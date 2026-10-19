@@ -1,0 +1,1510 @@
+{
+  "env": {
+    "utc": "2026-10-10T02:00:43Z",
+    "uname": "macOS-26.6.2-arm64-arm-64bit",
+    "cpu": "Apple M3 Max",
+    "cores": "16",
+    "mem_gb": 128.0,
+    "python": "3.12.7"
+  },
+  "reps": 5,
+  "duckdb": "v1.5.6",
+  "summary": {
+    "readme_q1_tile_window_cloud": {
+      "wall_s": {
+        "n": 5,
+        "min": 3.7347440836019814,
+        "p25": 3.7985474169254303,
+        "median": 4.067471374757588,
+        "p75": 4.574350917246193,
+        "max": 4.657100416254252
+      },
+      "get": [
+        8
+      ],
+      "bytes_in_MiB": [
+        6.17
+      ],
+      "waves": [
+        6,
+        7,
+        8
+      ],
+      "rows": [
+        2
+      ],
+      "warm_wall_s": {
+        "n": 5,
+        "min": 0.2737890421412885,
+        "p25": 0.35590245900675654,
+        "median": 0.47257145773619413,
+        "p75": 0.5635481663048267,
+        "max": 0.7185955829918385
+      }
+    },
+    "readme_q2_assets_one_scene": {
+      "wall_s": {
+        "n": 5,
+        "min": 3.1484165834262967,
+        "p25": 3.9283824171870947,
+        "median": 4.2954714158549905,
+        "p75": 4.596626332961023,
+        "max": 4.6518999161198735
+      },
+      "get": [
+        6
+      ],
+      "bytes_in_MiB": [
+        12.26
+      ],
+      "waves": [
+        5,
+        6
+      ],
+      "rows": [
+        1
+      ],
+      "warm_wall_s": {
+        "n": 5,
+        "min": 0.22025033319368958,
+        "p25": 0.25177337508648634,
+        "median": 0.2968484996818006,
+        "p75": 0.5208159578032792,
+        "max": 0.5391211248934269
+      }
+    },
+    "readme_q3_glob_year_prune": {
+      "wall_s": {
+        "n": 5,
+        "min": 1.5183569584041834,
+        "p25": 1.5322829592041671,
+        "median": 1.568970208056271,
+        "p75": 1.786004957742989,
+        "max": 1.881696832831949
+      },
+      "get": [
+        10
+      ],
+      "bytes_in_MiB": [
+        0.19
+      ],
+      "waves": [
+        3,
+        4
+      ],
+      "rows": [
+        2
+      ],
+      "warm_wall_s": {
+        "n": 5,
+        "min": 0.29829866671934724,
+        "p25": 0.30320604192093015,
+        "median": 0.3053316669538617,
+        "p75": 0.3060550829395652,
+        "max": 0.34356266586109996
+      }
+    },
+    "readme_q4_stats_monthly": {
+      "wall_s": {
+        "n": 5,
+        "min": 3.0111556672491133,
+        "p25": 3.212248000316322,
+        "median": 3.224450916983187,
+        "p75": 4.069248083047569,
+        "max": 4.679616209119558
+      },
+      "get": [
+        57
+      ],
+      "bytes_in_MiB": [
+        0.32
+      ],
+      "waves": [
+        4,
+        5,
+        6
+      ],
+      "rows": [
+        12
+      ],
+      "warm_wall_s": {
+        "n": 5,
+        "min": 0.19763216702267528,
+        "p25": 0.20834208419546485,
+        "median": 0.25363091565668583,
+        "p75": 0.45917299995198846,
+        "max": 0.9221306657418609
+      }
+    },
+    "readme_q5_stats_timeline": {
+      "wall_s": {
+        "n": 5,
+        "min": 0.5746813341975212,
+        "p25": 0.6888585002161562,
+        "median": 0.7325062910094857,
+        "p75": 0.8314408338628709,
+        "max": 0.9043654999695718
+      },
+      "get": [
+        1
+      ],
+      "bytes_in_MiB": [
+        0.0
+      ],
+      "waves": [
+        1,
+        2
+      ],
+      "rows": [
+        1
+      ],
+      "warm_wall_s": {
+        "n": 5,
+        "min": 0.4107496668584645,
+        "p25": 0.41933679208159447,
+        "median": 0.4242937918752432,
+        "p75": 0.4441866660490632,
+        "max": 0.528545584063977
+      }
+    }
+  },
+  "runs": {
+    "readme_q1_tile_window_cloud": [
+      {
+        "wall_s": 4.067471374757588,
+        "rows": 2,
+        "head": 1,
+        "get": 8,
+        "bytes_in": 6472330,
+        "waves": 7,
+        "span_s": 4.064158863067627,
+        "max_get_bytes": 6112623,
+        "requests": [
+          {
+            "type": "HEAD",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/sentinel-2-c1-l2a/year=2021/items.parquet",
+            "start_s": 0.0,
+            "dur_s": 0.497,
+            "rng": null,
+            "nbytes": 0,
+            "status": "OK_200"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/sentinel-2-c1-l2a/year=2021/items.parquet",
+            "start_s": 0.4970529079437256,
+            "dur_s": 0.658,
+            "rng": [
+              5015216641,
+              5015478784
+            ],
+            "nbytes": 262144,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/sentinel-2-c1-l2a/year=2021/items.parquet",
+            "start_s": 1.1561520099639893,
+            "dur_s": 0.543,
+            "rng": [
+              5009104018,
+              5015216640
+            ],
+            "nbytes": 6112623,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/sentinel-2-c1-l2a/year=2021/items.parquet",
+            "start_s": 1.730247974395752,
+            "dur_s": 0.427,
+            "rng": [
+              5005782665,
+              5005782744
+            ],
+            "nbytes": 80,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/sentinel-2-c1-l2a/year=2021/items.parquet",
+            "start_s": 2.1570749282836914,
+            "dur_s": 0.452,
+            "rng": [
+              1896172918,
+              1896211155
+            ],
+            "nbytes": 38238,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/sentinel-2-c1-l2a/year=2021/items.parquet",
+            "start_s": 2.6095168590545654,
+            "dur_s": 0.421,
+            "rng": [
+              1903302999,
+              1903303213
+            ],
+            "nbytes": 215,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/sentinel-2-c1-l2a/year=2021/items.parquet",
+            "start_s": 3.0299689769744873,
+            "dur_s": 0.483,
+            "rng": [
+              1896039542,
+              1896069265
+            ],
+            "nbytes": 29724,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/sentinel-2-c1-l2a/year=2021/items.parquet",
+            "start_s": 3.513162851333618,
+            "dur_s": 0.131,
+            "rng": [
+              1895914724,
+              1895923925
+            ],
+            "nbytes": 9202,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/sentinel-2-c1-l2a/year=2021/items.parquet",
+            "start_s": 3.670158863067627,
+            "dur_s": 0.394,
+            "rng": [
+              1895894620,
+              1895914723
+            ],
+            "nbytes": 20104,
+            "status": "PartialContent_206"
+          }
+        ],
+        "warm_wall_s": 0.2737890421412885,
+        "warm_get": 0
+      },
+      {
+        "wall_s": 3.7985474169254303,
+        "rows": 2,
+        "head": 1,
+        "get": 8,
+        "bytes_in": 6472330,
+        "waves": 6,
+        "span_s": 3.795373863220215,
+        "max_get_bytes": 6112623,
+        "warm_wall_s": 0.5635481663048267,
+        "warm_get": 0
+      },
+      {
+        "wall_s": 3.7347440836019814,
+        "rows": 2,
+        "head": 1,
+        "get": 8,
+        "bytes_in": 6472330,
+        "waves": 8,
+        "span_s": 3.731158950805664,
+        "max_get_bytes": 6112623,
+        "warm_wall_s": 0.7185955829918385,
+        "warm_get": 0
+      },
+      {
+        "wall_s": 4.657100416254252,
+        "rows": 2,
+        "head": 1,
+        "get": 8,
+        "bytes_in": 6472330,
+        "waves": 6,
+        "span_s": 4.6537390747070315,
+        "max_get_bytes": 6112623,
+        "warm_wall_s": 0.47257145773619413,
+        "warm_get": 0
+      },
+      {
+        "wall_s": 4.574350917246193,
+        "rows": 2,
+        "head": 1,
+        "get": 8,
+        "bytes_in": 6472330,
+        "waves": 8,
+        "span_s": 4.571559000015259,
+        "max_get_bytes": 6112623,
+        "warm_wall_s": 0.35590245900675654,
+        "warm_get": 0
+      }
+    ],
+    "readme_q2_assets_one_scene": [
+      {
+        "wall_s": 4.2954714158549905,
+        "rows": 1,
+        "head": 1,
+        "get": 6,
+        "bytes_in": 12853649,
+        "waves": 5,
+        "span_s": 4.273940120697022,
+        "max_get_bytes": 6448863,
+        "requests": [
+          {
+            "type": "HEAD",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/sentinel-2-c1-l2a/year=2021/items.parquet",
+            "start_s": 0.0,
+            "dur_s": 0.403,
+            "rng": null,
+            "nbytes": 0,
+            "status": "OK_200"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/sentinel-2-c1-l2a/year=2021/items.parquet",
+            "start_s": 0.4030590057373047,
+            "dur_s": 0.656,
+            "rng": [
+              5015216641,
+              5015478784
+            ],
+            "nbytes": 262144,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/sentinel-2-c1-l2a/year=2021/items.parquet",
+            "start_s": 1.0599250793457031,
+            "dur_s": 0.742,
+            "rng": [
+              5009104018,
+              5015216640
+            ],
+            "nbytes": 6112623,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/sentinel-2-c1-l2a/year=2021/items.parquet",
+            "start_s": 1.8409950733184814,
+            "dur_s": 0.499,
+            "rng": [
+              5005782665,
+              5005782744
+            ],
+            "nbytes": 80,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/sentinel-2-c1-l2a/year=2021/items.parquet",
+            "start_s": 2.339484930038452,
+            "dur_s": 0.428,
+            "rng": [
+              1903302999,
+              1903303213
+            ],
+            "nbytes": 215,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/sentinel-2-c1-l2a/year=2021/items.parquet",
+            "start_s": 2.767409086227417,
+            "dur_s": 0.42,
+            "rng": [
+              1896039542,
+              1896069265
+            ],
+            "nbytes": 29724,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/sentinel-2-c1-l2a/year=2021/items.parquet",
+            "start_s": 3.1879401206970215,
+            "dur_s": 1.086,
+            "rng": [
+              1896854136,
+              1903302998
+            ],
+            "nbytes": 6448863,
+            "status": "PartialContent_206"
+          }
+        ],
+        "warm_wall_s": 0.2968484996818006,
+        "warm_get": 0
+      },
+      {
+        "wall_s": 4.596626332961023,
+        "rows": 1,
+        "head": 1,
+        "get": 6,
+        "bytes_in": 12853649,
+        "waves": 6,
+        "span_s": 4.5789150104522705,
+        "max_get_bytes": 6448863,
+        "warm_wall_s": 0.5391211248934269,
+        "warm_get": 0
+      },
+      {
+        "wall_s": 4.6518999161198735,
+        "rows": 1,
+        "head": 1,
+        "get": 6,
+        "bytes_in": 12853649,
+        "waves": 5,
+        "span_s": 4.628198099136353,
+        "max_get_bytes": 6448863,
+        "warm_wall_s": 0.5208159578032792,
+        "warm_get": 0
+      },
+      {
+        "wall_s": 3.9283824171870947,
+        "rows": 1,
+        "head": 1,
+        "get": 6,
+        "bytes_in": 12853649,
+        "waves": 6,
+        "span_s": 3.9049059314727783,
+        "max_get_bytes": 6448863,
+        "warm_wall_s": 0.22025033319368958,
+        "warm_get": 0
+      },
+      {
+        "wall_s": 3.1484165834262967,
+        "rows": 1,
+        "head": 1,
+        "get": 6,
+        "bytes_in": 12853649,
+        "waves": 5,
+        "span_s": 3.1264098777770997,
+        "max_get_bytes": 6448863,
+        "warm_wall_s": 0.25177337508648634,
+        "warm_get": 0
+      }
+    ],
+    "readme_q3_glob_year_prune": [
+      {
+        "wall_s": 1.786004957742989,
+        "rows": 2,
+        "head": 0,
+        "get": 10,
+        "bytes_in": 200241,
+        "waves": 3,
+        "span_s": 1.7839060440063477,
+        "max_get_bytes": 65536,
+        "requests": [
+          {
+            "type": "GET",
+            "url": "https://s3.us-west-2.amazonaws.com/us-west-2.opendata.source.coop/?encoding-type=url&list-type=2&prefix=tge-labs%2Fs2-stac-geoparquet%2Fsentinel-2-c1-l2a%2Fyear%3D",
+            "start_s": 0.0,
+            "dur_s": 0.341,
+            "rng": null,
+            "nbytes": 0,
+            "status": "OK_200"
+          },
+          {
+            "type": "GET",
+            "url": "https://s3.us-west-2.amazonaws.com/us-west-2.opendata.source.coop/tge-labs/s2-stac-geoparquet/sentinel-2-c1-l2a/year%3D2015/items.parquet",
+            "start_s": 0.34168410301208496,
+            "dur_s": 0.362,
+            "rng": [
+              279344,
+              295727
+            ],
+            "nbytes": 16384,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://s3.us-west-2.amazonaws.com/us-west-2.opendata.source.coop/tge-labs/s2-stac-geoparquet/sentinel-2-c1-l2a/year%3D2016/items.parquet",
+            "start_s": 0.7086670398712158,
+            "dur_s": 0.44,
+            "rng": [
+              306876,
+              323259
+            ],
+            "nbytes": 16384,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://s3.us-west-2.amazonaws.com/us-west-2.opendata.source.coop/tge-labs/s2-stac-geoparquet/sentinel-2-c1-l2a/year%3D2017/items.parquet",
+            "start_s": 0.708686113357544,
+            "dur_s": 0.56,
+            "rng": [
+              32711387,
+              32776922
+            ],
+            "nbytes": 65536,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://s3.us-west-2.amazonaws.com/us-west-2.opendata.source.coop/tge-labs/s2-stac-geoparquet/sentinel-2-c1-l2a/year%3D2016/items.parquet",
+            "start_s": 1.1509101390838623,
+            "dur_s": 0.344,
+            "rng": [
+              11306,
+              12281
+            ],
+            "nbytes": 976,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://s3.us-west-2.amazonaws.com/us-west-2.opendata.source.coop/tge-labs/s2-stac-geoparquet/sentinel-2-c1-l2a/year%3D2017/items.parquet",
+            "start_s": 1.2699060440063477,
+            "dur_s": 0.368,
+            "rng": [
+              32587188,
+              32587641
+            ],
+            "nbytes": 454,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://s3.us-west-2.amazonaws.com/us-west-2.opendata.source.coop/tge-labs/s2-stac-geoparquet/sentinel-2-c1-l2a/year%3D2017/items.parquet",
+            "start_s": 1.2699060440063477,
+            "dur_s": 0.451,
+            "rng": [
+              24691069,
+              24716379
+            ],
+            "nbytes": 25311,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://s3.us-west-2.amazonaws.com/us-west-2.opendata.source.coop/tge-labs/s2-stac-geoparquet/sentinel-2-c1-l2a/year%3D2017/items.parquet",
+            "start_s": 1.2699060440063477,
+            "dur_s": 0.505,
+            "rng": [
+              8392755,
+              8418207
+            ],
+            "nbytes": 25453,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://s3.us-west-2.amazonaws.com/us-west-2.opendata.source.coop/tge-labs/s2-stac-geoparquet/sentinel-2-c1-l2a/year%3D2017/items.parquet",
+            "start_s": 1.2699060440063477,
+            "dur_s": 0.505,
+            "rng": [
+              16504197,
+              16529354
+            ],
+            "nbytes": 25158,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://s3.us-west-2.amazonaws.com/us-west-2.opendata.source.coop/tge-labs/s2-stac-geoparquet/sentinel-2-c1-l2a/year%3D2017/items.parquet",
+            "start_s": 1.2699060440063477,
+            "dur_s": 0.514,
+            "rng": [
+              208886,
+              233470
+            ],
+            "nbytes": 24585,
+            "status": "PartialContent_206"
+          }
+        ],
+        "warm_wall_s": 0.34356266586109996,
+        "warm_get": 1
+      },
+      {
+        "wall_s": 1.5183569584041834,
+        "rows": 2,
+        "head": 0,
+        "get": 10,
+        "bytes_in": 200241,
+        "waves": 3,
+        "span_s": 1.5173460998535155,
+        "max_get_bytes": 65536,
+        "warm_wall_s": 0.30320604192093015,
+        "warm_get": 1
+      },
+      {
+        "wall_s": 1.5322829592041671,
+        "rows": 2,
+        "head": 0,
+        "get": 10,
+        "bytes_in": 200241,
+        "waves": 3,
+        "span_s": 1.5308441467285157,
+        "max_get_bytes": 65536,
+        "warm_wall_s": 0.3053316669538617,
+        "warm_get": 1
+      },
+      {
+        "wall_s": 1.881696832831949,
+        "rows": 2,
+        "head": 0,
+        "get": 10,
+        "bytes_in": 200241,
+        "waves": 4,
+        "span_s": 1.8805660037994385,
+        "max_get_bytes": 65536,
+        "warm_wall_s": 0.29829866671934724,
+        "warm_get": 1
+      },
+      {
+        "wall_s": 1.568970208056271,
+        "rows": 2,
+        "head": 0,
+        "get": 10,
+        "bytes_in": 200241,
+        "waves": 3,
+        "span_s": 1.5668089752197265,
+        "max_get_bytes": 65536,
+        "warm_wall_s": 0.3060550829395652,
+        "warm_get": 1
+      }
+    ],
+    "readme_q4_stats_monthly": [
+      {
+        "wall_s": 3.0111556672491133,
+        "rows": 12,
+        "head": 1,
+        "get": 57,
+        "bytes_in": 333746,
+        "waves": 5,
+        "span_s": 3.000887035369873,
+        "max_get_bytes": 198126,
+        "requests": [
+          {
+            "type": "HEAD",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 0.0,
+            "dur_s": 0.376,
+            "rng": null,
+            "nbytes": 0,
+            "status": "OK_200"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 0.3764369487762451,
+            "dur_s": 0.486,
+            "rng": [
+              17479403,
+              17512170
+            ],
+            "nbytes": 32768,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 0.862307071685791,
+            "dur_s": 0.193,
+            "rng": [
+              17465253,
+              17512170
+            ],
+            "nbytes": 46918,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 1.0565528869628906,
+            "dur_s": 0.4,
+            "rng": [
+              17161498,
+              17161544
+            ],
+            "nbytes": 47,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 1.0565528869628906,
+            "dur_s": 0.48,
+            "rng": [
+              17228340,
+              17228386
+            ],
+            "nbytes": 47,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 1.0565528869628906,
+            "dur_s": 0.49,
+            "rng": [
+              17179780,
+              17179826
+            ],
+            "nbytes": 47,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 1.056623935699463,
+            "dur_s": 0.184,
+            "rng": [
+              17210250,
+              17210296
+            ],
+            "nbytes": 47,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 1.0567750930786133,
+            "dur_s": 0.432,
+            "rng": [
+              17167592,
+              17167638
+            ],
+            "nbytes": 47,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 1.0567779541015625,
+            "dur_s": 0.418,
+            "rng": [
+              17198062,
+              17198108
+            ],
+            "nbytes": 47,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 1.0568161010742188,
+            "dur_s": 0.422,
+            "rng": [
+              17191968,
+              17192014
+            ],
+            "nbytes": 47,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 1.056885004043579,
+            "dur_s": 0.195,
+            "rng": [
+              17185874,
+              17185920
+            ],
+            "nbytes": 47,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 1.0569639205932617,
+            "dur_s": 0.432,
+            "rng": [
+              17204156,
+              17204202
+            ],
+            "nbytes": 47,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 1.056973934173584,
+            "dur_s": 0.416,
+            "rng": [
+              17173686,
+              17173732
+            ],
+            "nbytes": 47,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 1.056973934173584,
+            "dur_s": 0.441,
+            "rng": [
+              17248030,
+              17248076
+            ],
+            "nbytes": 47,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 1.0569839477539062,
+            "dur_s": 0.456,
+            "rng": [
+              17234306,
+              17234352
+            ],
+            "nbytes": 47,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 1.0569899082183838,
+            "dur_s": 0.192,
+            "rng": [
+              17216152,
+              17216198
+            ],
+            "nbytes": 47,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 1.0569899082183838,
+            "dur_s": 0.48,
+            "rng": [
+              17240656,
+              17240702
+            ],
+            "nbytes": 47,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 1.0569980144500732,
+            "dur_s": 0.432,
+            "rng": [
+              17222246,
+              17222292
+            ],
+            "nbytes": 47,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 1.0569989681243896,
+            "dur_s": 0.416,
+            "rng": [
+              17254380,
+              17254426
+            ],
+            "nbytes": 47,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 1.2415480613708496,
+            "dur_s": 0.344,
+            "rng": [
+              17260474,
+              17260520
+            ],
+            "nbytes": 47,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 1.2491569519042969,
+            "dur_s": 0.34,
+            "rng": [
+              17266568,
+              17266614
+            ],
+            "nbytes": 47,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 1.2517480850219727,
+            "dur_s": 0.354,
+            "rng": [
+              17271622,
+              17272661
+            ],
+            "nbytes": 1040,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 1.4572758674621582,
+            "dur_s": 0.413,
+            "rng": [
+              17278756,
+              17278802
+            ],
+            "nbytes": 47,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 1.4736549854278564,
+            "dur_s": 0.407,
+            "rng": [
+              17284722,
+              17284768
+            ],
+            "nbytes": 47,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 1.4736549854278564,
+            "dur_s": 0.409,
+            "rng": [
+              17290624,
+              17290670
+            ],
+            "nbytes": 47,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 1.4746959209442139,
+            "dur_s": 0.393,
+            "rng": [
+              17296718,
+              17296764
+            ],
+            "nbytes": 47,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 1.478672981262207,
+            "dur_s": 0.381,
+            "rng": [
+              17302684,
+              17302730
+            ],
+            "nbytes": 47,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 1.48903489112854,
+            "dur_s": 0.367,
+            "rng": [
+              17308778,
+              17308824
+            ],
+            "nbytes": 47,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 1.48903489112854,
+            "dur_s": 0.371,
+            "rng": [
+              17320646,
+              17320692
+            ],
+            "nbytes": 47,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 1.48903489112854,
+            "dur_s": 0.436,
+            "rng": [
+              17314680,
+              17314726
+            ],
+            "nbytes": 47,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 1.4979350566864014,
+            "dur_s": 0.388,
+            "rng": [
+              17326740,
+              17326786
+            ],
+            "nbytes": 47,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 1.5128560066223145,
+            "dur_s": 0.383,
+            "rng": [
+              17332834,
+              17332880
+            ],
+            "nbytes": 47,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 1.5378758907318115,
+            "dur_s": 0.232,
+            "rng": [
+              17338928,
+              17338974
+            ],
+            "nbytes": 47,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 1.5378758907318115,
+            "dur_s": 0.416,
+            "rng": [
+              17345022,
+              17345068
+            ],
+            "nbytes": 47,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 1.5472149848937988,
+            "dur_s": 0.223,
+            "rng": [
+              17351116,
+              17351162
+            ],
+            "nbytes": 47,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 1.5865459442138672,
+            "dur_s": 0.183,
+            "rng": [
+              17357210,
+              17357256
+            ],
+            "nbytes": 47,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 1.5888409614562988,
+            "dur_s": 0.181,
+            "rng": [
+              17363304,
+              17363350
+            ],
+            "nbytes": 47,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 1.6064338684082031,
+            "dur_s": 0.343,
+            "rng": [
+              17272662,
+              17272708
+            ],
+            "nbytes": 47,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 1.7701420783996582,
+            "dur_s": 0.422,
+            "rng": [
+              17369398,
+              17369444
+            ],
+            "nbytes": 47,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 1.7701430320739746,
+            "dur_s": 0.139,
+            "rng": [
+              17387680,
+              17387726
+            ],
+            "nbytes": 47,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 1.7701430320739746,
+            "dur_s": 0.417,
+            "rng": [
+              17381586,
+              17381632
+            ],
+            "nbytes": 47,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 1.7701880931854248,
+            "dur_s": 0.131,
+            "rng": [
+              17375492,
+              17375538
+            ],
+            "nbytes": 47,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 1.8557500839233398,
+            "dur_s": 0.142,
+            "rng": [
+              17393774,
+              17393820
+            ],
+            "nbytes": 47,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 1.860037088394165,
+            "dur_s": 0.43,
+            "rng": [
+              17405737,
+              17405783
+            ],
+            "nbytes": 47,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 1.8600380420684814,
+            "dur_s": 0.158,
+            "rng": [
+              17399643,
+              17399689
+            ],
+            "nbytes": 47,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 1.8684098720550537,
+            "dur_s": 0.166,
+            "rng": [
+              17411831,
+              17411877
+            ],
+            "nbytes": 47,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 1.8695790767669678,
+            "dur_s": 0.42,
+            "rng": [
+              17417797,
+              17417843
+            ],
+            "nbytes": 47,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 1.8807830810546875,
+            "dur_s": 0.409,
+            "rng": [
+              17423763,
+              17423809
+            ],
+            "nbytes": 47,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 1.8836438655853271,
+            "dur_s": 0.428,
+            "rng": [
+              17429729,
+              17429775
+            ],
+            "nbytes": 47,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 1.886538028717041,
+            "dur_s": 0.403,
+            "rng": [
+              17435695,
+              17435741
+            ],
+            "nbytes": 47,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 1.8960599899291992,
+            "dur_s": 0.149,
+            "rng": [
+              17441661,
+              17441707
+            ],
+            "nbytes": 47,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 1.9011790752410889,
+            "dur_s": 0.125,
+            "rng": [
+              17447627,
+              17447673
+            ],
+            "nbytes": 47,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 1.9093680381774902,
+            "dur_s": 0.381,
+            "rng": [
+              17454745,
+              17454791
+            ],
+            "nbytes": 47,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 1.924726963043213,
+            "dur_s": 0.374,
+            "rng": [
+              17460199,
+              17460245
+            ],
+            "nbytes": 47,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 1.948889970779419,
+            "dur_s": 0.206,
+            "rng": [
+              6325202,
+              6327157
+            ],
+            "nbytes": 1956,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 2.154999017715454,
+            "dur_s": 0.384,
+            "rng": [
+              6322839,
+              6325201
+            ],
+            "nbytes": 2363,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 2.539720058441162,
+            "dur_s": 0.137,
+            "rng": [
+              6327158,
+              6375382
+            ],
+            "nbytes": 48225,
+            "status": "PartialContent_206"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/mgrs-monthly.parquet",
+            "start_s": 2.676887035369873,
+            "dur_s": 0.324,
+            "rng": [
+              6467659,
+              6665784
+            ],
+            "nbytes": 198126,
+            "status": "PartialContent_206"
+          }
+        ],
+        "warm_wall_s": 0.45917299995198846,
+        "warm_get": 0
+      },
+      {
+        "wall_s": 4.679616209119558,
+        "rows": 12,
+        "head": 1,
+        "get": 57,
+        "bytes_in": 333746,
+        "waves": 6,
+        "span_s": 4.675998931884766,
+        "max_get_bytes": 198126,
+        "warm_wall_s": 0.25363091565668583,
+        "warm_get": 0
+      },
+      {
+        "wall_s": 3.212248000316322,
+        "rows": 12,
+        "head": 1,
+        "get": 57,
+        "bytes_in": 333746,
+        "waves": 5,
+        "span_s": 3.2085790824890137,
+        "max_get_bytes": 198126,
+        "warm_wall_s": 0.20834208419546485,
+        "warm_get": 0
+      },
+      {
+        "wall_s": 4.069248083047569,
+        "rows": 12,
+        "head": 1,
+        "get": 57,
+        "bytes_in": 333746,
+        "waves": 5,
+        "span_s": 4.066274169921875,
+        "max_get_bytes": 198126,
+        "warm_wall_s": 0.19763216702267528,
+        "warm_get": 0
+      },
+      {
+        "wall_s": 3.224450916983187,
+        "rows": 12,
+        "head": 1,
+        "get": 57,
+        "bytes_in": 333746,
+        "waves": 4,
+        "span_s": 3.2195959281921387,
+        "max_get_bytes": 198126,
+        "warm_wall_s": 0.9221306657418609,
+        "warm_get": 0
+      }
+    ],
+    "readme_q5_stats_timeline": [
+      {
+        "wall_s": 0.7325062910094857,
+        "rows": 1,
+        "head": 1,
+        "get": 1,
+        "bytes_in": 1756,
+        "waves": 2,
+        "span_s": 0.6721631107330323,
+        "max_get_bytes": 1756,
+        "requests": [
+          {
+            "type": "HEAD",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/timeline.parquet",
+            "start_s": 0.0,
+            "dur_s": 0.516,
+            "rng": null,
+            "nbytes": 0,
+            "status": "OK_200"
+          },
+          {
+            "type": "GET",
+            "url": "https://data.source.coop/tge-labs/s2-stac-geoparquet/stats-c1/timeline.parquet",
+            "start_s": 0.5161631107330322,
+            "dur_s": 0.156,
+            "rng": [
+              0,
+              1755
+            ],
+            "nbytes": 1756,
+            "status": "PartialContent_206"
+          }
+        ],
+        "warm_wall_s": 0.4242937918752432,
+        "warm_get": 0
+      },
+      {
+        "wall_s": 0.5746813341975212,
+        "rows": 1,
+        "head": 1,
+        "get": 1,
+        "bytes_in": 1756,
+        "waves": 1,
+        "span_s": 0.5724150066375733,
+        "max_get_bytes": 1756,
+        "warm_wall_s": 0.4107496668584645,
+        "warm_get": 0
+      },
+      {
+        "wall_s": 0.8314408338628709,
+        "rows": 1,
+        "head": 1,
+        "get": 1,
+        "bytes_in": 1756,
+        "waves": 2,
+        "span_s": 0.8290889987945557,
+        "max_get_bytes": 1756,
+        "warm_wall_s": 0.4441866660490632,
+        "warm_get": 0
+      },
+      {
+        "wall_s": 0.6888585002161562,
+        "rows": 1,
+        "head": 1,
+        "get": 1,
+        "bytes_in": 1756,
+        "waves": 2,
+        "span_s": 0.6856848411560059,
+        "max_get_bytes": 1756,
+        "warm_wall_s": 0.41933679208159447,
+        "warm_get": 0
+      },
+      {
+        "wall_s": 0.9043654999695718,
+        "rows": 1,
+        "head": 1,
+        "get": 1,
+        "bytes_in": 1756,
+        "waves": 2,
+        "span_s": 0.9013530902862549,
+        "max_get_bytes": 1756,
+        "warm_wall_s": 0.528545584063977,
+        "warm_get": 0
+      }
+    ]
+  }
+}

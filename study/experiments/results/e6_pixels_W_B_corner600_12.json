@@ -1,0 +1,481 @@
+{
+  "env": {
+    "utc": "2026-10-10T03:04:39Z",
+    "uname": "macOS-26.6.2-arm64-arm-64bit",
+    "cpu": "Apple M3 Max",
+    "cores": "16",
+    "mem_gb": 128.0,
+    "python": "3.12.7"
+  },
+  "workload": "W_B_corner600",
+  "scenes": 12,
+  "reps": 3,
+  "summary": {
+    "gdal-default-T4": {
+      "n": 3,
+      "failed": 0,
+      "t_work_s": {
+        "n": 3,
+        "min": 28.45777375018224,
+        "p25": 28.45777375018224,
+        "median": 38.60976574989036,
+        "p75": 40.31804633280262,
+        "max": 40.31804633280262
+      },
+      "t_process_s": {
+        "n": 3,
+        "min": 28.61450016638264,
+        "p25": 28.61450016638264,
+        "median": 38.769944458734244,
+        "p75": 40.47580083273351,
+        "max": 40.47580083273351
+      },
+      "requests": [
+        324
+      ],
+      "bytes_requested": [
+        151180581
+      ],
+      "nic_bytes_in_median": 167360272,
+      "bit_exact": [
+        "24/24"
+      ],
+      "head": [
+        240
+      ],
+      "listing": [
+        12
+      ]
+    },
+    "gdal-tuned-T16": {
+      "n": 3,
+      "failed": 0,
+      "t_work_s": {
+        "n": 3,
+        "min": 10.582587707787752,
+        "p25": 10.582587707787752,
+        "median": 10.926727166865021,
+        "p75": 11.463468333240598,
+        "max": 11.463468333240598
+      },
+      "t_process_s": {
+        "n": 3,
+        "min": 10.75611749989912,
+        "p25": 10.75611749989912,
+        "median": 11.096636791247874,
+        "p75": 11.627198250032961,
+        "max": 11.627198250032961
+      },
+      "requests": [
+        48
+      ],
+      "bytes_requested": [
+        786432
+      ],
+      "nic_bytes_in_median": 161935834,
+      "bit_exact": [
+        "24/24"
+      ],
+      "head": [
+        24
+      ],
+      "listing": [
+        0
+      ]
+    },
+    "floor-C16": {
+      "n": 3,
+      "failed": 0,
+      "t_work_s": {
+        "n": 3,
+        "min": 6.653739207889885,
+        "p25": 6.653739207889885,
+        "median": 9.550786125008017,
+        "p75": 12.385605999734253,
+        "max": 12.385605999734253
+      },
+      "t_process_s": {
+        "n": 3,
+        "min": 6.925034582614899,
+        "p25": 6.925034582614899,
+        "median": 9.76963174995035,
+        "p75": 12.611688041128218,
+        "max": 12.611688041128218
+      },
+      "requests": [
+        48
+      ],
+      "bytes_requested": [
+        150786789
+      ],
+      "nic_bytes_in_median": 162029995,
+      "bit_exact": [],
+      "head": [
+        null
+      ],
+      "listing": [
+        null
+      ]
+    },
+    "floor-C32": {
+      "n": 3,
+      "failed": 0,
+      "t_work_s": {
+        "n": 3,
+        "min": 5.108427499886602,
+        "p25": 5.108427499886602,
+        "median": 5.399334582965821,
+        "p75": 7.354586374945939,
+        "max": 7.354586374945939
+      },
+      "t_process_s": {
+        "n": 3,
+        "min": 5.329076541122049,
+        "p25": 5.329076541122049,
+        "median": 5.609952666796744,
+        "p75": 7.593634000048041,
+        "max": 7.593634000048041
+      },
+      "requests": [
+        48
+      ],
+      "bytes_requested": [
+        150786789
+      ],
+      "nic_bytes_in_median": 159015397,
+      "bit_exact": [],
+      "head": [
+        null
+      ],
+      "listing": [
+        null
+      ]
+    },
+    "rasteret-read": {
+      "n": 3,
+      "failed": 0,
+      "t_work_s": {
+        "n": 3,
+        "min": 8.02220291690901,
+        "p25": 8.02220291690901,
+        "median": 9.394322624895722,
+        "p75": 9.502485957928002,
+        "max": 9.502485957928002
+      },
+      "t_process_s": {
+        "n": 3,
+        "min": 9.062213708180934,
+        "p25": 9.062213708180934,
+        "median": 10.448177125304937,
+        "p75": 10.538037291262299,
+        "max": 10.538037291262299
+      },
+      "requests": [
+        48
+      ],
+      "bytes_requested": [
+        150786789
+      ],
+      "nic_bytes_in_median": 157869792,
+      "bit_exact": [
+        "24/24"
+      ],
+      "head": [
+        null
+      ],
+      "listing": [
+        null
+      ]
+    }
+  },
+  "runs": [
+    {
+      "tool": "gdal",
+      "gdal": "3.12.2",
+      "workload": "W_B_corner600",
+      "threads": 16,
+      "assets": 24,
+      "t_work_s": 10.582587707787752,
+      "head": 24,
+      "get_range": 24,
+      "get_listing": 0,
+      "requests": 48,
+      "bytes_requested": 786432,
+      "head_status": {
+        "200": 24
+      },
+      "config": "gdal-tuned-T16",
+      "t_process_s": 10.75611749989912,
+      "nic_bytes_in": 162885829,
+      "rep": 0,
+      "bit_exact": 24,
+      "bit_total": 24
+    },
+    {
+      "phase": "read",
+      "workload": "W_B_corner600",
+      "rasteret": "0.4.1",
+      "t_load_index_s": 0.12388683389872313,
+      "t_read_s": 7.898312374949455,
+      "t_work_s": 8.02220291690901,
+      "array_shape": [
+        12,
+        2,
+        600,
+        600
+      ],
+      "dtype": "uint16",
+      "requests": 48,
+      "bytes_requested": 150786789,
+      "small_calls_le_64KiB": 0,
+      "large_calls_gt_64KiB": 48,
+      "config": "rasteret-read",
+      "t_process_s": 9.062213708180934,
+      "nic_bytes_in": 158569048,
+      "rep": 0,
+      "bit_exact": 24,
+      "bit_total": 24
+    },
+    {
+      "tool": "manifest-floor",
+      "workload": "W_B_corner600",
+      "conc": 32,
+      "requests": 48,
+      "bytes_requested": 150786789,
+      "t_work_s": 5.108427499886602,
+      "t_fetch_s": 5.108427499886602,
+      "config": "floor-C32",
+      "t_process_s": 5.329076541122049,
+      "nic_bytes_in": 159015397,
+      "rep": 0
+    },
+    {
+      "tool": "manifest-floor",
+      "workload": "W_B_corner600",
+      "conc": 16,
+      "requests": 48,
+      "bytes_requested": 150786789,
+      "t_work_s": 6.653739207889885,
+      "t_fetch_s": 6.653739207889885,
+      "config": "floor-C16",
+      "t_process_s": 6.925034582614899,
+      "nic_bytes_in": 226399203,
+      "rep": 0
+    },
+    {
+      "tool": "gdal",
+      "gdal": "3.12.2",
+      "workload": "W_B_corner600",
+      "threads": 4,
+      "assets": 24,
+      "t_work_s": 40.31804633280262,
+      "head": 240,
+      "get_range": 72,
+      "get_listing": 12,
+      "requests": 324,
+      "bytes_requested": 151180581,
+      "head_status": {
+        "200": 24,
+        "404": 216
+      },
+      "config": "gdal-default-T4",
+      "t_process_s": 40.47580083273351,
+      "nic_bytes_in": 377262876,
+      "rep": 0,
+      "bit_exact": 24,
+      "bit_total": 24
+    },
+    {
+      "tool": "gdal",
+      "gdal": "3.12.2",
+      "workload": "W_B_corner600",
+      "threads": 4,
+      "assets": 24,
+      "t_work_s": 28.45777375018224,
+      "head": 240,
+      "get_range": 72,
+      "get_listing": 12,
+      "requests": 324,
+      "bytes_requested": 151180581,
+      "head_status": {
+        "200": 24,
+        "404": 216
+      },
+      "config": "gdal-default-T4",
+      "t_process_s": 28.61450016638264,
+      "nic_bytes_in": 167360272,
+      "rep": 1,
+      "bit_exact": 24,
+      "bit_total": 24
+    },
+    {
+      "phase": "read",
+      "workload": "W_B_corner600",
+      "rasteret": "0.4.1",
+      "t_load_index_s": 0.11656074970960617,
+      "t_read_s": 9.385921792127192,
+      "t_work_s": 9.502485957928002,
+      "array_shape": [
+        12,
+        2,
+        600,
+        600
+      ],
+      "dtype": "uint16",
+      "requests": 48,
+      "bytes_requested": 150786789,
+      "small_calls_le_64KiB": 0,
+      "large_calls_gt_64KiB": 48,
+      "config": "rasteret-read",
+      "t_process_s": 10.538037291262299,
+      "nic_bytes_in": 157857035,
+      "rep": 1,
+      "bit_exact": 24,
+      "bit_total": 24
+    },
+    {
+      "tool": "manifest-floor",
+      "workload": "W_B_corner600",
+      "conc": 16,
+      "requests": 48,
+      "bytes_requested": 150786789,
+      "t_work_s": 12.385605999734253,
+      "t_fetch_s": 12.385605999734253,
+      "config": "floor-C16",
+      "t_process_s": 12.611688041128218,
+      "nic_bytes_in": 157342339,
+      "rep": 1
+    },
+    {
+      "tool": "manifest-floor",
+      "workload": "W_B_corner600",
+      "conc": 32,
+      "requests": 48,
+      "bytes_requested": 150786789,
+      "t_work_s": 5.399334582965821,
+      "t_fetch_s": 5.399334582965821,
+      "config": "floor-C32",
+      "t_process_s": 5.609952666796744,
+      "nic_bytes_in": 159982986,
+      "rep": 1
+    },
+    {
+      "tool": "gdal",
+      "gdal": "3.12.2",
+      "workload": "W_B_corner600",
+      "threads": 16,
+      "assets": 24,
+      "t_work_s": 11.463468333240598,
+      "head": 24,
+      "get_range": 24,
+      "get_listing": 0,
+      "requests": 48,
+      "bytes_requested": 786432,
+      "head_status": {
+        "200": 24
+      },
+      "config": "gdal-tuned-T16",
+      "t_process_s": 11.627198250032961,
+      "nic_bytes_in": 161935834,
+      "rep": 1,
+      "bit_exact": 24,
+      "bit_total": 24
+    },
+    {
+      "tool": "gdal",
+      "gdal": "3.12.2",
+      "workload": "W_B_corner600",
+      "threads": 16,
+      "assets": 24,
+      "t_work_s": 10.926727166865021,
+      "head": 24,
+      "get_range": 24,
+      "get_listing": 0,
+      "requests": 48,
+      "bytes_requested": 786432,
+      "head_status": {
+        "200": 24
+      },
+      "config": "gdal-tuned-T16",
+      "t_process_s": 11.096636791247874,
+      "nic_bytes_in": 160132118,
+      "rep": 2,
+      "bit_exact": 24,
+      "bit_total": 24
+    },
+    {
+      "tool": "manifest-floor",
+      "workload": "W_B_corner600",
+      "conc": 16,
+      "requests": 48,
+      "bytes_requested": 150786789,
+      "t_work_s": 9.550786125008017,
+      "t_fetch_s": 9.550786125008017,
+      "config": "floor-C16",
+      "t_process_s": 9.76963174995035,
+      "nic_bytes_in": 162029995,
+      "rep": 2
+    },
+    {
+      "tool": "gdal",
+      "gdal": "3.12.2",
+      "workload": "W_B_corner600",
+      "threads": 4,
+      "assets": 24,
+      "t_work_s": 38.60976574989036,
+      "head": 240,
+      "get_range": 72,
+      "get_listing": 12,
+      "requests": 324,
+      "bytes_requested": 151180581,
+      "head_status": {
+        "200": 24,
+        "404": 216
+      },
+      "config": "gdal-default-T4",
+      "t_process_s": 38.769944458734244,
+      "nic_bytes_in": 158437102,
+      "rep": 2,
+      "bit_exact": 24,
+      "bit_total": 24
+    },
+    {
+      "tool": "manifest-floor",
+      "workload": "W_B_corner600",
+      "conc": 32,
+      "requests": 48,
+      "bytes_requested": 150786789,
+      "t_work_s": 7.354586374945939,
+      "t_fetch_s": 7.354586374945939,
+      "config": "floor-C32",
+      "t_process_s": 7.593634000048041,
+      "nic_bytes_in": 158708833,
+      "rep": 2
+    },
+    {
+      "phase": "read",
+      "workload": "W_B_corner600",
+      "rasteret": "0.4.1",
+      "t_load_index_s": 0.12797733303159475,
+      "t_read_s": 9.266338834073395,
+      "t_work_s": 9.394322624895722,
+      "array_shape": [
+        12,
+        2,
+        600,
+        600
+      ],
+      "dtype": "uint16",
+      "requests": 48,
+      "bytes_requested": 150786789,
+      "small_calls_le_64KiB": 0,
+      "large_calls_gt_64KiB": 48,
+      "config": "rasteret-read",
+      "t_process_s": 10.448177125304937,
+      "nic_bytes_in": 157869792,
+      "rep": 2,
+      "bit_exact": 24,
+      "bit_total": 24
+    }
+  ]
+}
