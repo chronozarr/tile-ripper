@@ -1,0 +1,203 @@
+rustc 1.92.0 (ded5c06cf 2025-12-08)
+cargo 1.92.0 (344c4567c 2025-10-21)
+3.12.4
+GDAL 3.12.4 "Chicoutimi", released 2026/04/22
+Basic build/runtime checks passed; this does not validate remote access or a dataset.
+tile-ripper v0.1.0-alpha.1 (/private/tmp/tile-ripper-alpha-candidate-source):
+    tile-ripper
+Inspecting source metadata and native selection…
+Tile-Ripper inspection (not a saved execution plan)
+Requested Polygon in "EPSG:4326" (geometry in --json)
+Requested interval "2025-07-28T00:00:00Z" through "2025-07-28T23:59:59Z" (inclusive)
+  S2A_T17SPV_20250728T161108_L2A / B04: 91 x 113 native pixels; GDAL GTiff; 1 timestamp(s)
+    2025-07-28T16:13:44.543+00:00
+  S2A_T17SPV_20250728T161108_L2A / B08: 91 x 113 native pixels; GDAL GTiff; 1 timestamp(s)
+    2025-07-28T16:13:44.543+00:00
+    Native CRS EPSG:32617; source window x=7505 y=2319 width=91 height=113
+    Native CRS EPSG:32617; source window x=7505 y=2319 width=91 height=113
+Estimated logical output value bytes: 41132 (encoding, coordinates and metadata excluded).
+Source identities are checked before and after execution; per-object validation is not an atomic dataset snapshot.
+Expected data-library reads: 0 local, 2 remote (estimates; metadata excluded).
+Estimated unique encoded data bytes: 3035042
+Metadata cache: 0 reused inspections; remaining metadata inspected now.
+Native grids; no resampling, calibration or compositing.
+Physical tile/chunk selections and native CRS/window details: --json.
+  Limit: No implicit reprojection or compositing
+  Limit: buffer_bytes bounds admitted native sample/chunk payloads, not process RSS or external codec/cache scratch
+  Limit: Diagnostic JSON is not executable; use prepared runtime bindings or prepare anew from the request
+
+Inspecting source metadata and native selection…
+Fetching native pixels; validating source identities…
+Acquisition complete: 2 output records.
+Output: /private/tmp/tile-ripper-alpha-candidate-source/.alpha/sentinel
+Completion and provenance: manifest.json
+Observed HTTP totals unavailable for this backend; manifest records measured stages and planned reads separately.
+Driver: GTiff/GeoTIFF
+Files: .alpha/sentinel/asset-0000.tif
+Size is 91, 113
+Coordinate System is:
+PROJCRS["WGS 84 / UTM zone 17N",
+    BASEGEOGCRS["WGS 84",
+        DATUM["World Geodetic System 1984",
+            ELLIPSOID["WGS 84",6378137,298.257223563,
+                LENGTHUNIT["metre",1]]],
+        PRIMEM["Greenwich",0,
+            ANGLEUNIT["degree",0.0174532925199433]],
+        ID["EPSG",4326]],
+    CONVERSION["UTM zone 17N",
+        METHOD["Transverse Mercator",
+            ID["EPSG",9807]],
+        PARAMETER["Latitude of natural origin",0,
+            ANGLEUNIT["degree",0.0174532925199433],
+            ID["EPSG",8801]],
+        PARAMETER["Longitude of natural origin",-81,
+            ANGLEUNIT["degree",0.0174532925199433],
+            ID["EPSG",8802]],
+        PARAMETER["Scale factor at natural origin",0.9996,
+            SCALEUNIT["unity",1],
+            ID["EPSG",8805]],
+        PARAMETER["False easting",500000,
+            LENGTHUNIT["metre",1],
+            ID["EPSG",8806]],
+        PARAMETER["False northing",0,
+            LENGTHUNIT["metre",1],
+            ID["EPSG",8807]]],
+    CS[Cartesian,2],
+        AXIS["(E)",east,
+            ORDER[1],
+            LENGTHUNIT["metre",1]],
+        AXIS["(N)",north,
+            ORDER[2],
+            LENGTHUNIT["metre",1]],
+    USAGE[
+        SCOPE["Navigation and medium accuracy spatial referencing."],
+        AREA["Between 84°W and 78°W, northern hemisphere between equator and 84°N, onshore and offshore. Bahamas. Ecuador - north of equator. Canada - Nunavut; Ontario; Quebec. Cayman Islands. Colombia. Costa Rica. Cuba. Jamaica. Nicaragua. Panama. United States (USA)."],
+        BBOX[0,-84,84,-78]],
+    ID["EPSG",32617]]
+Data axis to CRS axis mapping: 1,2
+Origin = (675050.000000000000000,3976830.000000000000000)
+Pixel Size = (10.000000000000000,-10.000000000000000)
+Metadata:
+  AREA_OR_POINT=Area
+Image Structure Metadata:
+  COMPRESSION=DEFLATE
+  INTERLEAVE=BAND
+  PREDICTOR=2
+Corner Coordinates:
+Upper Left  (  675050.000, 3976830.000) ( 79d 3'35.37"W, 35d55'12.50"N)
+Lower Left  (  675050.000, 3975700.000) ( 79d 3'36.27"W, 35d54'35.85"N)
+Upper Right (  675960.000, 3976830.000) ( 79d 2'59.08"W, 35d55'11.92"N)
+Lower Right (  675960.000, 3975700.000) ( 79d 2'59.98"W, 35d54'35.26"N)
+Center      (  675505.000, 3976265.000) ( 79d 3'17.67"W, 35d54'53.88"N)
+Band 1 Block=256x256 Type=UInt16, ColorInterp=Gray
+  NoData Value=0
+  Offset: -0.1,   Scale:0.0001
+Driver: GTiff/GeoTIFF
+Files: .alpha/sentinel/asset-0001.tif
+Size is 91, 113
+Coordinate System is:
+PROJCRS["WGS 84 / UTM zone 17N",
+    BASEGEOGCRS["WGS 84",
+        DATUM["World Geodetic System 1984",
+            ELLIPSOID["WGS 84",6378137,298.257223563,
+                LENGTHUNIT["metre",1]]],
+        PRIMEM["Greenwich",0,
+            ANGLEUNIT["degree",0.0174532925199433]],
+        ID["EPSG",4326]],
+    CONVERSION["UTM zone 17N",
+        METHOD["Transverse Mercator",
+            ID["EPSG",9807]],
+        PARAMETER["Latitude of natural origin",0,
+            ANGLEUNIT["degree",0.0174532925199433],
+            ID["EPSG",8801]],
+        PARAMETER["Longitude of natural origin",-81,
+            ANGLEUNIT["degree",0.0174532925199433],
+            ID["EPSG",8802]],
+        PARAMETER["Scale factor at natural origin",0.9996,
+            SCALEUNIT["unity",1],
+            ID["EPSG",8805]],
+        PARAMETER["False easting",500000,
+            LENGTHUNIT["metre",1],
+            ID["EPSG",8806]],
+        PARAMETER["False northing",0,
+            LENGTHUNIT["metre",1],
+            ID["EPSG",8807]]],
+    CS[Cartesian,2],
+        AXIS["(E)",east,
+            ORDER[1],
+            LENGTHUNIT["metre",1]],
+        AXIS["(N)",north,
+            ORDER[2],
+            LENGTHUNIT["metre",1]],
+    USAGE[
+        SCOPE["Navigation and medium accuracy spatial referencing."],
+        AREA["Between 84°W and 78°W, northern hemisphere between equator and 84°N, onshore and offshore. Bahamas. Ecuador - north of equator. Canada - Nunavut; Ontario; Quebec. Cayman Islands. Colombia. Costa Rica. Cuba. Jamaica. Nicaragua. Panama. United States (USA)."],
+        BBOX[0,-84,84,-78]],
+    ID["EPSG",32617]]
+Data axis to CRS axis mapping: 1,2
+Origin = (675050.000000000000000,3976830.000000000000000)
+Pixel Size = (10.000000000000000,-10.000000000000000)
+Metadata:
+  AREA_OR_POINT=Area
+Image Structure Metadata:
+  COMPRESSION=DEFLATE
+  INTERLEAVE=BAND
+  PREDICTOR=2
+Corner Coordinates:
+Upper Left  (  675050.000, 3976830.000) ( 79d 3'35.37"W, 35d55'12.50"N)
+Lower Left  (  675050.000, 3975700.000) ( 79d 3'36.27"W, 35d54'35.85"N)
+Upper Right (  675960.000, 3976830.000) ( 79d 2'59.08"W, 35d55'11.92"N)
+Lower Right (  675960.000, 3975700.000) ( 79d 2'59.98"W, 35d54'35.26"N)
+Center      (  675505.000, 3976265.000) ( 79d 3'17.67"W, 35d54'53.88"N)
+Band 1 Block=256x256 Type=UInt16, ColorInterp=Gray
+  NoData Value=0
+  Offset: -0.1,   Scale:0.0001
+Inspecting source metadata and native selection…
+Tile-Ripper inspection (not a saved execution plan)
+Requested bounds [10.0,30.0,25.0,50.0] in "EPSG:4326"
+Requested interval "1959-01-01T00:00:00Z" through "1959-01-01T06:00:00Z" (inclusive)
+  era5 / 2m_temperature: 3 x 4 native pixels; zarrs; 2 timestamp(s)
+    1959-01-01T00:00:00+00:00
+    1959-01-01T06:00:00+00:00
+    Native CRS EPSG:4326; source window x=2 y=21 width=3 height=4
+Estimated logical output value bytes: 96 (encoding, coordinates and metadata excluded).
+Source identities are checked before and after execution; per-object validation is not an atomic dataset snapshot.
+Expected data-library reads: 0 local, 1 remote (estimates; metadata excluded).
+Estimated unique encoded data bytes: 580139
+Metadata cache: 0 reused inspections; remaining metadata inspected now.
+Native grids; no resampling, calibration or compositing.
+Physical tile/chunk selections and native CRS/window details: --json.
+  Limit: No implicit reprojection or compositing
+  Limit: buffer_bytes bounds admitted native sample/chunk payloads, not process RSS or external codec/cache scratch
+  Limit: Diagnostic JSON is not executable; use prepared runtime bindings or prepare anew from the request
+  Limit: Conventional geographic profile: EPSG:4326 is the profile's interpretation of named latitude/longitude centers in degrees, not a source-declared datum. Coordinates are preserved without transformation; precise datum-dependent uses require provider verification.
+  Limit: Zarr v2: custom UInt16 grid or conventional Float32 geographic axes; time first; native bounds; validated bounded codecs; selected source chunks retrieved once; native fill. No calibration, mosaicking or reprojection. Buffer budget is not a process RSS ceiling. Geographic output dimensions normalize to time/latitude/longitude with source axis order recorded in plan.
+
+Inspecting source metadata and native selection…
+Fetching native pixels; validating source identities…
+Acquisition complete: 1 output records.
+Output: /private/tmp/tile-ripper-alpha-candidate-source/.alpha/era5
+Completion and provenance: manifest.json
+Observed HTTP: 35 requests, 651576 response-body bytes (metadata and validation included).
+<xarray.Dataset> Size: 168B
+Dimensions:         (time: 2, latitude: 4, longitude: 3)
+Coordinates:
+  * latitude        (latitude) float64 32B 30.94 36.56 42.19 47.81
+  * longitude       (longitude) float64 24B 11.25 16.88 22.5
+  * time            (time) datetime64[ns] 16B 1959-01-01 1959-01-01T06:00:00
+Data variables:
+    2m_temperature  (time, latitude, longitude) float32 96B ...
+['1959-01-01T00:00:00.000000000' '1959-01-01T06:00:00.000000000']
+{'long_name': '2 metre temperature', 'short_name': 't2m', 'units': 'K'}
+[[[280.9038  285.44785 285.2259 ]
+  [286.04675 287.46225 285.32764]
+  [282.51382 280.73746 274.5347 ]
+  [274.21945 275.16586 274.82657]]
+
+ [[280.47192 284.1503  283.8764 ]
+  [285.9077  287.51172 285.1004 ]
+  [282.33704 280.1135  272.903  ]
+  [274.21127 274.8978  274.79108]]]
+.alpha/sentinel status: complete fields: aoi, collection, decisions, discovery, document_type, endpoint, final_flush_seconds, inspection, limitations, observed, outputs, plan, processing, schema_version, sources, status, time
+.alpha/era5 status: complete fields: decisions, document_type, inspection, limitations, observed, outputs, plan, processing, schema_version, source_metadata, sources, status
+    Removing /private/tmp/tile-ripper-alpha-candidate-source/.alpha/install/bin/tile-ripper

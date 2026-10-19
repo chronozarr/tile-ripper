@@ -16,7 +16,7 @@ for package in sorted(metadata['packages'], key=lambda p: (p['name'], p['version
         continue
     notices = []
     for path in sorted(root.rglob('*')):
-        if path.is_file() and path.name.lower().startswith(('license', 'copying', 'copyright', 'notice')):
+        if path.is_file() and path.name.lower().startswith(('license', 'licence', 'copying', 'copyright', 'notice', 'authors')):
             notices.append({'path': str(path.relative_to(root)),
                             'sha256': hashlib.sha256(path.read_bytes()).hexdigest()})
     rows.append({'name': package['name'], 'version': package['version'],

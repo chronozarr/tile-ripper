@@ -1,6 +1,10 @@
 # Installation and release preparation
 
-Tile-Ripper is pre-alpha source software, not a published package or standalone
+For the exact pinned `0.1.0-alpha.1` candidate instructions, isolated install/uninstall,
+and two real acquisitions use [the self-contained scientist trial](alpha/human-trial.md).
+[ALPHA.md](../ALPHA.md) is the short entrypoint; licensing remains pending.
+
+Tile-Ripper is private-alpha candidate source software, not a published package or standalone
 binary release. Build from the repository checkout with Cargo.lock. The current
 verified environment is macOS arm64, Rust 1.92.0, GDAL 3.12.4. This is a tested
 combination, not a claimed minimum Rust version or cross-platform certification.
@@ -124,3 +128,36 @@ Conda and Homebrew libraries is not a supported alpha setup. Prebuilt executable
 and bundled GDAL are deferred: current linkage includes many transitive libraries
 and data resources, with unresolved redistribution notices. No new package manager
 channel is needed for this source-only candidate.
+
+## Public source access and trial failures
+
+- `GDAL could not open asset`: first run the environment check and confirm
+  `gdalinfo --formats` lists GTiff. Then check that the public provider is reachable
+  from your network and your system CA certificates are installed. This error can
+  mean native GDAL HTTP/TLS support or source access failure; it does not identify
+  which one. Locators are deliberately omitted from errors.
+- HTTP 403/404, unsupported redirect or public-URL rejection: use the exact bundled
+  public request file and current documented endpoint. The alpha has no credential
+  provider, signed-URL or redirect workaround for Zarr. Check provider availability;
+  record the failing command and source ID. Do not add private tokens to feedback.
+- Source version conflict: the selected metadata or objects changed, or the server
+  did not honor the required identity checks. Save the error, plan again from the
+  original request, and use a new output path. Do not reuse partial output or edit
+  the completion manifest to mark it complete. Persistent conflicts are feedback.
+- No observations / no matching times: confirm the exact collection, native
+  variable names, longitude convention and inclusive UTC dates. The public catalog
+  can change. Planning succeeded with no result is not an acquisition success.
+- Unsupported dtype, dimension order, filter or codec: report source compatibility
+  and stop. Having a system GDAL/xarray reader for a format does not make it an
+  admitted Tile-Ripper profile. No automatic format conversion is provided.
+- Linker killed / signal 9 during compilation: use the documented `--jobs 1` and
+  enough memory/disk space. The earlier Linux default parallel debug test exhausted
+  linker memory; the serial release build/tests passed.
+- Existing output: choose a new directory. Caught failures clean up newly owned
+  output; abrupt interruption may leave a partial directory. Check exit status
+  and `manifest.json` completion before using results.
+
+Send the exact command, platform/tool versions, error and whether the bundled
+example or a different source was used. The [human trial feedback form](alpha/feedback-template.md)
+collects this without automatic uploads. Optional Python reader installation
+failures should be recorded separately from Rust acquisition failures.

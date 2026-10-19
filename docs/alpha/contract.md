@@ -1,6 +1,7 @@
 # Proposed 0.1.0-alpha.1 contract
 
 Candidate source distribution only; licensing and final gate must be cleared first.
+Other platforms are untested, not excluded by design.
 macOS arm64 with Rust 1.92.0 / Homebrew GDAL 3.12.4 is tested. Ubuntu 24.04 arm64 with Rust 1.92.0 / system GDAL 3.8.4 also passed a clean
 container source install, ERA5 fetch and serial release tests. This is the other
 tested alpha combination; broader Linux coverage is unverified. No Windows or Intel macOS support claim.

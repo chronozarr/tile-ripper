@@ -1,9 +1,11 @@
 # Tile-Ripper
 
+[Private alpha candidate: installation and first scientist trial](ALPHA.md).
+
 Retrieve native scientific raster subsets with one Rust library and one
 `plan` / `fetch` CLI. Inspect the selected observations, native grids and physical
 reads before downloading data. Outputs include a completion/provenance manifest.
-**Pre-alpha:** support is limited to the profiles below. This is not a general
+**Private-alpha candidate (unreleased; licensing approval pending):** support is limited to the profiles below. This is not a general
 Zarr reader, reprojection engine, mosaic or temporal compositor. No Python is
 required to acquire data; GDAL is required even for Zarr-only use today.
 
@@ -154,7 +156,7 @@ rough edge; its default works for both formats. API is not yet stable.
 ## Validation and benchmarks
 
 Native values, coordinates, NaNs/nodata and metadata are checked independently
-against GDAL and xarray. [Current private-alpha gate](docs/alpha/readiness.md)
+against GDAL and xarray. [Current private-alpha gate](docs/alpha/closeout.md)
 records the fresh-context agent trial, installation evidence and remaining alpha blockers.
 [Alpha contract](docs/alpha/contract.md), [small scientific examples](docs/alpha/examples.md),
 and [licensing audit](docs/alpha/licensing.md) define the candidate scope.

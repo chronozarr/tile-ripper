@@ -1,3 +1,6 @@
+> Historical readiness audit. The [licensing closeout](licensing-closeout.md) corrects
+> the LICENCE/AUTHORS scan omission and supersedes the missing-notice conclusions.
+
 # Licensing audit — 2026-10-19
 
 Scope: candidate based on 5187801, complete Cargo metadata graph (379 third-party

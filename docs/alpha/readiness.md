@@ -1,3 +1,6 @@
+> Historical gate. See the [private-alpha closeout](closeout.md) for current
+> source-distribution scope, approvals and the human tester procedure.
+
 # Private alpha decision — 2026-10-19
 
 Candidate based on `5187801`, `codex/acquisition-planner`. Recommendation:
