@@ -1,145 +1,179 @@
 # Tile-Ripper
 
-A Rust acquisition planner with a working Sentinel-2 STAC-to-pixels workflow,
-a native GeoTIFF reader path, and local/anonymous HTTP Zarr v2 acquisition paths, including real WeatherBench2
-ERA5 and NASA POWER IMERG Float32 subsets. One library
-and a thin CLI, with GDAL and zarrs handling storage and decoding. No ChronoZarr dependency.
+Retrieve native scientific raster subsets with one Rust library and one
+`plan` / `fetch` CLI. Inspect the selected observations, native grids and physical
+reads before downloading data. Outputs include a completion/provenance manifest.
+**Pre-alpha:** support is limited to the profiles below. This is not a general
+Zarr reader, reprojection engine, mosaic or temporal compositor. No Python is
+required to acquire data; GDAL is required even for Zarr-only use today.
 
-Start with [the unified workflow](docs/unified-workflow.md):
+## Build and try a real dataset
 
-```sh
-tile-ripper plan request.json --human
-tile-ripper fetch request.json --output ./subset
-```
-
-Complete requests: [remote STAC/COG](examples/unified-stac.json) and
-[local Zarr](examples/unified-zarr.json), and
-[controlled HTTP Zarr](examples/remote-zarr.json). All use the same prepared Rust library
-lifecycle and preserve native grids. See [the current decision gate](docs/second-zarr-decision.md) and
-[the HTTP Zarr demonstration and supported contract](docs/remote-zarr-workflow.md).
-The [paired precipitation demonstration](docs/second-zarr-workflow.md) and
-[real public ERA5 demonstration](docs/cf-zarr-workflow.md) work without custom
-source metadata. Arbitrary public Zarr is not yet supported. The earlier
-[compatibility assessment](docs/remote-zarr-public-compatibility.md) records the
-blockers resolved by this deliberately narrow profile.
-Earlier milestone guides and benchmarks remain historical evidence;
-[ADR 0003](docs/0003-unified-lifecycle.md) describes the unified lifecycle.
-The original [study](study/README.md) remains historical evidence.
-
-## Build and demonstrate
-
-Requires Rust/Cargo and system GDAL discoverable through `pkg-config` (tested
-with GDAL 3.12.4). Dependencies are pinned in Cargo.toml and Cargo.lock; use
-`--locked`. GDAL and its native dependencies are supplied by the host, not
-vendored or reproducibly pinned by Cargo.
+Install Rust/Cargo and system GDAL. On macOS with Homebrew:
 
 ```sh
-cargo build --release --locked --bins --examples
-# Use the existing study/experiments Python environment, or uv sync --locked there.
-/path/to/study/experiments/.venv/bin/python bench/make_fixture.py prototype-output/fixtures
-./target/release/tile-ripper plan prototype-output/fixtures/small.json --cache prototype-output/layout.json
-./target/release/tile-ripper fetch prototype-output/fixtures/small.json --output prototype-output/my-extract
-./target/release/tile-ripper plan prototype-output/fixtures/zarr.json
+brew install gdal pkg-config
+cargo build --release --locked --bin tile-ripper
+./target/release/tile-ripper --help
 ```
 
-The fixture creator writes complete example requests and deterministic source
-pixels. `fetch` requires a **new** output directory. It writes one GeoTIFF per
-native buffer and a manifest linking each file to its asset, band, window and
-time. Outputs remain separate observations; there is no mosaic or composite.
-`plan` prints diagnostic JSON without source locators or credentials. It may
-read metadata; it does not retrieve pixel windows. Saved plans are not replay
-inputs: `fetch` uses the original runtime request and replans.
+Run from a checkout of this branch. [Installation and platform status](docs/installation.md)
+cover native dependencies, local installation and release preparation.
 
-Minimal request (replace the local source with your own north-up UInt16 TIFF):
+This small public ERA5 example retrieves air temperature at two times without
+credentials. The source chunk is roughly 0.6 MB even though the subset is tiny:
 
-```json
-{
-  "source": {"kind":"assets", "assets":[
-    {"id":"observation-1", "locator":"/absolute/path/source.tif", "format":"cog",
-     "datetime":"2025-06-01T00:00:00Z"}
-  ]},
-  "spatial":{"kind":"bounds", "crs":"EPSG:32617", "bbox":[601000,3997420,602600,3999020]},
-  "variables":[{"kind":"band", "index":1}],
-  "grid":{"kind":"native"},
-  "sink":{"kind":"geotiff_directory", "path":"./new-output"},
-  "budget":{"buffer_bytes":524288, "chunk_edge":512, "max_nodes":10000}
-}
+```sh
+./target/release/tile-ripper plan \
+  --source https://storage.googleapis.com/weatherbench2/datasets/era5/1959-2023_01_10-6h-64x32_equiangular_conservative.zarr/ \
+  --format zarr_v2 --bbox 10,30,25,50 \
+  --start 1959-01-01T00:00:00Z --end 1959-01-01T06:00:00Z \
+  --variables 2m_temperature --human
+./target/release/tile-ripper fetch examples/weatherbench2.json --output ./era5-subset --human
 ```
 
-Bounds must already use the source CRS authority string, in x/y order. They
-select the outer pixel envelope, clipped to the source. `time` is optional;
-when given, timestamps must be RFC3339 and source datetimes must be supplied.
-Intervals include both endpoints. HTTP(S) sources use GDAL `/vsicurl/`.
-Runtime request files can contain sensitive locators; handle them accordingly.
-The CLI suppresses native driver diagnostics that could echo signed locators.
-Local layout caches contain canonical local paths but no remote locators.
+The second command uses the equivalent complete request file. Choose a **new**
+destination; existing directories are never overwritten. The result is
+`era5-subset/era5.zarr` plus `manifest.json`. For direct flags, use the same
+selection with `fetch --output ./new-subset`; its asset/group name is `subset.zarr`.
+`--buffer-mib 32` is the direct interface's default payload budget, not a process
+memory limit. STAC defaults cap discovery at 8 items/8 assets and output at one
+million pixels. Use JSON for advanced budgets and catalog limits.
 
-## Library
+Open the result with familiar tools (optional Python with xarray and Zarr v2):
+
+```python
+import xarray as xr
+subset = xr.open_zarr("era5-subset/era5.zarr", consolidated=False, chunks=None)
+print(subset)
+print(subset["2m_temperature"].values)  # native Kelvin; NaNs remain invalid
+```
+
+## Supported sources and limits
+
+| Source | Supported selection and output |
+| --- | --- |
+| Earth Search Sentinel-2 C1 L2A | STAC dates, geographic bounds/Polygon, named native UInt16 bands; separate georeferenced GeoTIFFs per observation/asset |
+| WeatherBench2 ERA5 64×32 product above | Anonymous HTTP Zarr v2, Float32/NaN, `(time,longitude,latitude)`; native Zarr subset |
+| NASA POWER IMERG daily spatial | Anonymous HTTP Zarr v2, Float32/NaN, `(time,lat,lon)`, verified daily time and storage filter; native Zarr subset |
+| Local custom-grid Zarr / direct GeoTIFF | Narrow UInt16 profiles; [advanced lifecycle](docs/unified-workflow.md) and [local Zarr](docs/zarr-workflow.md) |
+
+Public requests: [Sentinel-2](examples/unified-stac.json),
+[ERA5](examples/weatherbench2.json), [IMERG](examples/imerg.json).
+For IMERG, follow [the paired precipitation guide](docs/second-zarr-workflow.md).
+Other stores must fit the [exact admitted geographic/codec profile](docs/second-zarr-workflow.md);
+this is not generic CF support. Unsupported metadata, dtypes, dimensions and codecs fail
+explicitly. Zarr supports rectangular selection, not polygon masking. No remote
+authentication providers, Zarr v3, arbitrary calendars, curvilinear grids, target
+grids, resampling, unit conversion, mosaicking or temporal aggregation.
+
+Bounds are `west,south,east,north` in geographic x/y order with no antimeridian
+crossing. Use the source longitude convention (ERA5 uses 0–360); no automatic
+longitude wrapping. Zarr selects native cells whose area intersects the rectangle,
+so outer centers may lie outside it. Both interval endpoints are included.
+COG Polygon extraction instead masks by pixel center. Scientific coordinates
+are preserved; EPSG:4326 on these Zarr profiles is an interpretation of geographic
+axes, not a provider-declared precise datum. Original codec decoding is applied
+once; outputs do not repeat IMERG's lossy storage filter.
+
+## Inspect a plan
+
+```sh
+./target/release/tile-ripper plan examples/imerg.json --human
+./target/release/tile-ripper plan examples/imerg.json --json > inspection.json
+./target/release/tile-ripper fetch examples/imerg.json --dry-run --human
+```
+
+`plan` and `--dry-run` read bounded metadata/coordinate objects and inspect selected
+object identities; they do not GET scientific Zarr chunks or write outputs.
+GDAL may read TIFF headers/directories. Planning is not an offline operation.
+Human output summarizes variables, dates, grids, windows, reads and estimates.
+JSON exposes physical chunk keys/tile selections, output records, transformations,
+validation details, limitations and measured planning traffic. Logical output byte
+estimates exclude encoding, coordinates and filesystem overhead. Estimated reads
+are library operations, **not** measured HTTP requests for GDAL.
+
+Saved inspections cannot be replayed: `fetch` accepts the original request and
+prepares it again. Metadata and data identities are checked before/after execution;
+HTTP Zarr uses conditional ETags per object, not an atomic dataset snapshot.
+Diagnostics redact remote locators; runtime request files may contain sensitive
+information and should not be published. Anonymous Zarr rejects URL credentials,
+query tokens and redirects. Use explicit supported endpoints.
+
+## Fetch data
+
+```sh
+./target/release/tile-ripper fetch examples/imerg.json --output ./precipitation --human
+./target/release/tile-ripper fetch examples/unified-stac.json --output ./sentinel --human
+```
+
+JSON is the default stdout format for scripts. `--human` adds concise stderr
+progress and a completion path; the manifest records observations separately from
+estimates, source references, native metadata, processing decisions and timings.
+Zarr has measured HTTP totals; GDAL HTTP totals may be unavailable. A successful
+manifest has `status: "complete"`; failures return nonzero and remove newly created
+outputs. An interrupted process can leave an incomplete directory: inspect the
+manifest and choose a new path before retrying. Never treat partial files as success.
+
+Direct STAC syntax uses `--source ENDPOINT --format stac --collection NAME`,
+`--variables B04,B08`, dates and `--bbox …` or `--aoi polygon.geojson` (a GeoJSON
+**Polygon geometry**, not a Feature). Do not mix JSON selection and direct flags;
+`--output`, `--human`, `--cache` and `--dry-run` still work with request files.
+
+## Rust library
+
+The CLI translates flags into the public `Request`; it calls the same library as
+applications. There is no CLI dependency in the planner:
 
 ```rust,no_run
-use tile_ripper::{Request, Result, execute, cog::LayoutCache};
-fn acquire(request: &Request) -> Result<()> {
-    let mut cache = LayoutCache::default();
-    execute(request, &mut cache, |chunk| {
-        // Georeferenced owned UInt16 buffer. Returning an error cancels the run.
-        println!("{}: {} pixels", chunk.asset_id, chunk.pixels.data().len());
-        Ok(())
-    })?;
+use tile_ripper::{acquisition, cog::LayoutCache, Request, Result};
+fn fetch(request: &Request) -> Result<()> {
+    let prepared = acquisition::prepare(request, &mut LayoutCache::default())?;
+    println!("{}", prepared.human());
+    let manifest = prepared.fetch()?;
+    assert_eq!(manifest["status"], "complete");
     Ok(())
 }
 ```
 
-`execute` calls the sink synchronously, providing backpressure. It is not yet
-an async stream or an incremental planner. Library hosts own GDAL process
-configuration and diagnostics; the CLI's conservative settings are visible in
-src/main.rs. `buffer_bytes` bounds one returned pixel buffer. It **does not**
-cap process RSS, GDAL's caches/codec working space, the metadata cache or a
-caller that retains buffers. `max_nodes` bounds the materialized plan. A separate prototype metadata cap
-limits inspection and the local layout cache to 65,536 tile records; loading
-a cache larger than 32 MiB is rejected.
+[The runnable example](examples/acquire.rs) accepts any shared request;
+[a typed request example](examples/scientific_subset.rs) constructs the ERA5 query directly:
 
-## What works and what does not
+```sh
+cargo run --release --locked --example acquire -- examples/weatherbench2.json --fetch
+```
 
-- COG/GeoTIFF: direct assets, source-CRS bounds, integer bands, optional time
-  selection, native UInt16 buffers/GeoTIFF outputs, local layout cache.
-- Zarr v2: planning only, local 2D array metadata, C order, `.` or `/` chunk
-  separators. Explicit `tile_ripper_grid` CRS/affine attributes are a prototype
-  fixture convention; `.zarray` itself has no universal georeferencing.
-- The STAC facade now supports Earth Search discovery, AOI CRS mapping, polygon
-  masks and per-asset outputs; see its separate request contract above.
-- Unsupported: other provider adapters, target grids, other dtypes,
-  quality masks, internal mask/alpha TIFFs, Zarr materialization/v3 sharding,
-  HDF5/NetCDF and GeoParquet reads, mosaicking and temporal reduction.
-- TIFF ranges shown in plans are explanatory block-layout evidence. GDAL
-  chooses actual HTTP reads. Request/byte observations are null unless
-  measured externally; payload estimates are not wire-byte guarantees.
-- Persistent remote layout caching is disabled until ETag/version validation
-  and conditional execution exist. Local identity uses size/mtime, not a
-  content hash. The STAC workflow now pins strong ETags through conditional reads;
-  legacy direct requests without ETags still assume unchanged remote objects.
+`Prepared::execute` also delivers owned native `Pixels::UInt16` or `Pixels::Float32`
+buffers synchronously, with backpressure, coordinates, validity and provenance.
+Use `.pixels.len()`, `.as_u16()` or `.as_f32()`; callback consumers must not retain
+unbounded buffers. Results are provisional until execution returns success.
+The planner models assets, variables, grids, windows and reads; runtime adapters
+own codecs and source bindings. `cog::LayoutCache` is a historical naming/coupling
+rough edge; its default works for both formats. API is not yet stable.
 
-## Verification and benchmarks
+## Validation and benchmarks
+
+Native values, coordinates, NaNs/nodata and metadata are checked independently
+against GDAL and xarray. [Current usability/release gate](docs/external-usability-decision.md)
+records unfamiliar requests, build evidence and remaining alpha blockers.
+[Previous scientific gate](docs/second-zarr-decision.md) and
+[raw repeated benchmarks](docs/second-zarr-benchmark.json) preserve methods and limits.
+There is no demonstrated consistent end-to-end speed advantage. xarray is preferable
+for broad CF processing and analysis; GDAL/rasterio for general raster operations.
+See [ordinary alternatives and matching-work limits](docs/alternatives.md).
+Tile-Ripper's present advantage is a shared inspectable acquisition lifecycle with
+bounded native selection and provenance, not a new decoder or universal speedup.
+
+## Development and architecture
 
 ```sh
 cargo test --locked
 cargo fmt --check
 cargo clippy --locked --all-targets -- -D warnings
-/path/to/study/experiments/.venv/bin/python bench/compare_study.py
-/path/to/study/experiments/.venv/bin/python bench/run.py --reps 5
 ```
 
-The parity check reruns the original SQL and compares Rust windows and tile
-offsets/counts against its saved manifests. The benchmark creates local COG
-fixtures, interleaves fresh processes, independently checks all output pixels
-and metadata, and counts HTTP requests/response-body bytes at a loopback
-server. It records process peak RSS, planning/read+decode/sink timings and wall
-time, fixture/lock hashes and versions. GDAL fuses read and decode, so those
-times are combined. Direct-asset discovery has no catalog request cost.
-
-Cold/warm refers to local persisted layout metadata. OS caches stay warm.
-HTTP runs are index-free; no false warm-remote label is used. GDAL versions
-differ between the host Rust binding and the existing rasterio environment.
-Python import and output-manifest overhead differ too: these measurements
-validate behavior/accounting, not a Rust-vs-Python speed claim. Rasteret and
-the original direct range executor remain prior-study baselines; they were
-not rerun on this new fixture. Results and limitations are in docs/.
+See [architecture](docs/0003-unified-lifecycle.md),
+[implementation map](docs/implementation-map.md) and
+[historical study](study/README.md). Detailed milestone reports in `docs/` retain
+historical scope and results; use this README and the current gate for current support.
+No ChronoZarr dependency, plugin system, Python binding or paid service is required.

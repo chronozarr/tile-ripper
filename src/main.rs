@@ -1,4 +1,5 @@
-use std::{env, fs, path::Path};
+mod cli;
+use std::{env, path::Path};
 use tile_ripper::{acquisition, cog::LayoutCache, Request, Result, Sink};
 fn run() -> Result<()> {
     let mut args: Vec<_> = env::args().collect();
@@ -9,43 +10,18 @@ fn run() -> Result<()> {
             _ => {}
         }
     }
-    if args.get(1).is_some_and(|a| a == "--help" || a == "-h") {
-        println!("tile-ripper plan|fetch request.json [--human|--json] [--output new-directory] [--cache layout.json] [--discover-only]\nLegacy aliases: stac-plan, stac-fetch. See docs/unified-workflow.md.");
+    let options = cli::parse(&args[1..])?;
+    let Some(options) = options else {
         return Ok(());
-    }
-    if args.len() < 3 {
-        return Err("usage: tile-ripper plan|fetch|stac-plan|stac-fetch request.json [--human|--json] [--discover-only] [--cache layout.json] [--output new-directory]".into());
-    }
-    let mut discover_only = false;
-    let mut human = false;
-    let mut cache_path = None;
-    let mut output = None;
-    let mut i = 3;
-    while i < args.len() {
-        if args[i] == "--human" || args[i] == "--json" {
-            human = args[i] == "--human";
-            i += 1;
-            continue;
-        }
-        if args[i] == "--discover-only" {
-            discover_only = true;
-            i += 1;
-            continue;
-        }
-        if i + 1 >= args.len() {
-            return Err("option requires a value".into());
-        }
-        match args[i].as_str() {
-            "--cache" => cache_path = Some(args[i + 1].clone()),
-            "--output" => output = Some(args[i + 1].clone()),
-            _ => return Err("unknown option".into()),
-        };
-        i += 2;
-    }
-    if !matches!(args[1].as_str(), "plan" | "fetch") {
-        return Err("expected plan or fetch".into());
-    }
-    let input = fs::read(&args[2]).map_err(|_| "cannot read request file")?;
+    };
+    let cli::Options {
+        command,
+        input,
+        discover_only,
+        human,
+        cache_path,
+        output,
+    } = options;
     // Quiet native driver diagnostics; they can include signed locators.
     gdal::config::set_error_handler(|_, _, _| {});
     for (key, value) in [
@@ -65,14 +41,12 @@ fn run() -> Result<()> {
     } else {
         LayoutCache::default()
     };
-    let json: serde_json::Value =
-        serde_json::from_slice(&input).map_err(|_| "invalid request JSON syntax")?;
-    let mut request: Request = if json.get("source").is_some() {
-        serde_json::from_value(json)
+    let mut request: Request = if input.get("source").is_some() {
+        serde_json::from_value(input)
             .map_err(|_| "invalid request schema; see docs/unified-workflow.md")?
     } else {
         acquisition::from_stac(
-            serde_json::from_value(json)
+            serde_json::from_value(input)
                 .map_err(|_| "invalid request schema; see docs/unified-workflow.md")?,
         )
     };
@@ -83,14 +57,26 @@ fn run() -> Result<()> {
             _ => Sink::Directory { path },
         };
     }
-    if discover_only && args[1] != "plan" {
+    if discover_only && command != "plan" {
         return Err("--discover-only requires plan".into());
+    }
+    let destination = match &request.sink {
+        Sink::Directory { path }
+        | Sink::ZarrDirectory { path }
+        | Sink::GeoTiffDirectory { path } => Some(std::path::absolute(path)?),
+        Sink::Callback => None,
+    };
+    if command == "fetch" && destination.as_ref().is_some_and(|path| path.exists()) {
+        return Err("output directory already exists; choose --output NEW_DIRECTORY".into());
+    }
+    if human {
+        eprintln!("Inspecting source metadata and native selection…");
     }
     let value = if discover_only {
         acquisition::discover(&request)?
     } else {
         let prepared = acquisition::prepare(&request, &mut cache)?;
-        match args[1].as_str() {
+        match command.as_str() {
             "plan" => {
                 if human {
                     let result = prepared.human();
@@ -102,18 +88,26 @@ fn run() -> Result<()> {
                 }
                 prepared.explain()
             }
-            "fetch" => prepared.fetch()?,
+            "fetch" => {
+                if human {
+                    eprintln!("Fetching native pixels; validating source identities…");
+                }
+                prepared.fetch()?
+            }
             _ => return Err("expected plan or fetch".into()),
         }
     };
     if let Some(path) = cache_path {
         cache.save(Path::new(&path))?;
     }
-    if human && args[1] == "fetch" {
-        println!(
-            "Acquisition complete: {} output records. See manifest.json in the output directory.",
-            value["outputs"].as_array().map_or(0, |a| a.len())
-        );
+    if human && command == "fetch" {
+        println!("Acquisition complete: {} output records.\nOutput: {}\nCompletion and provenance: manifest.json", value["outputs"].as_array().map_or(0, |a| a.len()), destination.as_ref().map_or_else(|| "callback".into(), |p|p.display().to_string()));
+        let transport = &value["observed"]["transport"];
+        if let Some((requests, bytes)) = cli::transport_totals(transport) {
+            println!("Observed HTTP: {requests} requests, {bytes} response-body bytes (metadata and validation included).");
+        } else {
+            println!("Observed HTTP totals unavailable for this backend; manifest records measured stages and planned reads separately.");
+        }
     } else {
         println!("{}", serde_json::to_string_pretty(&value)?);
     }

@@ -58,6 +58,28 @@ impl Prepared {
     }
     pub fn human(&self) -> String {
         let mut s = String::from("Tile-Ripper inspection (not a saved execution plan)\n");
+        let logical = &self.inspection["logical_request"];
+        let spatial = &logical["spatial"];
+        if spatial["kind"] == "bounds" {
+            s += &format!(
+                "Requested bounds {} in {}\n",
+                spatial["bbox"], spatial["crs"]
+            );
+        } else {
+            s += &format!(
+                "Requested Polygon in {} (geometry in --json)\n",
+                spatial["crs"]
+            );
+        }
+        let time = &logical["time"];
+        if time["kind"] == "interval" {
+            s += &format!(
+                "Requested interval {} through {} (inclusive)\n",
+                time["start"], time["end"]
+            );
+        } else if let Some(values) = time["values"].as_array() {
+            s += &format!("Requested {} explicit timestamp(s)\n", values.len());
+        }
         for selection in &self.plan().selected {
             let backend = &selection.capabilities.decoding;
             let variable = selection
@@ -88,10 +110,30 @@ impl Prepared {
                 backend,
                 selection.timestamps.len()
             );
-            for time in &selection.timestamps {
+            for time in selection.timestamps.iter().take(8) {
                 s += &format!("    {time}\n");
             }
+            if selection.timestamps.len() > 8 {
+                s += &format!(
+                    "    … {} more timestamp(s); full list in --json\n",
+                    selection.timestamps.len() - 8
+                );
+            }
         }
+        for selection in &self.plan().selected {
+            if let Some(layout) = &selection.layout {
+                s += &format!(
+                    "    Native CRS {}; source window x={} y={} width={} height={}\n",
+                    layout.crs,
+                    selection.window.x,
+                    selection.window.y,
+                    selection.window.width,
+                    selection.window.height
+                );
+            }
+        }
+        s += &format!("Estimated logical output value bytes: {} (encoding, coordinates and metadata excluded).\n", self.inspection["output_estimates"]["native_value_bytes"]);
+        s += "Source identities are checked before and after execution; per-object validation is not an atomic dataset snapshot.\n";
         let reads = &self.inspection["expected_reads"];
         s += &format!(
             "Expected data-library reads: {} local, {} remote (estimates; metadata excluded).\n",
@@ -360,6 +402,25 @@ fn prepare_inner(request: &Request, cache: &mut LayoutCache) -> Result<Prepared>
     if let Runtime::Direct { sources, .. } = &runtime {
         inspection["transport"] = sources.stats();
     }
+    let native_value_bytes = p.selected.iter().try_fold(0u64, |total, selected| {
+        let layout = selected.layout.as_ref()?;
+        let width = u64::try_from(selected.window.width).ok()?;
+        let height = u64::try_from(selected.window.height).ok()?;
+        let times = if selected.dimensions.is_some() {
+            selected.timestamps.len()
+        } else {
+            1
+        };
+        let bytes = if layout.dtype == "<f4" { 4 } else { 2 };
+        total.checked_add(
+            width
+                .checked_mul(height)?
+                .checked_mul(times as u64)?
+                .checked_mul(bytes)?,
+        )
+    });
+    inspection["logical_request"] = json!({"spatial":request.spatial,"time":request.time,"variables":request.variables,"grid":request.grid});
+    inspection["output_estimates"] = json!({"native_value_bytes": native_value_bytes, "encoded_file_bytes":null,"note":"estimate of native value payload only; coordinates, metadata, encoding, and filesystem overhead excluded; encoded output size unknown"});
     sanitize(&mut inspection);
     Ok(Prepared {
         runtime,

@@ -176,6 +176,14 @@ fn same_public_lifecycle_preserves_native_selection_and_provenance() {
         let prepared = acquisition::prepare(&f.request, &mut cache).unwrap();
         let inspection = prepared.explain();
         assert_eq!(inspection["document_type"], "inspection_only");
+        assert!(inspection["logical_request"]["spatial"].is_object());
+        assert!(
+            inspection["output_estimates"]["native_value_bytes"]
+                .as_u64()
+                .unwrap()
+                > 0
+        );
+        assert!(inspection["output_estimates"]["encoded_file_bytes"].is_null());
         assert_eq!(inspection["saved_plan_execution_supported"], false);
         assert_eq!(prepared.plan().selected[0].timestamps.len(), 1);
         let mut seen = std::collections::BTreeMap::new();

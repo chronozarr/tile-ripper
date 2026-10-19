@@ -1,0 +1,13 @@
+[plan]
+name = "external-usability"
+source_mtime_max = "2026-10-19T14:46:10.427140Z"
+sop_set_hash = ""
+
+[tasks."tasks/implement.implement"]
+summary = "Bounded external usability and release-readiness gate"
+prompt = "Orient: Audit current interface; Edit: translate direct flags into shared Request, retain JSON lifecycle; explain estimates; correct README; Verify: run unfamiliar public requests and independent scientific oracles; clean source build and linkage review; record Sonnet authentication blocker without claiming a trial. No formats, dependencies, infrastructure, merge or publication."
+commit_message = ""
+timeout_s = 0
+test_cmd = "cargo test --locked"
+files.create = ["src/cli/mod.rs", "tests/cli.rs", "docs/external-usability-decision.md", "docs/installation.md", "bench/usability.py"]
+files.edit = ["README.md", "src/main.rs", "src/acquisition.rs"]
