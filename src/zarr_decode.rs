@@ -17,6 +17,8 @@ pub(crate) struct Checked<T> {
     cap: usize,
     codec: Option<String>,
     element: usize,
+    blosc_format: u8,
+    bitshuffle: bool,
 }
 pub(crate) fn array<T: ReadableStorageTraits + 'static>(
     inner: Arc<T>,
@@ -57,6 +59,12 @@ pub(crate) fn array<T: ReadableStorageTraits + 'static>(
         cap: budget.buffer_bytes / 2,
         codec,
         element,
+        blosc_format: if metadata["compressor"]["cname"] == "zstd" {
+            4
+        } else {
+            1
+        },
+        bitshuffle: metadata["compressor"]["shuffle"] == 2,
     });
     let mut ar = Array::new_with_metadata(
         checked,
@@ -125,7 +133,9 @@ impl<T: ReadableStorageTraits> ReadableStorageTraits for Checked<T> {
                     let flags = bytes[2];
                     if bytes[0] != 2
                         || (flags & 2 == 0
-                            && ((flags >> 5) != 1 || bytes[1] != 1 || flags & 4 != 0))
+                            && ((flags >> 5) != self.blosc_format
+                                || bytes[1] != 1
+                                || (flags & 4 != 0) != self.bitshuffle))
                     {
                         return fail("unsupported Blosc stream version/codec/filter");
                     }

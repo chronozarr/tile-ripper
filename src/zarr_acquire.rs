@@ -51,7 +51,7 @@ fn open_v2(
     budget: &Budget,
 ) -> Result<Array<crate::zarr_decode::Checked<crate::storage::Objects>>> {
     if source
-        .metadata_bytes(&format!("{path}/zarr.json"))?
+        .admission_probe(&format!("{path}/zarr.json"))?
         .is_some()
     {
         return fail("Zarr v3 or hybrid v2/v3 arrays are unsupported");
@@ -93,12 +93,26 @@ fn meta(
     if m["zarr_format"] != 2
         || m["dtype"] != dtype
         || m["order"] != "C"
-        || m["filters"] != serde_json::Value::Null
         || attrs["_ARRAY_DIMENSIONS"] != serde_json::json!(dims)
     {
-        return fail(
-            "unsupported Zarr array: require v2 C-order, defined dtype/dimensions and no filters",
-        );
+        return fail("unsupported Zarr array: require v2 C-order and admitted dtype/dimensions");
+    }
+    if !m["filters"].is_null() {
+        let filters = m["filters"].as_array().ok_or("invalid filter list")?;
+        if dtype != "<f4"
+            || filters.len() != 1
+            || filters[0]["id"] != "fixedscaleoffset"
+            || filters[0]["dtype"] != "<f4"
+            || filters[0]["astype"] != "<f4"
+            || filters[0]["scale"].as_f64().is_none_or(|v| {
+                !v.is_finite() || v <= 0. || !(v as f32).is_finite() || (v as f32) <= 0.
+            })
+            || filters[0]["offset"]
+                .as_f64()
+                .is_none_or(|v| !v.is_finite() || !(v as f32).is_finite())
+        {
+            return fail("only Float32-to-Float32 fixedscaleoffset filter supported");
+        }
     }
     for key in [
         "grid_mapping",
@@ -113,7 +127,7 @@ fn meta(
     if attrs.get("coordinates").is_some_and(|v| {
         v.as_str().is_none_or(|s| {
             s.split_whitespace()
-                .any(|c| !["time", "y", "x", "latitude", "longitude"].contains(&c))
+                .any(|c| !["time", "y", "x", "latitude", "longitude", "lat", "lon"].contains(&c))
         })
     }) {
         return fail("auxiliary coordinates are unsupported");
@@ -126,12 +140,12 @@ fn meta(
         return fail("gzip level must be an integer from 0 to 9");
     }
     if codec == Some("blosc")
-        && (m["compressor"]["cname"] != "lz4"
-            || !matches!(m["compressor"]["shuffle"].as_u64(), Some(0 | 1))
+        && (!matches!(m["compressor"]["cname"].as_str(), Some("lz4" | "zstd"))
+            || !matches!(m["compressor"]["shuffle"].as_u64(), Some(0..=2))
             || m["compressor"]["clevel"].as_u64().is_none_or(|v| v > 9)
             || m["compressor"]["blocksize"].as_u64().is_none_or(|v| v != 0))
     {
-        return fail("only Blosc/LZ4 shuffle 0/1 automatic blocksize supported");
+        return fail("only Blosc LZ4/Zstd shuffle 0..2 automatic blocksize supported");
     }
     let shape = sizes(&m, "shape")?;
     let chunks = sizes(&m, "chunks")?;
@@ -172,7 +186,7 @@ struct Dataset {
 }
 fn inspect_on(r: &Request, s: Arc<crate::storage::Objects>) -> Result<Dataset> {
     let root = s.as_ref();
-    if root.metadata_bytes("zarr.json")?.is_some() {
+    if root.admission_probe("zarr.json")?.is_some() {
         return fail("Zarr v3 or hybrid v2/v3 stores are unsupported");
     }
     if json(root, ".zgroup")?["zarr_format"] != 2 {
@@ -181,7 +195,18 @@ fn inspect_on(r: &Request, s: Arc<crate::storage::Objects>) -> Result<Dataset> {
     let attrs = json(root, ".zattrs")?;
     let conventional = !attrs["tile_ripper_grid"].is_object();
     let axes: [String; 2] = if conventional {
-        ["longitude".into(), "latitude".into()]
+        let Variable::Dataset { path } = &r.variables[0] else {
+            return fail("Zarr needs dataset variables");
+        };
+        let va = json(root, &format!("{}/.zattrs", name(path)?))?;
+        let dims = va["_ARRAY_DIMENSIONS"]
+            .as_array()
+            .ok_or("missing coordinate dimensions")?;
+        if dims.contains(&serde_json::json!("lat")) && dims.contains(&serde_json::json!("lon")) {
+            ["lon".into(), "lat".into()]
+        } else {
+            ["longitude".into(), "latitude".into()]
+        }
     } else {
         ["x".into(), "y".into()]
     };
@@ -234,6 +259,7 @@ fn inspect_on(r: &Request, s: Arc<crate::storage::Objects>) -> Result<Dataset> {
     let (factor, epoch) = match ta["units"].as_str() {
         Some("seconds since 1970-01-01 00:00:00") => (1i64, 0i64),
         Some("hours since 1959-01-01") => (3600, -347155200),
+        Some("days since 1998-01-01 00:00:00") => (86400, 883612800),
         _ => {
             return fail("unsupported time units; supported Unix seconds or hours since 1959-01-01")
         }
@@ -263,7 +289,11 @@ fn inspect_on(r: &Request, s: Arc<crate::storage::Objects>) -> Result<Dataset> {
                 "degrees_north"
             };
             if ca.get("units").is_some_and(|v| v != unit)
-                || ca.get("standard_name").is_some_and(|v| v != axis)
+                || ca.get("standard_name").is_some_and(|v| {
+                    v.as_str().is_none_or(|v| {
+                        !v.eq_ignore_ascii_case(if i == 0 { "longitude" } else { "latitude" })
+                    })
+                })
                 || ca
                     .get("axis")
                     .is_some_and(|v| v != if i == 0 { "X" } else { "Y" })
@@ -273,7 +303,20 @@ fn inspect_on(r: &Request, s: Arc<crate::storage::Objects>) -> Result<Dataset> {
             if values.len() < 2 {
                 return fail("geographic axes need at least two centers");
             }
-            let step = values[1] - values[0];
+            let nominal = attrs[if i == 0 {
+                "geospatial_lon_resolution"
+            } else {
+                "geospatial_lat_resolution"
+            }]
+            .as_f64();
+            let step = if let Some(n) = nominal {
+                if !n.is_finite() || n <= 0. {
+                    return fail("invalid declared geographic resolution");
+                }
+                n.copysign(values[values.len() - 1] - values[0])
+            } else {
+                values[1] - values[0]
+            };
             if !step.is_finite()
                 || step == 0.
                 || values.iter().any(|v| {
@@ -294,13 +337,31 @@ fn inspect_on(r: &Request, s: Arc<crate::storage::Objects>) -> Result<Dataset> {
             return fail("duplicated/wrapped longitude unsupported");
         }
     }
-    for (values, origin, step) in [
+    for (axis_index, (values, origin, step)) in [
         (&x, transform[0], transform[1]),
         (&y, transform[3], transform[5]),
-    ] {
+    ]
+    .into_iter()
+    .enumerate()
+    {
+        let declared_rounding = conventional
+            && attrs
+                .get(if axis_index == 0 {
+                    "geospatial_lon_resolution"
+                } else {
+                    "geospatial_lat_resolution"
+                })
+                .is_some();
+        let tolerance = if declared_rounding {
+            step.abs() * 1e-8
+                + ((f32::EPSILON as f64) * values.iter().map(|v| v.abs()).fold(1., f64::max))
+                    .min(step.abs() * 1e-3)
+        } else {
+            step.abs() * 1e-8
+        };
         for (i, v) in values.iter().enumerate() {
             let expected = origin + (i as f64 + 0.5) * step;
-            if !v.is_finite() || (v - expected).abs() > step.abs() * 1e-8 {
+            if !v.is_finite() || (v - expected).abs() > tolerance {
                 return fail("coordinates disagree with affine pixel centers");
             }
         }
@@ -349,11 +410,19 @@ pub(crate) fn plan_asset_on(
     if d.conventional {
         p.limitations.push("Conventional geographic profile: EPSG:4326 is the profile's interpretation of named latitude/longitude centers in degrees, not a source-declared datum. Coordinates are preserved without transformation; precise datum-dependent uses require provider verification.".into());
     }
+    if d.root_attrs.get("geospatial_lon_resolution").is_some() {
+        p.limitations.push("Declared regular spacing may have Float32-rounded coordinate centers. Native coordinate arrays and callback centers are authoritative; affine is approximate. Storage filters are decoded once; output stores logical Float32 values without re-quantization.".into());
+    }
     let root = source.as_ref();
     let Spatial::Bounds { .. } = &r.spatial else {
         return fail("Zarr path supports native bounds only; polygon masking is unsupported");
     };
-    let Some(window) = crate::spatial::window(&d.layout, &r.spatial)? else {
+    let selected_window = if d.conventional {
+        crate::spatial::coordinate_window(&d.layout.crs, &r.spatial, &d.x, &d.y)?
+    } else {
+        crate::spatial::window(&d.layout, &r.spatial)?
+    };
+    let Some(window) = selected_window else {
         return Ok(());
     };
     let mut ti = Vec::new();
@@ -509,7 +578,7 @@ pub(crate) fn plan_asset_on(
                 selection: vec!["native bounds, time, variables".into()],
                 reads: vec!["chunk_object".into()],
                 decoding: "zarrs".into(),
-                compression: "none/gzip/Blosc-LZ4".into(),
+                compression: "none/gzip/Blosc LZ4 or Zstd; shuffle/bitshuffle; admitted Float32 fixedscaleoffset".into(),
                 materialization: true,
             },
             layout: Some(layout),
@@ -693,6 +762,10 @@ pub(crate) fn execute_selected(
                         offset: layout.offset,
                         window,
                         pixels,
+                        coordinates: Some((
+                            d.x[x..x + width].to_vec(),
+                            d.y[y..y + height].to_vec(),
+                        )),
                     };
                     report.assembly_seconds += assembly.elapsed().as_secs_f64();
                     let t = Instant::now();
@@ -766,6 +839,8 @@ fn output_array(
     chunks: Vec<usize>,
 ) -> Result<Array<OutputStore>> {
     let mut m = json(source, &format!("{path}/.zarray"))?;
+    // Source storage filters have already been decoded. Do not quantize twice.
+    m["filters"] = serde_json::Value::Null;
     m["shape"] = serde_json::json!(shape);
     m["chunks"] = serde_json::json!(chunks);
     // zarrs owns metadata validation, chunk encoding and writing.
@@ -775,9 +850,15 @@ fn output_array(
     if attrs["_ARRAY_DIMENSIONS"]
         .as_array()
         .is_some_and(|v| v.len() == 3)
-        && attrs["_ARRAY_DIMENSIONS"][1] == "longitude"
+        && matches!(
+            attrs["_ARRAY_DIMENSIONS"][1].as_str(),
+            Some("longitude" | "lon")
+        )
     {
-        attrs["_ARRAY_DIMENSIONS"] = serde_json::json!(["time", "latitude", "longitude"]);
+        attrs["_ARRAY_DIMENSIONS"] = {
+            let dims = attrs["_ARRAY_DIMENSIONS"].as_array().unwrap();
+            serde_json::json!([dims[0], dims[2], dims[1]])
+        };
     }
     *array.attributes_mut() = serde_json::from_value(attrs)?;
     array.store_metadata_opt(
@@ -851,6 +932,7 @@ pub(crate) fn fetch_on(
         let setup = Instant::now();
         let mut stores = Vec::new();
         let mut outputs = std::collections::HashMap::new();
+        let mut original_metadata = serde_json::Map::new();
         for a in assets {
             let selected: Vec<_> = p.selected.iter().filter(|s| s.asset_id == a.id).collect();
             if selected.is_empty() {
@@ -869,7 +951,71 @@ pub(crate) fn fetch_on(
                 "/",
                 serde_json::from_value(serde_json::json!({"zarr_format":2}))?,
             )?;
+            let mut source_arrays = serde_json::Map::new();
+            for sel in &selected {
+                if let Variable::Dataset { path } = &sel.layout.as_ref().unwrap().variable {
+                    let n = name(path)?;
+                    source_arrays.insert(n.into(),serde_json::json!({"metadata":json(&source_store,&format!("{n}/.zarray"))?,"attributes":json(&source_store,&format!("{n}/.zattrs"))?}));
+                }
+            }
+            original_metadata.insert(
+                a.id.clone(),
+                serde_json::json!({"group_attributes":d.root_attrs,"arrays":source_arrays}),
+            );
             let mut attrs = d.root_attrs;
+            if d.conventional {
+                for (axis, values, start, count) in
+                    [("lon", &d.x, w.x, w.width), ("lat", &d.y, w.y, w.height)]
+                {
+                    let subset = &values[start..start + count];
+                    for (suffix, value) in [
+                        ("min", subset.iter().copied().fold(f64::INFINITY, f64::min)),
+                        (
+                            "max",
+                            subset.iter().copied().fold(f64::NEG_INFINITY, f64::max),
+                        ),
+                    ] {
+                        let key = format!("geospatial_{axis}_{suffix}");
+                        if attrs.get(&key).is_some() {
+                            attrs[&key] = serde_json::json!(value);
+                        }
+                    }
+                }
+                if attrs.get("geospatial_bounds").is_some() {
+                    let edge = |v: &[f64], i: usize| {
+                        if i == 0 {
+                            v[0] - (v[1] - v[0]) / 2.
+                        } else if i == v.len() {
+                            v[i - 1] + (v[i - 1] - v[i - 2]) / 2.
+                        } else {
+                            v[i - 1] / 2. + v[i] / 2.
+                        }
+                    };
+                    let (xa, xb, ya, yb) = (
+                        edge(&d.x, w.x),
+                        edge(&d.x, w.x + w.width),
+                        edge(&d.y, w.y),
+                        edge(&d.y, w.y + w.height),
+                    );
+                    let (lo, hi, la, ha) = (xa.min(xb), xa.max(xb), ya.min(yb), ya.max(yb));
+                    attrs["geospatial_bounds"]=serde_json::json!(format!("POLYGON(({lo:.10} {ha:.10}, {lo:.10} {la:.10}, {hi:.10} {la:.10}, {hi:.10} {ha:.10}, {lo:.10} {ha:.10}))"));
+                }
+                for (key, ti) in [
+                    ("time_coverage_start", indices[0]),
+                    ("time_coverage_end", *indices.last().unwrap()),
+                ] {
+                    if attrs.get(key).is_some() {
+                        attrs[key] =
+                            serde_json::json!(chrono::DateTime::from_timestamp(d.times[ti], 0)
+                                .unwrap()
+                                .to_rfc3339());
+                    }
+                }
+                attrs
+                    .as_object_mut()
+                    .unwrap()
+                    .remove("time_coverage_duration");
+            }
             if !d.conventional {
                 attrs["tile_ripper_grid"]["transform"] =
                     serde_json::json!(crate::spatial::window_transform(&d.layout, w));
@@ -951,6 +1097,7 @@ pub(crate) fn fetch_on(
             )?;
             Ok(())
         })?;
+        sources.phase("output_finalization");
         let finalize = Instant::now();
         buffer.flush()?;
         report.output_finalize_seconds = finalize.elapsed().as_secs_f64();
@@ -970,7 +1117,7 @@ pub(crate) fn fetch_on(
         });
         let manifest = Instant::now();
         let bytes = serde_json::to_vec_pretty(
-            &serde_json::json!({"plan":p,"observed":report,"sources":assets,"decisions":"native raw values; no calibration; missing chunks fill; coordinates subset in source order; local sources must remain immutable during operation"}),
+            &serde_json::json!({"plan":p,"observed":report,"sources":assets,"source_metadata":original_metadata,"decisions":"source storage filters decoded once; output has no repeat quantization; subset geospatial/time extent fields recalculated; original metadata retained; native logical values; no calibration; missing chunks fill; coordinates subset in source order; local sources must remain immutable during operation"}),
         )?;
         crate::diagnostics::profile_stage(
             "native_manifest_serialization",

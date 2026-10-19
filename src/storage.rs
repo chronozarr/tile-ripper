@@ -64,6 +64,7 @@ impl Sources {
         Ok(Arc::new(Objects::Local(FilesystemStore::new(&a.locator)?)))
     }
     pub fn seal(&self) -> Result<()> {
+        self.phase("prepare_validation");
         for s in self.0.values() {
             if let Some(h) = s.http() {
                 h.seal()?;
@@ -78,6 +79,15 @@ impl Sources {
             }
         }
         Ok(())
+    }
+    pub fn phase(&self, phase: &'static str) {
+        for source in self.0.values() {
+            if let Some(http) = source.http() {
+                let mut state = http.state.lock().unwrap();
+                state.phase = phase;
+                state.stats.phases.entry(phase.into()).or_default();
+            }
+        }
     }
     pub fn describe(&self, id: &str) -> serde_json::Value {
         self.0.get(id).map_or(serde_json::Value::Null, |s| {
@@ -134,6 +144,15 @@ impl Objects {
                 state.cached_bytes -= bytes.len();
             }
         }
+    }
+    /// Admission-only probes cannot affect explicitly opened v2 metadata/data.
+    /// Cache the answer, but do not pretend its absence is a pixel dependency.
+    pub fn admission_probe(&self, key: &str) -> Result<s::MaybeBytes> {
+        let answer = self.metadata_bytes(key)?;
+        if let Some(http) = self.http() {
+            http.state.lock().unwrap().versions.remove(key);
+        }
+        Ok(answer)
     }
     pub fn metadata_bytes(&self, key: &str) -> Result<s::MaybeBytes> {
         let key = s::StoreKey::new(key)?;
@@ -245,6 +264,7 @@ struct Counts {
 }
 #[derive(Default, Serialize)]
 struct Stats {
+    phases: BTreeMap<String, BTreeMap<String, Counts>>,
     requests: u64,
     bytes: u64,
     retries: u64,
@@ -253,6 +273,7 @@ struct Stats {
 }
 #[derive(Default)]
 struct State {
+    phase: &'static str,
     sealed: bool,
     cached: BTreeMap<String, Option<Vec<u8>>>,
     cached_bytes: usize,
@@ -299,7 +320,10 @@ impl Http {
                 .map_err(|_| "cannot initialize HTTP client")?,
             cap: b.buffer_bytes / 2,
             nodes: b.max_nodes,
-            state: Mutex::new(State::default()),
+            state: Mutex::new(State {
+                phase: "planning",
+                ..State::default()
+            }),
             network: Mutex::new(()),
         })
     }
@@ -469,6 +493,25 @@ impl Http {
                 state.stats.requests += 1;
                 state.stats.bytes += body.len() as u64;
                 state.stats.seconds += started.elapsed().as_secs_f64();
+                let phase = state.phase.to_string();
+                let phase_entry = state
+                    .stats
+                    .phases
+                    .entry(phase)
+                    .or_default()
+                    .entry(format!(
+                        "{} {}",
+                        if head { "HEAD" } else { "GET" },
+                        key_string
+                    ))
+                    .or_default();
+                phase_entry.seconds += started.elapsed().as_secs_f64();
+                phase_entry.attempts += 1;
+                phase_entry.bytes += body.len() as u64;
+                *phase_entry.statuses.entry(status).or_default() += 1;
+                if attempt > 0 {
+                    phase_entry.retries += 1;
+                }
                 let entry = state
                     .stats
                     .objects

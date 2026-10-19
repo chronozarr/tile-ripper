@@ -24,6 +24,8 @@ pub struct Chunk {
     pub scale: Option<f64>,
     pub offset: Option<f64>,
     pub pixels: crate::Pixels,
+    /// Actual rectilinear native centers, when an affine is only approximate.
+    pub coordinates: Option<(Vec<f64>, Vec<f64>)>,
 }
 impl Chunk {
     /// Pixel-center coordinates in this chunk's native CRS, without resampling.
@@ -31,6 +33,9 @@ impl Chunk {
     pub fn pixel_center(&self, column: usize, row: usize) -> Option<[f64; 2]> {
         if column >= self.window.width || row >= self.window.height {
             return None;
+        }
+        if let Some((x, y)) = &self.coordinates {
+            return Some([x[column], y[row]]);
         }
         let x = column as f64 + 0.5;
         let y = row as f64 + 0.5;
@@ -273,6 +278,7 @@ pub(crate) fn execute_on(
                 scale: layout.scale,
                 offset: layout.offset,
                 pixels: pixels.into_shape_and_vec().1.into(),
+                coordinates: None,
             };
             let t = Instant::now();
             sink(chunk)?;

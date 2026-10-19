@@ -101,3 +101,18 @@ decoded sizes, uses flate2 into a fixed output buffer, and validates Blosc heade
 before established zarrs decoding. Original source/output metadata is retained;
 only the internal gzip input array view is uncompressed. No second planner,
 downloader or format was introduced. See `cf-zarr-workflow.md`.
+
+
+## Validation efficiency and satellite precipitation profile
+
+`storage.rs` separates cached admission probes from actual snapshot dependencies
+and groups HTTP observations by lifecycle phase; `acquisition.rs` marks validation
+and execution phases. Actual v2 metadata, coordinates, conditional scientific
+GETs and missing-key checks retain their existing versions. `zarr_acquire.rs`
+recognizes lat/lon aliases, the verified daily time encoding, declared spacing
+with bounded coordinate rounding, and the chosen existing codec/filter profile.
+`spatial::coordinate_window` selects cells using exact center midpoints. Zarr
+callbacks carry actual coordinate vectors in `Chunk::coordinates`. The format
+adapter recalculates subset extent metadata and stores original metadata in the
+manifest; output Float32 has no repeat lossy filter. The logical planner and
+public request schema remain unchanged. No provider URL appears in source logic.

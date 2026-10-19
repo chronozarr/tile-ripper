@@ -1,7 +1,8 @@
 # Tile-Ripper
 
 A Rust acquisition planner with a working Sentinel-2 STAC-to-pixels workflow,
-a native GeoTIFF reader path, and local/anonymous HTTP Zarr v2 acquisition paths, including a real WeatherBench2 ERA5 Float32 subset. One library
+a native GeoTIFF reader path, and local/anonymous HTTP Zarr v2 acquisition paths, including real WeatherBench2
+ERA5 and NASA POWER IMERG Float32 subsets. One library
 and a thin CLI, with GDAL and zarrs handling storage and decoding. No ChronoZarr dependency.
 
 Start with [the unified workflow](docs/unified-workflow.md):
@@ -14,9 +15,10 @@ tile-ripper fetch request.json --output ./subset
 Complete requests: [remote STAC/COG](examples/unified-stac.json) and
 [local Zarr](examples/unified-zarr.json), and
 [controlled HTTP Zarr](examples/remote-zarr.json). All use the same prepared Rust library
-lifecycle and preserve native grids. See [the current decision gate](docs/cf-zarr-decision.md) and
+lifecycle and preserve native grids. See [the current decision gate](docs/second-zarr-decision.md) and
 [the HTTP Zarr demonstration and supported contract](docs/remote-zarr-workflow.md).
-The [real public ERA5 demonstration](docs/cf-zarr-workflow.md) works without custom
+The [paired precipitation demonstration](docs/second-zarr-workflow.md) and
+[real public ERA5 demonstration](docs/cf-zarr-workflow.md) work without custom
 source metadata. Arbitrary public Zarr is not yet supported. The earlier
 [compatibility assessment](docs/remote-zarr-public-compatibility.md) records the
 blockers resolved by this deliberately narrow profile.

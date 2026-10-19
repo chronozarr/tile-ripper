@@ -124,11 +124,14 @@ impl Prepared {
                 sources,
                 planning_seconds,
             } => {
+                sources.phase("pre_execution_validation");
                 versions.validate()?;
                 sources.validate()?;
+                sources.phase("execution");
                 let mut report =
                     crate::execute::execute_on(request, plan, *planning_seconds, sources, sink)
                         .map_err(|e| safe_error(request, "execution", e))?;
+                sources.phase("post_execution_validation");
                 versions.validate()?;
                 sources.validate()?;
                 report.transport = sources.stats();
@@ -150,8 +153,10 @@ impl Prepared {
                 sources,
                 planning_seconds,
             } => {
+                sources.phase("pre_execution_validation");
                 versions.validate()?;
                 sources.validate()?;
+                sources.phase("execution");
                 let root = destination(&request.sink)?;
                 if Path::new(root).exists() {
                     return Err("output directory already exists; choose a new directory".into());
@@ -166,6 +171,7 @@ impl Prepared {
                 crate::execute::fetch_on(request, plan, *planning_seconds, sources)
                     .map_err(|e| safe_error(request, "fetch", e))?;
                 // A successful native writer owns this new directory; cleanup is safe.
+                sources.phase("post_execution_validation");
                 if let Err(e) = versions.validate().and_then(|_| sources.validate()) {
                     let _ = fs::remove_dir_all(root);
                     return Err(e);
@@ -488,7 +494,7 @@ fn outputs(p: &Plan, mode: OutputStrategy) -> Value {
             } else {
                 "explicit integer fill"
             });
-            record["dimensions"] = json!({"names":if l.dtype=="<f4" {vec!["time","latitude","longitude"]}else{vec!["time","y","x"]},"shape":[s.timestamps.len(),s.window.height,s.window.width]});
+            record["dimensions"] = json!({"names":if l.dtype=="<f4" {if s.dimensions.as_ref().is_some_and(|d|d.names.iter().any(|v|v=="lat")){vec!["time","lat","lon"]}else{vec!["time","latitude","longitude"]}}else{vec!["time","y","x"]},"shape":[s.timestamps.len(),s.window.height,s.window.width]});
             if let Variable::Dataset { path } = &l.variable {
                 record["dataset"] = json!(path.trim_start_matches('/'));
             }
@@ -612,6 +618,8 @@ impl Versions {
             let root_attrs: Value = serde_json::from_slice(&fs::read(root.join(".zattrs"))?)?;
             let axes = if root_attrs["tile_ripper_grid"].is_object() {
                 ["time", "y", "x"]
+            } else if root.join("lat/.zarray").is_file() {
+                ["time", "lat", "lon"]
             } else {
                 ["time", "latitude", "longitude"]
             };

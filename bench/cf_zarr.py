@@ -21,7 +21,9 @@ from numcodecs import Blosc, GZip
 import remote_zarr as h
 
 ROOT = h.ROOT
-WORK = ROOT / "prototype-output/cf-zarr"
+WORK = Path(
+    os.environ.get("TILE_RIPPER_BENCH_WORK", str(ROOT / "prototype-output/cf-zarr"))
+)
 
 
 def request(source, output):
@@ -35,21 +37,68 @@ def selection(r, ds):
     lo, la, hi, ha = r["spatial"]["bbox"]
     # Match native cell-intersection semantics independently from affine math.
     idx = {}
-    for axis, lower, upper in [("longitude", lo, hi), ("latitude", la, ha)]:
+    for axis, lower, upper in [
+        ("longitude" if "longitude" in ds else "lon", lo, hi),
+        ("latitude" if "latitude" in ds else "lat", la, ha),
+    ]:
         v = ds[axis].values
-        half = abs(v[1] - v[0]) / 2
-        idx[axis] = np.flatnonzero((v + half > lower) & (v - half < upper))
+        edges = np.r_[
+            v[0] - (v[1] - v[0]) / 2, (v[:-1] + v[1:]) / 2, v[-1] + (v[-1] - v[-2]) / 2
+        ]
+        idx[axis] = np.flatnonzero(
+            (np.maximum(edges[:-1], edges[1:]) > lower)
+            & (np.minimum(edges[:-1], edges[1:]) < upper)
+        )
     t = ds.time.values
     attrs = ds.time.attrs
     if attrs["units"] == "hours since 1959-01-01":
         seconds = t * 3600 - 347155200
+    elif attrs["units"] == "days since 1998-01-01 00:00:00":
+        seconds = t * 86400 + 883612800
     else:
         assert attrs["units"] == "seconds since 1970-01-01 00:00:00"
         seconds = t
     start = np.datetime64(r["time"]["start"].replace("Z", ""), "s").astype("int64")
     end = np.datetime64(r["time"]["end"].replace("Z", ""), "s").astype("int64")
     idx["time"] = np.flatnonzero((seconds >= start) & (seconds <= end))
-    return ds[[v["path"] for v in r["variables"]]].isel(idx), idx
+    selected = ds[[v["path"] for v in r["variables"]]].isel(idx)
+    selected.attrs = copy.deepcopy(ds.attrs)
+    xn = "lon" if "lon" in idx else "longitude"
+    yn = "lat" if "lat" in idx else "latitude"
+    if len(idx[xn]) and len(idx[yn]) and len(idx["time"]):
+        for role, axis in [("lon", xn), ("lat", yn)]:
+            for suffix, value in [
+                ("min", float(selected[axis].min())),
+                ("max", float(selected[axis].max())),
+            ]:
+                key = f"geospatial_{role}_{suffix}"
+                if key in selected.attrs:
+                    selected.attrs[key] = value
+        if "geospatial_bounds" in selected.attrs:
+            boundaries = []
+            for axis in [xn, yn]:
+                v = ds[axis].values
+                e = np.r_[
+                    v[0] - (v[1] - v[0]) / 2,
+                    (v[:-1] + v[1:]) / 2,
+                    v[-1] + (v[-1] - v[-2]) / 2,
+                ]
+                edges = e[[idx[axis][0], idx[axis][-1] + 1]]
+                boundaries.append((float(edges.min()), float(edges.max())))
+            (lo, hi), (la, ha) = boundaries
+            selected.attrs["geospatial_bounds"] = (
+                f"POLYGON(({lo:.10f} {ha:.10f}, {lo:.10f} {la:.10f}, {hi:.10f} {la:.10f}, {hi:.10f} {ha:.10f}, {lo:.10f} {ha:.10f}))"
+            )
+        for key, ti in [
+            ("time_coverage_start", idx["time"][0]),
+            ("time_coverage_end", idx["time"][-1]),
+        ]:
+            if key in selected.attrs:
+                selected.attrs[key] = (
+                    str(np.datetime64(int(seconds[ti]), "s")) + "+00:00"
+                )
+        selected.attrs.pop("time_coverage_duration", None)
+    return selected, idx
 
 
 def minimum(r, source):
@@ -155,6 +204,10 @@ class Mapping(h.HttpMapping):
     def fetch(self, key, head=False, data_head=False):
         t = time.perf_counter()
         value = super().fetch(key, head, data_head)
+        # The explicitly opened v2 group cannot switch to a root array. Apply
+        # the same admission/dependency distinction as the product under test.
+        if key == ".zarray" and not head and value is None:
+            self.versions.pop(key, None)
         self.counts["requests"] += 1
         size = len(value) if isinstance(value, bytes) else 0
         self.counts["bytes"] += size
@@ -171,9 +224,13 @@ def baseline(r):
         r["budget"]["buffer_bytes"] // 2,
         r["budget"]["max_nodes"],
     )
-    store.names = ["time", "latitude", "longitude"] + [
-        v["path"] for v in r["variables"]
-    ]
+    yn = (
+        "lat"
+        if store.metadata is not None and "lat/.zarray" in store.metadata
+        else "latitude"
+    )
+    xn = "lon" if yn == "lat" else "longitude"
+    store.names = ["time", yn, xn] + [v["path"] for v in r["variables"]]
     excluded = (
         [
             k.split("/")[0]
@@ -214,7 +271,7 @@ def baseline(r):
         store.validate()
         read = time.perf_counter()
         # Reload from the lazy selection for each extraction: no data-body cache.
-        data = sub.copy(deep=False).transpose("time", "latitude", "longitude").load()
+        data = sub.copy(deep=False).transpose("time", yn, xn).load()
         read = time.perf_counter() - read
         edge = r["budget"]["chunk_edge"]
 
@@ -231,6 +288,7 @@ def baseline(r):
             n: {
                 "chunks": (data[n].size,),
                 "compressor": group[n].compressor,
+                "filters": None,
             }
             for n in data.coords
         }
@@ -239,17 +297,18 @@ def baseline(r):
                 n: {
                     "chunks": (
                         1,
-                        min(edge, data.sizes["latitude"]),
-                        min(edge, data.sizes["longitude"]),
+                        min(edge, data.sizes[yn]),
+                        min(edge, data.sizes[xn]),
                     ),
                     "compressor": group[n].compressor,
+                    "filters": None,
                 }
                 for n in data.data_vars
             }
         )
         write = time.perf_counter()
         data.to_zarr(
-            Durable(str(output / "era5.zarr")),
+            Durable(str(output / (r["source"]["assets"][0]["id"] + ".zarr"))),
             mode="w",
             consolidated=False,
             encoding=enc,
@@ -378,7 +437,7 @@ def checks():
         if mode == "codec":
             p = source / "2m_temperature/.zarray"
             m = json.loads(p.read_text())
-            m["compressor"]["cname"] = "zstd"
+            m["compressor"]["cname"] = "snappy"
             p.write_text(json.dumps(m))
         if mode == "codec-header":
             # Use a block large enough for genuine compression rather than a

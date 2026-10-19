@@ -1,0 +1,17 @@
+[tasks.implement]
+summary="Efficient v2 validation and independently produced satellite precipitation"
+role="worker"
+prompt="""
+Orient:
+Audit per-request lifecycle costs at 407e642 and inspect real metadata.
+Edit:
+Retain ETags for actual v2 dependencies; separate cached admission probes.
+Add only geographic aliases, verified time units and existing required codecs
+for public POWER IMERG. Preserve logical planner, CLI, bounded decode and native
+values/coordinates. No new downloader, format, infrastructure or deployment.
+Verify:
+Independent xarray/Numcodecs, source mutation and fault tests, all existing
+regressions, repeated before/after/public baselines. Commit locally and stop.
+"""
+files={edit=["src/storage.rs","src/acquisition.rs","src/zarr_acquire.rs","src/zarr_decode.rs","src/spatial.rs","src/execute.rs","tests/remote_zarr.rs","bench/remote_zarr.py","bench/cf_zarr.py","README.md","docs/implementation-map.md"],create=["bench/second_zarr.py","bench/validation_efficiency.py","examples/imerg.json","docs/second-zarr-decision.md","docs/second-zarr-workflow.md","docs/second-zarr-inspection.json","docs/second-zarr-benchmark.json","docs/second-zarr-regression.json","docs/validation-efficiency-weatherbench.json","docs/validation-efficiency-before.json","docs/validation-efficiency-controlled.json","docs/second-zarr-checks.json","docs/second-zarr-http-checks.json","docs/second-zarr-cf-regression.json","docs/second-zarr-local-validation.json"]}
+test_cmd="cargo test --locked"

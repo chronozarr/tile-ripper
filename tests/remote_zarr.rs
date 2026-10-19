@@ -36,6 +36,26 @@ fn prepared_http_changes_and_cancellation() {
         assert_eq!(delivered, 1);
         return;
     }
+    if mode == "postmetadata" {
+        let Source::Assets { assets } = &r.source else {
+            unreachable!()
+        };
+        let root = assets[0].locator.split("/store/").next().unwrap();
+        let mut changed = false;
+        let error = prepared
+            .execute(|_| {
+                if !changed {
+                    reqwest::blocking::get(format!("{root}/control/metadata"))?
+                        .error_for_status()?;
+                    changed = true;
+                }
+                Ok(())
+            })
+            .unwrap_err()
+            .to_string();
+        assert!(error.contains("version conflict"));
+        return;
+    }
     let Source::Assets { assets } = &r.source else {
         panic!("explicit fixture required")
     };
@@ -51,6 +71,11 @@ fn prepared_http_changes_and_cancellation() {
     .unwrap()
     .error_for_status()
     .unwrap();
+    if mode == "admission" {
+        let result = prepared.fetch().unwrap();
+        assert_eq!(result["status"], "complete");
+        return;
+    }
     if mode == "isolation" {
         let newer = acquisition::prepare(&r, &mut LayoutCache::default()).unwrap();
         let report = newer.execute(|_| Ok(())).unwrap();

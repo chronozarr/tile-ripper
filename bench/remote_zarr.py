@@ -83,6 +83,13 @@ class Handler(BaseHTTPRequestHandler):
                 target = server.root / "nir/1/1/1"
                 target.parent.mkdir(parents=True, exist_ok=True)
                 target.write_bytes((server.root / "nir/1/1/0").read_bytes())
+            elif mode == "admission":
+                (server.root / "zarr.json").write_text('{"zarr_format":3}')
+            elif mode == "coordinate":
+                path = server.root / "x/0"
+                data = bytearray(path.read_bytes())
+                data[0] ^= 1
+                path.write_bytes(data)
             elif mode == "metadata":
                 path = server.root / ".zattrs"
                 data = json.loads(path.read_text())
@@ -486,6 +493,9 @@ def checks():
             "appear",
             "metadata",
             "isolation",
+            "admission",
+            "coordinate",
+            "postmetadata",
             "cancel",
             "malformed",
             "empty",
@@ -574,7 +584,16 @@ def checks():
             out = Path(r["sink"]["path"])
             shutil.rmtree(out, ignore_errors=True)
             shutil.rmtree(Path(str(out) + "-0"), ignore_errors=True)
-            if mode in ["mutate", "appear", "metadata", "isolation", "cancel"]:
+            if mode in [
+                "mutate",
+                "appear",
+                "metadata",
+                "isolation",
+                "cancel",
+                "admission",
+                "coordinate",
+                "postmetadata",
+            ]:
                 test = subprocess.run(
                     [
                         "cargo",

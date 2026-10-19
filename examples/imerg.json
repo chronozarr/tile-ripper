@@ -1,0 +1,50 @@
+{
+  "source": {
+    "kind": "assets",
+    "assets": [
+      {
+        "id": "imerg",
+        "locator": "https://nasa-power.s3.us-west-2.amazonaws.com/imerg/spatial/power_imerg_daily_spatial_utc.zarr/",
+        "format": "zarr_v2",
+        "datetime": null
+      }
+    ]
+  },
+  "spatial": {
+    "kind": "bounds",
+    "crs": "EPSG:4326",
+    "bbox": [
+      -80.02,
+      35.02,
+      -79.68,
+      35.28
+    ]
+  },
+  "time": {
+    "kind": "interval",
+    "start": "2020-06-01T00:00:00Z",
+    "end": "2020-06-01T00:00:00Z"
+  },
+  "variables": [
+    {
+      "kind": "dataset",
+      "path": "IMERG_PRECTOT"
+    },
+    {
+      "kind": "dataset",
+      "path": "IMERG_PRECLIQUID_PROB"
+    }
+  ],
+  "grid": {
+    "kind": "native"
+  },
+  "sink": {
+    "kind": "directory",
+    "path": "prototype-output/imerg-subset"
+  },
+  "budget": {
+    "buffer_bytes": 16777216,
+    "max_nodes": 100000,
+    "chunk_edge": 32
+  }
+}

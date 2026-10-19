@@ -1,0 +1,294 @@
+{
+  "url": "https://nasa-power.s3.us-west-2.amazonaws.com/imerg/spatial/power_imerg_daily_spatial_utc.zarr/",
+  "metadata": {
+    "metadata": {
+      ".zattrs": {
+        "acknowledgement": "The Prediction of Worldwide Energy Resources (POWER) Project is funded through the NASA Applied Sciences Program within the Earth Science Division of the Science Mission Directorate.",
+        "comment": "POWER data version 10.0.0 uses the source data resolution.",
+        "conventions": "CF-1.8, ACDD-1.3",
+        "creator_email": "bradley.macpherson@nasa.gov",
+        "creator_name": "Bradley Macpherson",
+        "date_created": "2025-02-11T20:35:35Z",
+        "derived_from": "The data products are derived from data partners and the POWER science team.",
+        "derived_info": "The data products are derived from data partners.",
+        "derived_link": "https://power.larc.nasa.gov",
+        "geospatial_bounds": "POLYGON((-180.0 90.0, -180.0 -90.0, 180.0 -90.0, 180.0 90.0, -180.0 90.0))",
+        "geospatial_lat_max": 89.95,
+        "geospatial_lat_min": -89.95,
+        "geospatial_lat_resolution": 0.1,
+        "geospatial_lon_max": 179.9499969482422,
+        "geospatial_lon_min": -179.9499969482422,
+        "geospatial_lon_resolution": 0.1,
+        "history": "The POWER project was established in the early 2000s to support distribution of NASA research products.",
+        "id": "power_imerg_daily_spatial_utc.zarr",
+        "institution": "NASA Langley Research Center (LaRC)",
+        "keywords": "Earth Science",
+        "keywords_vocabulary": "NASA Global Change Master Directory (GCMD) Science Keyword Version 9.1.5",
+        "naming_authority": "gov.nasa.larc.power",
+        "processing_level": "4",
+        "project": "Prediction Of Worldwide Energy Resource (POWER)",
+        "publisher_email": "paul.w.stackhouse@nasa.gov",
+        "publisher_name": "Paul Stackhouse",
+        "references": "https://power.larc.nasa.gov",
+        "source": "Prediction Of Worldwide Energy Resource (POWER)",
+        "standard_name_vocabulary": "CF Standard Name Table v72",
+        "summary": "The POWER project provides solar and meteorological datasets from NASA research for support of renewable energy, building energy efficiency, and agricultural needs.",
+        "time_coverage_duration": "P1D",
+        "time_coverage_end": "2029-12-31T00:00:00",
+        "time_coverage_resolution": "P1D",
+        "time_coverage_start": "1998-01-01T00:00:00",
+        "time_standard": "Universal Time Coordinated (UTC)",
+        "title": "POWER Universal Time Coordinated (UTC) Time Series",
+        "version": "POWER Version 10.0.0"
+      },
+      ".zgroup": {
+        "zarr_format": 2
+      },
+      "IMERG_PRECLIQUID_PROB/.zarray": {
+        "chunks": [
+          1,
+          900,
+          1800
+        ],
+        "compressor": {
+          "blocksize": 0,
+          "clevel": 3,
+          "cname": "zstd",
+          "id": "blosc",
+          "shuffle": 2
+        },
+        "dtype": "<f4",
+        "fill_value": "NaN",
+        "filters": [
+          {
+            "astype": "<f4",
+            "dtype": "<f4",
+            "id": "fixedscaleoffset",
+            "offset": 1000,
+            "scale": 1
+          }
+        ],
+        "order": "C",
+        "shape": [
+          11688,
+          1800,
+          3600
+        ],
+        "zarr_format": 2
+      },
+      "IMERG_PRECLIQUID_PROB/.zattrs": {
+        "_ARRAY_DIMENSIONS": [
+          "time",
+          "lat",
+          "lon"
+        ],
+        "base": "float32",
+        "cell_methods": "time: source",
+        "definition": "Probability of liquid precipitation estimated with a diagnostic parameterization using ancillary data.",
+        "long_name": "Probability of Liquid Precipitation",
+        "significant_digits": 0,
+        "standard_name": "Probability_of_Liquid_Precipitation",
+        "status": "reviewing",
+        "units": "%",
+        "valid_max": 100.0,
+        "valid_min": 1.0
+      },
+      "IMERG_PRECTOT/.zarray": {
+        "chunks": [
+          1,
+          900,
+          1800
+        ],
+        "compressor": {
+          "blocksize": 0,
+          "clevel": 3,
+          "cname": "zstd",
+          "id": "blosc",
+          "shuffle": 2
+        },
+        "dtype": "<f4",
+        "fill_value": "NaN",
+        "filters": [
+          {
+            "astype": "<f4",
+            "dtype": "<f4",
+            "id": "fixedscaleoffset",
+            "offset": 1000,
+            "scale": 100
+          }
+        ],
+        "order": "C",
+        "shape": [
+          11688,
+          1800,
+          3600
+        ],
+        "zarr_format": 2
+      },
+      "IMERG_PRECTOT/.zattrs": {
+        "_ARRAY_DIMENSIONS": [
+          "time",
+          "lat",
+          "lon"
+        ],
+        "base": "float32",
+        "cell_methods": "time: source",
+        "definition": "The average IMERG total precipitation at the surface of the earth.",
+        "long_name": "Total Precipitation",
+        "significant_digits": 2,
+        "standard_name": "Total_Precipitation",
+        "status": "reviewing",
+        "units": "mm/day",
+        "valid_max": 12000.0,
+        "valid_min": 0.0
+      },
+      "IMERG_PRECTOT_COUNT/.zarray": {
+        "chunks": [
+          1,
+          900,
+          1800
+        ],
+        "compressor": {
+          "blocksize": 0,
+          "clevel": 3,
+          "cname": "zstd",
+          "id": "blosc",
+          "shuffle": 2
+        },
+        "dtype": "<i2",
+        "fill_value": -999,
+        "filters": null,
+        "order": "C",
+        "shape": [
+          11688,
+          1800,
+          3600
+        ],
+        "zarr_format": 2
+      },
+      "IMERG_PRECTOT_COUNT/.zattrs": {
+        "_ARRAY_DIMENSIONS": [
+          "time",
+          "lat",
+          "lon"
+        ],
+        "base": "int16",
+        "cell_methods": "time: source",
+        "definition": "The count of half-hourly precipitation retrievals where precipitation is at least 0.01 mm.",
+        "long_name": "Count of Precipitation Retrievals",
+        "significant_digits": 0,
+        "standard_name": "Count_of_Precipitation_Retrievals",
+        "status": "reviewing",
+        "units": "count",
+        "valid_max": 48.0,
+        "valid_min": 0.0
+      },
+      "lat/.zarray": {
+        "chunks": [
+          1800
+        ],
+        "compressor": {
+          "blocksize": 0,
+          "clevel": 5,
+          "cname": "lz4",
+          "id": "blosc",
+          "shuffle": 1
+        },
+        "dtype": "<f8",
+        "fill_value": "NaN",
+        "filters": null,
+        "order": "C",
+        "shape": [
+          1800
+        ],
+        "zarr_format": 2
+      },
+      "lat/.zattrs": {
+        "_ARRAY_DIMENSIONS": [
+          "lat"
+        ],
+        "axis": "Y",
+        "long_name": "Latitude",
+        "standard_name": "Latitude",
+        "units": "degrees_north"
+      },
+      "lon/.zarray": {
+        "chunks": [
+          3600
+        ],
+        "compressor": {
+          "blocksize": 0,
+          "clevel": 5,
+          "cname": "lz4",
+          "id": "blosc",
+          "shuffle": 1
+        },
+        "dtype": "<f8",
+        "fill_value": "NaN",
+        "filters": null,
+        "order": "C",
+        "shape": [
+          3600
+        ],
+        "zarr_format": 2
+      },
+      "lon/.zattrs": {
+        "_ARRAY_DIMENSIONS": [
+          "lon"
+        ],
+        "axis": "X",
+        "long_name": "Longitude",
+        "standard_name": "Longitude",
+        "units": "degrees_east"
+      },
+      "time/.zarray": {
+        "chunks": [
+          11688
+        ],
+        "compressor": {
+          "blocksize": 0,
+          "clevel": 5,
+          "cname": "lz4",
+          "id": "blosc",
+          "shuffle": 1
+        },
+        "dtype": "<i8",
+        "fill_value": null,
+        "filters": null,
+        "order": "C",
+        "shape": [
+          11688
+        ],
+        "zarr_format": 2
+      },
+      "time/.zattrs": {
+        "_ARRAY_DIMENSIONS": [
+          "time"
+        ],
+        "axis": "T",
+        "calendar": "proleptic_gregorian",
+        "delta": "0000-00-01 00:00:00",
+        "long_name": "Time",
+        "standard_name": "Time",
+        "units": "days since 1998-01-01 00:00:00"
+      }
+    },
+    "zarr_consolidated_format": 1
+  },
+  "rejected_candidates": {
+    "daymet": "HTTP 409 public access disabled",
+    "mur": "64,764,000-byte native signed-int16 chunk; 1,289 time-coordinate requests; unsuitable for small demo",
+    "oisst": "OSN endpoint could not be resolved/reached in this environment"
+  },
+  "inspection_body_cap": 1048576,
+  "metadata_received_bytes": 5702,
+  "metadata_sha256": "8fa2a49f659132fccf7b004d49c16236d7eca0de84596e5cfaf5e17fb1957f42",
+  "http_access": "anonymous HTTPS GET succeeded; strong object ETags and HEAD lengths subsequently pinned by the acquisition",
+  "initial_reader_blockers": [
+    "lat/lon names and capitalized semantic standard names",
+    "days since 1998-01-01 00:00:00",
+    "declared regular spacing with Float32-rounded Float64 longitude centers",
+    "Blosc Zstd/bitshuffle and Float32-to-Float32 fixedscaleoffset",
+    "global extent/time metadata requires subset-aware output"
+  ]
+}
