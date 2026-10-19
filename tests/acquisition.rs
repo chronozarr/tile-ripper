@@ -390,3 +390,107 @@ fn local_references_preserve_literal_question_marks() {
         p.execute(|_| Ok(())).unwrap();
     }
 }
+
+#[test]
+fn buffered_output_eviction_preserves_values_and_deterministic_objects() {
+    let mut f = fixture(Format::ZarrV2);
+    f.request.time = None;
+    f.request.spatial = Spatial::Bounds {
+        crs: "EPSG:32617".into(),
+        bbox: [10., 10., 80., 80.],
+    };
+    f.request.budget.buffer_bytes = 1024;
+    let prepared = acquisition::prepare(&f.request, &mut LayoutCache::default()).unwrap();
+    let mut expected = std::collections::BTreeMap::new();
+    let streamed = prepared
+        .execute(|chunk| {
+            assert_eq!(chunk.validity().count(), chunk.pixels.len());
+            assert_eq!(chunk.pixel_center(chunk.window.width, 0), None);
+            let center = chunk.pixel_center(0, 0).unwrap();
+            assert_eq!(
+                center,
+                [
+                    chunk.window.x as f64 * 10. + 5.,
+                    75. - chunk.window.y as f64 * 10.
+                ]
+            );
+            for y in 0..chunk.window.height {
+                for x in 0..chunk.window.width {
+                    expected.insert(
+                        (chunk.indices[0], chunk.window.y + y, chunk.window.x + x),
+                        chunk.pixels[y * chunk.window.width + x],
+                    );
+                }
+            }
+            Ok(())
+        })
+        .unwrap();
+    let manifest = prepared.fetch().unwrap();
+    let io = &manifest["observed"]["output_io"];
+    assert!(io["buffered_bytes_peak"].as_u64().unwrap() <= 256);
+    assert_eq!(
+        manifest["observed"]["source_data_requests"].as_u64(),
+        streamed.source_data_requests
+    );
+    let read = |root: &std::path::Path| {
+        let ar = Array::open(
+            Arc::new(FilesystemStore::new(root.join("source.zarr")).unwrap()),
+            "/red",
+        )
+        .unwrap();
+        ar.retrieve_array_subset_elements::<u16>(&ar.subset_all())
+            .unwrap()
+    };
+    let out = f.root.join("out");
+    let actual = read(&out);
+    for t in 0..3 {
+        for y in 0..7 {
+            for x in 0..7 {
+                assert_eq!(actual[(t * 7 + y) * 7 + x], expected[&(t, y, x + 1)]);
+            }
+        }
+    }
+    // Repeat with a different cache capacity: encoded data and metadata must be
+    // byte-identical even when eviction and write order differ. Timings excluded.
+    f.request.sink = Sink::Directory {
+        path: f.root.join("out2").to_string_lossy().into(),
+    };
+    f.request.budget.buffer_bytes = 8192;
+    acquisition::fetch(&f.request, &mut LayoutCache::default()).unwrap();
+    fn objects(
+        root: &std::path::Path,
+        base: &std::path::Path,
+        out: &mut std::collections::BTreeMap<PathBuf, Vec<u8>>,
+    ) {
+        for entry in fs::read_dir(root).unwrap() {
+            let p = entry.unwrap().path();
+            if p.is_dir() {
+                objects(&p, base, out);
+            } else if p.file_name().unwrap() != "manifest.json" {
+                out.insert(
+                    p.strip_prefix(base).unwrap().to_owned(),
+                    fs::read(&p).unwrap(),
+                );
+            }
+        }
+    }
+    let (mut first, mut second) = (Default::default(), Default::default());
+    objects(&out, &out, &mut first);
+    objects(&f.root.join("out2"), &f.root.join("out2"), &mut second);
+    assert_eq!(first, second);
+}
+
+#[test]
+fn output_object_bookkeeping_is_bounded_before_directory_creation() {
+    let mut f = fixture(Format::ZarrV2);
+    f.request.time = None;
+    f.request.budget.chunk_edge = 1;
+    f.request.budget.max_nodes = 64;
+    let prepared = acquisition::prepare(&f.request, &mut LayoutCache::default()).unwrap();
+    assert!(prepared
+        .fetch()
+        .unwrap_err()
+        .to_string()
+        .contains("output object bookkeeping"));
+    assert!(!f.root.join("out").exists());
+}

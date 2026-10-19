@@ -20,3 +20,5 @@ mod zarr_acquire;
 pub mod acquisition;
 
 mod diagnostics;
+
+mod zarr_io;

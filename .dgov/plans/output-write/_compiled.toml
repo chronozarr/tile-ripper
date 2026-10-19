@@ -1,0 +1,22 @@
+[plan]
+name = "output-write"
+source_mtime_max = "2026-10-19T03:52:52.756645Z"
+sop_set_hash = ""
+
+[tasks."tasks/writer.writer"]
+summary = "Measure and eliminate bounded native-output write amplification"
+prompt = """
+Orient:
+Read unified decision, implementation, benchmarks and pinned zarrs writer.
+Edit:
+Profile before changing the writer. Keep native semantics and source minimum.
+Implement only demonstrated bounded output improvements and stream documentation.
+Verify:
+Run cargo test --locked, independent xarray checks, repeated equivalent output
+benchmarks and COG regression. No remote Zarr, third format, publish or merge.
+"""
+commit_message = ""
+timeout_s = 0
+test_cmd = "cargo test --locked"
+files.create = ["bench/output_write.py", "bench/io_profile.c", "docs/output-write-decision.md", "docs/output-write-workflow.md", "src/zarr_io.rs", "bench/output_validation.py", "docs/output-write-after.json", "docs/output-write-cog.json", "docs/output-write-validation.json", "docs/output-write-regression.json"]
+files.edit = ["src/zarr_acquire.rs", "src/execute.rs", "src/acquisition.rs", "tests/acquisition.rs", "README.md", "examples/acquire.rs", "src/diagnostics.rs", "src/lib.rs", "docs/implementation-map.md", "bench/unified_workflow.py"]

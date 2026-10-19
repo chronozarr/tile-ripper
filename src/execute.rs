@@ -25,10 +25,41 @@ pub struct Chunk {
     pub offset: Option<f64>,
     pub pixels: Vec<u16>,
 }
+impl Chunk {
+    /// Pixel-center coordinates in this chunk's native CRS, without resampling.
+    /// `column` and `row` are relative to the delivered buffer, not the source.
+    pub fn pixel_center(&self, column: usize, row: usize) -> Option<[f64; 2]> {
+        if column >= self.window.width || row >= self.window.height {
+            return None;
+        }
+        let x = column as f64 + 0.5;
+        let y = row as f64 + 0.5;
+        let t = self.transform;
+        Some([t[0] + x * t[1] + y * t[2], t[3] + x * t[4] + y * t[5]])
+    }
+    /// Validity of each stored value; COG AOI exclusions already carry nodata.
+    pub fn validity(&self) -> impl Iterator<Item = bool> + '_ {
+        self.pixels.iter().map(|v| Some(*v as f64) != self.nodata)
+    }
+}
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ExecutionReport {
     #[serde(default)]
     pub source_reads: Vec<SourceRead>,
+    #[serde(default)]
+    pub assembly_seconds: f64,
+    #[serde(default)]
+    pub source_retrieval_seconds: Option<f64>,
+    #[serde(default)]
+    pub allocation_seconds: Option<f64>,
+    #[serde(default)]
+    pub copying_seconds: Option<f64>,
+    #[serde(default)]
+    pub output_setup_seconds: f64,
+    #[serde(default)]
+    pub output_finalize_seconds: f64,
+    #[serde(default)]
+    pub output_io: Option<OutputIo>,
     pub native_materialized_bytes: Option<usize>,
     /// Observed data-chunk store calls and returned encoded bytes (metadata excluded).
     pub source_data_requests: Option<u64>,
@@ -43,6 +74,22 @@ pub struct ExecutionReport {
     pub masking_seconds: f64,
     pub remote_requests: Option<u64>,
     pub remote_bytes: Option<u64>,
+}
+/// Native output-store operations, including coordinates and metadata, excluding
+/// manifests. Counts library calls/encoded bytes, not physical device traffic.
+#[derive(Debug, Default, Serialize, Deserialize)]
+pub struct OutputIo {
+    pub reads: usize,
+    pub writes: usize,
+    pub bytes_read: usize,
+    pub bytes_written: usize,
+    pub buffered_bytes_peak: usize,
+    pub storage_read_seconds: f64,
+    pub storage_write_seconds: f64,
+    /// Full-chunk encoding/serialization/library overhead, excluding store I/O.
+    pub encode_seconds: f64,
+    pub allocation_seconds: f64,
+    pub copying_seconds: f64,
 }
 /// Replan from the runtime request. Diagnostic JSON plans are never replayed.
 pub fn execute(
@@ -73,6 +120,13 @@ pub(crate) fn execute_plan(
     };
     let mut report = ExecutionReport {
         source_reads: vec![],
+        assembly_seconds: 0.,
+        source_retrieval_seconds: None,
+        allocation_seconds: None,
+        copying_seconds: None,
+        output_setup_seconds: 0.,
+        output_finalize_seconds: 0.,
+        output_io: None,
         native_materialized_bytes: None,
         source_data_requests: None,
         source_data_bytes: None,

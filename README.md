@@ -13,7 +13,8 @@ tile-ripper fetch request.json --output ./subset
 
 Complete requests: [remote STAC/COG](examples/unified-stac.json) and
 [local Zarr](examples/unified-zarr.json). Both use the same prepared Rust library
-lifecycle and preserve native grids. See [the current decision gate](docs/unified-decision-gate.md).
+lifecycle and preserve native grids. See [the current decision gate](docs/output-write-decision.md) and
+[the output-write measurements and reproduction guide](docs/output-write-workflow.md).
 Earlier milestone guides and benchmarks remain historical evidence;
 [ADR 0003](docs/0003-unified-lifecycle.md) describes the unified lifecycle.
 The original [study](study/README.md) remains historical evidence.

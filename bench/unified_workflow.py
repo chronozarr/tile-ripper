@@ -515,7 +515,7 @@ def common_stac(r):
     }
 
 
-def run_stac(reps):
+def run_stac(reps, result_path=None):
     import stac_workflow as oracle
 
     WORK.mkdir(parents=True, exist_ok=True)
@@ -609,7 +609,7 @@ def run_stac(reps):
             "baseline freezes independently known selected item IDs while doing real pagination",
         ],
     }
-    (ROOT / "docs/unified-stac-benchmark.json").write_text(
+    (result_path or ROOT / "docs/unified-stac-benchmark.json").write_text(
         json.dumps(result, indent=2) + "\n"
     )
     print(json.dumps({"runs": len(rows), "summary": result["summary"]}))

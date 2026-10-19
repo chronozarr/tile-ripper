@@ -3,6 +3,9 @@ use crate::{cog, fail, model::*, planner::push, Result};
 use std::{fs, path::Path, sync::Arc, time::Instant};
 use zarrs::{array::Array, array_subset::ArraySubset, filesystem::FilesystemStore};
 type Store = FilesystemStore;
+type Metrics =
+    zarrs::storage::storage_adapter::performance_metrics::PerformanceMetricsStorageAdapter<Store>;
+type OutputStore = crate::zarr_io::Timed<Metrics>;
 fn store(a: &Asset) -> Result<Arc<Store>> {
     if cog::remote(&a.locator) || a.etag.is_some() {
         return fail("Zarr supports immutable local directory stores only");
@@ -360,10 +363,11 @@ pub(crate) fn execute_selected(
         return fail("missing dataset variable");
     };
     let path = name(path)?;
+    let timed = Arc::new(crate::zarr_io::Timed::new(s));
     let trace = Arc::new(std::sync::Mutex::new(ReadTrace::default()));
     let logged = Arc::new(
         zarrs::storage::storage_adapter::usage_log::UsageLogStorageAdapter::new(
-            s,
+            timed.clone(),
             trace.clone(),
             String::new,
         ),
@@ -371,6 +375,7 @@ pub(crate) fn execute_selected(
     let array = Array::open(logged, &format!("/{path}"))?;
     *trace.lock().map_err(|_| "trace lock poisoned")? = ReadTrace::default();
     report.source_open_seconds += t.elapsed().as_secs_f64();
+    timed.reset();
     let dims = selected
         .dimensions
         .as_ref()
@@ -409,12 +414,20 @@ pub(crate) fn execute_selected(
                 for x in (x0..x1).step_by(r.budget.chunk_edge) {
                     let width = (x1 - x).min(r.budget.chunk_edge);
                     let height = (y1 - y).min(r.budget.chunk_edge);
+                    let assembly = Instant::now();
+                    let alloc = Instant::now();
                     let mut pixels = Vec::with_capacity(width * height);
+                    report.allocation_seconds = Some(
+                        report.allocation_seconds.unwrap_or(0.) + alloc.elapsed().as_secs_f64(),
+                    );
+                    let copy = Instant::now();
                     for sy in y..y + height {
                         let offset =
                             ((ti - origin[0]) * cs[1] + sy - origin[1]) * cs[2] + x - origin[2];
                         pixels.extend_from_slice(&native[offset..offset + width]);
                     }
+                    report.copying_seconds =
+                        Some(report.copying_seconds.unwrap_or(0.) + copy.elapsed().as_secs_f64());
                     report.decoded_bytes += pixels.len() * 2;
                     report.non_nodata_pixels += pixels
                         .iter()
@@ -444,6 +457,7 @@ pub(crate) fn execute_selected(
                         window,
                         pixels,
                     };
+                    report.assembly_seconds += assembly.elapsed().as_secs_f64();
                     let t = Instant::now();
                     sink(chunk)?;
                     report.sink_seconds += t.elapsed().as_secs_f64();
@@ -452,6 +466,8 @@ pub(crate) fn execute_selected(
             }
         }
     }
+    report.source_retrieval_seconds =
+        Some(report.source_retrieval_seconds.unwrap_or(0.) + timed.read_seconds());
     let trace = trace.lock().map_err(|_| "trace lock poisoned")?;
     report.source_data_requests = Some(report.source_data_requests.unwrap_or(0) + trace.requests);
     report.source_data_bytes = Some(report.source_data_bytes.unwrap_or(0) + trace.bytes);
@@ -507,11 +523,11 @@ impl std::io::Write for ReadTrace {
 }
 fn output_array(
     source: &Path,
-    target: Arc<Store>,
+    target: Arc<OutputStore>,
     path: &str,
     shape: Vec<usize>,
     chunks: Vec<usize>,
-) -> Result<Array<Store>> {
+) -> Result<Array<OutputStore>> {
     let mut m = json(source, &format!("{path}/.zarray"))?;
     m["shape"] = serde_json::json!(shape);
     m["chunks"] = serde_json::json!(chunks);
@@ -542,11 +558,44 @@ pub(crate) fn fetch_plan(r: &Request, p: &Plan, planning: f64) -> Result<crate::
     if p.selected.iter().any(|s| s.dimensions.is_none()) {
         return fail("Zarr directory sink requires supported Zarr group assets");
     }
+    // FilesystemStore retains one lock entry per visited object. Bound that
+    // bookkeeping as well as decoded payloads, before creating any output.
+    let mut objects = 1usize; // completion manifest
+    let mut groups = std::collections::HashSet::new();
+    for selected in &p.selected {
+        if groups.insert(&selected.asset_id) {
+            objects = objects
+                .checked_add(11)
+                .ok_or("output object count overflow")?;
+        }
+        let w = &selected.window;
+        let times = selected
+            .dimensions
+            .as_ref()
+            .ok_or("missing dimensions")?
+            .indices[0]
+            .len();
+        let chunks = times
+            .checked_mul(w.width.div_ceil(r.budget.chunk_edge))
+            .and_then(|n| n.checked_mul(w.height.div_ceil(r.budget.chunk_edge)))
+            .and_then(|n| n.checked_add(2))
+            .ok_or("output object count overflow")?;
+        objects = objects
+            .checked_add(chunks)
+            .ok_or("output object count overflow")?;
+        if objects > r.budget.max_nodes {
+            return fail(
+                "output object bookkeeping exceeds max_nodes; increase budget or chunk_edge",
+            );
+        }
+    }
     fs::create_dir(root)?;
     let result = (|| -> Result<crate::ExecutionReport> {
         let Source::Assets { assets } = &r.source else {
             unreachable!()
         };
+        let setup = Instant::now();
+        let mut stores = Vec::new();
         let mut outputs = std::collections::HashMap::new();
         for a in assets {
             let selected: Vec<_> = p.selected.iter().filter(|s| s.asset_id == a.id).collect();
@@ -554,7 +603,10 @@ pub(crate) fn fetch_plan(r: &Request, p: &Plan, planning: f64) -> Result<crate::
                 continue;
             }
             let d = inspect(a, r)?;
-            let s = Arc::new(Store::new(root.join(format!("{}.zarr", a.id)))?);
+            let s = Arc::new(OutputStore::new(Arc::new(Metrics::new(Arc::new(
+                Store::new(root.join(format!("{}.zarr", a.id)))?,
+            )))));
+            stores.push(s.clone());
             let w = &selected[0].window;
             let indices = &selected[0].dimensions.as_ref().unwrap().indices[0];
             let mut group = zarrs::group::Group::new_with_metadata(
@@ -608,11 +660,13 @@ pub(crate) fn fetch_plan(r: &Request, p: &Plan, planning: f64) -> Result<crate::
                 )?;
                 outputs.insert(
                     (a.id.clone(), n.to_string()),
-                    (ar, w.clone(), indices.clone()),
+                    (Arc::new(ar), w.clone(), indices.clone()),
                 );
             }
         }
-        let report = crate::execute::execute_plan(r, p, planning, |c| {
+        let output_setup = setup.elapsed().as_secs_f64();
+        let mut buffer = OutputBuffer::new(r.budget.buffer_bytes / 4);
+        let mut report = crate::execute::execute_plan(r, p, planning, |c| {
             let Variable::Dataset { path } = &c.variable else {
                 return fail("unexpected variable");
             };
@@ -623,7 +677,10 @@ pub(crate) fn fetch_plan(r: &Request, p: &Plan, planning: f64) -> Result<crate::
                 .iter()
                 .position(|i| *i == c.indices[0])
                 .ok_or("time missing")?;
-            ar.store_array_subset_elements_opt(
+            buffer.write(
+                ar,
+                &c.asset_id,
+                path,
                 &ArraySubset::new_with_start_shape(
                     vec![
                         ti as u64,
@@ -633,22 +690,155 @@ pub(crate) fn fetch_plan(r: &Request, p: &Plan, planning: f64) -> Result<crate::
                     vec![1, c.window.height as u64, c.window.width as u64],
                 )?,
                 &c.pixels,
-                &serial(),
             )?;
             Ok(())
         })?;
-        fs::write(
-            root.join("manifest.json"),
-            serde_json::to_vec_pretty(
-                &serde_json::json!({"plan":p,"observed":report,"sources":assets,"decisions":"native raw values; no calibration; missing chunks fill; coordinates subset in source order; local sources must remain immutable during operation"}),
-            )?,
+        let finalize = Instant::now();
+        buffer.flush()?;
+        report.output_finalize_seconds = finalize.elapsed().as_secs_f64();
+        report.output_setup_seconds = output_setup;
+        report.output_io = Some(crate::execute::OutputIo {
+            reads: stores.iter().map(|s| s.inner.reads()).sum(),
+            writes: stores.iter().map(|s| s.inner.writes()).sum(),
+            bytes_read: stores.iter().map(|s| s.inner.bytes_read()).sum(),
+            bytes_written: stores.iter().map(|s| s.inner.bytes_written()).sum(),
+            buffered_bytes_peak: buffer.peak,
+            storage_read_seconds: stores.iter().map(|s| s.read_seconds()).sum(),
+            storage_write_seconds: stores.iter().map(|s| s.write_seconds()).sum(),
+            encode_seconds: buffer.encode_seconds,
+            allocation_seconds: buffer.allocation_seconds,
+            copying_seconds: buffer.copying_seconds,
+        });
+        let manifest = Instant::now();
+        let bytes = serde_json::to_vec_pretty(
+            &serde_json::json!({"plan":p,"observed":report,"sources":assets,"decisions":"native raw values; no calibration; missing chunks fill; coordinates subset in source order; local sources must remain immutable during operation"}),
         )?;
+        crate::diagnostics::profile_stage(
+            "native_manifest_serialization",
+            manifest.elapsed().as_secs_f64(),
+        );
+        let manifest = Instant::now();
+        fs::write(root.join("manifest.json"), bytes)?;
+        crate::diagnostics::profile_stage(
+            "native_manifest_write_close",
+            manifest.elapsed().as_secs_f64(),
+        );
         Ok(report)
     })();
     if result.is_err() {
         let _ = fs::remove_dir_all(root);
     }
     result
+}
+
+/// Adapter-local, byte-bounded LRU of decoded destination chunks. Evictions are
+/// encoded/synchronised by zarrs; a later revisit reads that destination chunk.
+/// Source traversal, selection and the shared executor remain unchanged.
+struct OutputBuffer {
+    limit: usize,
+    peak: usize,
+    clock: u64,
+    encode_seconds: f64,
+    allocation_seconds: f64,
+    copying_seconds: f64,
+    active: Option<(String, String, Arc<Array<OutputStore>>)>,
+    ages: std::collections::HashMap<[u64; 3], u64>,
+    entries: std::collections::BTreeMap<u64, ([u64; 3], Vec<u16>)>,
+}
+impl OutputBuffer {
+    fn new(limit: usize) -> Self {
+        Self {
+            limit,
+            peak: 0,
+            clock: 0,
+            encode_seconds: 0.,
+            allocation_seconds: 0.,
+            copying_seconds: 0.,
+            active: None,
+            ages: Default::default(),
+            entries: Default::default(),
+        }
+    }
+    fn evict(&mut self) -> Result<()> {
+        if let Some((_, (key, values))) = self.entries.pop_first() {
+            self.ages.remove(&key);
+            let ar = &self.active.as_ref().ok_or("output buffer missing array")?.2;
+            let before = ar.storage().write_seconds();
+            let t = Instant::now();
+            ar.store_chunk_elements_opt(&key, &values, &serial())?;
+            self.encode_seconds +=
+                (t.elapsed().as_secs_f64() - (ar.storage().write_seconds() - before)).max(0.);
+        }
+        Ok(())
+    }
+    fn flush(&mut self) -> Result<()> {
+        while !self.entries.is_empty() {
+            self.evict()?;
+        }
+        Ok(())
+    }
+    fn write(
+        &mut self,
+        ar: &Arc<Array<OutputStore>>,
+        asset: &str,
+        variable: &str,
+        subset: &ArraySubset,
+        pixels: &[u16],
+    ) -> Result<()> {
+        if self
+            .active
+            .as_ref()
+            .is_none_or(|(a, v, _)| a != asset || v != variable)
+        {
+            self.flush()?;
+            self.active = Some((asset.into(), variable.into(), ar.clone()));
+        }
+        let cs = ar.chunk_shape_usize(&[0, 0, 0])?;
+        let bytes = cs.iter().product::<usize>() * 2;
+        if bytes > self.limit {
+            return fail("destination chunk exceeds output buffer budget");
+        }
+        let capacity = self.limit / bytes;
+        let start = subset.start();
+        let shape = subset.shape();
+        let (y0, x0) = (start[1] as usize, start[2] as usize);
+        let (h, w) = (shape[1] as usize, shape[2] as usize);
+        for cy in y0 / cs[1]..=(y0 + h - 1) / cs[1] {
+            for cx in x0 / cs[2]..=(x0 + w - 1) / cs[2] {
+                let key = [start[0], cy as u64, cx as u64];
+                let mut values = if let Some(age) = self.ages.remove(&key) {
+                    self.entries
+                        .remove(&age)
+                        .ok_or("output buffer index missing")?
+                        .1
+                } else {
+                    if self.entries.len() == capacity {
+                        self.evict()?;
+                    }
+                    let t = Instant::now();
+                    let values = ar.retrieve_chunk_elements_opt::<u16>(&key, &serial())?;
+                    self.allocation_seconds += t.elapsed().as_secs_f64();
+                    values
+                };
+                let sy = y0.max(cy * cs[1]);
+                let ey = (y0 + h).min((cy + 1) * cs[1]);
+                let sx = x0.max(cx * cs[2]);
+                let ex = (x0 + w).min((cx + 1) * cs[2]);
+                let copying = Instant::now();
+                for y in sy..ey {
+                    let src = (y - y0) * w + sx - x0;
+                    let dst = (y - cy * cs[1]) * cs[2] + sx - cx * cs[2];
+                    values[dst..dst + ex - sx].copy_from_slice(&pixels[src..src + ex - sx]);
+                }
+                self.copying_seconds += copying.elapsed().as_secs_f64();
+                self.clock += 1;
+                self.ages.insert(key, self.clock);
+                self.entries.insert(self.clock, (key, values));
+                self.peak = self.peak.max(self.entries.len() * bytes);
+            }
+        }
+        Ok(())
+    }
 }
 
 fn serial() -> zarrs::array::codec::CodecOptions {

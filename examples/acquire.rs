@@ -8,16 +8,22 @@ fn main() -> Result<()> {
     match args.get(2).map(String::as_str) {
         Some("--fetch") => println!("{}", serde_json::to_string_pretty(&prepared.fetch()?)?),
         Some("--stream") => {
-            prepared.execute(|chunk| {
+            // One provenance header, joined by asset_id; no per-pixel duplication.
+            println!("sources: {}", prepared.explain()["sources"]);
+            let report = prepared.execute(|chunk| {
                 println!(
-                    "{} {:?} {:?}: {} native cells",
+                    "{} {:?} {:?}: {} native cells; {} valid; first center {:?}; CRS {}",
                     chunk.asset_id,
                     chunk.variable,
                     chunk.datetime,
-                    chunk.pixels.len()
+                    chunk.pixels.len(),
+                    chunk.validity().filter(|v| *v).count(),
+                    chunk.pixel_center(0, 0),
+                    chunk.crs
                 );
                 Ok(())
             })?;
+            eprintln!("{} bounded buffers consumed", report.chunks);
         }
         _ => println!("{}", prepared.human()),
     }

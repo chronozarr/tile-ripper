@@ -171,6 +171,7 @@ impl Prepared {
             }
         };
         let result = (|| -> Result<Value> {
+            let stage = Instant::now();
             let mut manifest: Value = serde_json::from_slice(&legacy?)?;
             let outputs = outputs(self.plan(), strategy(&self.runtime, &self.output));
             manifest["schema_version"] = json!(3);
@@ -187,9 +188,24 @@ impl Prepared {
             ]);
             manifest["limitations"] = json!(self.plan().limitations);
             sanitize(&mut manifest);
+            crate::diagnostics::profile_stage(
+                "common_manifest_build",
+                stage.elapsed().as_secs_f64(),
+            );
+            let stage = Instant::now();
+            let bytes = serde_json::to_vec_pretty(&manifest)?;
+            crate::diagnostics::profile_stage(
+                "common_manifest_serialization",
+                stage.elapsed().as_secs_f64(),
+            );
+            let stage = Instant::now();
             let temporary = Path::new(&root).join(".manifest.tmp");
-            fs::write(&temporary, serde_json::to_vec_pretty(&manifest)?)?;
+            fs::write(&temporary, bytes)?;
             fs::rename(temporary, Path::new(&root).join("manifest.json"))?;
+            crate::diagnostics::profile_stage(
+                "common_manifest_write_rename",
+                stage.elapsed().as_secs_f64(),
+            );
             Ok(manifest)
         })();
         if result.is_err() {

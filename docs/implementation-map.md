@@ -64,3 +64,16 @@ Catalog configuration stays outside the logical planner; formats still own
 native grids, coordinates, codecs and execution. Zarr now plans source chunks
 rather than output-sized slices and retrieves each selected key once. See
 ADR 0003 and the unified decision gate for current evidence and limits.
+
+## Bounded native Zarr output writing
+
+The native output adapter now assembles partial callback regions in a shared,
+byte-bounded destination-chunk LRU. Eviction and finalization use zarrs' existing
+full-chunk encoding/storage path. The planner and one-read-per-source-key
+execution order are unchanged; COG does not use the buffer. `zarr_io` adds thin
+store timing delegation and the existing zarrs metrics adapter counts output I/O.
+`Chunk` exposes allocation-free native pixel-center/validity helpers; the existing
+synchronous prepared callback remains the bounded consumption interface.
+
+See `docs/output-write-decision.md` and `docs/output-write-workflow.md` for the
+measured gate, equivalent-output protocol, limitations and stream assessment.

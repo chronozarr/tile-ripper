@@ -1,0 +1,422 @@
+{
+  "checks": {
+    "pagination_exact_footprints_discover_only": {
+      "stac_requests": 3,
+      "stac_bytes": 3158,
+      "heads": 0,
+      "range_gets": 0,
+      "whole_gets": 0,
+      "raster_bytes": 0,
+      "response_seconds": 0.0,
+      "conditional_gets": 0,
+      "rejected_conditionals": 0,
+      "injected_failures": 0
+    },
+    "empty_query": true,
+    "footprint_overlap_without_selected_pixel_centers": true,
+    "no_silent_truncation": true,
+    "output_budget_preflight": true,
+    "changed_object_rejected": true,
+    "failed_read_output_cleanup": true,
+    "library_prepared_snapshots_do_not_share_stale_cache": true
+  },
+  "summary": [
+    {
+      "workload": "large",
+      "config": "gdal-stac-tuned",
+      "n": 1,
+      "median_seconds": 0.2516628750599921,
+      "min_seconds": 0.2516628750599921,
+      "max_seconds": 0.2516628750599921,
+      "stdev_seconds": 0,
+      "peak_rss_bytes": 80134144,
+      "observed": [
+        {
+          "stac_requests": 3,
+          "stac_bytes": 3158,
+          "heads": 8,
+          "range_gets": 13,
+          "whole_gets": 0,
+          "raster_bytes": 556108,
+          "response_seconds": 0.0010789595544338226,
+          "conditional_gets": 13,
+          "rejected_conditionals": 0,
+          "injected_failures": 0
+        }
+      ]
+    },
+    {
+      "workload": "large",
+      "config": "tile-ripper",
+      "n": 1,
+      "median_seconds": 0.17464437521994114,
+      "min_seconds": 0.17464437521994114,
+      "max_seconds": 0.17464437521994114,
+      "stdev_seconds": 0,
+      "peak_rss_bytes": 58441728,
+      "observed": [
+        {
+          "stac_requests": 3,
+          "stac_bytes": 3158,
+          "heads": 12,
+          "range_gets": 17,
+          "whole_gets": 0,
+          "raster_bytes": 687180,
+          "response_seconds": 0.0013302075676620007,
+          "conditional_gets": 17,
+          "rejected_conditionals": 0,
+          "injected_failures": 0
+        }
+      ]
+    },
+    {
+      "workload": "small",
+      "config": "gdal-stac-tuned",
+      "n": 1,
+      "median_seconds": 0.2539622918702662,
+      "min_seconds": 0.2539622918702662,
+      "max_seconds": 0.2539622918702662,
+      "stdev_seconds": 0,
+      "peak_rss_bytes": 79265792,
+      "observed": [
+        {
+          "stac_requests": 3,
+          "stac_bytes": 3158,
+          "heads": 8,
+          "range_gets": 12,
+          "whole_gets": 0,
+          "raster_bytes": 327142,
+          "response_seconds": 0.001161541324108839,
+          "conditional_gets": 12,
+          "rejected_conditionals": 0,
+          "injected_failures": 0
+        }
+      ]
+    },
+    {
+      "workload": "small",
+      "config": "tile-ripper",
+      "n": 1,
+      "median_seconds": 0.17079070815816522,
+      "min_seconds": 0.17079070815816522,
+      "max_seconds": 0.17079070815816522,
+      "stdev_seconds": 0,
+      "peak_rss_bytes": 57212928,
+      "observed": [
+        {
+          "stac_requests": 3,
+          "stac_bytes": 3158,
+          "heads": 12,
+          "range_gets": 16,
+          "whole_gets": 0,
+          "raster_bytes": 458214,
+          "response_seconds": 0.0013680844567716122,
+          "conditional_gets": 16,
+          "rejected_conditionals": 0,
+          "injected_failures": 0
+        }
+      ]
+    }
+  ],
+  "runs": [
+    {
+      "workload": "small",
+      "config": "tile-ripper",
+      "rep": 0,
+      "wall_seconds": 0.17079070815816522,
+      "peak_rss_bytes": 57212928,
+      "observed": {
+        "stac_requests": 3,
+        "stac_bytes": 3158,
+        "heads": 12,
+        "range_gets": 16,
+        "whole_gets": 0,
+        "raster_bytes": 458214,
+        "response_seconds": 0.0013680844567716122,
+        "conditional_gets": 16,
+        "rejected_conditionals": 0,
+        "injected_failures": 0
+      },
+      "stages": {
+        "source_reads": [],
+        "assembly_seconds": 0.0,
+        "source_retrieval_seconds": null,
+        "allocation_seconds": null,
+        "copying_seconds": null,
+        "output_setup_seconds": 0.0,
+        "output_finalize_seconds": 0.0,
+        "output_io": null,
+        "native_materialized_bytes": null,
+        "source_data_requests": null,
+        "source_data_bytes": null,
+        "chunks": 4,
+        "decoded_bytes": 6710,
+        "non_nodata_pixels": 1801,
+        "planning_seconds": 0.017528042,
+        "source_open_seconds": 0.0031933749999999996,
+        "read_decode_seconds": 0.0030337090000000003,
+        "sink_seconds": 0.006160584,
+        "masking_seconds": 0.00018608299999999997,
+        "remote_requests": null,
+        "remote_bytes": null
+      },
+      "discovery": {
+        "seconds": 0.004971833,
+        "returned_items": 3,
+        "selected_items": 2,
+        "selected_assets": 4,
+        "attempts": 1
+      },
+      "equality": {
+        "outputs": 4,
+        "exact_pixels": true,
+        "nodata_pixels": 1554,
+        "valid_pixels": 1801,
+        "native_resolutions": [
+          10.0,
+          20.0
+        ],
+        "native_crses": [
+          32617,
+          32618
+        ]
+      }
+    },
+    {
+      "workload": "small",
+      "config": "gdal-stac-tuned",
+      "rep": 0,
+      "wall_seconds": 0.2539622918702662,
+      "peak_rss_bytes": 79265792,
+      "observed": {
+        "stac_requests": 3,
+        "stac_bytes": 3158,
+        "heads": 8,
+        "range_gets": 12,
+        "whole_gets": 0,
+        "raster_bytes": 327142,
+        "response_seconds": 0.001161541324108839,
+        "conditional_gets": 12,
+        "rejected_conditionals": 0,
+        "injected_failures": 0
+      },
+      "stages": {
+        "outputs": [
+          {
+            "file": "scene-0-red.tif",
+            "href": "http://127.0.0.1:59475/scene0-red.tif"
+          },
+          {
+            "file": "scene-0-nir.tif",
+            "href": "http://127.0.0.1:59475/scene0-nir.tif"
+          },
+          {
+            "file": "scene-1-red.tif",
+            "href": "http://127.0.0.1:59475/scene1-red.tif"
+          },
+          {
+            "file": "scene-1-nir.tif",
+            "href": "http://127.0.0.1:59475/scene1-nir.tif"
+          }
+        ],
+        "discovery_seconds": 0.013142917305231094,
+        "planning_seconds": 0.05459191557019949,
+        "read_decode_seconds": 0.0042507098987698555,
+        "masking_seconds": 0.0009385030716657639,
+        "sink_seconds": 0.007054002024233341
+      },
+      "discovery": null,
+      "equality": {
+        "outputs": 4,
+        "exact_pixels": true,
+        "nodata_pixels": 1604,
+        "valid_pixels": 1801,
+        "native_resolutions": [
+          10.0,
+          20.0
+        ],
+        "native_crses": [
+          32617,
+          32618
+        ]
+      }
+    },
+    {
+      "workload": "large",
+      "config": "gdal-stac-tuned",
+      "rep": 0,
+      "wall_seconds": 0.2516628750599921,
+      "peak_rss_bytes": 80134144,
+      "observed": {
+        "stac_requests": 3,
+        "stac_bytes": 3158,
+        "heads": 8,
+        "range_gets": 13,
+        "whole_gets": 0,
+        "raster_bytes": 556108,
+        "response_seconds": 0.0010789595544338226,
+        "conditional_gets": 13,
+        "rejected_conditionals": 0,
+        "injected_failures": 0
+      },
+      "stages": {
+        "outputs": [
+          {
+            "file": "scene-0-red.tif",
+            "href": "http://127.0.0.1:59475/scene0-red.tif"
+          },
+          {
+            "file": "scene-0-nir.tif",
+            "href": "http://127.0.0.1:59475/scene0-nir.tif"
+          },
+          {
+            "file": "scene-1-red.tif",
+            "href": "http://127.0.0.1:59475/scene1-red.tif"
+          },
+          {
+            "file": "scene-1-nir.tif",
+            "href": "http://127.0.0.1:59475/scene1-nir.tif"
+          }
+        ],
+        "discovery_seconds": 0.014037000015377998,
+        "planning_seconds": 0.04843687638640404,
+        "read_decode_seconds": 0.006822461728006601,
+        "masking_seconds": 0.0038331663236021996,
+        "sink_seconds": 0.00659470958635211
+      },
+      "discovery": null,
+      "equality": {
+        "outputs": 4,
+        "exact_pixels": true,
+        "nodata_pixels": 7180,
+        "valid_pixels": 53650,
+        "native_resolutions": [
+          10.0,
+          20.0
+        ],
+        "native_crses": [
+          32617,
+          32618
+        ]
+      }
+    },
+    {
+      "workload": "large",
+      "config": "tile-ripper",
+      "rep": 0,
+      "wall_seconds": 0.17464437521994114,
+      "peak_rss_bytes": 58441728,
+      "observed": {
+        "stac_requests": 3,
+        "stac_bytes": 3158,
+        "heads": 12,
+        "range_gets": 17,
+        "whole_gets": 0,
+        "raster_bytes": 687180,
+        "response_seconds": 0.0013302075676620007,
+        "conditional_gets": 17,
+        "rejected_conditionals": 0,
+        "injected_failures": 0
+      },
+      "stages": {
+        "source_reads": [],
+        "assembly_seconds": 0.0,
+        "source_retrieval_seconds": null,
+        "allocation_seconds": null,
+        "copying_seconds": null,
+        "output_setup_seconds": 0.0,
+        "output_finalize_seconds": 0.0,
+        "output_io": null,
+        "native_materialized_bytes": null,
+        "source_data_requests": null,
+        "source_data_bytes": null,
+        "chunks": 20,
+        "decoded_bytes": 120256,
+        "non_nodata_pixels": 53650,
+        "planning_seconds": 0.018819958,
+        "source_open_seconds": 0.002702873,
+        "read_decode_seconds": 0.004236085,
+        "sink_seconds": 0.007319126999999999,
+        "masking_seconds": 0.000516207,
+        "remote_requests": null,
+        "remote_bytes": null
+      },
+      "discovery": {
+        "seconds": 0.00524725,
+        "returned_items": 3,
+        "selected_items": 2,
+        "selected_assets": 4,
+        "attempts": 1
+      },
+      "equality": {
+        "outputs": 4,
+        "exact_pixels": true,
+        "nodata_pixels": 6478,
+        "valid_pixels": 53650,
+        "native_resolutions": [
+          10.0,
+          20.0
+        ],
+        "native_crses": [
+          32617,
+          32618
+        ]
+      }
+    }
+  ],
+  "independent_probes": [
+    {
+      "workload": "small",
+      "rep": 0,
+      "transfer_only_seconds": 0.014936082996428013,
+      "transfer_body_bytes": 195978,
+      "transfer_range_requests": 8,
+      "decode_and_window_assembly_from_memory_seconds": 0.00157233327627182,
+      "decoded_pixels": 3355,
+      "scope": "independent probes, not additive stages of production RasterIO; COG header open excluded from decode timer"
+    },
+    {
+      "workload": "large",
+      "rep": 0,
+      "transfer_only_seconds": 0.006493584252893925,
+      "transfer_body_bytes": 261271,
+      "transfer_range_requests": 10,
+      "decode_and_window_assembly_from_memory_seconds": 0.001897458452731371,
+      "decoded_pixels": 60128,
+      "scope": "independent probes, not additive stages of production RasterIO; COG header open excluded from decode timer"
+    }
+  ],
+  "environment": {
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "python": "3.12.7 (main, Oct  1 2024, 02:05:46) [Clang 15.0.0 (clang-1500.3.9.4)]",
+    "rustc": "rustc 1.92.0 (ded5c06cf 2025-12-08)",
+    "source_sha256": "89a22d063c5a82809ddb98df3d4831de8a3279384d7f8f28c2eebf47b939f806",
+    "fixture_sha256": {
+      "scene0-nir.tif": "ac19b0a75df0f8a0f99b4b673eae063fc4ffd82ae5cec6ef16f48a5995d530bc",
+      "scene0-red.tif": "98cb0650b2622577e2777e046b4520f1370eb52a2c38faf071002e839644d289",
+      "scene1-nir.tif": "a3c9dc2435934cc1b21d2c5733b233769e912e9e47a07dbdda52548f5b157bee",
+      "scene1-red.tif": "339884c7617bf57885cdc9c8113f56798a5a1d18d315f054c23204fad8c9effa"
+    },
+    "rasterio": "1.5.2",
+    "gdal": "3.12.2",
+    "rust_gdal": "3.12.4",
+    "cargo_lock_sha256": "f175f69089e9d7780ea2251abc1251aae3a95396c4fad07f0457d261dbb9ac9c"
+  },
+  "limitations": [
+    "loopback HTTP, one machine, warm OS cache; no throughput superiority claim",
+    "GDAL read and decode fused; server response time is not isolated client transfer latency",
+    "source metadata immutable in fixture; production remote cache remains index-free"
+  ],
+  "verification": {
+    "ordinary_rust_tests_passed": 26,
+    "http_snapshot_test_passed": true,
+    "clippy_all_targets_warnings_denied": true,
+    "rust_library_stream_buffers": 64,
+    "cli_demo_independent_values": 29904,
+    "measured_binary_sha256": "8f3536e7452fc2b897016feaf9a502e8e7c12c7ce08f9c321dcbdb9564abc11e",
+    "final_binary_sha256": "4847194eac82c5e394aecd054aa2ff7aa5ce60cab320cafa675a7142c8d5cd9c",
+    "measured_sources_sha256": "35e147614649082f91a978915728e4004db8ab5bccad43798b06639ace8a0ece",
+    "final_sources_sha256": "9787279a7e7b5879e74049692ebdbbcb925b19b3fdccd84fdefdc40e1e0b0a38",
+    "post_measurement_rust_change": "Move unchanged diagnostic profile helper above cfg(test) module to satisfy clippy; all targets rebuilt and final tests/CLI/library/HTTP gates passed."
+  }
+}
