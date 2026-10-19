@@ -75,7 +75,10 @@ fn run() -> Result<()> {
     }
     let mut request: Request = serde_json::from_slice(&input)?;
     if let Some(path) = output {
-        request.sink = Sink::GeoTiffDirectory { path };
+        request.sink = match request.sink {
+            Sink::ZarrDirectory { .. } => Sink::ZarrDirectory { path },
+            _ => Sink::GeoTiffDirectory { path },
+        };
     }
     let value = match args[1].as_str() {
         "plan" => serde_json::to_value(plan(&request, &mut cache)?)?,

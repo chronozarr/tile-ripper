@@ -26,8 +26,9 @@ struct GeoGrid {
     crs: String,
     transform: [f64; 6],
 }
-pub struct ZarrPlanner;
-impl FormatPlanner for ZarrPlanner {
+struct LegacyArrayPlanner;
+
+impl FormatPlanner for LegacyArrayPlanner {
     fn capabilities(&self) -> Capabilities {
         Capabilities {
             selection: vec!["2D native_bounds with explicit georeferencing".into()],
@@ -75,7 +76,7 @@ impl FormatPlanner for ZarrPlanner {
             height: a.shape[0],
             transform: t,
             crs: attrs.tile_ripper_grid.crs,
-            band: 0,
+            variable: Variable::Dataset { path: "/".into() },
             block: [a.chunks[1], a.chunks[0]],
             dtype: a.dtype,
             nodata: None,
@@ -87,6 +88,7 @@ impl FormatPlanner for ZarrPlanner {
             return Ok(());
         };
         p.selected.push(Selected {
+            dimensions: None,
             mask_geometry: None,
             asset_id: asset.id.clone(),
             datetime: asset.datetime.clone(),
@@ -121,5 +123,26 @@ impl FormatPlanner for ZarrPlanner {
             }
         }
         Ok(())
+    }
+}
+
+/// The executable group adapter retains the original root-array planning probe.
+pub struct ZarrPlanner;
+impl FormatPlanner for ZarrPlanner {
+    fn capabilities(&self) -> Capabilities {
+        Capabilities {
+            selection: vec!["native bounds, time, variables in regular time/y/x groups".into()],
+            reads: vec!["dataset_slice".into()],
+            decoding: "zarrs".into(),
+            compression: "none/gzip".into(),
+            materialization: true,
+        }
+    }
+    fn plan_asset(&mut self, asset: &Asset, r: &Request, p: &mut Plan) -> Result<()> {
+        if Path::new(&asset.locator).join(".zgroup").exists() {
+            crate::zarr_acquire::plan_asset(asset, r, p)
+        } else {
+            LegacyArrayPlanner.plan_asset(asset, r, p)
+        }
     }
 }

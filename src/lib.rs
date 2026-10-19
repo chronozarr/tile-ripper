@@ -14,3 +14,5 @@ pub(crate) fn fail<T>(message: &str) -> Result<T> {
 
 pub mod spatial;
 pub mod stac_workflow;
+
+mod zarr_acquire;

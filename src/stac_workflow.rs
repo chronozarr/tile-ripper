@@ -204,7 +204,9 @@ impl Prepared {
                     .iter()
                     .find(|s| {
                         s.asset_id == chunk.asset_id
-                            && s.layout.as_ref().is_some_and(|l| l.band == chunk.band)
+                            && s.layout
+                                .as_ref()
+                                .is_some_and(|l| l.variable == chunk.variable)
                     })
                     .ok_or("missing planned output")?;
                 let layout = selected.layout.as_ref().ok_or("missing grid")?;
@@ -249,7 +251,10 @@ impl Prepared {
                         (chunk.window.y - selected.window.y) as isize,
                     ),
                     (chunk.window.width, chunk.window.height),
-                    &mut chunk.pixels,
+                    &mut gdal::raster::Buffer::new(
+                        (chunk.window.width, chunk.window.height),
+                        std::mem::take(&mut chunk.pixels),
+                    ),
                 )?;
                 Ok(())
             })?;

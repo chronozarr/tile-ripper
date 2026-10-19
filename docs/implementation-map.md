@@ -41,3 +41,15 @@ support per asset, immutable object identity, and observed I/O counters. A
 conditional whole-object fallback must require explicit disk/staging budget;
 it must not silently bypass random-access limits. Layout discovery and data
 retrieval may both perform I/O and need separate accounting.
+
+
+## Executable Zarr milestone (plan schema 2)
+
+`zarr_acquire` now validates the defined local time/y/x dataset layout, resolves
+coordinate/date selections, executes zarrs dataset slices and writes native
+subset Zarr groups. `zarr` retains the original root-array planning probe and
+routes groups to the executable adapter. `execute` dispatches both read kinds
+through the same fallible native-plane callback; `spatial` owns shared window
+math. Layout/callback variable selectors replace mandatory band numbers.
+See `zarr-workflow.md` and `zarr-decision-gate.md` for current capability limits;
+the planning-only statements above describe the original milestone.

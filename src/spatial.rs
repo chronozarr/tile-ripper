@@ -146,3 +146,36 @@ pub fn native_mask(spatial: &Spatial, l: &Layout) -> Result<Option<Geometry>> {
         .ok_or("geometry intersection failed; GDAL with GEOS is required")?;
     Ok(Some(clipped))
 }
+
+/// Outer pixel envelope, clipped to source extent; half-open pixel bounds.
+pub fn window(layout: &Layout, spatial: &Spatial) -> Result<Option<Window>> {
+    let Spatial::Bounds {
+        crs,
+        bbox: [xmin, ymin, xmax, ymax],
+    } = spatial
+    else {
+        return fail("polygon selection is not implemented");
+    };
+    if *crs != layout.crs {
+        return fail(
+            "bounds CRS must equal source authority string; reprojection is not implemented",
+        );
+    }
+    let t = layout.transform;
+    let x0 = ((xmin - t[0]) / t[1])
+        .floor()
+        .clamp(0., layout.width as f64) as usize;
+    let x1 = ((xmax - t[0]) / t[1]).ceil().clamp(0., layout.width as f64) as usize;
+    let y0 = ((ymax - t[3]) / t[5])
+        .floor()
+        .clamp(0., layout.height as f64) as usize;
+    let y1 = ((ymin - t[3]) / t[5])
+        .ceil()
+        .clamp(0., layout.height as f64) as usize;
+    Ok((x1 > x0 && y1 > y0).then_some(Window {
+        x: x0,
+        y: y0,
+        width: x1.saturating_sub(x0),
+        height: y1.saturating_sub(y0),
+    }))
+}

@@ -1,0 +1,18 @@
+[tasks.workflow]
+summary = "Implement, validate and evaluate native Zarr acquisition"
+role = "worker"
+prompt = """
+Orient:
+Read architecture and previous decision gates.
+Edit:
+Implement a narrow local Zarr v2
+(time,y,x) dataset workflow using zarrs through existing plan/execute/fetch.
+Preserve native coordinates, values, nodata and attributes. Test against xarray,
+measure store calls, bytes, phases, wall and RSS.
+Verify:
+Keep COG/STAC tests intact.
+Stop at decision gate; no third format, mosaicking, publishing or merging.
+"""
+commit_message = "Add native Zarr acquisition through the shared planner"
+files = { edit = ["src/model.rs", "src/planner.rs", "src/cog.rs", "src/execute.rs", "src/main.rs", "src/lib.rs", "src/zarr.rs", "src/spatial.rs", "src/stac_workflow.rs", "Cargo.toml", "Cargo.lock", "README.md", "tests/planner.rs", "tests/stac_workflow.rs"], create = ["src/zarr_acquire.rs", "tests/zarr_workflow.rs", "examples/zarr_acquire.rs", "bench/zarr_workflow.py", "docs/zarr-workflow.md", "docs/zarr-decision-gate.md"] }
+test_cmd = "cargo test --locked"

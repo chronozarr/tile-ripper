@@ -34,3 +34,17 @@ versions were downgraded to pre-cutoff compatible releases (including paired
 Pest/TLS/derive dependencies); all final registry versions predate 2026-10-11.
 The `bench/check_dependency_ages.py` inventory helper reproduces the check.
 It is still an age/license inventory, not a vulnerability certification.
+
+
+## Zarr milestone
+
+One direct dependency, zarrs =0.22.10, with only filesystem and gzip features,
+adds the maintained Zarr codec/storage implementation. No new workspace crate
+or downloader. Cargo.lock contains 372 registry package versions (47 more than
+the STAC milestone). zarrs_filesystem was pinned transitively to 0.3.13 to keep
+the existing seven-day quarantine; all locked registry versions predate the
+October 11 cutoff. `zarr-dependency-inventory.json` records publication dates,
+licenses and checksums. The Python oracle uses an isolated, frozen environment
+in `bench/zarr-requirements.txt`, installed with the same uv cutoff. Existing
+study and ChronoZarr environments were not changed. This remains an age/license
+inventory, not a vulnerability certification.

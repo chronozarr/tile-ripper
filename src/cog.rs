@@ -27,7 +27,10 @@ impl LayoutCache {
         if fs::metadata(path)?.len() > MAX_CACHE_FILE_BYTES {
             return fail("layout cache file exceeds 32 MiB metadata limit");
         }
-        let entries: HashMap<String, Entry> = serde_json::from_slice(&fs::read(path)?)?;
+        let mut saved: serde_json::Map<String, serde_json::Value> =
+            serde_json::from_slice(&fs::read(path)?)?;
+        saved.retain(|_, e| e["adapter_version"] == 2);
+        let entries: HashMap<String, Entry> = serde_json::from_value(saved.into())?;
         let mut total = 0usize;
         for e in entries.values() {
             total = total
@@ -73,7 +76,7 @@ impl LayoutCache {
         };
         if let (Some(identity), Some(key)) = (&identity, &key) {
             if let Some(entry) = self.entries.get(key) {
-                if entry.adapter_version == 1 && entry.identity == *identity && entry.band == band {
+                if entry.adapter_version == 2 && entry.identity == *identity && entry.band == band {
                     return Ok((entry.layout.clone(), true));
                 }
             }
@@ -93,7 +96,7 @@ impl LayoutCache {
             self.entries.insert(
                 key,
                 Entry {
-                    adapter_version: 1,
+                    adapter_version: 2,
                     identity,
                     band,
                     layout: layout.clone(),
@@ -176,7 +179,7 @@ pub fn inspect(asset: &Asset, band: usize) -> Result<Layout> {
         height,
         transform,
         crs,
-        band,
+        variable: crate::Variable::Band { index: band },
         block: [bx, by],
         dtype: b.band_type().name(),
         nodata: b.no_data_value(),
@@ -185,38 +188,7 @@ pub fn inspect(asset: &Asset, band: usize) -> Result<Layout> {
         tiles,
     })
 }
-/// Outer pixel envelope, clipped to source extent; half-open pixel bounds.
-pub fn window(layout: &Layout, spatial: &Spatial) -> Result<Option<Window>> {
-    let Spatial::Bounds {
-        crs,
-        bbox: [xmin, ymin, xmax, ymax],
-    } = spatial
-    else {
-        return fail("polygon selection is not implemented");
-    };
-    if *crs != layout.crs {
-        return fail(
-            "bounds CRS must equal source authority string; reprojection is not implemented",
-        );
-    }
-    let t = layout.transform;
-    let x0 = ((xmin - t[0]) / t[1])
-        .floor()
-        .clamp(0., layout.width as f64) as usize;
-    let x1 = ((xmax - t[0]) / t[1]).ceil().clamp(0., layout.width as f64) as usize;
-    let y0 = ((ymax - t[3]) / t[5])
-        .floor()
-        .clamp(0., layout.height as f64) as usize;
-    let y1 = ((ymin - t[3]) / t[5])
-        .ceil()
-        .clamp(0., layout.height as f64) as usize;
-    Ok((x1 > x0 && y1 > y0).then_some(Window {
-        x: x0,
-        y: y0,
-        width: x1.saturating_sub(x0),
-        height: y1.saturating_sub(y0),
-    }))
-}
+pub use crate::spatial::window;
 pub fn tiles(layout: &Layout, w: &Window) -> Vec<Tile> {
     layout
         .tiles

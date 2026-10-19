@@ -60,7 +60,7 @@ pub enum Time {
     Interval { start: String, end: String },
     Instants { values: Vec<String> },
 }
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub enum Variable {
     Band { index: usize },
@@ -81,6 +81,9 @@ pub enum Grid {
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub enum Sink {
     Callback,
+    ZarrDirectory {
+        path: String,
+    },
     #[serde(rename = "geotiff_directory")]
     GeoTiffDirectory {
         path: String,
@@ -121,7 +124,7 @@ pub struct Layout {
     pub height: usize,
     pub transform: [f64; 6],
     pub crs: String,
-    pub band: usize,
+    pub variable: Variable,
     pub block: [usize; 2],
     pub dtype: String,
     pub nodata: Option<f64>,
@@ -170,6 +173,8 @@ pub struct Node {
 }
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Selected {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub dimensions: Option<DimensionSelection>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub mask_geometry: Option<serde_json::Value>,
     pub asset_id: String,
@@ -237,4 +242,13 @@ pub enum Reducer {
     Min,
     Max,
     Count,
+}
+
+/// Native multidimensional selection; axis names and indices have no format semantics.
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct DimensionSelection {
+    pub shape: Vec<usize>,
+    pub chunk_shape: Vec<usize>,
+    pub names: Vec<String>,
+    pub indices: Vec<Vec<usize>>,
 }

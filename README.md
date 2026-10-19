@@ -1,11 +1,12 @@
 # Tile-Ripper
 
 A Rust acquisition planner with a working Sentinel-2 STAC-to-pixels workflow,
-a native GeoTIFF reader path, and a planning-only Zarr adapter. One library
-and a thin CLI, with GDAL handling raster I/O/decoding. No ChronoZarr dependency.
+a native GeoTIFF reader path, and a local Zarr v2 acquisition path. One library
+and a thin CLI, with GDAL and zarrs handling storage and decoding. No ChronoZarr dependency.
 
 Start with [the usable STAC workflow](docs/stac-workflow.md) and its
-[decision gate](docs/stac-decision-gate.md). The commands below demonstrate
+[decision gate](docs/stac-decision-gate.md). For Zarr, see the [copyable local acquisition demo](docs/zarr-workflow.md) and
+[Zarr decision gate](docs/zarr-decision-gate.md). The commands below demonstrate
 the older direct-asset prototype. [ADR 0001](docs/0001-acquisition-planner.md)
 and [ADR 0002](docs/0002-stac-workflow.md) describe the preserved design.
 The original [study](study/README.md) remains historical evidence.

@@ -19,7 +19,7 @@ fn masks_preserve_holes_and_use_native_pixel_centers() {
         height: 10,
         transform: [0., 1., 0., 10., 0., -1.],
         crs: "EPSG:32617".into(),
-        band: 1,
+        variable: tile_ripper::Variable::Band { index: 1 },
         block: [16, 16],
         dtype: "UInt16".into(),
         nodata: Some(0.),

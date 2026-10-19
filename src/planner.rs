@@ -62,7 +62,7 @@ impl FormatPlanner for CogPlanner<'_> {
                 .selected_compressed_payload_bytes
                 .zip(payload)
                 .and_then(|(a, b)| a.checked_add(b));
-            p.selected.push(Selected { mask_geometry: mask.as_ref().map(|g| g.json().and_then(|s| serde_json::from_str(&s).map_err(|_| gdal::errors::GdalError::BadArgument("invalid geometry JSON".into())))).transpose()?, asset_id: asset.id.clone(), datetime: asset.datetime.clone(), reason: "direct asset; requested band and bounds intersect native grid; time predicate passed".into(), capabilities: self.capabilities(), layout: Some(layout.clone()), window: window.clone() });
+            p.selected.push(Selected { dimensions: None, mask_geometry: mask.as_ref().map(|g| g.json().and_then(|s| serde_json::from_str(&s).map_err(|_| gdal::errors::GdalError::BadArgument("invalid geometry JSON".into())))).transpose()?, asset_id: asset.id.clone(), datetime: asset.datetime.clone(), reason: "direct asset; requested band and bounds intersect native grid; time predicate passed".into(), capabilities: self.capabilities(), layout: Some(layout.clone()), window: window.clone() });
             let inspect = push(p, request, &asset.id, vec![], Operation::Inspect { cached })?;
             for y in (window.y..window.y + window.height).step_by(request.budget.chunk_edge) {
                 for x in (window.x..window.x + window.width).step_by(request.budget.chunk_edge) {
@@ -139,7 +139,7 @@ fn instant(s: &str) -> Result<chrono::DateTime<chrono::FixedOffset>> {
     chrono::DateTime::parse_from_rfc3339(s)
         .map_err(|_| "time values must be RFC3339 timestamps".into())
 }
-fn time_matches(asset: &Asset, time: &Option<Time>) -> Result<bool> {
+pub(crate) fn time_matches(asset: &Asset, time: &Option<Time>) -> Result<bool> {
     let Some(time) = time else {
         return Ok(true);
     };
@@ -243,18 +243,20 @@ pub fn validate(r: &Request) -> Result<&[Asset]> {
         {
             return fail("unsupported locator scheme");
         }
-        time_matches(a, &r.time)?;
+        if a.format == Format::Cog {
+            time_matches(a, &r.time)?;
+        }
     }
     Ok(assets)
 }
 pub fn plan(request: &Request, cache: &mut LayoutCache) -> Result<Plan> {
     let assets = validate(request)?;
-    let mut p=Plan { schema_version:1,selected:vec![],nodes:vec![],estimates:Estimates {
+    let mut p=Plan { schema_version:2,selected:vec![],nodes:vec![],estimates:Estimates {
         selected_compressed_payload_bytes:Some(0),remote_requests:None,
         note:"Payload estimate excludes headers, masks, GDAL range rounding and repeated tile reads between output chunks; actual request counts require observation".into(),
     },limitations:vec!["No implicit reprojection or compositing".into(),"buffer_bytes caps the returned UInt16 pixel buffer, not process RSS or GDAL codec/cache allocations".into(),"Saved plan is diagnostic; fetch replans from runtime request and validates local identity".into()] };
     for asset in assets {
-        if !time_matches(asset, &request.time)? {
+        if asset.format == Format::Cog && !time_matches(asset, &request.time)? {
             continue;
         }
         match asset.format {

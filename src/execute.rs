@@ -14,17 +14,22 @@ pub struct Chunk {
     pub node_id: usize,
     pub asset_id: String,
     pub datetime: Option<String>,
-    pub band: usize,
+    pub variable: Variable,
+    /// Source indices of nonspatial axes, in the selected dimension order.
+    pub indices: Vec<usize>,
     pub window: Window,
     pub transform: [f64; 6],
     pub crs: String,
     pub nodata: Option<f64>,
     pub scale: Option<f64>,
     pub offset: Option<f64>,
-    pub pixels: Buffer<u16>,
+    pub pixels: Vec<u16>,
 }
 #[derive(Debug, Serialize)]
 pub struct ExecutionReport {
+    /// Observed data-chunk store calls and returned encoded bytes (metadata excluded).
+    pub source_data_requests: Option<u64>,
+    pub source_data_bytes: Option<u64>,
     pub chunks: usize,
     pub decoded_bytes: usize,
     pub non_nodata_pixels: usize,
@@ -60,6 +65,8 @@ pub(crate) fn execute_plan(
         unreachable!()
     };
     let mut report = ExecutionReport {
+        source_data_requests: None,
+        source_data_bytes: None,
         chunks: 0,
         decoded_bytes: 0,
         non_nodata_pixels: 0,
@@ -76,6 +83,10 @@ pub(crate) fn execute_plan(
             .iter()
             .find(|a| a.id == selected.asset_id)
             .ok_or("asset binding missing")?;
+        if asset.format == Format::ZarrV2 {
+            crate::zarr_acquire::execute_selected(r, p, asset, selected, &mut report, &mut sink)?;
+            continue;
+        }
         let layout = selected.layout.as_ref().ok_or("missing layout")?;
         let mask_geometry = selected
             .mask_geometry
@@ -95,7 +106,10 @@ pub(crate) fn execute_plan(
         {
             return fail("asset grid changed since planning");
         }
-        let band = ds.rasterband(layout.band)?;
+        let Variable::Band { index } = layout.variable else {
+            return fail("COG band missing");
+        };
+        let band = ds.rasterband(index)?;
         report.source_open_seconds += open_started.elapsed().as_secs_f64();
         for node in &p.nodes {
             if node.asset_id != asset.id {
@@ -112,7 +126,7 @@ pub(crate) fn execute_plan(
             else {
                 continue;
             };
-            if *band_index != layout.band {
+            if *band_index != index {
                 continue;
             }
             let t = Instant::now();
@@ -149,14 +163,15 @@ pub(crate) fn execute_plan(
                 node_id: node.id,
                 asset_id: asset.id.clone(),
                 datetime: asset.datetime.clone(),
-                band: layout.band,
+                variable: layout.variable.clone(),
+                indices: vec![],
                 window: window.clone(),
                 transform,
                 crs: layout.crs.clone(),
                 nodata: layout.nodata,
                 scale: layout.scale,
                 offset: layout.offset,
-                pixels,
+                pixels: pixels.into_shape_and_vec().1,
             };
             let t = Instant::now();
             sink(chunk)?;
@@ -167,6 +182,9 @@ pub(crate) fn execute_plan(
     Ok(report)
 }
 pub fn fetch(r: &Request, cache: &mut LayoutCache) -> Result<ExecutionReport> {
+    if matches!(r.sink, Sink::ZarrDirectory { .. }) {
+        return crate::zarr_acquire::fetch(r, cache);
+    }
     let Sink::GeoTiffDirectory { path } = &r.sink else {
         return fail("fetch requires a GeoTIFF directory sink; library callers may use execute with a callback");
     };
@@ -204,7 +222,10 @@ pub fn fetch(r: &Request, cache: &mut LayoutCache) -> Result<ExecutionReport> {
         b.write(
             (0, 0),
             (chunk.window.width, chunk.window.height),
-            &mut chunk.pixels,
+            &mut Buffer::new(
+                (chunk.window.width, chunk.window.height),
+                std::mem::take(&mut chunk.pixels),
+            ),
         )?;
         ds.flush_cache()?;
         Ok(())

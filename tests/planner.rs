@@ -124,7 +124,7 @@ fn native_pixels_tiles_georef_cache_and_sink_failure() {
         assert_eq!(c.offset, Some(-0.1));
         for y in 0..16 {
             for x in 0..16 {
-                assert_eq!(c.pixels.data()[y * 16 + x], ((y + 15) * 64 + x + 15) as u16);
+                assert_eq!(c.pixels[y * 16 + x], ((y + 15) * 64 + x + 15) as u16);
             }
         }
         Ok(())
@@ -218,7 +218,7 @@ fn disjoint_and_fractional_bounds_clip_correctly() {
         height: 10,
         transform: [0., 1., 0., 10., 0., -1.],
         crs: "native".into(),
-        band: 1,
+        variable: tile_ripper::Variable::Band { index: 1 },
         block: [4, 4],
         dtype: "UInt16".into(),
         nodata: None,
