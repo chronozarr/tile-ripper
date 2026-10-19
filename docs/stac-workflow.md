@@ -8,7 +8,7 @@ resample bands or create a temporal composite.
 
 ## Build and run the small real example
 
-Use Rust >=1.88, system GDAL with GTiff, curl, GEOS and PROJ available to pkg-config.
+Use Rust 1.92.0 (tested; minimum unverified), system GDAL with GTiff, curl, GEOS and PROJ available to pkg-config.
 The tested versions are recorded with the benchmark evidence. Build with the
 committed dependency lock. The example is a roughly 1 km triangle near Chapel
 Hill, North Carolina, on 2025-07-28, requesting B04 and B08.

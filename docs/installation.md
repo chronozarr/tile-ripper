@@ -22,7 +22,7 @@ It compiles locally and still needs GDAL at runtime. Python is not an acquisitio
 dependency. Tests comparing against xarray/rasterio use separate Python environments.
 
 On Debian/Ubuntu the usual native prerequisites are `build-essential`, `pkg-config`,
-`cmake`, `libgdal-dev` and `gdal-bin`; this milestone did not test a Linux build.
+`cmake`, `libgdal-dev` and `gdal-bin`; the alpha follow-up tested an Ubuntu 24.04 arm64 container with GDAL 3.8.4.
 The locked native codec dependencies compile C/C++ code, so a compiler toolchain
 is required. GDAL must provide GTiff, HTTP/curl, PROJ and GEOS support for the
 advertised STAC workflow. A header/library mismatch or unfindable GDAL should be
@@ -65,3 +65,62 @@ The clean-source test here uses a Git source archive overlaid with the candidate
 changed source files, with no ignored fixture or previous target directory. Cargo's
 local dependency cache and the installed native toolchain were reused. It is not
 a fresh-machine installation test or a byte-for-byte reproducible-build claim.
+
+## Private-alpha candidate diagnostics (2026-10-19)
+
+From the checkout, run `sh scripts/check-environment.sh` before compiling. After
+installation, run `sh scripts/check-environment.sh /absolute/path/to/tile-ripper`.
+This catches absent tools, GTiff support and a binary that cannot load its runtime.
+It is not a remote-source compatibility test. See the [current alpha gate](alpha/readiness.md).
+
+For a reversible isolated installation:
+
+```sh
+cargo install --path . --locked --root "$HOME/.local/tile-ripper-alpha"
+"$HOME/.local/tile-ripper-alpha/bin/tile-ripper" --help
+# Uninstall only this prefix's Tile-Ripper:
+cargo uninstall --root "$HOME/.local/tile-ripper-alpha" tile-ripper
+```
+
+Cargo's registry cache, build target, request files, explicit `--cache` files and
+acquired datasets remain separate. Remove only the specific test directories you
+created after inspection; uninstall does not delete scientific outputs or system
+GDAL. No service, startup task or scheduler is installed.
+
+For Ubuntu/Debian, install prerequisites before using the same Cargo command:
+
+```sh
+sudo apt-get update
+sudo apt-get install build-essential pkg-config cmake libgdal-dev gdal-bin ca-certificates curl
+```
+
+Install Rust 1.92.0 through the official Rust installer if it is absent; a distro's
+Cargo may be too old for this lockfile. Do not silently regenerate Cargo.lock.
+Linux container validation status is recorded in the current gate, separately from macOS.
+Homebrew users also need Apple's command-line developer tools (`xcode-select --install`)
+if a C/C++ compiler is missing. The macOS test reused installed Homebrew GDAL;
+it did not test provisioning a fresh operating system.
+
+If gdal-sys cannot locate GDAL, inspect `gdal-config --version`,
+`gdal-config --cflags` and `gdal-config --libs`. Check that the selected compiler,
+headers and libraries come from the same prefix/architecture. The binding supports
+`GDAL_HOME`, `GDAL_LIB_DIR` and `GDAL_INCLUDE_DIR`; consult its
+[build documentation](https://github.com/georust/gdal/blob/master/README.md).
+Do not point at a different installation just to suppress the error.
+
+`Library not loaded: …libgdal…` on macOS or `libgdal.so…: cannot open shared object`
+on Linux happens before Rust can print diagnostics. Use the shell check above,
+`otool -L /path/to/tile-ripper` (macOS), or `ldd /path/to/tile-ripper` (Linux).
+Restore a consistent system GDAL installation and rebuild Tile-Ripper after an ABI
+upgrade. Do not copy/symlink a differently versioned library into place. A
+`GDAL could not open asset` error can also mean missing HTTP support, TLS/network
+failure, or an inaccessible object. First verify `gdalinfo --formats` and a small
+local GeoTIFF; source locators are intentionally omitted from runtime errors.
+
+Conda-forge is a future option, not a delivered Tile-Ripper package. GDAL itself
+is available there (`conda install -c conda-forge gdal`), but a Tile-Ripper recipe
+would need compiler variants, runtime pinning, licenses and platform CI. Mixing
+Conda and Homebrew libraries is not a supported alpha setup. Prebuilt executables
+and bundled GDAL are deferred: current linkage includes many transitive libraries
+and data resources, with unresolved redistribution notices. No new package manager
+channel is needed for this source-only candidate.

@@ -1,0 +1,1595 @@
+{
+  "plan": {
+    "schema_version": 3,
+    "selected": [
+      {
+        "timestamps": [
+          "1959-01-01T00:00:00+00:00",
+          "1959-01-01T06:00:00+00:00"
+        ],
+        "dimensions": {
+          "shape": [
+            93544,
+            64,
+            32
+          ],
+          "chunk_shape": [
+            100,
+            64,
+            32
+          ],
+          "names": [
+            "time",
+            "longitude",
+            "latitude"
+          ],
+          "indices": [
+            [
+              0,
+              1
+            ],
+            [
+              2,
+              3,
+              4
+            ],
+            [
+              21,
+              22,
+              23,
+              24
+            ]
+          ]
+        },
+        "asset_id": "subset",
+        "datetime": null,
+        "reason": "native coordinate selection: 2m_temperature",
+        "capabilities": {
+          "selection": [
+            "native bounds, time, variables"
+          ],
+          "reads": [
+            "chunk_object"
+          ],
+          "decoding": "zarrs",
+          "compression": "none/gzip/Blosc LZ4 or Zstd; shuffle/bitshuffle; admitted Float32 fixedscaleoffset",
+          "materialization": true
+        },
+        "layout": {
+          "width": 64,
+          "height": 32,
+          "transform": [
+            -2.8125,
+            5.625,
+            0.0,
+            -90.00000000000003,
+            0.0,
+            5.625000000000014
+          ],
+          "crs": "EPSG:4326",
+          "variable": {
+            "kind": "dataset",
+            "path": "2m_temperature"
+          },
+          "block": [
+            64,
+            32
+          ],
+          "dtype": "<f4",
+          "nodata": null,
+          "scale": null,
+          "offset": null,
+          "tiles": []
+        },
+        "window": {
+          "x": 2,
+          "y": 21,
+          "width": 3,
+          "height": 4
+        }
+      }
+    ],
+    "nodes": [
+      {
+        "id": 0,
+        "dependencies": [],
+        "asset_id": "subset",
+        "operation": {
+          "kind": "inspect",
+          "cached": false
+        }
+      },
+      {
+        "id": 1,
+        "dependencies": [
+          0
+        ],
+        "asset_id": "subset",
+        "operation": {
+          "kind": "read",
+          "read": {
+            "kind": "chunk_object",
+            "key": "2m_temperature/0.0.0",
+            "indices": [
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      },
+      {
+        "id": 2,
+        "dependencies": [
+          1
+        ],
+        "asset_id": "subset",
+        "operation": {
+          "kind": "decode",
+          "reader": "zarrs"
+        }
+      },
+      {
+        "id": 3,
+        "dependencies": [
+          2
+        ],
+        "asset_id": "subset",
+        "operation": {
+          "kind": "write",
+          "output": "subset/2m_temperature"
+        }
+      }
+    ],
+    "estimates": {
+      "selected_compressed_payload_bytes": 580139,
+      "remote_requests": null,
+      "note": "Payload estimate excludes headers, masks, GDAL range rounding and repeated tile reads between output chunks; actual request counts require observation"
+    },
+    "limitations": [
+      "No implicit reprojection or compositing",
+      "buffer_bytes bounds admitted native sample/chunk payloads, not process RSS or external codec/cache scratch",
+      "Diagnostic JSON is not executable; use prepared runtime bindings or prepare anew from the request",
+      "Conventional geographic profile: EPSG:4326 is the profile's interpretation of named latitude/longitude centers in degrees, not a source-declared datum. Coordinates are preserved without transformation; precise datum-dependent uses require provider verification.",
+      "Zarr v2: custom UInt16 grid or conventional Float32 geographic axes; time first; native bounds; validated bounded codecs; selected source chunks retrieved once; native fill. No calibration, mosaicking or reprojection. Buffer budget is not a process RSS ceiling. Geographic output dimensions normalize to time/latitude/longitude with source axis order recorded in plan."
+    ]
+  },
+  "observed": {
+    "source_reads": [
+      {
+        "asset_id": "subset",
+        "key": "2m_temperature/0.0.0",
+        "requests": 1,
+        "bytes": 580139
+      }
+    ],
+    "transport": {
+      "subset": {
+        "phases": {
+          "execution": {
+            "GET 2m_temperature/0.0.0": {
+              "seconds": 0.069949416,
+              "attempts": 1,
+              "bytes": 580139,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            }
+          },
+          "output_finalization": {},
+          "planning": {
+            "GET .zmetadata": {
+              "seconds": 0.133826,
+              "attempts": 1,
+              "bytes": 57929,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "GET 2m_temperature/zarr.json": {
+              "seconds": 0.041857041,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "404": 1
+              }
+            },
+            "GET latitude/0": {
+              "seconds": 0.047908708,
+              "attempts": 1,
+              "bytes": 169,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "GET latitude/zarr.json": {
+              "seconds": 0.031406166,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "404": 1
+              }
+            },
+            "GET longitude/0": {
+              "seconds": 0.036021166,
+              "attempts": 1,
+              "bytes": 192,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "GET longitude/zarr.json": {
+              "seconds": 0.031371458,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "404": 1
+              }
+            },
+            "GET time/0": {
+              "seconds": 0.033781833,
+              "attempts": 1,
+              "bytes": 3326,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "GET time/1": {
+              "seconds": 0.030598292,
+              "attempts": 1,
+              "bytes": 3371,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "GET time/2": {
+              "seconds": 0.035346458,
+              "attempts": 1,
+              "bytes": 3076,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "GET time/3": {
+              "seconds": 0.034669459,
+              "attempts": 1,
+              "bytes": 3374,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "GET time/zarr.json": {
+              "seconds": 0.036162542,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "404": 1
+              }
+            },
+            "GET zarr.json": {
+              "seconds": 0.036134167,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "404": 1
+              }
+            },
+            "HEAD 2m_temperature/0.0.0": {
+              "seconds": 0.03621525,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            }
+          },
+          "post_execution_validation": {
+            "HEAD .zmetadata": {
+              "seconds": 0.015734792,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "HEAD latitude/0": {
+              "seconds": 0.015772,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "HEAD longitude/0": {
+              "seconds": 0.015714125,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "HEAD time/0": {
+              "seconds": 0.015547375,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "HEAD time/1": {
+              "seconds": 0.015647458,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "HEAD time/2": {
+              "seconds": 0.015596625,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "HEAD time/3": {
+              "seconds": 0.015477083,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            }
+          },
+          "pre_execution_validation": {
+            "HEAD .zmetadata": {
+              "seconds": 0.015590959,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "HEAD latitude/0": {
+              "seconds": 0.01562625,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "HEAD longitude/0": {
+              "seconds": 0.0156125,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "HEAD time/0": {
+              "seconds": 0.015624375,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "HEAD time/1": {
+              "seconds": 0.015875958,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "HEAD time/2": {
+              "seconds": 0.01550125,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "HEAD time/3": {
+              "seconds": 0.016538666,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            }
+          },
+          "prepare_validation": {
+            "HEAD .zmetadata": {
+              "seconds": 0.015967417,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "HEAD latitude/0": {
+              "seconds": 0.016827916,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "HEAD longitude/0": {
+              "seconds": 0.016347375,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "HEAD time/0": {
+              "seconds": 0.017796458,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "HEAD time/1": {
+              "seconds": 0.015952208,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "HEAD time/2": {
+              "seconds": 0.016830375,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "HEAD time/3": {
+              "seconds": 0.015896958,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            }
+          }
+        },
+        "requests": 35,
+        "bytes": 651576,
+        "retries": 0,
+        "seconds": 0.9706615379999999,
+        "objects": {
+          "GET .zmetadata": {
+            "seconds": 0.133826541,
+            "attempts": 1,
+            "bytes": 57929,
+            "retries": 0,
+            "statuses": {
+              "200": 1
+            }
+          },
+          "GET 2m_temperature/0.0.0": {
+            "seconds": 0.069955125,
+            "attempts": 1,
+            "bytes": 580139,
+            "retries": 0,
+            "statuses": {
+              "200": 1
+            }
+          },
+          "GET 2m_temperature/zarr.json": {
+            "seconds": 0.041857541,
+            "attempts": 1,
+            "bytes": 0,
+            "retries": 0,
+            "statuses": {
+              "404": 1
+            }
+          },
+          "GET latitude/0": {
+            "seconds": 0.047909208,
+            "attempts": 1,
+            "bytes": 169,
+            "retries": 0,
+            "statuses": {
+              "200": 1
+            }
+          },
+          "GET latitude/zarr.json": {
+            "seconds": 0.031406791,
+            "attempts": 1,
+            "bytes": 0,
+            "retries": 0,
+            "statuses": {
+              "404": 1
+            }
+          },
+          "GET longitude/0": {
+            "seconds": 0.036021708,
+            "attempts": 1,
+            "bytes": 192,
+            "retries": 0,
+            "statuses": {
+              "200": 1
+            }
+          },
+          "GET longitude/zarr.json": {
+            "seconds": 0.031372041,
+            "attempts": 1,
+            "bytes": 0,
+            "retries": 0,
+            "statuses": {
+              "404": 1
+            }
+          },
+          "GET time/0": {
+            "seconds": 0.033782458,
+            "attempts": 1,
+            "bytes": 3326,
+            "retries": 0,
+            "statuses": {
+              "200": 1
+            }
+          },
+          "GET time/1": {
+            "seconds": 0.030598708,
+            "attempts": 1,
+            "bytes": 3371,
+            "retries": 0,
+            "statuses": {
+              "200": 1
+            }
+          },
+          "GET time/2": {
+            "seconds": 0.035346833,
+            "attempts": 1,
+            "bytes": 3076,
+            "retries": 0,
+            "statuses": {
+              "200": 1
+            }
+          },
+          "GET time/3": {
+            "seconds": 0.034670125,
+            "attempts": 1,
+            "bytes": 3374,
+            "retries": 0,
+            "statuses": {
+              "200": 1
+            }
+          },
+          "GET time/zarr.json": {
+            "seconds": 0.036163167,
+            "attempts": 1,
+            "bytes": 0,
+            "retries": 0,
+            "statuses": {
+              "404": 1
+            }
+          },
+          "GET zarr.json": {
+            "seconds": 0.0361345,
+            "attempts": 1,
+            "bytes": 0,
+            "retries": 0,
+            "statuses": {
+              "404": 1
+            }
+          },
+          "HEAD .zmetadata": {
+            "seconds": 0.047295167,
+            "attempts": 3,
+            "bytes": 0,
+            "retries": 0,
+            "statuses": {
+              "200": 3
+            }
+          },
+          "HEAD 2m_temperature/0.0.0": {
+            "seconds": 0.036215875,
+            "attempts": 1,
+            "bytes": 0,
+            "retries": 0,
+            "statuses": {
+              "200": 1
+            }
+          },
+          "HEAD latitude/0": {
+            "seconds": 0.048228415999999996,
+            "attempts": 3,
+            "bytes": 0,
+            "retries": 0,
+            "statuses": {
+              "200": 3
+            }
+          },
+          "HEAD longitude/0": {
+            "seconds": 0.047676624,
+            "attempts": 3,
+            "bytes": 0,
+            "retries": 0,
+            "statuses": {
+              "200": 3
+            }
+          },
+          "HEAD time/0": {
+            "seconds": 0.048970125,
+            "attempts": 3,
+            "bytes": 0,
+            "retries": 0,
+            "statuses": {
+              "200": 3
+            }
+          },
+          "HEAD time/1": {
+            "seconds": 0.047478665,
+            "attempts": 3,
+            "bytes": 0,
+            "retries": 0,
+            "statuses": {
+              "200": 3
+            }
+          },
+          "HEAD time/2": {
+            "seconds": 0.0479305,
+            "attempts": 3,
+            "bytes": 0,
+            "retries": 0,
+            "statuses": {
+              "200": 3
+            }
+          },
+          "HEAD time/3": {
+            "seconds": 0.047915,
+            "attempts": 3,
+            "bytes": 0,
+            "retries": 0,
+            "statuses": {
+              "200": 3
+            }
+          }
+        },
+        "cached_metadata_bytes": 13508,
+        "metadata_overlay_bytes": 20997,
+        "cache_limit_bytes": 16777216,
+        "object_identities": 8
+      }
+    },
+    "decoded_source_chunks": 1,
+    "filled_source_chunks": 0,
+    "first_output_seconds": 0.245081417,
+    "assembly_seconds": 2.666e-06,
+    "source_retrieval_seconds": 0.06996129100000001,
+    "allocation_seconds": 3.75e-07,
+    "copying_seconds": 3.33e-07,
+    "output_setup_seconds": 0.058902041,
+    "output_finalize_seconds": 0.008047834,
+    "output_io": {
+      "reads": 2,
+      "writes": 14,
+      "bytes_read": 0,
+      "bytes_written": 1930,
+      "buffered_bytes_peak": 96,
+      "storage_read_seconds": 5.1709e-05,
+      "storage_write_seconds": 0.065616167,
+      "encode_seconds": 9.997999999997176e-06,
+      "allocation_seconds": 5.9458e-05,
+      "copying_seconds": 1.25e-07
+    },
+    "native_materialized_bytes": 819200,
+    "source_data_requests": 1,
+    "source_data_bytes": 580139,
+    "chunks": 2,
+    "decoded_bytes": 96,
+    "non_nodata_pixels": 24,
+    "planning_seconds": 0.709518208,
+    "source_open_seconds": 0.000901791,
+    "read_decode_seconds": 0.0705275,
+    "sink_seconds": 6.5125e-05,
+    "masking_seconds": 0.0,
+    "remote_requests": null,
+    "remote_bytes": null
+  },
+  "sources": [
+    {
+      "asset_id": "subset",
+      "format": "zarr_v2",
+      "reference": "https://storage.googleapis.com/weatherbench2/datasets/era5/1959-2023_01_10-6h-64x32_equiangular_conservative.zarr/",
+      "datetime": null,
+      "object_version": null,
+      "local_identity": [],
+      "object_identities": {
+        ".zmetadata": {
+          "etag": "\"941ab0a7d533321c380fef35370f6397\"",
+          "size": 57929,
+          "metadata": true
+        },
+        "2m_temperature/0.0.0": {
+          "etag": "\"1bb59cfceabe97e956942a5e00a44587\"",
+          "size": 580139,
+          "metadata": false
+        },
+        "latitude/0": {
+          "etag": "\"6470dbca7d693e80fb42415f13b714d4\"",
+          "size": 169,
+          "metadata": true
+        },
+        "longitude/0": {
+          "etag": "\"c52dff6a23a7a6006074f2a926238b20\"",
+          "size": 192,
+          "metadata": true
+        },
+        "time/0": {
+          "etag": "\"a705e06600cda3e64b4e605f693867ea\"",
+          "size": 3326,
+          "metadata": true
+        },
+        "time/1": {
+          "etag": "\"51d440bade9915bfbe2592b905814dad\"",
+          "size": 3371,
+          "metadata": true
+        },
+        "time/2": {
+          "etag": "\"68f97cbd89662abffd1f49abdc8cbd48\"",
+          "size": 3076,
+          "metadata": true
+        },
+        "time/3": {
+          "etag": "\"baace251c4fbc835cb7c515b8707d5d0\"",
+          "size": 3374,
+          "metadata": true
+        }
+      },
+      "version_validation": "conditional ETag"
+    }
+  ],
+  "source_metadata": {
+    "subset": {
+      "group_attributes": {},
+      "arrays": {
+        "2m_temperature": {
+          "metadata": {
+            "chunks": [
+              100,
+              64,
+              32
+            ],
+            "compressor": {
+              "blocksize": 0,
+              "clevel": 5,
+              "cname": "lz4",
+              "id": "blosc",
+              "shuffle": 1
+            },
+            "dtype": "<f4",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+              93544,
+              64,
+              32
+            ],
+            "zarr_format": 2
+          },
+          "attributes": {
+            "_ARRAY_DIMENSIONS": [
+              "time",
+              "longitude",
+              "latitude"
+            ],
+            "long_name": "2 metre temperature",
+            "short_name": "t2m",
+            "units": "K"
+          }
+        }
+      }
+    }
+  },
+  "decisions": "source storage filters decoded once; output has no repeat quantization; subset geospatial/time extent fields recalculated; original metadata retained; native logical values; no calibration; missing chunks fill; coordinates subset in source order; local sources must remain immutable during operation",
+  "schema_version": 3,
+  "document_type": "acquisition_result",
+  "status": "complete",
+  "outputs": [
+    {
+      "asset_id": "subset",
+      "variable": {
+        "kind": "dataset",
+        "path": "2m_temperature"
+      },
+      "timestamps": [
+        "1959-01-01T00:00:00+00:00",
+        "1959-01-01T06:00:00+00:00"
+      ],
+      "window": {
+        "x": 2,
+        "y": 21,
+        "width": 3,
+        "height": 4
+      },
+      "native_grid": {
+        "crs": "EPSG:4326",
+        "transform": [
+          8.4375,
+          5.625,
+          0.0,
+          28.12500000000027,
+          0.0,
+          5.625000000000014
+        ]
+      },
+      "dtype": "float32",
+      "native_dtype": "<f4",
+      "nodata": null,
+      "scale": null,
+      "offset": null,
+      "aoi_mask_applied": false,
+      "file": "subset.zarr",
+      "validity": "NaN is invalid; raw Float32 preserved",
+      "dimensions": {
+        "names": [
+          "time",
+          "latitude",
+          "longitude"
+        ],
+        "shape": [
+          2,
+          4,
+          3
+        ]
+      },
+      "dataset": "2m_temperature"
+    }
+  ],
+  "inspection": {
+    "schema_version": 3,
+    "document_type": "inspection_only",
+    "saved_plan_execution_supported": false,
+    "sources": [
+      {
+        "asset_id": "subset",
+        "format": "zarr_v2",
+        "reference": "https://storage.googleapis.com/weatherbench2/datasets/era5/1959-2023_01_10-6h-64x32_equiangular_conservative.zarr/",
+        "datetime": null,
+        "object_version": null,
+        "local_identity": [],
+        "object_identities": {
+          ".zmetadata": {
+            "etag": "\"941ab0a7d533321c380fef35370f6397\"",
+            "size": 57929,
+            "metadata": true
+          },
+          "2m_temperature/0.0.0": {
+            "etag": "\"1bb59cfceabe97e956942a5e00a44587\"",
+            "size": 580139,
+            "metadata": false
+          },
+          "latitude/0": {
+            "etag": "\"6470dbca7d693e80fb42415f13b714d4\"",
+            "size": 169,
+            "metadata": true
+          },
+          "longitude/0": {
+            "etag": "\"c52dff6a23a7a6006074f2a926238b20\"",
+            "size": 192,
+            "metadata": true
+          },
+          "time/0": {
+            "etag": "\"a705e06600cda3e64b4e605f693867ea\"",
+            "size": 3326,
+            "metadata": true
+          },
+          "time/1": {
+            "etag": "\"51d440bade9915bfbe2592b905814dad\"",
+            "size": 3371,
+            "metadata": true
+          },
+          "time/2": {
+            "etag": "\"68f97cbd89662abffd1f49abdc8cbd48\"",
+            "size": 3076,
+            "metadata": true
+          },
+          "time/3": {
+            "etag": "\"baace251c4fbc835cb7c515b8707d5d0\"",
+            "size": 3374,
+            "metadata": true
+          }
+        },
+        "version_validation": "conditional ETag"
+      }
+    ],
+    "discovery": {
+      "seconds": 0.0,
+      "kind": "explicit_assets",
+      "selected_assets": 1
+    },
+    "planning_seconds": 0.709518208,
+    "plan": {
+      "schema_version": 3,
+      "selected": [
+        {
+          "timestamps": [
+            "1959-01-01T00:00:00+00:00",
+            "1959-01-01T06:00:00+00:00"
+          ],
+          "dimensions": {
+            "shape": [
+              93544,
+              64,
+              32
+            ],
+            "chunk_shape": [
+              100,
+              64,
+              32
+            ],
+            "names": [
+              "time",
+              "longitude",
+              "latitude"
+            ],
+            "indices": [
+              [
+                0,
+                1
+              ],
+              [
+                2,
+                3,
+                4
+              ],
+              [
+                21,
+                22,
+                23,
+                24
+              ]
+            ]
+          },
+          "asset_id": "subset",
+          "datetime": null,
+          "reason": "native coordinate selection: 2m_temperature",
+          "capabilities": {
+            "selection": [
+              "native bounds, time, variables"
+            ],
+            "reads": [
+              "chunk_object"
+            ],
+            "decoding": "zarrs",
+            "compression": "none/gzip/Blosc LZ4 or Zstd; shuffle/bitshuffle; admitted Float32 fixedscaleoffset",
+            "materialization": true
+          },
+          "layout": {
+            "width": 64,
+            "height": 32,
+            "transform": [
+              -2.8125,
+              5.625,
+              0.0,
+              -90.00000000000003,
+              0.0,
+              5.625000000000014
+            ],
+            "crs": "EPSG:4326",
+            "variable": {
+              "kind": "dataset",
+              "path": "2m_temperature"
+            },
+            "block": [
+              64,
+              32
+            ],
+            "dtype": "<f4",
+            "nodata": null,
+            "scale": null,
+            "offset": null,
+            "tiles": []
+          },
+          "window": {
+            "x": 2,
+            "y": 21,
+            "width": 3,
+            "height": 4
+          }
+        }
+      ],
+      "nodes": [
+        {
+          "id": 0,
+          "dependencies": [],
+          "asset_id": "subset",
+          "operation": {
+            "kind": "inspect",
+            "cached": false
+          }
+        },
+        {
+          "id": 1,
+          "dependencies": [
+            0
+          ],
+          "asset_id": "subset",
+          "operation": {
+            "kind": "read",
+            "read": {
+              "kind": "chunk_object",
+              "key": "2m_temperature/0.0.0",
+              "indices": [
+                0,
+                0,
+                0
+              ]
+            }
+          }
+        },
+        {
+          "id": 2,
+          "dependencies": [
+            1
+          ],
+          "asset_id": "subset",
+          "operation": {
+            "kind": "decode",
+            "reader": "zarrs"
+          }
+        },
+        {
+          "id": 3,
+          "dependencies": [
+            2
+          ],
+          "asset_id": "subset",
+          "operation": {
+            "kind": "write",
+            "output": "subset/2m_temperature"
+          }
+        }
+      ],
+      "estimates": {
+        "selected_compressed_payload_bytes": 580139,
+        "remote_requests": null,
+        "note": "Payload estimate excludes headers, masks, GDAL range rounding and repeated tile reads between output chunks; actual request counts require observation"
+      },
+      "limitations": [
+        "No implicit reprojection or compositing",
+        "buffer_bytes bounds admitted native sample/chunk payloads, not process RSS or external codec/cache scratch",
+        "Diagnostic JSON is not executable; use prepared runtime bindings or prepare anew from the request",
+        "Conventional geographic profile: EPSG:4326 is the profile's interpretation of named latitude/longitude centers in degrees, not a source-declared datum. Coordinates are preserved without transformation; precise datum-dependent uses require provider verification.",
+        "Zarr v2: custom UInt16 grid or conventional Float32 geographic axes; time first; native bounds; validated bounded codecs; selected source chunks retrieved once; native fill. No calibration, mosaicking or reprojection. Buffer budget is not a process RSS ceiling. Geographic output dimensions normalize to time/latitude/longitude with source axis order recorded in plan."
+      ]
+    },
+    "expected_reads": {
+      "local_library_reads": 0,
+      "remote_library_reads": 1,
+      "note": "estimates of library calls; COG HTTP grouping is controlled by GDAL; Zarr data keys are exact, metadata/coordinate reads excluded"
+    },
+    "transformations": [],
+    "unsupported_operations": [],
+    "observed_planning": {
+      "discovery_seconds": 0.0,
+      "metadata_and_plan_seconds": 0.709518208
+    },
+    "output_strategy": "zarr_groups",
+    "expected_outputs": [
+      {
+        "asset_id": "subset",
+        "variable": {
+          "kind": "dataset",
+          "path": "2m_temperature"
+        },
+        "timestamps": [
+          "1959-01-01T00:00:00+00:00",
+          "1959-01-01T06:00:00+00:00"
+        ],
+        "window": {
+          "x": 2,
+          "y": 21,
+          "width": 3,
+          "height": 4
+        },
+        "native_grid": {
+          "crs": "EPSG:4326",
+          "transform": [
+            8.4375,
+            5.625,
+            0.0,
+            28.12500000000027,
+            0.0,
+            5.625000000000014
+          ]
+        },
+        "dtype": "float32",
+        "native_dtype": "<f4",
+        "nodata": null,
+        "scale": null,
+        "offset": null,
+        "aoi_mask_applied": false,
+        "file": "subset.zarr",
+        "validity": "NaN is invalid; raw Float32 preserved",
+        "dimensions": {
+          "names": [
+            "time",
+            "latitude",
+            "longitude"
+          ],
+          "shape": [
+            2,
+            4,
+            3
+          ]
+        },
+        "dataset": "2m_temperature"
+      }
+    ],
+    "metadata_cache": [
+      {
+        "asset_id": "subset",
+        "cached": false
+      }
+    ],
+    "transport": {
+      "subset": {
+        "phases": {
+          "planning": {
+            "GET .zmetadata": {
+              "seconds": 0.133826,
+              "attempts": 1,
+              "bytes": 57929,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "GET 2m_temperature/zarr.json": {
+              "seconds": 0.041857041,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "404": 1
+              }
+            },
+            "GET latitude/0": {
+              "seconds": 0.047908708,
+              "attempts": 1,
+              "bytes": 169,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "GET latitude/zarr.json": {
+              "seconds": 0.031406166,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "404": 1
+              }
+            },
+            "GET longitude/0": {
+              "seconds": 0.036021166,
+              "attempts": 1,
+              "bytes": 192,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "GET longitude/zarr.json": {
+              "seconds": 0.031371458,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "404": 1
+              }
+            },
+            "GET time/0": {
+              "seconds": 0.033781833,
+              "attempts": 1,
+              "bytes": 3326,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "GET time/1": {
+              "seconds": 0.030598292,
+              "attempts": 1,
+              "bytes": 3371,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "GET time/2": {
+              "seconds": 0.035346458,
+              "attempts": 1,
+              "bytes": 3076,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "GET time/3": {
+              "seconds": 0.034669459,
+              "attempts": 1,
+              "bytes": 3374,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "GET time/zarr.json": {
+              "seconds": 0.036162542,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "404": 1
+              }
+            },
+            "GET zarr.json": {
+              "seconds": 0.036134167,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "404": 1
+              }
+            },
+            "HEAD 2m_temperature/0.0.0": {
+              "seconds": 0.03621525,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            }
+          },
+          "prepare_validation": {
+            "HEAD .zmetadata": {
+              "seconds": 0.015967417,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "HEAD latitude/0": {
+              "seconds": 0.016827916,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "HEAD longitude/0": {
+              "seconds": 0.016347375,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "HEAD time/0": {
+              "seconds": 0.017796458,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "HEAD time/1": {
+              "seconds": 0.015952208,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "HEAD time/2": {
+              "seconds": 0.016830375,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "HEAD time/3": {
+              "seconds": 0.015896958,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            }
+          }
+        },
+        "requests": 20,
+        "bytes": 71437,
+        "retries": 0,
+        "seconds": 0.6808785809999999,
+        "objects": {
+          "GET .zmetadata": {
+            "seconds": 0.133826541,
+            "attempts": 1,
+            "bytes": 57929,
+            "retries": 0,
+            "statuses": {
+              "200": 1
+            }
+          },
+          "GET 2m_temperature/zarr.json": {
+            "seconds": 0.041857541,
+            "attempts": 1,
+            "bytes": 0,
+            "retries": 0,
+            "statuses": {
+              "404": 1
+            }
+          },
+          "GET latitude/0": {
+            "seconds": 0.047909208,
+            "attempts": 1,
+            "bytes": 169,
+            "retries": 0,
+            "statuses": {
+              "200": 1
+            }
+          },
+          "GET latitude/zarr.json": {
+            "seconds": 0.031406791,
+            "attempts": 1,
+            "bytes": 0,
+            "retries": 0,
+            "statuses": {
+              "404": 1
+            }
+          },
+          "GET longitude/0": {
+            "seconds": 0.036021708,
+            "attempts": 1,
+            "bytes": 192,
+            "retries": 0,
+            "statuses": {
+              "200": 1
+            }
+          },
+          "GET longitude/zarr.json": {
+            "seconds": 0.031372041,
+            "attempts": 1,
+            "bytes": 0,
+            "retries": 0,
+            "statuses": {
+              "404": 1
+            }
+          },
+          "GET time/0": {
+            "seconds": 0.033782458,
+            "attempts": 1,
+            "bytes": 3326,
+            "retries": 0,
+            "statuses": {
+              "200": 1
+            }
+          },
+          "GET time/1": {
+            "seconds": 0.030598708,
+            "attempts": 1,
+            "bytes": 3371,
+            "retries": 0,
+            "statuses": {
+              "200": 1
+            }
+          },
+          "GET time/2": {
+            "seconds": 0.035346833,
+            "attempts": 1,
+            "bytes": 3076,
+            "retries": 0,
+            "statuses": {
+              "200": 1
+            }
+          },
+          "GET time/3": {
+            "seconds": 0.034670125,
+            "attempts": 1,
+            "bytes": 3374,
+            "retries": 0,
+            "statuses": {
+              "200": 1
+            }
+          },
+          "GET time/zarr.json": {
+            "seconds": 0.036163167,
+            "attempts": 1,
+            "bytes": 0,
+            "retries": 0,
+            "statuses": {
+              "404": 1
+            }
+          },
+          "GET zarr.json": {
+            "seconds": 0.0361345,
+            "attempts": 1,
+            "bytes": 0,
+            "retries": 0,
+            "statuses": {
+              "404": 1
+            }
+          },
+          "HEAD .zmetadata": {
+            "seconds": 0.015968125,
+            "attempts": 1,
+            "bytes": 0,
+            "retries": 0,
+            "statuses": {
+              "200": 1
+            }
+          },
+          "HEAD 2m_temperature/0.0.0": {
+            "seconds": 0.036215875,
+            "attempts": 1,
+            "bytes": 0,
+            "retries": 0,
+            "statuses": {
+              "200": 1
+            }
+          },
+          "HEAD latitude/0": {
+            "seconds": 0.016828833,
+            "attempts": 1,
+            "bytes": 0,
+            "retries": 0,
+            "statuses": {
+              "200": 1
+            }
+          },
+          "HEAD longitude/0": {
+            "seconds": 0.016348208,
+            "attempts": 1,
+            "bytes": 0,
+            "retries": 0,
+            "statuses": {
+              "200": 1
+            }
+          },
+          "HEAD time/0": {
+            "seconds": 0.017797167,
+            "attempts": 1,
+            "bytes": 0,
+            "retries": 0,
+            "statuses": {
+              "200": 1
+            }
+          },
+          "HEAD time/1": {
+            "seconds": 0.015953541,
+            "attempts": 1,
+            "bytes": 0,
+            "retries": 0,
+            "statuses": {
+              "200": 1
+            }
+          },
+          "HEAD time/2": {
+            "seconds": 0.016831042,
+            "attempts": 1,
+            "bytes": 0,
+            "retries": 0,
+            "statuses": {
+              "200": 1
+            }
+          },
+          "HEAD time/3": {
+            "seconds": 0.0158975,
+            "attempts": 1,
+            "bytes": 0,
+            "retries": 0,
+            "statuses": {
+              "200": 1
+            }
+          }
+        },
+        "cached_metadata_bytes": 13508,
+        "metadata_overlay_bytes": 20997,
+        "cache_limit_bytes": 16777216,
+        "object_identities": 8
+      }
+    },
+    "logical_request": {
+      "spatial": {
+        "kind": "bounds",
+        "crs": "EPSG:4326",
+        "bbox": [
+          10.0,
+          30.0,
+          25.0,
+          50.0
+        ]
+      },
+      "time": {
+        "kind": "interval",
+        "start": "1959-01-01T00:00:00Z",
+        "end": "1959-01-01T06:00:00Z"
+      },
+      "variables": [
+        {
+          "kind": "dataset",
+          "path": "2m_temperature"
+        }
+      ],
+      "grid": {
+        "kind": "native"
+      }
+    },
+    "output_estimates": {
+      "native_value_bytes": 96,
+      "encoded_file_bytes": null,
+      "note": "estimate of native value payload only; coordinates, metadata, encoding, and filesystem overhead excluded; encoded output size unknown"
+    }
+  },
+  "processing": [
+    "native stored values; no calibration",
+    "native grids and coordinates; no reprojection, interpolation, mosaic or composite",
+    "source nodata preserved; explicit pixel-center AOI masks for COG",
+    "missing Zarr chunks use native fill; corrupt objects fail"
+  ],
+  "limitations": [
+    "No implicit reprojection or compositing",
+    "buffer_bytes bounds admitted native sample/chunk payloads, not process RSS or external codec/cache scratch",
+    "Diagnostic JSON is not executable; use prepared runtime bindings or prepare anew from the request",
+    "Conventional geographic profile: EPSG:4326 is the profile's interpretation of named latitude/longitude centers in degrees, not a source-declared datum. Coordinates are preserved without transformation; precise datum-dependent uses require provider verification.",
+    "Zarr v2: custom UInt16 grid or conventional Float32 geographic axes; time first; native bounds; validated bounded codecs; selected source chunks retrieved once; native fill. No calibration, mosaicking or reprojection. Buffer budget is not a process RSS ceiling. Geographic output dimensions normalize to time/latitude/longitude with source axis order recorded in plan."
+  ]
+}

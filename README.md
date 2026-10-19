@@ -154,8 +154,10 @@ rough edge; its default works for both formats. API is not yet stable.
 ## Validation and benchmarks
 
 Native values, coordinates, NaNs/nodata and metadata are checked independently
-against GDAL and xarray. [Current usability/release gate](docs/external-usability-decision.md)
-records unfamiliar requests, build evidence and remaining alpha blockers.
+against GDAL and xarray. [Current private-alpha gate](docs/alpha/readiness.md)
+records the fresh-context agent trial, installation evidence and remaining alpha blockers.
+[Alpha contract](docs/alpha/contract.md), [small scientific examples](docs/alpha/examples.md),
+and [licensing audit](docs/alpha/licensing.md) define the candidate scope.
 [Previous scientific gate](docs/second-zarr-decision.md) and
 [raw repeated benchmarks](docs/second-zarr-benchmark.json) preserve methods and limits.
 There is no demonstrated consistent end-to-end speed advantage. xarray is preferable
