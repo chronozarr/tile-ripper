@@ -48,14 +48,21 @@ pub(crate) fn metadata_view(
 fn open_v2(
     source: Arc<crate::storage::Objects>,
     path: &str,
-) -> Result<Array<crate::storage::Objects>> {
+    budget: &Budget,
+) -> Result<Array<crate::zarr_decode::Checked<crate::storage::Objects>>> {
     if source
         .metadata_bytes(&format!("{path}/zarr.json"))?
         .is_some()
     {
         return fail("Zarr v3 or hybrid v2/v3 arrays are unsupported");
     }
-    Ok(Array::open(source, &format!("/{path}"))?)
+    crate::zarr_decode::array(
+        source.clone(),
+        path,
+        json(&source, &format!("{path}/.zarray"))?,
+        json(&source, &format!("{path}/.zattrs"))?,
+        budget,
+    )
 }
 fn store(a: &Asset) -> Result<Arc<crate::storage::Objects>> {
     crate::storage::Sources::default().get(a)
@@ -106,14 +113,25 @@ fn meta(
     if attrs.get("coordinates").is_some_and(|v| {
         v.as_str().is_none_or(|s| {
             s.split_whitespace()
-                .any(|c| !["time", "y", "x"].contains(&c))
+                .any(|c| !["time", "y", "x", "latitude", "longitude"].contains(&c))
         })
     }) {
         return fail("auxiliary coordinates are unsupported");
     }
     let codec = m["compressor"]["id"].as_str();
-    if !m["compressor"].is_null() && codec != Some("gzip") {
-        return fail("supported codecs: none or gzip");
+    if !m["compressor"].is_null() && !matches!(codec, Some("gzip" | "blosc")) {
+        return fail("supported codecs: none, gzip or Blosc/LZ4");
+    }
+    if codec == Some("gzip") && m["compressor"]["level"].as_u64().is_none_or(|v| v > 9) {
+        return fail("gzip level must be an integer from 0 to 9");
+    }
+    if codec == Some("blosc")
+        && (m["compressor"]["cname"] != "lz4"
+            || !matches!(m["compressor"]["shuffle"].as_u64(), Some(0 | 1))
+            || m["compressor"]["clevel"].as_u64().is_none_or(|v| v > 9)
+            || m["compressor"]["blocksize"].as_u64().is_none_or(|v| v != 0))
+    {
+        return fail("only Blosc/LZ4 shuffle 0/1 automatic blocksize supported");
     }
     let shape = sizes(&m, "shape")?;
     let chunks = sizes(&m, "chunks")?;
@@ -123,6 +141,11 @@ fn meta(
         || chunks.contains(&0)
     {
         return fail("invalid nonempty shape/chunks");
+    }
+    for dims in [&shape, &chunks] {
+        dims.iter()
+            .try_fold(8usize, |n, v| n.checked_mul(*v))
+            .ok_or("array size overflow")?;
     }
     Ok(m)
 }
@@ -143,6 +166,9 @@ struct Dataset {
     x: Vec<f64>,
     y: Vec<f64>,
     root_attrs: serde_json::Value,
+    axes: [String; 2],
+    raw_times: Vec<i64>,
+    conventional: bool,
 }
 fn inspect_on(r: &Request, s: Arc<crate::storage::Objects>) -> Result<Dataset> {
     let root = s.as_ref();
@@ -153,23 +179,35 @@ fn inspect_on(r: &Request, s: Arc<crate::storage::Objects>) -> Result<Dataset> {
         return fail("requires a Zarr v2 group");
     }
     let attrs = json(root, ".zattrs")?;
-    let grid = &attrs["tile_ripper_grid"];
-    if !grid.is_object() {
-        return fail("Zarr requires explicit tile_ripper_grid CRS/affine metadata; automatic CF georeferencing is unsupported");
-    }
-    let transform: [f64; 6] = serde_json::from_value(grid["transform"].clone())?;
-    if !transform.iter().all(|x| x.is_finite())
-        || transform[1] <= 0.
-        || transform[5] >= 0.
-        || transform[2] != 0.
-        || transform[4] != 0.
-    {
-        return fail("requires finite north-up affine grid");
-    }
-    let crs = grid["crs"].as_str().ok_or("missing CRS")?.to_owned();
+    let conventional = !attrs["tile_ripper_grid"].is_object();
+    let axes: [String; 2] = if conventional {
+        ["longitude".into(), "latitude".into()]
+    } else {
+        ["x".into(), "y".into()]
+    };
+    let mut transform: [f64; 6] = [0.; 6];
+    let crs = if conventional {
+        "EPSG:4326".to_string()
+    } else {
+        let grid = &attrs["tile_ripper_grid"];
+        transform = serde_json::from_value(grid["transform"].clone())?;
+        if !transform.iter().all(|v| v.is_finite())
+            || transform[1] <= 0.
+            || transform[5] >= 0.
+            || transform[2] != 0.
+            || transform[4] != 0.
+        {
+            return fail("requires finite north-up affine grid");
+        }
+        grid["crs"].as_str().ok_or("missing CRS")?.to_owned()
+    };
     gdal::spatial_ref::SpatialRef::from_definition(&crs)?;
     let mut coordinates = Vec::new();
-    for (axis, dtype) in [("x", "<f8"), ("y", "<f8"), ("time", "<i8")] {
+    for (axis, dtype) in [
+        (axes[0].as_str(), "<f8"),
+        (axes[1].as_str(), "<f8"),
+        ("time", "<i8"),
+    ] {
         let m = meta(root, axis, &[axis], dtype)?;
         let count = sizes(&m, "shape")?[0];
         // Coordinates and their native chunks must also fit the explicit working budget.
@@ -182,18 +220,79 @@ fn inspect_on(r: &Request, s: Arc<crate::storage::Objects>) -> Result<Dataset> {
         {
             return fail("coordinate axis exceeds buffer budget");
         }
-        coordinates.push(open_v2(s.clone(), axis)?);
+        coordinates.push(open_v2(s.clone(), axis, &r.budget)?);
     }
     let x = coordinates[0].retrieve_array_subset_elements::<f64>(&coordinates[0].subset_all())?;
     let y = coordinates[1].retrieve_array_subset_elements::<f64>(&coordinates[1].subset_all())?;
     let times =
         coordinates[2].retrieve_array_subset_elements::<i64>(&coordinates[2].subset_all())?;
+    let raw_times = times;
     let ta = json(root, "time/.zattrs")?;
-    if ta["units"] != "seconds since 1970-01-01 00:00:00"
-        || ta["calendar"] != "proleptic_gregorian"
-        || times.windows(2).any(|w| w[0] >= w[1])
+    if ta["calendar"] != "proleptic_gregorian" {
+        return fail("requires proleptic_gregorian time calendar");
+    }
+    let (factor, epoch) = match ta["units"].as_str() {
+        Some("seconds since 1970-01-01 00:00:00") => (1i64, 0i64),
+        Some("hours since 1959-01-01") => (3600, -347155200),
+        _ => {
+            return fail("unsupported time units; supported Unix seconds or hours since 1959-01-01")
+        }
+    };
+    let times: Vec<i64> = raw_times
+        .iter()
+        .map(|v| {
+            v.checked_mul(factor)
+                .and_then(|v| v.checked_add(epoch))
+                .ok_or("time conversion overflow")
+        })
+        .collect::<std::result::Result<_, _>>()?;
+    if times.windows(2).any(|w| w[0] >= w[1])
+        || times
+            .iter()
+            .any(|v| chrono::DateTime::from_timestamp(*v, 0).is_none())
     {
-        return fail("time must be ascending unique i64 Unix seconds with explicit proleptic_gregorian calendar");
+        return fail("time must be ascending unique supported timestamps");
+    }
+    if conventional {
+        for (i, values) in [&x, &y].iter().enumerate() {
+            let axis = &axes[i];
+            let ca = json(root, &format!("{axis}/.zattrs"))?;
+            let unit = if i == 0 {
+                "degrees_east"
+            } else {
+                "degrees_north"
+            };
+            if ca.get("units").is_some_and(|v| v != unit)
+                || ca.get("standard_name").is_some_and(|v| v != axis)
+                || ca
+                    .get("axis")
+                    .is_some_and(|v| v != if i == 0 { "X" } else { "Y" })
+            {
+                return fail("ambiguous geographic coordinate attributes");
+            }
+            if values.len() < 2 {
+                return fail("geographic axes need at least two centers");
+            }
+            let step = values[1] - values[0];
+            if !step.is_finite()
+                || step == 0.
+                || values.iter().any(|v| {
+                    !v.is_finite()
+                        || if i == 0 {
+                            *v < -180. || *v > 360.
+                        } else {
+                            *v < -90. || *v > 90.
+                        }
+                })
+            {
+                return fail("invalid geographic coordinate range/spacing");
+            }
+            transform[if i == 0 { 0 } else { 3 }] = values[0] - step / 2.;
+            transform[if i == 0 { 1 } else { 5 }] = step;
+        }
+        if (x[x.len() - 1] - x[0]).abs() >= 360. {
+            return fail("duplicated/wrapped longitude unsupported");
+        }
     }
     for (values, origin, step) in [
         (&x, transform[0], transform[1]),
@@ -224,6 +323,9 @@ fn inspect_on(r: &Request, s: Arc<crate::storage::Objects>) -> Result<Dataset> {
         x,
         y,
         root_attrs: attrs,
+        axes,
+        raw_times,
+        conventional,
     })
 }
 pub(crate) fn plan_asset(a: &Asset, r: &Request, p: &mut Plan) -> Result<()> {
@@ -238,12 +340,15 @@ pub(crate) fn plan_asset_on(
     if r.budget
         .chunk_edge
         .checked_mul(r.budget.chunk_edge)
-        .and_then(|n| n.checked_mul(2))
+        .and_then(|n| n.checked_mul(4))
         .is_none_or(|n| n > r.budget.buffer_bytes / 4)
     {
         return fail("Zarr output buffer exceeds quarter buffer_bytes");
     }
     let d = inspect_on(r, source.clone())?;
+    if d.conventional {
+        p.limitations.push("Conventional geographic profile: EPSG:4326 is the profile's interpretation of named latitude/longitude centers in degrees, not a source-declared datum. Coordinates are preserved without transformation; precise datum-dependent uses require provider verification.".into());
+    }
     let root = source.as_ref();
     let Spatial::Bounds { .. } = &r.spatial else {
         return fail("Zarr path supports native bounds only; polygon masking is unsupported");
@@ -275,21 +380,39 @@ pub(crate) fn plan_asset_on(
         if !variable_names.insert(path) {
             return fail("duplicate dataset path alias");
         }
-        let m = meta(root, path, &["time", "y", "x"], "<u2")?;
+        let va = json(root, &format!("{path}/.zattrs"))?;
+        let names: Vec<String> = serde_json::from_value(va["_ARRAY_DIMENSIONS"].clone())?;
+        let expected_names = vec!["time".to_string(), d.axes[1].clone(), d.axes[0].clone()];
+        let alternate = vec!["time".to_string(), d.axes[0].clone(), d.axes[1].clone()];
+        if names != expected_names && (!d.conventional || names != alternate) {
+            return fail("requires time first and two geographic axes only");
+        }
+        let yi = names.iter().position(|v| v == &d.axes[1]).unwrap();
+        let xi = 3 - yi;
+        let dtype = if d.conventional { "<f4" } else { "<u2" };
+        let m = meta(
+            root,
+            path,
+            &names.iter().map(String::as_str).collect::<Vec<_>>(),
+            dtype,
+        )?;
         // Resolve every library metadata probe while the snapshot is inspectable.
-        let _ = open_v2(source.clone(), path)?;
+
         let shape = sizes(&m, "shape")?;
         let chunks = sizes(&m, "chunks")?;
-        if shape != vec![d.times.len(), d.y.len(), d.x.len()] {
+        if shape[0] != d.times.len() || shape[yi] != d.y.len() || shape[xi] != d.x.len() {
             return fail("variables must share coordinate dimensions");
         }
         let chunk_bytes = chunks
             .iter()
-            .try_fold(2usize, |n, x| n.checked_mul(*x))
+            .try_fold(if d.conventional { 4usize } else { 2usize }, |n, x| {
+                n.checked_mul(*x)
+            })
             .ok_or("chunk size overflow")?;
         if chunk_bytes > r.budget.buffer_bytes / 2 {
             return fail("decoded source chunk exceeds half buffer_bytes; increase budget");
         }
+        let _ = open_v2(source.clone(), path, &r.budget)?;
         let sep = m["dimension_separator"].as_str().unwrap_or(".");
         if sep != "." && sep != "/" {
             return fail("unsupported chunk separator");
@@ -297,13 +420,15 @@ pub(crate) fn plan_asset_on(
         let mut keys = std::collections::BTreeMap::new();
         let mut payload = 0u64;
         for t in &ti {
-            for cy in window.y / chunks[1]..=(window.y + window.height - 1) / chunks[1] {
-                for cx in window.x / chunks[2]..=(window.x + window.width - 1) / chunks[2] {
-                    let key = format!("{path}/{}{sep}{cy}{sep}{cx}", t / chunks[0]);
-                    if keys
-                        .insert(key.clone(), vec![t / chunks[0], cy, cx])
-                        .is_some()
-                    {
+            for cy in window.y / chunks[yi]..=(window.y + window.height - 1) / chunks[yi] {
+                for cx in window.x / chunks[xi]..=(window.x + window.width - 1) / chunks[xi] {
+                    let coords = if yi == 1 {
+                        [t / chunks[0], cy, cx]
+                    } else {
+                        [t / chunks[0], cx, cy]
+                    };
+                    let key = format!("{path}/{}{sep}{}{sep}{}", coords[0], coords[1], coords[2]);
+                    if keys.insert(key.clone(), coords.to_vec()).is_some() {
                         continue;
                     }
                     if keys.len() > r.budget.max_nodes {
@@ -323,20 +448,29 @@ pub(crate) fn plan_asset_on(
             .estimates
             .selected_compressed_payload_bytes
             .and_then(|n| n.checked_add(payload));
-        let fill = m["fill_value"]
-            .as_u64()
-            .filter(|v| *v <= 65535)
-            .ok_or("requires explicit UInt16 fill_value")?;
         let attrs = json(root, &format!("{path}/.zattrs"))?;
-        if attrs
-            .get("_FillValue")
-            .is_some_and(|v| v.as_u64() != Some(fill))
-        {
-            return fail("_FillValue and storage fill_value disagree");
-        }
+        let fill = if d.conventional {
+            if m["fill_value"] != "NaN" || attrs.get("_FillValue").is_some_and(|v| v != "NaN") {
+                return fail("Float32 profile requires NaN fill");
+            }
+            f64::NAN
+        } else {
+            let fill = m["fill_value"]
+                .as_u64()
+                .filter(|v| *v <= 65535)
+                .ok_or("requires explicit UInt16 fill_value")?;
+            if attrs
+                .get("_FillValue")
+                .is_some_and(|v| v.as_u64() != Some(fill))
+            {
+                return fail("_FillValue and storage fill_value disagree");
+            }
+            fill as f64
+        };
         let mut layout = d.layout.clone();
         layout.variable = v.clone();
-        layout.block = [chunks[2], chunks[1]];
+        layout.block = [chunks[xi], chunks[yi]];
+        layout.dtype = dtype.into();
         layout.nodata = Some(fill as f64);
         layout.scale = attrs["scale_factor"].as_f64();
         layout.offset = attrs["add_offset"].as_f64();
@@ -352,12 +486,20 @@ pub(crate) fn plan_asset_on(
             dimensions: Some(DimensionSelection {
                 shape: shape.clone(),
                 chunk_shape: chunks.clone(),
-                names: vec!["time".into(), "y".into(), "x".into()],
-                indices: vec![
-                    ti.clone(),
-                    (window.y..window.y + window.height).collect(),
-                    (window.x..window.x + window.width).collect(),
-                ],
+                names: names.clone(),
+                indices: if yi == 1 {
+                    vec![
+                        ti.clone(),
+                        (window.y..window.y + window.height).collect(),
+                        (window.x..window.x + window.width).collect(),
+                    ]
+                } else {
+                    vec![
+                        ti.clone(),
+                        (window.x..window.x + window.width).collect(),
+                        (window.y..window.y + window.height).collect(),
+                    ]
+                },
             }),
             mask_geometry: None,
             asset_id: a.id.clone(),
@@ -367,7 +509,7 @@ pub(crate) fn plan_asset_on(
                 selection: vec!["native bounds, time, variables".into()],
                 reads: vec!["chunk_object".into()],
                 decoding: "zarrs".into(),
-                compression: "none/gzip".into(),
+                compression: "none/gzip/Blosc-LZ4".into(),
                 materialization: true,
             },
             layout: Some(layout),
@@ -404,7 +546,7 @@ pub(crate) fn plan_asset_on(
         }
     }
 
-    p.limitations.push("Zarr: immutable local v2 group; UInt16 time/y/x arrays; native bounds; none/gzip; each selected source chunk retrieved once; missing chunks require a zero-byte lookup. buffer_bytes bounds coordinates, one decoded chunk and returned buffer separately, not RSS/codec overhead. Missing chunks retain fill_value. No calibration.".into());
+    p.limitations.push("Zarr v2: custom UInt16 grid or conventional Float32 geographic axes; time first; native bounds; validated bounded codecs; selected source chunks retrieved once; native fill. No calibration, mosaicking or reprojection. Buffer budget is not a process RSS ceiling. Geographic output dimensions normalize to time/latitude/longitude with source axis order recorded in plan.".into());
     Ok(())
 }
 pub(crate) fn execute_selected(
@@ -433,7 +575,13 @@ pub(crate) fn execute_selected(
             String::new,
         ),
     );
-    let array = Array::open(logged, &format!("/{path}"))?;
+    let array = crate::zarr_decode::array(
+        logged,
+        path,
+        json(sources.get(a)?.as_ref(), &format!("{path}/.zarray"))?,
+        json(sources.get(a)?.as_ref(), &format!("{path}/.zattrs"))?,
+        &r.budget,
+    )?;
     *trace.lock().map_err(|_| "trace lock poisoned")? = ReadTrace::default();
     report.source_open_seconds += t.elapsed().as_secs_f64();
     timed.reset();
@@ -442,6 +590,12 @@ pub(crate) fn execute_selected(
         .as_ref()
         .ok_or("missing native dimensions")?;
     let cs = &dims.chunk_shape;
+    let yi = dims
+        .names
+        .iter()
+        .position(|v| v == &d.axes[1])
+        .ok_or("missing latitude/y dimension")?;
+    let xi = 3 - yi;
     let w = &selected.window;
     for node in &p.nodes {
         let Operation::Read {
@@ -454,10 +608,12 @@ pub(crate) fn execute_selected(
             continue;
         }
         let t = Instant::now();
-        let native = array.retrieve_chunk_elements_opt::<u16>(
-            &indices.iter().map(|v| *v as u64).collect::<Vec<_>>(),
-            &serial(),
-        )?;
+        let idx = indices.iter().map(|v| *v as u64).collect::<Vec<_>>();
+        let native = if d.conventional {
+            crate::Pixels::Float32(array.retrieve_chunk_elements_opt::<f32>(&idx, &serial())?)
+        } else {
+            crate::Pixels::UInt16(array.retrieve_chunk_elements_opt::<u16>(&idx, &serial())?)
+        };
         report.read_decode_seconds += t.elapsed().as_secs_f64();
         if trace
             .lock()
@@ -471,12 +627,12 @@ pub(crate) fn execute_selected(
             report.filled_source_chunks += 1;
         }
         report.native_materialized_bytes =
-            Some(report.native_materialized_bytes.unwrap_or(0) + native.len() * 2);
+            Some(report.native_materialized_bytes.unwrap_or(0) + native.byte_len());
         let origin: Vec<_> = indices.iter().zip(cs).map(|(i, c)| i * c).collect();
-        let x0 = w.x.max(origin[2]);
-        let x1 = (w.x + w.width).min(origin[2] + cs[2]);
-        let y0 = w.y.max(origin[1]);
-        let y1 = (w.y + w.height).min(origin[1] + cs[1]);
+        let x0 = w.x.max(origin[xi]);
+        let x1 = (w.x + w.width).min(origin[xi] + cs[xi]);
+        let y0 = w.y.max(origin[yi]);
+        let y1 = (w.y + w.height).min(origin[yi] + cs[yi]);
         for ti in dims.indices[0]
             .iter()
             .copied()
@@ -488,22 +644,31 @@ pub(crate) fn execute_selected(
                     let height = (y1 - y).min(r.budget.chunk_edge);
                     let assembly = Instant::now();
                     let alloc = Instant::now();
-                    let mut pixels = Vec::with_capacity(width * height);
+                    let mut pixels = if d.conventional {
+                        crate::Pixels::Float32(vec![f32::NAN; width * height])
+                    } else {
+                        crate::Pixels::UInt16(vec![0; width * height])
+                    };
                     report.allocation_seconds = Some(
                         report.allocation_seconds.unwrap_or(0.) + alloc.elapsed().as_secs_f64(),
                     );
                     let copy = Instant::now();
                     for sy in y..y + height {
-                        let offset =
-                            ((ti - origin[0]) * cs[1] + sy - origin[1]) * cs[2] + x - origin[2];
-                        pixels.extend_from_slice(&native[offset..offset + width]);
+                        for sx in x..x + width {
+                            let coord = if yi == 1 {
+                                [ti - origin[0], sy - origin[yi], sx - origin[xi]]
+                            } else {
+                                [ti - origin[0], sx - origin[xi], sy - origin[yi]]
+                            };
+                            let offset = (coord[0] * cs[1] + coord[1]) * cs[2] + coord[2];
+                            pixels.copy((sy - y) * width + sx - x, &native, offset, 1)?;
+                        }
                     }
                     report.copying_seconds =
                         Some(report.copying_seconds.unwrap_or(0.) + copy.elapsed().as_secs_f64());
-                    report.decoded_bytes += pixels.len() * 2;
-                    report.non_nodata_pixels += pixels
-                        .iter()
-                        .filter(|v| Some(**v as f64) != layout.nodata)
+                    report.decoded_bytes += pixels.byte_len();
+                    report.non_nodata_pixels += (0..pixels.len())
+                        .filter(|i| pixels.valid(*i, layout.nodata))
                         .count();
                     let window = Window {
                         x,
@@ -606,7 +771,15 @@ fn output_array(
     // zarrs owns metadata validation, chunk encoding and writing.
     let mut array =
         Array::new_with_metadata(target, &format!("/{path}"), serde_json::from_value(m)?)?;
-    *array.attributes_mut() = serde_json::from_value(json(source, &format!("{path}/.zattrs"))?)?;
+    let mut attrs = json(source, &format!("{path}/.zattrs"))?;
+    if attrs["_ARRAY_DIMENSIONS"]
+        .as_array()
+        .is_some_and(|v| v.len() == 3)
+        && attrs["_ARRAY_DIMENSIONS"][1] == "longitude"
+    {
+        attrs["_ARRAY_DIMENSIONS"] = serde_json::json!(["time", "latitude", "longitude"]);
+    }
+    *array.attributes_mut() = serde_json::from_value(attrs)?;
     array.store_metadata_opt(
         &zarrs::array::ArrayMetadataOptions::default().with_include_zarrs_metadata(false),
     )?;
@@ -697,14 +870,16 @@ pub(crate) fn fetch_on(
                 serde_json::from_value(serde_json::json!({"zarr_format":2}))?,
             )?;
             let mut attrs = d.root_attrs;
-            attrs["tile_ripper_grid"]["transform"] =
-                serde_json::json!(crate::spatial::window_transform(&d.layout, w));
+            if !d.conventional {
+                attrs["tile_ripper_grid"]["transform"] =
+                    serde_json::json!(crate::spatial::window_transform(&d.layout, w));
+            }
             *group.attributes_mut() = serde_json::from_value(attrs)?;
             group.store_metadata()?;
             let source = source_store.as_ref();
             for (axis, values) in [
-                ("x", &d.x[w.x..w.x + w.width]),
-                ("y", &d.y[w.y..w.y + w.height]),
+                (d.axes[0].as_str(), &d.x[w.x..w.x + w.width]),
+                (d.axes[1].as_str(), &d.y[w.y..w.y + w.height]),
             ] {
                 let ar = output_array(
                     source,
@@ -715,7 +890,7 @@ pub(crate) fn fetch_on(
                 )?;
                 ar.store_array_subset_elements_opt(&ar.subset_all(), values, &serial())?;
             }
-            let times: Vec<_> = indices.iter().map(|i| d.times[*i]).collect();
+            let times: Vec<_> = indices.iter().map(|i| d.raw_times[*i]).collect();
             let ar = output_array(
                 source,
                 s.clone(),
@@ -829,7 +1004,7 @@ struct OutputBuffer {
     copying_seconds: f64,
     active: Option<(String, String, Arc<Array<OutputStore>>)>,
     ages: std::collections::HashMap<[u64; 3], u64>,
-    entries: std::collections::BTreeMap<u64, ([u64; 3], Vec<u16>)>,
+    entries: std::collections::BTreeMap<u64, ([u64; 3], crate::Pixels)>,
 }
 impl OutputBuffer {
     fn new(limit: usize) -> Self {
@@ -853,7 +1028,10 @@ impl OutputBuffer {
             let ar = &self.active.as_ref().ok_or("output buffer missing array")?.2;
             let before = ar.storage().write_seconds();
             let t = Instant::now();
-            ar.store_chunk_elements_opt(&key, &values, &serial())?;
+            match &values {
+                crate::Pixels::UInt16(v) => ar.store_chunk_elements_opt(&key, v, &serial())?,
+                crate::Pixels::Float32(v) => ar.store_chunk_elements_opt(&key, v, &serial())?,
+            };
             if self.first_output.is_none() {
                 self.first_output = Some(self.started.elapsed().as_secs_f64());
             }
@@ -874,7 +1052,7 @@ impl OutputBuffer {
         asset: &str,
         variable: &str,
         subset: &ArraySubset,
-        pixels: &[u16],
+        pixels: &crate::Pixels,
     ) -> Result<()> {
         if self
             .active
@@ -885,7 +1063,8 @@ impl OutputBuffer {
             self.active = Some((asset.into(), variable.into(), ar.clone()));
         }
         let cs = ar.chunk_shape_usize(&[0, 0, 0])?;
-        let bytes = cs.iter().product::<usize>() * 2;
+        let float = ar.data_type() == &zarrs::array::DataType::Float32;
+        let bytes = cs.iter().product::<usize>() * if float { 4 } else { 2 };
         if bytes > self.limit {
             return fail("destination chunk exceeds output buffer budget");
         }
@@ -907,7 +1086,15 @@ impl OutputBuffer {
                         self.evict()?;
                     }
                     let t = Instant::now();
-                    let values = ar.retrieve_chunk_elements_opt::<u16>(&key, &serial())?;
+                    let values = if float {
+                        crate::Pixels::Float32(
+                            ar.retrieve_chunk_elements_opt::<f32>(&key, &serial())?,
+                        )
+                    } else {
+                        crate::Pixels::UInt16(
+                            ar.retrieve_chunk_elements_opt::<u16>(&key, &serial())?,
+                        )
+                    };
                     self.allocation_seconds += t.elapsed().as_secs_f64();
                     values
                 };
@@ -919,7 +1106,7 @@ impl OutputBuffer {
                 for y in sy..ey {
                     let src = (y - y0) * w + sx - x0;
                     let dst = (y - cy * cs[1]) * cs[2] + sx - cx * cs[2];
-                    values[dst..dst + ex - sx].copy_from_slice(&pixels[src..src + ex - sx]);
+                    values.copy(dst, pixels, src, ex - sx)?;
                 }
                 self.copying_seconds += copying.elapsed().as_secs_f64();
                 self.clock += 1;

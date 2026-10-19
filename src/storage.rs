@@ -210,6 +210,18 @@ impl ReadableStorageTraits for Objects {
         Ok(Some(Box::new(out.into_iter())))
     }
     fn size_key(&self, key: &s::StoreKey) -> std::result::Result<Option<u64>, s::StorageError> {
+        if let Some(http) = self.http() {
+            let state = http
+                .state
+                .lock()
+                .map_err(|_| s::StorageError::Other("HTTP lock poisoned".into()))?;
+            // HTTP get already bounds the body. Do not introduce an extra
+            // planning HEAD that would classify coordinate bodies as data.
+            return Ok(state
+                .versions
+                .get(key.as_str())
+                .and_then(|v| v.as_ref().map(|v| v.size)));
+        }
         self.size(key.as_str())
             .map_err(|e| s::StorageError::Other(e.to_string()))
     }

@@ -1,0 +1,436 @@
+{
+  "rust_ordinary_tests": 31,
+  "rust_ignored_tests": [
+    "HTTP snapshot/cancellation: five server-driven scenarios passed",
+    "COG snapshot/cache isolation: server-driven test passed"
+  ],
+  "fmt": "passed",
+  "clippy_all_targets_warnings_denied": "passed",
+  "python_profile_orientations": 24,
+  "python_profile_edge_failure_cases": 17,
+  "controlled_http_checks": 25,
+  "cog_regression": {
+    "checks": {
+      "pagination_exact_footprints_discover_only": {
+        "stac_requests": 3,
+        "stac_bytes": 3158,
+        "heads": 0,
+        "range_gets": 0,
+        "whole_gets": 0,
+        "raster_bytes": 0,
+        "response_seconds": 0.0,
+        "conditional_gets": 0,
+        "rejected_conditionals": 0,
+        "injected_failures": 0
+      },
+      "empty_query": true,
+      "footprint_overlap_without_selected_pixel_centers": true,
+      "no_silent_truncation": true,
+      "output_budget_preflight": true,
+      "changed_object_rejected": true,
+      "failed_read_output_cleanup": true,
+      "library_prepared_snapshots_do_not_share_stale_cache": true
+    },
+    "summary": [
+      {
+        "workload": "large",
+        "config": "gdal-stac-tuned",
+        "n": 1,
+        "median_seconds": 0.24661620892584324,
+        "min_seconds": 0.24661620892584324,
+        "max_seconds": 0.24661620892584324,
+        "stdev_seconds": 0,
+        "peak_rss_bytes": 80625664,
+        "observed": [
+          {
+            "stac_requests": 3,
+            "stac_bytes": 3158,
+            "heads": 8,
+            "range_gets": 13,
+            "whole_gets": 0,
+            "raster_bytes": 556108,
+            "response_seconds": 0.0010412493720650673,
+            "conditional_gets": 13,
+            "rejected_conditionals": 0,
+            "injected_failures": 0
+          }
+        ]
+      },
+      {
+        "workload": "large",
+        "config": "tile-ripper",
+        "n": 1,
+        "median_seconds": 0.17461870796978474,
+        "min_seconds": 0.17461870796978474,
+        "max_seconds": 0.17461870796978474,
+        "stdev_seconds": 0,
+        "peak_rss_bytes": 58556416,
+        "observed": [
+          {
+            "stac_requests": 3,
+            "stac_bytes": 3158,
+            "heads": 12,
+            "range_gets": 17,
+            "whole_gets": 0,
+            "raster_bytes": 687180,
+            "response_seconds": 0.0011685434728860855,
+            "conditional_gets": 17,
+            "rejected_conditionals": 0,
+            "injected_failures": 0
+          }
+        ]
+      },
+      {
+        "workload": "small",
+        "config": "gdal-stac-tuned",
+        "n": 1,
+        "median_seconds": 0.2694447082467377,
+        "min_seconds": 0.2694447082467377,
+        "max_seconds": 0.2694447082467377,
+        "stdev_seconds": 0,
+        "peak_rss_bytes": 79478784,
+        "observed": [
+          {
+            "stac_requests": 3,
+            "stac_bytes": 3158,
+            "heads": 8,
+            "range_gets": 12,
+            "whole_gets": 0,
+            "raster_bytes": 327142,
+            "response_seconds": 0.0009723328985273838,
+            "conditional_gets": 12,
+            "rejected_conditionals": 0,
+            "injected_failures": 0
+          }
+        ]
+      },
+      {
+        "workload": "small",
+        "config": "tile-ripper",
+        "n": 1,
+        "median_seconds": 0.17075887462124228,
+        "min_seconds": 0.17075887462124228,
+        "max_seconds": 0.17075887462124228,
+        "stdev_seconds": 0,
+        "peak_rss_bytes": 57589760,
+        "observed": [
+          {
+            "stac_requests": 3,
+            "stac_bytes": 3158,
+            "heads": 12,
+            "range_gets": 16,
+            "whole_gets": 0,
+            "raster_bytes": 458214,
+            "response_seconds": 0.0010142531245946884,
+            "conditional_gets": 16,
+            "rejected_conditionals": 0,
+            "injected_failures": 0
+          }
+        ]
+      }
+    ],
+    "runs": [
+      {
+        "workload": "small",
+        "config": "tile-ripper",
+        "rep": 0,
+        "wall_seconds": 0.17075887462124228,
+        "peak_rss_bytes": 57589760,
+        "observed": {
+          "stac_requests": 3,
+          "stac_bytes": 3158,
+          "heads": 12,
+          "range_gets": 16,
+          "whole_gets": 0,
+          "raster_bytes": 458214,
+          "response_seconds": 0.0010142531245946884,
+          "conditional_gets": 16,
+          "rejected_conditionals": 0,
+          "injected_failures": 0
+        },
+        "stages": {
+          "source_reads": [],
+          "transport": null,
+          "decoded_source_chunks": 0,
+          "filled_source_chunks": 0,
+          "first_output_seconds": null,
+          "assembly_seconds": 0.0,
+          "source_retrieval_seconds": null,
+          "allocation_seconds": null,
+          "copying_seconds": null,
+          "output_setup_seconds": 0.0,
+          "output_finalize_seconds": 0.0,
+          "output_io": null,
+          "native_materialized_bytes": null,
+          "source_data_requests": null,
+          "source_data_bytes": null,
+          "chunks": 4,
+          "decoded_bytes": 6710,
+          "non_nodata_pixels": 1801,
+          "planning_seconds": 0.019007042,
+          "source_open_seconds": 0.003288166,
+          "read_decode_seconds": 0.0031755820000000006,
+          "sink_seconds": 0.005627375,
+          "masking_seconds": 0.00012541699999999998,
+          "remote_requests": null,
+          "remote_bytes": null
+        },
+        "discovery": {
+          "seconds": 0.005633667,
+          "returned_items": 3,
+          "selected_items": 2,
+          "selected_assets": 4,
+          "attempts": 1
+        },
+        "equality": {
+          "outputs": 4,
+          "exact_pixels": true,
+          "nodata_pixels": 1554,
+          "valid_pixels": 1801,
+          "native_resolutions": [
+            10.0,
+            20.0
+          ],
+          "native_crses": [
+            32617,
+            32618
+          ]
+        }
+      },
+      {
+        "workload": "small",
+        "config": "gdal-stac-tuned",
+        "rep": 0,
+        "wall_seconds": 0.2694447082467377,
+        "peak_rss_bytes": 79478784,
+        "observed": {
+          "stac_requests": 3,
+          "stac_bytes": 3158,
+          "heads": 8,
+          "range_gets": 12,
+          "whole_gets": 0,
+          "raster_bytes": 327142,
+          "response_seconds": 0.0009723328985273838,
+          "conditional_gets": 12,
+          "rejected_conditionals": 0,
+          "injected_failures": 0
+        },
+        "stages": {
+          "outputs": [
+            {
+              "file": "scene-0-red.tif",
+              "href": "http://127.0.0.1:65274/scene0-red.tif"
+            },
+            {
+              "file": "scene-0-nir.tif",
+              "href": "http://127.0.0.1:65274/scene0-nir.tif"
+            },
+            {
+              "file": "scene-1-red.tif",
+              "href": "http://127.0.0.1:65274/scene1-red.tif"
+            },
+            {
+              "file": "scene-1-nir.tif",
+              "href": "http://127.0.0.1:65274/scene1-nir.tif"
+            }
+          ],
+          "discovery_seconds": 0.01556670805439353,
+          "planning_seconds": 0.07109429221600294,
+          "read_decode_seconds": 0.00472291698679328,
+          "masking_seconds": 0.0009402916766703129,
+          "sink_seconds": 0.0071413335390388966
+        },
+        "discovery": null,
+        "equality": {
+          "outputs": 4,
+          "exact_pixels": true,
+          "nodata_pixels": 1604,
+          "valid_pixels": 1801,
+          "native_resolutions": [
+            10.0,
+            20.0
+          ],
+          "native_crses": [
+            32617,
+            32618
+          ]
+        }
+      },
+      {
+        "workload": "large",
+        "config": "gdal-stac-tuned",
+        "rep": 0,
+        "wall_seconds": 0.24661620892584324,
+        "peak_rss_bytes": 80625664,
+        "observed": {
+          "stac_requests": 3,
+          "stac_bytes": 3158,
+          "heads": 8,
+          "range_gets": 13,
+          "whole_gets": 0,
+          "raster_bytes": 556108,
+          "response_seconds": 0.0010412493720650673,
+          "conditional_gets": 13,
+          "rejected_conditionals": 0,
+          "injected_failures": 0
+        },
+        "stages": {
+          "outputs": [
+            {
+              "file": "scene-0-red.tif",
+              "href": "http://127.0.0.1:65274/scene0-red.tif"
+            },
+            {
+              "file": "scene-0-nir.tif",
+              "href": "http://127.0.0.1:65274/scene0-nir.tif"
+            },
+            {
+              "file": "scene-1-red.tif",
+              "href": "http://127.0.0.1:65274/scene1-red.tif"
+            },
+            {
+              "file": "scene-1-nir.tif",
+              "href": "http://127.0.0.1:65274/scene1-nir.tif"
+            }
+          ],
+          "discovery_seconds": 0.013845167122781277,
+          "planning_seconds": 0.04921404179185629,
+          "read_decode_seconds": 0.007184502203017473,
+          "masking_seconds": 0.0032556247897446156,
+          "sink_seconds": 0.006583751179277897
+        },
+        "discovery": null,
+        "equality": {
+          "outputs": 4,
+          "exact_pixels": true,
+          "nodata_pixels": 7180,
+          "valid_pixels": 53650,
+          "native_resolutions": [
+            10.0,
+            20.0
+          ],
+          "native_crses": [
+            32617,
+            32618
+          ]
+        }
+      },
+      {
+        "workload": "large",
+        "config": "tile-ripper",
+        "rep": 0,
+        "wall_seconds": 0.17461870796978474,
+        "peak_rss_bytes": 58556416,
+        "observed": {
+          "stac_requests": 3,
+          "stac_bytes": 3158,
+          "heads": 12,
+          "range_gets": 17,
+          "whole_gets": 0,
+          "raster_bytes": 687180,
+          "response_seconds": 0.0011685434728860855,
+          "conditional_gets": 17,
+          "rejected_conditionals": 0,
+          "injected_failures": 0
+        },
+        "stages": {
+          "source_reads": [],
+          "transport": null,
+          "decoded_source_chunks": 0,
+          "filled_source_chunks": 0,
+          "first_output_seconds": null,
+          "assembly_seconds": 0.0,
+          "source_retrieval_seconds": null,
+          "allocation_seconds": null,
+          "copying_seconds": null,
+          "output_setup_seconds": 0.0,
+          "output_finalize_seconds": 0.0,
+          "output_io": null,
+          "native_materialized_bytes": null,
+          "source_data_requests": null,
+          "source_data_bytes": null,
+          "chunks": 20,
+          "decoded_bytes": 120256,
+          "non_nodata_pixels": 53650,
+          "planning_seconds": 0.018815042,
+          "source_open_seconds": 0.002951832,
+          "read_decode_seconds": 0.004969126,
+          "sink_seconds": 0.0074643339999999996,
+          "masking_seconds": 0.000505963,
+          "remote_requests": null,
+          "remote_bytes": null
+        },
+        "discovery": {
+          "seconds": 0.005548542,
+          "returned_items": 3,
+          "selected_items": 2,
+          "selected_assets": 4,
+          "attempts": 1
+        },
+        "equality": {
+          "outputs": 4,
+          "exact_pixels": true,
+          "nodata_pixels": 6478,
+          "valid_pixels": 53650,
+          "native_resolutions": [
+            10.0,
+            20.0
+          ],
+          "native_crses": [
+            32617,
+            32618
+          ]
+        }
+      }
+    ],
+    "independent_probes": [
+      {
+        "workload": "small",
+        "rep": 0,
+        "transfer_only_seconds": 0.015320584177970886,
+        "transfer_body_bytes": 195978,
+        "transfer_range_requests": 8,
+        "decode_and_window_assembly_from_memory_seconds": 0.0015726247802376747,
+        "decoded_pixels": 3355,
+        "scope": "independent probes, not additive stages of production RasterIO; COG header open excluded from decode timer"
+      },
+      {
+        "workload": "large",
+        "rep": 0,
+        "transfer_only_seconds": 0.0072180419228971004,
+        "transfer_body_bytes": 261271,
+        "transfer_range_requests": 10,
+        "decode_and_window_assembly_from_memory_seconds": 0.0018966654315590858,
+        "decoded_pixels": 60128,
+        "scope": "independent probes, not additive stages of production RasterIO; COG header open excluded from decode timer"
+      }
+    ],
+    "environment": {
+      "platform": "macOS-26.6.2-arm64-arm-64bit",
+      "python": "3.12.7 (main, Oct  1 2024, 02:05:46) [Clang 15.0.0 (clang-1500.3.9.4)]",
+      "rustc": "rustc 1.92.0 (ded5c06cf 2025-12-08)",
+      "source_sha256": "0d7f755011c2129a675a1f1926feafebfb5eed9e6877a8521f83bd422f9ea087",
+      "fixture_sha256": {
+        "scene0-nir.tif": "ac19b0a75df0f8a0f99b4b673eae063fc4ffd82ae5cec6ef16f48a5995d530bc",
+        "scene0-red.tif": "98cb0650b2622577e2777e046b4520f1370eb52a2c38faf071002e839644d289",
+        "scene1-nir.tif": "a3c9dc2435934cc1b21d2c5733b233769e912e9e47a07dbdda52548f5b157bee",
+        "scene1-red.tif": "339884c7617bf57885cdc9c8113f56798a5a1d18d315f054c23204fad8c9effa"
+      },
+      "rasterio": "1.5.2",
+      "gdal": "3.12.2",
+      "rust_gdal": "3.12.4",
+      "cargo_lock_sha256": "0f12b8f56ff6ac9bf2be877ca78f0885fd5aa55129f2a0376b9f9110e5701cf3"
+    },
+    "limitations": [
+      "loopback HTTP, one machine, warm OS cache; no throughput superiority claim",
+      "GDAL read and decode fused; server response time is not isolated client transfer latency",
+      "source metadata immutable in fixture; production remote cache remains index-free"
+    ]
+  },
+  "local_zarr_oracle": "cf-zarr-local-validation.json",
+  "independent_sonnet_review": "Attempted read-only Sonnet review; runner returned expired OAuth token. No review result claimed.",
+  "native_output_determinism": "Both cold/warm native object fingerprints identical for each reader in all three public repetitions. Manifests excluded because observations/timings differ.",
+  "binary_sha256": "cb3937c3d7f5712ab9265539382ad906b3d8e55f7c134207baf81aa79f9bb421",
+  "source_sha256": "ef386ac6f5af5d7f5d787274e0025f1a7c81016e9c442be9ba46c981f9be1a33",
+  "rust_tests_evidence": "31 ordinary Rust tests passed after final production code changes"
+}

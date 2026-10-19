@@ -209,13 +209,16 @@ class HttpMapping(MutableMapping):
     def __init__(self, url, cap, nodes):
         parsed = urlsplit(url)
         self.path = parsed.path
-        self.connection = http.client.HTTPConnection(
-            parsed.hostname, parsed.port, timeout=30
-        )
+        self.connection = (
+            http.client.HTTPSConnection
+            if parsed.scheme == "https"
+            else http.client.HTTPConnection
+        )(parsed.hostname, parsed.port, timeout=30)
         self.url = url
         self.cap = cap
         self.nodes = nodes
         self.versions = {}
+        self.events = []
         self.cached = {}
         self.sealed = False
         self.names = []
@@ -238,6 +241,8 @@ class HttpMapping(MutableMapping):
                 response = self.connection.getresponse()
                 with response:
                     status = response.status
+                    event = dict(key=key, head=head, status=status, bytes=0)
+                    self.events.append(event)
                     if status in [404, 408, 412, 429, 500, 502, 503, 504]:
                         response.read()
                     if status in [408, 429, 500, 502, 503, 504]:
@@ -254,6 +259,7 @@ class HttpMapping(MutableMapping):
                     if size > self.cap:
                         raise RuntimeError("object budget")
                     body = b"" if head else response.read(self.cap + 1)
+                    event["bytes"] = len(body)
                     if not head and len(body) != size:
                         raise ConnectionError("truncated body")
                     version = (
@@ -469,6 +475,8 @@ def checks():
             "uncompressed",
             "corrupt",
             "decoded-size-mismatch",
+            "gzip-bomb",
+            "gzip-truncated",
             "consolidated",
             "503",
             "429",
@@ -518,12 +526,19 @@ def checks():
                         write_empty_chunks=False,
                     )
                     target.attrs.update(attrs)
-            if mode == "decoded-size-mismatch":
-                # Deliberately invalid, bounded 1 MiB output: quantify the pinned
-                # codec's lack of an early decoded-size cap, without a large bomb.
+            if mode in ["decoded-size-mismatch", "gzip-bomb"]:
+                # Reject after expected bytes + one probe, independent of the
+                # stream's advertised/actual inflation (1 MiB and 16 MiB).
                 from numcodecs import GZip
 
-                (source / "red/0.0.0").write_bytes(GZip(1).encode(bytes(1024 * 1024)))
+                (source / "red/0.0.0").write_bytes(
+                    GZip(1).encode(
+                        bytes((16 if mode == "gzip-bomb" else 1) * 1024 * 1024)
+                    )
+                )
+            if mode == "gzip-truncated":
+                path = source / "red/0.0.0"
+                path.write_bytes(path.read_bytes()[:-4])
             if mode == "corrupt":
                 path = source / "red/0.0.0"
                 encoded = bytearray(path.read_bytes())
@@ -590,6 +605,8 @@ def checks():
                 "permanent",
                 "corrupt",
                 "decoded-size-mismatch",
+                "gzip-bomb",
+                "gzip-truncated",
                 "mutate",
                 "appear",
                 "metadata",

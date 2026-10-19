@@ -195,6 +195,19 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3ded4057c258ba199e2d26386d3af3780957ecaee6c4ef4041c6b4b8b97c0b06"
 
 [[package]]
+name = "blosc-src"
+version = "0.3.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a9046dd58971db0226346fde214143d16a6eb12f535b5320d0ea94fcea420631"
+dependencies = [
+ "cc",
+ "libz-sys",
+ "lz4-sys",
+ "snappy_src",
+ "zstd-sys",
+]
+
+[[package]]
 name = "borrow-or-share"
 version = "0.2.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1549,10 +1562,31 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b6d2cec3eae94f9f509c767b45932f1ada8350c4bdb85af2fcab4a3c14807981"
 
 [[package]]
+name = "libz-sys"
+version = "1.1.25"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d52f4c29e2a68ac30c9087e1b772dc9f44a2b66ed44edf2266cf2be9b03dafc1"
+dependencies = [
+ "cc",
+ "libc",
+ "pkg-config",
+ "vcpkg",
+]
+
+[[package]]
 name = "like"
 version = "0.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fc7281e4b2b1a1fae03463a7c49dd21464de50251a450f6da9715c40c7b21a70"
+
+[[package]]
+name = "link-cplusplus"
+version = "1.0.12"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7f78c730aaa7d0b9336a299029ea49f9ee53b0ed06e9202e8cb7db9bae7b8c82"
+dependencies = [
+ "cc",
+]
 
 [[package]]
 name = "litemap"
@@ -1589,6 +1623,16 @@ name = "lru-slab"
 version = "0.1.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4050469837a6ff301cd14c1f8f24f88549e6d548f24f64e2148eb0f72cebc51f"
+
+[[package]]
+name = "lz4-sys"
+version = "1.11.1+lz4-1.10.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6bd8c0d6c6ed0cd30b3652886bb8711dc4bb01d637a68105a3d5158039b418e6"
+dependencies = [
+ "cc",
+ "libc",
+]
 
 [[package]]
 name = "memchr"
@@ -2646,6 +2690,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5b3dc8af474f516a851ff4bd12db780f948b9250ad37211e4eec0bccea54e01b"
 
 [[package]]
+name = "snappy_src"
+version = "0.2.7+snappy.1.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "10b04989c0e9be7ceeb4a8db3a288fd37346596ffe09fc83ee327e91ae029c65"
+dependencies = [
+ "cc",
+ "link-cplusplus",
+]
+
+[[package]]
 name = "socket2"
 version = "0.6.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2901,6 +2955,7 @@ name = "tile-ripper"
 version = "0.1.0"
 dependencies = [
  "chrono",
+ "flate2",
  "gdal",
  "reqwest",
  "serde",
@@ -3150,6 +3205,12 @@ dependencies = [
  "uuid",
  "vsimd",
 ]
+
+[[package]]
+name = "vcpkg"
+version = "0.2.15"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "accd4ea62f7bb7a82fe23066fb0957d48ef677f6eeb8215f372f52e48bb32426"
 
 [[package]]
 name = "version_check"
@@ -3533,6 +3594,7 @@ checksum = "bfbcfd7f9ae28f00972fcc4ca97e88c161d98ff8fde6959dc4955bb223eb9205"
 dependencies = [
  "async-lock",
  "base64 0.22.1",
+ "blosc-src",
  "bytemuck",
  "bytes",
  "derive_more",
@@ -3749,3 +3811,13 @@ name = "zlib-rs"
 version = "0.6.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b268e58e7c693d7c271f93ffc4ba3b380412554231c85bf61ca7af91042a4112"
+
+[[package]]
+name = "zstd-sys"
+version = "2.0.16+zstd.1.5.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "91e19ebc2adc8f83e43039e79776e3fda8ca919132d68a1fed6a5faca2683748"
+dependencies = [
+ "cc",
+ "pkg-config",
+]

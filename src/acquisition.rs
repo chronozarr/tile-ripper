@@ -480,10 +480,15 @@ fn outputs(p: &Plan, mode: OutputStrategy) -> Value {
         let Some(l) = &s.layout else {
             continue;
         };
-        let mut record = json!({"asset_id":s.asset_id,"variable":l.variable,"timestamps":s.timestamps,"window":s.window,"native_grid":{"crs":l.crs,"transform":crate::spatial::window_transform(l,&s.window)},"dtype":"uint16","native_dtype":l.dtype,"nodata":l.nodata,"scale":l.scale,"offset":l.offset,"aoi_mask_applied":s.mask_geometry.is_some()});
+        let mut record = json!({"asset_id":s.asset_id,"variable":l.variable,"timestamps":s.timestamps,"window":s.window,"native_grid":{"crs":l.crs,"transform":crate::spatial::window_transform(l,&s.window)},"dtype":if l.dtype=="<f4" {"float32"}else{"uint16"},"native_dtype":l.dtype,"nodata":l.nodata,"scale":l.scale,"offset":l.offset,"aoi_mask_applied":s.mask_geometry.is_some()});
         if zarr {
             record["file"] = json!(format!("{}.zarr", s.asset_id));
-            record["dimensions"] = json!({"names":["time","y","x"],"shape":[s.timestamps.len(),s.window.height,s.window.width]});
+            record["validity"] = json!(if l.dtype == "<f4" {
+                "NaN is invalid; raw Float32 preserved"
+            } else {
+                "explicit integer fill"
+            });
+            record["dimensions"] = json!({"names":if l.dtype=="<f4" {vec!["time","latitude","longitude"]}else{vec!["time","y","x"]},"shape":[s.timestamps.len(),s.window.height,s.window.width]});
             if let Variable::Dataset { path } = &l.variable {
                 record["dataset"] = json!(path.trim_start_matches('/'));
             }
@@ -604,7 +609,13 @@ impl Versions {
             for file in [".zgroup", ".zattrs", ".zarray", "zarr.json"] {
                 v.add(root.join(file))?;
             }
-            for axis in ["time", "y", "x"] {
+            let root_attrs: Value = serde_json::from_slice(&fs::read(root.join(".zattrs"))?)?;
+            let axes = if root_attrs["tile_ripper_grid"].is_object() {
+                ["time", "y", "x"]
+            } else {
+                ["time", "latitude", "longitude"]
+            };
+            for axis in axes {
                 let dir = root.join(axis);
                 if dir.is_dir() {
                     v.axis(&dir, r.budget.max_nodes)?;

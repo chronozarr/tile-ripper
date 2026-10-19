@@ -256,7 +256,7 @@ impl Prepared {
                     (chunk.window.width, chunk.window.height),
                     &mut gdal::raster::Buffer::new(
                         (chunk.window.width, chunk.window.height),
-                        std::mem::take(&mut chunk.pixels),
+                        std::mem::take(&mut chunk.pixels).into_u16()?,
                     ),
                 )?;
                 Ok(())

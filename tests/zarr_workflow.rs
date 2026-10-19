@@ -165,7 +165,7 @@ fn shared_api_native_slices_values_fill_coordinates_and_metadata() {
                 } else {
                     (t * 64 + sy * 8 + sx + 1) as u16
                 };
-                assert_eq!(c.pixels[y * c.window.width + x], expected);
+                assert_eq!(c.pixels.as_u16().unwrap()[y * c.window.width + x], expected);
                 values += 1;
             }
         }

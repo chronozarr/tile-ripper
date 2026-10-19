@@ -124,7 +124,10 @@ fn native_pixels_tiles_georef_cache_and_sink_failure() {
         assert_eq!(c.offset, Some(-0.1));
         for y in 0..16 {
             for x in 0..16 {
-                assert_eq!(c.pixels[y * 16 + x], ((y + 15) * 64 + x + 15) as u16);
+                assert_eq!(
+                    c.pixels.as_u16().unwrap()[y * 16 + x],
+                    ((y + 15) * 64 + x + 15) as u16
+                );
             }
         }
         Ok(())

@@ -270,7 +270,7 @@ pub(crate) fn plan_on(
     let mut p=Plan { schema_version:3,selected:vec![],nodes:vec![],estimates:Estimates {
         selected_compressed_payload_bytes:Some(0),remote_requests:None,
         note:"Payload estimate excludes headers, masks, GDAL range rounding and repeated tile reads between output chunks; actual request counts require observation".into(),
-    },limitations:vec!["No implicit reprojection or compositing".into(),"buffer_bytes caps the returned UInt16 pixel buffer, not process RSS or GDAL codec/cache allocations".into(),"Diagnostic JSON is not executable; use prepared runtime bindings or prepare anew from the request".into()] };
+    },limitations:vec!["No implicit reprojection or compositing".into(),"buffer_bytes bounds admitted native sample/chunk payloads, not process RSS or external codec/cache scratch".into(),"Diagnostic JSON is not executable; use prepared runtime bindings or prepare anew from the request".into()] };
     for asset in assets {
         if asset.format == Format::Cog && !time_matches(asset, &request.time)? {
             continue;

@@ -162,16 +162,14 @@ pub fn window(layout: &Layout, spatial: &Spatial) -> Result<Option<Window>> {
         );
     }
     let t = layout.transform;
-    let x0 = ((xmin - t[0]) / t[1])
-        .floor()
-        .clamp(0., layout.width as f64) as usize;
-    let x1 = ((xmax - t[0]) / t[1]).ceil().clamp(0., layout.width as f64) as usize;
-    let y0 = ((ymax - t[3]) / t[5])
-        .floor()
-        .clamp(0., layout.height as f64) as usize;
-    let y1 = ((ymin - t[3]) / t[5])
-        .ceil()
-        .clamp(0., layout.height as f64) as usize;
+    let ax = (xmin - t[0]) / t[1];
+    let bx = (xmax - t[0]) / t[1];
+    let ay = (ymin - t[3]) / t[5];
+    let by = (ymax - t[3]) / t[5];
+    let x0 = ax.min(bx).floor().clamp(0., layout.width as f64) as usize;
+    let x1 = ax.max(bx).ceil().clamp(0., layout.width as f64) as usize;
+    let y0 = ay.min(by).floor().clamp(0., layout.height as f64) as usize;
+    let y1 = ay.max(by).ceil().clamp(0., layout.height as f64) as usize;
     Ok((x1 > x0 && y1 > y0).then_some(Window {
         x: x0,
         y: y0,

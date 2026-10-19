@@ -88,3 +88,16 @@ reuses existing native selection/extraction. `acquisition.rs` owns preparation,
 sealing, pre/post validation, cleanup and completion. Public Request/Plan remain
 format-neutral; COG continues through GDAL. See `remote-zarr-workflow.md` for
 strict layout/backend limits and `remote-zarr-decision.md` for measurements.
+
+
+## Conventional geographic Float32 profile
+
+`zarr_acquire.rs` recognizes exact conventional latitude/longitude roles, validates
+regular axes and verified time units, maps native source dimension order into the
+existing chunk-key planner, and normalizes output dimensions. `spatial::window`
+handles both affine directions. `pixels.rs` carries UInt16/Float32 native samples
+through the existing shared synchronous callback. `zarr_decode.rs` admits fixed
+decoded sizes, uses flate2 into a fixed output buffer, and validates Blosc headers
+before established zarrs decoding. Original source/output metadata is retained;
+only the internal gzip input array view is uncompressed. No second planner,
+downloader or format was introduced. See `cf-zarr-workflow.md`.

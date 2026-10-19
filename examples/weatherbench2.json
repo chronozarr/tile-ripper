@@ -1,0 +1,46 @@
+{
+  "source": {
+    "kind": "assets",
+    "assets": [
+      {
+        "id": "era5",
+        "locator": "https://storage.googleapis.com/weatherbench2/datasets/era5/1959-2023_01_10-6h-64x32_equiangular_conservative.zarr/",
+        "format": "zarr_v2",
+        "datetime": null
+      }
+    ]
+  },
+  "spatial": {
+    "kind": "bounds",
+    "crs": "EPSG:4326",
+    "bbox": [
+      10,
+      30,
+      25,
+      50
+    ]
+  },
+  "time": {
+    "kind": "interval",
+    "start": "1959-01-01T00:00:00Z",
+    "end": "1959-01-01T06:00:00Z"
+  },
+  "variables": [
+    {
+      "kind": "dataset",
+      "path": "2m_temperature"
+    }
+  ],
+  "grid": {
+    "kind": "native"
+  },
+  "sink": {
+    "kind": "directory",
+    "path": "prototype-output/era5-subset"
+  },
+  "budget": {
+    "buffer_bytes": 16777216,
+    "max_nodes": 100000,
+    "chunk_edge": 32
+  }
+}

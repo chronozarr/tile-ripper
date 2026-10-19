@@ -67,3 +67,16 @@ package and feature stack were already locked through STAC dependencies: no new
 registry packages or versions are added. HTTP transport uses reqwest; Zarr
 serialization and decoding remain zarrs. Python uses the same frozen Zarr oracle
 environment and standard-library HTTP, with no new installed packages.
+
+
+## First conventional geographic Zarr profile
+
+zarrs remains pinned to 0.22.10; its established Blosc feature is enabled. That
+feature brings seven native build/library packages, including the other codec
+libraries enabled by zarrs' Blosc feature even though this profile admits only
+LZ4. No workspace crate or downloader is added. flate2 1.1.10 was already locked
+and is now direct for fixed-output-buffer gzip decoding. Existing package
+versions are unchanged. `cf-zarr-dependencies.json` records the newly locked
+packages, checksums, license expressions and upstream publication dates. The
+Python oracle environment is unchanged. Payload allocation tests do not certify
+the native libraries as vulnerability-free.

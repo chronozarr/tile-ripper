@@ -23,3 +23,8 @@ mod diagnostics;
 
 mod storage;
 mod zarr_io;
+
+mod zarr_decode;
+
+mod pixels;
+pub use pixels::Pixels;

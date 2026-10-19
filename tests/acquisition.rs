@@ -189,7 +189,7 @@ fn same_public_lifecycle_preserves_native_selection_and_provenance() {
                         let sy = c.window.y + y;
                         let sx = c.window.x + x;
                         assert_eq!(
-                            c.pixels[y * c.window.width + x],
+                            c.pixels.as_u16().unwrap()[y * c.window.width + x],
                             if sy >= 4 && sx >= 4 {
                                 0
                             } else {
@@ -418,7 +418,7 @@ fn buffered_output_eviction_preserves_values_and_deterministic_objects() {
                 for x in 0..chunk.window.width {
                     expected.insert(
                         (chunk.indices[0], chunk.window.y + y, chunk.window.x + x),
-                        chunk.pixels[y * chunk.window.width + x],
+                        chunk.pixels.as_u16().unwrap()[y * chunk.window.width + x],
                     );
                 }
             }

@@ -23,7 +23,7 @@ pub struct Chunk {
     pub nodata: Option<f64>,
     pub scale: Option<f64>,
     pub offset: Option<f64>,
-    pub pixels: Vec<u16>,
+    pub pixels: crate::Pixels,
 }
 impl Chunk {
     /// Pixel-center coordinates in this chunk's native CRS, without resampling.
@@ -39,7 +39,7 @@ impl Chunk {
     }
     /// Validity of each stored value; COG AOI exclusions already carry nodata.
     pub fn validity(&self) -> impl Iterator<Item = bool> + '_ {
-        self.pixels.iter().map(|v| Some(*v as f64) != self.nodata)
+        (0..self.pixels.len()).map(|i| self.pixels.valid(i, self.nodata))
     }
 }
 #[derive(Debug, Serialize, Deserialize)]
@@ -272,7 +272,7 @@ pub(crate) fn execute_on(
                 nodata: layout.nodata,
                 scale: layout.scale,
                 offset: layout.offset,
-                pixels: pixels.into_shape_and_vec().1,
+                pixels: pixels.into_shape_and_vec().1.into(),
             };
             let t = Instant::now();
             sink(chunk)?;
@@ -363,7 +363,7 @@ pub(crate) fn fetch_on(
             (chunk.window.width, chunk.window.height),
             &mut Buffer::new(
                 (chunk.window.width, chunk.window.height),
-                std::mem::take(&mut chunk.pixels),
+                std::mem::take(&mut chunk.pixels).into_u16()?,
             ),
         )?;
         ds.flush_cache()?;
