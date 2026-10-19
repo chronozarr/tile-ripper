@@ -1,0 +1,46 @@
+{
+  "source": {
+    "kind": "assets",
+    "assets": [
+      {
+        "id": "fixture",
+        "locator": "prototype-output/fixtures/source.tif",
+        "format": "cog",
+        "datetime": "2025-06-01T00:00:00Z"
+      }
+    ]
+  },
+  "spatial": {
+    "kind": "bounds",
+    "crs": "EPSG:32617",
+    "bbox": [
+      601000,
+      3997420,
+      602600,
+      3999020
+    ]
+  },
+  "time": {
+    "kind": "interval",
+    "start": "2025-01-01T00:00:00Z",
+    "end": "2025-12-31T23:59:59Z"
+  },
+  "variables": [
+    {
+      "kind": "band",
+      "index": 1
+    }
+  ],
+  "grid": {
+    "kind": "native"
+  },
+  "sink": {
+    "kind": "geotiff_directory",
+    "path": "prototype-output/demo-extract"
+  },
+  "budget": {
+    "buffer_bytes": 524288,
+    "chunk_edge": 512,
+    "max_nodes": 10000
+  }
+}

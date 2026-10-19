@@ -1,0 +1,144 @@
+{
+  "estimates": {
+    "note": "Payload estimate excludes headers, masks, GDAL range rounding and repeated tile reads between output chunks; actual request counts require observation",
+    "remote_requests": null,
+    "selected_compressed_payload_bytes": null
+  },
+  "limitations": [
+    "No implicit reprojection or compositing",
+    "buffer_bytes caps the returned UInt16 pixel buffer, not process RSS or GDAL codec/cache allocations",
+    "Saved plan is diagnostic; fetch replans from runtime request and validates local identity",
+    "Zarr planning only; missing chunks use fill_value at execution; compressor=none/unknown, filter_count=0"
+  ],
+  "nodes": [
+    {
+      "asset_id": "fixture",
+      "dependencies": [],
+      "id": 0,
+      "operation": {
+        "cached": false,
+        "kind": "inspect"
+      }
+    },
+    {
+      "asset_id": "fixture",
+      "dependencies": [
+        0
+      ],
+      "id": 1,
+      "operation": {
+        "kind": "read",
+        "read": {
+          "indices": [
+            0,
+            0
+          ],
+          "key": "0.0",
+          "kind": "chunk_object"
+        }
+      }
+    },
+    {
+      "asset_id": "fixture",
+      "dependencies": [
+        0
+      ],
+      "id": 2,
+      "operation": {
+        "kind": "read",
+        "read": {
+          "indices": [
+            0,
+            1
+          ],
+          "key": "0.1",
+          "kind": "chunk_object"
+        }
+      }
+    },
+    {
+      "asset_id": "fixture",
+      "dependencies": [
+        0
+      ],
+      "id": 3,
+      "operation": {
+        "kind": "read",
+        "read": {
+          "indices": [
+            1,
+            0
+          ],
+          "key": "1.0",
+          "kind": "chunk_object"
+        }
+      }
+    },
+    {
+      "asset_id": "fixture",
+      "dependencies": [
+        0
+      ],
+      "id": 4,
+      "operation": {
+        "kind": "read",
+        "read": {
+          "indices": [
+            1,
+            1
+          ],
+          "key": "1.1",
+          "kind": "chunk_object"
+        }
+      }
+    }
+  ],
+  "schema_version": 1,
+  "selected": [
+    {
+      "asset_id": "fixture",
+      "capabilities": {
+        "compression": "metadata preserved, execution unsupported",
+        "decoding": "not implemented",
+        "materialization": false,
+        "reads": [
+          "chunk_object"
+        ],
+        "selection": [
+          "2D native_bounds with explicit georeferencing"
+        ]
+      },
+      "datetime": "2025-06-01T00:00:00Z",
+      "layout": {
+        "band": 0,
+        "block": [
+          256,
+          256
+        ],
+        "crs": "EPSG:32617",
+        "dtype": "<u2",
+        "height": 2048,
+        "nodata": null,
+        "offset": null,
+        "scale": null,
+        "tiles": [],
+        "transform": [
+          600000.0,
+          10.0,
+          0.0,
+          4000020.0,
+          0.0,
+          -10.0
+        ],
+        "width": 2048
+      },
+      "reason": "requested array and native bounds intersect",
+      "window": {
+        "height": 160,
+        "width": 160,
+        "x": 100,
+        "y": 100
+      }
+    }
+  ]
+}

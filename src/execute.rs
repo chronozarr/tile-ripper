@@ -1,0 +1,197 @@
+use crate::{
+    cog::{self, LayoutCache},
+    fail,
+    model::*,
+    plan, Result,
+};
+use gdal::{raster::Buffer, DriverManager};
+use serde::Serialize;
+use std::{fs, path::Path, time::Instant};
+
+/// One owned native-grid buffer. Sink callbacks run synchronously: retaining chunks
+/// is the caller's responsibility and outside the executor's buffer bound.
+pub struct Chunk {
+    pub node_id: usize,
+    pub asset_id: String,
+    pub datetime: Option<String>,
+    pub band: usize,
+    pub window: Window,
+    pub transform: [f64; 6],
+    pub crs: String,
+    pub nodata: Option<f64>,
+    pub scale: Option<f64>,
+    pub offset: Option<f64>,
+    pub pixels: Buffer<u16>,
+}
+#[derive(Debug, Serialize)]
+pub struct ExecutionReport {
+    pub chunks: usize,
+    pub decoded_bytes: usize,
+    pub planning_seconds: f64,
+    pub read_decode_seconds: f64,
+    pub sink_seconds: f64,
+    pub remote_requests: Option<u64>,
+    pub remote_bytes: Option<u64>,
+}
+/// Replan from the runtime request. Diagnostic JSON plans are never replayed.
+pub fn execute(
+    r: &Request,
+    cache: &mut LayoutCache,
+    sink: impl FnMut(Chunk) -> Result<()>,
+) -> Result<ExecutionReport> {
+    let t = Instant::now();
+    let p = plan(r, cache)?;
+    execute_plan(r, &p, t.elapsed().as_secs_f64(), sink)
+}
+fn execute_plan(
+    r: &Request,
+    p: &Plan,
+    planning_seconds: f64,
+    mut sink: impl FnMut(Chunk) -> Result<()>,
+) -> Result<ExecutionReport> {
+    // Preflight every format before delivering or writing the first chunk.
+    if p.selected.iter().any(|s| !s.capabilities.materialization) {
+        return fail("plan contains a planning-only format; execution is unsupported");
+    }
+    let Source::Assets { assets } = &r.source else {
+        unreachable!()
+    };
+    let mut report = ExecutionReport {
+        chunks: 0,
+        decoded_bytes: 0,
+        planning_seconds,
+        read_decode_seconds: 0.,
+        sink_seconds: 0.,
+        remote_requests: None,
+        remote_bytes: None,
+    };
+    for selected in &p.selected {
+        let asset = assets
+            .iter()
+            .find(|a| a.id == selected.asset_id)
+            .ok_or("asset binding missing")?;
+        let layout = selected.layout.as_ref().ok_or("missing layout")?;
+        let ds = cog::open(asset)?;
+        if ds.raster_size() != (layout.width, layout.height)
+            || ds.geo_transform()? != layout.transform
+        {
+            return fail("asset grid changed since planning");
+        }
+        let band = ds.rasterband(layout.band)?;
+        for node in &p.nodes {
+            if node.asset_id != asset.id {
+                continue;
+            }
+            let Operation::Read {
+                read:
+                    Read::LibraryWindow {
+                        window,
+                        band: band_index,
+                        ..
+                    },
+            } = &node.operation
+            else {
+                continue;
+            };
+            if *band_index != layout.band {
+                continue;
+            }
+            let t = Instant::now();
+            let pixels = band
+                .read_as::<u16>(
+                    (window.x as isize, window.y as isize),
+                    (window.width, window.height),
+                    (window.width, window.height),
+                    None,
+                )
+                .map_err(|_| "GDAL window read failed (locator omitted)")?;
+            report.read_decode_seconds += t.elapsed().as_secs_f64();
+            report.decoded_bytes += pixels.data().len() * 2;
+            let mut transform = layout.transform;
+            transform[0] += window.x as f64 * transform[1];
+            transform[3] += window.y as f64 * transform[5];
+            let chunk = Chunk {
+                node_id: node.id,
+                asset_id: asset.id.clone(),
+                datetime: asset.datetime.clone(),
+                band: layout.band,
+                window: window.clone(),
+                transform,
+                crs: layout.crs.clone(),
+                nodata: layout.nodata,
+                scale: layout.scale,
+                offset: layout.offset,
+                pixels,
+            };
+            let t = Instant::now();
+            sink(chunk)?;
+            report.sink_seconds += t.elapsed().as_secs_f64();
+            report.chunks += 1;
+        }
+    }
+    Ok(report)
+}
+pub fn fetch(r: &Request, cache: &mut LayoutCache) -> Result<ExecutionReport> {
+    let Sink::GeoTiffDirectory { path } = &r.sink else {
+        return fail("fetch requires a GeoTIFF directory sink; library callers may use execute with a callback");
+    };
+    let root = Path::new(path);
+    // Refuse overwrites, and remove a newly created directory on failure.
+    let start = Instant::now();
+    let preview = plan(r, cache)?;
+    let planning_seconds = start.elapsed().as_secs_f64();
+    if preview
+        .selected
+        .iter()
+        .any(|s| !s.capabilities.materialization)
+    {
+        return fail("planning-only format cannot be materialized");
+    }
+    fs::create_dir(root)?;
+    let result = execute_plan(r, &preview, planning_seconds, |mut chunk| {
+        let file = root.join(format!("chunk-{}.tif", chunk.node_id));
+        let mut ds = DriverManager::get_driver_by_name("GTiff")?.create_with_band_type::<u16, _>(
+            &file,
+            chunk.window.width,
+            chunk.window.height,
+            1,
+        )?;
+        ds.set_geo_transform(&chunk.transform)?;
+        ds.set_spatial_ref(&gdal::spatial_ref::SpatialRef::from_definition(&chunk.crs)?)?;
+        let mut b = ds.rasterband(1)?;
+        b.set_no_data_value(chunk.nodata)?;
+        if let Some(s) = chunk.scale {
+            b.set_scale(s)?;
+        }
+        if let Some(o) = chunk.offset {
+            b.set_offset(o)?;
+        }
+        b.write(
+            (0, 0),
+            (chunk.window.width, chunk.window.height),
+            &mut chunk.pixels,
+        )?;
+        ds.flush_cache()?;
+        Ok(())
+    });
+    match result {
+        Ok(report) => {
+            // Per-chunk metadata maps outputs back to observation/band, not an implicit mosaic.
+            let manifest = serde_json::json!({"plan":preview,"observed":report});
+            if fs::write(
+                root.join("manifest.json"),
+                serde_json::to_vec_pretty(&manifest)?,
+            )
+            .is_err()
+            {
+                let _ = fs::remove_dir_all(root);
+                return fail("could not write output manifest");
+            }
+            Ok(report)
+        }
+        Err(e) => {
+            let _ = fs::remove_dir_all(root);
+            Err(e)
+        }
+    }
+}

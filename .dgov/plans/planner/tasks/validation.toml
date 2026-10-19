@@ -1,0 +1,17 @@
+[tasks.validation]
+summary = "Check SQL parity, independent pixels and report the decision gate"
+role = "worker"
+depends_on = ["tasks/prototype.prototype"]
+commit_message = "Validate acquisition planner and record decision gate"
+prompt = """
+Orient:
+Read study/experiments and docs/0001-acquisition-planner.md.
+Edit:
+Add an offline SQL parity comparison and an interleaved local benchmark
+with exact HTTP accounting and an independent GDAL oracle. Report limits.
+Verify:
+Run bench/compare_study.py and bench/run.py in the original locked
+study Python environment, and record results under docs/. No public stress tests.
+"""
+files = { read = ["docs/0001-acquisition-planner.md"], create = ["bench/make_fixture.py", "bench/gdal_worker.py", "bench/run.py", "bench/compare_study.py", "examples/layout_oracle.rs", "README.md", "docs/decision-gate.md"] }
+test_cmd = "cargo test --locked"

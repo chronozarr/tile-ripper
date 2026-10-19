@@ -1,0 +1,15 @@
+[tasks.prototype]
+summary = "Implement the bounded acquisition planning proof"
+role = "worker"
+commit_message = "Prototype format-extensible acquisition planning"
+prompt = """
+Orient:
+Read docs/0001-acquisition-planner.md and the preserved study.
+Edit:
+Implement one Rust library and thin CLI for native COG extraction with
+GDAL, plus a planning-only Zarr chunk-object adapter. Preserve study inputs.
+Verify:
+cargo test --locked; cargo clippy --locked --all-targets -- -D warnings
+"""
+files = { read = ["docs/0001-acquisition-planner.md"], create = ["Cargo.toml", "Cargo.lock", "src/model.rs", "src/lib.rs", "src/planner.rs", "src/cog.rs", "src/zarr.rs", "src/execute.rs", "src/main.rs", "tests/planner.rs"] }
+test_cmd = "cargo test --locked"

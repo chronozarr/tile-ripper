@@ -1,0 +1,525 @@
+{
+  "estimates": {
+    "note": "Payload estimate excludes headers, masks, GDAL range rounding and repeated tile reads between output chunks; actual request counts require observation",
+    "remote_requests": null,
+    "selected_compressed_payload_bytes": 521485
+  },
+  "limitations": [
+    "No implicit reprojection or compositing",
+    "buffer_bytes caps the returned UInt16 pixel buffer, not process RSS or GDAL codec/cache allocations",
+    "Saved plan is diagnostic; fetch replans from runtime request and validates local identity"
+  ],
+  "nodes": [
+    {
+      "asset_id": "fixture",
+      "dependencies": [],
+      "id": 0,
+      "operation": {
+        "cached": false,
+        "kind": "inspect"
+      }
+    },
+    {
+      "asset_id": "fixture",
+      "dependencies": [
+        0
+      ],
+      "id": 1,
+      "operation": {
+        "kind": "read",
+        "read": {
+          "band": 1,
+          "kind": "library_window",
+          "tiles": [
+            {
+              "bytes": 129874,
+              "offset": 2593384,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "bytes": 130518,
+              "offset": 2723266,
+              "x": 1,
+              "y": 0
+            },
+            {
+              "bytes": 130545,
+              "offset": 3637130,
+              "x": 0,
+              "y": 1
+            },
+            {
+              "bytes": 130548,
+              "offset": 3767683,
+              "x": 1,
+              "y": 1
+            }
+          ],
+          "window": {
+            "height": 160,
+            "width": 160,
+            "x": 100,
+            "y": 100
+          }
+        }
+      }
+    },
+    {
+      "asset_id": "fixture",
+      "dependencies": [
+        1
+      ],
+      "id": 2,
+      "operation": {
+        "kind": "decode",
+        "reader": "GDAL RasterIO (fused retrieval and decode)"
+      }
+    },
+    {
+      "asset_id": "fixture",
+      "dependencies": [
+        2
+      ],
+      "id": 3,
+      "operation": {
+        "kind": "write",
+        "output": "chunk-1.tif"
+      }
+    }
+  ],
+  "schema_version": 1,
+  "selected": [
+    {
+      "asset_id": "fixture",
+      "capabilities": {
+        "compression": "delegated to installed GDAL; UInt16 parity required",
+        "decoding": "GDAL GTiff",
+        "materialization": true,
+        "reads": [
+          "library_window"
+        ],
+        "selection": [
+          "native_bounds",
+          "integer_band"
+        ]
+      },
+      "datetime": "2025-06-01T00:00:00Z",
+      "layout": {
+        "band": 1,
+        "block": [
+          256,
+          256
+        ],
+        "crs": "EPSG:32617",
+        "dtype": "UInt16",
+        "height": 2048,
+        "nodata": 0.0,
+        "offset": -0.1,
+        "scale": 0.0001,
+        "tiles": [
+          {
+            "bytes": 129874,
+            "offset": 2593384,
+            "x": 0,
+            "y": 0
+          },
+          {
+            "bytes": 130518,
+            "offset": 2723266,
+            "x": 1,
+            "y": 0
+          },
+          {
+            "bytes": 130569,
+            "offset": 2853792,
+            "x": 2,
+            "y": 0
+          },
+          {
+            "bytes": 130513,
+            "offset": 2984369,
+            "x": 3,
+            "y": 0
+          },
+          {
+            "bytes": 130559,
+            "offset": 3114890,
+            "x": 4,
+            "y": 0
+          },
+          {
+            "bytes": 130548,
+            "offset": 3245457,
+            "x": 5,
+            "y": 0
+          },
+          {
+            "bytes": 130574,
+            "offset": 3376013,
+            "x": 6,
+            "y": 0
+          },
+          {
+            "bytes": 130527,
+            "offset": 3506595,
+            "x": 7,
+            "y": 0
+          },
+          {
+            "bytes": 130545,
+            "offset": 3637130,
+            "x": 0,
+            "y": 1
+          },
+          {
+            "bytes": 130548,
+            "offset": 3767683,
+            "x": 1,
+            "y": 1
+          },
+          {
+            "bytes": 130587,
+            "offset": 3898239,
+            "x": 2,
+            "y": 1
+          },
+          {
+            "bytes": 130536,
+            "offset": 4028834,
+            "x": 3,
+            "y": 1
+          },
+          {
+            "bytes": 130547,
+            "offset": 4159378,
+            "x": 4,
+            "y": 1
+          },
+          {
+            "bytes": 130552,
+            "offset": 4289933,
+            "x": 5,
+            "y": 1
+          },
+          {
+            "bytes": 130492,
+            "offset": 4420493,
+            "x": 6,
+            "y": 1
+          },
+          {
+            "bytes": 130515,
+            "offset": 4550993,
+            "x": 7,
+            "y": 1
+          },
+          {
+            "bytes": 130595,
+            "offset": 4681516,
+            "x": 0,
+            "y": 2
+          },
+          {
+            "bytes": 130553,
+            "offset": 4812119,
+            "x": 1,
+            "y": 2
+          },
+          {
+            "bytes": 130531,
+            "offset": 4942680,
+            "x": 2,
+            "y": 2
+          },
+          {
+            "bytes": 130549,
+            "offset": 5073219,
+            "x": 3,
+            "y": 2
+          },
+          {
+            "bytes": 130499,
+            "offset": 5203776,
+            "x": 4,
+            "y": 2
+          },
+          {
+            "bytes": 130532,
+            "offset": 5334283,
+            "x": 5,
+            "y": 2
+          },
+          {
+            "bytes": 130538,
+            "offset": 5464823,
+            "x": 6,
+            "y": 2
+          },
+          {
+            "bytes": 130542,
+            "offset": 5595369,
+            "x": 7,
+            "y": 2
+          },
+          {
+            "bytes": 130573,
+            "offset": 5725919,
+            "x": 0,
+            "y": 3
+          },
+          {
+            "bytes": 130520,
+            "offset": 5856500,
+            "x": 1,
+            "y": 3
+          },
+          {
+            "bytes": 130540,
+            "offset": 5987028,
+            "x": 2,
+            "y": 3
+          },
+          {
+            "bytes": 130539,
+            "offset": 6117576,
+            "x": 3,
+            "y": 3
+          },
+          {
+            "bytes": 130560,
+            "offset": 6248123,
+            "x": 4,
+            "y": 3
+          },
+          {
+            "bytes": 130541,
+            "offset": 6378691,
+            "x": 5,
+            "y": 3
+          },
+          {
+            "bytes": 130576,
+            "offset": 6509240,
+            "x": 6,
+            "y": 3
+          },
+          {
+            "bytes": 130576,
+            "offset": 6639824,
+            "x": 7,
+            "y": 3
+          },
+          {
+            "bytes": 130539,
+            "offset": 6770408,
+            "x": 0,
+            "y": 4
+          },
+          {
+            "bytes": 130558,
+            "offset": 6900955,
+            "x": 1,
+            "y": 4
+          },
+          {
+            "bytes": 130604,
+            "offset": 7031521,
+            "x": 2,
+            "y": 4
+          },
+          {
+            "bytes": 130590,
+            "offset": 7162133,
+            "x": 3,
+            "y": 4
+          },
+          {
+            "bytes": 130531,
+            "offset": 7292731,
+            "x": 4,
+            "y": 4
+          },
+          {
+            "bytes": 130602,
+            "offset": 7423270,
+            "x": 5,
+            "y": 4
+          },
+          {
+            "bytes": 130595,
+            "offset": 7553880,
+            "x": 6,
+            "y": 4
+          },
+          {
+            "bytes": 130569,
+            "offset": 7684483,
+            "x": 7,
+            "y": 4
+          },
+          {
+            "bytes": 130512,
+            "offset": 7815060,
+            "x": 0,
+            "y": 5
+          },
+          {
+            "bytes": 130566,
+            "offset": 7945580,
+            "x": 1,
+            "y": 5
+          },
+          {
+            "bytes": 130533,
+            "offset": 8076154,
+            "x": 2,
+            "y": 5
+          },
+          {
+            "bytes": 130562,
+            "offset": 8206695,
+            "x": 3,
+            "y": 5
+          },
+          {
+            "bytes": 130507,
+            "offset": 8337265,
+            "x": 4,
+            "y": 5
+          },
+          {
+            "bytes": 130553,
+            "offset": 8467780,
+            "x": 5,
+            "y": 5
+          },
+          {
+            "bytes": 130500,
+            "offset": 8598341,
+            "x": 6,
+            "y": 5
+          },
+          {
+            "bytes": 130572,
+            "offset": 8728849,
+            "x": 7,
+            "y": 5
+          },
+          {
+            "bytes": 130538,
+            "offset": 8859429,
+            "x": 0,
+            "y": 6
+          },
+          {
+            "bytes": 130515,
+            "offset": 8989975,
+            "x": 1,
+            "y": 6
+          },
+          {
+            "bytes": 130532,
+            "offset": 9120498,
+            "x": 2,
+            "y": 6
+          },
+          {
+            "bytes": 130509,
+            "offset": 9251038,
+            "x": 3,
+            "y": 6
+          },
+          {
+            "bytes": 130535,
+            "offset": 9381555,
+            "x": 4,
+            "y": 6
+          },
+          {
+            "bytes": 130551,
+            "offset": 9512098,
+            "x": 5,
+            "y": 6
+          },
+          {
+            "bytes": 130582,
+            "offset": 9642657,
+            "x": 6,
+            "y": 6
+          },
+          {
+            "bytes": 130503,
+            "offset": 9773247,
+            "x": 7,
+            "y": 6
+          },
+          {
+            "bytes": 130583,
+            "offset": 9903758,
+            "x": 0,
+            "y": 7
+          },
+          {
+            "bytes": 130536,
+            "offset": 10034349,
+            "x": 1,
+            "y": 7
+          },
+          {
+            "bytes": 130543,
+            "offset": 10164893,
+            "x": 2,
+            "y": 7
+          },
+          {
+            "bytes": 130545,
+            "offset": 10295444,
+            "x": 3,
+            "y": 7
+          },
+          {
+            "bytes": 130572,
+            "offset": 10425997,
+            "x": 4,
+            "y": 7
+          },
+          {
+            "bytes": 130520,
+            "offset": 10556577,
+            "x": 5,
+            "y": 7
+          },
+          {
+            "bytes": 130548,
+            "offset": 10687105,
+            "x": 6,
+            "y": 7
+          },
+          {
+            "bytes": 130523,
+            "offset": 10817661,
+            "x": 7,
+            "y": 7
+          }
+        ],
+        "transform": [
+          600000.0,
+          10.0,
+          0.0,
+          4000020.0,
+          0.0,
+          -10.0
+        ],
+        "width": 2048
+      },
+      "reason": "direct asset; requested band and bounds intersect native grid; time predicate passed",
+      "window": {
+        "height": 160,
+        "width": 160,
+        "x": 100,
+        "y": 100
+      }
+    }
+  ]
+}
