@@ -116,6 +116,7 @@ pub fn open(asset: &Asset) -> Result<Dataset> {
         .map_err(|_| "GDAL could not open asset (locator omitted)".into())
 }
 pub fn inspect(asset: &Asset, band: usize) -> Result<Layout> {
+    let _headers = ConditionalHeaders::for_asset(asset)?;
     let ds = open(asset)?;
     if ds.driver().short_name() != "GTiff" {
         return fail("COG adapter requires GeoTIFF");
@@ -228,4 +229,57 @@ pub fn tiles(layout: &Layout, w: &Window) -> Vec<Tile> {
         })
         .cloned()
         .collect()
+}
+
+/// A scoped per-thread conditional, restored before the next asset/caller.
+pub(crate) struct ConditionalHeaders {
+    previous: String,
+}
+impl ConditionalHeaders {
+    pub(crate) fn for_asset(asset: &Asset) -> Result<Self> {
+        let previous = gdal::config::get_thread_local_config_option("GDAL_HTTP_HEADERS", "")?;
+        if let Some(etag) = &asset.etag {
+            if etag.starts_with("W/") || etag.is_empty() || etag.bytes().any(|b| b < 32 || b == 127)
+            {
+                return fail("a strong, single-line ETag is required");
+            }
+            // A trailing CRLF selects GDAL's raw-header parser; its CSV parser
+            // strips ETag quotes. The mutation test checks the exact header.
+            let value = if previous.is_empty() {
+                format!("If-Match: {etag}\r\n")
+            } else {
+                format!("{previous}\r\nIf-Match: {etag}\r\n")
+            };
+            gdal::config::set_thread_local_config_option("GDAL_HTTP_HEADERS", &value)?;
+        }
+        Ok(Self { previous })
+    }
+}
+impl Drop for ConditionalHeaders {
+    fn drop(&mut self) {
+        if self.previous.is_empty() {
+            let _ = gdal::config::clear_thread_local_config_option("GDAL_HTTP_HEADERS");
+        } else {
+            let _ =
+                gdal::config::set_thread_local_config_option("GDAL_HTTP_HEADERS", &self.previous);
+        }
+    }
+}
+
+// GDAL exposes this stable C API, but gdal 0.19 has no high-level wrapper.
+unsafe extern "C" {
+    fn VSICurlPartialClearCache(prefix: *const std::os::raw::c_char);
+}
+/// Before binding a new ETag, discard GDAL's URL-only header/range cache.
+/// Called before this workflow has any open datasets for that URL.
+pub(crate) fn clear_remote_cache(asset: &Asset) -> Result<()> {
+    if remote(&asset.locator) {
+        let prefix = std::ffi::CString::new(format!("/vsicurl/{}", asset.locator))?;
+        // SAFETY: a live NUL-terminated C string, and no handles opened by this
+        // acquisition exist yet. GDAL owns the cache and retains no pointer.
+        unsafe {
+            VSICurlPartialClearCache(prefix.as_ptr());
+        }
+    }
+    Ok(())
 }

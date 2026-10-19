@@ -29,9 +29,30 @@ impl FormatPlanner for CogPlanner<'_> {
                 return fail("COG requires integer band selectors");
             };
             let (layout, cached) = self.cache.resolve(asset, *index)?;
-            let Some(window) = cog::window(&layout, &request.spatial)? else {
+            let mask = crate::spatial::native_mask(&request.spatial, &layout)?;
+            let spatial = if let Some(g) = &mask {
+                if g.is_empty() || g.area() <= 0. {
+                    continue;
+                }
+                Spatial::Bounds {
+                    crs: layout.crs.clone(),
+                    bbox: crate::spatial::bounds(g),
+                }
+            } else {
+                request.spatial.clone()
+            };
+            let Some(window) = cog::window(&layout, &spatial)? else {
                 continue;
             };
+            if mask.is_some()
+                && layout.nodata.is_none_or(|n| {
+                    !n.is_finite() || n.fract() != 0. || !(0. ..=65535.).contains(&n)
+                })
+            {
+                return fail(
+                    "AOI masking requires representable UInt16 source nodata in this release",
+                );
+            }
             let selected_tiles = cog::tiles(&layout, &window);
             let payload = selected_tiles
                 .iter()
@@ -41,7 +62,7 @@ impl FormatPlanner for CogPlanner<'_> {
                 .selected_compressed_payload_bytes
                 .zip(payload)
                 .and_then(|(a, b)| a.checked_add(b));
-            p.selected.push(Selected { asset_id: asset.id.clone(), datetime: asset.datetime.clone(), reason: "direct asset; requested band and bounds intersect native grid; time predicate passed".into(), capabilities: self.capabilities(), layout: Some(layout.clone()), window: window.clone() });
+            p.selected.push(Selected { mask_geometry: mask.as_ref().map(|g| g.json().and_then(|s| serde_json::from_str(&s).map_err(|_| gdal::errors::GdalError::BadArgument("invalid geometry JSON".into())))).transpose()?, asset_id: asset.id.clone(), datetime: asset.datetime.clone(), reason: "direct asset; requested band and bounds intersect native grid; time predicate passed".into(), capabilities: self.capabilities(), layout: Some(layout.clone()), window: window.clone() });
             let inspect = push(p, request, &asset.id, vec![], Operation::Inspect { cached })?;
             for y in (window.y..window.y + window.height).step_by(request.budget.chunk_edge) {
                 for x in (window.x..window.x + window.width).step_by(request.budget.chunk_edge) {
@@ -51,6 +72,12 @@ impl FormatPlanner for CogPlanner<'_> {
                         width: request.budget.chunk_edge.min(window.x + window.width - x),
                         height: request.budget.chunk_edge.min(window.y + window.height - y),
                     };
+                    if let Some(g) = &mask {
+                        let m = crate::spatial::mask(g, &layout, &w)?;
+                        if !m.data().iter().any(|v| *v != 0) {
+                            continue;
+                        }
+                    }
                     let ts = cog::tiles(&layout, &w);
                     let read = push(
                         p,
@@ -146,11 +173,15 @@ pub fn validate(r: &Request) -> Result<&[Asset]> {
     if !r.quality.is_empty() || !r.operations.is_empty() {
         return fail("quality, mosaicking and compositing operations are not implemented");
     }
-    let Spatial::Bounds { bbox, .. } = &r.spatial else {
-        return fail("polygon selection is not implemented");
-    };
-    if !bbox.iter().all(|x| x.is_finite()) || bbox[0] >= bbox[2] || bbox[1] >= bbox[3] {
-        return fail("invalid or wrapped bounds; use finite increasing bounds");
+    match &r.spatial {
+        Spatial::Bounds { bbox, .. } => {
+            if !bbox.iter().all(|x| x.is_finite()) || bbox[0] >= bbox[2] || bbox[1] >= bbox[3] {
+                return fail("invalid or wrapped bounds");
+            }
+        }
+        Spatial::Polygon { .. } => {
+            crate::spatial::geometry(&r.spatial)?;
+        }
     }
     if r.budget.chunk_edge == 0 || r.budget.max_nodes == 0 {
         return fail("chunk_edge and max_nodes must be positive");
@@ -159,7 +190,13 @@ pub fn validate(r: &Request) -> Result<&[Asset]> {
         .budget
         .chunk_edge
         .checked_mul(r.budget.chunk_edge)
-        .and_then(|n| n.checked_mul(2))
+        .and_then(|n| {
+            n.checked_mul(if matches!(r.spatial, Spatial::Polygon { .. }) {
+                4
+            } else {
+                2
+            })
+        })
         .ok_or("buffer size overflow")?;
     if bytes > r.budget.buffer_bytes {
         return fail("chunk pixel buffer exceeds buffer_bytes");
@@ -225,5 +262,10 @@ pub fn plan(request: &Request, cache: &mut LayoutCache) -> Result<Plan> {
             Format::ZarrV2 => zarr::ZarrPlanner.plan_asset(asset, request, &mut p)?,
         }
     }
+    p.selected.retain(|s| {
+        p.nodes
+            .iter()
+            .any(|n| n.asset_id == s.asset_id && matches!(n.operation, Operation::Read { .. }))
+    });
     Ok(p)
 }

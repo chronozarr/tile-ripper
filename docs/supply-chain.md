@@ -17,3 +17,20 @@ The exact versions, publication dates, licenses and lock checksums are in
 This is a version/age/license inventory, not a security certification or a
 cargo-vet/cargo-deny audit. Host GDAL/PROJ/libtiff and the Python environment
 remain separately managed native dependencies. No packages were published.
+
+## STAC milestone
+
+The existing `stac` 0.17.6 and `stac-io` 0.3.4 libraries provide STAC types,
+query serialization and pagination. Tokio 1.48.0 supplies their required
+runtime; it does not replace GDAL's I/O/decoder. These are three necessary
+direct dependencies in the same package; no workspace crates, DuckDB, new
+codec stack or extra geometry library were added. Upstream STAC/CQL/TLS
+support brings a substantial transitive dependency tree (325 registry package
+versions in the final lock). This compile/supply-chain cost is explicit.
+
+`stac-dependency-inventory.json` records final publication dates/licenses and
+checksums from the same primary registry API. Nineteen recently resolved
+versions were downgraded to pre-cutoff compatible releases (including paired
+Pest/TLS/derive dependencies); all final registry versions predate 2026-10-11.
+The `bench/check_dependency_ages.py` inventory helper reproduces the check.
+It is still an age/license inventory, not a vulnerability certification.

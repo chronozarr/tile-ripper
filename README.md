@@ -1,12 +1,14 @@
 # Tile-Ripper
 
-An experimental Rust acquisition planner with a working native-grid GeoTIFF
-extraction path. One library, one thin CLI, GDAL for TIFF metadata/I/O/decoding.
-Standalone: no ChronoZarr dependency.
+A Rust acquisition planner with a working Sentinel-2 STAC-to-pixels workflow,
+a native GeoTIFF reader path, and a planning-only Zarr adapter. One library
+and a thin CLI, with GDAL handling raster I/O/decoding. No ChronoZarr dependency.
 
-Read [the architecture decision](docs/0001-acquisition-planner.md) and
-[the decision gate](docs/decision-gate.md) before extending the prototype.
-The original [study](study/README.md) is preserved as historical evidence.
+Start with [the usable STAC workflow](docs/stac-workflow.md) and its
+[decision gate](docs/stac-decision-gate.md). The commands below demonstrate
+the older direct-asset prototype. [ADR 0001](docs/0001-acquisition-planner.md)
+and [ADR 0002](docs/0002-stac-workflow.md) describe the preserved design.
+The original [study](study/README.md) remains historical evidence.
 
 ## Build and demonstrate
 
@@ -87,7 +89,9 @@ a cache larger than 32 MiB is rejected.
 - Zarr v2: planning only, local 2D array metadata, C order, `.` or `/` chunk
   separators. Explicit `tile_ripper_grid` CRS/affine attributes are a prototype
   fixture convention; `.zarray` itself has no universal georeferencing.
-- Unsupported: discovery adapters, polygons, target grids, other dtypes,
+- The STAC facade now supports Earth Search discovery, AOI CRS mapping, polygon
+  masks and per-asset outputs; see its separate request contract above.
+- Unsupported: other provider adapters, target grids, other dtypes,
   quality masks, internal mask/alpha TIFFs, Zarr materialization/v3 sharding,
   HDF5/NetCDF and GeoParquet reads, mosaicking and temporal reduction.
 - TIFF ranges shown in plans are explanatory block-layout evidence. GDAL
@@ -95,7 +99,8 @@ a cache larger than 32 MiB is rejected.
   measured externally; payload estimates are not wire-byte guarantees.
 - Persistent remote layout caching is disabled until ETag/version validation
   and conditional execution exist. Local identity uses size/mtime, not a
-  content hash. The prototype assumes source objects stay unchanged during a run.
+  content hash. The STAC workflow now pins strong ETags through conditional reads;
+  legacy direct requests without ETags still assume unchanged remote objects.
 
 ## Verification and benchmarks
 

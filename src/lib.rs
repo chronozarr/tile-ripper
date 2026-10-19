@@ -11,3 +11,6 @@ pub type Result<T> = std::result::Result<T, Box<dyn std::error::Error + Send + S
 pub(crate) fn fail<T>(message: &str) -> Result<T> {
     Err(message.to_owned().into())
 }
+
+pub mod spatial;
+pub mod stac_workflow;

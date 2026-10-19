@@ -87,6 +87,7 @@ impl FormatPlanner for ZarrPlanner {
             return Ok(());
         };
         p.selected.push(Selected {
+            mask_geometry: None,
             asset_id: asset.id.clone(),
             datetime: asset.datetime.clone(),
             reason: "requested array and native bounds intersect".into(),

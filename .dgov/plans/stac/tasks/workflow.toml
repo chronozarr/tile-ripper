@@ -1,0 +1,17 @@
+[tasks.workflow]
+summary = "Implement and evaluate the STAC native extraction workflow"
+role = "worker"
+commit_message = "Add STAC to native masked GeoTIFF acquisition"
+prompt = """
+Orient:
+Read docs/0002-stac-workflow.md and prior decision-gate evidence.
+Edit:
+Add bounded paginated STAC discovery, GDAL AOI masks, one output per source,
+a thin CLI and library API. Preserve Zarr planning and the existing DAG.
+Verify:
+Run cargo test --locked and strict Clippy; independent GDAL pixel checks;
+small live Earth Search demo and repeated local STAC/GDAL benchmark.
+Stop at the decision gate; no publication or second format executor.
+"""
+files = { read = ["docs/0002-stac-workflow.md"], edit = ["src/model.rs", "src/planner.rs", "src/cog.rs", "src/execute.rs", "src/main.rs", "src/lib.rs", "Cargo.toml", "Cargo.lock", "README.md", "tests/planner.rs"], create = ["src/spatial.rs", "src/stac_workflow.rs", "tests/stac_workflow.rs", "examples/stac-request.json", "examples/stac_acquire.rs", "bench/stac_workflow.py", "docs/stac-decision-gate.md"] }
+test_cmd = "cargo test --locked"

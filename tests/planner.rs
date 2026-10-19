@@ -57,6 +57,7 @@ fn fixture(root: &std::path::Path) -> Request {
     Request {
         source: Source::Assets {
             assets: vec![Asset {
+                etag: None,
                 id: "test".into(),
                 locator: file.to_str().unwrap().into(),
                 format: Format::Cog,
@@ -148,9 +149,10 @@ fn rejects_unsupported_and_over_budget_before_io() {
     });
     assert!(plan(&r, &mut c).is_err());
     r.quality.clear();
-    r.spatial = Spatial::Bounds {
+    r.grid = Grid::Target {
         crs: "EPSG:4326".into(),
-        bbox: [0., 0., 1., 1.],
+        resolution: [0.1, 0.1],
+        resampling: "nearest".into(),
     };
     assert!(plan(&r, &mut c).is_err());
     fs::remove_dir_all(root).unwrap();

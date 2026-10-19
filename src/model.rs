@@ -29,6 +29,8 @@ pub enum Source {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Asset {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub etag: Option<String>,
     pub id: String,
     pub locator: String,
     pub format: Format,
@@ -168,6 +170,8 @@ pub struct Node {
 }
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Selected {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub mask_geometry: Option<serde_json::Value>,
     pub asset_id: String,
     pub datetime: Option<String>,
     pub reason: String,

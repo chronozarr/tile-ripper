@@ -27,9 +27,12 @@ pub struct Chunk {
 pub struct ExecutionReport {
     pub chunks: usize,
     pub decoded_bytes: usize,
+    pub non_nodata_pixels: usize,
     pub planning_seconds: f64,
+    pub source_open_seconds: f64,
     pub read_decode_seconds: f64,
     pub sink_seconds: f64,
+    pub masking_seconds: f64,
     pub remote_requests: Option<u64>,
     pub remote_bytes: Option<u64>,
 }
@@ -43,7 +46,7 @@ pub fn execute(
     let p = plan(r, cache)?;
     execute_plan(r, &p, t.elapsed().as_secs_f64(), sink)
 }
-fn execute_plan(
+pub(crate) fn execute_plan(
     r: &Request,
     p: &Plan,
     planning_seconds: f64,
@@ -59,9 +62,12 @@ fn execute_plan(
     let mut report = ExecutionReport {
         chunks: 0,
         decoded_bytes: 0,
+        non_nodata_pixels: 0,
         planning_seconds,
+        source_open_seconds: 0.,
         read_decode_seconds: 0.,
         sink_seconds: 0.,
+        masking_seconds: 0.,
         remote_requests: None,
         remote_bytes: None,
     };
@@ -71,6 +77,18 @@ fn execute_plan(
             .find(|a| a.id == selected.asset_id)
             .ok_or("asset binding missing")?;
         let layout = selected.layout.as_ref().ok_or("missing layout")?;
+        let mask_geometry = selected
+            .mask_geometry
+            .as_ref()
+            .map(|v| gdal::vector::Geometry::from_geojson(&v.to_string()))
+            .transpose()?;
+        // A different prepared job may have populated GDAL's URL-only cache
+        // since planning. Rebind the cached metadata/data to this snapshot.
+        if asset.etag.is_some() {
+            cog::clear_remote_cache(asset)?;
+        }
+        let _headers = cog::ConditionalHeaders::for_asset(asset)?;
+        let open_started = Instant::now();
         let ds = cog::open(asset)?;
         if ds.raster_size() != (layout.width, layout.height)
             || ds.geo_transform()? != layout.transform
@@ -78,6 +96,7 @@ fn execute_plan(
             return fail("asset grid changed since planning");
         }
         let band = ds.rasterband(layout.band)?;
+        report.source_open_seconds += open_started.elapsed().as_secs_f64();
         for node in &p.nodes {
             if node.asset_id != asset.id {
                 continue;
@@ -97,7 +116,7 @@ fn execute_plan(
                 continue;
             }
             let t = Instant::now();
-            let pixels = band
+            let mut pixels = band
                 .read_as::<u16>(
                     (window.x as isize, window.y as isize),
                     (window.width, window.height),
@@ -106,7 +125,23 @@ fn execute_plan(
                 )
                 .map_err(|_| "GDAL window read failed (locator omitted)")?;
             report.read_decode_seconds += t.elapsed().as_secs_f64();
+            let t = Instant::now();
+            if let Some(g) = &mask_geometry {
+                let mask = crate::spatial::mask(g, layout, window)?;
+                let nodata = layout.nodata.ok_or("AOI mask requires nodata")? as u16;
+                for (value, valid) in pixels.data_mut().iter_mut().zip(mask.data()) {
+                    if *valid == 0 {
+                        *value = nodata;
+                    }
+                }
+            }
+            report.masking_seconds += t.elapsed().as_secs_f64();
             report.decoded_bytes += pixels.data().len() * 2;
+            report.non_nodata_pixels += pixels
+                .data()
+                .iter()
+                .filter(|v| layout.nodata.is_none_or(|n| f64::from(**v) != n))
+                .count();
             let mut transform = layout.transform;
             transform[0] += window.x as f64 * transform[1];
             transform[3] += window.y as f64 * transform[5];
