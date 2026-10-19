@@ -58,3 +58,12 @@ thread-local handler stack, without a new dependency or global library handler.
 Python benchmarks reuse the existing isolated environments and locked/frozen
 requirements. No codecs, downloader, workspace crate or remote Zarr backend
 were introduced.
+
+
+## Remote HTTP Zarr milestone
+
+reqwest =0.13.5 is now a direct dependency with its blocking feature. That exact
+package and feature stack were already locked through STAC dependencies: no new
+registry packages or versions are added. HTTP transport uses reqwest; Zarr
+serialization and decoding remain zarrs. Python uses the same frozen Zarr oracle
+environment and standard-library HTTP, with no new installed packages.

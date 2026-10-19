@@ -35,6 +35,7 @@ enum Runtime {
         request: Box<Request>,
         plan: Plan,
         versions: Versions,
+        sources: crate::storage::Sources,
         planning_seconds: f64,
     },
     Catalog(Box<stac_workflow::Prepared>),
@@ -120,12 +121,17 @@ impl Prepared {
                 request,
                 plan,
                 versions,
+                sources,
                 planning_seconds,
             } => {
                 versions.validate()?;
-                let report = crate::execute::execute_plan(request, plan, *planning_seconds, sink)
-                    .map_err(|e| safe_error(request, "execution", e))?;
+                sources.validate()?;
+                let mut report =
+                    crate::execute::execute_on(request, plan, *planning_seconds, sources, sink)
+                        .map_err(|e| safe_error(request, "execution", e))?;
                 versions.validate()?;
+                sources.validate()?;
+                report.transport = sources.stats();
                 Ok(report)
             }
             Runtime::Catalog(p) => p.execute(sink),
@@ -134,15 +140,18 @@ impl Prepared {
     /// Native format writers are retained. Only the provenance envelope is unified.
     pub fn fetch(&self) -> Result<Value> {
         let _quiet = crate::diagnostics::QuietNative::enter();
+        let fetch_started = Instant::now();
         destination(&self.output)?;
         let (root, legacy) = match &self.runtime {
             Runtime::Direct {
                 request,
                 plan,
                 versions,
+                sources,
                 planning_seconds,
             } => {
                 versions.validate()?;
+                sources.validate()?;
                 let root = destination(&request.sink)?;
                 if Path::new(root).exists() {
                     return Err("output directory already exists; choose a new directory".into());
@@ -153,16 +162,25 @@ impl Prepared {
                 {
                     fs::create_dir_all(parent)?;
                 }
-                crate::execute::fetch_plan(request, plan, *planning_seconds)
+                let materialization_prefix = fetch_started.elapsed().as_secs_f64();
+                crate::execute::fetch_on(request, plan, *planning_seconds, sources)
                     .map_err(|e| safe_error(request, "fetch", e))?;
                 // A successful native writer owns this new directory; cleanup is safe.
-                if let Err(e) = versions.validate() {
+                if let Err(e) = versions.validate().and_then(|_| sources.validate()) {
                     let _ = fs::remove_dir_all(root);
                     return Err(e);
                 }
                 (
                     root.to_owned(),
-                    fs::read(Path::new(root).join("manifest.json")),
+                    fs::read(Path::new(root).join("manifest.json")).and_then(|bytes| {
+                        let mut value: Value = serde_json::from_slice(&bytes)?;
+                        value["observed"]["transport"] = sources.stats();
+                        if let Some(seconds) = value["observed"]["first_output_seconds"].as_f64() {
+                            value["observed"]["first_output_seconds"] =
+                                json!(seconds + materialization_prefix);
+                        }
+                        Ok(serde_json::to_vec(&value)?)
+                    }),
                 )
             }
             Runtime::Catalog(p) => {
@@ -231,6 +249,7 @@ fn prepare_inner(request: &Request, cache: &mut LayoutCache) -> Result<Prepared>
             Runtime::Catalog(Box::new(stac_workflow::prepare(&as_stac(request)?, cache)?))
         }
         Source::Assets { assets } => {
+            crate::planner::validate(request)?;
             if (assets.iter().any(|a| a.format == Format::ZarrV2)
                 && matches!(request.sink, Sink::GeoTiffDirectory { .. }))
                 || (assets.iter().any(|a| a.format == Format::Cog)
@@ -255,16 +274,22 @@ fn prepare_inner(request: &Request, cache: &mut LayoutCache) -> Result<Prepared>
             let t = Instant::now();
             // Capture relevant metadata before inspection, then add selected data keys.
             let mut versions = Versions::metadata(&request)?;
-            if assets.iter().any(|a| crate::cog::remote(&a.locator)) {
+            if assets
+                .iter()
+                .any(|a| a.format == Format::Cog && crate::cog::remote(&a.locator))
+            {
                 stac_workflow::resolve_identities(&mut request, &mut [], &Default::default())?;
             }
-            let plan = crate::planner::plan(&request, cache)?;
+            let sources = crate::storage::Sources::new(&request)?;
+            let plan = crate::planner::plan_on(&request, cache, &sources)?;
+            sources.seal()?;
             versions.validate()?;
             versions.add_data(&request, &plan)?;
             Runtime::Direct {
                 request: Box::new(request),
                 plan,
                 versions,
+                sources,
                 planning_seconds: t.elapsed().as_secs_f64(),
             }
         }
@@ -289,11 +314,12 @@ fn prepare_inner(request: &Request, cache: &mut LayoutCache) -> Result<Prepared>
             plan,
             planning_seconds,
             versions,
+            sources,
         } => {
             let Source::Assets { assets } = &request.source else {
                 unreachable!()
             };
-            let sources:Vec<_>=assets.iter().map(|a|json!({"asset_id":a.id,"format":a.format,"reference":if crate::cog::remote(&a.locator){stac_workflow::safe_reference(&a.locator)}else{a.locator.clone()},"datetime":a.datetime,"object_version":a.etag,"local_identity":versions.describe(Path::new(&a.locator)),"version_validation":if crate::cog::remote(&a.locator){"conditional ETag"}else{"local size and modification timestamp"}})).collect();
+            let sources:Vec<_>=assets.iter().map(|a|json!({"asset_id":a.id,"format":a.format,"reference":if crate::cog::remote(&a.locator){stac_workflow::safe_reference(&a.locator)}else{a.locator.clone()},"datetime":a.datetime,"object_version":a.etag,"local_identity":versions.describe(Path::new(&a.locator)),"object_identities":sources.describe(&a.id),"version_validation":if crate::cog::remote(&a.locator){"conditional ETag"}else{"local size and modification timestamp"}})).collect();
             (
                 plan,
                 json!(sources),
@@ -325,6 +351,9 @@ fn prepare_inner(request: &Request, cache: &mut LayoutCache) -> Result<Prepared>
         }
     }
     let mut inspection = json!({"schema_version":3,"document_type":"inspection_only","saved_plan_execution_supported":false,"sources":sources,"discovery":discovery,"planning_seconds":planning,"plan":p,"expected_reads":{"local_library_reads":local,"remote_library_reads":remote,"note":"estimates of library calls; COG HTTP grouping is controlled by GDAL; Zarr data keys are exact, metadata/coordinate reads excluded"},"transformations":p.selected.iter().filter(|s|s.mask_geometry.is_some()).map(|s|json!({"asset_id":s.asset_id,"operation":"AOI pixel-center mask; geometry-only CRS mapping as required","raster_resampling":false})).collect::<Vec<_>>(),"unsupported_operations":p.selected.iter().filter(|s|!s.capabilities.materialization).map(|s|json!({"asset_id":s.asset_id,"operation":"materialize","reason":"reader supports inspection only"})).collect::<Vec<_>>(),"observed_planning":{"discovery_seconds":discovery["seconds"],"metadata_and_plan_seconds":planning},"output_strategy":strategy(&runtime,&request.sink),"expected_outputs":outputs(p,strategy(&runtime,&request.sink)),"metadata_cache":p.nodes.iter().filter_map(|n|match n.operation{Operation::Inspect{cached}=>Some(json!({"asset_id":n.asset_id,"cached":cached})),_=>None}).collect::<Vec<_>>()});
+    if let Runtime::Direct { sources, .. } = &runtime {
+        inspection["transport"] = sources.stats();
+    }
     sanitize(&mut inspection);
     Ok(Prepared {
         runtime,
@@ -572,7 +601,7 @@ impl Versions {
                 v.add(root.into())?;
                 continue;
             }
-            for file in [".zgroup", ".zattrs", ".zarray"] {
+            for file in [".zgroup", ".zattrs", ".zarray", "zarr.json"] {
                 v.add(root.join(file))?;
             }
             for axis in ["time", "y", "x"] {
@@ -587,7 +616,7 @@ impl Versions {
                     if name == ".." || name.contains('/') || name.contains('\\') {
                         return Err("unsafe dataset path".into());
                     }
-                    for file in [".zarray", ".zattrs"] {
+                    for file in [".zarray", ".zattrs", "zarr.json"] {
                         v.add(root.join(name).join(file))?;
                     }
                 }
@@ -626,7 +655,9 @@ impl Versions {
                     .iter()
                     .find(|a| a.id == n.asset_id)
                     .ok_or("asset binding missing")?;
-                self.add(Path::new(&a.locator).join(key))?;
+                if !crate::cog::remote(&a.locator) {
+                    self.add(Path::new(&a.locator).join(key))?;
+                }
             }
         }
         Ok(())

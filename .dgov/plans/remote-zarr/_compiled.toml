@@ -1,0 +1,24 @@
+[plan]
+name = "remote-zarr"
+source_mtime_max = "2026-10-19T04:03:20.432231Z"
+sop_set_hash = ""
+
+[tasks."tasks/http.http"]
+summary = "Implement and measure anonymous HTTP Zarr v2 acquisition"
+prompt = """
+Orient:
+Read the remote acquisition brief, existing lifecycle, native Zarr and preservation gate.
+Edit:
+Use reqwest and zarrs object interfaces with private prepared storage bindings.
+Retain one planner, bounded payload/output bookkeeping, explicit object versions,
+metadata/data/retry accounting, cleanup and sanitized diagnostics.
+Verify:
+All existing tests; independent HTTP/xarray fixtures, faults, metadata modes,
+cold/warm measurements, bounded public-network compatibility check and CLI/library
+examples. No signing, S3 API, new codec, v3, third format, publication or merge.
+"""
+commit_message = ""
+timeout_s = 0
+test_cmd = "cargo test --locked"
+files.create = ["src/storage.rs", "bench/remote_zarr.py", "examples/remote_zarr.rs", "examples/remote-zarr.json", "docs/remote-zarr-decision.md", "docs/remote-zarr-workflow.md", "tests/remote_zarr.rs"]
+files.edit = ["Cargo.toml", "Cargo.lock", "src/lib.rs", "src/acquisition.rs", "src/planner.rs", "src/zarr.rs", "src/zarr_acquire.rs", "src/execute.rs", "README.md"]

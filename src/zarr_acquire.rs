@@ -6,18 +6,62 @@ type Store = FilesystemStore;
 type Metrics =
     zarrs::storage::storage_adapter::performance_metrics::PerformanceMetricsStorageAdapter<Store>;
 type OutputStore = crate::zarr_io::Timed<Metrics>;
-fn store(a: &Asset) -> Result<Arc<Store>> {
-    if cog::remote(&a.locator) || a.etag.is_some() {
-        return fail("Zarr supports immutable local directory stores only");
+/// Zarr v2 consolidated metadata is an adapter-owned view over generic objects.
+pub(crate) fn metadata_view(
+    source: Arc<crate::storage::Objects>,
+    budget: &Budget,
+) -> Result<Arc<crate::storage::Objects>> {
+    use zarrs::storage::ReadableStorageTraits;
+    let Some(bytes) = source.get(&zarrs::storage::StoreKey::new(".zmetadata")?)? else {
+        return Ok(source);
+    };
+    let doc: serde_json::Value =
+        serde_json::from_slice(&bytes).map_err(|_| "malformed consolidated metadata")?;
+    if doc["zarr_consolidated_format"] != 1 {
+        return fail("unsupported consolidated metadata version");
     }
-    Ok(Arc::new(Store::new(&a.locator)?))
+    let entries = doc["metadata"]
+        .as_object()
+        .ok_or("malformed consolidated metadata map")?;
+    if entries.len() > budget.max_nodes {
+        return fail("consolidated metadata exceeds max_nodes");
+    }
+    let mut view = std::collections::BTreeMap::new();
+    let mut total = 0usize;
+    for (key, value) in entries {
+        let encoded = serde_json::to_vec(value)?;
+        total = total
+            .checked_add(encoded.len())
+            .ok_or("metadata size overflow")?;
+        if total > budget.buffer_bytes / 2 {
+            return fail("expanded consolidated metadata exceeds half buffer_bytes");
+        }
+        view.insert(key.clone(), encoded);
+    }
+    let entries = view;
+    source.discard_cached(".zmetadata");
+    Ok(Arc::new(crate::storage::Objects::Overlay {
+        origin: source,
+        entries,
+    }))
 }
-fn json(root: &Path, key: &str) -> Result<serde_json::Value> {
-    let path = root.join(key);
-    if fs::metadata(&path)?.len() > 1024 * 1024 {
-        return fail("Zarr metadata exceeds 1 MiB");
+fn open_v2(
+    source: Arc<crate::storage::Objects>,
+    path: &str,
+) -> Result<Array<crate::storage::Objects>> {
+    if source
+        .metadata_bytes(&format!("{path}/zarr.json"))?
+        .is_some()
+    {
+        return fail("Zarr v3 or hybrid v2/v3 arrays are unsupported");
     }
-    Ok(serde_json::from_slice(&fs::read(path)?)?)
+    Ok(Array::open(source, &format!("/{path}"))?)
+}
+fn store(a: &Asset) -> Result<Arc<crate::storage::Objects>> {
+    crate::storage::Sources::default().get(a)
+}
+fn json(source: &crate::storage::Objects, key: &str) -> Result<serde_json::Value> {
+    source.json(key)
 }
 fn name(path: &str) -> Result<&str> {
     let s = path.strip_prefix('/').unwrap_or(path);
@@ -31,7 +75,12 @@ fn name(path: &str) -> Result<&str> {
     }
     Ok(s)
 }
-fn meta(root: &Path, path: &str, dims: &[&str], dtype: &str) -> Result<serde_json::Value> {
+fn meta(
+    root: &crate::storage::Objects,
+    path: &str,
+    dims: &[&str],
+    dtype: &str,
+) -> Result<serde_json::Value> {
     let m = json(root, &format!("{path}/.zarray"))?;
     let attrs = json(root, &format!("{path}/.zattrs"))?;
     if m["zarr_format"] != 2
@@ -95,14 +144,19 @@ struct Dataset {
     y: Vec<f64>,
     root_attrs: serde_json::Value,
 }
-fn inspect(a: &Asset, r: &Request) -> Result<Dataset> {
-    let root = Path::new(&a.locator);
-    let s = store(a)?;
+fn inspect_on(r: &Request, s: Arc<crate::storage::Objects>) -> Result<Dataset> {
+    let root = s.as_ref();
+    if root.metadata_bytes("zarr.json")?.is_some() {
+        return fail("Zarr v3 or hybrid v2/v3 stores are unsupported");
+    }
     if json(root, ".zgroup")?["zarr_format"] != 2 {
         return fail("requires a Zarr v2 group");
     }
     let attrs = json(root, ".zattrs")?;
     let grid = &attrs["tile_ripper_grid"];
+    if !grid.is_object() {
+        return fail("Zarr requires explicit tile_ripper_grid CRS/affine metadata; automatic CF georeferencing is unsupported");
+    }
     let transform: [f64; 6] = serde_json::from_value(grid["transform"].clone())?;
     if !transform.iter().all(|x| x.is_finite())
         || transform[1] <= 0.
@@ -128,7 +182,7 @@ fn inspect(a: &Asset, r: &Request) -> Result<Dataset> {
         {
             return fail("coordinate axis exceeds buffer budget");
         }
-        coordinates.push(Array::open(s.clone(), &format!("/{axis}"))?);
+        coordinates.push(open_v2(s.clone(), axis)?);
     }
     let x = coordinates[0].retrieve_array_subset_elements::<f64>(&coordinates[0].subset_all())?;
     let y = coordinates[1].retrieve_array_subset_elements::<f64>(&coordinates[1].subset_all())?;
@@ -173,6 +227,14 @@ fn inspect(a: &Asset, r: &Request) -> Result<Dataset> {
     })
 }
 pub(crate) fn plan_asset(a: &Asset, r: &Request, p: &mut Plan) -> Result<()> {
+    plan_asset_on(a, r, p, store(a)?)
+}
+pub(crate) fn plan_asset_on(
+    a: &Asset,
+    r: &Request,
+    p: &mut Plan,
+    source: Arc<crate::storage::Objects>,
+) -> Result<()> {
     if r.budget
         .chunk_edge
         .checked_mul(r.budget.chunk_edge)
@@ -181,8 +243,8 @@ pub(crate) fn plan_asset(a: &Asset, r: &Request, p: &mut Plan) -> Result<()> {
     {
         return fail("Zarr output buffer exceeds quarter buffer_bytes");
     }
-    let d = inspect(a, r)?;
-    let root = Path::new(&a.locator);
+    let d = inspect_on(r, source.clone())?;
+    let root = source.as_ref();
     let Spatial::Bounds { .. } = &r.spatial else {
         return fail("Zarr path supports native bounds only; polygon masking is unsupported");
     };
@@ -214,6 +276,8 @@ pub(crate) fn plan_asset(a: &Asset, r: &Request, p: &mut Plan) -> Result<()> {
             return fail("duplicate dataset path alias");
         }
         let m = meta(root, path, &["time", "y", "x"], "<u2")?;
+        // Resolve every library metadata probe while the snapshot is inspectable.
+        let _ = open_v2(source.clone(), path)?;
         let shape = sizes(&m, "shape")?;
         let chunks = sizes(&m, "chunks")?;
         if shape != vec![d.times.len(), d.y.len(), d.x.len()] {
@@ -245,11 +309,7 @@ pub(crate) fn plan_asset(a: &Asset, r: &Request, p: &mut Plan) -> Result<()> {
                     if keys.len() > r.budget.max_nodes {
                         return fail("source chunk enumeration exceeds max_nodes");
                     }
-                    let bytes = match fs::metadata(root.join(&key)) {
-                        Ok(m) => m.len(),
-                        Err(e) if e.kind() == std::io::ErrorKind::NotFound => 0,
-                        Err(e) => return Err(e.into()),
-                    };
+                    let bytes = source.size(&key)?.unwrap_or(0);
                     if bytes > r.budget.buffer_bytes as u64 / 2 {
                         return fail("encoded source chunk exceeds half buffer_bytes");
                     }
@@ -351,13 +411,14 @@ pub(crate) fn execute_selected(
     r: &Request,
     p: &Plan,
     a: &Asset,
+    sources: &crate::storage::Sources,
     selected: &Selected,
     report: &mut crate::ExecutionReport,
     sink: &mut impl FnMut(crate::Chunk) -> Result<()>,
 ) -> Result<()> {
     let t = Instant::now();
-    let s = store(a)?;
-    let d = inspect(a, r)?;
+    let s = sources.get(a)?;
+    let d = inspect_on(r, s.clone())?;
     let layout = selected.layout.as_ref().ok_or("missing layout")?;
     let Variable::Dataset { path } = &layout.variable else {
         return fail("missing dataset variable");
@@ -398,6 +459,17 @@ pub(crate) fn execute_selected(
             &serial(),
         )?;
         report.read_decode_seconds += t.elapsed().as_secs_f64();
+        if trace
+            .lock()
+            .map_err(|_| "trace lock poisoned")?
+            .keys
+            .get(key)
+            .is_some_and(|(_, bytes)| *bytes > 0)
+        {
+            report.decoded_source_chunks += 1;
+        } else {
+            report.filled_source_chunks += 1;
+        }
         report.native_materialized_bytes =
             Some(report.native_materialized_bytes.unwrap_or(0) + native.len() * 2);
         let origin: Vec<_> = indices.iter().zip(cs).map(|(i, c)| i * c).collect();
@@ -522,7 +594,7 @@ impl std::io::Write for ReadTrace {
     }
 }
 fn output_array(
-    source: &Path,
+    source: &crate::storage::Objects,
     target: Arc<OutputStore>,
     path: &str,
     shape: Vec<usize>,
@@ -551,6 +623,15 @@ pub(crate) fn fetch(r: &Request, cache: &mut cog::LayoutCache) -> Result<crate::
     fetch_plan(r, &p, planning)
 }
 pub(crate) fn fetch_plan(r: &Request, p: &Plan, planning: f64) -> Result<crate::ExecutionReport> {
+    fetch_on(r, p, planning, &crate::storage::Sources::default())
+}
+pub(crate) fn fetch_on(
+    r: &Request,
+    p: &Plan,
+    planning: f64,
+    sources: &crate::storage::Sources,
+) -> Result<crate::ExecutionReport> {
+    let fetch_started = Instant::now();
     let Sink::ZarrDirectory { path } = &r.sink else {
         return fail("Zarr requires a native Zarr directory sink");
     };
@@ -602,7 +683,8 @@ pub(crate) fn fetch_plan(r: &Request, p: &Plan, planning: f64) -> Result<crate::
             if selected.is_empty() {
                 continue;
             }
-            let d = inspect(a, r)?;
+            let source_store = sources.get(a)?;
+            let d = inspect_on(r, source_store.clone())?;
             let s = Arc::new(OutputStore::new(Arc::new(Metrics::new(Arc::new(
                 Store::new(root.join(format!("{}.zarr", a.id)))?,
             )))));
@@ -619,7 +701,7 @@ pub(crate) fn fetch_plan(r: &Request, p: &Plan, planning: f64) -> Result<crate::
                 serde_json::json!(crate::spatial::window_transform(&d.layout, w));
             *group.attributes_mut() = serde_json::from_value(attrs)?;
             group.store_metadata()?;
-            let source = Path::new(&a.locator);
+            let source = source_store.as_ref();
             for (axis, values) in [
                 ("x", &d.x[w.x..w.x + w.width]),
                 ("y", &d.y[w.y..w.y + w.height]),
@@ -666,7 +748,8 @@ pub(crate) fn fetch_plan(r: &Request, p: &Plan, planning: f64) -> Result<crate::
         }
         let output_setup = setup.elapsed().as_secs_f64();
         let mut buffer = OutputBuffer::new(r.budget.buffer_bytes / 4);
-        let mut report = crate::execute::execute_plan(r, p, planning, |c| {
+        buffer.started = fetch_started;
+        let mut report = crate::execute::execute_on(r, p, planning, sources, |c| {
             let Variable::Dataset { path } = &c.variable else {
                 return fail("unexpected variable");
             };
@@ -696,6 +779,7 @@ pub(crate) fn fetch_plan(r: &Request, p: &Plan, planning: f64) -> Result<crate::
         let finalize = Instant::now();
         buffer.flush()?;
         report.output_finalize_seconds = finalize.elapsed().as_secs_f64();
+        report.first_output_seconds = buffer.first_output;
         report.output_setup_seconds = output_setup;
         report.output_io = Some(crate::execute::OutputIo {
             reads: stores.iter().map(|s| s.inner.reads()).sum(),
@@ -738,6 +822,8 @@ struct OutputBuffer {
     limit: usize,
     peak: usize,
     clock: u64,
+    started: Instant,
+    first_output: Option<f64>,
     encode_seconds: f64,
     allocation_seconds: f64,
     copying_seconds: f64,
@@ -751,6 +837,8 @@ impl OutputBuffer {
             limit,
             peak: 0,
             clock: 0,
+            started: Instant::now(),
+            first_output: None,
             encode_seconds: 0.,
             allocation_seconds: 0.,
             copying_seconds: 0.,
@@ -766,6 +854,9 @@ impl OutputBuffer {
             let before = ar.storage().write_seconds();
             let t = Instant::now();
             ar.store_chunk_elements_opt(&key, &values, &serial())?;
+            if self.first_output.is_none() {
+                self.first_output = Some(self.started.elapsed().as_secs_f64());
+            }
             self.encode_seconds +=
                 (t.elapsed().as_secs_f64() - (ar.storage().write_seconds() - before)).max(0.);
         }

@@ -77,3 +77,14 @@ synchronous prepared callback remains the bounded consumption interface.
 
 See `docs/output-write-decision.md` and `docs/output-write-workflow.md` for the
 measured gate, equivalent-output protocol, limitations and stream assessment.
+
+
+## Remote HTTP Zarr
+
+`src/storage.rs` provides private prepared local/HTTP object bindings, bounded
+metadata cache, conditional versions and transport accounting using reqwest and
+zarrs storage traits. `zarr_acquire.rs` interprets consolidated metadata and
+reuses existing native selection/extraction. `acquisition.rs` owns preparation,
+sealing, pre/post validation, cleanup and completion. Public Request/Plan remain
+format-neutral; COG continues through GDAL. See `remote-zarr-workflow.md` for
+strict layout/backend limits and `remote-zarr-decision.md` for measurements.

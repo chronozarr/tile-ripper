@@ -1,0 +1,17 @@
+[tasks.http]
+summary = "Implement and measure anonymous HTTP Zarr v2 acquisition"
+role = "worker"
+prompt = """
+Orient:
+Read the remote acquisition brief, existing lifecycle, native Zarr and preservation gate.
+Edit:
+Use reqwest and zarrs object interfaces with private prepared storage bindings.
+Retain one planner, bounded payload/output bookkeeping, explicit object versions,
+metadata/data/retry accounting, cleanup and sanitized diagnostics.
+Verify:
+All existing tests; independent HTTP/xarray fixtures, faults, metadata modes,
+cold/warm measurements, bounded public-network compatibility check and CLI/library
+examples. No signing, S3 API, new codec, v3, third format, publication or merge.
+"""
+files = {edit=["Cargo.toml","Cargo.lock","src/lib.rs","src/acquisition.rs","src/planner.rs","src/zarr.rs","src/zarr_acquire.rs","src/execute.rs","README.md","docs/implementation-map.md","docs/supply-chain.md"],create=["src/storage.rs","bench/remote_zarr.py","examples/remote_zarr.rs","examples/remote-zarr.json","docs/remote-zarr-decision.md","docs/remote-zarr-workflow.md","tests/remote_zarr.rs","docs/remote-zarr-public-compatibility.md","docs/remote-zarr-benchmark.json","docs/remote-zarr-checks.json","docs/remote-zarr-resource.json","docs/remote-zarr-public-metadata.json","docs/remote-zarr-public-plan.json","docs/remote-zarr-regression.json","docs/remote-zarr-demo.json"]}
+test_cmd = "cargo test --locked"

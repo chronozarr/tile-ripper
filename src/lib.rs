@@ -21,4 +21,5 @@ pub mod acquisition;
 
 mod diagnostics;
 
+mod storage;
 mod zarr_io;

@@ -47,6 +47,14 @@ pub struct ExecutionReport {
     #[serde(default)]
     pub source_reads: Vec<SourceRead>,
     #[serde(default)]
+    pub transport: serde_json::Value,
+    #[serde(default)]
+    pub decoded_source_chunks: usize,
+    #[serde(default)]
+    pub filled_source_chunks: usize,
+    #[serde(default)]
+    pub first_output_seconds: Option<f64>,
+    #[serde(default)]
     pub assembly_seconds: f64,
     #[serde(default)]
     pub source_retrieval_seconds: Option<f64>,
@@ -97,7 +105,10 @@ pub fn execute(
     cache: &mut LayoutCache,
     sink: impl FnMut(Chunk) -> Result<()>,
 ) -> Result<ExecutionReport> {
-    if !matches!(r.source, Source::Assets { .. }) || matches!(r.sink, Sink::Directory { .. }) {
+    if !matches!(r.source, Source::Assets { .. })
+        || matches!(r.sink, Sink::Directory { .. })
+        || crate::storage::has_remote_zarr(r)
+    {
         return crate::acquisition::prepare(r, cache)?.execute(sink);
     }
     let t = Instant::now();
@@ -108,6 +119,21 @@ pub(crate) fn execute_plan(
     r: &Request,
     p: &Plan,
     planning_seconds: f64,
+    sink: impl FnMut(Chunk) -> Result<()>,
+) -> Result<ExecutionReport> {
+    execute_on(
+        r,
+        p,
+        planning_seconds,
+        &crate::storage::Sources::default(),
+        sink,
+    )
+}
+pub(crate) fn execute_on(
+    r: &Request,
+    p: &Plan,
+    planning_seconds: f64,
+    sources: &crate::storage::Sources,
     mut sink: impl FnMut(Chunk) -> Result<()>,
 ) -> Result<ExecutionReport> {
     let _quiet = crate::diagnostics::QuietNative::enter();
@@ -120,6 +146,10 @@ pub(crate) fn execute_plan(
     };
     let mut report = ExecutionReport {
         source_reads: vec![],
+        transport: serde_json::Value::Null,
+        decoded_source_chunks: 0,
+        filled_source_chunks: 0,
+        first_output_seconds: None,
         assembly_seconds: 0.,
         source_retrieval_seconds: None,
         allocation_seconds: None,
@@ -147,7 +177,15 @@ pub(crate) fn execute_plan(
             .find(|a| a.id == selected.asset_id)
             .ok_or("asset binding missing")?;
         if asset.format == Format::ZarrV2 {
-            crate::zarr_acquire::execute_selected(r, p, asset, selected, &mut report, &mut sink)?;
+            crate::zarr_acquire::execute_selected(
+                r,
+                p,
+                asset,
+                sources,
+                selected,
+                &mut report,
+                &mut sink,
+            )?;
             continue;
         }
         let layout = selected.layout.as_ref().ok_or("missing layout")?;
@@ -245,7 +283,10 @@ pub(crate) fn execute_plan(
     Ok(report)
 }
 pub fn fetch(r: &Request, cache: &mut LayoutCache) -> Result<ExecutionReport> {
-    if !matches!(r.source, Source::Assets { .. }) || matches!(r.sink, Sink::Directory { .. }) {
+    if !matches!(r.source, Source::Assets { .. })
+        || matches!(r.sink, Sink::Directory { .. })
+        || crate::storage::has_remote_zarr(r)
+    {
         return Ok(serde_json::from_value(
             crate::acquisition::fetch(r, cache)?["observed"].clone(),
         )?);
@@ -268,8 +309,21 @@ pub(crate) fn fetch_plan(
     preview: &Plan,
     planning_seconds: f64,
 ) -> Result<ExecutionReport> {
+    fetch_on(
+        r,
+        preview,
+        planning_seconds,
+        &crate::storage::Sources::default(),
+    )
+}
+pub(crate) fn fetch_on(
+    r: &Request,
+    preview: &Plan,
+    planning_seconds: f64,
+    sources: &crate::storage::Sources,
+) -> Result<ExecutionReport> {
     if matches!(r.sink, Sink::ZarrDirectory { .. }) {
-        return crate::zarr_acquire::fetch_plan(r, preview, planning_seconds);
+        return crate::zarr_acquire::fetch_on(r, preview, planning_seconds, sources);
     }
     let Sink::GeoTiffDirectory { path } = &r.sink else {
         return fail("fetch requires a native directory sink");

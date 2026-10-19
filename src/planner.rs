@@ -254,10 +254,18 @@ pub fn validate(r: &Request) -> Result<&[Asset]> {
     Ok(assets)
 }
 pub fn plan(request: &Request, cache: &mut LayoutCache) -> Result<Plan> {
-    let _quiet = crate::diagnostics::QuietNative::enter();
-    if !matches!(request.source, Source::Assets { .. }) {
+    if !matches!(request.source, Source::Assets { .. }) || crate::storage::has_remote_zarr(request)
+    {
         return Ok(crate::acquisition::prepare(request, cache)?.plan().clone());
     }
+    plan_on(request, cache, &crate::storage::Sources::default())
+}
+pub(crate) fn plan_on(
+    request: &Request,
+    cache: &mut LayoutCache,
+    sources: &crate::storage::Sources,
+) -> Result<Plan> {
+    let _quiet = crate::diagnostics::QuietNative::enter();
     let assets = validate(request)?;
     let mut p=Plan { schema_version:3,selected:vec![],nodes:vec![],estimates:Estimates {
         selected_compressed_payload_bytes:Some(0),remote_requests:None,
@@ -269,6 +277,9 @@ pub fn plan(request: &Request, cache: &mut LayoutCache) -> Result<Plan> {
         }
         match asset.format {
             Format::Cog => CogPlanner { cache }.plan_asset(asset, request, &mut p)?,
+            Format::ZarrV2 if cog::remote(&asset.locator) => {
+                crate::zarr_acquire::plan_asset_on(asset, request, &mut p, sources.get(asset)?)?
+            }
             Format::ZarrV2 => zarr::ZarrPlanner.plan_asset(asset, request, &mut p)?,
         }
     }

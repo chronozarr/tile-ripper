@@ -1,0 +1,50 @@
+{
+  "source": {
+    "kind": "assets",
+    "assets": [
+      {
+        "id": "cube",
+        "locator": "http://127.0.0.1:8765/store/",
+        "format": "zarr_v2",
+        "datetime": null
+      }
+    ]
+  },
+  "spatial": {
+    "kind": "bounds",
+    "crs": "EPSG:32617",
+    "bbox": [
+      500155,
+      3999095,
+      501035,
+      3999925
+    ]
+  },
+  "time": {
+    "kind": "interval",
+    "start": "2025-01-02T00:00:00Z",
+    "end": "2025-01-04T00:00:00Z"
+  },
+  "variables": [
+    {
+      "kind": "dataset",
+      "path": "red"
+    },
+    {
+      "kind": "dataset",
+      "path": "nir"
+    }
+  ],
+  "grid": {
+    "kind": "native"
+  },
+  "sink": {
+    "kind": "directory",
+    "path": "prototype-output/my-http-subset"
+  },
+  "budget": {
+    "buffer_bytes": 1048576,
+    "max_nodes": 100000,
+    "chunk_edge": 32
+  }
+}
