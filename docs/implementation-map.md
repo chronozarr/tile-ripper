@@ -53,3 +53,14 @@ through the same fallible native-plane callback; `spatial` owns shared window
 math. Layout/callback variable selectors replace mandatory band numbers.
 See `zarr-workflow.md` and `zarr-decision-gate.md` for current capability limits;
 the planning-only statements above describe the original milestone.
+
+
+## Unified lifecycle milestone
+
+`acquisition` resolves source discovery/direct bindings once, preserves the
+native plan and version checks, renders inspection JSON/human summaries and
+publishes a shared completion/provenance envelope. CLI aliases use it too.
+Catalog configuration stays outside the logical planner; formats still own
+native grids, coordinates, codecs and execution. Zarr now plans source chunks
+rather than output-sized slices and retrieves each selected key once. See
+ADR 0003 and the unified decision gate for current evidence and limits.

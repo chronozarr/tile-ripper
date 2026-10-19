@@ -1,0 +1,17 @@
+Tile-Ripper inspection (not a saved execution plan)
+  cube / red: 89 x 84 native pixels; zarrs; 2 timestamp(s)
+    2025-01-02T00:00:00+00:00
+    2025-01-04T00:00:00+00:00
+  cube / nir: 89 x 84 native pixels; zarrs; 2 timestamp(s)
+    2025-01-02T00:00:00+00:00
+    2025-01-04T00:00:00+00:00
+Expected data-library reads: 42 local, 0 remote (estimates; metadata excluded).
+Estimated unique encoded data bytes: 109903
+Metadata cache: 0 reused inspections; remaining metadata inspected now.
+Native grids; no resampling, calibration or compositing.
+Physical tile/chunk selections and native CRS/window details: --json.
+  Limit: No implicit reprojection or compositing
+  Limit: buffer_bytes caps the returned UInt16 pixel buffer, not process RSS or GDAL codec/cache allocations
+  Limit: Diagnostic JSON is not executable; use prepared runtime bindings or prepare anew from the request
+  Limit: Zarr: immutable local v2 group; UInt16 time/y/x arrays; native bounds; none/gzip; each selected source chunk retrieved once; missing chunks require a zero-byte lookup. buffer_bytes bounds coordinates, one decoded chunk and returned buffer separately, not RSS/codec overhead. Missing chunks retain fill_value. No calibration.
+

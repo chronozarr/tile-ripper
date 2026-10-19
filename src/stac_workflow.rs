@@ -161,6 +161,9 @@ impl Discovered {
     }
 }
 impl Prepared {
+    pub(crate) fn output(&self) -> &str {
+        &self.discovered.request.output
+    }
     pub fn plan(&self) -> &Plan {
         &self.plan
     }
@@ -544,7 +547,7 @@ pub fn prepare(request: &StacRequest, cache: &mut LayoutCache) -> Result<Prepare
     discover(request)?.prepare(cache)
 }
 
-fn resolve_identities(
+pub(crate) fn resolve_identities(
     core: &mut Request,
     sources: &mut [SourceReference],
     limits: &Limits,
@@ -562,7 +565,7 @@ fn resolve_identities(
         .timeout(Duration::from_secs(limits.timeout_seconds))
         .user_agent("tile-ripper/0.1")
         .build()?;
-    for (asset, source) in assets.iter_mut().zip(sources) {
+    for (i, asset) in assets.iter_mut().enumerate() {
         let mut attempt = 0;
         let response = loop {
             attempt += 1;
@@ -589,6 +592,13 @@ fn resolve_identities(
             .filter(|v| !v.starts_with("W/"))
             .ok_or("supported source must expose a strong ETag for conditional extraction")?
             .to_owned();
+        if asset
+            .etag
+            .as_ref()
+            .is_some_and(|expected| *expected != etag)
+        {
+            return fail("source version conflict: requested ETag differs from current source");
+        }
         let bytes = response
             .headers()
             .get("content-length")
@@ -597,7 +607,9 @@ fn resolve_identities(
             .ok_or("source HEAD missing content-length")?;
         crate::cog::clear_remote_cache(asset)?;
         asset.etag = Some(etag.clone());
-        source.object_identity = Some(ObjectIdentity { etag, bytes });
+        if let Some(source) = sources.get_mut(i) {
+            source.object_identity = Some(ObjectIdentity { etag, bytes });
+        }
     }
     Ok(())
 }

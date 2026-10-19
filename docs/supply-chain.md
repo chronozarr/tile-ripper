@@ -48,3 +48,13 @@ licenses and checksums. The Python oracle uses an isolated, frozen environment
 in `bench/zarr-requirements.txt`, installed with the same uv cutoff. Existing
 study and ChronoZarr environments were not changed. This remains an age/license
 inventory, not a vulnerability certification.
+
+
+## Unified lifecycle milestone
+
+Cargo.toml/Cargo.lock are unchanged: the same 372 locked registry versions and
+host GDAL are used. Scoped native diagnostics bind GDAL's existing CPL
+thread-local handler stack, without a new dependency or global library handler.
+Python benchmarks reuse the existing isolated environments and locked/frozen
+requirements. No codecs, downloader, workspace crate or remote Zarr backend
+were introduced.

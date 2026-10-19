@@ -1,15 +1,32 @@
 use std::{env, fs, path::Path};
-use tile_ripper::{cog::LayoutCache, fetch, plan, Request, Result, Sink};
+use tile_ripper::{acquisition, cog::LayoutCache, Request, Result, Sink};
 fn run() -> Result<()> {
-    let args: Vec<_> = env::args().collect();
+    let mut args: Vec<_> = env::args().collect();
+    if let Some(command) = args.get_mut(1) {
+        match command.as_str() {
+            "stac-plan" => *command = "plan".into(),
+            "stac-fetch" => *command = "fetch".into(),
+            _ => {}
+        }
+    }
+    if args.get(1).is_some_and(|a| a == "--help" || a == "-h") {
+        println!("tile-ripper plan|fetch request.json [--human|--json] [--output new-directory] [--cache layout.json] [--discover-only]\nLegacy aliases: stac-plan, stac-fetch. See docs/unified-workflow.md.");
+        return Ok(());
+    }
     if args.len() < 3 {
-        return Err("usage: tile-ripper plan|fetch|stac-plan|stac-fetch request.json [--discover-only] [--cache layout.json] [--output new-directory]".into());
+        return Err("usage: tile-ripper plan|fetch|stac-plan|stac-fetch request.json [--human|--json] [--discover-only] [--cache layout.json] [--output new-directory]".into());
     }
     let mut discover_only = false;
+    let mut human = false;
     let mut cache_path = None;
     let mut output = None;
     let mut i = 3;
     while i < args.len() {
+        if args[i] == "--human" || args[i] == "--json" {
+            human = args[i] == "--human";
+            i += 1;
+            continue;
+        }
         if args[i] == "--discover-only" {
             discover_only = true;
             i += 1;
@@ -25,7 +42,10 @@ fn run() -> Result<()> {
         };
         i += 2;
     }
-    let input = fs::read(&args[2])?;
+    if !matches!(args[1].as_str(), "plan" | "fetch") {
+        return Err("expected plan or fetch".into());
+    }
+    let input = fs::read(&args[2]).map_err(|_| "cannot read request file")?;
     // Quiet native driver diagnostics; they can include signed locators.
     gdal::config::set_error_handler(|_, _, _| {});
     for (key, value) in [
@@ -45,50 +65,58 @@ fn run() -> Result<()> {
     } else {
         LayoutCache::default()
     };
-    if args[1] == "stac-plan" || args[1] == "stac-fetch" {
-        let mut request: tile_ripper::stac_workflow::StacRequest = serde_json::from_slice(&input)?;
-        if let Some(path) = output {
-            request.output = path;
-        }
-        let discovered = tile_ripper::stac_workflow::discover(&request)?;
-        let value = if discover_only {
-            if args[1] != "stac-plan" {
-                return Err("--discover-only requires stac-plan".into());
-            }
-            serde_json::json!({"discovery":discovered.report,"sources":discovered.sources(),"raster_metadata_opened":false})
-        } else {
-            let prepared = discovered.prepare(&mut cache)?;
-            if args[1] == "stac-fetch" {
-                prepared.fetch()?
-            } else {
-                prepared.explain()
-            }
-        };
-        if let Some(path) = cache_path {
-            cache.save(Path::new(&path))?;
-        }
-        println!("{}", serde_json::to_string_pretty(&value)?);
-        return Ok(());
-    }
-    if discover_only {
-        return Err("--discover-only requires stac-plan".into());
-    }
-    let mut request: Request = serde_json::from_slice(&input)?;
+    let json: serde_json::Value =
+        serde_json::from_slice(&input).map_err(|_| "invalid request JSON syntax")?;
+    let mut request: Request = if json.get("source").is_some() {
+        serde_json::from_value(json)
+            .map_err(|_| "invalid request schema; see docs/unified-workflow.md")?
+    } else {
+        acquisition::from_stac(
+            serde_json::from_value(json)
+                .map_err(|_| "invalid request schema; see docs/unified-workflow.md")?,
+        )
+    };
     if let Some(path) = output {
         request.sink = match request.sink {
             Sink::ZarrDirectory { .. } => Sink::ZarrDirectory { path },
-            _ => Sink::GeoTiffDirectory { path },
+            Sink::GeoTiffDirectory { .. } => Sink::GeoTiffDirectory { path },
+            _ => Sink::Directory { path },
         };
     }
-    let value = match args[1].as_str() {
-        "plan" => serde_json::to_value(plan(&request, &mut cache)?)?,
-        "fetch" => serde_json::to_value(fetch(&request, &mut cache)?)?,
-        _ => return Err("expected plan or fetch".into()),
+    if discover_only && args[1] != "plan" {
+        return Err("--discover-only requires plan".into());
+    }
+    let value = if discover_only {
+        acquisition::discover(&request)?
+    } else {
+        let prepared = acquisition::prepare(&request, &mut cache)?;
+        match args[1].as_str() {
+            "plan" => {
+                if human {
+                    let result = prepared.human();
+                    if let Some(path) = cache_path {
+                        cache.save(Path::new(&path))?;
+                    }
+                    println!("{result}");
+                    return Ok(());
+                }
+                prepared.explain()
+            }
+            "fetch" => prepared.fetch()?,
+            _ => return Err("expected plan or fetch".into()),
+        }
     };
     if let Some(path) = cache_path {
         cache.save(Path::new(&path))?;
     }
-    println!("{}", serde_json::to_string_pretty(&value)?);
+    if human && args[1] == "fetch" {
+        println!(
+            "Acquisition complete: {} output records. See manifest.json in the output directory.",
+            value["outputs"].as_array().map_or(0, |a| a.len())
+        );
+    } else {
+        println!("{}", serde_json::to_string_pretty(&value)?);
+    }
     Ok(())
 }
 fn main() {

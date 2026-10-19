@@ -4,11 +4,18 @@ A Rust acquisition planner with a working Sentinel-2 STAC-to-pixels workflow,
 a native GeoTIFF reader path, and a local Zarr v2 acquisition path. One library
 and a thin CLI, with GDAL and zarrs handling storage and decoding. No ChronoZarr dependency.
 
-Start with [the usable STAC workflow](docs/stac-workflow.md) and its
-[decision gate](docs/stac-decision-gate.md). For Zarr, see the [copyable local acquisition demo](docs/zarr-workflow.md) and
-[Zarr decision gate](docs/zarr-decision-gate.md). The commands below demonstrate
-the older direct-asset prototype. [ADR 0001](docs/0001-acquisition-planner.md)
-and [ADR 0002](docs/0002-stac-workflow.md) describe the preserved design.
+Start with [the unified workflow](docs/unified-workflow.md):
+
+```sh
+tile-ripper plan request.json --human
+tile-ripper fetch request.json --output ./subset
+```
+
+Complete requests: [remote STAC/COG](examples/unified-stac.json) and
+[local Zarr](examples/unified-zarr.json). Both use the same prepared Rust library
+lifecycle and preserve native grids. See [the current decision gate](docs/unified-decision-gate.md).
+Earlier milestone guides and benchmarks remain historical evidence;
+[ADR 0003](docs/0003-unified-lifecycle.md) describes the unified lifecycle.
 The original [study](study/README.md) remains historical evidence.
 
 ## Build and demonstrate

@@ -62,7 +62,7 @@ impl FormatPlanner for CogPlanner<'_> {
                 .selected_compressed_payload_bytes
                 .zip(payload)
                 .and_then(|(a, b)| a.checked_add(b));
-            p.selected.push(Selected { dimensions: None, mask_geometry: mask.as_ref().map(|g| g.json().and_then(|s| serde_json::from_str(&s).map_err(|_| gdal::errors::GdalError::BadArgument("invalid geometry JSON".into())))).transpose()?, asset_id: asset.id.clone(), datetime: asset.datetime.clone(), reason: "direct asset; requested band and bounds intersect native grid; time predicate passed".into(), capabilities: self.capabilities(), layout: Some(layout.clone()), window: window.clone() });
+            p.selected.push(Selected { timestamps: asset.datetime.iter().cloned().collect(), dimensions: None, mask_geometry: mask.as_ref().map(|g| g.json().and_then(|s| serde_json::from_str(&s).map_err(|_| gdal::errors::GdalError::BadArgument("invalid geometry JSON".into())))).transpose()?, asset_id: asset.id.clone(), datetime: asset.datetime.clone(), reason: "direct asset; requested band and bounds intersect native grid; time predicate passed".into(), capabilities: self.capabilities(), layout: Some(layout.clone()), window: window.clone() });
             let inspect = push(p, request, &asset.id, vec![], Operation::Inspect { cached })?;
             for y in (window.y..window.y + window.height).step_by(request.budget.chunk_edge) {
                 for x in (window.x..window.x + window.width).step_by(request.budget.chunk_edge) {
@@ -166,7 +166,7 @@ pub(crate) fn time_matches(asset: &Asset, time: &Option<Time>) -> Result<bool> {
         }
     }
 }
-pub fn validate(r: &Request) -> Result<&[Asset]> {
+pub(crate) fn validate_common(r: &Request) -> Result<()> {
     if !matches!(r.grid, Grid::Native) {
         return fail("target grids/resampling are not implemented");
     }
@@ -224,6 +224,10 @@ pub fn validate(r: &Request) -> Result<&[Asset]> {
     if r.variables.is_empty() {
         return fail("at least one variable is required");
     }
+    Ok(())
+}
+pub fn validate(r: &Request) -> Result<&[Asset]> {
+    validate_common(r)?;
     let Source::Assets { assets } = &r.source else {
         return fail("catalog discovery is not implemented; supply explicit assets");
     };
@@ -250,11 +254,15 @@ pub fn validate(r: &Request) -> Result<&[Asset]> {
     Ok(assets)
 }
 pub fn plan(request: &Request, cache: &mut LayoutCache) -> Result<Plan> {
+    let _quiet = crate::diagnostics::QuietNative::enter();
+    if !matches!(request.source, Source::Assets { .. }) {
+        return Ok(crate::acquisition::prepare(request, cache)?.plan().clone());
+    }
     let assets = validate(request)?;
-    let mut p=Plan { schema_version:2,selected:vec![],nodes:vec![],estimates:Estimates {
+    let mut p=Plan { schema_version:3,selected:vec![],nodes:vec![],estimates:Estimates {
         selected_compressed_payload_bytes:Some(0),remote_requests:None,
         note:"Payload estimate excludes headers, masks, GDAL range rounding and repeated tile reads between output chunks; actual request counts require observation".into(),
-    },limitations:vec!["No implicit reprojection or compositing".into(),"buffer_bytes caps the returned UInt16 pixel buffer, not process RSS or GDAL codec/cache allocations".into(),"Saved plan is diagnostic; fetch replans from runtime request and validates local identity".into()] };
+    },limitations:vec!["No implicit reprojection or compositing".into(),"buffer_bytes caps the returned UInt16 pixel buffer, not process RSS or GDAL codec/cache allocations".into(),"Diagnostic JSON is not executable; use prepared runtime bindings or prepare anew from the request".into()] };
     for asset in assets {
         if asset.format == Format::Cog && !time_matches(asset, &request.time)? {
             continue;

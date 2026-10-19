@@ -202,6 +202,25 @@ fn zarr_chunk_objects_and_execution_preflight() {
         })
         .collect();
     assert_eq!(keys, vec!["0.0", "0.1", "1.0", "1.1"]);
+    r.sink = Sink::Directory {
+        path: root.join("not-written").to_string_lossy().into(),
+    };
+    let inspection = tile_ripper::acquisition::prepare(&r, &mut c)
+        .unwrap()
+        .explain();
+    assert_eq!(inspection["expected_outputs"], serde_json::json!([]));
+    assert_eq!(
+        inspection["unsupported_operations"]
+            .as_array()
+            .unwrap()
+            .len(),
+        1
+    );
+    assert!(inspection["plan"]["selected"][0]
+        .get("dimensions")
+        .is_none());
+    r.sink = Sink::Callback;
+
     let mut calls = 0;
     assert!(execute(&r, &mut c, |_| {
         calls += 1;

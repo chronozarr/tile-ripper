@@ -21,6 +21,12 @@ pub enum Source {
     Assets {
         assets: Vec<Asset>,
     },
+    Stac {
+        endpoint: String,
+        collection: String,
+        #[serde(default)]
+        limits: CatalogLimits,
+    },
     Catalog {
         endpoint: String,
         collection: String,
@@ -63,6 +69,7 @@ pub enum Time {
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub enum Variable {
+    Named { name: String },
     Band { index: usize },
     Dataset { path: String },
     Polarization { name: String },
@@ -80,6 +87,10 @@ pub enum Grid {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub enum Sink {
+    /// Preserve each source format and native grid.
+    Directory {
+        path: String,
+    },
     Callback,
     ZarrDirectory {
         path: String,
@@ -173,6 +184,8 @@ pub struct Node {
 }
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Selected {
+    #[serde(default)]
+    pub timestamps: Vec<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub dimensions: Option<DimensionSelection>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -251,4 +264,30 @@ pub struct DimensionSelection {
     pub chunk_shape: Vec<usize>,
     pub names: Vec<String>,
     pub indices: Vec<Vec<usize>>,
+}
+
+/// Catalog/provider limits. Pixel buffers and DAG limits live only in Budget.
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(default, deny_unknown_fields)]
+pub struct CatalogLimits {
+    pub max_items: usize,
+    pub page_size: usize,
+    pub max_assets: usize,
+    pub max_output_pixels: u64,
+    pub gdal_cache_mb: usize,
+    pub max_retries: u32,
+    pub timeout_seconds: u64,
+}
+impl Default for CatalogLimits {
+    fn default() -> Self {
+        Self {
+            max_items: 32,
+            page_size: 8,
+            max_assets: 64,
+            max_output_pixels: 16_000_000,
+            gdal_cache_mb: 32,
+            max_retries: 2,
+            timeout_seconds: 45,
+        }
+    }
 }

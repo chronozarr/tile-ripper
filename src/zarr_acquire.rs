@@ -227,19 +227,22 @@ pub(crate) fn plan_asset(a: &Asset, r: &Request, p: &mut Plan) -> Result<()> {
         if sep != "." && sep != "/" {
             return fail("unsupported chunk separator");
         }
-        let mut keys = std::collections::HashSet::new();
+        let mut keys = std::collections::BTreeMap::new();
         let mut payload = 0u64;
         for t in &ti {
             for cy in window.y / chunks[1]..=(window.y + window.height - 1) / chunks[1] {
                 for cx in window.x / chunks[2]..=(window.x + window.width - 1) / chunks[2] {
                     let key = format!("{path}/{}{sep}{cy}{sep}{cx}", t / chunks[0]);
-                    if !keys.insert(key.clone()) {
+                    if keys
+                        .insert(key.clone(), vec![t / chunks[0], cy, cx])
+                        .is_some()
+                    {
                         continue;
                     }
                     if keys.len() > r.budget.max_nodes {
                         return fail("source chunk enumeration exceeds max_nodes");
                     }
-                    let bytes = match fs::metadata(root.join(key)) {
+                    let bytes = match fs::metadata(root.join(&key)) {
                         Ok(m) => m.len(),
                         Err(e) if e.kind() == std::io::ErrorKind::NotFound => 0,
                         Err(e) => return Err(e.into()),
@@ -275,6 +278,14 @@ pub(crate) fn plan_asset(a: &Asset, r: &Request, p: &mut Plan) -> Result<()> {
         layout.scale = attrs["scale_factor"].as_f64();
         layout.offset = attrs["add_offset"].as_f64();
         p.selected.push(Selected {
+            timestamps: ti
+                .iter()
+                .map(|i| {
+                    chrono::DateTime::from_timestamp(d.times[*i], 0)
+                        .expect("validated timestamp")
+                        .to_rfc3339()
+                })
+                .collect(),
             dimensions: Some(DimensionSelection {
                 shape: shape.clone(),
                 chunk_shape: chunks.clone(),
@@ -291,7 +302,7 @@ pub(crate) fn plan_asset(a: &Asset, r: &Request, p: &mut Plan) -> Result<()> {
             reason: format!("native coordinate selection: {path}"),
             capabilities: Capabilities {
                 selection: vec!["native bounds, time, variables".into()],
-                reads: vec!["dataset_slice".into()],
+                reads: vec!["chunk_object".into()],
                 decoding: "zarrs".into(),
                 compression: "none/gzip".into(),
                 materialization: true,
@@ -299,48 +310,38 @@ pub(crate) fn plan_asset(a: &Asset, r: &Request, p: &mut Plan) -> Result<()> {
             layout: Some(layout),
             window: window.clone(),
         });
-        for t in &ti {
-            for y in (window.y..window.y + window.height).step_by(r.budget.chunk_edge) {
-                for x in (window.x..window.x + window.width).step_by(r.budget.chunk_edge) {
-                    let w = (window.x + window.width - x).min(r.budget.chunk_edge);
-                    let h = (window.y + window.height - y).min(r.budget.chunk_edge);
-                    let read = push(
-                        p,
-                        r,
-                        &a.id,
-                        vec![inspect],
-                        Operation::Read {
-                            read: Read::DatasetSlice {
-                                path: path.into(),
-                                start: vec![*t, y, x],
-                                count: vec![1, h, w],
-                            },
-                        },
-                    )?;
-                    let decode = push(
-                        p,
-                        r,
-                        &a.id,
-                        vec![read],
-                        Operation::Decode {
-                            reader: "zarrs".into(),
-                        },
-                    )?;
-                    push(
-                        p,
-                        r,
-                        &a.id,
-                        vec![decode],
-                        Operation::Write {
-                            output: format!("{}/{path}", a.id),
-                        },
-                    )?;
-                }
-            }
+        for (key, indices) in keys {
+            let read = push(
+                p,
+                r,
+                &a.id,
+                vec![inspect],
+                Operation::Read {
+                    read: Read::ChunkObject { key, indices },
+                },
+            )?;
+            let decode = push(
+                p,
+                r,
+                &a.id,
+                vec![read],
+                Operation::Decode {
+                    reader: "zarrs".into(),
+                },
+            )?;
+            push(
+                p,
+                r,
+                &a.id,
+                vec![decode],
+                Operation::Write {
+                    output: format!("{}/{path}", a.id),
+                },
+            )?;
         }
     }
 
-    p.limitations.push("Zarr: immutable local v2 group; UInt16 time/y/x arrays; native bounds; none/gzip; estimated requests unknown (slice overlap may repeat chunks). buffer_bytes bounds coordinates, one decoded chunk and returned buffer separately, not RSS/codec overhead. Missing chunks retain fill_value. No calibration.".into());
+    p.limitations.push("Zarr: immutable local v2 group; UInt16 time/y/x arrays; native bounds; none/gzip; each selected source chunk retrieved once; missing chunks require a zero-byte lookup. buffer_bytes bounds coordinates, one decoded chunk and returned buffer separately, not RSS/codec overhead. Missing chunks retain fill_value. No calibration.".into());
     Ok(())
 }
 pub(crate) fn execute_selected(
@@ -370,65 +371,98 @@ pub(crate) fn execute_selected(
     let array = Array::open(logged, &format!("/{path}"))?;
     *trace.lock().map_err(|_| "trace lock poisoned")? = ReadTrace::default();
     report.source_open_seconds += t.elapsed().as_secs_f64();
+    let dims = selected
+        .dimensions
+        .as_ref()
+        .ok_or("missing native dimensions")?;
+    let cs = &dims.chunk_shape;
+    let w = &selected.window;
     for node in &p.nodes {
         let Operation::Read {
-            read:
-                Read::DatasetSlice {
-                    path: np,
-                    start,
-                    count,
-                },
+            read: Read::ChunkObject { key, indices },
         } = &node.operation
         else {
             continue;
         };
-        if node.asset_id != a.id || np != path {
+        if node.asset_id != a.id || !key.starts_with(&format!("{path}/")) {
             continue;
         }
-        let subset = ArraySubset::new_with_start_shape(
-            start.iter().map(|v| *v as u64).collect(),
-            count.iter().map(|v| *v as u64).collect(),
+        let t = Instant::now();
+        let native = array.retrieve_chunk_elements_opt::<u16>(
+            &indices.iter().map(|v| *v as u64).collect::<Vec<_>>(),
+            &serial(),
         )?;
-        let t = Instant::now();
-        let pixels = array.retrieve_array_subset_elements_opt::<u16>(&subset, &serial())?;
         report.read_decode_seconds += t.elapsed().as_secs_f64();
-        report.decoded_bytes += pixels.len() * 2;
-        report.non_nodata_pixels += pixels
+        report.native_materialized_bytes =
+            Some(report.native_materialized_bytes.unwrap_or(0) + native.len() * 2);
+        let origin: Vec<_> = indices.iter().zip(cs).map(|(i, c)| i * c).collect();
+        let x0 = w.x.max(origin[2]);
+        let x1 = (w.x + w.width).min(origin[2] + cs[2]);
+        let y0 = w.y.max(origin[1]);
+        let y1 = (w.y + w.height).min(origin[1] + cs[1]);
+        for ti in dims.indices[0]
             .iter()
-            .filter(|v| Some(**v as f64) != layout.nodata)
-            .count();
-        let window = Window {
-            x: start[2],
-            y: start[1],
-            width: count[2],
-            height: count[1],
-        };
-        let chunk = crate::Chunk {
-            node_id: node.id,
-            asset_id: a.id.clone(),
-            datetime: Some(
-                chrono::DateTime::from_timestamp(d.times[start[0]], 0)
-                    .ok_or("invalid time")?
-                    .to_rfc3339(),
-            ),
-            variable: layout.variable.clone(),
-            indices: vec![start[0]],
-            transform: crate::spatial::window_transform(layout, &window),
-            crs: layout.crs.clone(),
-            nodata: layout.nodata,
-            scale: layout.scale,
-            offset: layout.offset,
-            window,
-            pixels,
-        };
-        let t = Instant::now();
-        sink(chunk)?;
-        report.sink_seconds += t.elapsed().as_secs_f64();
-        report.chunks += 1;
+            .copied()
+            .filter(|t| *t >= origin[0] && *t < origin[0] + cs[0])
+        {
+            for y in (y0..y1).step_by(r.budget.chunk_edge) {
+                for x in (x0..x1).step_by(r.budget.chunk_edge) {
+                    let width = (x1 - x).min(r.budget.chunk_edge);
+                    let height = (y1 - y).min(r.budget.chunk_edge);
+                    let mut pixels = Vec::with_capacity(width * height);
+                    for sy in y..y + height {
+                        let offset =
+                            ((ti - origin[0]) * cs[1] + sy - origin[1]) * cs[2] + x - origin[2];
+                        pixels.extend_from_slice(&native[offset..offset + width]);
+                    }
+                    report.decoded_bytes += pixels.len() * 2;
+                    report.non_nodata_pixels += pixels
+                        .iter()
+                        .filter(|v| Some(**v as f64) != layout.nodata)
+                        .count();
+                    let window = Window {
+                        x,
+                        y,
+                        width,
+                        height,
+                    };
+                    let chunk = crate::Chunk {
+                        node_id: node.id,
+                        asset_id: a.id.clone(),
+                        datetime: Some(
+                            chrono::DateTime::from_timestamp(d.times[ti], 0)
+                                .ok_or("invalid time")?
+                                .to_rfc3339(),
+                        ),
+                        variable: layout.variable.clone(),
+                        indices: vec![ti],
+                        transform: crate::spatial::window_transform(layout, &window),
+                        crs: layout.crs.clone(),
+                        nodata: layout.nodata,
+                        scale: layout.scale,
+                        offset: layout.offset,
+                        window,
+                        pixels,
+                    };
+                    let t = Instant::now();
+                    sink(chunk)?;
+                    report.sink_seconds += t.elapsed().as_secs_f64();
+                    report.chunks += 1;
+                }
+            }
+        }
     }
     let trace = trace.lock().map_err(|_| "trace lock poisoned")?;
     report.source_data_requests = Some(report.source_data_requests.unwrap_or(0) + trace.requests);
     report.source_data_bytes = Some(report.source_data_bytes.unwrap_or(0) + trace.bytes);
+    for (key, (requests, bytes)) in &trace.keys {
+        report.source_reads.push(crate::execute::SourceRead {
+            asset_id: a.id.clone(),
+            key: key.clone(),
+            requests: *requests,
+            bytes: *bytes,
+        });
+    }
     Ok(())
 }
 #[derive(Default)]
@@ -436,6 +470,7 @@ struct ReadTrace {
     pending: Vec<u8>,
     requests: u64,
     bytes: u64,
+    keys: std::collections::BTreeMap<String, (u64, u64)>,
 }
 impl std::io::Write for ReadTrace {
     fn write(&mut self, b: &[u8]) -> std::io::Result<usize> {
@@ -444,12 +479,22 @@ impl std::io::Write for ReadTrace {
             let line = String::from_utf8_lossy(&self.pending[..end]);
             if line.starts_with("get(") || line.starts_with("get_partial_many(") {
                 self.requests += 1;
+                let mut bytes = 0;
                 if let Some((_, v)) = line.split_once("len=") {
-                    self.bytes += v
+                    bytes = v
                         .split(|c: char| !c.is_ascii_digit())
                         .filter(|v| !v.is_empty())
                         .filter_map(|v| v.parse::<u64>().ok())
                         .sum::<u64>();
+                }
+                self.bytes += bytes;
+                if let Some(key) = line
+                    .split_once('(')
+                    .and_then(|(_, v)| v.split([',', ')']).next())
+                {
+                    let entry = self.keys.entry(key.into()).or_default();
+                    entry.0 += 1;
+                    entry.1 += bytes;
                 }
             }
             self.pending.drain(..=end);
@@ -483,10 +528,17 @@ pub(crate) fn fetch(r: &Request, cache: &mut cog::LayoutCache) -> Result<crate::
     let Sink::ZarrDirectory { path } = &r.sink else {
         unreachable!()
     };
-    let root = Path::new(path);
+    let _ = path;
     let t = Instant::now();
     let p = crate::plan(r, cache)?;
     let planning = t.elapsed().as_secs_f64();
+    fetch_plan(r, &p, planning)
+}
+pub(crate) fn fetch_plan(r: &Request, p: &Plan, planning: f64) -> Result<crate::ExecutionReport> {
+    let Sink::ZarrDirectory { path } = &r.sink else {
+        return fail("Zarr requires a native Zarr directory sink");
+    };
+    let root = Path::new(path);
     if p.selected.iter().any(|s| s.dimensions.is_none()) {
         return fail("Zarr directory sink requires supported Zarr group assets");
     }
@@ -560,7 +612,7 @@ pub(crate) fn fetch(r: &Request, cache: &mut cog::LayoutCache) -> Result<crate::
                 );
             }
         }
-        let report = crate::execute::execute_plan(r, &p, planning, |c| {
+        let report = crate::execute::execute_plan(r, p, planning, |c| {
             let Variable::Dataset { path } = &c.variable else {
                 return fail("unexpected variable");
             };

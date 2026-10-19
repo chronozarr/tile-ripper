@@ -147,7 +147,7 @@ fn shared_api_native_slices_values_fill_coordinates_and_metadata() {
     assert!(p.nodes.iter().any(|n| matches!(
         n.operation,
         Operation::Read {
-            read: Read::DatasetSlice { .. }
+            read: Read::ChunkObject { .. }
         }
     )));
     let mut values = 0;

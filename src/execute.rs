@@ -5,7 +5,7 @@ use crate::{
     plan, Result,
 };
 use gdal::{raster::Buffer, DriverManager};
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use std::{fs, path::Path, time::Instant};
 
 /// One owned native-grid buffer. Sink callbacks run synchronously: retaining chunks
@@ -25,8 +25,11 @@ pub struct Chunk {
     pub offset: Option<f64>,
     pub pixels: Vec<u16>,
 }
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct ExecutionReport {
+    #[serde(default)]
+    pub source_reads: Vec<SourceRead>,
+    pub native_materialized_bytes: Option<usize>,
     /// Observed data-chunk store calls and returned encoded bytes (metadata excluded).
     pub source_data_requests: Option<u64>,
     pub source_data_bytes: Option<u64>,
@@ -47,6 +50,9 @@ pub fn execute(
     cache: &mut LayoutCache,
     sink: impl FnMut(Chunk) -> Result<()>,
 ) -> Result<ExecutionReport> {
+    if !matches!(r.source, Source::Assets { .. }) || matches!(r.sink, Sink::Directory { .. }) {
+        return crate::acquisition::prepare(r, cache)?.execute(sink);
+    }
     let t = Instant::now();
     let p = plan(r, cache)?;
     execute_plan(r, &p, t.elapsed().as_secs_f64(), sink)
@@ -57,6 +63,7 @@ pub(crate) fn execute_plan(
     planning_seconds: f64,
     mut sink: impl FnMut(Chunk) -> Result<()>,
 ) -> Result<ExecutionReport> {
+    let _quiet = crate::diagnostics::QuietNative::enter();
     // Preflight every format before delivering or writing the first chunk.
     if p.selected.iter().any(|s| !s.capabilities.materialization) {
         return fail("plan contains a planning-only format; execution is unsupported");
@@ -65,6 +72,8 @@ pub(crate) fn execute_plan(
         unreachable!()
     };
     let mut report = ExecutionReport {
+        source_reads: vec![],
+        native_materialized_bytes: None,
         source_data_requests: None,
         source_data_bytes: None,
         chunks: 0,
@@ -182,17 +191,36 @@ pub(crate) fn execute_plan(
     Ok(report)
 }
 pub fn fetch(r: &Request, cache: &mut LayoutCache) -> Result<ExecutionReport> {
+    if !matches!(r.source, Source::Assets { .. }) || matches!(r.sink, Sink::Directory { .. }) {
+        return Ok(serde_json::from_value(
+            crate::acquisition::fetch(r, cache)?["observed"].clone(),
+        )?);
+    }
     if matches!(r.sink, Sink::ZarrDirectory { .. }) {
         return crate::zarr_acquire::fetch(r, cache);
     }
     let Sink::GeoTiffDirectory { path } = &r.sink else {
         return fail("fetch requires a GeoTIFF directory sink; library callers may use execute with a callback");
     };
-    let root = Path::new(path);
+    let _ = path;
     // Refuse overwrites, and remove a newly created directory on failure.
     let start = Instant::now();
     let preview = plan(r, cache)?;
     let planning_seconds = start.elapsed().as_secs_f64();
+    fetch_plan(r, &preview, planning_seconds)
+}
+pub(crate) fn fetch_plan(
+    r: &Request,
+    preview: &Plan,
+    planning_seconds: f64,
+) -> Result<ExecutionReport> {
+    if matches!(r.sink, Sink::ZarrDirectory { .. }) {
+        return crate::zarr_acquire::fetch_plan(r, preview, planning_seconds);
+    }
+    let Sink::GeoTiffDirectory { path } = &r.sink else {
+        return fail("fetch requires a native directory sink");
+    };
+    let root = Path::new(path);
     if preview
         .selected
         .iter()
@@ -200,8 +228,11 @@ pub fn fetch(r: &Request, cache: &mut LayoutCache) -> Result<ExecutionReport> {
     {
         return fail("planning-only format cannot be materialized");
     }
+    if preview.selected.iter().any(|s| s.dimensions.is_some()) {
+        return fail("Zarr extraction requires native Zarr directory output");
+    }
     fs::create_dir(root)?;
-    let result = execute_plan(r, &preview, planning_seconds, |mut chunk| {
+    let result = execute_plan(r, preview, planning_seconds, |mut chunk| {
         let file = root.join(format!("chunk-{}.tif", chunk.node_id));
         let mut ds = DriverManager::get_driver_by_name("GTiff")?.create_with_band_type::<u16, _>(
             &file,
@@ -250,4 +281,13 @@ pub fn fetch(r: &Request, cache: &mut LayoutCache) -> Result<ExecutionReport> {
             Err(e)
         }
     }
+}
+
+/// Observed data-object access; metadata and coordinate reads are excluded.
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct SourceRead {
+    pub asset_id: String,
+    pub key: String,
+    pub requests: u64,
+    pub bytes: u64,
 }

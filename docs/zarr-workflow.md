@@ -1,5 +1,9 @@
 # Native Zarr acquisition
 
+The layout contract below remains current. For the current CLI, unified
+provenance and source-chunk execution strategy, use [the unified guide](unified-workflow.md).
+The dataset-slice read-amplification measurements here describe 46dd503.
+
 The existing `plan`, `execute` and `fetch` Rust functions and `plan`/`fetch`
 CLI commands now support one executable Zarr dataset layout. The source is
 an **immutable local directory store**, read through `zarrs` and its existing

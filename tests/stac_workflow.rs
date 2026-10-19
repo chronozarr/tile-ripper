@@ -92,11 +92,12 @@ fn prepared_versions_do_not_reuse_another_snapshot_cache() {
     let file = std::env::var("TILE_RIPPER_STAC_TEST_REQUEST").unwrap();
     let request: StacRequest = serde_json::from_slice(&std::fs::read(file).unwrap()).unwrap();
     let mut cache = tile_ripper::cog::LayoutCache::default();
-    let older = stac_workflow::prepare(&request, &mut cache).unwrap();
-    let newer = stac_workflow::prepare(&request, &mut cache).unwrap();
+    let request = tile_ripper::acquisition::from_stac(request);
+    let older = tile_ripper::acquisition::prepare(&request, &mut cache).unwrap();
+    let newer = tile_ripper::acquisition::prepare(&request, &mut cache).unwrap();
     assert_ne!(
-        older.sources()[0].object_identity.as_ref().unwrap().etag,
-        newer.sources()[0].object_identity.as_ref().unwrap().etag
+        older.explain()["sources"][0]["object_identity"]["etag"],
+        newer.explain()["sources"][0]["object_identity"]["etag"]
     );
     newer.execute(|_| Ok(())).unwrap();
     assert!(older.execute(|_| Ok(())).is_err());

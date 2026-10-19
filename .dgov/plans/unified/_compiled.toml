@@ -1,0 +1,24 @@
+[plan]
+name = "unified-acquisition"
+source_mtime_max = "2026-10-19T03:08:15.781689Z"
+sop_set_hash = ""
+
+[tasks."tasks/lifecycle.lifecycle"]
+summary = "Unify lifecycle and evaluate physical read selection"
+prompt = """
+Orient:
+Read architecture, COG/STAC and Zarr workflows and decision/benchmark evidence.
+Edit:
+Use the existing Request and physical adapters. Add one prepared lifecycle,
+inspection/result schemas, native directory CLI and compatibility aliases.
+Read Zarr native chunks once and fan out bounded buffers without caching.
+Verify:
+Shared lifecycle tests, GDAL/xarray oracles, physical key minimum comparisons,
+small/medium benchmarks against 46dd503 and established readers. No new format,
+remote Zarr, generalized engine, publication or merge. Stop at decision gate.
+"""
+commit_message = "Unify acquisition lifecycle and eliminate repeated Zarr source reads"
+timeout_s = 0
+test_cmd = "cargo test --locked"
+files.create = ["src/acquisition.rs", "src/diagnostics.rs", "tests/acquisition.rs", "examples/acquire.rs", "examples/unified-stac.json", "examples/unified-zarr.json", "bench/unified_workflow.py", "docs/unified-workflow.md", "docs/unified-decision-gate.md"]
+files.edit = ["src/model.rs", "src/planner.rs", "src/execute.rs", "src/stac_workflow.rs", "src/zarr_acquire.rs", "src/main.rs", "src/lib.rs", "src/zarr.rs", "tests/zarr_workflow.rs", "tests/stac_workflow.rs", "bench/zarr_workflow.py", "src/cog.rs", "README.md", "docs/implementation-map.md", "docs/zarr-workflow.md"]

@@ -200,7 +200,7 @@ def process(cmd):
         if p.returncode:
             raise RuntimeError(err.read().decode()[:2000])
         return {
-            "report": json.load(out),
+            "report": (lambda value: value.get("observed", value))(json.load(out)),
             "wall_seconds": time.perf_counter() - start,
             "peak_rss_bytes": usage.ru_maxrss
             * (1 if sys.platform == "darwin" else 1024),

@@ -1,0 +1,64 @@
+{
+  "source": {
+    "kind": "stac",
+    "endpoint": "https://earth-search.aws.element84.com/v1",
+    "collection": "sentinel-2-c1-l2a",
+    "limits": {
+      "max_items": 8,
+      "page_size": 2,
+      "max_assets": 8,
+      "max_output_pixels": 1000000
+    }
+  },
+  "spatial": {
+    "kind": "polygon",
+    "crs": "EPSG:4326",
+    "coordinates": [
+      [
+        [
+          -79.06,
+          35.91
+        ],
+        [
+          -79.05,
+          35.91
+        ],
+        [
+          -79.052,
+          35.92
+        ],
+        [
+          -79.06,
+          35.91
+        ]
+      ]
+    ]
+  },
+  "time": {
+    "kind": "interval",
+    "start": "2025-07-28T00:00:00Z",
+    "end": "2025-07-28T23:59:59Z"
+  },
+  "variables": [
+    {
+      "kind": "named",
+      "name": "B04"
+    },
+    {
+      "kind": "named",
+      "name": "B08"
+    }
+  ],
+  "grid": {
+    "kind": "native"
+  },
+  "sink": {
+    "kind": "directory",
+    "path": "prototype-output/unified-sentinel"
+  },
+  "budget": {
+    "buffer_bytes": 4194304,
+    "max_nodes": 100000,
+    "chunk_edge": 512
+  }
+}

@@ -16,3 +16,7 @@ pub mod spatial;
 pub mod stac_workflow;
 
 mod zarr_acquire;
+
+pub mod acquisition;
+
+mod diagnostics;

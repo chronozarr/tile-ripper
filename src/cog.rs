@@ -110,6 +110,7 @@ pub fn remote(locator: &str) -> bool {
     locator.starts_with("https://") || locator.starts_with("http://")
 }
 pub fn open(asset: &Asset) -> Result<Dataset> {
+    let _quiet = crate::diagnostics::QuietNative::enter();
     let locator = if remote(&asset.locator) {
         format!("/vsicurl/{}", asset.locator)
     } else {
@@ -119,6 +120,7 @@ pub fn open(asset: &Asset) -> Result<Dataset> {
         .map_err(|_| "GDAL could not open asset (locator omitted)".into())
 }
 pub fn inspect(asset: &Asset, band: usize) -> Result<Layout> {
+    let _quiet = crate::diagnostics::QuietNative::enter();
     let _headers = ConditionalHeaders::for_asset(asset)?;
     let ds = open(asset)?;
     if ds.driver().short_name() != "GTiff" {

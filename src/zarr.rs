@@ -88,6 +88,7 @@ impl FormatPlanner for LegacyArrayPlanner {
             return Ok(());
         };
         p.selected.push(Selected {
+            timestamps: asset.datetime.iter().cloned().collect(),
             dimensions: None,
             mask_geometry: None,
             asset_id: asset.id.clone(),
@@ -132,7 +133,7 @@ impl FormatPlanner for ZarrPlanner {
     fn capabilities(&self) -> Capabilities {
         Capabilities {
             selection: vec!["native bounds, time, variables in regular time/y/x groups".into()],
-            reads: vec!["dataset_slice".into()],
+            reads: vec!["chunk_object".into()],
             decoding: "zarrs".into(),
             compression: "none/gzip".into(),
             materialization: true,
