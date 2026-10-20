@@ -607,11 +607,20 @@ fn empty_scientific_fetch_admits_metadata_before_creating_output() {
 
 #[test]
 fn scientific_encoding_and_unequal_chunk_layouts_preserve_values() {
-    for encoding in [
+    let encodings = [
         ScientificEncoding::Uncompressed,
         ScientificEncoding::Gzip,
         ScientificEncoding::BloscZstd,
-    ] {
+    ];
+    #[cfg(feature = "experimental-output")]
+    let encodings = encodings.into_iter().chain([
+        ScientificEncoding::ExperimentalV3Uncompressed,
+        ScientificEncoding::ExperimentalV3ShardedUncompressed,
+        ScientificEncoding::ExperimentalV3ShardedGzip,
+        ScientificEncoding::ExperimentalV3ShardedBloscZstd,
+        ScientificEncoding::ExperimentalV3ShardedZstd,
+    ]);
+    for encoding in encodings {
         for edge in [2, 7] {
             let mut f = fixture(Format::Cog);
             let out = f.root.join("candidate.zarr");

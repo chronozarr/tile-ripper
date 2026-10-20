@@ -1,0 +1,40 @@
+{
+  "passed": true,
+  "upgrade_commit": "7d14342",
+  "source_sha256": "6412a67ec862ee12764a4222242f8353b5225dd6193c3f8fb26ac619e5e288b6",
+  "benchmark_cells": 90,
+  "profiles": 5,
+  "observations_per_cell": 4,
+  "publication_faults": 155,
+  "rust_acquisition_tests": 14,
+  "strict_clippy": true,
+  "zarr_only_compile": true,
+  "summary": [
+    {
+      "mode": "v3_raw",
+      "warm_seconds": 0.349007457960397,
+      "shaped_seconds": 3.274997583590448
+    },
+    {
+      "mode": "v3_sharded_raw",
+      "warm_seconds": 0.46123720798641443,
+      "shaped_seconds": 3.367964875418693
+    },
+    {
+      "mode": "sharded",
+      "warm_seconds": 1.0329854576848447,
+      "shaped_seconds": 3.9374124594032764
+    },
+    {
+      "mode": "v3_sharded_blosc",
+      "warm_seconds": 0.6874099159613252,
+      "shaped_seconds": 3.5415896247141063
+    },
+    {
+      "mode": "v3_sharded_zstd",
+      "warm_seconds": 0.6509234169498086,
+      "shaped_seconds": 3.4647344169206917
+    }
+  ],
+  "scope": "Native UInt16 COG output, both masks, native grids, nanosecond timestamps, fill and source provenance; experimental output only. No power-cut or physical-flush certification."
+}

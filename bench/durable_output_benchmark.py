@@ -71,7 +71,7 @@ def read_probe(dest, manifest):
     return dict(full=full,subset=dict(wall_seconds=time.perf_counter()-start,cpu_seconds=time.process_time()-cpu))
 
 
-def main(action, reps):
+def main(action, reps, candidate_modes=None):
     WORK.mkdir(parents=True,exist_ok=True)
     sources_all = json.loads((real.WORK/"sources.json").read_text())["sources"]
     sources = sources_all[:4]
@@ -82,6 +82,8 @@ def main(action, reps):
     modes = ["old","stream"] if action == "baseline" else ["old","raw","gzip","blosc_zstd","raw128","raw512","stream"]
     if action != "baseline" and int(zarr.__version__.split(".")[0]) >= 3:
         modes.append("sharded")
+    if candidate_modes is not None:
+        modes = candidate_modes
     binaries = [OLD,NEW,CANDIDATE] if action!="baseline" else [OLD,NEW]
     hashes = {str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in binaries}
     runs_path = WORK/"runs.json"
@@ -110,7 +112,7 @@ def main(action, reps):
                     args = ["stream" if mode=="stream" else "fetch",path,"--gdal-free","--workers","2","--per-host","2"]
                     if mode not in ["old","raw","stream"]:
                         binary = CANDIDATE
-                        codec = mode if mode in ["gzip","blosc_zstd","sharded"] else "raw"
+                        codec = mode if mode in ["gzip","blosc_zstd","sharded"] or mode.startswith("v3_") else "raw"
                         edge = 128 if mode=="raw128" else 512 if mode=="raw512" else 256
                         args = [path,codec,str(edge)]
                     server.reset()
@@ -132,6 +134,8 @@ def main(action, reps):
                         continue
                     stdout = result.pop("stdout")
                     manifest = json.loads(stdout.splitlines()[-1]) if mode=="stream" else json.loads(stdout)
+                    if mode != "stream":
+                        assert manifest["format"] == ("zarr_v3" if mode=="sharded" or mode.startswith("v3_") else "zarr_v2")
                     observed = manifest["observed"]
                     assert observed["decoded_bytes"] == sum(a.size*2 for a in refs.values())
                     files = [p for p in dest.rglob("*") if p.is_file()] if dest.exists() else []

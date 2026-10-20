@@ -34,13 +34,25 @@ pub enum ScientificEncoding {
     Gzip,
     BloscZstd,
     #[cfg(feature = "experimental-output")]
+    ExperimentalV3Uncompressed,
+    #[cfg(feature = "experimental-output")]
+    ExperimentalV3ShardedUncompressed,
+    #[cfg(feature = "experimental-output")]
     ExperimentalV3ShardedGzip,
+    #[cfg(feature = "experimental-output")]
+    ExperimentalV3ShardedBloscZstd,
+    #[cfg(feature = "experimental-output")]
+    ExperimentalV3ShardedZstd,
 }
 impl ScientificEncoding {
     fn version(self) -> u8 {
         match self {
             #[cfg(feature = "experimental-output")]
-            Self::ExperimentalV3ShardedGzip => 3,
+            Self::ExperimentalV3Uncompressed
+            | Self::ExperimentalV3ShardedUncompressed
+            | Self::ExperimentalV3ShardedGzip
+            | Self::ExperimentalV3ShardedBloscZstd
+            | Self::ExperimentalV3ShardedZstd => 3,
             _ => 2,
         }
     }
@@ -52,7 +64,29 @@ impl ScientificEncoding {
                 json!({"id":"blosc","cname":"zstd","clevel":1,"shuffle":1,"blocksize":0})
             }
             #[cfg(feature = "experimental-output")]
-            Self::ExperimentalV3ShardedGzip => Value::Null,
+            Self::ExperimentalV3Uncompressed
+            | Self::ExperimentalV3ShardedUncompressed
+            | Self::ExperimentalV3ShardedGzip
+            | Self::ExperimentalV3ShardedBloscZstd
+            | Self::ExperimentalV3ShardedZstd => Value::Null,
+        }
+    }
+    fn shard_factor(self) -> usize {
+        match self {
+            #[cfg(feature = "experimental-output")]
+            Self::ExperimentalV3ShardedUncompressed
+            | Self::ExperimentalV3ShardedGzip
+            | Self::ExperimentalV3ShardedBloscZstd
+            | Self::ExperimentalV3ShardedZstd => 4,
+            _ => 1,
+        }
+    }
+    fn codec_workspace(self) -> usize {
+        match self {
+            Self::Uncompressed => 0,
+            #[cfg(feature = "experimental-output")]
+            Self::ExperimentalV3Uncompressed | Self::ExperimentalV3ShardedUncompressed => 0,
+            _ => 1024 * 1024,
         }
     }
 }
@@ -116,16 +150,28 @@ fn array(
     if encoding.version() == 3 {
         let bytes = json!({"name":"bytes","configuration":{"endian":"little"}});
         let mut outer = chunks.to_vec();
-        let codecs = if shape.len() == 3 {
+        let mut inner = vec![bytes.clone()];
+        if shape.len() == 3 {
+            match encoding {
+                ScientificEncoding::ExperimentalV3ShardedGzip =>
+                    inner.push(json!({"name":"gzip","configuration":{"level":1}})),
+                ScientificEncoding::ExperimentalV3ShardedBloscZstd =>
+                    inner.push(json!({"name":"blosc","configuration":{"cname":"zstd","clevel":1,"shuffle":"shuffle","typesize":if dtype=="<u2" {2}else{1},"blocksize":0}})),
+                ScientificEncoding::ExperimentalV3ShardedZstd =>
+                    inner.push(json!({"name":"zstd","configuration":{"level":1,"checksum":true}})),
+                _ => {}
+            }
+        }
+        let codecs = if shape.len() == 3 && encoding.shard_factor() == 4 {
             // One 2x2 shard, encoded by zarrs with no retained application cache.
             outer[1] *= 2;
             outer[2] *= 2;
             json!([{"name":"sharding_indexed","configuration":{"chunk_shape":chunks,
-                "codecs":[bytes,{"name":"gzip","configuration":{"level":1}}],
-                "index_codecs":[{"name":"bytes","configuration":{"endian":"little"}}],
+                "codecs":inner,
+                "index_codecs":[bytes,{"name":"crc32c"}],
                 "index_location":"end"}}])
         } else {
-            json!([bytes])
+            json!(inner)
         };
         metadata = json!({"zarr_format":3,"node_type":"array","shape":shape,
             "data_type":match dtype {"<u2"=>"uint16","|u1"=>"uint8","<f8"=>"float64","<i8"=>"int64","<i4"=>"int32",_=>return Err("unsupported output dtype".into())},
@@ -340,12 +386,8 @@ pub(crate) fn fetch_with_options(
         .map(|s| options.chunk_edge.min(s.window.width) * options.chunk_edge.min(s.window.height))
         .max()
         .unwrap_or(0);
-    let shard_factor = if encoding.version() == 3 { 4 } else { 1 };
-    let codec_workspace = if matches!(encoding, ScientificEncoding::Uncompressed) {
-        0
-    } else {
-        1024 * 1024
-    };
+    let shard_factor = encoding.shard_factor();
+    let codec_workspace = encoding.codec_workspace();
     let reservation = output_area
         .checked_mul(shard_factor)
         .and_then(|n| n.checked_mul(32))

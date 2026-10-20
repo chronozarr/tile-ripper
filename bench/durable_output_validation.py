@@ -64,15 +64,16 @@ def invoke_request(req, mode, edge=256, env=None):
     return gate.invoke(args[1:],binary=Path(args[0]),env=env)
 
 
-def checks():
+def checks(modes=None):
     # Replay the inherited mixed-grid, late-mutation and actual mid-write signal
     # oracle with the new default binary, retaining the old receipt unchanged.
     gate.WORK,gate.DOCS,gate.BIN = WORK/"inherited",DOCS/"inherited",BIN
     gate.controlled()
     s = source_server()
     cases = []
-    modes = [("raw",128),("raw",512),("gzip",256),("blosc_zstd",256)]
-    if int(zarr.__version__.split(".")[0]) >= 3: modes.append(("sharded",256))
+    if modes is None:
+        modes = [("raw",128),("raw",512),("gzip",256),("blosc_zstd",256)]
+        if int(zarr.__version__.split(".")[0]) >= 3: modes.append(("sharded",256))
     try:
         for mode,edge in modes:
             req = request(s,f"{mode}-{edge}.zarr")
@@ -80,7 +81,7 @@ def checks():
             assert result["code"]==0,result
             manifest = json.loads(result.pop("stdout"))
             local = {source["asset_id"]:str(s.root/f'scene{source["item_id"][-1]}-{source["asset_key"]}.tif') for source in manifest["sources"]}
-            expected_format = "zarr_v3" if mode=="sharded" else "zarr_v2"
+            expected_format = "zarr_v3" if mode=="sharded" or mode.startswith("v3_") else "zarr_v2"
             verified = gate.verify(Path(req["sink"]["path"]),req,local,expected_format=expected_format)
             # Metadata and observation order must be repeatable, including
             # coordinates and exact subsecond timestamps on distinct grids.
@@ -141,7 +142,7 @@ def live():
     print(json.dumps(dict(passed=True,candidates=len(rows),observations_per_candidate=6,samples_per_candidate=46376)))
 
 
-def faults():
+def faults(mode="default"):
     s = source_server()
     interposer = WORK/"io.dylib"
     subprocess.run(["cc","-O2","-dynamiclib",str(ROOT/"bench/durable_output_io.c"),"-o",str(interposer)],check=True)
@@ -160,7 +161,7 @@ def faults():
                 env={**os.environ,"TILE_RIPPER_WORKERS":"2","DYLD_INSERT_LIBRARIES":str(interposer),"TR_IO_OUTPUT":str(cell),
                     "TR_IO_REPORT":str(cell/"io.json"),"TR_FAULT_POINT":point,"TR_FAULT_ACTION":"fail" if action=="fail" else "pause","TR_FAULT_MARKER":str(marker)}
                 with tempfile.TemporaryFile() as log:
-                    p=subprocess.Popen(candidate_args(path,"default"),env=env,stdout=log,stderr=log)
+                    p=subprocess.Popen(candidate_args(path,mode),env=env,stdout=log,stderr=log)
                     deadline=time.monotonic()+30
                     while not marker.exists() and p.poll() is None and time.monotonic()<deadline:time.sleep(0.002)
                     assert marker.exists(),(point,action,p.poll())
@@ -180,7 +181,7 @@ def faults():
                     assert out.exists()
                     manifest=json.loads((out/"manifest.json").read_text())
                     local={v["asset_id"]:str(s.root/f'scene{v["item_id"][-1]}-{v["asset_key"]}.tif') for v in manifest["sources"]}
-                    verified=gate.verify(out,req,local)
+                    verified=gate.verify(out,req,local,expected_format="zarr_v3" if mode=="sharded" or mode.startswith("v3_") else "zarr_v2")
                     assert verified["passed"]
                     if action=="fail":assert p.returncode!=0 and "durability is unconfirmed" in text,text
                     if action=="int":assert p.returncode==0,text # commit wins; complete sync
@@ -192,7 +193,7 @@ def faults():
                     assert bool(stages)==(action=="kill")
                 if action=="kill" and not committed:
                     # Retry must use a new owned sibling and leave the orphan.
-                    retry=invoke_request(req,"default")
+                    retry=invoke_request(req,mode)
                     assert retry["code"]==0 and out.exists() and all(p.exists() for p in stages),retry
                     shutil.rmtree(out)
                 rows.append(dict(point=point,action=action,exit_code=p.returncode,commit_point_passed=committed,
@@ -200,12 +201,12 @@ def faults():
     finally:
         s.shutdown();s.server_close()
     gate.save(DOCS/"faults.json",dict(passed=True,cases=rows,
-        binary_sha256=hashlib.sha256(BIN.read_bytes()).hexdigest(),
+        binary_sha256=hashlib.sha256((BIN if mode=="default" else CANDIDATE).read_bytes()).hexdigest(),
         scope="Application-visible faults/signals at actual syscalls; not power-cut emulation. Pre-commit failure leaves no destination; post-commit failure preserves complete output and refuses to report durable success."))
     print(json.dumps(dict(passed=True,fault_cases=len(rows))))
 
 
-def memory():
+def memory(modes=None):
     """Logical output grows 64x; construction/verification stay tile-bounded."""
     binary_sha256=hashlib.sha256(CANDIDATE.read_bytes()).hexdigest()
     rows = []
@@ -220,8 +221,9 @@ def memory():
                     a=((xx*17+yy*31)%65535+1).astype("u2")
                     a[(xx+yy)%37==0]=0
                     ds.write(a,1,window=Window(x,y,256,256))
-        modes=["raw","gzip","blosc_zstd"]
-        if int(zarr.__version__.split(".")[0])>=3:modes.append("sharded")
+        if modes is None:
+            modes=["raw","gzip","blosc_zstd"]
+            if int(zarr.__version__.split(".")[0])>=3:modes.append("sharded")
         for mode in modes:
             out=WORK/f"{n}-{mode}.zarr"
             req=dict(source=dict(kind="assets",assets=[dict(id=f"observation-{i}",format="cog",locator=str(source),datetime=f"2025-01-0{2-i}T12:00:00.123456Z") for i in range(2)]),

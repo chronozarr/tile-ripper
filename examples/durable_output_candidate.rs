@@ -12,6 +12,14 @@ fn main() -> tile_ripper::Result<()> {
         "blosc_zstd" => ScientificEncoding::BloscZstd,
         #[cfg(feature = "experimental-output")]
         "sharded" => ScientificEncoding::ExperimentalV3ShardedGzip,
+        #[cfg(feature = "experimental-output")]
+        "v3_raw" => ScientificEncoding::ExperimentalV3Uncompressed,
+        #[cfg(feature = "experimental-output")]
+        "v3_sharded_raw" => ScientificEncoding::ExperimentalV3ShardedUncompressed,
+        #[cfg(feature = "experimental-output")]
+        "v3_sharded_blosc" => ScientificEncoding::ExperimentalV3ShardedBloscZstd,
+        #[cfg(feature = "experimental-output")]
+        "v3_sharded_zstd" => ScientificEncoding::ExperimentalV3ShardedZstd,
         _ => {
             return Err("unknown encoding, or sharding needs --features experimental-output".into())
         }
