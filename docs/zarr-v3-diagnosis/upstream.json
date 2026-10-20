@@ -1,0 +1,32 @@
+{
+  "checked_on": "2026-10-20",
+  "issue": {
+    "html_url": "https://github.com/zarrs/zarrs/issues/444",
+    "number": 444,
+    "title": "Sharding + gzip: `GzipCodec::encoded_representation` under-estimates the encoded size, causing an out-of-bounds panic",
+    "state": "closed",
+    "created_at": "2026-08-11T13:10:56Z",
+    "closed_at": "2026-08-14T21:57:36Z"
+  },
+  "fix": {
+    "html_url": "https://github.com/zarrs/zarrs/pull/446",
+    "number": 446,
+    "title": "fix: gzip encoded representation bound can be exceeded, overflowing sharded buffers",
+    "state": "closed",
+    "merged_at": "2026-08-14T21:57:35Z",
+    "merge_commit_sha": "4e80aee5209445701caccb5bb6db5ff9df4fcdfb"
+  },
+  "release": {
+    "version": "0.23.14",
+    "created_at": "2026-08-14T22:34:05.685462Z",
+    "checksum": "fbd6697e73e803a80f182036563038ccfaf7fca1b71fc510cce65daaa45478f8",
+    "tag_commit": "f2c77ea616507cd5837f32eafb4f4bf317db8896",
+    "url": "https://github.com/zarrs/zarrs/releases/tag/zarrs-v0.23.14"
+  },
+  "inspected_main": {
+    "sha": "f0aed718659e77cde7436664df29ea3010774cef",
+    "date": "2026-10-19T11:17:06Z"
+  },
+  "pinned_crate_vcs_commit": "0563c6421781eba488413f3b2e34047162087e3e",
+  "fix_summary": "Conservative gzip encoded-size bound and defensive shard bounds checks. Independently tested via the released crate in the standalone fixed control; no production dependency change."
+}

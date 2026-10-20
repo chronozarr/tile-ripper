@@ -7,7 +7,7 @@ simulated 8 ms / 100 Mbit/s link. The native stream lower-work baselines were
 0.369 and 3.089 s. Values, masks, native grids, timestamps and provenance remain
 independently verified. This continues `82e21b1` on `codex/acquisition-planner`.
 
-The main improvement replaces repeated macOS device-wide flushes with two
+The main improvement replaces repeated macOS `F_FULLFSYNC` requests with two
 transaction barriers, while retaining synchronization on every original writer
 handle. Linux keeps per-file `sync_all`/`fsync`; no Linux speedup is claimed.
 Immutable inspection metadata is shared across prepared-request clones, and
@@ -117,8 +117,9 @@ avoids introducing that error-reporting gap. Directory entries also need their
 own synchronization. [Linux fsync](https://man7.org/linux/man-pages/man2/fsync.2.html),
 [kernel error-sequence tracking](https://www.kernel.org/doc/html/latest/core-api/errseq.html).
 
-The large case changes **941 full device flush calls into 952 host fsync calls
-and two full device barriers**. It reduces device barriers, not the requirement
+The large case changes **941 observed F_FULLFSYNC requests into 952 host fsync
+requests and two checked F_FULLFSYNC requests**. These are syscall observations,
+not measured physical hardware flushes. It reduces device barriers, not the requirement
 to synchronize every file. The extra host calls include directory ancestors and
 checked publication synchronization. File writes and sizes remain comparable.
 
@@ -281,13 +282,17 @@ encoding path; it can rewrite a shard on each inner delivery. Its index has no
 optional CRC32C codec. [Sharding specification](https://zarr-specs.readthedocs.io/en/latest/v3/codecs/sharding-indexed/index.html).
 
 The library's bounded encoder returns `Sharding did not allocate a large enough
-buffer` on all medium/large real-source cases. Its own guard identifies an
-incorrect codec size bound as the condition; the gzip bound is an investigation
-lead, not a completed upstream root-cause fix. [Retained failures](sharding-failures.json).
-The appropriate next gate is an upstream reproducer/fix, raw and compressed shard
-comparisons, existing partial-encoding evaluation, write amplification, index
-checksums and renewed independent/fault/memory validation. Smaller file counts or
-successful compressible fixtures alone are insufficient grounds for adoption.
+buffer` on all medium/large real-source cases. The follow-up [v3 diagnosis](../zarr-v3-diagnosis/report.md)
+confirms an upstream gzip size-bound defect, exposed on these inputs by the
+native build's zlib-rs backend. It reproduces independently in memory; released
+zarrs 0.23.14 passes the corresponding controls. The original pinned failure
+[receipt](sharding-failures.json) remains unchanged. The next gate is a deliberate
+upstream upgrade followed by integration, write-amplification, independent,
+fault and memory validation. Smaller file counts or successful compressible
+fixtures alone are insufficient grounds for adoption. The follow-up
+[synchronization audit](../zarr-v3-diagnosis/synchronization-audit.md) separates
+publication guarantees, conditional crash consistency and syscall observations;
+no actual hardware flush or power-loss survival was measured.
 
 Reproduce with the [protocol](protocol.md). Raw images, mirrors, generated
 datasets, logs and exploratory failed screens remain local in ignored

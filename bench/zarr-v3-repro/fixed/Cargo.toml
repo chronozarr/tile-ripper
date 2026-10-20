@@ -1,0 +1,26 @@
+[package]
+name = "zarr-v3-repro"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+# Standalone: no tile-ripper dependency, filesystem adapter or source imagery.
+[workspace]
+
+[features]
+default = ["upstream-fixed"]
+native-backend = ["flate2/zlib-rs"]
+upstream-fixed = []
+
+[dependencies]
+zarrs = { version = "=0.23.14", default-features = false, features = ["gzip", "sharding", "crc32c"] }
+flate2 = "=1.1.10"
+serde_json = "=1.0.145"
+
+[[bin]]
+name = "zarr-v3-repro"
+path = "../src/main.rs"
+
+[[bin]]
+name = "matrix"
+path = "../src/bin/matrix.rs"

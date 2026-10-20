@@ -1,0 +1,52 @@
+{
+  "passed": true,
+  "scope": "Expected pinned defects reproduced and fixed upstream release verified in standalone controls; preserved production behavior checked, not a v3 production-readiness gate.",
+  "transaction_tests": {
+    "command": "cargo test --locked --no-default-features --features native-cog,experimental-output --lib scientific_output::tests",
+    "passed": 4,
+    "failed": 0,
+    "ignored": 0
+  },
+  "standalone_matrix": {
+    "profiles": 4,
+    "cases_per_profile": 98,
+    "total": 392,
+    "fixed_release_roundtrips": 196,
+    "pinned_expected_codec_errors": 71,
+    "pinned_expected_caught_panics": 7
+  },
+  "application_budget_replays": {
+    "cases": 6,
+    "expected_budget_rejections": 2,
+    "reproduced_upstream_errors": 4,
+    "published": 0,
+    "staging_cleaned": true
+  },
+  "issue_draft": {
+    "self_contained_source_and_manifest_compiled_with_attached_lock": true,
+    "expected_exit_code": 1,
+    "expected_exact_encoder_error": true,
+    "submitted": false
+  },
+  "checks": [
+    "root and both standalone cargo fmt --check",
+    "ruff check --select F,E9 bench/zarr_v3_diagnosis.py",
+    "python3 -m py_compile bench/zarr_v3_diagnosis.py",
+    "strict clippy on pinned standalone minimal program",
+    "git diff --check",
+    "all receipt artifact hashes and local Markdown links",
+    "original 0d0cc18 digest, three binary hashes, eight independent receipts and 144 benchmark rows"
+  ],
+  "vendor_audit": {
+    "registry_version": "0.3.13",
+    "direct_io_and_upstream_tests_identical": true,
+    "lib_rs_diff_reviewed": "one default-off option, its docs, and original-handle fsync branch"
+  },
+  "rust_sync_all_source": {
+    "url": "https://github.com/rust-lang/rust/blob/1.92.0/library/std/src/sys/fs/unix.rs",
+    "sha256": "2357ba5167bea291b690db9d0b75f69fd9bc2be332a4e27c1da213dcd0273c20",
+    "finding": "File::fsync uses fcntl(F_FULLFSYNC) on Apple targets and propagates failure; no fsync fallback in this version"
+  },
+  "research_results_sha256": "2f571f31d2acce29ad6a40f3b6444e3a3c420d2e9b53b04a3bd5502a9b3d2250",
+  "publication_status": "Local only; production root dependency versions and runtime behavior unchanged; v3 remains experimental and disabled by default."
+}

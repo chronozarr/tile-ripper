@@ -786,8 +786,8 @@ fn device_barrier(file: &fs::File) -> Result<()> {
     #[cfg(target_os = "macos")]
     {
         use std::os::fd::AsRawFd;
-        // Unlike Rust's sync_all, do not silently fall back to fsync if the
-        // device refuses the stronger barrier that this strategy requires.
+        // Require the explicit stronger macOS request and propagate failures;
+        // POSIX fsync alone does not satisfy this transaction barrier.
         if unsafe { libc::fcntl(file.as_raw_fd(), libc::F_FULLFSYNC) } != 0 {
             return Err(std::io::Error::last_os_error().into());
         }
