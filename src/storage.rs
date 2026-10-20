@@ -22,10 +22,17 @@ pub(crate) fn has_remote_zarr(r: &Request) -> bool {
     matches!(&r.source,Source::Assets{assets} if assets.iter().any(|a|a.format==Format::ZarrV2 && cog::remote(&a.locator)))
 }
 #[derive(Default)]
-pub(crate) struct Sources(BTreeMap<String, Arc<Objects>>);
+pub(crate) struct Sources(
+    BTreeMap<String, Arc<Objects>>,
+    #[cfg(feature = "native-cog")] pub(crate) crate::native_cog::Snapshots,
+);
 impl Sources {
     pub fn new(r: &Request) -> Result<Self> {
         let mut sources = Self::default();
+        #[cfg(feature = "native-cog")]
+        {
+            sources.1 = crate::native_cog::Snapshots::new(r.budget.buffer_bytes);
+        }
         let mut shared_client: Option<Arc<Client>> = None;
         let metadata_budget = Arc::new(MetadataBudget::new(r.budget.buffer_bytes / 2));
         if let Source::Assets { assets } = &r.source {

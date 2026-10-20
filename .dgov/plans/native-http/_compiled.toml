@@ -1,0 +1,70 @@
+[plan]
+name = "native-http"
+source_mtime_max = "2026-10-20T04:39:39.881305Z"
+sop_set_hash = ""
+
+[tasks."tasks/work.acceptance"]
+summary = "Scientific, fault, resource, deployment and performance decision"
+prompt = """
+Orient:
+Read new transport strategies and the inherited independent COG/Sentinel/Zarr gates.
+Edit:
+Run independent oracles, fault/mutation/cancellation tests, clean GDAL-free runtime and equivalent four-reader comparisons; retain resource failures and measured tradeoffs. Commit validated improvements locally.
+Verify:
+cargo clippy --locked --all-features --all-targets -- -D warnings
+"""
+commit_message = ""
+depends_on = ["tasks/work.transport", "tasks/work.usability"]
+timeout_s = 0
+test_cmd = "cargo clippy --locked --all-features --all-targets -- -D warnings"
+files.create = ["bench/native_http_checks.py", "bench/native_http_faults.py", "bench/native_http_linux.sh", "bench/native_http_live.py", "bench/native_http_prefix.py", "bench/native_http_runtime.py", "bench/native_http_verify.py", "bench/native_http_analysis.py", "docs/native-http/report.md", "docs/native-http/validation.json", "docs/native-http/deployment.json", "docs/native-http/candidate.json", "docs/native-http/verification.json"]
+
+[tasks."tasks/work.baseline"]
+summary = "Freeze 1473c4c binaries and equivalent native/GDAL baseline"
+prompt = """
+Orient:
+Read existing frozen mirrors, source hashes, native Sentinel receipts and request profiles.
+Edit:
+Preserve current committed native binaries and version-pinned comparisons. Add a four-reader benchmark with worker/budget matrix and transparent failures.
+Verify:
+prototype-output/zarr-env/bin/python bench/native_http_benchmark.py --help
+"""
+commit_message = ""
+timeout_s = 0
+test_cmd = "prototype-output/zarr-env/bin/python bench/native_http_benchmark.py --help"
+files.create = ["bench/native_http_benchmark.py", "docs/native-http/protocol.md", "docs/native-http/baseline.json", "docs/native-http/benchmark.json"]
+
+[tasks."tasks/work.transport"]
+summary = "Profile-aware range, metadata reuse and resource-dependent concurrency"
+prompt = """
+Orient:
+Read native_cog.rs, cog_range.rs, scheduler.rs and the independent physical request traces.
+Edit:
+Reduce end-to-end HTTP overhead only with strict capacity-based buffer admission, immutable source identities, ordered chunks and provisional completion. Preserve small-budget strategies and all scientific profiles.
+Verify:
+cargo test --locked --no-default-features --features native-cog
+"""
+commit_message = ""
+depends_on = ["tasks/work.baseline"]
+timeout_s = 0
+test_cmd = "cargo test --locked --no-default-features --features native-cog"
+files.touch = ["src/storage.rs"]
+files.create = ["tests/native_http_snapshot.rs"]
+files.edit = ["src/native_cog.rs", "src/cog_range.rs", "src/cog.rs", "src/scheduler.rs", "src/planner.rs", "src/acquisition.rs", "src/stac_workflow.rs", "src/execute.rs"]
+
+[tasks."tasks/work.usability"]
+summary = "Discoverable explicit native CLI and public GDAL-free guard"
+prompt = """
+Orient:
+Read CLI help, backend feature guards and stream/output behavior.
+Edit:
+Add explicit native/GDAL selection and GDAL-free validation without fallback or changing default. Make native stream examples and unsupported-output errors actionable.
+Verify:
+cargo test --locked --all-features --test cli
+"""
+commit_message = ""
+depends_on = ["tasks/work.baseline"]
+timeout_s = 0
+test_cmd = "cargo test --locked --all-features --test cli"
+files.create = ["docs/native-http/cli.md"]
+files.edit = ["src/cli/mod.rs", "src/main.rs", "tests/cli.rs", "README.md", "docs/installation.md"]

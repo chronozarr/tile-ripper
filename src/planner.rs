@@ -348,6 +348,10 @@ pub(crate) fn plan_on(
                                     let Variable::Band { index } = variable else {
                                         return fail("COG requires integer band selectors");
                                     };
+                                    #[cfg(feature = "native-cog")]
+                                    if cog::native_selected() {
+                                        return sources.1.inspect(asset, *index);
+                                    }
                                     cog::inspect(asset, *index)
                                 })
                                 .collect()
@@ -384,6 +388,13 @@ pub(crate) fn plan_on(
                             Ok((layouts.next().ok_or("missing inspected layout")?, false))
                         })?;
                     } else {
+                        #[cfg(feature = "native-cog")]
+                        if cog::native_selected() && cog::remote(&asset.locator) {
+                            plan_cog_asset(asset, request, &mut p, |band| {
+                                Ok((sources.1.inspect(asset, band)?, false))
+                            })?;
+                            continue;
+                        }
                         CogPlanner { cache }.plan_asset(asset, request, &mut p)?;
                     }
                 }
@@ -399,6 +410,63 @@ pub(crate) fn plan_on(
             .iter()
             .any(|n| n.asset_id == s.asset_id && matches!(n.operation, Operation::Read { .. }))
     });
+    #[cfg(feature = "native-cog")]
+    if cog::native_selected() {
+        // Prepared metadata is optional. Preserve enough working headroom for
+        // every exact-read operation before freezing the runtime snapshot.
+        let mut mandatory_peak = 0;
+        for selected in &p.selected {
+            let Some(layout) = &selected.layout else {
+                continue;
+            };
+            let nodes: Vec<_> = p
+                .nodes
+                .iter()
+                .filter(|n| {
+                    n.asset_id == selected.asset_id
+                        && matches!(
+                            n.operation,
+                            Operation::Read {
+                                read: Read::LibraryWindow { .. }
+                            }
+                        )
+                })
+                .collect();
+            if nodes.is_empty() {
+                continue;
+            }
+            let (retained, working, _) = crate::native_cog::reservation(
+                layout,
+                &selected.window,
+                &nodes,
+                0,
+                width.min(p.selected.len().max(1)),
+            )?;
+            let windows = nodes
+                .iter()
+                .filter_map(|n| match &n.operation {
+                    Operation::Read {
+                        read: Read::LibraryWindow { window, .. },
+                    } => Some(window),
+                    _ => None,
+                })
+                .map(|w| w.width.checked_mul(w.height).and_then(|n| n.checked_mul(4)))
+                .collect::<Option<Vec<_>>>()
+                .ok_or("native COG window size overflow")?
+                .into_iter()
+                .max()
+                .unwrap_or(0);
+            mandatory_peak = mandatory_peak.max(
+                retained
+                    .checked_add(working)
+                    .and_then(|n| n.checked_add(windows))
+                    .ok_or("native COG working set overflow")?,
+            );
+        }
+        sources
+            .1
+            .trim(request.budget.buffer_bytes.saturating_sub(mandatory_peak));
+    }
     crate::diagnostics::profile_stage(
         "native_planning_with_layout",
         started.elapsed().as_secs_f64(),

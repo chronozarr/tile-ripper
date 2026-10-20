@@ -4,46 +4,330 @@ use crate::{
     Variable,
 };
 use geotiff_core::{CrsInfo, GeoKeyDirectory, GeoTransform, RasterType};
-use std::{sync::Arc, time::Instant};
+use std::{
+    collections::{BTreeMap, BTreeSet, VecDeque},
+    sync::{
+        atomic::{AtomicUsize, Ordering},
+        Arc, Mutex,
+    },
+    time::Instant,
+};
 use tiff_reader::{Ifd, OpenOptions, ParseBudgets, TagValue, TiffFile};
 #[path = "cog_range.rs"]
 mod range;
 use range::RangeSource;
 const MAX_CACHE: usize = 8 * 1024 * 1024;
 const MAX_TILE: usize = 2 * 1024 * 1024;
+const CODEC_WORKING: usize = 128 * 1024;
 
-fn cache_bytes(l: &Layout, w: &crate::Window) -> Result<usize> {
-    let tiles = crate::cog::tiles(l, w).len();
-    l.block[0]
-        .checked_mul(l.block[1])
-        .and_then(|n| n.checked_mul(2))
-        .and_then(|n| n.checked_mul(tiles))
-        .map(|n| n.min(MAX_CACHE))
-        .ok_or_else(|| "native COG cache reservation overflow".into())
+#[derive(Default)]
+pub(crate) struct Snapshots {
+    cap: usize,
+    entries: Mutex<BTreeMap<String, Arc<range::Snapshot>>>,
+    skipped: AtomicUsize,
 }
-pub(crate) fn reservation(l: &Layout, w: &crate::Window) -> Result<(usize, usize)> {
+impl Snapshots {
+    pub(crate) fn new(buffer_bytes: usize) -> Self {
+        Self {
+            cap: (buffer_bytes / 2).min(8 * 1024 * 1024),
+            ..Self::default()
+        }
+    }
+    pub(crate) fn bytes(&self) -> usize {
+        self.entries
+            .lock()
+            .unwrap()
+            .values()
+            .map(|s| s.bytes())
+            .sum()
+    }
+    pub(crate) fn trim(&self, cap: usize) {
+        let mut entries = self.entries.lock().unwrap();
+        let mut retained = entries.values().map(|s| s.bytes()).sum::<usize>();
+        while retained > cap {
+            let Some((_, snapshot)) = entries.pop_last() else {
+                break;
+            };
+            retained -= snapshot.bytes();
+            self.skipped.fetch_add(1, Ordering::Relaxed);
+        }
+    }
+    pub(crate) fn inspect(&self, a: &Asset, band: usize) -> Result<Layout> {
+        let (tiff, source) = open(a, 0, None)?;
+        let layout = layout(&tiff, band)?;
+        if self.cap > 0 && crate::cog::remote(&a.locator) {
+            let snapshot = Arc::new(source.snapshot(a));
+            let mut entries = self.entries.lock().unwrap();
+            let retained = entries
+                .iter()
+                .filter(|(id, _)| **id != a.id)
+                .map(|(_, s)| s.bytes())
+                .sum::<usize>();
+            // If the bounded optimization does not fit, retain baseline reads.
+            if retained
+                .checked_add(snapshot.bytes())
+                .is_some_and(|n| n <= self.cap)
+            {
+                entries.insert(a.id.clone(), snapshot);
+            } else {
+                self.skipped.fetch_add(1, Ordering::Relaxed);
+            }
+        }
+        Ok(layout)
+    }
+    fn get(&self, a: &Asset) -> Option<Arc<range::Snapshot>> {
+        self.entries.lock().unwrap().get(&a.id).cloned()
+    }
+    pub(crate) fn summary(&self) -> serde_json::Value {
+        let entries = self.entries.lock().unwrap();
+        serde_json::json!({"retained_sources":entries.len(),"retained_bytes":entries.values().map(|s|s.bytes()).sum::<usize>(),
+            "cap_bytes":self.cap,"skipped_sources":self.skipped.load(Ordering::Relaxed),
+            "scope":"this Prepared only; immutable version-bound parser pages; never a data cache"})
+    }
+}
+
+#[derive(Clone, Default)]
+pub(crate) struct Strategy {
+    cache_bytes: usize,
+    pub(crate) groups: Vec<range::Group>,
+    delivery: Delivery,
+}
+#[derive(Clone, Default)]
+enum Delivery {
+    #[default]
+    Windows,
+    Selection(crate::Window),
+}
+impl Strategy {
+    pub(crate) fn summary(&self) -> serde_json::Value {
+        let (scope, selection_bytes) = match &self.delivery {
+            Delivery::Windows => ("planned_windows", 0),
+            Delivery::Selection(w) => ("bounded_selection", w.width * w.height * 2),
+        };
+        serde_json::json!({"read_scope":scope,"retained_selection_bytes":selection_bytes,
+            "decoded_cache_limit_bytes":self.cache_bytes,"coalesced_groups":self.groups.len(),
+            "max_encoded_group_reservation_bytes":self.groups.iter().map(|g|g.len + 8).max().unwrap_or(0),
+            "codec_working_bytes":CODEC_WORKING})
+    }
+}
+// Match the existing cache's physical reads with the smallest LRU. This uses
+// actual planned windows (including skipped masked windows), not AOI area.
+fn cache_slots(sequence: &[(usize, usize)], maximum: usize) -> usize {
+    fn misses(sequence: &[(usize, usize)], slots: usize) -> usize {
+        let mut cache = VecDeque::new();
+        let mut misses = 0;
+        for tile in sequence {
+            if let Some(i) = cache.iter().position(|t| t == tile) {
+                cache.remove(i);
+            } else {
+                misses += 1;
+            }
+            if slots > 0 {
+                cache.push_back(*tile);
+                if cache.len() > slots {
+                    cache.pop_front();
+                }
+            }
+        }
+        misses
+    }
+    let expected = misses(sequence, maximum);
+    // LRU has the stack property: increasing capacity never increases misses.
+    let (mut low, mut high) = (0, maximum);
+    while low < high {
+        let middle = (low + high) / 2;
+        if misses(sequence, middle) == expected {
+            high = middle;
+        } else {
+            low = middle + 1;
+        }
+    }
+    low
+}
+fn block_working(tile_capacity: usize, encoded: usize) -> Result<usize> {
+    let decode = tile_capacity
+        .checked_mul(2)
+        .and_then(|n| n.checked_add(encoded))
+        .ok_or("native COG decode working set overflow")?;
+    // Upstream can retain a readable but mismatched wrapped payload while the
+    // direct fallback holds both its raw range and its unwrapped payload copy.
+    let fallback = encoded
+        .checked_mul(3)
+        .ok_or("native COG encoded working set overflow")?;
+    decode
+        .max(fallback)
+        .checked_add(CODEC_WORKING)
+        .ok_or_else(|| "native COG codec working set overflow".into())
+}
+pub(crate) fn reservation(
+    l: &Layout,
+    selection: &crate::Window,
+    nodes: &[&Node],
+    budget: usize,
+    workers: usize,
+) -> Result<(usize, usize, Strategy)> {
     let tile = l.block[0]
         .checked_mul(l.block[1])
         .and_then(|n| n.checked_mul(2))
         .filter(|n| *n <= MAX_TILE)
         .ok_or("native COG tile exceeds 2 MiB decode limit")?;
-    let encoded = l
-        .tiles
+    let tiles: Vec<_> = nodes
+        .iter()
+        .flat_map(|n| match &n.operation {
+            Operation::Read {
+                read: Read::LibraryWindow { tiles, .. },
+            } => tiles.as_slice(),
+            _ => &[],
+        })
+        .collect();
+    let encoded = tiles
         .iter()
         .map(|t| t.bytes.unwrap_or(0))
         .max()
-        .unwrap_or(0) as usize;
-    // Upstream keeps a cached decoded block, a decode buffer, a typed window,
-    // and encoded input. Metadata/runtime allocations are reported separately.
+        .unwrap_or(0) as usize
+        + 8;
+    let sequence: Vec<_> = tiles.iter().map(|t| (t.x, t.y)).collect();
+    let slots = cache_slots(&sequence, (MAX_CACHE / tile).min(64));
+    // Upstream Vec growth can retain capacity above decoded length for a
+    // non-power-of-two tile. Charge capacity, including the codec's probe.
+    let tile_capacity = tile
+        .checked_next_power_of_two()
+        .ok_or("tile capacity overflow")?;
+    let retained = tile_capacity
+        .checked_mul(slots)
+        .ok_or("cache size overflow")?;
+    let block_peak = block_working(tile_capacity, encoded)?;
+    let mut working = block_peak;
+    let windows = nodes
+        .iter()
+        .filter_map(|n| match &n.operation {
+            Operation::Read {
+                read: Read::LibraryWindow { window, .. },
+            } => Some(window),
+            _ => None,
+        })
+        .map(|w| w.width.checked_mul(w.height).and_then(|n| n.checked_mul(4)))
+        .collect::<Option<Vec<_>>>()
+        .ok_or("window size overflow")?
+        .into_iter()
+        .max()
+        .unwrap_or(0);
+    let selection_bytes = selection
+        .width
+        .checked_mul(selection.height)
+        .and_then(|n| n.checked_mul(2))
+        .ok_or("selection size overflow")?;
+    let selection_tiles = crate::cog::tiles(l, selection);
+    let key_set = |tiles: &[&Tile]| tiles.iter().map(|t| (t.x, t.y)).collect::<BTreeSet<_>>();
+    let expected = selection_tiles
+        .iter()
+        .map(|t| (t.x, t.y))
+        .collect::<BTreeSet<_>>();
+    let first = nodes.first().and_then(|n| match &n.operation {
+        Operation::Read {
+            read: Read::LibraryWindow { tiles, .. },
+        } => Some(tiles),
+        _ => None,
+    });
+    if nodes.len() > 1
+        && selection_bytes <= MAX_TILE
+        && key_set(&tiles) == expected
+        && first.is_some_and(|tiles| {
+            tiles.iter().map(|t| (t.x, t.y)).collect::<BTreeSet<_>>() == expected
+        })
+    {
+        // These phases do not overlap: upstream first produces raw selection
+        // bytes while decoding blocks, then converts raw bytes to UInt16. Only
+        // afterward do we retain UInt16 and allocate/mask one delivery chunk.
+        let decode = selection_bytes
+            .checked_add(block_peak)
+            .ok_or("selection working set overflow")?;
+        let convert = selection_bytes
+            .checked_mul(2)
+            .ok_or("selection working set overflow")?;
+        let deliver = selection_bytes
+            .checked_add(windows)
+            .ok_or("selection working set overflow")?;
+        let base = decode.max(convert).max(deliver);
+        // Preserve the largest payload concurrency the individual-tile strategy
+        // can admit. Coalescing may use spare capacity, never a reader's slot.
+        let concurrency = (budget / base).max(1).min(workers.max(1));
+        let available = (budget / concurrency).saturating_sub(base);
+        let groups = range::groups(selection_tiles, available);
+        let merged = groups.iter().map(|g| g.len + 8).max().unwrap_or(0);
+        let peak = decode
+            .checked_add(merged)
+            .ok_or("selection encoded working set overflow")?
+            .max(convert)
+            .max(deliver);
+        return Ok((
+            0,
+            peak.saturating_sub(windows),
+            Strategy {
+                cache_bytes: 0,
+                groups,
+                delivery: Delivery::Selection(selection.clone()),
+            },
+        ));
+    }
+    let available = budget.saturating_sub(retained.saturating_add(working).saturating_add(windows));
+    // Only group the actual cache misses, and only if every group member is
+    // consumed consecutively. This prevents refetching a half-consumed group
+    // when a TIFF's physical order differs from its tile index order.
+    let mut lru = VecDeque::new();
+    let mut misses = Vec::new();
+    for tile in &tiles {
+        let key = (tile.x, tile.y);
+        if let Some(i) = lru.iter().position(|t| *t == key) {
+            lru.remove(i);
+        } else {
+            misses.push((**tile).clone());
+        }
+        if slots > 0 {
+            lru.push_back(key);
+            if lru.len() > slots {
+                lru.pop_front();
+            }
+        }
+    }
+    let mut first_needed = BTreeMap::new();
+    for (index, node) in nodes.iter().enumerate() {
+        if let Operation::Read {
+            read: Read::LibraryWindow { tiles, .. },
+        } = &node.operation
+        {
+            for tile in tiles {
+                if let Some(offset) = tile.offset {
+                    first_needed.entry(offset).or_insert(index);
+                }
+            }
+        }
+    }
+    let mut groups = range::groups(misses, available);
+    // Do not delay an early chunk to prefetch a tile only a later chunk needs.
+    // The controlled replay found no six-source wall-time benefit from that
+    // broader prefetch despite its lower GET count.
+    groups.retain(|g| g.first_needed_together(&first_needed));
+    let merged = groups.iter().map(|g| g.len + 8).max().unwrap_or(0);
+    working = working
+        .checked_add(merged)
+        .ok_or("encoded working set overflow")?;
     Ok((
-        cache_bytes(l, w)?,
-        tile.checked_mul(2)
-            .and_then(|n| n.checked_add(encoded))
-            .ok_or("native COG working set overflow")?,
+        retained,
+        working,
+        Strategy {
+            cache_bytes: tile * slots,
+            groups,
+            delivery: Delivery::Windows,
+        },
     ))
 }
-fn open(a: &Asset, cache: usize) -> Result<(TiffFile, Arc<RangeSource>)> {
-    let source = RangeSource::open(a)?;
+fn open(
+    a: &Asset,
+    cache: usize,
+    snapshot: Option<&range::Snapshot>,
+) -> Result<(TiffFile, Arc<RangeSource>)> {
+    let source = RangeSource::open(a, snapshot)?;
     let tiff = TiffFile::from_source_with_options(
         source.clone(),
         OpenOptions {
@@ -277,7 +561,7 @@ fn calibration(i: &Ifd) -> Result<(Option<f64>, Option<f64>)> {
     Ok((scale, offset))
 }
 pub(crate) fn inspect(a: &Asset, band: usize) -> Result<Layout> {
-    let (t, _) = open(a, 0)?;
+    let (t, _) = open(a, 0, None)?;
     layout(&t, band)
 }
 pub(crate) struct SelectedReader {
@@ -286,11 +570,60 @@ pub(crate) struct SelectedReader {
     source: Arc<RangeSource>,
     layout: Layout,
     mask: Option<crate::spatial::Geometry>,
+    buffered: Buffered,
+    delivery_capacity_peak: usize,
+}
+enum Buffered {
+    Direct,
+    Pending(crate::Window),
+    Ready {
+        window: crate::Window,
+        values: Vec<u16>,
+    },
+}
+fn selection_chunk(whole: &crate::Window, values: &[u16], w: &crate::Window) -> Result<Vec<u16>> {
+    let x =
+        w.x.checked_sub(whole.x)
+            .ok_or("native COG chunk outside buffered selection")?;
+    let y =
+        w.y.checked_sub(whole.y)
+            .ok_or("native COG chunk outside buffered selection")?;
+    if x.checked_add(w.width).is_none_or(|end| end > whole.width)
+        || y.checked_add(w.height).is_none_or(|end| end > whole.height)
+    {
+        return fail("native COG chunk outside buffered selection");
+    }
+    let len = w
+        .width
+        .checked_mul(w.height)
+        .ok_or("native COG chunk size overflow")?;
+    let mut result = Vec::with_capacity(len);
+    for row in y..y + w.height {
+        let start = row
+            .checked_mul(whole.width)
+            .and_then(|n| n.checked_add(x))
+            .ok_or("native COG selection offset overflow")?;
+        let end = start
+            .checked_add(w.width)
+            .ok_or("native COG selection offset overflow")?;
+        result.extend_from_slice(
+            values
+                .get(start..end)
+                .ok_or("native COG selection buffer mismatch")?,
+        );
+    }
+    Ok(result)
 }
 impl SelectedReader {
-    pub(crate) fn new(asset: &Asset, s: &Selected) -> Result<Self> {
+    pub(crate) fn new(
+        asset: &Asset,
+        s: &Selected,
+        strategy: Strategy,
+        snapshots: &Snapshots,
+    ) -> Result<Self> {
         let expected = s.layout.as_ref().ok_or("missing native COG layout")?;
-        let (tiff, source) = open(asset, cache_bytes(expected, &s.window)?)?;
+        let snapshot = snapshots.get(asset);
+        let (tiff, source) = open(asset, strategy.cache_bytes, snapshot.as_deref())?;
         let layout = layout(&tiff, 1)?;
         if serde_json::to_value(&layout)? != serde_json::to_value(expected)? {
             return fail("native COG metadata changed since planning");
@@ -300,13 +633,19 @@ impl SelectedReader {
             .as_ref()
             .map(|g| crate::spatial::from_geojson(g, &layout.crs))
             .transpose()?;
-        source.begin_data();
+        source.begin_data(strategy.groups);
+        let buffered = match strategy.delivery {
+            Delivery::Windows => Buffered::Direct,
+            Delivery::Selection(w) => Buffered::Pending(w),
+        };
         Ok(Self {
             asset: asset.clone(),
             tiff,
             source,
             layout,
             mask,
+            buffered,
+            delivery_capacity_peak: 0,
         })
     }
     pub(crate) fn execute_node(
@@ -328,12 +667,39 @@ impl SelectedReader {
         }
         let before = self.source.counters.lock().unwrap().clone();
         let t = Instant::now();
-        let values =
-            self.tiff
-                .read_window::<u16>(0, window.y, window.x, window.height, window.width)?;
-        let (mut values, _) = values.into_raw_vec_and_offset();
+        if let Buffered::Pending(whole) = &self.buffered {
+            let whole = whole.clone();
+            let values =
+                self.tiff
+                    .read_window::<u16>(0, whole.y, whole.x, whole.height, whole.width)?;
+            let (values, _) = values.into_raw_vec_and_offset();
+            self.buffered = Buffered::Ready {
+                window: whole,
+                values,
+            };
+        }
+        let mut values = match &self.buffered {
+            Buffered::Direct => {
+                self.tiff
+                    .read_window::<u16>(0, window.y, window.x, window.height, window.width)?
+                    .into_raw_vec_and_offset()
+                    .0
+            }
+            Buffered::Ready {
+                window: whole,
+                values,
+            } => selection_chunk(whole, values, window)?,
+            Buffered::Pending(_) => return fail("native COG selection was not decoded"),
+        };
         let elapsed = t.elapsed().as_secs_f64();
         let after = self.source.counters.lock().unwrap().clone();
+        let selection_capacity = match &self.buffered {
+            Buffered::Ready { values, .. } => values.capacity() * 2,
+            _ => 0,
+        };
+        self.delivery_capacity_peak = self
+            .delivery_capacity_peak
+            .max(selection_capacity + values.capacity() * 2);
         report.read_decode_seconds += elapsed;
         report.source_retrieval_seconds =
             Some(report.source_retrieval_seconds.unwrap_or(0.) + after.seconds - before.seconds);
@@ -344,6 +710,9 @@ impl SelectedReader {
         if let Some(g) = &self.mask {
             let t = Instant::now();
             let m = crate::spatial::mask(g, &self.layout, window)?;
+            self.delivery_capacity_peak = self
+                .delivery_capacity_peak
+                .max(selection_capacity + values.capacity() * 2 + m.data().len());
             let n = self.layout.nodata.ok_or("mask requires nodata")? as u16;
             for (v, keep) in values.iter_mut().zip(m.data()) {
                 if *keep == 0 {
@@ -377,5 +746,229 @@ impl SelectedReader {
         report.sink_seconds += t.elapsed().as_secs_f64();
         report.chunks += 1;
         Ok(())
+    }
+    pub(crate) fn finish(&self, report: &mut ExecutionReport) {
+        let counters = self.source.counters.lock().unwrap();
+        if report.scheduler.is_null() {
+            report.scheduler = serde_json::json!({});
+        }
+        if !report.scheduler["native_buffers"].is_array() {
+            report.scheduler["native_buffers"] = serde_json::json!([]);
+        }
+        report.scheduler["native_buffers"].as_array_mut().unwrap().push(serde_json::json!({
+            "asset_id":self.asset.id,
+            "transport_encoded_capacity_peak_bytes":counters.encoded_capacity_peak,
+            "adapter_delivery_capacity_peak_bytes":self.delivery_capacity_peak,
+            "scope":"observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"}));
+    }
+}
+
+#[cfg(test)]
+mod efficiency_tests {
+    use super::*;
+    #[test]
+    fn malformed_wrapped_fallback_reserves_three_encoded_capacities() {
+        let decoded = 262_144;
+        let encoded = 1_000_000 + 8;
+        // Such a declared byte count is admitted by both our narrow profile
+        // and upstream's 4*decoded+4096 compressed-input bound. A mismatched
+        // leader can make three encoded copies coexist before codec entry.
+        assert!(encoded < 4 * decoded + 4096);
+        assert_eq!(
+            block_working(decoded, encoded).unwrap(),
+            3 * encoded + CODEC_WORKING
+        );
+        // Typical Sentinel encoded tiles remain limited by the decode phase.
+        assert_eq!(
+            block_working(2 << 20, 1_650_000).unwrap(),
+            (4 << 20) + 1_650_000 + CODEC_WORKING
+        );
+        assert!(block_working(usize::MAX, encoded).is_err());
+        assert!(block_working(decoded, usize::MAX).is_err());
+    }
+    fn fixture(window: crate::Window) -> (Layout, Vec<Node>) {
+        let layout = Layout {
+            width: 8192,
+            height: 4096,
+            transform: [0., 1., 0., 0., 0., -1.],
+            crs: "EPSG:32617".into(),
+            variable: Variable::Band { index: 1 },
+            block: [1024, 1024],
+            dtype: "UInt16".into(),
+            nodata: Some(0.),
+            scale: None,
+            offset: None,
+            tiles: (0..4)
+                .flat_map(|y| {
+                    (0..8).map(move |x| Tile {
+                        x,
+                        y,
+                        offset: Some(1_000_000 + y as u64 * 20_000_000 + x as u64 * 1_600_008),
+                        bytes: Some(1_600_000),
+                    })
+                })
+                .collect(),
+        };
+        let mut nodes = Vec::new();
+        for y in (window.y..window.y + window.height).step_by(256) {
+            for x in (window.x..window.x + window.width).step_by(256) {
+                let w = crate::Window {
+                    x,
+                    y,
+                    width: 256.min(window.x + window.width - x),
+                    height: 256.min(window.y + window.height - y),
+                };
+                nodes.push(Node {
+                    id: nodes.len(),
+                    dependencies: vec![],
+                    asset_id: "fixture".into(),
+                    operation: Operation::Read {
+                        read: Read::LibraryWindow {
+                            tiles: crate::cog::tiles(&layout, &w),
+                            window: w,
+                            band: 1,
+                        },
+                    },
+                });
+            }
+        }
+        (layout, nodes)
+    }
+    #[test]
+    fn selection_buffer_preserves_payload_concurrency_and_first_read_tiles() {
+        let window = crate::Window {
+            x: 7124,
+            y: 2004,
+            width: 768,
+            height: 768,
+        };
+        let (layout, nodes) = fixture(window.clone());
+        let refs: Vec<_> = nodes.iter().collect();
+        let window_pair = 256 * 256 * 4;
+        let (cache, working, strategy) = reservation(&layout, &window, &refs, 16 << 20, 2).unwrap();
+        assert!(matches!(strategy.delivery, Delivery::Selection(_)));
+        assert_eq!(cache, 0);
+        assert_eq!(strategy.cache_bytes, 0);
+        assert!(strategy.groups.is_empty());
+        // Two full raw selection/decode/error-capacity phases fit, including
+        // prepared metadata. No allocation is moved outside the reservation.
+        assert!((working + window_pair) * 2 + 64 * 1024 < 16 << 20);
+        let (_, working, strategy) = reservation(&layout, &window, &refs, 32 << 20, 2).unwrap();
+        assert_eq!(strategy.groups.len(), 2);
+        assert!((working + window_pair) * 2 + 64 * 1024 < 32 << 20);
+        let (_, working, strategy) = reservation(&layout, &window, &refs, 32 << 20, 4).unwrap();
+        assert!(strategy.groups.is_empty());
+        assert!((working + window_pair) * 4 + 64 * 1024 < 32 << 20);
+        // Masked holes can remove delivery windows, but may not make an extra
+        // source tile eligible. The first remaining read must still need every
+        // tile decoded by the bounded selection read.
+        let skipped = vec![&nodes[0], &nodes[nodes.len() - 1]];
+        let (_, _, strategy) = reservation(&layout, &window, &skipped, 16 << 20, 2).unwrap();
+        assert!(matches!(strategy.delivery, Delivery::Selection(_)));
+        let mut partial = nodes.clone();
+        if let Operation::Read {
+            read: Read::LibraryWindow { tiles, .. },
+        } = &mut partial[0].operation
+        {
+            tiles.pop();
+        }
+        let (_, _, strategy) = reservation(
+            &layout,
+            &window,
+            &partial.iter().collect::<Vec<_>>(),
+            16 << 20,
+            2,
+        )
+        .unwrap();
+        assert!(matches!(strategy.delivery, Delivery::Windows));
+        let earlier = crate::Window {
+            x: 6868,
+            y: 1748,
+            width: 768,
+            height: 768,
+        };
+        let (layout, nodes) = fixture(earlier.clone());
+        let (_, _, strategy) = reservation(
+            &layout,
+            &earlier,
+            &nodes.iter().collect::<Vec<_>>(),
+            16 << 20,
+            2,
+        )
+        .unwrap();
+        assert!(matches!(strategy.delivery, Delivery::Windows));
+        let single = crate::Window {
+            x: 7300,
+            y: 2100,
+            width: 96,
+            height: 96,
+        };
+        let (layout, nodes) = fixture(single.clone());
+        let (_, _, strategy) = reservation(
+            &layout,
+            &single,
+            &nodes.iter().collect::<Vec<_>>(),
+            16 << 20,
+            2,
+        )
+        .unwrap();
+        assert!(matches!(strategy.delivery, Delivery::Windows));
+    }
+    #[test]
+    fn buffered_chunk_rows_edges_and_bounds_are_exact() {
+        let whole = crate::Window {
+            x: 7124,
+            y: 2004,
+            width: 5,
+            height: 4,
+        };
+        let values: Vec<u16> = (0..20).collect();
+        let w = crate::Window {
+            x: 7125,
+            y: 2005,
+            width: 3,
+            height: 2,
+        };
+        assert_eq!(
+            selection_chunk(&whole, &values, &w).unwrap(),
+            [6, 7, 8, 11, 12, 13]
+        );
+        let edge = crate::Window {
+            x: 7128,
+            y: 2007,
+            width: 1,
+            height: 1,
+        };
+        assert_eq!(selection_chunk(&whole, &values, &edge).unwrap(), [19]);
+        let outside = crate::Window {
+            x: 7123,
+            ..edge.clone()
+        };
+        assert!(selection_chunk(&whole, &values, &outside).is_err());
+        assert!(selection_chunk(&whole, &values[..19], &edge).is_err());
+    }
+    #[test]
+    fn lru_uses_smallest_capacity_without_additional_tile_reads() {
+        for (window, expected) in [
+            ([7300, 2100, 96, 96], 0),
+            ([6144, 1024, 2048, 2048], 2),
+            ([6868, 1748, 768, 768], 3),
+            ([7124, 2004, 768, 768], 3),
+        ] {
+            let [x, y, width, height] = window;
+            let mut sequence = Vec::new();
+            for yy in (y..y + height).step_by(256) {
+                for xx in (x..x + width).step_by(256) {
+                    for ty in yy / 1024..=(yy + 256.min(y + height - yy) - 1) / 1024 {
+                        for tx in xx / 1024..=(xx + 256.min(x + width - xx) - 1) / 1024 {
+                            sequence.push((tx, ty));
+                        }
+                    }
+                }
+            }
+            assert_eq!(cache_slots(&sequence, 4), expected);
+        }
+        assert_eq!(cache_slots(&[(0, 0), (1, 0), (0, 0)], 4), 2);
+        assert_eq!(cache_slots(&[], 4), 0);
     }
 }

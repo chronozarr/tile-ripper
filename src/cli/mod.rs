@@ -2,7 +2,7 @@
 use serde_json::{json, Value};
 use std::{collections::BTreeMap, fs};
 use tile_ripper::Result;
-const HELP: &str = "tile-ripper plan|fetch|stream [request.json] [options]
+const HELP: &str = r#"tile-ripper plan|fetch|stream [request.json] [options]
   --source URL_OR_PATH --format zarr_v2|stac
   --collection NAME                 required for STAC
   --bbox WEST,SOUTH,EAST,NORTH       EPSG:4326; or --aoi polygon.geojson
@@ -11,12 +11,35 @@ const HELP: &str = "tile-ripper plan|fetch|stream [request.json] [options]
   --output NEW_DIRECTORY            required for direct fetch
   --buffer-mib N                    payload budget (default 32; not RSS)
   --workers N --per-host N           concurrent reader operations (1..64)
+  --backend native|gdal             COG reader; overrides TILE_RIPPER_COG_BACKEND
+  --gdal-free                      require a build without GDAL; native COG if compiled
   --human | --json                  JSON default, stable for scripts
   --dry-run                        fetch behaves as plan; metadata may download
   --cache FILE --discover-only      discover-only requires plan
 JSON requests retain the full advanced schema. Do not mix selection flags and JSON.
 stream emits NDJSON descriptors and completion; Rust streaming yields native values.
-Supported profiles and installation: README.md. No reprojection or compositing.";
+GDAL remains the default. --backend native in a dual-feature build still links GDAL.
+GDAL-free Sentinel-2: build --no-default-features --features native-cog, then:
+  tile-ripper stream docs/native-sentinel/request.json --gdal-free
+  tile-ripper plan --source https://earth-search.aws.element84.com/v1 --format stac \
+    --collection sentinel-2-c1-l2a --aoi polygon.geojson \
+    --start 2025-07-28T00:00:00Z --end 2025-07-28T23:59:59Z --variables B04,B08 --gdal-free
+Native supports narrow tiled single-band UInt16 COGs; unsupported profiles fail.
+GeoTIFF output needs GDAL; stream and the Rust API accept native COG data without it.
+Install, supported profiles, Rust examples: docs/native-http/cli.md. No resampling or compositing."#;
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Backend {
+    Native,
+    Gdal,
+}
+impl Backend {
+    pub fn name(self) -> &'static str {
+        match self {
+            Self::Native => "native",
+            Self::Gdal => "gdal",
+        }
+    }
+}
 pub struct Options {
     pub command: String,
     pub input: Value,
@@ -26,6 +49,8 @@ pub struct Options {
     pub output: Option<String>,
     pub workers: Option<usize>,
     pub per_host: Option<usize>,
+    pub backend: Option<Backend>,
+    pub gdal_free: bool,
 }
 pub fn parse(args: &[String]) -> Result<Option<Options>> {
     if args.is_empty() || args.iter().any(|s| s == "--help" || s == "-h") {
@@ -41,6 +66,7 @@ pub fn parse(args: &[String]) -> Result<Option<Options>> {
     let mut human = false;
     let mut discover_only = false;
     let mut dry = false;
+    let mut gdal_free = false;
     let mut i = 1;
     while i < args.len() {
         match args[i].as_str() {
@@ -48,9 +74,10 @@ pub fn parse(args: &[String]) -> Result<Option<Options>> {
             "--json" => human = false,
             "--dry-run" => dry = true,
             "--discover-only" => discover_only = true,
+            "--gdal-free" => gdal_free = true,
             key @ ("--source" | "--format" | "--collection" | "--bbox" | "--aoi" | "--start"
             | "--end" | "--variables" | "--buffer-mib" | "--output" | "--cache"
-            | "--workers" | "--per-host") => {
+            | "--workers" | "--per-host" | "--backend") => {
                 i += 1;
                 let value = args
                     .get(i)
@@ -72,6 +99,15 @@ pub fn parse(args: &[String]) -> Result<Option<Options>> {
     if discover_only && command != "plan" {
         return Err("--discover-only requires plan".into());
     }
+    let backend = flags
+        .remove("--backend")
+        .map(|name| match name.as_str() {
+            "native" => Ok(Backend::Native),
+            "gdal" => Ok(Backend::Gdal),
+            _ => Err("--backend requires native or gdal"),
+        })
+        .transpose()?;
+    validate_backend(backend, gdal_free)?;
     let mut resource = |key: &str| -> Result<Option<usize>> {
         flags
             .remove(key)
@@ -196,7 +232,12 @@ pub fn parse(args: &[String]) -> Result<Option<Options>> {
                     .into(),
             );
         }
-        json!({"source":source,"spatial":spatial,"time":{"kind":"interval","start":start,"end":end},"variables":variables,"grid":{"kind":"native"},"sink":{"kind":"directory","path":output.as_deref().unwrap_or("subset")},"budget":{"buffer_bytes":bytes,"max_nodes":100000,"chunk_edge":512}})
+        let sink = if command == "plan" && gdal_free && output.is_none() {
+            json!({"kind":"callback"})
+        } else {
+            json!({"kind":"directory","path":output.as_deref().unwrap_or("subset")})
+        };
+        json!({"source":source,"spatial":spatial,"time":{"kind":"interval","start":start,"end":end},"variables":variables,"grid":{"kind":"native"},"sink":sink,"budget":{"buffer_bytes":bytes,"max_nodes":100000,"chunk_edge":512}})
     };
     Ok(Some(Options {
         command,
@@ -207,7 +248,26 @@ pub fn parse(args: &[String]) -> Result<Option<Options>> {
         output,
         workers,
         per_host,
+        backend,
+        gdal_free,
     }))
+}
+
+/// Validate explicit choices before opening a request file or contacting sources.
+pub fn validate_backend(backend: Option<Backend>, gdal_free: bool) -> Result<()> {
+    if gdal_free && backend == Some(Backend::Gdal) {
+        return Err("--gdal-free cannot be combined with --backend gdal".into());
+    }
+    if gdal_free && cfg!(feature = "gdal") {
+        return Err("--gdal-free requires a binary built without GDAL; rebuild with --no-default-features --features native-cog (or --no-default-features for Zarr only); selecting --backend native does not remove GDAL linkage".into());
+    }
+    if backend == Some(Backend::Native) && !cfg!(feature = "native-cog") {
+        return Err("native COG backend is not compiled; rebuild with --no-default-features --features native-cog for GDAL-free acquisition, or add --features native-cog to a GDAL build".into());
+    }
+    if backend == Some(Backend::Gdal) && !cfg!(feature = "gdal") {
+        return Err("GDAL COG backend is not compiled; build with --features gdal, or use --backend native with the native-cog feature".into());
+    }
+    Ok(())
 }
 
 /// Transport observations are keyed by asset, unlike the format-independent report.
@@ -269,6 +329,29 @@ mod tests {
         assert_eq!(options.per_host, Some(2));
         assert!(parse(&arguments(&["--dry-run", "--workers", "0"])).is_err());
         assert!(parse(&arguments(&["--dry-run", "--per-host", "65"])).is_err());
+    }
+    #[test]
+    #[cfg(not(feature = "gdal"))]
+    fn gdal_free_direct_plan_defaults_to_callback_and_preserves_explicit_output() {
+        let mut args = arguments(&["--gdal-free", "--collection", "sentinel-2-c1-l2a"]);
+        args[0] = "plan".into();
+        let index = args.iter().position(|v| v == "--format").unwrap();
+        args[index + 1] = "stac".into();
+        let options = parse(&args).unwrap().unwrap();
+        let request: tile_ripper::Request = serde_json::from_value(options.input).unwrap();
+        assert!(matches!(request.sink, tile_ripper::Sink::Callback));
+        args.extend(["--output".into(), "explicit-directory".into()]);
+        let options = parse(&args).unwrap().unwrap();
+        let request: tile_ripper::Request = serde_json::from_value(options.input).unwrap();
+        assert!(
+            matches!(request.sink, tile_ripper::Sink::Directory { path } if path == "explicit-directory")
+        );
+        let options =
+            parse(&["plan", "examples/unified-stac.json", "--gdal-free"].map(str::to_owned))
+                .unwrap()
+                .unwrap();
+        let request: tile_ripper::Request = serde_json::from_value(options.input).unwrap();
+        assert!(matches!(request.sink, tile_ripper::Sink::Directory { .. }));
     }
     #[test]
     fn catalog_flags_and_observed_transport_are_format_independent() {

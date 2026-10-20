@@ -57,7 +57,7 @@ has been tested. No registry, GitHub release, upload or deployment occurred here
 
 ## Optional GDAL-free build
 
-The native COG prototype is opt-in. Use Rust 1.92 (tested), a C/C++ compiler,
+The native COG/Sentinel build is opt-in. Use Rust 1.92 (tested), a C/C++ compiler,
 CMake and pkg-config. On Debian the tested prerequisites were `build-essential`,
 `cmake`, `pkg-config` and CA certificates, with **no** GDAL, PROJ or libtiff package.
 The first Rust slim-container attempt without C++ failed on vendored Snappy;
@@ -82,11 +82,17 @@ values. Zarr acquisition and native Zarr output retain their existing profiles.
 GeoTIFF output requires GDAL and fails explicitly when it is disabled.
 
 For a comparison build, `cargo build --features native-cog` includes both readers.
-Set `TILE_RIPPER_COG_BACKEND=native` or `gdal` before preparation and keep it fixed
-for the process. That dual-reader executable still links GDAL. An executable built
+Use CLI `--backend native` or `--backend gdal`, or set
+`TILE_RIPPER_COG_BACKEND=native` or `gdal` before library preparation and keep it
+fixed for the process. An explicit CLI choice overrides that environment setting.
+The dual-reader executable still links GDAL. An executable built
 with `--no-default-features --features native-cog` selects native automatically
-and contains no GDAL link. Do not infer linkage from the selected environment
-variable; inspect the actual executable (`otool -L` on macOS, `ldd` on Linux).
+and contains no GDAL link. CLI `--gdal-free` rejects any GDAL-linked build and
+selects native when compiled; it also works for the Zarr-only build. The public
+Rust `acquisition::prepare_gdal_free` helper checks the same build requirement.
+See [selection and Rust examples](native-http/cli.md). Do not infer linkage from
+the selected environment variable; inspect the actual executable (`otool -L` on
+macOS, `ldd` on Linux).
 
 macOS ARM64 and a clean Linux ARM64 container were exercised. Linux still needs
 libstdc++, libgcc_s, libm and libc; macOS needs its OS frameworks/C++ runtime.

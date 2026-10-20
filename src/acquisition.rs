@@ -35,7 +35,7 @@ enum Runtime {
         request: Box<Request>,
         plan: Plan,
         versions: Versions,
-        sources: crate::storage::Sources,
+        sources: Box<crate::storage::Sources>,
         planning_seconds: f64,
     },
     Catalog(Box<stac_workflow::Prepared>),
@@ -319,6 +319,18 @@ pub fn prepare(request: &Request, cache: &mut LayoutCache) -> Result<Prepared> {
     let _quiet = crate::diagnostics::QuietNative::enter();
     prepare_inner(request, cache).map_err(|e| safe_error(request, "prepare", e))
 }
+/// Prepare only when Tile-Ripper was compiled without its `gdal` feature.
+/// Keep backend environment selection fixed until this prepared request and its
+/// streams are dropped. Independent host-application linkage is not inspected.
+pub fn prepare_gdal_free(request: &Request, cache: &mut LayoutCache) -> Result<Prepared> {
+    crate::cog::require_gdal_free()?;
+    if !matches!(request.source, Source::Assets { .. })
+        || matches!(&request.source, Source::Assets { assets } if assets.iter().any(|a| a.format == Format::Cog))
+    {
+        crate::cog::backend()?;
+    }
+    prepare(request, cache)
+}
 fn prepare_inner(request: &Request, cache: &mut LayoutCache) -> Result<Prepared> {
     crate::planner::validate_common(request)?;
     let runtime = match &request.source {
@@ -366,7 +378,7 @@ fn prepare_inner(request: &Request, cache: &mut LayoutCache) -> Result<Prepared>
                 request: Box::new(request),
                 plan,
                 versions,
-                sources,
+                sources: Box::new(sources),
                 planning_seconds: t.elapsed().as_secs_f64(),
             }
         }

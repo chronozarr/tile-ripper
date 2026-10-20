@@ -1,0 +1,455 @@
+{
+  "main": {
+    "admitted_optimized_trials": 24,
+    "reservation_peak_range_bytes": [
+      10480825,
+      14237781
+    ],
+    "transport_encoded_capacity_peak_range_per_reader_bytes": [
+      1519139,
+      1699550
+    ],
+    "adapter_delivery_capacity_peak_range_per_reader_bytes": [
+      18432,
+      1310720
+    ],
+    "all_reservations_within_declared_budget": true,
+    "row_memory_scope": "conservative reader working reservations; includes prepared native COG metadata capacities and encoded coalescing; excludes process/runtime, GDAL cache, Zarr prepared metadata and caller retention"
+  },
+  "resource": {
+    "admitted_optimized_trials": 20,
+    "reservation_peak_range_bytes": [
+      7204025,
+      31221313
+    ],
+    "transport_encoded_capacity_peak_range_per_reader_bytes": [
+      1522624,
+      4935133
+    ],
+    "adapter_delivery_capacity_peak_range_per_reader_bytes": [
+      131072,
+      1310720
+    ],
+    "all_reservations_within_declared_budget": true,
+    "row_memory_scope": "conservative reader working reservations; includes prepared native COG metadata capacities and encoded coalescing; excludes process/runtime, GDAL cache, Zarr prepared metadata and caller retention"
+  },
+  "resource_rejections": {
+    "total": 12,
+    "all_expected_admission": true,
+    "by_backend": {
+      "native-baseline": 8,
+      "native-optimized": 4
+    },
+    "all_budget_8mib": true,
+    "all_metadata_gets_12": true,
+    "all_metadata_body_49152_bytes": true,
+    "no_successful_complete_record": true,
+    "scopes": [
+      {
+        "backend": "native-baseline",
+        "workload": "overlap-b",
+        "latency_ms": 0,
+        "buffer_bytes": 8388608,
+        "failure": "execution: reader state and one task exceed buffer_bytes; increase the working buffer",
+        "workers": 1
+      },
+      {
+        "backend": "native-baseline",
+        "workload": "overlap-b",
+        "latency_ms": 0,
+        "buffer_bytes": 8388608,
+        "failure": "execution: reader state and one task exceed buffer_bytes; increase the working buffer",
+        "workers": 4
+      },
+      {
+        "backend": "native-optimized",
+        "workload": "several-large",
+        "latency_ms": 0,
+        "buffer_bytes": 8388608,
+        "failure": "execution: one read operation exceeds the scheduler working buffer; increase buffer_bytes or reduce chunk size",
+        "workers": 1
+      },
+      {
+        "backend": "native-baseline",
+        "workload": "several-large",
+        "latency_ms": 0,
+        "buffer_bytes": 8388608,
+        "failure": "execution: reader state and one task exceed buffer_bytes; increase the working buffer",
+        "workers": 1
+      },
+      {
+        "backend": "native-baseline",
+        "workload": "several-large",
+        "latency_ms": 0,
+        "buffer_bytes": 8388608,
+        "failure": "execution: reader state and one task exceed buffer_bytes; increase the working buffer",
+        "workers": 4
+      },
+      {
+        "backend": "native-optimized",
+        "workload": "several-large",
+        "latency_ms": 0,
+        "buffer_bytes": 8388608,
+        "failure": "execution: one read operation exceeds the scheduler working buffer; increase buffer_bytes or reduce chunk size",
+        "workers": 4
+      },
+      {
+        "backend": "native-baseline",
+        "workload": "overlap-b",
+        "latency_ms": 8,
+        "buffer_bytes": 8388608,
+        "failure": "execution: reader state and one task exceed buffer_bytes; increase the working buffer",
+        "workers": 1
+      },
+      {
+        "backend": "native-baseline",
+        "workload": "overlap-b",
+        "latency_ms": 8,
+        "buffer_bytes": 8388608,
+        "failure": "execution: reader state and one task exceed buffer_bytes; increase the working buffer",
+        "workers": 4
+      },
+      {
+        "backend": "native-optimized",
+        "workload": "several-large",
+        "latency_ms": 8,
+        "buffer_bytes": 8388608,
+        "failure": "execution: one read operation exceeds the scheduler working buffer; increase buffer_bytes or reduce chunk size",
+        "workers": 1
+      },
+      {
+        "backend": "native-baseline",
+        "workload": "several-large",
+        "latency_ms": 8,
+        "buffer_bytes": 8388608,
+        "failure": "execution: reader state and one task exceed buffer_bytes; increase the working buffer",
+        "workers": 1
+      },
+      {
+        "backend": "native-optimized",
+        "workload": "several-large",
+        "latency_ms": 8,
+        "buffer_bytes": 8388608,
+        "failure": "execution: one read operation exceeds the scheduler working buffer; increase buffer_bytes or reduce chunk size",
+        "workers": 4
+      },
+      {
+        "backend": "native-baseline",
+        "workload": "several-large",
+        "latency_ms": 8,
+        "buffer_bytes": 8388608,
+        "failure": "execution: reader state and one task exceed buffer_bytes; increase the working buffer",
+        "workers": 4
+      }
+    ]
+  },
+  "resource_selected_shape_rows": [
+    {
+      "backend": "native-optimized",
+      "workload": "overlap-b",
+      "workers": 1,
+      "buffer_bytes": 8388608,
+      "wall_seconds": 4.775086999870837,
+      "active_workers_peak": 1,
+      "peak_concurrent_payload_get": 1,
+      "reservation_peak_bytes": 7204025,
+      "get": 36,
+      "passed": true
+    },
+    {
+      "backend": "native-baseline",
+      "workload": "overlap-b",
+      "workers": 1,
+      "buffer_bytes": 8388608,
+      "wall_seconds": 0.32312766602262855,
+      "active_workers_peak": null,
+      "peak_concurrent_payload_get": null,
+      "reservation_peak_bytes": null,
+      "get": 12,
+      "passed": false
+    },
+    {
+      "backend": "native-baseline",
+      "workload": "overlap-b",
+      "workers": 1,
+      "buffer_bytes": 16777216,
+      "wall_seconds": 4.883686083834618,
+      "active_workers_peak": 1,
+      "peak_concurrent_payload_get": 1,
+      "reservation_peak_bytes": 14579635,
+      "get": 48,
+      "passed": true
+    },
+    {
+      "backend": "native-optimized",
+      "workload": "overlap-b",
+      "workers": 1,
+      "buffer_bytes": 16777216,
+      "wall_seconds": 4.808913125190884,
+      "active_workers_peak": 1,
+      "peak_concurrent_payload_get": 1,
+      "reservation_peak_bytes": 10489309,
+      "get": 24,
+      "passed": true
+    },
+    {
+      "backend": "native-optimized",
+      "workload": "overlap-b",
+      "workers": 1,
+      "buffer_bytes": 33554432,
+      "wall_seconds": 4.749314291868359,
+      "active_workers_peak": 1,
+      "peak_concurrent_payload_get": 1,
+      "reservation_peak_bytes": 10489309,
+      "get": 24,
+      "passed": true
+    },
+    {
+      "backend": "native-baseline",
+      "workload": "overlap-b",
+      "workers": 1,
+      "buffer_bytes": 33554432,
+      "wall_seconds": 5.140932667069137,
+      "active_workers_peak": 1,
+      "peak_concurrent_payload_get": 1,
+      "reservation_peak_bytes": 14579635,
+      "get": 48,
+      "passed": true
+    },
+    {
+      "backend": "native-optimized",
+      "workload": "overlap-b",
+      "workers": 4,
+      "buffer_bytes": 8388608,
+      "wall_seconds": 4.6717850412242115,
+      "active_workers_peak": 1,
+      "peak_concurrent_payload_get": 1,
+      "reservation_peak_bytes": 7204025,
+      "get": 36,
+      "passed": true
+    },
+    {
+      "backend": "native-baseline",
+      "workload": "overlap-b",
+      "workers": 4,
+      "buffer_bytes": 8388608,
+      "wall_seconds": 0.12346829241141677,
+      "active_workers_peak": null,
+      "peak_concurrent_payload_get": null,
+      "reservation_peak_bytes": null,
+      "get": 12,
+      "passed": false
+    },
+    {
+      "backend": "native-optimized",
+      "workload": "overlap-b",
+      "workers": 4,
+      "buffer_bytes": 16777216,
+      "wall_seconds": 3.3898997916840017,
+      "active_workers_peak": 2,
+      "peak_concurrent_payload_get": 2,
+      "reservation_peak_bytes": 14237781,
+      "get": 36,
+      "passed": true
+    },
+    {
+      "backend": "native-baseline",
+      "workload": "overlap-b",
+      "workers": 4,
+      "buffer_bytes": 16777216,
+      "wall_seconds": 4.907063165679574,
+      "active_workers_peak": 1,
+      "peak_concurrent_payload_get": 1,
+      "reservation_peak_bytes": 14579635,
+      "get": 48,
+      "passed": true
+    },
+    {
+      "backend": "native-optimized",
+      "workload": "overlap-b",
+      "workers": 4,
+      "buffer_bytes": 33554432,
+      "wall_seconds": 3.2818310000002384,
+      "active_workers_peak": 4,
+      "peak_concurrent_payload_get": 4,
+      "reservation_peak_bytes": 28421782,
+      "get": 36,
+      "passed": true
+    },
+    {
+      "backend": "native-baseline",
+      "workload": "overlap-b",
+      "workers": 4,
+      "buffer_bytes": 33554432,
+      "wall_seconds": 4.851143749896437,
+      "active_workers_peak": 1,
+      "peak_concurrent_payload_get": 1,
+      "reservation_peak_bytes": 31356851,
+      "get": 48,
+      "passed": true
+    },
+    {
+      "backend": "native-optimized",
+      "workload": "several-large",
+      "workers": 1,
+      "buffer_bytes": 8388608,
+      "wall_seconds": 0.3418464162386954,
+      "active_workers_peak": null,
+      "peak_concurrent_payload_get": null,
+      "reservation_peak_bytes": null,
+      "get": 12,
+      "passed": false
+    },
+    {
+      "backend": "native-baseline",
+      "workload": "several-large",
+      "workers": 1,
+      "buffer_bytes": 8388608,
+      "wall_seconds": 0.35568754095584154,
+      "active_workers_peak": null,
+      "peak_concurrent_payload_get": null,
+      "reservation_peak_bytes": null,
+      "get": 12,
+      "passed": false
+    },
+    {
+      "backend": "native-optimized",
+      "workload": "several-large",
+      "workers": 1,
+      "buffer_bytes": 16777216,
+      "wall_seconds": 5.198650749865919,
+      "active_workers_peak": 1,
+      "peak_concurrent_payload_get": 1,
+      "reservation_peak_bytes": 10480825,
+      "get": 36,
+      "passed": true
+    },
+    {
+      "backend": "native-baseline",
+      "workload": "several-large",
+      "workers": 1,
+      "buffer_bytes": 16777216,
+      "wall_seconds": 5.2927864589728415,
+      "active_workers_peak": 1,
+      "peak_concurrent_payload_get": 1,
+      "reservation_peak_bytes": 14579635,
+      "get": 48,
+      "passed": true
+    },
+    {
+      "backend": "native-optimized",
+      "workload": "several-large",
+      "workers": 1,
+      "buffer_bytes": 33554432,
+      "wall_seconds": 5.009780959226191,
+      "active_workers_peak": 1,
+      "peak_concurrent_payload_get": 1,
+      "reservation_peak_bytes": 10480825,
+      "get": 36,
+      "passed": true
+    },
+    {
+      "backend": "native-baseline",
+      "workload": "several-large",
+      "workers": 1,
+      "buffer_bytes": 33554432,
+      "wall_seconds": 5.105732959229499,
+      "active_workers_peak": 1,
+      "peak_concurrent_payload_get": 1,
+      "reservation_peak_bytes": 14579635,
+      "get": 48,
+      "passed": true
+    },
+    {
+      "backend": "native-optimized",
+      "workload": "several-large",
+      "workers": 4,
+      "buffer_bytes": 8388608,
+      "wall_seconds": 0.12378637492656708,
+      "active_workers_peak": null,
+      "peak_concurrent_payload_get": null,
+      "reservation_peak_bytes": null,
+      "get": 12,
+      "passed": false
+    },
+    {
+      "backend": "native-baseline",
+      "workload": "several-large",
+      "workers": 4,
+      "buffer_bytes": 8388608,
+      "wall_seconds": 0.12405412457883358,
+      "active_workers_peak": null,
+      "peak_concurrent_payload_get": null,
+      "reservation_peak_bytes": null,
+      "get": 12,
+      "passed": false
+    },
+    {
+      "backend": "native-baseline",
+      "workload": "several-large",
+      "workers": 4,
+      "buffer_bytes": 16777216,
+      "wall_seconds": 4.955589458812028,
+      "active_workers_peak": 1,
+      "peak_concurrent_payload_get": 1,
+      "reservation_peak_bytes": 14579635,
+      "get": 48,
+      "passed": true
+    },
+    {
+      "backend": "native-optimized",
+      "workload": "several-large",
+      "workers": 4,
+      "buffer_bytes": 16777216,
+      "wall_seconds": 4.554850667249411,
+      "active_workers_peak": 1,
+      "peak_concurrent_payload_get": 1,
+      "reservation_peak_bytes": 10480825,
+      "get": 36,
+      "passed": true
+    },
+    {
+      "backend": "native-baseline",
+      "workload": "several-large",
+      "workers": 4,
+      "buffer_bytes": 33554432,
+      "wall_seconds": 5.2330413749441504,
+      "active_workers_peak": 1,
+      "peak_concurrent_payload_get": 1,
+      "reservation_peak_bytes": 31356851,
+      "get": 48,
+      "passed": true
+    },
+    {
+      "backend": "native-optimized",
+      "workload": "several-large",
+      "workers": 4,
+      "buffer_bytes": 33554432,
+      "wall_seconds": 4.53875399986282,
+      "active_workers_peak": 3,
+      "peak_concurrent_payload_get": 3,
+      "reservation_peak_bytes": 31221313,
+      "get": 36,
+      "passed": true
+    }
+  ],
+  "source_reports_sha256": {
+    "docs/native-http/benchmark.json": "2d2874cb59e5f7f69c8cae3dacb5035f7dcd6dcb43434400d92d733a85ed91e5",
+    "docs/native-http/resource-benchmark.json": "40a7278d7697c7e161040326d6e4799fa901b9d6ff9a871630d50d426e10e1bf"
+  },
+  "analysis_source_sha256": "4b827a21a468f83e07906aa398cd819dfe0d97614d69d7563992359d6e31d3d6",
+  "raw_inputs_sha256": {
+    "prototype-output/native-http/resource-matrix/0-overlap-b-w1-b8-r0-native-baseline/stdout.json": "cb2399a6424d70f798162dc3481c347ef8ae5d912d4907570ce10c411869b4a8",
+    "prototype-output/native-http/resource-matrix/0-overlap-b-w4-b8-r0-native-baseline/stdout.json": "5ee26bfbd6332178b2a723470cac8644e5fe9fe9cbe16746c156ae580eb62799",
+    "prototype-output/native-http/resource-matrix/0-several-large-w1-b8-r0-native-optimized/stdout.json": "7f07dad7f56154e8419a201578e49536935d13b75974bb9de31737575ef39c5a",
+    "prototype-output/native-http/resource-matrix/0-several-large-w1-b8-r0-native-baseline/stdout.json": "a2512dbbd5a46c6d18a28ec928f7d8a3070b327f906bf81c41d75e36bb81f3a7",
+    "prototype-output/native-http/resource-matrix/0-several-large-w4-b8-r0-native-baseline/stdout.json": "cabd14e502ed4375d103fa03e3ad6f665d4a57fb2b8a01bd4ec7851017b60454",
+    "prototype-output/native-http/resource-matrix/0-several-large-w4-b8-r0-native-optimized/stdout.json": "e855cc4ffc65fdbb218053acf09a2aced228598ac535bcbff66d16040796d7ce",
+    "prototype-output/native-http/resource-matrix/8-overlap-b-w1-b8-r0-native-baseline/stdout.json": "19a3b58cbe12edc37df70a53bfc4f8ce16468381915340bf3dd69577aafe9e46",
+    "prototype-output/native-http/resource-matrix/8-overlap-b-w4-b8-r0-native-baseline/stdout.json": "319090f00b644b276e44e7a716bb86747b86a4eecc27b7fa694932a061a3d9bf",
+    "prototype-output/native-http/resource-matrix/8-several-large-w1-b8-r0-native-optimized/stdout.json": "f229788830df63c33a84ca34051d3e7d3540932777f209b84b49051053f423a0",
+    "prototype-output/native-http/resource-matrix/8-several-large-w1-b8-r0-native-baseline/stdout.json": "6bc474ed4c64b7d12374120c1aa7a1bf4c21dff96513c29080c840341d41917d",
+    "prototype-output/native-http/resource-matrix/8-several-large-w4-b8-r0-native-optimized/stdout.json": "d82ddc1144895979721bb5e515eb0f4697a7ad76040a7d4c42998a9056ceff6a",
+    "prototype-output/native-http/resource-matrix/8-several-large-w4-b8-r0-native-baseline/stdout.json": "c4b60db3fa866175137835f8959fc93a80fd6b3390cf9272811ad1c291f9636a"
+  }
+}

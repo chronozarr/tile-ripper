@@ -106,6 +106,7 @@ pub struct Prepared {
     discovered: Discovered,
     plan: Plan,
     pub planning_seconds: f64,
+    sources: crate::storage::Sources,
 }
 impl Discovered {
     pub fn sources(&self) -> &[SourceReference] {
@@ -115,7 +116,8 @@ impl Discovered {
         configure(&self.request.limits)?;
         let t = Instant::now();
         resolve_identities(&mut self.core, &mut self.sources, &self.request.limits)?;
-        let mut plan = crate::plan(&self.core, cache)?;
+        let sources = crate::storage::Sources::new(&self.core)?;
+        let mut plan = crate::planner::plan_on(&self.core, cache, &sources)?;
         // The STAC sink assembles native chunks into one file per asset.
         for node in &mut plan.nodes {
             if let crate::Operation::Write { output } = &mut node.operation {
@@ -145,6 +147,10 @@ impl Discovered {
         plan.estimates.remote_requests =
             Some(tile_reads.len() as u64 + 7 * plan.selected.len() as u64);
         plan.estimates.note = "ESTIMATE: one GET per distinct selected non-sparse tile plus five HEADs (identity, plan open, pre/post validation, execution open) and two metadata GETs per asset. GDAL may merge, round, reread, retry, or issue extra metadata reads. Payload excludes metadata and transport overhead; observed counters are separate. Metadata inspections of assets rejected after pixel-center checks are not included.".into();
+        if crate::cog::native_selected() {
+            plan.estimates.remote_requests = None;
+            plan.estimates.note = "Native HTTP totals depend on TIFF metadata pages, optional prepared-page reuse, admitted adjacent-tile groups, cache hits and bounded retries. Immutable-source HEAD checks remain mandatory. Selected compressed payload excludes wrappers, metadata and HTTP overhead; inspect observed transport counters for request and byte totals. Rejected-source metadata inspections are separate.".into();
+        }
         let pixels = plan
             .selected
             .iter()
@@ -159,6 +165,7 @@ impl Discovered {
             discovered: self,
             plan,
             planning_seconds: t.elapsed().as_secs_f64(),
+            sources,
         })
     }
 }
@@ -197,7 +204,7 @@ impl Prepared {
             &self.discovered.core,
             &self.plan,
             self.planning_seconds,
-            &crate::storage::Sources::default(),
+            &self.sources,
             cancelled,
             sink,
         )?;

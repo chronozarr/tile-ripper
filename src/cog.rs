@@ -136,14 +136,17 @@ pub(crate) use gdal_impl::{
     apply_thread_configuration, clear_remote_cache, thread_configuration, ConditionalHeaders,
 };
 
-#[derive(Clone, Copy, PartialEq, Eq)]
-pub(crate) enum Backend {
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Backend {
     #[cfg(feature = "gdal")]
     Gdal,
     #[cfg(feature = "native-cog")]
     Native,
 }
-pub(crate) fn backend() -> Result<Backend> {
+/// Resolve the reader selected by `TILE_RIPPER_COG_BACKEND`; GDAL is the
+/// default when compiled. Keep that environment selection fixed from request
+/// preparation until all related `Prepared` values and streams are dropped.
+pub fn backend() -> Result<Backend> {
     let default = if cfg!(feature = "gdal") {
         "gdal"
     } else {
@@ -159,6 +162,16 @@ pub(crate) fn backend() -> Result<Backend> {
         "native" => Ok(Backend::Native),
         _ => fail("COG backend unavailable; enable gdal or native-cog and select gdal/native"),
     }
+}
+/// Require Tile-Ripper to be compiled without its `gdal` feature. This guard
+/// permits feature-free Zarr and does not change backend state. It cannot detect
+/// GDAL linked independently by a host application; inspect the final executable
+/// for a whole-process linkage guarantee.
+pub fn require_gdal_free() -> Result<()> {
+    if cfg!(feature = "gdal") {
+        return fail("GDAL-free operation requires a build without the gdal feature; install with --no-default-features --features native-cog for COG/Sentinel-2");
+    }
+    Ok(())
 }
 #[allow(unused_variables)]
 pub fn inspect(asset: &Asset, band: usize) -> Result<Layout> {

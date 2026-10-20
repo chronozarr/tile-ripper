@@ -1,6 +1,6 @@
 mod cli;
 use std::{env, path::Path};
-use tile_ripper::{acquisition, cog::LayoutCache, Request, Result, Sink};
+use tile_ripper::{acquisition, cog::LayoutCache, Format, Request, Result, Sink, Source};
 fn run() -> Result<()> {
     let mut args: Vec<_> = env::args().collect();
     if let Some(command) = args.get_mut(1) {
@@ -23,7 +23,18 @@ fn run() -> Result<()> {
         output,
         workers,
         per_host,
+        backend,
+        gdal_free,
     } = options;
+    if let Some(backend) = backend {
+        env::set_var("TILE_RIPPER_COG_BACKEND", backend.name());
+    } else if gdal_free && cfg!(feature = "native-cog") {
+        // Explicit GDAL-free operation selects native regardless of inherited settings.
+        env::set_var("TILE_RIPPER_COG_BACKEND", "native");
+    }
+    if gdal_free {
+        tile_ripper::cog::require_gdal_free()?;
+    }
     if let Some(n) = workers {
         env::set_var("TILE_RIPPER_WORKERS", n.to_string());
     }
@@ -69,6 +80,16 @@ fn run() -> Result<()> {
             Sink::GeoTiffDirectory { .. } => Sink::GeoTiffDirectory { path },
             _ => Sink::Directory { path },
         };
+    }
+    if command == "stream" {
+        request.sink = Sink::Callback;
+    }
+    if cog_source(&request.source) {
+        // Resolve the selected reader before discovery or source inspection.
+        tile_ripper::cog::backend()?;
+    }
+    if command == "fetch" && !cfg!(feature = "gdal") && cog_source(&request.source) {
+        return Err("COG/STAC fetch writes GeoTIFF and requires the gdal feature; use stream --gdal-free for chunk descriptors or the Rust Prepared::into_stream API for native values, or build with --features gdal for GeoTIFF output".into());
     }
     if discover_only && command != "plan" {
         return Err("--discover-only requires plan".into());
@@ -147,6 +168,12 @@ fn run() -> Result<()> {
         println!("{}", serde_json::to_string_pretty(&value)?);
     }
     Ok(())
+}
+fn cog_source(source: &Source) -> bool {
+    match source {
+        Source::Stac { .. } | Source::Catalog { .. } => true,
+        Source::Assets { assets } => assets.iter().any(|asset| asset.format == Format::Cog),
+    }
 }
 fn main() {
     if let Err(e) = run() {

@@ -19,6 +19,8 @@ struct Task {
     host: String,
     bytes: usize,
     reader_bytes: usize,
+    #[cfg(feature = "native-cog")]
+    native: crate::native_cog::Strategy,
 }
 #[derive(Default)]
 struct State {
@@ -47,6 +49,8 @@ impl Reader {
     fn finish(&self, report: &mut ExecutionReport) -> Result<()> {
         if let Self::Zarr(reader) = self {
             reader.finish(report)?;
+        } else if let Self::Cog(reader) = self {
+            reader.finish(report);
         }
         Ok(())
     }
@@ -149,6 +153,8 @@ fn tasks(r: &Request, p: &Plan, sources: &crate::storage::Sources) -> Result<Vec
                     host: host(a)?,
                     bytes,
                     reader_bytes: coordinates.checked_mul(3).ok_or("reader state overflow")?,
+                    #[cfg(feature = "native-cog")]
+                    native: Default::default(),
                 });
             }
         } else {
@@ -183,12 +189,22 @@ fn tasks(r: &Request, p: &Plan, sources: &crate::storage::Sources) -> Result<Vec
                 #[allow(unused_mut)]
                 let mut reader_bytes = 0;
                 #[cfg(feature = "native-cog")]
+                let mut native = crate::native_cog::Strategy::default();
+                #[cfg(feature = "native-cog")]
                 if crate::cog::backend()? == crate::cog::Backend::Native {
-                    let (retained, working) = crate::native_cog::reservation(l, &selected.window)?;
-                    reader_bytes = retained;
+                    let read_nodes: Vec<_> = nodes.iter().map(|i| &p.nodes[*i]).collect();
+                    let (retained, working, strategy) = crate::native_cog::reservation(
+                        l,
+                        &selected.window,
+                        &read_nodes,
+                        r.budget.buffer_bytes.saturating_sub(sources.1.bytes()),
+                        crate::storage::worker_count()?.min(p.selected.len().max(1)),
+                    )?;
+                    native = strategy;
                     bytes = bytes
                         .checked_mul(2)
                         .and_then(|n| n.checked_add(working))
+                        .and_then(|n| n.checked_add(retained))
                         .ok_or("native COG buffer reservation overflow")?;
                 }
                 out.push(Task {
@@ -197,6 +213,8 @@ fn tasks(r: &Request, p: &Plan, sources: &crate::storage::Sources) -> Result<Vec
                     host: host(a)?,
                     bytes,
                     reader_bytes,
+                    #[cfg(feature = "native-cog")]
+                    native,
                 });
             }
         }
@@ -217,6 +235,12 @@ pub(crate) fn execute(
 ) -> Result<ExecutionReport> {
     let started = Instant::now();
     let tasks = tasks(r, p, sources)?;
+    #[allow(unused_mut)]
+    let mut prepared_bytes = 0;
+    #[cfg(feature = "native-cog")]
+    if crate::cog::native_selected() {
+        prepared_bytes = sources.1.bytes();
+    }
     let mut workers = positive_env(
         "TILE_RIPPER_WORKERS",
         std::thread::available_parallelism().map_or(1, |n| n.get().min(2)),
@@ -230,6 +254,7 @@ pub(crate) fn execute(
         && per_reader
             .checked_mul(workers)
             .and_then(|n| n.checked_add(largest_task))
+            .and_then(|n| n.checked_add(prepared_bytes))
             .is_none_or(|n| n > r.budget.buffer_bytes)
     {
         workers -= 1;
@@ -238,6 +263,7 @@ pub(crate) fn execute(
         .checked_mul(workers)
         .filter(|n| {
             n.checked_add(largest_task)
+                .and_then(|total| total.checked_add(prepared_bytes))
                 .is_some_and(|total| total <= r.budget.buffer_bytes)
         })
         .ok_or("reader state and one task exceed buffer_bytes; increase the working buffer")?;
@@ -249,8 +275,8 @@ pub(crate) fn execute(
     // Pre/post version checks protect reuse of that same prepared snapshot.
     let admission = Admission {
         state: Mutex::new(State {
-            used: retained,
-            peak: retained,
+            used: retained + prepared_bytes,
+            peak: retained + prepared_bytes,
             ..State::default()
         }),
         wake: Condvar::new(),
@@ -331,7 +357,13 @@ pub(crate) fn execute(
                                 let open = Instant::now();
                                 let physical = match asset.format {
                                     Format::Cog => Reader::Cog(Box::new(
-                                        crate::execute::SelectedCogReader::new(asset, sel)?,
+                                        crate::execute::SelectedCogReader::new(
+                                            asset,
+                                            sel,
+                                            sources,
+                                            #[cfg(feature = "native-cog")]
+                                            task.native.clone(),
+                                        )?,
                                     )),
                                     Format::ZarrV2 => Reader::Zarr(Box::new(
                                         crate::zarr_acquire::SelectedReader::new(
@@ -361,6 +393,15 @@ pub(crate) fn execute(
                             Err("reader worker panicked during acquisition".into())
                         });
                     let failed = work.is_err();
+                    // COG selections are single tasks, so their block caches
+                    // have no cross-task lifetime. Drop before releasing the
+                    // task's cache+working reservation. Zarr coordinates remain
+                    // retained across that selection's individual chunk tasks.
+                    if matches!(reader, Some((_, Reader::Cog(_)))) {
+                        if let Some((_, previous)) = reader.take() {
+                            previous.finish(&mut report)?;
+                        }
+                    }
                     let event = match work {
                         Ok(()) => Event::Done,
                         Err(e) => Event::Error(e.to_string()),
@@ -440,7 +481,22 @@ pub(crate) fn execute(
     result
         .source_reads
         .sort_by(|a, b| (&a.asset_id, &a.key).cmp(&(&b.asset_id, &b.key)));
-    result.scheduler = serde_json::json!({"workers":workers,"per_host":per_host,"buffer_bytes":r.budget.buffer_bytes,"reserved_bytes_peak":state.peak,"reader_state_reserved_bytes":retained,"active_workers_peak":state.active_peak,"completed_tasks":tasks.iter().map(|t|t.nodes.len()).sum::<usize>(),"admitted_jobs":tasks.len(),"cog_reader_scope":"selection","seconds":started.elapsed().as_secs_f64(),"order":"plan","memory_scope":"conservative reader working reservations; excludes process/runtime, GDAL cache, prepared metadata and caller retention"});
+    let native_buffers = result.scheduler.get("native_buffers").cloned();
+    result.scheduler = serde_json::json!({"workers":workers,"per_host":per_host,"buffer_bytes":r.budget.buffer_bytes,"reserved_bytes_peak":state.peak,"reader_state_reserved_bytes":retained,"prepared_native_metadata_bytes":prepared_bytes,"active_workers_peak":state.active_peak,"completed_tasks":tasks.iter().map(|t|t.nodes.len()).sum::<usize>(),"admitted_jobs":tasks.len(),"cog_reader_scope":"selection","seconds":started.elapsed().as_secs_f64(),"order":"plan","memory_scope":"conservative reader working reservations; includes prepared native COG metadata capacities and encoded coalescing; excludes process/runtime, GDAL cache, Zarr prepared metadata and caller retention"});
+    if let Some(buffers) = native_buffers {
+        result.scheduler["native_buffers"] = buffers;
+    }
+    #[cfg(feature = "native-cog")]
+    if crate::cog::native_selected() {
+        result.scheduler["native_metadata"] = sources.1.summary();
+        result.scheduler["native_strategies"] = serde_json::json!(tasks
+            .iter()
+            .map(
+                |t| serde_json::json!({"asset_id":p.selected[t.selected].asset_id,
+                "task_reserved_bytes":t.bytes,"strategy":t.native.summary()})
+            )
+            .collect::<Vec<_>>());
+    }
     Ok(result)
 }
 fn add(a: &mut Option<f64>, b: Option<f64>) {
@@ -454,6 +510,18 @@ fn add_u(a: &mut Option<u64>, b: Option<u64>) {
     }
 }
 fn merge(a: &mut ExecutionReport, b: ExecutionReport) {
+    if let Some(buffers) = b.scheduler.get("native_buffers").and_then(|v| v.as_array()) {
+        if a.scheduler.is_null() {
+            a.scheduler = serde_json::json!({});
+        }
+        if !a.scheduler["native_buffers"].is_array() {
+            a.scheduler["native_buffers"] = serde_json::json!([]);
+        }
+        a.scheduler["native_buffers"]
+            .as_array_mut()
+            .unwrap()
+            .extend(buffers.iter().cloned());
+    }
     a.source_reads.extend(b.source_reads);
     a.decoded_source_chunks += b.decoded_source_chunks;
     a.filled_source_chunks += b.filled_source_chunks;

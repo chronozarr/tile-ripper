@@ -1,0 +1,89 @@
+{
+  "passed": true,
+  "consumer_sha256": "a1cee1d9a56a5a2f2272b2b08f55209c2fbe49b7e4bfe93af4d971ac2365cf4e",
+  "source_sha256": "5be70f5b3f0ce214faf817608129cec439aa64a963b93e523d4b6ef068519030",
+  "geometry_checks": 95,
+  "geometry_samples": 755798,
+  "native_profile_fault_checks": 61,
+  "exact_frozen_samples": 32391168,
+  "bounded_selection_payload_checks": 44,
+  "bounded_selection_exact_samples": 3391488,
+  "consumer_checks": [
+    {
+      "case": "two-remote-cogs",
+      "passed": true,
+      "chunks": 2,
+      "peak_rss_bytes": 13238272
+    },
+    {
+      "case": "cancel-after-delivery",
+      "passed": true
+    },
+    {
+      "case": "already-read-cog-mutated-after-delivery",
+      "passed": true,
+      "provisional_chunks": 2
+    },
+    {
+      "case": "catalog-consumer-and-post-delivery-mutation",
+      "passed": true,
+      "peak_rss_bytes": 15286272
+    },
+    {
+      "case": "two-remote-uint16-zarr",
+      "passed": true,
+      "chunks": 128,
+      "peak_rss_bytes": 19759104
+    },
+    {
+      "case": "zarr-mutated-after-delivery",
+      "passed": true
+    },
+    {
+      "case": "remote-float32-nan-reversed-swapped-axes",
+      "passed": true,
+      "chunks": 8,
+      "peak_rss_bytes": 15695872
+    }
+  ],
+  "workflow_checks": 8,
+  "independent_prepared_snapshot_isolation_and_repeatability": true,
+  "fault_max_rss_bytes": 13615104,
+  "exact": {
+    "passed": true,
+    "rows": [
+      {
+        "workload": "many-small",
+        "samples_compared_bit_for_bit": 147456,
+        "chunks": 16,
+        "complete": true,
+        "expected_sha256": "8985457d4a01eafc18bcad615d062f6ee09ec3d760948906110bb2de613b6a86"
+      },
+      {
+        "workload": "several-large",
+        "samples_compared_bit_for_bit": 25165824,
+        "chunks": 384,
+        "complete": true,
+        "expected_sha256": "dd407efabdd9c3875b6d961c9e1516a7f34fd9b3e005e31177653302ce170f6a"
+      },
+      {
+        "workload": "overlap-a",
+        "samples_compared_bit_for_bit": 3538944,
+        "chunks": 54,
+        "complete": true,
+        "expected_sha256": "95026d5d1f7fc0c5f5440329e95feaf40cbe7349950c2b2eb75513c15e255377"
+      },
+      {
+        "workload": "overlap-b",
+        "samples_compared_bit_for_bit": 3538944,
+        "chunks": 54,
+        "complete": true,
+        "expected_sha256": "5a9286e742fb743f2f1c5276cdd2328d1ec69f5a02cb15d5694b15abd14016ea"
+      }
+    ],
+    "mirror_index_sha256": "364121a9ef46437772834fae8a0d84797063320087bc1acbfdf154afb5e70122",
+    "binary_sha256": "b5cc04c6cdaf80aa925227abb64ae96480acaea6d011f61d381cddbe60bea5a3",
+    "harness_sha256": "828bad54bf92a3abfe8f907b38e465777dfe49ea01bc064b5192285849fb6108"
+  },
+  "harness_sha256": "92123b21f96dbcd593216151c29a63e79690ac01f6f8af31949a4616fb0cf91b"
+}

@@ -166,7 +166,23 @@ pub(crate) enum SelectedCogReader {
 }
 impl SelectedCogReader {
     #[allow(unused_variables)]
-    pub(crate) fn new(asset: &Asset, selected: &Selected) -> Result<Self> {
+    pub(crate) fn finish(&self, report: &mut ExecutionReport) {
+        match self {
+            #[cfg(feature = "native-cog")]
+            Self::Native(reader) => reader.finish(report),
+            #[cfg(feature = "gdal")]
+            Self::Gdal(_) => {}
+            #[cfg(not(any(feature = "gdal", feature = "native-cog")))]
+            Self::Unavailable => {}
+        }
+    }
+    #[allow(unused_variables)]
+    pub(crate) fn new(
+        asset: &Asset,
+        selected: &Selected,
+        sources: &crate::storage::Sources,
+        #[cfg(feature = "native-cog")] strategy: crate::native_cog::Strategy,
+    ) -> Result<Self> {
         match crate::cog::backend()? {
             #[cfg(feature = "gdal")]
             crate::cog::Backend::Gdal => Ok(Self::Gdal(gdal_reader::GdalCogReader::new(
@@ -174,7 +190,7 @@ impl SelectedCogReader {
             )?)),
             #[cfg(feature = "native-cog")]
             crate::cog::Backend::Native => Ok(Self::Native(
-                crate::native_cog::SelectedReader::new(asset, selected)?,
+                crate::native_cog::SelectedReader::new(asset, selected, strategy, &sources.1)?,
             )),
         }
     }
