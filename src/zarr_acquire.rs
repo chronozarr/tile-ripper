@@ -1,7 +1,7 @@
 //! Narrow local CF-style Zarr v2 acquisition. Codecs and storage belong to zarrs.
 use crate::{cog, fail, model::*, planner::push, Result};
 use std::{fs, path::Path, sync::Arc, time::Instant};
-use zarrs::{array::Array, array_subset::ArraySubset, filesystem::FilesystemStore};
+use zarrs::{array::Array, array::ArraySubset, filesystem::FilesystemStore};
 type Store = FilesystemStore;
 type Metrics =
     zarrs::storage::storage_adapter::performance_metrics::PerformanceMetricsStorageAdapter<Store>;
@@ -248,10 +248,9 @@ fn inspect_on(r: &Request, s: Arc<crate::storage::Objects>) -> Result<Dataset> {
         }
         coordinates.push(open_v2(s.clone(), axis, &r.budget)?);
     }
-    let x = coordinates[0].retrieve_array_subset_elements::<f64>(&coordinates[0].subset_all())?;
-    let y = coordinates[1].retrieve_array_subset_elements::<f64>(&coordinates[1].subset_all())?;
-    let times =
-        coordinates[2].retrieve_array_subset_elements::<i64>(&coordinates[2].subset_all())?;
+    let x = coordinates[0].retrieve_array_subset::<Vec<f64>>(&coordinates[0].subset_all())?;
+    let y = coordinates[1].retrieve_array_subset::<Vec<f64>>(&coordinates[1].subset_all())?;
+    let times = coordinates[2].retrieve_array_subset::<Vec<i64>>(&coordinates[2].subset_all())?;
     let raw_times = times;
     let ta = json(root, "time/.zattrs")?;
     if ta["calendar"] != "proleptic_gregorian" {
@@ -727,15 +726,9 @@ impl SelectedReader {
         let t = Instant::now();
         let idx = indices.iter().map(|v| *v as u64).collect::<Vec<_>>();
         let native = if d.conventional {
-            crate::Pixels::Float32(
-                self.array
-                    .retrieve_chunk_elements_opt::<f32>(&idx, &serial())?,
-            )
+            crate::Pixels::Float32(self.array.retrieve_chunk_opt::<Vec<f32>>(&idx, &serial())?)
         } else {
-            crate::Pixels::UInt16(
-                self.array
-                    .retrieve_chunk_elements_opt::<u16>(&idx, &serial())?,
-            )
+            crate::Pixels::UInt16(self.array.retrieve_chunk_opt::<Vec<u16>>(&idx, &serial())?)
         };
         report.read_decode_seconds += t.elapsed().as_secs_f64();
         if self
@@ -1095,7 +1088,7 @@ pub(crate) fn fetch_on(
                     vec![values.len()],
                     vec![values.len()],
                 )?;
-                ar.store_array_subset_elements_opt(&ar.subset_all(), values, &serial())?;
+                ar.store_array_subset_opt(&ar.subset_all(), values, &serial())?;
             }
             let times: Vec<_> = indices.iter().map(|i| d.raw_times[*i]).collect();
             let ar = output_array(
@@ -1105,7 +1098,7 @@ pub(crate) fn fetch_on(
                 vec![times.len()],
                 vec![times.len()],
             )?;
-            ar.store_array_subset_elements_opt(&ar.subset_all(), &times, &serial())?;
+            ar.store_array_subset_opt(&ar.subset_all(), &times, &serial())?;
             for sel in selected {
                 let Variable::Dataset { path } = &sel.layout.as_ref().unwrap().variable else {
                     unreachable!()
@@ -1237,8 +1230,8 @@ impl OutputBuffer {
             let before = ar.storage().write_seconds();
             let t = Instant::now();
             match &values {
-                crate::Pixels::UInt16(v) => ar.store_chunk_elements_opt(&key, v, &serial())?,
-                crate::Pixels::Float32(v) => ar.store_chunk_elements_opt(&key, v, &serial())?,
+                crate::Pixels::UInt16(v) => ar.store_chunk_opt(&key, v, &serial())?,
+                crate::Pixels::Float32(v) => ar.store_chunk_opt(&key, v, &serial())?,
             };
             if self.first_output.is_none() {
                 self.first_output = Some(self.started.elapsed().as_secs_f64());
@@ -1271,7 +1264,7 @@ impl OutputBuffer {
             self.active = Some((asset.into(), variable.into(), ar.clone()));
         }
         let cs = ar.chunk_shape_usize(&[0, 0, 0])?;
-        let float = ar.data_type() == &zarrs::array::DataType::Float32;
+        let float = ar.data_type() == &zarrs::array::data_type::float32();
         let bytes = cs.iter().product::<usize>() * if float { 4 } else { 2 };
         if bytes > self.limit {
             return fail("destination chunk exceeds output buffer budget");
@@ -1295,13 +1288,9 @@ impl OutputBuffer {
                     }
                     let t = Instant::now();
                     let values = if float {
-                        crate::Pixels::Float32(
-                            ar.retrieve_chunk_elements_opt::<f32>(&key, &serial())?,
-                        )
+                        crate::Pixels::Float32(ar.retrieve_chunk_opt::<Vec<f32>>(&key, &serial())?)
                     } else {
-                        crate::Pixels::UInt16(
-                            ar.retrieve_chunk_elements_opt::<u16>(&key, &serial())?,
-                        )
+                        crate::Pixels::UInt16(ar.retrieve_chunk_opt::<Vec<u16>>(&key, &serial())?)
                     };
                     self.allocation_seconds += t.elapsed().as_secs_f64();
                     values
@@ -1327,8 +1316,8 @@ impl OutputBuffer {
     }
 }
 
-fn serial() -> zarrs::array::codec::CodecOptions {
-    let mut o = zarrs::array::codec::CodecOptions::default();
+fn serial() -> zarrs::array::CodecOptions {
+    let mut o = zarrs::array::CodecOptions::default();
     o.set_concurrent_target(1);
     o
 }

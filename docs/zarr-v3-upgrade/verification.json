@@ -1,0 +1,93 @@
+{
+  "passed": true,
+  "baseline_commit": "f885e5046239767b9113b3ce9a6f47aba2fa58b0",
+  "source_sha256": "b2a60355aacf8c1d247987b36e02de5876a270c522e51b73e7d52ddd54e586d7",
+  "rustc": "rustc 1.92.0 (ded5c06cf 2025-12-08)",
+  "checks": [
+    {
+      "name": "tests-default",
+      "passed": 65,
+      "ignored": 2,
+      "failed": 0
+    },
+    {
+      "name": "tests-native",
+      "passed": 43,
+      "ignored": 3,
+      "failed": 0
+    },
+    {
+      "name": "tests-native-experimental",
+      "passed": 43,
+      "ignored": 3,
+      "failed": 0
+    },
+    {
+      "name": "tests-all",
+      "passed": 83,
+      "ignored": 4,
+      "failed": 0
+    },
+    {
+      "name": "clippy-default",
+      "passed": true
+    },
+    {
+      "name": "clippy-native",
+      "passed": true
+    },
+    {
+      "name": "clippy-all",
+      "passed": true
+    },
+    {
+      "name": "check-zarr-only",
+      "passed": true
+    },
+    {
+      "name": "release-build",
+      "passed": true
+    },
+    {
+      "name": "consumer-build",
+      "passed": true
+    },
+    {
+      "name": "consumer-locked",
+      "passed": true
+    }
+  ],
+  "reproduction": {
+    "cases": 98,
+    "roundtrips": 98,
+    "manifest": "bench/zarr-v3-repro/fixed/Cargo.toml",
+    "zarrs": "0.23.14",
+    "backend": "zlib-rs",
+    "raw_results_sha256": "29975a100f8f78fddea555f3d5d5fe1a9e258639541af464ee10e388d18f63d0"
+  },
+  "benchmark_rows": 144,
+  "matched_large_medians": [
+    {
+      "latency_ms": 0,
+      "baseline_f885e50_seconds": 0.43015629099681973,
+      "upgraded_v2_seconds": 0.35585179226472974,
+      "experimental_sharded_gzip_seconds": 1.1398509996943176,
+      "v2_ratio": 0.8272616249319498
+    },
+    {
+      "latency_ms": 8,
+      "baseline_f885e50_seconds": 3.4583054170943797,
+      "upgraded_v2_seconds": 3.4208418331108987,
+      "experimental_sharded_gzip_seconds": 4.144127582665533,
+      "v2_ratio": 0.9891670689932998
+    }
+  ],
+  "baseline_binary_sha256": "98016f9ef24367c4fd455c98d317f4121fa21187c74ac3c1232647c57231de92",
+  "candidate_binary_sha256": "ef6027408390fb001b194d57069043504ac0a1b6ac9dea8cd4e777309b7f6bbd",
+  "timing_restart": {
+    "discarded_cells": 24,
+    "retained_cells": 120,
+    "reason": "Memory validation was started before the last timing group completed. Stopped it and discarded the entire large shaped-network group; final receipts use only its isolated rerun."
+  },
+  "scope": "All original format/stream/scientific/publication gates were rerun; existing ignored external-fixture cases remain counted; remote ignored tests are exercised by their controlled HTTP gate. Hardware flush and power-loss survival are not certified. No v3 input change is included in this dependency-only milestone."
+}

@@ -7,7 +7,7 @@ use std::{
     },
 };
 use tile_ripper::{cog::LayoutCache, *};
-use zarrs::{array::Array, array_subset::ArraySubset, filesystem::FilesystemStore};
+use zarrs::{array::Array, array::ArraySubset, filesystem::FilesystemStore};
 static NEXT: AtomicUsize = AtomicUsize::new(0);
 struct Fixture {
     root: PathBuf,
@@ -66,27 +66,24 @@ fn fixture() -> Fixture {
         let ar = Array::open(s.clone(), &format!("/{n}")).unwrap();
         match n {
             "time" => ar
-                .store_array_subset_elements(
-                    &ar.subset_all(),
-                    &[1735689600i64, 1735776000, 1735948800],
-                )
+                .store_array_subset(&ar.subset_all(), &[1735689600i64, 1735776000, 1735948800])
                 .unwrap(),
             "x" => ar
-                .store_array_subset_elements(
+                .store_array_subset(
                     &ar.subset_all(),
-                    &(0..8).map(|i| 5. + i as f64 * 10.).collect::<Vec<_>>(),
+                    (0..8).map(|i| 5. + i as f64 * 10.).collect::<Vec<_>>(),
                 )
                 .unwrap(),
             "y" => ar
-                .store_array_subset_elements(
+                .store_array_subset(
                     &ar.subset_all(),
-                    &(0..8).map(|i| 75. - i as f64 * 10.).collect::<Vec<_>>(),
+                    (0..8).map(|i| 75. - i as f64 * 10.).collect::<Vec<_>>(),
                 )
                 .unwrap(),
             _ => ar
-                .store_array_subset_elements(
+                .store_array_subset(
                     &ar.subset_all(),
-                    &(0..192).map(|i| i as u16 + 1).collect::<Vec<_>>(),
+                    (0..192).map(|i| i as u16 + 1).collect::<Vec<_>>(),
                 )
                 .unwrap(),
         }
@@ -186,13 +183,13 @@ fn shared_api_native_slices_values_fill_coordinates_and_metadata() {
     let s = Arc::new(FilesystemStore::new(out.join("cube.zarr")).unwrap());
     let x = Array::open(s.clone(), "/x").unwrap();
     assert_eq!(
-        x.retrieve_array_subset_elements::<f64>(&x.subset_all())
+        x.retrieve_array_subset::<Vec<f64>>(&x.subset_all())
             .unwrap(),
         vec![15., 25., 35., 45., 55., 65.]
     );
     let time = Array::open(s.clone(), "/time").unwrap();
     assert_eq!(
-        time.retrieve_array_subset_elements::<i64>(&time.subset_all())
+        time.retrieve_array_subset::<Vec<i64>>(&time.subset_all())
             .unwrap(),
         vec![1735689600, 1735948800]
     );
@@ -252,7 +249,7 @@ fn malformed_coordinates_are_rejected() {
     let f = fixture();
     let s = Arc::new(FilesystemStore::new(f.root.join("source")).unwrap());
     let x = Array::open(s, "/x").unwrap();
-    x.store_array_subset_elements(
+    x.store_array_subset(
         &ArraySubset::new_with_start_shape(vec![2], vec![1]).unwrap(),
         &[999f64],
     )

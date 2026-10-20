@@ -1,0 +1,14 @@
+[tasks.output]
+summary = "Revalidate raw, gzip and Blosc/Zstd v3 output under the experimental gate"
+role = "worker"
+depends_on = ["tasks/upgrade.upgrade"]
+prompt = """
+Orient:
+Use the upgraded zarrs writer and existing durability/publication tests.
+Edit:
+Extend explicit experimental v3 output candidates; retain v2 default.
+Verify:
+Real medium/large former failures, independent Python reopen, values/masks/coordinates/time/fill/provenance, cancellation/mutation/publication faults and bounded memory.
+"""
+files = {edit=["src/scientific_output.rs","examples/durable_output_candidate.rs"],create=["bench/zarr_v3_output.py","docs/zarr-v3-output/report.md"]}
+test_cmd = "cargo test --locked --all-features --test acquisition"

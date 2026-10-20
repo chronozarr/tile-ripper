@@ -146,27 +146,27 @@ fn zarr_fixture() -> Fixture {
         let array = Array::open(store.clone(), &format!("/{name}")).unwrap();
         match name {
             "x" => array
-                .store_array_subset_elements(
+                .store_array_subset(
                     &array.subset_all(),
-                    &(0..8).map(|i| i as f64 * 10. + 5.).collect::<Vec<_>>(),
+                    (0..8).map(|i| i as f64 * 10. + 5.).collect::<Vec<_>>(),
                 )
                 .unwrap(),
             "y" => array
-                .store_array_subset_elements(
+                .store_array_subset(
                     &array.subset_all(),
-                    &(0..8).map(|i| 75. - i as f64 * 10.).collect::<Vec<_>>(),
+                    (0..8).map(|i| 75. - i as f64 * 10.).collect::<Vec<_>>(),
                 )
                 .unwrap(),
             "time" => array
-                .store_array_subset_elements(
+                .store_array_subset(
                     &array.subset_all(),
                     &[1735689600i64, 1735776000, 1735948800],
                 )
                 .unwrap(),
             _ => array
-                .store_array_subset_elements(
+                .store_array_subset(
                     &array.subset_all(),
-                    &(1..=192).map(|i| i as u16).collect::<Vec<_>>(),
+                    (1..=192).map(|i| i as u16).collect::<Vec<_>>(),
                 )
                 .unwrap(),
         }

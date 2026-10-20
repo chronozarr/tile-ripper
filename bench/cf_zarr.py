@@ -21,6 +21,7 @@ from numcodecs import Blosc, GZip
 import remote_zarr as h
 
 ROOT = h.ROOT
+DOCS = Path(os.environ.get("TILE_RIPPER_VALIDATION_DOCS", ROOT / "docs"))
 WORK = Path(
     os.environ.get("TILE_RIPPER_BENCH_WORK", str(ROOT / "prototype-output/cf-zarr"))
 )
@@ -507,7 +508,7 @@ def checks():
         finally:
             server.shutdown()
             server.server_close()
-    (ROOT / "docs/cf-zarr-checks.json").write_text(
+    (DOCS / "cf-zarr-checks.json").write_text(
         json.dumps(dict(orientations=results, errors=errors), indent=2) + "\n"
     )
 
@@ -678,7 +679,7 @@ def benchmark():
             "baseline uses same diagnostic manifest template; scientific selection/codecs are independent",
         ],
     )
-    (ROOT / "docs/cf-zarr-benchmark.json").write_text(
+    (DOCS / "cf-zarr-benchmark.json").write_text(
         json.dumps(evidence, indent=2) + "\n"
     )
 

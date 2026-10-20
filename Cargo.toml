@@ -2,6 +2,7 @@
 name = "tile-ripper"
 version = "0.1.0-alpha.1"
 edition = "2021"
+rust-version = "1.91"
 publish = false
 description = "Inspectable native acquisition for narrow STAC/COG and scientific Zarr profiles"
 
@@ -19,7 +20,7 @@ chrono = { version = "=0.4.42", default-features = false, features = ["std"] }
 stac = { version = "=0.17.6", features = ["std"] }
 stac-io = "=0.3.4"
 tokio = { version = "=1.48.0", features = ["rt"] }
-zarrs = { version = "=0.22.10", default-features = false, features = ["filesystem", "gzip", "blosc"] }
+zarrs = { version = "=0.23.14", default-features = false, features = ["filesystem", "gzip", "blosc", "crc32c"] }
 # Scoped copy of the existing filesystem dependency; see its patch note.
 zarrs_filesystem = { version = "=0.3.13", path = "vendor/zarrs_filesystem" }
 

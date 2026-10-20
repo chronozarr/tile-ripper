@@ -103,27 +103,24 @@ fn fixture(format: Format) -> Fixture {
             let ar = Array::open(store.clone(), &format!("/{name}")).unwrap();
             match name {
                 "time" => ar
-                    .store_array_subset_elements(
-                        &ar.subset_all(),
-                        &[1735689600i64, 1735776000, 1735948800],
-                    )
+                    .store_array_subset(&ar.subset_all(), &[1735689600i64, 1735776000, 1735948800])
                     .unwrap(),
                 "x" => ar
-                    .store_array_subset_elements(
+                    .store_array_subset(
                         &ar.subset_all(),
-                        &(0..8).map(|i| i as f64 * 10. + 5.).collect::<Vec<_>>(),
+                        (0..8).map(|i| i as f64 * 10. + 5.).collect::<Vec<_>>(),
                     )
                     .unwrap(),
                 "y" => ar
-                    .store_array_subset_elements(
+                    .store_array_subset(
                         &ar.subset_all(),
-                        &(0..8).map(|i| 75. - i as f64 * 10.).collect::<Vec<_>>(),
+                        (0..8).map(|i| 75. - i as f64 * 10.).collect::<Vec<_>>(),
                     )
                     .unwrap(),
                 _ => ar
-                    .store_array_subset_elements(
+                    .store_array_subset(
                         &ar.subset_all(),
-                        &(1..=192).map(|i| i as u16).collect::<Vec<_>>(),
+                        (1..=192).map(|i| i as u16).collect::<Vec<_>>(),
                     )
                     .unwrap(),
             }
@@ -447,7 +444,7 @@ fn buffered_output_eviction_preserves_values_and_deterministic_objects() {
             "/red",
         )
         .unwrap();
-        ar.retrieve_array_subset_elements::<u16>(&ar.subset_all())
+        ar.retrieve_array_subset::<Vec<u16>>(&ar.subset_all())
             .unwrap()
     };
     let out = f.root.join("out");
@@ -539,15 +536,13 @@ fn cog_zarr_fetch_preserves_values_masks_coordinates_and_time() {
         |name: &str| Array::open(store.clone(), &format!("/observations/000000/{name}")).unwrap();
     let a = array("values");
     let values = a
-        .retrieve_array_subset_elements::<u16>(&a.subset_all())
+        .retrieve_array_subset::<Vec<u16>>(&a.subset_all())
         .unwrap();
     let a = array("valid");
-    let valid = a
-        .retrieve_array_subset_elements::<u8>(&a.subset_all())
-        .unwrap();
+    let valid = a.retrieve_array_subset::<Vec<u8>>(&a.subset_all()).unwrap();
     let a = array("aoi_mask");
     assert!(a
-        .retrieve_array_subset_elements::<u8>(&a.subset_all())
+        .retrieve_array_subset::<Vec<u8>>(&a.subset_all())
         .unwrap()
         .iter()
         .all(|v| *v == 1));
@@ -560,13 +555,13 @@ fn cog_zarr_fetch_preserves_values_masks_coordinates_and_time() {
     }
     let a = array("time");
     assert_eq!(
-        a.retrieve_array_subset_elements::<i64>(&a.subset_all())
+        a.retrieve_array_subset::<Vec<i64>>(&a.subset_all())
             .unwrap(),
         vec![1735776000000000000]
     );
     let a = array("x");
     assert_eq!(
-        a.retrieve_array_subset_elements::<f64>(&a.subset_all())
+        a.retrieve_array_subset::<Vec<f64>>(&a.subset_all())
             .unwrap(),
         vec![15., 25., 35., 45., 55., 65.]
     );
@@ -638,11 +633,11 @@ fn scientific_encoding_and_unequal_chunk_layouts_preserve_values() {
             let store = Arc::new(FilesystemStore::new(&out).unwrap());
             let ar = Array::open(store.clone(), "/observations/000000/values").unwrap();
             let values = ar
-                .retrieve_array_subset_elements::<u16>(&ar.subset_all())
+                .retrieve_array_subset::<Vec<u16>>(&ar.subset_all())
                 .unwrap();
             let ar = Array::open(store, "/observations/000000/valid").unwrap();
             let valid = ar
-                .retrieve_array_subset_elements::<u8>(&ar.subset_all())
+                .retrieve_array_subset::<Vec<u8>>(&ar.subset_all())
                 .unwrap();
             for y in 0..6 {
                 for x in 0..6 {

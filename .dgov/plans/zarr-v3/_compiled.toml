@@ -1,0 +1,55 @@
+[plan]
+name = "zarr-v3"
+source_mtime_max = "2026-10-20T21:12:28.557956Z"
+sop_set_hash = ""
+
+[tasks."tasks/input.input"]
+summary = "Implement and benchmark remote v3 with selective sharded reads through the existing streaming API"
+prompt = """
+Orient:
+Read existing logical planner, object transport, scheduler, Zarr adapter and streaming contracts.
+Edit:
+Admit documented native UInt16/Float32 v3 profiles and standard codecs using zarrs. Bind versions, cache shard indices within the prepared budget, retrieve only needed encoded inner chunks when supported, expose physical traffic and resource observations.
+Verify:
+Independent Zarr-Python/xarray ordinary/sharded dense/sparse fixtures, corruption and limits, cancel/retry/mutation, actual public store if accessible, tuned shaped-network comparisons, Rust feature/distribution matrix and inherited regressions. No HDF5/NetCDF, downstream integration, default v3 output or publication.
+"""
+commit_message = ""
+depends_on = ["tasks/output.output"]
+timeout_s = 0
+test_cmd = "cargo test --locked --all-features"
+files.create = ["src/zarr_v3.rs", "tests/zarr_v3.rs", "bench/zarr_v3_acquisition.py", "docs/zarr-v3/report.md"]
+files.edit = ["Cargo.toml", "Cargo.lock", "src/lib.rs", "src/model.rs", "src/planner.rs", "src/storage.rs", "src/zarr.rs", "src/zarr_acquire.rs", "src/zarr_decode.rs", "src/scheduler.rs", "src/acquisition.rs", "src/execute.rs", "README.md", "docs/supply-chain.md"]
+
+[tasks."tasks/output.output"]
+summary = "Revalidate raw, gzip and Blosc/Zstd v3 output under the experimental gate"
+prompt = """
+Orient:
+Use the upgraded zarrs writer and existing durability/publication tests.
+Edit:
+Extend explicit experimental v3 output candidates; retain v2 default.
+Verify:
+Real medium/large former failures, independent Python reopen, values/masks/coordinates/time/fill/provenance, cancellation/mutation/publication faults and bounded memory.
+"""
+commit_message = ""
+depends_on = ["tasks/upgrade.upgrade"]
+timeout_s = 0
+test_cmd = "cargo test --locked --all-features --test acquisition"
+files.create = ["bench/zarr_v3_output.py", "docs/zarr-v3-output/report.md"]
+files.edit = ["src/scientific_output.rs", "examples/durable_output_candidate.rs"]
+
+[tasks."tasks/upgrade.upgrade"]
+summary = "Upgrade to fixed zarrs 0.23.14 and preserve validated v2 behavior"
+prompt = """
+Orient:
+Read the user's seven-phase v3 brief and current f885e50 receipts and upstream API changes.
+Edit:
+Upgrade zarrs, migrate public library calls, preserve runtime contracts and uncompressed v2 default.
+Keep this upgrade in its own validated local commit. Never merge or publish.
+Verify:
+All existing Rust feature matrices, native and Zarr scientific/fault suites, deterministic gzip reproduction, matched v2 baseline, clean dependency builds.
+"""
+commit_message = ""
+timeout_s = 0
+test_cmd = "cargo test --locked --all-features"
+files.create = ["docs/zarr-v3-upgrade/report.md"]
+files.edit = ["Cargo.toml", "Cargo.lock", "src/zarr_acquire.rs", "src/scientific_output.rs", "tests/zarr_workflow.rs", "tests/acquisition.rs", "tests/cf_zarr.rs", "tests/streaming.rs", "consumers/native-stats/Cargo.lock"]

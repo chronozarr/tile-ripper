@@ -1,0 +1,14 @@
+[tasks.input]
+summary = "Implement and benchmark remote v3 with selective sharded reads through the existing streaming API"
+role = "worker"
+depends_on = ["tasks/output.output"]
+prompt = """
+Orient:
+Read existing logical planner, object transport, scheduler, Zarr adapter and streaming contracts.
+Edit:
+Admit documented native UInt16/Float32 v3 profiles and standard codecs using zarrs. Bind versions, cache shard indices within the prepared budget, retrieve only needed encoded inner chunks when supported, expose physical traffic and resource observations.
+Verify:
+Independent Zarr-Python/xarray ordinary/sharded dense/sparse fixtures, corruption and limits, cancel/retry/mutation, actual public store if accessible, tuned shaped-network comparisons, Rust feature/distribution matrix and inherited regressions. No HDF5/NetCDF, downstream integration, default v3 output or publication.
+"""
+files = {edit=["Cargo.toml","Cargo.lock","src/lib.rs","src/model.rs","src/planner.rs","src/storage.rs","src/zarr.rs","src/zarr_acquire.rs","src/zarr_decode.rs","src/scheduler.rs","src/acquisition.rs","src/execute.rs","README.md","docs/supply-chain.md"],create=["src/zarr_v3.rs","tests/zarr_v3.rs","bench/zarr_v3_acquisition.py","docs/zarr-v3/report.md"]}
+test_cmd = "cargo test --locked --all-features"

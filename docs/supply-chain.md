@@ -18,6 +18,27 @@ This is a version/age/license inventory, not a security certification or a
 cargo-vet/cargo-deny audit. Host GDAL/PROJ/libtiff and the Python environment
 remain separately managed native dependencies. No packages were published.
 
+## Current zarrs upgrade — 20 October 2026
+
+The current pin is zarrs **0.23.14**, whose gzip/sharding bound fix was checked
+against the released source and the deterministic reproduction. Its MSRV is
+Rust 1.91; this milestone uses Rust 1.92. The library moves array/codec types,
+uses datatype factories and generic store/retrieve methods; our adapter calls
+were migrated without changing the native value or publication contracts.
+The `crc32c` feature is necessary to compile this release's sharding builder,
+including a bytes-only shard index configuration. Filesystem storage traits
+remain compatible with zarrs_storage 0.4.5 and the scoped filesystem 0.3.13 copy.
+
+[The dependency delta](zarr-v3-upgrade/dependencies.json) records the 19 new or
+updated registry entries, publication dates, licenses and verified checksums.
+All predate the original October 11 cutoff. Target-conditional packages are
+included: the Blosc feature adds pure-Rust `blusc` dependencies for WASM;
+macOS/Linux still use the established native codec stack. Gzip remains flate2
+1.1.10; native COG still selects zlib-rs 0.6.8. The root and separate consumer
+lockfiles are updated together. Python reference environments are unchanged.
+
+The sections below retain the dependency history of the preceding milestones.
+
 ## STAC milestone
 
 The existing `stac` 0.17.6 and `stac-io` 0.3.4 libraries provide STAC types,

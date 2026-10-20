@@ -132,7 +132,7 @@ fn conventional_float_callback_and_native_output_preserve_source_coordinates() {
         Arc::new(zarrs::filesystem::FilesystemStore::new(root.join("out/era5.zarr")).unwrap());
     let ar = zarrs::array::Array::open(store, "/temperature").unwrap();
     let v = ar
-        .retrieve_array_subset_elements::<f32>(&ar.subset_all())
+        .retrieve_array_subset::<Vec<f32>>(&ar.subset_all())
         .unwrap();
     assert_eq!(v.len(), 8);
     assert!(v[0].is_nan());

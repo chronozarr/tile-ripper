@@ -31,6 +31,7 @@ from zarr_workflow import fixture, expected, check
 from unified_workflow import minimum_keys, medium_fixture
 
 ROOT = Path(__file__).resolve().parents[1]
+DOCS = Path(os.environ.get("TILE_RIPPER_VALIDATION_DOCS", ROOT / "docs"))
 WORK = ROOT / "prototype-output/remote-zarr"
 CURRENT = ROOT / "target/release/tile-ripper"
 EXAMPLE = ROOT / "target/release/examples/remote_zarr"
@@ -694,7 +695,7 @@ def checks():
     finally:
         server.shutdown()
         server.server_close()
-    (ROOT / "docs/remote-zarr-checks.json").write_text(json.dumps(results, indent=2))
+    (DOCS / "remote-zarr-checks.json").write_text(json.dumps(results, indent=2))
 
 
 def resource_check():
@@ -733,7 +734,7 @@ def resource_check():
     finally:
         server.shutdown()
         server.server_close()
-    (ROOT / "docs/remote-zarr-resource.json").write_text(
+    (DOCS / "remote-zarr-resource.json").write_text(
         json.dumps(row, indent=2) + "\n"
     )
 
@@ -880,7 +881,7 @@ def benchmark(reps):
                 ),
             )
         )
-    (ROOT / "docs/remote-zarr-benchmark.json").write_text(
+    (DOCS / "remote-zarr-benchmark.json").write_text(
         json.dumps(
             dict(
                 repetitions=reps,

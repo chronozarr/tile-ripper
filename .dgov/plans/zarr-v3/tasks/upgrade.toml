@@ -1,0 +1,14 @@
+[tasks.upgrade]
+summary = "Upgrade to fixed zarrs 0.23.14 and preserve validated v2 behavior"
+role = "worker"
+prompt = """
+Orient:
+Read the user's seven-phase v3 brief and current f885e50 receipts and upstream API changes.
+Edit:
+Upgrade zarrs, migrate public library calls, preserve runtime contracts and uncompressed v2 default.
+Keep this upgrade in its own validated local commit. Never merge or publish.
+Verify:
+All existing Rust feature matrices, native and Zarr scientific/fault suites, deterministic gzip reproduction, matched v2 baseline, clean dependency builds.
+"""
+files = {edit=["Cargo.toml","Cargo.lock","src/zarr_acquire.rs","src/scientific_output.rs","tests/zarr_workflow.rs","tests/acquisition.rs","tests/cf_zarr.rs","tests/streaming.rs","consumers/native-stats/Cargo.lock"],create=["docs/zarr-v3-upgrade/report.md"]}
+test_cmd = "cargo test --locked --all-features"

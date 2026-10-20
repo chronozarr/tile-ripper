@@ -21,6 +21,7 @@ import zarr
 from numcodecs import GZip
 
 ROOT = Path(__file__).resolve().parents[1]
+DOCS = Path(os.environ.get("TILE_RIPPER_VALIDATION_DOCS", ROOT / "docs"))
 WORK = ROOT / "prototype-output/zarr"
 BIN = ROOT / "target/release/tile-ripper"
 
@@ -369,7 +370,7 @@ def run():
             "no speedup claim; output encodings may differ",
         ],
     }
-    (ROOT / "docs/zarr-benchmark-results.json").write_text(
+    (DOCS / "zarr-benchmark-results.json").write_text(
         json.dumps(result, indent=2) + "\n"
     )
     print(

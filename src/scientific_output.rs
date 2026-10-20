@@ -13,8 +13,8 @@ use std::{
     time::Instant,
 };
 use zarrs::{
+    array::ArraySubset,
     array::{Array, ArrayMetadataOptions},
-    array_subset::ArraySubset,
     group::Group,
     storage::{
         storage_adapter::performance_metrics::PerformanceMetricsStorageAdapter, StoreKey,
@@ -153,8 +153,8 @@ fn group(store: Arc<Store>, path: &str, attrs: Value, encoding: ScientificEncodi
     g.store_metadata()?;
     Ok(())
 }
-fn serial() -> zarrs::array::codec::CodecOptions {
-    let mut options = zarrs::array::codec::CodecOptions::default();
+fn serial() -> zarrs::array::CodecOptions {
+    let mut options = zarrs::array::CodecOptions::default();
     options.set_concurrent_target(1);
     options
 }
@@ -370,7 +370,7 @@ pub(crate) fn fetch_with_options(
         "observations":output_records,"logical_request":inspection["logical_request"],
         "sources":inspection["sources"],"query":inspection["query"],
         "processing":"native stored values; no calibration, reprojection, resampling or mosaic",
-        "software":{"name":"tile-ripper","version":env!("CARGO_PKG_VERSION"),"writer":"zarrs 0.22.10","zarr_format":encoding.version()},
+        "software":{"name":"tile-ripper","version":env!("CARGO_PKG_VERSION"),"writer":"zarrs 0.23.14","zarr_format":encoding.version()},
         "output_encoding":encoding,"output_chunk_edge":options.chunk_edge});
     group(store.clone(), "/", root_attrs.clone(), encoding)?;
     group(store.clone(), "/observations", json!({}), encoding)?;
@@ -447,7 +447,7 @@ pub(crate) fn fetch_with_options(
                     .collect();
                 writer_peak = writer_peak.max(edge * 16);
                 encode_call(&store, &mut encode_seconds, || {
-                    a.store_array_subset_elements_opt(
+                    a.store_array_subset_opt(
                         &ArraySubset::new_with_start_shape(
                             vec![start as u64],
                             vec![values.len() as u64],
@@ -469,7 +469,7 @@ pub(crate) fn fetch_with_options(
             encoding,
         )?;
         encode_call(&store, &mut encode_seconds, || {
-            time.store_chunk_elements_opt(&[0], &[time_value], &serial())
+            time.store_chunk_opt(&[0], &[time_value], &serial())
         })?;
         let crs = array(
             store.clone(),
@@ -482,7 +482,7 @@ pub(crate) fn fetch_with_options(
             encoding,
         )?;
         encode_call(&store, &mut encode_seconds, || {
-            crs.store_chunk_elements_opt(&[], &[0i32], &serial())
+            crs.store_chunk_opt(&[], &[0i32], &serial())
         })?;
         let shape = [1, s.window.height, s.window.width];
         let chunks = [
@@ -593,13 +593,11 @@ pub(crate) fn fetch_with_options(
             vec![1, window.height as u64, window.width as u64],
         )?;
         encode_call(&store, &mut encode_seconds, || {
-            o.values
-                .store_array_subset_elements_opt(&subset, values, &serial())
+            o.values.store_array_subset_opt(&subset, values, &serial())
         })?;
         let valid: Vec<u8> = c.validity().map(u8::from).collect();
         encode_call(&store, &mut encode_seconds, || {
-            o.valid
-                .store_array_subset_elements_opt(&subset, &valid, &serial())
+            o.valid.store_array_subset_opt(&subset, &valid, &serial())
         })?;
         let mask = o
             .geometry
@@ -611,8 +609,7 @@ pub(crate) fn fetch_with_options(
             .map(|m| m.data().to_vec())
             .unwrap_or_else(|| vec![1; values.len()]);
         encode_call(&store, &mut encode_seconds, || {
-            o.aoi
-                .store_array_subset_elements_opt(&subset, &aoi, &serial())
+            o.aoi.store_array_subset_opt(&subset, &aoi, &serial())
         })?;
         // Payload and encode scratch were admitted before creating staging;
         // these temporaries are dropped before accepting the next delivery.
@@ -649,7 +646,7 @@ pub(crate) fn fetch_with_options(
     report.output_finalize_seconds = finalize.elapsed().as_secs_f64();
     let manifest_start = Instant::now();
     let mut manifest = json!({"schema_version":3,"document_type":"acquisition_result","status":"complete",
-        "format":format!("zarr_v{}",encoding.version()),"writer":"zarrs 0.22.10","sources":inspection["sources"],"outputs":output_records,
+        "format":format!("zarr_v{}",encoding.version()),"writer":"zarrs 0.23.14","sources":inspection["sources"],"outputs":output_records,
         "output_encoding":encoding,"output_chunk_edge":options.chunk_edge,
         "observed":report,"processing":["native stored UInt16 values; calibration is metadata only","one source asset/band and native grid per observation; chronological order","no reprojection, resampling, mosaicking or implicit alignment","valid and aoi_mask distinguish source nodata from excluded AOI centers"],
         "completion":{"stream_finish":"successful","publication":"atomic no-replace sibling rename","existing_destination":"refused; replacement is never implicit","scope":"validated provider ETags or local size/mtime, not an atomic multi-object snapshot",
