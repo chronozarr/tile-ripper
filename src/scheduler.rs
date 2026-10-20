@@ -103,7 +103,7 @@ fn tasks(r: &Request, p: &Plan, sources: &crate::storage::Sources) -> Result<Vec
             .find(|a| a.id == selected.asset_id)
             .ok_or("asset binding missing")?;
         let l = selected.layout.as_ref().ok_or("missing layout")?;
-        if a.format == Format::ZarrV2 {
+        if a.format.is_zarr() {
             let Variable::Dataset { path } = &l.variable else {
                 return Err("missing variable".into());
             };
@@ -132,7 +132,7 @@ fn tasks(r: &Request, p: &Plan, sources: &crate::storage::Sources) -> Result<Vec
                     continue;
                 }
                 let Operation::Read {
-                    read: Read::ChunkObject { key, .. },
+                    read: Read::ChunkObject { key, indices },
                 } = &node.operation
                 else {
                     continue;
@@ -141,7 +141,11 @@ fn tasks(r: &Request, p: &Plan, sources: &crate::storage::Sources) -> Result<Vec
                     continue;
                 }
                 // HTTP sizes are already version-pinned by planning. No probes.
-                let encoded = usize::try_from(store.size_key(&StoreKey::new(key)?)?.unwrap_or(0))?;
+                let encoded = if a.format == Format::ZarrV3 {
+                    sources.v3.binding(&a.id, path)?.encoded_bytes(indices)?
+                } else {
+                    usize::try_from(store.size_key(&StoreKey::new(key)?)?.unwrap_or(0))?
+                };
                 let bytes = native
                     .checked_mul(2)
                     .and_then(|n| n.checked_add(encoded.checked_mul(2)?))
@@ -152,7 +156,11 @@ fn tasks(r: &Request, p: &Plan, sources: &crate::storage::Sources) -> Result<Vec
                     nodes: vec![ni],
                     host: host(a)?,
                     bytes,
-                    reader_bytes: coordinates.checked_mul(3).ok_or("reader state overflow")?,
+                    reader_bytes: if a.format == Format::ZarrV3 {
+                        0
+                    } else {
+                        coordinates.checked_mul(3).ok_or("reader state overflow")?
+                    },
                     #[cfg(feature = "native-cog")]
                     native: Default::default(),
                 });
@@ -197,7 +205,7 @@ fn tasks(r: &Request, p: &Plan, sources: &crate::storage::Sources) -> Result<Vec
                         l,
                         &selected.window,
                         &read_nodes,
-                        r.budget.buffer_bytes.saturating_sub(sources.1.bytes()),
+                        r.budget.buffer_bytes.saturating_sub(sources.native.bytes()),
                         crate::storage::worker_count()?.min(p.selected.len().max(1)),
                     )?;
                     native = strategy;
@@ -236,11 +244,14 @@ pub(crate) fn execute(
     let started = Instant::now();
     let tasks = tasks(r, p, sources)?;
     #[allow(unused_mut)]
-    let mut prepared_bytes = 0;
+    let mut prepared_bytes = 0usize;
     #[cfg(feature = "native-cog")]
     if crate::cog::native_selected() {
-        prepared_bytes = sources.1.bytes();
+        prepared_bytes = sources.native.bytes();
     }
+    prepared_bytes = prepared_bytes
+        .checked_add(sources.v3_prepared_bytes())
+        .ok_or("prepared reservation overflow")?;
     let mut workers = positive_env(
         "TILE_RIPPER_WORKERS",
         std::thread::available_parallelism().map_or(1, |n| n.get().min(2)),
@@ -365,7 +376,7 @@ pub(crate) fn execute(
                                             task.native.clone(),
                                         )?,
                                     )),
-                                    Format::ZarrV2 => Reader::Zarr(Box::new(
+                                    Format::ZarrV2 | Format::ZarrV3 => Reader::Zarr(Box::new(
                                         crate::zarr_acquire::SelectedReader::new(
                                             r, asset, sources, sel,
                                         )?,
@@ -482,13 +493,13 @@ pub(crate) fn execute(
         .source_reads
         .sort_by(|a, b| (&a.asset_id, &a.key).cmp(&(&b.asset_id, &b.key)));
     let native_buffers = result.scheduler.get("native_buffers").cloned();
-    result.scheduler = serde_json::json!({"workers":workers,"per_host":per_host,"buffer_bytes":r.budget.buffer_bytes,"reserved_bytes_peak":state.peak,"reader_state_reserved_bytes":retained,"prepared_native_metadata_bytes":prepared_bytes,"active_workers_peak":state.active_peak,"completed_tasks":tasks.iter().map(|t|t.nodes.len()).sum::<usize>(),"admitted_jobs":tasks.len(),"cog_reader_scope":"selection","seconds":started.elapsed().as_secs_f64(),"order":"plan","memory_scope":"conservative reader working reservations; includes prepared native COG metadata capacities and encoded coalescing; excludes process/runtime, GDAL cache, Zarr prepared metadata and caller retention"});
+    result.scheduler = serde_json::json!({"workers":workers,"per_host":per_host,"buffer_bytes":r.budget.buffer_bytes,"reserved_bytes_peak":state.peak,"reader_state_reserved_bytes":retained,"prepared_native_metadata_bytes":prepared_bytes,"prepared_v3_metadata_index_bytes":sources.v3_prepared_bytes(),"active_workers_peak":state.active_peak,"completed_tasks":tasks.iter().map(|t|t.nodes.len()).sum::<usize>(),"admitted_jobs":tasks.len(),"cog_reader_scope":"selection","seconds":started.elapsed().as_secs_f64(),"order":"plan","memory_scope":"conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention"});
     if let Some(buffers) = native_buffers {
         result.scheduler["native_buffers"] = buffers;
     }
     #[cfg(feature = "native-cog")]
     if crate::cog::native_selected() {
-        result.scheduler["native_metadata"] = sources.1.summary();
+        result.scheduler["native_metadata"] = sources.native.summary();
         result.scheduler["native_strategies"] = serde_json::json!(tasks
             .iter()
             .map(

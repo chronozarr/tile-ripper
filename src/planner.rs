@@ -286,7 +286,8 @@ pub fn validate(r: &Request) -> Result<&[Asset]> {
     Ok(assets)
 }
 pub fn plan(request: &Request, cache: &mut LayoutCache) -> Result<Plan> {
-    if !matches!(request.source, Source::Assets { .. }) || crate::storage::has_remote_zarr(request)
+    if !matches!(request.source, Source::Assets { .. })
+        || crate::storage::requires_zarr_bindings(request)
     {
         return Ok(crate::acquisition::prepare(request, cache)?.plan().clone());
     }
@@ -350,7 +351,7 @@ pub(crate) fn plan_on(
                                     };
                                     #[cfg(feature = "native-cog")]
                                     if cog::native_selected() {
-                                        return sources.1.inspect(asset, *index);
+                                        return sources.native.inspect(asset, *index);
                                     }
                                     cog::inspect(asset, *index)
                                 })
@@ -391,13 +392,16 @@ pub(crate) fn plan_on(
                         #[cfg(feature = "native-cog")]
                         if cog::native_selected() && cog::remote(&asset.locator) {
                             plan_cog_asset(asset, request, &mut p, |band| {
-                                Ok((sources.1.inspect(asset, band)?, false))
+                                Ok((sources.native.inspect(asset, band)?, false))
                             })?;
                             continue;
                         }
                         CogPlanner { cache }.plan_asset(asset, request, &mut p)?;
                     }
                 }
+                Format::ZarrV3 => sources
+                    .v3
+                    .plan(asset, request, &mut p, sources.get(asset)?)?,
                 Format::ZarrV2 if cog::remote(&asset.locator) => {
                     crate::zarr_acquire::plan_asset_on(asset, request, &mut p, sources.get(asset)?)?
                 }
@@ -464,7 +468,7 @@ pub(crate) fn plan_on(
             );
         }
         sources
-            .1
+            .native
             .trim(request.budget.buffer_bytes.saturating_sub(mandatory_peak));
     }
     crate::diagnostics::profile_stage(

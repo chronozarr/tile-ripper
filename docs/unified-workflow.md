@@ -61,7 +61,9 @@ unique Int64 Unix-second time with the documented units/calendar. Variables
 share coordinates, but may use different chunks and dot/slash chunk separators.
 No coordinates are inferred from shape or filenames. Missing chunks use native
 fill, while corrupt chunks fail. Auxiliary CF objects, other dtypes/codecs,
-v3/shards, polygons/reprojected bounds and remote Zarr are unsupported.
+polygons/reprojected bounds remain unsupported by this local v2 profile.
+[Remote v2](remote-zarr-workflow.md) and [ordinary/sharded v3](zarr-v3-input/workflow.md)
+have separately documented admission rules.
 
 Spatial bounds use the exact native CRS identifier and select the clipped outer
 half-open pixel envelope, including fractional/partial source windows. Time
@@ -75,7 +77,7 @@ time gaps. Scale and offset are metadata, not instructions to modify stored DN.
 Both examples use:
 
 * `source`: `stac` with endpoint/collection/provider limits, or `assets` with
-  opaque unique IDs, location and explicit `cog`/`zarr_v2` format. The original
+  opaque unique IDs, location and explicit `cog`/`zarr_v2`/`zarr_v3` format. The original
   `catalog` source spelling now maps to STAC with conservative default limits.
 * `spatial`: typed bounds or polygon with CRS; supported operations depend on
   source capabilities. Zarr accepts native bounds, COG also supports AOI masks.

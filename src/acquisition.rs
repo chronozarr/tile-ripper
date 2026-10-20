@@ -397,7 +397,7 @@ fn prepare_inner(request: &Request, cache: &mut LayoutCache) -> Result<Prepared>
         }
         Source::Assets { assets } => {
             crate::planner::validate(request)?;
-            if assets.iter().any(|a| a.format == Format::ZarrV2)
+            if assets.iter().any(|a| a.format.is_zarr())
                 && matches!(request.sink, Sink::GeoTiffDirectory { .. })
             {
                 return Err("output capability unsupported: choose directory to preserve the native source format".into());
@@ -405,8 +405,8 @@ fn prepare_inner(request: &Request, cache: &mut LayoutCache) -> Result<Prepared>
             let mut request = request.clone();
             request.sink = match &request.sink {
                 Sink::Directory { path } => {
-                    if assets.iter().any(|a| a.format == Format::ZarrV2) {
-                        if assets.iter().any(|a| a.format != Format::ZarrV2) {
+                    if assets.iter().any(|a| a.format.is_zarr()) {
+                        if assets.iter().any(|a| !a.format.is_zarr()) {
                             return Err("mixed formats require separate native requests".into());
                         }
                         Sink::ZarrDirectory { path: path.clone() }
@@ -464,7 +464,7 @@ fn prepare_inner(request: &Request, cache: &mut LayoutCache) -> Result<Prepared>
             let Source::Assets { assets } = &request.source else {
                 unreachable!()
             };
-            let sources:Vec<_>=assets.iter().map(|a|json!({"asset_id":a.id,"format":a.format,"reference":if crate::cog::remote(&a.locator){stac_workflow::safe_reference(&a.locator)}else{a.locator.clone()},"datetime":a.datetime,"object_version":a.etag,"local_identity":versions.describe(Path::new(&a.locator)),"object_identities":sources.describe(&a.id),"version_validation":if crate::cog::remote(&a.locator){"conditional ETag"}else{"local size and modification timestamp"}})).collect();
+            let sources:Vec<_>=assets.iter().map(|a|json!({"asset_id":a.id,"format":a.format,"reference":if crate::cog::remote(&a.locator){stac_workflow::safe_reference(&a.locator)}else{a.locator.clone()},"datetime":a.datetime,"object_version":a.etag,"local_identity":versions.describe(Path::new(&a.locator)),"object_identities":sources.describe(&a.id),"zarr_v3":sources.v3.describe(&a.id),"version_validation":if crate::cog::remote(&a.locator){"conditional ETag"}else{"local size and modification timestamp"}})).collect();
             (
                 plan,
                 json!(sources),
@@ -776,6 +776,51 @@ impl Versions {
             }
             for file in [".zgroup", ".zattrs", ".zarray", "zarr.json"] {
                 v.add(root.join(file))?;
+            }
+            if a.format == Format::ZarrV3 {
+                for axis in [
+                    "time",
+                    "x",
+                    "y",
+                    "lat",
+                    "lon",
+                    "latitude",
+                    "longitude",
+                    "spatial_ref",
+                ] {
+                    let dir = root.join(axis);
+                    if dir.is_dir() {
+                        v.axis(&dir, r.budget.max_nodes)?;
+                    }
+                }
+                if fs::metadata(root.join("zarr.json"))?.len() > 1024 * 1024 {
+                    return Err("v3 group metadata exceeds 1 MiB".into());
+                }
+                let group: Value = serde_json::from_slice(&fs::read(root.join("zarr.json"))?)?;
+                for var in &r.variables {
+                    if let Variable::Dataset { path } = var {
+                        let n = crate::zarr_acquire::name(path)?;
+                        let path = root.join(n).join("zarr.json");
+                        v.add(path.clone())?;
+                        let metadata =
+                            if let Some(m) = group["consolidated_metadata"]["metadata"].get(n) {
+                                m.clone()
+                            } else {
+                                if fs::metadata(&path)?.len() > 1024 * 1024 {
+                                    return Err("v3 array metadata exceeds 1 MiB".into());
+                                }
+                                serde_json::from_slice(&fs::read(path)?)?
+                            };
+                        let attrs = &metadata["attributes"];
+                        if let Some(mapping) = attrs["grid_mapping"].as_str() {
+                            v.add(
+                                root.join(crate::zarr_acquire::name(mapping)?)
+                                    .join("zarr.json"),
+                            )?;
+                        }
+                    }
+                }
+                continue;
             }
             let root_attrs: Value = serde_json::from_slice(&fs::read(root.join(".zattrs"))?)?;
             let axes = if root_attrs["tile_ripper_grid"].is_object() {

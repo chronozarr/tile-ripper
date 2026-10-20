@@ -209,3 +209,9 @@ Send the exact command, platform/tool versions, error and whether the bundled
 example or a different source was used. The [human trial feedback form](alpha/feedback-template.md)
 collects this without automatic uploads. Optional Python reader installation
 failures should be recorded separately from Rust acquisition failures.
+
+
+The [v3 source profile](zarr-v3-input/workflow.md) uses the same native or
+Zarr-only build, with zarrs 0.23.14 sharding and Zstd included for reading.
+It needs no Python runtime. Experimental v3 **output** still requires the
+separate feature and explicit encoding; uncompressed v2 output remains default.

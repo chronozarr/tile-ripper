@@ -117,7 +117,7 @@ pub fn execute(
 ) -> Result<ExecutionReport> {
     if !matches!(r.source, Source::Assets { .. })
         || matches!(r.sink, Sink::Directory { .. })
-        || crate::storage::has_remote_zarr(r)
+        || crate::storage::requires_zarr_bindings(r)
         || matches!(&r.source, Source::Assets {assets} if assets.iter().any(|a| a.format == Format::Cog && cog::remote(&a.locator)))
         || (cog::native_selected()
             && matches!(&r.source, Source::Assets {assets} if assets.iter().any(|a| a.format == Format::Cog)))
@@ -190,7 +190,7 @@ impl SelectedCogReader {
             )?)),
             #[cfg(feature = "native-cog")]
             crate::cog::Backend::Native => Ok(Self::Native(
-                crate::native_cog::SelectedReader::new(asset, selected, strategy, &sources.1)?,
+                crate::native_cog::SelectedReader::new(asset, selected, strategy, &sources.native)?,
             )),
         }
     }
@@ -216,7 +216,7 @@ impl SelectedCogReader {
 pub fn fetch(r: &Request, cache: &mut LayoutCache) -> Result<ExecutionReport> {
     if !matches!(r.source, Source::Assets { .. })
         || matches!(r.sink, Sink::Directory { .. })
-        || crate::storage::has_remote_zarr(r)
+        || crate::storage::requires_zarr_bindings(r)
         || matches!(&r.source, Source::Assets {assets} if assets.iter().any(|a| a.format == Format::Cog && cog::remote(&a.locator)))
         || (cog::native_selected()
             && matches!(&r.source, Source::Assets {assets} if assets.iter().any(|a| a.format == Format::Cog)))

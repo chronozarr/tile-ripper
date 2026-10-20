@@ -1,0 +1,2775 @@
+{
+  "passed": true,
+  "binary_sha256": "8f34f264a9b296494077f21cddad947b76cc7e7d74d2e455e04408d9d28320f5",
+  "native_cog_faults": {
+    "passed": true,
+    "checks": [
+      {
+        "name": "profile-None-1-NO-LITTLE",
+        "passed": true,
+        "exit_code": 0,
+        "chunks": 20,
+        "peak_rss_bytes": 10403840,
+        "seconds": 0.3003317089751363,
+        "last": {
+          "type": "complete",
+          "chunks": 20,
+          "valid_pixels": 3678,
+          "native_sum": 108424397.0,
+          "first_chunk_seconds": 0.002687667,
+          "prepare_seconds": 0.002180125,
+          "seconds": 0.003806667,
+          "observed": {
+            "source_reads": [],
+            "scheduler": {
+              "workers": 1,
+              "per_host": 4,
+              "buffer_bytes": 16777216,
+              "reserved_bytes_peak": 148504,
+              "reader_state_reserved_bytes": 0,
+              "prepared_native_metadata_bytes": 0,
+              "prepared_v3_metadata_index_bytes": 0,
+              "active_workers_peak": 1,
+              "completed_tasks": 20,
+              "admitted_jobs": 1,
+              "cog_reader_scope": "selection",
+              "seconds": 0.001146666,
+              "order": "plan",
+              "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+              "native_buffers": [
+                {
+                  "asset_id": "science",
+                  "transport_encoded_capacity_peak_bytes": 2048,
+                  "adapter_delivery_capacity_peak_bytes": 512,
+                  "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+                }
+              ],
+              "native_metadata": {
+                "retained_sources": 0,
+                "retained_bytes": 0,
+                "cap_bytes": 8388608,
+                "skipped_sources": 0,
+                "scope": "this Prepared only; immutable version-bound parser pages; never a data cache"
+              },
+              "native_strategies": [
+                {
+                  "asset_id": "science",
+                  "task_reserved_bytes": 148504,
+                  "strategy": {
+                    "read_scope": "planned_windows",
+                    "retained_selection_bytes": 0,
+                    "decoded_cache_limit_bytes": 10240,
+                    "coalesced_groups": 0,
+                    "max_encoded_group_reservation_bytes": 0,
+                    "codec_working_bytes": 131072
+                  }
+                }
+              ]
+            },
+            "transport": {},
+            "decoded_source_chunks": 0,
+            "filled_source_chunks": 0,
+            "first_output_seconds": 0.000318958,
+            "assembly_seconds": 0.0,
+            "source_retrieval_seconds": 2.7416000000000007e-05,
+            "allocation_seconds": null,
+            "copying_seconds": null,
+            "output_setup_seconds": 0.0,
+            "output_finalize_seconds": 0.0,
+            "output_io": null,
+            "native_materialized_bytes": null,
+            "source_data_requests": 6,
+            "source_data_bytes": 12288,
+            "chunks": 20,
+            "decoded_bytes": 7888,
+            "non_nodata_pixels": 3678,
+            "planning_seconds": 0.001435167,
+            "source_open_seconds": 0.000140334,
+            "read_decode_seconds": 0.00020587599999999996,
+            "sink_seconds": 0.000232001,
+            "masking_seconds": 0.0,
+            "remote_requests": null,
+            "remote_bytes": null
+          }
+        }
+      },
+      {
+        "name": "profile-None-1-NO-BIG",
+        "passed": true,
+        "exit_code": 0,
+        "chunks": 20,
+        "peak_rss_bytes": 10354688,
+        "seconds": 0.009406667202711105,
+        "last": {
+          "type": "complete",
+          "chunks": 20,
+          "valid_pixels": 3678,
+          "native_sum": 108424397.0,
+          "first_chunk_seconds": 0.000715958,
+          "prepare_seconds": 0.000396417,
+          "seconds": 0.0011675,
+          "observed": {
+            "source_reads": [],
+            "scheduler": {
+              "workers": 1,
+              "per_host": 4,
+              "buffer_bytes": 16777216,
+              "reserved_bytes_peak": 148504,
+              "reader_state_reserved_bytes": 0,
+              "prepared_native_metadata_bytes": 0,
+              "prepared_v3_metadata_index_bytes": 0,
+              "active_workers_peak": 1,
+              "completed_tasks": 20,
+              "admitted_jobs": 1,
+              "cog_reader_scope": "selection",
+              "seconds": 0.000531167,
+              "order": "plan",
+              "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+              "native_buffers": [
+                {
+                  "asset_id": "science",
+                  "transport_encoded_capacity_peak_bytes": 2048,
+                  "adapter_delivery_capacity_peak_bytes": 512,
+                  "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+                }
+              ],
+              "native_metadata": {
+                "retained_sources": 0,
+                "retained_bytes": 0,
+                "cap_bytes": 8388608,
+                "skipped_sources": 0,
+                "scope": "this Prepared only; immutable version-bound parser pages; never a data cache"
+              },
+              "native_strategies": [
+                {
+                  "asset_id": "science",
+                  "task_reserved_bytes": 148504,
+                  "strategy": {
+                    "read_scope": "planned_windows",
+                    "retained_selection_bytes": 0,
+                    "decoded_cache_limit_bytes": 10240,
+                    "coalesced_groups": 0,
+                    "max_encoded_group_reservation_bytes": 0,
+                    "codec_working_bytes": 131072
+                  }
+                }
+              ]
+            },
+            "transport": {},
+            "decoded_source_chunks": 0,
+            "filled_source_chunks": 0,
+            "first_output_seconds": 0.00020575,
+            "assembly_seconds": 0.0,
+            "source_retrieval_seconds": 1.2e-05,
+            "allocation_seconds": null,
+            "copying_seconds": null,
+            "output_setup_seconds": 0.0,
+            "output_finalize_seconds": 0.0,
+            "output_io": null,
+            "native_materialized_bytes": null,
+            "source_data_requests": 6,
+            "source_data_bytes": 12288,
+            "chunks": 20,
+            "decoded_bytes": 7888,
+            "non_nodata_pixels": 3678,
+            "planning_seconds": 0.000225834,
+            "source_open_seconds": 8.8375e-05,
+            "read_decode_seconds": 8.3209e-05,
+            "sink_seconds": 9.9499e-05,
+            "masking_seconds": 0.0,
+            "remote_requests": null,
+            "remote_bytes": null
+          }
+        }
+      },
+      {
+        "name": "profile-None-1-YES-LITTLE",
+        "passed": true,
+        "exit_code": 0,
+        "chunks": 20,
+        "peak_rss_bytes": 10420224,
+        "seconds": 0.007746292278170586,
+        "last": {
+          "type": "complete",
+          "chunks": 20,
+          "valid_pixels": 3678,
+          "native_sum": 108424397.0,
+          "first_chunk_seconds": 0.000613875,
+          "prepare_seconds": 0.000335042,
+          "seconds": 0.001061875,
+          "observed": {
+            "source_reads": [],
+            "scheduler": {
+              "workers": 1,
+              "per_host": 4,
+              "buffer_bytes": 16777216,
+              "reserved_bytes_peak": 148504,
+              "reader_state_reserved_bytes": 0,
+              "prepared_native_metadata_bytes": 0,
+              "prepared_v3_metadata_index_bytes": 0,
+              "active_workers_peak": 1,
+              "completed_tasks": 20,
+              "admitted_jobs": 1,
+              "cog_reader_scope": "selection",
+              "seconds": 0.000512958,
+              "order": "plan",
+              "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+              "native_buffers": [
+                {
+                  "asset_id": "science",
+                  "transport_encoded_capacity_peak_bytes": 2048,
+                  "adapter_delivery_capacity_peak_bytes": 512,
+                  "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+                }
+              ],
+              "native_metadata": {
+                "retained_sources": 0,
+                "retained_bytes": 0,
+                "cap_bytes": 8388608,
+                "skipped_sources": 0,
+                "scope": "this Prepared only; immutable version-bound parser pages; never a data cache"
+              },
+              "native_strategies": [
+                {
+                  "asset_id": "science",
+                  "task_reserved_bytes": 148504,
+                  "strategy": {
+                    "read_scope": "planned_windows",
+                    "retained_selection_bytes": 0,
+                    "decoded_cache_limit_bytes": 10240,
+                    "coalesced_groups": 0,
+                    "max_encoded_group_reservation_bytes": 0,
+                    "codec_working_bytes": 131072
+                  }
+                }
+              ]
+            },
+            "transport": {},
+            "decoded_source_chunks": 0,
+            "filled_source_chunks": 0,
+            "first_output_seconds": 0.000179958,
+            "assembly_seconds": 0.0,
+            "source_retrieval_seconds": 1.1167999999999999e-05,
+            "allocation_seconds": null,
+            "copying_seconds": null,
+            "output_setup_seconds": 0.0,
+            "output_finalize_seconds": 0.0,
+            "output_io": null,
+            "native_materialized_bytes": null,
+            "source_data_requests": 6,
+            "source_data_bytes": 12288,
+            "chunks": 20,
+            "decoded_bytes": 7888,
+            "non_nodata_pixels": 3678,
+            "planning_seconds": 0.000190292,
+            "source_open_seconds": 6.6459e-05,
+            "read_decode_seconds": 7.587500000000001e-05,
+            "sink_seconds": 0.000128789,
+            "masking_seconds": 0.0,
+            "remote_requests": null,
+            "remote_bytes": null
+          }
+        }
+      },
+      {
+        "name": "profile-None-1-YES-BIG",
+        "passed": true,
+        "exit_code": 0,
+        "chunks": 20,
+        "peak_rss_bytes": 10387456,
+        "seconds": 0.007269292138516903,
+        "last": {
+          "type": "complete",
+          "chunks": 20,
+          "valid_pixels": 3678,
+          "native_sum": 108424397.0,
+          "first_chunk_seconds": 0.000554625,
+          "prepare_seconds": 0.000308375,
+          "seconds": 0.000923709,
+          "observed": {
+            "source_reads": [],
+            "scheduler": {
+              "workers": 1,
+              "per_host": 4,
+              "buffer_bytes": 16777216,
+              "reserved_bytes_peak": 148504,
+              "reader_state_reserved_bytes": 0,
+              "prepared_native_metadata_bytes": 0,
+              "prepared_v3_metadata_index_bytes": 0,
+              "active_workers_peak": 1,
+              "completed_tasks": 20,
+              "admitted_jobs": 1,
+              "cog_reader_scope": "selection",
+              "seconds": 0.000428458,
+              "order": "plan",
+              "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+              "native_buffers": [
+                {
+                  "asset_id": "science",
+                  "transport_encoded_capacity_peak_bytes": 2048,
+                  "adapter_delivery_capacity_peak_bytes": 512,
+                  "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+                }
+              ],
+              "native_metadata": {
+                "retained_sources": 0,
+                "retained_bytes": 0,
+                "cap_bytes": 8388608,
+                "skipped_sources": 0,
+                "scope": "this Prepared only; immutable version-bound parser pages; never a data cache"
+              },
+              "native_strategies": [
+                {
+                  "asset_id": "science",
+                  "task_reserved_bytes": 148504,
+                  "strategy": {
+                    "read_scope": "planned_windows",
+                    "retained_selection_bytes": 0,
+                    "decoded_cache_limit_bytes": 10240,
+                    "coalesced_groups": 0,
+                    "max_encoded_group_reservation_bytes": 0,
+                    "codec_working_bytes": 131072
+                  }
+                }
+              ]
+            },
+            "transport": {},
+            "decoded_source_chunks": 0,
+            "filled_source_chunks": 0,
+            "first_output_seconds": 0.000157041,
+            "assembly_seconds": 0.0,
+            "source_retrieval_seconds": 9.039999999999996e-06,
+            "allocation_seconds": null,
+            "copying_seconds": null,
+            "output_setup_seconds": 0.0,
+            "output_finalize_seconds": 0.0,
+            "output_io": null,
+            "native_materialized_bytes": null,
+            "source_data_requests": 6,
+            "source_data_bytes": 12288,
+            "chunks": 20,
+            "decoded_bytes": 7888,
+            "non_nodata_pixels": 3678,
+            "planning_seconds": 0.000169584,
+            "source_open_seconds": 5.7709e-05,
+            "read_decode_seconds": 6.2459e-05,
+            "sink_seconds": 0.00011178999999999999,
+            "masking_seconds": 0.0,
+            "remote_requests": null,
+            "remote_bytes": null
+          }
+        }
+      },
+      {
+        "name": "profile-deflate-1-NO-LITTLE",
+        "passed": true,
+        "exit_code": 0,
+        "chunks": 20,
+        "peak_rss_bytes": 10567680,
+        "seconds": 0.0070030419155955315,
+        "last": {
+          "type": "complete",
+          "chunks": 20,
+          "valid_pixels": 3678,
+          "native_sum": 108424397.0,
+          "first_chunk_seconds": 0.000544541,
+          "prepare_seconds": 0.000274375,
+          "seconds": 0.000943708,
+          "observed": {
+            "source_reads": [],
+            "scheduler": {
+              "workers": 1,
+              "per_host": 4,
+              "buffer_bytes": 16777216,
+              "reserved_bytes_peak": 148409,
+              "reader_state_reserved_bytes": 0,
+              "prepared_native_metadata_bytes": 0,
+              "prepared_v3_metadata_index_bytes": 0,
+              "active_workers_peak": 1,
+              "completed_tasks": 20,
+              "admitted_jobs": 1,
+              "cog_reader_scope": "selection",
+              "seconds": 0.000498125,
+              "order": "plan",
+              "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+              "native_buffers": [
+                {
+                  "asset_id": "science",
+                  "transport_encoded_capacity_peak_bytes": 1969,
+                  "adapter_delivery_capacity_peak_bytes": 512,
+                  "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+                }
+              ],
+              "native_metadata": {
+                "retained_sources": 0,
+                "retained_bytes": 0,
+                "cap_bytes": 8388608,
+                "skipped_sources": 0,
+                "scope": "this Prepared only; immutable version-bound parser pages; never a data cache"
+              },
+              "native_strategies": [
+                {
+                  "asset_id": "science",
+                  "task_reserved_bytes": 148409,
+                  "strategy": {
+                    "read_scope": "planned_windows",
+                    "retained_selection_bytes": 0,
+                    "decoded_cache_limit_bytes": 10240,
+                    "coalesced_groups": 0,
+                    "max_encoded_group_reservation_bytes": 0,
+                    "codec_working_bytes": 131072
+                  }
+                }
+              ]
+            },
+            "transport": {},
+            "decoded_source_chunks": 0,
+            "filled_source_chunks": 0,
+            "first_output_seconds": 0.000185833,
+            "assembly_seconds": 0.0,
+            "source_retrieval_seconds": 8.750000000000004e-06,
+            "allocation_seconds": null,
+            "copying_seconds": null,
+            "output_setup_seconds": 0.0,
+            "output_finalize_seconds": 0.0,
+            "output_io": null,
+            "native_materialized_bytes": null,
+            "source_data_requests": 6,
+            "source_data_bytes": 9986,
+            "chunks": 20,
+            "decoded_bytes": 7888,
+            "non_nodata_pixels": 3678,
+            "planning_seconds": 0.000153416,
+            "source_open_seconds": 5.1625e-05,
+            "read_decode_seconds": 0.00019820799999999998,
+            "sink_seconds": 5.495799999999999e-05,
+            "masking_seconds": 0.0,
+            "remote_requests": null,
+            "remote_bytes": null
+          }
+        }
+      },
+      {
+        "name": "profile-deflate-1-NO-BIG",
+        "passed": true,
+        "exit_code": 0,
+        "chunks": 20,
+        "peak_rss_bytes": 10551296,
+        "seconds": 0.006361417006701231,
+        "last": {
+          "type": "complete",
+          "chunks": 20,
+          "valid_pixels": 3678,
+          "native_sum": 108424397.0,
+          "first_chunk_seconds": 0.000468959,
+          "prepare_seconds": 0.000257084,
+          "seconds": 0.000852084,
+          "observed": {
+            "source_reads": [],
+            "scheduler": {
+              "workers": 1,
+              "per_host": 4,
+              "buffer_bytes": 16777216,
+              "reserved_bytes_peak": 148408,
+              "reader_state_reserved_bytes": 0,
+              "prepared_native_metadata_bytes": 0,
+              "prepared_v3_metadata_index_bytes": 0,
+              "active_workers_peak": 1,
+              "completed_tasks": 20,
+              "admitted_jobs": 1,
+              "cog_reader_scope": "selection",
+              "seconds": 0.000434625,
+              "order": "plan",
+              "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+              "native_buffers": [
+                {
+                  "asset_id": "science",
+                  "transport_encoded_capacity_peak_bytes": 1968,
+                  "adapter_delivery_capacity_peak_bytes": 512,
+                  "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+                }
+              ],
+              "native_metadata": {
+                "retained_sources": 0,
+                "retained_bytes": 0,
+                "cap_bytes": 8388608,
+                "skipped_sources": 0,
+                "scope": "this Prepared only; immutable version-bound parser pages; never a data cache"
+              },
+              "native_strategies": [
+                {
+                  "asset_id": "science",
+                  "task_reserved_bytes": 148408,
+                  "strategy": {
+                    "read_scope": "planned_windows",
+                    "retained_selection_bytes": 0,
+                    "decoded_cache_limit_bytes": 10240,
+                    "coalesced_groups": 0,
+                    "max_encoded_group_reservation_bytes": 0,
+                    "codec_working_bytes": 131072
+                  }
+                }
+              ]
+            },
+            "transport": {},
+            "decoded_source_chunks": 0,
+            "filled_source_chunks": 0,
+            "first_output_seconds": 0.000136334,
+            "assembly_seconds": 0.0,
+            "source_retrieval_seconds": 7.083000000000001e-06,
+            "allocation_seconds": null,
+            "copying_seconds": null,
+            "output_setup_seconds": 0.0,
+            "output_finalize_seconds": 0.0,
+            "output_io": null,
+            "native_materialized_bytes": null,
+            "source_data_requests": 6,
+            "source_data_bytes": 9966,
+            "chunks": 20,
+            "decoded_bytes": 7888,
+            "non_nodata_pixels": 3678,
+            "planning_seconds": 0.000144,
+            "source_open_seconds": 4.9458e-05,
+            "read_decode_seconds": 0.00013116799999999997,
+            "sink_seconds": 6.500299999999999e-05,
+            "masking_seconds": 0.0,
+            "remote_requests": null,
+            "remote_bytes": null
+          }
+        }
+      },
+      {
+        "name": "profile-deflate-1-YES-LITTLE",
+        "passed": true,
+        "exit_code": 0,
+        "chunks": 20,
+        "peak_rss_bytes": 10649600,
+        "seconds": 0.006195624824613333,
+        "last": {
+          "type": "complete",
+          "chunks": 20,
+          "valid_pixels": 3678,
+          "native_sum": 108424397.0,
+          "first_chunk_seconds": 0.000456917,
+          "prepare_seconds": 0.000244167,
+          "seconds": 0.000842542,
+          "observed": {
+            "source_reads": [],
+            "scheduler": {
+              "workers": 1,
+              "per_host": 4,
+              "buffer_bytes": 16777216,
+              "reserved_bytes_peak": 148409,
+              "reader_state_reserved_bytes": 0,
+              "prepared_native_metadata_bytes": 0,
+              "prepared_v3_metadata_index_bytes": 0,
+              "active_workers_peak": 1,
+              "completed_tasks": 20,
+              "admitted_jobs": 1,
+              "cog_reader_scope": "selection",
+              "seconds": 0.000440166,
+              "order": "plan",
+              "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+              "native_buffers": [
+                {
+                  "asset_id": "science",
+                  "transport_encoded_capacity_peak_bytes": 1969,
+                  "adapter_delivery_capacity_peak_bytes": 512,
+                  "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+                }
+              ],
+              "native_metadata": {
+                "retained_sources": 0,
+                "retained_bytes": 0,
+                "cap_bytes": 8388608,
+                "skipped_sources": 0,
+                "scope": "this Prepared only; immutable version-bound parser pages; never a data cache"
+              },
+              "native_strategies": [
+                {
+                  "asset_id": "science",
+                  "task_reserved_bytes": 148409,
+                  "strategy": {
+                    "read_scope": "planned_windows",
+                    "retained_selection_bytes": 0,
+                    "decoded_cache_limit_bytes": 10240,
+                    "coalesced_groups": 0,
+                    "max_encoded_group_reservation_bytes": 0,
+                    "codec_working_bytes": 131072
+                  }
+                }
+              ]
+            },
+            "transport": {},
+            "decoded_source_chunks": 0,
+            "filled_source_chunks": 0,
+            "first_output_seconds": 0.000140125,
+            "assembly_seconds": 0.0,
+            "source_retrieval_seconds": 8.832e-06,
+            "allocation_seconds": null,
+            "copying_seconds": null,
+            "output_setup_seconds": 0.0,
+            "output_finalize_seconds": 0.0,
+            "output_io": null,
+            "native_materialized_bytes": null,
+            "source_data_requests": 6,
+            "source_data_bytes": 9986,
+            "chunks": 20,
+            "decoded_bytes": 7888,
+            "non_nodata_pixels": 3678,
+            "planning_seconds": 0.000139084,
+            "source_open_seconds": 5.0542e-05,
+            "read_decode_seconds": 0.00012958399999999997,
+            "sink_seconds": 7.729199999999999e-05,
+            "masking_seconds": 0.0,
+            "remote_requests": null,
+            "remote_bytes": null
+          }
+        }
+      },
+      {
+        "name": "profile-deflate-1-YES-BIG",
+        "passed": true,
+        "exit_code": 0,
+        "chunks": 20,
+        "peak_rss_bytes": 10551296,
+        "seconds": 0.006225625053048134,
+        "last": {
+          "type": "complete",
+          "chunks": 20,
+          "valid_pixels": 3678,
+          "native_sum": 108424397.0,
+          "first_chunk_seconds": 0.000444917,
+          "prepare_seconds": 0.00023675,
+          "seconds": 0.000829375,
+          "observed": {
+            "source_reads": [],
+            "scheduler": {
+              "workers": 1,
+              "per_host": 4,
+              "buffer_bytes": 16777216,
+              "reserved_bytes_peak": 148408,
+              "reader_state_reserved_bytes": 0,
+              "prepared_native_metadata_bytes": 0,
+              "prepared_v3_metadata_index_bytes": 0,
+              "active_workers_peak": 1,
+              "completed_tasks": 20,
+              "admitted_jobs": 1,
+              "cog_reader_scope": "selection",
+              "seconds": 0.00043675,
+              "order": "plan",
+              "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+              "native_buffers": [
+                {
+                  "asset_id": "science",
+                  "transport_encoded_capacity_peak_bytes": 1968,
+                  "adapter_delivery_capacity_peak_bytes": 512,
+                  "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+                }
+              ],
+              "native_metadata": {
+                "retained_sources": 0,
+                "retained_bytes": 0,
+                "cap_bytes": 8388608,
+                "skipped_sources": 0,
+                "scope": "this Prepared only; immutable version-bound parser pages; never a data cache"
+              },
+              "native_strategies": [
+                {
+                  "asset_id": "science",
+                  "task_reserved_bytes": 148408,
+                  "strategy": {
+                    "read_scope": "planned_windows",
+                    "retained_selection_bytes": 0,
+                    "decoded_cache_limit_bytes": 10240,
+                    "coalesced_groups": 0,
+                    "max_encoded_group_reservation_bytes": 0,
+                    "codec_working_bytes": 131072
+                  }
+                }
+              ]
+            },
+            "transport": {},
+            "decoded_source_chunks": 0,
+            "filled_source_chunks": 0,
+            "first_output_seconds": 0.000137209,
+            "assembly_seconds": 0.0,
+            "source_retrieval_seconds": 6.292999999999997e-06,
+            "allocation_seconds": null,
+            "copying_seconds": null,
+            "output_setup_seconds": 0.0,
+            "output_finalize_seconds": 0.0,
+            "output_io": null,
+            "native_materialized_bytes": null,
+            "source_data_requests": 6,
+            "source_data_bytes": 9966,
+            "chunks": 20,
+            "decoded_bytes": 7888,
+            "non_nodata_pixels": 3678,
+            "planning_seconds": 0.000131958,
+            "source_open_seconds": 4.8041e-05,
+            "read_decode_seconds": 0.00013071100000000002,
+            "sink_seconds": 7.2916e-05,
+            "masking_seconds": 0.0,
+            "remote_requests": null,
+            "remote_bytes": null
+          }
+        }
+      },
+      {
+        "name": "profile-deflate-2-NO-LITTLE",
+        "passed": true,
+        "exit_code": 0,
+        "chunks": 20,
+        "peak_rss_bytes": 10502144,
+        "seconds": 0.006059042178094387,
+        "last": {
+          "type": "complete",
+          "chunks": 20,
+          "valid_pixels": 3678,
+          "native_sum": 108424397.0,
+          "first_chunk_seconds": 0.000445959,
+          "prepare_seconds": 0.000237667,
+          "seconds": 0.00079875,
+          "observed": {
+            "source_reads": [],
+            "scheduler": {
+              "workers": 1,
+              "per_host": 4,
+              "buffer_bytes": 16777216,
+              "reserved_bytes_peak": 146941,
+              "reader_state_reserved_bytes": 0,
+              "prepared_native_metadata_bytes": 0,
+              "prepared_v3_metadata_index_bytes": 0,
+              "active_workers_peak": 1,
+              "completed_tasks": 20,
+              "admitted_jobs": 1,
+              "cog_reader_scope": "selection",
+              "seconds": 0.000405375,
+              "order": "plan",
+              "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+              "native_buffers": [
+                {
+                  "asset_id": "science",
+                  "transport_encoded_capacity_peak_bytes": 501,
+                  "adapter_delivery_capacity_peak_bytes": 512,
+                  "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+                }
+              ],
+              "native_metadata": {
+                "retained_sources": 0,
+                "retained_bytes": 0,
+                "cap_bytes": 8388608,
+                "skipped_sources": 0,
+                "scope": "this Prepared only; immutable version-bound parser pages; never a data cache"
+              },
+              "native_strategies": [
+                {
+                  "asset_id": "science",
+                  "task_reserved_bytes": 146941,
+                  "strategy": {
+                    "read_scope": "planned_windows",
+                    "retained_selection_bytes": 0,
+                    "decoded_cache_limit_bytes": 10240,
+                    "coalesced_groups": 0,
+                    "max_encoded_group_reservation_bytes": 0,
+                    "codec_working_bytes": 131072
+                  }
+                }
+              ]
+            },
+            "transport": {},
+            "decoded_source_chunks": 0,
+            "filled_source_chunks": 0,
+            "first_output_seconds": 0.000137458,
+            "assembly_seconds": 0.0,
+            "source_retrieval_seconds": 8.249e-06,
+            "allocation_seconds": null,
+            "copying_seconds": null,
+            "output_setup_seconds": 0.0,
+            "output_finalize_seconds": 0.0,
+            "output_io": null,
+            "native_materialized_bytes": null,
+            "source_data_requests": 6,
+            "source_data_bytes": 2775,
+            "chunks": 20,
+            "decoded_bytes": 7888,
+            "non_nodata_pixels": 3678,
+            "planning_seconds": 0.000134083,
+            "source_open_seconds": 4.9375e-05,
+            "read_decode_seconds": 0.00011287199999999997,
+            "sink_seconds": 6.0374e-05,
+            "masking_seconds": 0.0,
+            "remote_requests": null,
+            "remote_bytes": null
+          }
+        }
+      },
+      {
+        "name": "profile-deflate-2-NO-BIG",
+        "passed": true,
+        "exit_code": 0,
+        "chunks": 20,
+        "peak_rss_bytes": 10600448,
+        "seconds": 0.005705957766622305,
+        "last": {
+          "type": "complete",
+          "chunks": 20,
+          "valid_pixels": 3678,
+          "native_sum": 108424397.0,
+          "first_chunk_seconds": 0.000432667,
+          "prepare_seconds": 0.000228584,
+          "seconds": 0.0007965,
+          "observed": {
+            "source_reads": [],
+            "scheduler": {
+              "workers": 1,
+              "per_host": 4,
+              "buffer_bytes": 16777216,
+              "reserved_bytes_peak": 146944,
+              "reader_state_reserved_bytes": 0,
+              "prepared_native_metadata_bytes": 0,
+              "prepared_v3_metadata_index_bytes": 0,
+              "active_workers_peak": 1,
+              "completed_tasks": 20,
+              "admitted_jobs": 1,
+              "cog_reader_scope": "selection",
+              "seconds": 0.0004145,
+              "order": "plan",
+              "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+              "native_buffers": [
+                {
+                  "asset_id": "science",
+                  "transport_encoded_capacity_peak_bytes": 504,
+                  "adapter_delivery_capacity_peak_bytes": 512,
+                  "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+                }
+              ],
+              "native_metadata": {
+                "retained_sources": 0,
+                "retained_bytes": 0,
+                "cap_bytes": 8388608,
+                "skipped_sources": 0,
+                "scope": "this Prepared only; immutable version-bound parser pages; never a data cache"
+              },
+              "native_strategies": [
+                {
+                  "asset_id": "science",
+                  "task_reserved_bytes": 146944,
+                  "strategy": {
+                    "read_scope": "planned_windows",
+                    "retained_selection_bytes": 0,
+                    "decoded_cache_limit_bytes": 10240,
+                    "coalesced_groups": 0,
+                    "max_encoded_group_reservation_bytes": 0,
+                    "codec_working_bytes": 131072
+                  }
+                }
+              ]
+            },
+            "transport": {},
+            "decoded_source_chunks": 0,
+            "filled_source_chunks": 0,
+            "first_output_seconds": 0.00013525,
+            "assembly_seconds": 0.0,
+            "source_retrieval_seconds": 4.999999999999996e-06,
+            "allocation_seconds": null,
+            "copying_seconds": null,
+            "output_setup_seconds": 0.0,
+            "output_finalize_seconds": 0.0,
+            "output_io": null,
+            "native_materialized_bytes": null,
+            "source_data_requests": 6,
+            "source_data_bytes": 2800,
+            "chunks": 20,
+            "decoded_bytes": 7888,
+            "non_nodata_pixels": 3678,
+            "planning_seconds": 0.000128625,
+            "source_open_seconds": 5.425e-05,
+            "read_decode_seconds": 0.00011254499999999999,
+            "sink_seconds": 6.504599999999999e-05,
+            "masking_seconds": 0.0,
+            "remote_requests": null,
+            "remote_bytes": null
+          }
+        }
+      },
+      {
+        "name": "profile-deflate-2-YES-LITTLE",
+        "passed": true,
+        "exit_code": 0,
+        "chunks": 20,
+        "peak_rss_bytes": 10584064,
+        "seconds": 0.006064583081752062,
+        "last": {
+          "type": "complete",
+          "chunks": 20,
+          "valid_pixels": 3678,
+          "native_sum": 108424397.0,
+          "first_chunk_seconds": 0.000439375,
+          "prepare_seconds": 0.00023275,
+          "seconds": 0.000800708,
+          "observed": {
+            "source_reads": [],
+            "scheduler": {
+              "workers": 1,
+              "per_host": 4,
+              "buffer_bytes": 16777216,
+              "reserved_bytes_peak": 146941,
+              "reader_state_reserved_bytes": 0,
+              "prepared_native_metadata_bytes": 0,
+              "prepared_v3_metadata_index_bytes": 0,
+              "active_workers_peak": 1,
+              "completed_tasks": 20,
+              "admitted_jobs": 1,
+              "cog_reader_scope": "selection",
+              "seconds": 0.000414167,
+              "order": "plan",
+              "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+              "native_buffers": [
+                {
+                  "asset_id": "science",
+                  "transport_encoded_capacity_peak_bytes": 501,
+                  "adapter_delivery_capacity_peak_bytes": 512,
+                  "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+                }
+              ],
+              "native_metadata": {
+                "retained_sources": 0,
+                "retained_bytes": 0,
+                "cap_bytes": 8388608,
+                "skipped_sources": 0,
+                "scope": "this Prepared only; immutable version-bound parser pages; never a data cache"
+              },
+              "native_strategies": [
+                {
+                  "asset_id": "science",
+                  "task_reserved_bytes": 146941,
+                  "strategy": {
+                    "read_scope": "planned_windows",
+                    "retained_selection_bytes": 0,
+                    "decoded_cache_limit_bytes": 10240,
+                    "coalesced_groups": 0,
+                    "max_encoded_group_reservation_bytes": 0,
+                    "codec_working_bytes": 131072
+                  }
+                }
+              ]
+            },
+            "transport": {},
+            "decoded_source_chunks": 0,
+            "filled_source_chunks": 0,
+            "first_output_seconds": 0.00013925,
+            "assembly_seconds": 0.0,
+            "source_retrieval_seconds": 6.791999999999998e-06,
+            "allocation_seconds": null,
+            "copying_seconds": null,
+            "output_setup_seconds": 0.0,
+            "output_finalize_seconds": 0.0,
+            "output_io": null,
+            "native_materialized_bytes": null,
+            "source_data_requests": 6,
+            "source_data_bytes": 2775,
+            "chunks": 20,
+            "decoded_bytes": 7888,
+            "non_nodata_pixels": 3678,
+            "planning_seconds": 0.000132459,
+            "source_open_seconds": 5.3041e-05,
+            "read_decode_seconds": 0.00011178800000000002,
+            "sink_seconds": 6.616800000000001e-05,
+            "masking_seconds": 0.0,
+            "remote_requests": null,
+            "remote_bytes": null
+          }
+        }
+      },
+      {
+        "name": "profile-deflate-2-YES-BIG",
+        "passed": true,
+        "exit_code": 0,
+        "chunks": 20,
+        "peak_rss_bytes": 10600448,
+        "seconds": 0.005898292176425457,
+        "last": {
+          "type": "complete",
+          "chunks": 20,
+          "valid_pixels": 3678,
+          "native_sum": 108424397.0,
+          "first_chunk_seconds": 0.000452208,
+          "prepare_seconds": 0.000232542,
+          "seconds": 0.000816708,
+          "observed": {
+            "source_reads": [],
+            "scheduler": {
+              "workers": 1,
+              "per_host": 4,
+              "buffer_bytes": 16777216,
+              "reserved_bytes_peak": 146944,
+              "reader_state_reserved_bytes": 0,
+              "prepared_native_metadata_bytes": 0,
+              "prepared_v3_metadata_index_bytes": 0,
+              "active_workers_peak": 1,
+              "completed_tasks": 20,
+              "admitted_jobs": 1,
+              "cog_reader_scope": "selection",
+              "seconds": 0.000427625,
+              "order": "plan",
+              "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+              "native_buffers": [
+                {
+                  "asset_id": "science",
+                  "transport_encoded_capacity_peak_bytes": 504,
+                  "adapter_delivery_capacity_peak_bytes": 512,
+                  "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+                }
+              ],
+              "native_metadata": {
+                "retained_sources": 0,
+                "retained_bytes": 0,
+                "cap_bytes": 8388608,
+                "skipped_sources": 0,
+                "scope": "this Prepared only; immutable version-bound parser pages; never a data cache"
+              },
+              "native_strategies": [
+                {
+                  "asset_id": "science",
+                  "task_reserved_bytes": 146944,
+                  "strategy": {
+                    "read_scope": "planned_windows",
+                    "retained_selection_bytes": 0,
+                    "decoded_cache_limit_bytes": 10240,
+                    "coalesced_groups": 0,
+                    "max_encoded_group_reservation_bytes": 0,
+                    "codec_working_bytes": 131072
+                  }
+                }
+              ]
+            },
+            "transport": {},
+            "decoded_source_chunks": 0,
+            "filled_source_chunks": 0,
+            "first_output_seconds": 0.000148708,
+            "assembly_seconds": 0.0,
+            "source_retrieval_seconds": 6.541999999999999e-06,
+            "allocation_seconds": null,
+            "copying_seconds": null,
+            "output_setup_seconds": 0.0,
+            "output_finalize_seconds": 0.0,
+            "output_io": null,
+            "native_materialized_bytes": null,
+            "source_data_requests": 6,
+            "source_data_bytes": 2800,
+            "chunks": 20,
+            "decoded_bytes": 7888,
+            "non_nodata_pixels": 3678,
+            "planning_seconds": 0.000131083,
+            "source_open_seconds": 5.525e-05,
+            "read_decode_seconds": 0.00011516699999999998,
+            "sink_seconds": 7.966700000000001e-05,
+            "masking_seconds": 0.0,
+            "remote_requests": null,
+            "remote_bytes": null
+          }
+        }
+      },
+      {
+        "name": "profile-lzw-1-NO-LITTLE",
+        "passed": true,
+        "exit_code": 0,
+        "chunks": 20,
+        "peak_rss_bytes": 10436608,
+        "seconds": 0.006031208671629429,
+        "last": {
+          "type": "complete",
+          "chunks": 20,
+          "valid_pixels": 3678,
+          "native_sum": 108424397.0,
+          "first_chunk_seconds": 0.000465375,
+          "prepare_seconds": 0.000251542,
+          "seconds": 0.0008095,
+          "observed": {
+            "source_reads": [],
+            "scheduler": {
+              "workers": 1,
+              "per_host": 4,
+              "buffer_bytes": 16777216,
+              "reserved_bytes_peak": 149860,
+              "reader_state_reserved_bytes": 0,
+              "prepared_native_metadata_bytes": 0,
+              "prepared_v3_metadata_index_bytes": 0,
+              "active_workers_peak": 1,
+              "completed_tasks": 20,
+              "admitted_jobs": 1,
+              "cog_reader_scope": "selection",
+              "seconds": 0.000398,
+              "order": "plan",
+              "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+              "native_buffers": [
+                {
+                  "asset_id": "science",
+                  "transport_encoded_capacity_peak_bytes": 2500,
+                  "adapter_delivery_capacity_peak_bytes": 512,
+                  "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+                }
+              ],
+              "native_metadata": {
+                "retained_sources": 0,
+                "retained_bytes": 0,
+                "cap_bytes": 8388608,
+                "skipped_sources": 0,
+                "scope": "this Prepared only; immutable version-bound parser pages; never a data cache"
+              },
+              "native_strategies": [
+                {
+                  "asset_id": "science",
+                  "task_reserved_bytes": 149860,
+                  "strategy": {
+                    "read_scope": "planned_windows",
+                    "retained_selection_bytes": 0,
+                    "decoded_cache_limit_bytes": 10240,
+                    "coalesced_groups": 0,
+                    "max_encoded_group_reservation_bytes": 0,
+                    "codec_working_bytes": 131072
+                  }
+                }
+              ]
+            },
+            "transport": {},
+            "decoded_source_chunks": 0,
+            "filled_source_chunks": 0,
+            "first_output_seconds": 0.000138667,
+            "assembly_seconds": 0.0,
+            "source_retrieval_seconds": 6.249999999999999e-06,
+            "allocation_seconds": null,
+            "copying_seconds": null,
+            "output_setup_seconds": 0.0,
+            "output_finalize_seconds": 0.0,
+            "output_io": null,
+            "native_materialized_bytes": null,
+            "source_data_requests": 6,
+            "source_data_bytes": 12442,
+            "chunks": 20,
+            "decoded_bytes": 7888,
+            "non_nodata_pixels": 3678,
+            "planning_seconds": 0.000143917,
+            "source_open_seconds": 5.225e-05,
+            "read_decode_seconds": 0.00011529200000000001,
+            "sink_seconds": 5.041499999999999e-05,
+            "masking_seconds": 0.0,
+            "remote_requests": null,
+            "remote_bytes": null
+          }
+        }
+      },
+      {
+        "name": "profile-lzw-1-NO-BIG",
+        "passed": true,
+        "exit_code": 0,
+        "chunks": 20,
+        "peak_rss_bytes": 10452992,
+        "seconds": 0.005957791116088629,
+        "last": {
+          "type": "complete",
+          "chunks": 20,
+          "valid_pixels": 3678,
+          "native_sum": 108424397.0,
+          "first_chunk_seconds": 0.000444833,
+          "prepare_seconds": 0.000231875,
+          "seconds": 0.000818083,
+          "observed": {
+            "source_reads": [],
+            "scheduler": {
+              "workers": 1,
+              "per_host": 4,
+              "buffer_bytes": 16777216,
+              "reserved_bytes_peak": 149794,
+              "reader_state_reserved_bytes": 0,
+              "prepared_native_metadata_bytes": 0,
+              "prepared_v3_metadata_index_bytes": 0,
+              "active_workers_peak": 1,
+              "completed_tasks": 20,
+              "admitted_jobs": 1,
+              "cog_reader_scope": "selection",
+              "seconds": 0.000435792,
+              "order": "plan",
+              "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+              "native_buffers": [
+                {
+                  "asset_id": "science",
+                  "transport_encoded_capacity_peak_bytes": 2478,
+                  "adapter_delivery_capacity_peak_bytes": 512,
+                  "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+                }
+              ],
+              "native_metadata": {
+                "retained_sources": 0,
+                "retained_bytes": 0,
+                "cap_bytes": 8388608,
+                "skipped_sources": 0,
+                "scope": "this Prepared only; immutable version-bound parser pages; never a data cache"
+              },
+              "native_strategies": [
+                {
+                  "asset_id": "science",
+                  "task_reserved_bytes": 149794,
+                  "strategy": {
+                    "read_scope": "planned_windows",
+                    "retained_selection_bytes": 0,
+                    "decoded_cache_limit_bytes": 10240,
+                    "coalesced_groups": 0,
+                    "max_encoded_group_reservation_bytes": 0,
+                    "codec_working_bytes": 131072
+                  }
+                }
+              ]
+            },
+            "transport": {},
+            "decoded_source_chunks": 0,
+            "filled_source_chunks": 0,
+            "first_output_seconds": 0.000145458,
+            "assembly_seconds": 0.0,
+            "source_retrieval_seconds": 6.584000000000001e-06,
+            "allocation_seconds": null,
+            "copying_seconds": null,
+            "output_setup_seconds": 0.0,
+            "output_finalize_seconds": 0.0,
+            "output_io": null,
+            "native_materialized_bytes": null,
+            "source_data_requests": 6,
+            "source_data_bytes": 12273,
+            "chunks": 20,
+            "decoded_bytes": 7888,
+            "non_nodata_pixels": 3678,
+            "planning_seconds": 0.000132291,
+            "source_open_seconds": 5.25e-05,
+            "read_decode_seconds": 0.000112082,
+            "sink_seconds": 8.242e-05,
+            "masking_seconds": 0.0,
+            "remote_requests": null,
+            "remote_bytes": null
+          }
+        }
+      },
+      {
+        "name": "profile-lzw-1-YES-LITTLE",
+        "passed": true,
+        "exit_code": 0,
+        "chunks": 20,
+        "peak_rss_bytes": 10436608,
+        "seconds": 0.005865166895091534,
+        "last": {
+          "type": "complete",
+          "chunks": 20,
+          "valid_pixels": 3678,
+          "native_sum": 108424397.0,
+          "first_chunk_seconds": 0.000432542,
+          "prepare_seconds": 0.000227667,
+          "seconds": 0.000768458,
+          "observed": {
+            "source_reads": [],
+            "scheduler": {
+              "workers": 1,
+              "per_host": 4,
+              "buffer_bytes": 16777216,
+              "reserved_bytes_peak": 149860,
+              "reader_state_reserved_bytes": 0,
+              "prepared_native_metadata_bytes": 0,
+              "prepared_v3_metadata_index_bytes": 0,
+              "active_workers_peak": 1,
+              "completed_tasks": 20,
+              "admitted_jobs": 1,
+              "cog_reader_scope": "selection",
+              "seconds": 0.000385375,
+              "order": "plan",
+              "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+              "native_buffers": [
+                {
+                  "asset_id": "science",
+                  "transport_encoded_capacity_peak_bytes": 2500,
+                  "adapter_delivery_capacity_peak_bytes": 512,
+                  "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+                }
+              ],
+              "native_metadata": {
+                "retained_sources": 0,
+                "retained_bytes": 0,
+                "cap_bytes": 8388608,
+                "skipped_sources": 0,
+                "scope": "this Prepared only; immutable version-bound parser pages; never a data cache"
+              },
+              "native_strategies": [
+                {
+                  "asset_id": "science",
+                  "task_reserved_bytes": 149860,
+                  "strategy": {
+                    "read_scope": "planned_windows",
+                    "retained_selection_bytes": 0,
+                    "decoded_cache_limit_bytes": 10240,
+                    "coalesced_groups": 0,
+                    "max_encoded_group_reservation_bytes": 0,
+                    "codec_working_bytes": 131072
+                  }
+                }
+              ]
+            },
+            "transport": {},
+            "decoded_source_chunks": 0,
+            "filled_source_chunks": 0,
+            "first_output_seconds": 0.000133291,
+            "assembly_seconds": 0.0,
+            "source_retrieval_seconds": 5.750999999999999e-06,
+            "allocation_seconds": null,
+            "copying_seconds": null,
+            "output_setup_seconds": 0.0,
+            "output_finalize_seconds": 0.0,
+            "output_io": null,
+            "native_materialized_bytes": null,
+            "source_data_requests": 6,
+            "source_data_bytes": 12442,
+            "chunks": 20,
+            "decoded_bytes": 7888,
+            "non_nodata_pixels": 3678,
+            "planning_seconds": 0.000128625,
+            "source_open_seconds": 5.125e-05,
+            "read_decode_seconds": 0.00010287500000000001,
+            "sink_seconds": 5.7998999999999985e-05,
+            "masking_seconds": 0.0,
+            "remote_requests": null,
+            "remote_bytes": null
+          }
+        }
+      },
+      {
+        "name": "profile-lzw-1-YES-BIG",
+        "passed": true,
+        "exit_code": 0,
+        "chunks": 20,
+        "peak_rss_bytes": 10469376,
+        "seconds": 0.005888583138585091,
+        "last": {
+          "type": "complete",
+          "chunks": 20,
+          "valid_pixels": 3678,
+          "native_sum": 108424397.0,
+          "first_chunk_seconds": 0.000468291,
+          "prepare_seconds": 0.000243291,
+          "seconds": 0.000827041,
+          "observed": {
+            "source_reads": [],
+            "scheduler": {
+              "workers": 1,
+              "per_host": 4,
+              "buffer_bytes": 16777216,
+              "reserved_bytes_peak": 149794,
+              "reader_state_reserved_bytes": 0,
+              "prepared_native_metadata_bytes": 0,
+              "prepared_v3_metadata_index_bytes": 0,
+              "active_workers_peak": 1,
+              "completed_tasks": 20,
+              "admitted_jobs": 1,
+              "cog_reader_scope": "selection",
+              "seconds": 0.000420875,
+              "order": "plan",
+              "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+              "native_buffers": [
+                {
+                  "asset_id": "science",
+                  "transport_encoded_capacity_peak_bytes": 2478,
+                  "adapter_delivery_capacity_peak_bytes": 512,
+                  "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+                }
+              ],
+              "native_metadata": {
+                "retained_sources": 0,
+                "retained_bytes": 0,
+                "cap_bytes": 8388608,
+                "skipped_sources": 0,
+                "scope": "this Prepared only; immutable version-bound parser pages; never a data cache"
+              },
+              "native_strategies": [
+                {
+                  "asset_id": "science",
+                  "task_reserved_bytes": 149794,
+                  "strategy": {
+                    "read_scope": "planned_windows",
+                    "retained_selection_bytes": 0,
+                    "decoded_cache_limit_bytes": 10240,
+                    "coalesced_groups": 0,
+                    "max_encoded_group_reservation_bytes": 0,
+                    "codec_working_bytes": 131072
+                  }
+                }
+              ]
+            },
+            "transport": {},
+            "decoded_source_chunks": 0,
+            "filled_source_chunks": 0,
+            "first_output_seconds": 0.00014925,
+            "assembly_seconds": 0.0,
+            "source_retrieval_seconds": 5.959e-06,
+            "allocation_seconds": null,
+            "copying_seconds": null,
+            "output_setup_seconds": 0.0,
+            "output_finalize_seconds": 0.0,
+            "output_io": null,
+            "native_materialized_bytes": null,
+            "source_data_requests": 6,
+            "source_data_bytes": 12273,
+            "chunks": 20,
+            "decoded_bytes": 7888,
+            "non_nodata_pixels": 3678,
+            "planning_seconds": 0.000137583,
+            "source_open_seconds": 4.6125e-05,
+            "read_decode_seconds": 0.00010937500000000002,
+            "sink_seconds": 8.329000000000001e-05,
+            "masking_seconds": 0.0,
+            "remote_requests": null,
+            "remote_bytes": null
+          }
+        }
+      },
+      {
+        "name": "profile-lzw-2-NO-LITTLE",
+        "passed": true,
+        "exit_code": 0,
+        "chunks": 20,
+        "peak_rss_bytes": 10436608,
+        "seconds": 0.006587125360965729,
+        "last": {
+          "type": "complete",
+          "chunks": 20,
+          "valid_pixels": 3678,
+          "native_sum": 108424397.0,
+          "first_chunk_seconds": 0.000535,
+          "prepare_seconds": 0.000309208,
+          "seconds": 0.000893083,
+          "observed": {
+            "source_reads": [],
+            "scheduler": {
+              "workers": 1,
+              "per_host": 4,
+              "buffer_bytes": 16777216,
+              "reserved_bytes_peak": 147019,
+              "reader_state_reserved_bytes": 0,
+              "prepared_native_metadata_bytes": 0,
+              "prepared_v3_metadata_index_bytes": 0,
+              "active_workers_peak": 1,
+              "completed_tasks": 20,
+              "admitted_jobs": 1,
+              "cog_reader_scope": "selection",
+              "seconds": 0.000415667,
+              "order": "plan",
+              "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+              "native_buffers": [
+                {
+                  "asset_id": "science",
+                  "transport_encoded_capacity_peak_bytes": 579,
+                  "adapter_delivery_capacity_peak_bytes": 512,
+                  "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+                }
+              ],
+              "native_metadata": {
+                "retained_sources": 0,
+                "retained_bytes": 0,
+                "cap_bytes": 8388608,
+                "skipped_sources": 0,
+                "scope": "this Prepared only; immutable version-bound parser pages; never a data cache"
+              },
+              "native_strategies": [
+                {
+                  "asset_id": "science",
+                  "task_reserved_bytes": 147019,
+                  "strategy": {
+                    "read_scope": "planned_windows",
+                    "retained_selection_bytes": 0,
+                    "decoded_cache_limit_bytes": 10240,
+                    "coalesced_groups": 0,
+                    "max_encoded_group_reservation_bytes": 0,
+                    "codec_working_bytes": 131072
+                  }
+                }
+              ]
+            },
+            "transport": {},
+            "decoded_source_chunks": 0,
+            "filled_source_chunks": 0,
+            "first_output_seconds": 0.000146917,
+            "assembly_seconds": 0.0,
+            "source_retrieval_seconds": 5.377999999999997e-06,
+            "allocation_seconds": null,
+            "copying_seconds": null,
+            "output_setup_seconds": 0.0,
+            "output_finalize_seconds": 0.0,
+            "output_io": null,
+            "native_materialized_bytes": null,
+            "source_data_requests": 6,
+            "source_data_bytes": 3192,
+            "chunks": 20,
+            "decoded_bytes": 7888,
+            "non_nodata_pixels": 3678,
+            "planning_seconds": 0.000191417,
+            "source_open_seconds": 5.2083e-05,
+            "read_decode_seconds": 9.5331e-05,
+            "sink_seconds": 7.971100000000001e-05,
+            "masking_seconds": 0.0,
+            "remote_requests": null,
+            "remote_bytes": null
+          }
+        }
+      },
+      {
+        "name": "profile-lzw-2-NO-BIG",
+        "passed": true,
+        "exit_code": 0,
+        "chunks": 20,
+        "peak_rss_bytes": 10485760,
+        "seconds": 0.006555166095495224,
+        "last": {
+          "type": "complete",
+          "chunks": 20,
+          "valid_pixels": 3678,
+          "native_sum": 108424397.0,
+          "first_chunk_seconds": 0.000447416,
+          "prepare_seconds": 0.000238,
+          "seconds": 0.000802125,
+          "observed": {
+            "source_reads": [],
+            "scheduler": {
+              "workers": 1,
+              "per_host": 4,
+              "buffer_bytes": 16777216,
+              "reserved_bytes_peak": 146985,
+              "reader_state_reserved_bytes": 0,
+              "prepared_native_metadata_bytes": 0,
+              "prepared_v3_metadata_index_bytes": 0,
+              "active_workers_peak": 1,
+              "completed_tasks": 20,
+              "admitted_jobs": 1,
+              "cog_reader_scope": "selection",
+              "seconds": 0.000403375,
+              "order": "plan",
+              "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+              "native_buffers": [
+                {
+                  "asset_id": "science",
+                  "transport_encoded_capacity_peak_bytes": 545,
+                  "adapter_delivery_capacity_peak_bytes": 512,
+                  "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+                }
+              ],
+              "native_metadata": {
+                "retained_sources": 0,
+                "retained_bytes": 0,
+                "cap_bytes": 8388608,
+                "skipped_sources": 0,
+                "scope": "this Prepared only; immutable version-bound parser pages; never a data cache"
+              },
+              "native_strategies": [
+                {
+                  "asset_id": "science",
+                  "task_reserved_bytes": 146985,
+                  "strategy": {
+                    "read_scope": "planned_windows",
+                    "retained_selection_bytes": 0,
+                    "decoded_cache_limit_bytes": 10240,
+                    "coalesced_groups": 0,
+                    "max_encoded_group_reservation_bytes": 0,
+                    "codec_working_bytes": 131072
+                  }
+                }
+              ]
+            },
+            "transport": {},
+            "decoded_source_chunks": 0,
+            "filled_source_chunks": 0,
+            "first_output_seconds": 0.000138708,
+            "assembly_seconds": 0.0,
+            "source_retrieval_seconds": 6.167000000000001e-06,
+            "allocation_seconds": null,
+            "copying_seconds": null,
+            "output_setup_seconds": 0.0,
+            "output_finalize_seconds": 0.0,
+            "output_io": null,
+            "native_materialized_bytes": null,
+            "source_data_requests": 6,
+            "source_data_bytes": 3057,
+            "chunks": 20,
+            "decoded_bytes": 7888,
+            "non_nodata_pixels": 3678,
+            "planning_seconds": 0.000134084,
+            "source_open_seconds": 5.4916e-05,
+            "read_decode_seconds": 0.00010166799999999999,
+            "sink_seconds": 7.120800000000001e-05,
+            "masking_seconds": 0.0,
+            "remote_requests": null,
+            "remote_bytes": null
+          }
+        }
+      },
+      {
+        "name": "profile-lzw-2-YES-LITTLE",
+        "passed": true,
+        "exit_code": 0,
+        "chunks": 20,
+        "peak_rss_bytes": 10452992,
+        "seconds": 0.0063245417550206184,
+        "last": {
+          "type": "complete",
+          "chunks": 20,
+          "valid_pixels": 3678,
+          "native_sum": 108424397.0,
+          "first_chunk_seconds": 0.000462459,
+          "prepare_seconds": 0.000245459,
+          "seconds": 0.000822,
+          "observed": {
+            "source_reads": [],
+            "scheduler": {
+              "workers": 1,
+              "per_host": 4,
+              "buffer_bytes": 16777216,
+              "reserved_bytes_peak": 147019,
+              "reader_state_reserved_bytes": 0,
+              "prepared_native_metadata_bytes": 0,
+              "prepared_v3_metadata_index_bytes": 0,
+              "active_workers_peak": 1,
+              "completed_tasks": 20,
+              "admitted_jobs": 1,
+              "cog_reader_scope": "selection",
+              "seconds": 0.000415583,
+              "order": "plan",
+              "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+              "native_buffers": [
+                {
+                  "asset_id": "science",
+                  "transport_encoded_capacity_peak_bytes": 579,
+                  "adapter_delivery_capacity_peak_bytes": 512,
+                  "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+                }
+              ],
+              "native_metadata": {
+                "retained_sources": 0,
+                "retained_bytes": 0,
+                "cap_bytes": 8388608,
+                "skipped_sources": 0,
+                "scope": "this Prepared only; immutable version-bound parser pages; never a data cache"
+              },
+              "native_strategies": [
+                {
+                  "asset_id": "science",
+                  "task_reserved_bytes": 147019,
+                  "strategy": {
+                    "read_scope": "planned_windows",
+                    "retained_selection_bytes": 0,
+                    "decoded_cache_limit_bytes": 10240,
+                    "coalesced_groups": 0,
+                    "max_encoded_group_reservation_bytes": 0,
+                    "codec_working_bytes": 131072
+                  }
+                }
+              ]
+            },
+            "transport": {},
+            "decoded_source_chunks": 0,
+            "filled_source_chunks": 0,
+            "first_output_seconds": 0.000143625,
+            "assembly_seconds": 0.0,
+            "source_retrieval_seconds": 7.2920000000000015e-06,
+            "allocation_seconds": null,
+            "copying_seconds": null,
+            "output_setup_seconds": 0.0,
+            "output_finalize_seconds": 0.0,
+            "output_io": null,
+            "native_materialized_bytes": null,
+            "source_data_requests": 6,
+            "source_data_bytes": 3192,
+            "chunks": 20,
+            "decoded_bytes": 7888,
+            "non_nodata_pixels": 3678,
+            "planning_seconds": 0.000137625,
+            "source_open_seconds": 4.8625e-05,
+            "read_decode_seconds": 9.4583e-05,
+            "sink_seconds": 8.499799999999999e-05,
+            "masking_seconds": 0.0,
+            "remote_requests": null,
+            "remote_bytes": null
+          }
+        }
+      },
+      {
+        "name": "profile-lzw-2-YES-BIG",
+        "passed": true,
+        "exit_code": 0,
+        "chunks": 20,
+        "peak_rss_bytes": 10403840,
+        "seconds": 0.005875375121831894,
+        "last": {
+          "type": "complete",
+          "chunks": 20,
+          "valid_pixels": 3678,
+          "native_sum": 108424397.0,
+          "first_chunk_seconds": 0.000468292,
+          "prepare_seconds": 0.000241667,
+          "seconds": 0.000815542,
+          "observed": {
+            "source_reads": [],
+            "scheduler": {
+              "workers": 1,
+              "per_host": 4,
+              "buffer_bytes": 16777216,
+              "reserved_bytes_peak": 146985,
+              "reader_state_reserved_bytes": 0,
+              "prepared_native_metadata_bytes": 0,
+              "prepared_v3_metadata_index_bytes": 0,
+              "active_workers_peak": 1,
+              "completed_tasks": 20,
+              "admitted_jobs": 1,
+              "cog_reader_scope": "selection",
+              "seconds": 0.0004045,
+              "order": "plan",
+              "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+              "native_buffers": [
+                {
+                  "asset_id": "science",
+                  "transport_encoded_capacity_peak_bytes": 545,
+                  "adapter_delivery_capacity_peak_bytes": 512,
+                  "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+                }
+              ],
+              "native_metadata": {
+                "retained_sources": 0,
+                "retained_bytes": 0,
+                "cap_bytes": 8388608,
+                "skipped_sources": 0,
+                "scope": "this Prepared only; immutable version-bound parser pages; never a data cache"
+              },
+              "native_strategies": [
+                {
+                  "asset_id": "science",
+                  "task_reserved_bytes": 146985,
+                  "strategy": {
+                    "read_scope": "planned_windows",
+                    "retained_selection_bytes": 0,
+                    "decoded_cache_limit_bytes": 10240,
+                    "coalesced_groups": 0,
+                    "max_encoded_group_reservation_bytes": 0,
+                    "codec_working_bytes": 131072
+                  }
+                }
+              ]
+            },
+            "transport": {},
+            "decoded_source_chunks": 0,
+            "filled_source_chunks": 0,
+            "first_output_seconds": 0.000144375,
+            "assembly_seconds": 0.0,
+            "source_retrieval_seconds": 6.164999999999999e-06,
+            "allocation_seconds": null,
+            "copying_seconds": null,
+            "output_setup_seconds": 0.0,
+            "output_finalize_seconds": 0.0,
+            "output_io": null,
+            "native_materialized_bytes": null,
+            "source_data_requests": 6,
+            "source_data_bytes": 3057,
+            "chunks": 20,
+            "decoded_bytes": 7888,
+            "non_nodata_pixels": 3678,
+            "planning_seconds": 0.000135709,
+            "source_open_seconds": 5.0625e-05,
+            "read_decode_seconds": 9.545900000000001e-05,
+            "sink_seconds": 7.483300000000002e-05,
+            "masking_seconds": 0.0,
+            "remote_requests": null,
+            "remote_bytes": null
+          }
+        }
+      },
+      {
+        "name": "nodata-None",
+        "passed": true,
+        "exit_code": 0,
+        "chunks": 20,
+        "peak_rss_bytes": 10502144,
+        "seconds": 0.006122332997620106,
+        "last": {
+          "type": "complete",
+          "chunks": 20,
+          "valid_pixels": 3944,
+          "native_sum": 125856707.0,
+          "first_chunk_seconds": 0.000455584,
+          "prepare_seconds": 0.000245,
+          "seconds": 0.000810167,
+          "observed": {
+            "source_reads": [],
+            "scheduler": {
+              "workers": 1,
+              "per_host": 4,
+              "buffer_bytes": 16777216,
+              "reserved_bytes_peak": 146941,
+              "reader_state_reserved_bytes": 0,
+              "prepared_native_metadata_bytes": 0,
+              "prepared_v3_metadata_index_bytes": 0,
+              "active_workers_peak": 1,
+              "completed_tasks": 20,
+              "admitted_jobs": 1,
+              "cog_reader_scope": "selection",
+              "seconds": 0.000407625,
+              "order": "plan",
+              "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+              "native_buffers": [
+                {
+                  "asset_id": "science",
+                  "transport_encoded_capacity_peak_bytes": 501,
+                  "adapter_delivery_capacity_peak_bytes": 512,
+                  "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+                }
+              ],
+              "native_metadata": {
+                "retained_sources": 0,
+                "retained_bytes": 0,
+                "cap_bytes": 8388608,
+                "skipped_sources": 0,
+                "scope": "this Prepared only; immutable version-bound parser pages; never a data cache"
+              },
+              "native_strategies": [
+                {
+                  "asset_id": "science",
+                  "task_reserved_bytes": 146941,
+                  "strategy": {
+                    "read_scope": "planned_windows",
+                    "retained_selection_bytes": 0,
+                    "decoded_cache_limit_bytes": 10240,
+                    "coalesced_groups": 0,
+                    "max_encoded_group_reservation_bytes": 0,
+                    "codec_working_bytes": 131072
+                  }
+                }
+              ]
+            },
+            "transport": {},
+            "decoded_source_chunks": 0,
+            "filled_source_chunks": 0,
+            "first_output_seconds": 0.000138125,
+            "assembly_seconds": 0.0,
+            "source_retrieval_seconds": 6.749999999999996e-06,
+            "allocation_seconds": null,
+            "copying_seconds": null,
+            "output_setup_seconds": 0.0,
+            "output_finalize_seconds": 0.0,
+            "output_io": null,
+            "native_materialized_bytes": null,
+            "source_data_requests": 6,
+            "source_data_bytes": 2775,
+            "chunks": 20,
+            "decoded_bytes": 7888,
+            "non_nodata_pixels": 3944,
+            "planning_seconds": 0.000137584,
+            "source_open_seconds": 4.9875e-05,
+            "read_decode_seconds": 0.00011149900000000001,
+            "sink_seconds": 6.124999999999998e-05,
+            "masking_seconds": 0.0,
+            "remote_requests": null,
+            "remote_bytes": null
+          }
+        }
+      },
+      {
+        "name": "nodata-0",
+        "passed": true,
+        "exit_code": 0,
+        "chunks": 20,
+        "peak_rss_bytes": 10534912,
+        "seconds": 0.005875875242054462,
+        "last": {
+          "type": "complete",
+          "chunks": 20,
+          "valid_pixels": 3944,
+          "native_sum": 125856707.0,
+          "first_chunk_seconds": 0.000470083,
+          "prepare_seconds": 0.000257416,
+          "seconds": 0.000816416,
+          "observed": {
+            "source_reads": [],
+            "scheduler": {
+              "workers": 1,
+              "per_host": 4,
+              "buffer_bytes": 16777216,
+              "reserved_bytes_peak": 146941,
+              "reader_state_reserved_bytes": 0,
+              "prepared_native_metadata_bytes": 0,
+              "prepared_v3_metadata_index_bytes": 0,
+              "active_workers_peak": 1,
+              "completed_tasks": 20,
+              "admitted_jobs": 1,
+              "cog_reader_scope": "selection",
+              "seconds": 0.000406583,
+              "order": "plan",
+              "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+              "native_buffers": [
+                {
+                  "asset_id": "science",
+                  "transport_encoded_capacity_peak_bytes": 501,
+                  "adapter_delivery_capacity_peak_bytes": 512,
+                  "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+                }
+              ],
+              "native_metadata": {
+                "retained_sources": 0,
+                "retained_bytes": 0,
+                "cap_bytes": 8388608,
+                "skipped_sources": 0,
+                "scope": "this Prepared only; immutable version-bound parser pages; never a data cache"
+              },
+              "native_strategies": [
+                {
+                  "asset_id": "science",
+                  "task_reserved_bytes": 146941,
+                  "strategy": {
+                    "read_scope": "planned_windows",
+                    "retained_selection_bytes": 0,
+                    "decoded_cache_limit_bytes": 10240,
+                    "coalesced_groups": 0,
+                    "max_encoded_group_reservation_bytes": 0,
+                    "codec_working_bytes": 131072
+                  }
+                }
+              ]
+            },
+            "transport": {},
+            "decoded_source_chunks": 0,
+            "filled_source_chunks": 0,
+            "first_output_seconds": 0.000142333,
+            "assembly_seconds": 0.0,
+            "source_retrieval_seconds": 6.708000000000002e-06,
+            "allocation_seconds": null,
+            "copying_seconds": null,
+            "output_setup_seconds": 0.0,
+            "output_finalize_seconds": 0.0,
+            "output_io": null,
+            "native_materialized_bytes": null,
+            "source_data_requests": 6,
+            "source_data_bytes": 2775,
+            "chunks": 20,
+            "decoded_bytes": 7888,
+            "non_nodata_pixels": 3944,
+            "planning_seconds": 0.000144875,
+            "source_open_seconds": 5.3375e-05,
+            "read_decode_seconds": 0.00010620999999999999,
+            "sink_seconds": 6.433599999999999e-05,
+            "masking_seconds": 0.0,
+            "remote_requests": null,
+            "remote_bytes": null
+          }
+        }
+      },
+      {
+        "name": "pixel-is-point",
+        "passed": true,
+        "exit_code": 1,
+        "chunks": 0,
+        "peak_rss_bytes": 8716288,
+        "seconds": 0.005272083915770054,
+        "last": {
+          "type": "aborted",
+          "error": "prepare: native COG PixelIsPoint is outside the validated profile"
+        }
+      },
+      {
+        "name": "stripped",
+        "passed": true,
+        "exit_code": 1,
+        "chunks": 0,
+        "peak_rss_bytes": 8568832,
+        "seconds": 0.005334834102541208,
+        "last": {
+          "type": "aborted",
+          "error": "prepare: native COG requires tiled single-band MinIsBlack UInt16, top-left orientation, no alpha"
+        }
+      },
+      {
+        "name": "float",
+        "passed": true,
+        "exit_code": 1,
+        "chunks": 0,
+        "peak_rss_bytes": 8585216,
+        "seconds": 0.005085083190351725,
+        "last": {
+          "type": "aborted",
+          "error": "prepare: native COG requires tiled single-band MinIsBlack UInt16, top-left orientation, no alpha"
+        }
+      },
+      {
+        "name": "oversized-tile",
+        "passed": true,
+        "exit_code": 1,
+        "chunks": 0,
+        "peak_rss_bytes": 8732672,
+        "seconds": 0.006174707785248756,
+        "last": {
+          "type": "aborted",
+          "error": "prepare: native COG tile exceeds 2 MiB decode limit"
+        }
+      },
+      {
+        "name": "rotated",
+        "passed": true,
+        "exit_code": 1,
+        "chunks": 0,
+        "peak_rss_bytes": 8683520,
+        "seconds": 0.005315500311553478,
+        "last": {
+          "type": "aborted",
+          "error": "prepare: native COG transformation matrices are outside the validated profile"
+        }
+      },
+      {
+        "name": "explicit-mask",
+        "passed": true,
+        "exit_code": 1,
+        "chunks": 0,
+        "peak_rss_bytes": 8568832,
+        "seconds": 0.005147875286638737,
+        "last": {
+          "type": "aborted",
+          "error": "prepare: native COG explicit masks and SubIFDs are unsupported"
+        }
+      },
+      {
+        "name": "foreign-crs",
+        "passed": true,
+        "exit_code": 1,
+        "chunks": 0,
+        "peak_rss_bytes": 8847360,
+        "seconds": 0.005040499847382307,
+        "last": {
+          "type": "aborted",
+          "error": "prepare: native geographic geometry requires longitude [-180,180] and latitude [-80,80]"
+        }
+      },
+      {
+        "name": "band2",
+        "passed": true,
+        "exit_code": 1,
+        "chunks": 0,
+        "peak_rss_bytes": 8568832,
+        "seconds": 0.004903291817754507,
+        "last": {
+          "type": "aborted",
+          "error": "prepare: native COG supports one UInt16 band (index 1)"
+        }
+      },
+      {
+        "name": "buffer-bound",
+        "passed": true,
+        "exit_code": 1,
+        "chunks": 0,
+        "peak_rss_bytes": 10027008,
+        "seconds": 0.005505917128175497,
+        "last": {
+          "type": "aborted",
+          "error": "execution: one read operation exceeds the scheduler working buffer; increase buffer_bytes or reduce chunk size"
+        }
+      },
+      {
+        "name": "bad-magic",
+        "passed": true,
+        "exit_code": 1,
+        "chunks": 0,
+        "peak_rss_bytes": 8437760,
+        "seconds": 0.004897249862551689,
+        "last": {
+          "type": "aborted",
+          "error": "prepare: not a TIFF file: invalid magic bytes"
+        }
+      },
+      {
+        "name": "too-many-tags",
+        "passed": true,
+        "exit_code": 1,
+        "chunks": 0,
+        "peak_rss_bytes": 8486912,
+        "seconds": 0.005110249854624271,
+        "last": {
+          "type": "aborted",
+          "error": "prepare: invalid image layout: IFD entry count 65535 exceeds parse budget 256"
+        }
+      },
+      {
+        "name": "tag-value-overflow",
+        "passed": true,
+        "exit_code": 1,
+        "chunks": 0,
+        "peak_rss_bytes": 8503296,
+        "seconds": 0.004904207773506641,
+        "last": {
+          "type": "aborted",
+          "error": "prepare: invalid TIFF tag 324: value byte length 17179869180 exceeds parse budget 1048576"
+        }
+      },
+      {
+        "name": "ifd-cycle",
+        "passed": true,
+        "exit_code": 1,
+        "chunks": 0,
+        "peak_rss_bytes": 8519680,
+        "seconds": 0.0047513339668512344,
+        "last": {
+          "type": "aborted",
+          "error": "prepare: invalid image layout: IFD chain contains a loop at offset 3214"
+        }
+      },
+      {
+        "name": "invalid-xml",
+        "passed": true,
+        "exit_code": 1,
+        "chunks": 0,
+        "peak_rss_bytes": 8634368,
+        "seconds": 0.004971541929990053,
+        "last": {
+          "type": "aborted",
+          "error": "prepare: native COG malformed GDAL metadata XML"
+        }
+      },
+      {
+        "name": "unknown-compression",
+        "passed": true,
+        "exit_code": 1,
+        "chunks": 0,
+        "peak_rss_bytes": 8568832,
+        "seconds": 0.004944750107824802,
+        "last": {
+          "type": "aborted",
+          "error": "prepare: native COG supports lossless uncompressed/LZW/Deflate with predictor 1/2 only"
+        }
+      },
+      {
+        "name": "bad-geokeys",
+        "passed": true,
+        "exit_code": 1,
+        "chunks": 0,
+        "peak_rss_bytes": 8519680,
+        "seconds": 0.005044375080615282,
+        "last": {
+          "type": "aborted",
+          "error": "prepare: native COG range outside object"
+        }
+      },
+      {
+        "name": "tile-outside-file",
+        "passed": true,
+        "exit_code": 1,
+        "chunks": 0,
+        "peak_rss_bytes": 8732672,
+        "seconds": 0.00506241712719202,
+        "last": {
+          "type": "aborted",
+          "error": "prepare: native COG sparse/oversized/out-of-bounds tile"
+        }
+      },
+      {
+        "name": "corrupt-deflate",
+        "passed": true,
+        "exit_code": 1,
+        "chunks": 0,
+        "peak_rss_bytes": 10338304,
+        "seconds": 0.0051827081479132175,
+        "last": {
+          "type": "aborted",
+          "error": "execution: decompression failed for strip/tile 0: deflate: corrupt deflate stream"
+        }
+      },
+      {
+        "name": "truncated-file",
+        "passed": true,
+        "exit_code": 1,
+        "chunks": 0,
+        "peak_rss_bytes": 8519680,
+        "seconds": 0.0051132082007825375,
+        "last": {
+          "type": "aborted",
+          "error": "prepare: native COG range outside object"
+        }
+      },
+      {
+        "name": "decoded-length",
+        "passed": true,
+        "exit_code": 1,
+        "chunks": 0,
+        "peak_rss_bytes": 8749056,
+        "seconds": 0.00502687506377697,
+        "last": {
+          "type": "aborted",
+          "error": "prepare: native COG sparse/oversized/out-of-bounds tile"
+        }
+      },
+      {
+        "name": "deflate-output-limit",
+        "passed": true,
+        "exit_code": 1,
+        "chunks": 0,
+        "peak_rss_bytes": 10338304,
+        "seconds": 0.0057496665976941586,
+        "last": {
+          "type": "aborted",
+          "error": "execution: decompression failed for strip/tile 0: deflate: decoded block exceeds TIFF block budget 2048"
+        }
+      },
+      {
+        "name": "bigtiff-ifd-overflow",
+        "passed": true,
+        "exit_code": 1,
+        "chunks": 0,
+        "peak_rss_bytes": 8470528,
+        "seconds": 0.0052212500013411045,
+        "last": {
+          "type": "aborted",
+          "error": "prepare: invalid image layout: IFD entry count 18446744073709551615 exceeds parse budget 256"
+        }
+      },
+      {
+        "name": "http-correct",
+        "passed": true,
+        "exit_code": 0,
+        "chunks": 20,
+        "peak_rss_bytes": 14057472,
+        "seconds": 0.01541895791888237,
+        "last": {
+          "type": "complete",
+          "chunks": 20,
+          "valid_pixels": 3678,
+          "native_sum": 108424397.0,
+          "first_chunk_seconds": 0.008125292,
+          "prepare_seconds": 0.006740417,
+          "seconds": 0.010657208,
+          "observed": {
+            "source_reads": [],
+            "scheduler": {
+              "workers": 1,
+              "per_host": 4,
+              "buffer_bytes": 16777216,
+              "reserved_bytes_peak": 150763,
+              "reader_state_reserved_bytes": 0,
+              "prepared_native_metadata_bytes": 3822,
+              "prepared_v3_metadata_index_bytes": 0,
+              "active_workers_peak": 1,
+              "completed_tasks": 20,
+              "admitted_jobs": 1,
+              "cog_reader_scope": "selection",
+              "seconds": 0.002240834,
+              "order": "plan",
+              "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+              "native_buffers": [
+                {
+                  "asset_id": "science",
+                  "transport_encoded_capacity_peak_bytes": 501,
+                  "adapter_delivery_capacity_peak_bytes": 512,
+                  "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+                }
+              ],
+              "native_metadata": {
+                "retained_sources": 1,
+                "retained_bytes": 3822,
+                "cap_bytes": 8388608,
+                "skipped_sources": 0,
+                "scope": "this Prepared only; immutable version-bound parser pages; never a data cache"
+              },
+              "native_strategies": [
+                {
+                  "asset_id": "science",
+                  "task_reserved_bytes": 146941,
+                  "strategy": {
+                    "read_scope": "planned_windows",
+                    "retained_selection_bytes": 0,
+                    "decoded_cache_limit_bytes": 10240,
+                    "coalesced_groups": 0,
+                    "max_encoded_group_reservation_bytes": 0,
+                    "codec_working_bytes": 131072
+                  }
+                }
+              ]
+            },
+            "transport": {},
+            "decoded_source_chunks": 0,
+            "filled_source_chunks": 0,
+            "first_output_seconds": 0.000604709,
+            "assembly_seconds": 0.0,
+            "source_retrieval_seconds": 0.0015243330000000001,
+            "allocation_seconds": null,
+            "copying_seconds": null,
+            "output_setup_seconds": 0.0,
+            "output_finalize_seconds": 0.0,
+            "output_io": null,
+            "native_materialized_bytes": null,
+            "source_data_requests": 6,
+            "source_data_bytes": 2775,
+            "chunks": 20,
+            "decoded_bytes": 7888,
+            "non_nodata_pixels": 3678,
+            "planning_seconds": 0.006642208,
+            "source_open_seconds": 0.000260167,
+            "read_decode_seconds": 0.0016800880000000002,
+            "sink_seconds": 9.9083e-05,
+            "masking_seconds": 0.0,
+            "remote_requests": null,
+            "remote_bytes": null
+          }
+        },
+        "gets": 7,
+        "heads": 5
+      },
+      {
+        "name": "http-503-once",
+        "passed": true,
+        "exit_code": 0,
+        "chunks": 20,
+        "peak_rss_bytes": 14090240,
+        "seconds": 0.12998591596260667,
+        "last": {
+          "type": "complete",
+          "chunks": 20,
+          "valid_pixels": 3678,
+          "native_sum": 108424397.0,
+          "first_chunk_seconds": 0.119549416,
+          "prepare_seconds": 0.11708875,
+          "seconds": 0.123272916,
+          "observed": {
+            "source_reads": [],
+            "scheduler": {
+              "workers": 1,
+              "per_host": 4,
+              "buffer_bytes": 16777216,
+              "reserved_bytes_peak": 150763,
+              "reader_state_reserved_bytes": 0,
+              "prepared_native_metadata_bytes": 3822,
+              "prepared_v3_metadata_index_bytes": 0,
+              "active_workers_peak": 1,
+              "completed_tasks": 20,
+              "admitted_jobs": 1,
+              "cog_reader_scope": "selection",
+              "seconds": 0.003565709,
+              "order": "plan",
+              "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+              "native_buffers": [
+                {
+                  "asset_id": "science",
+                  "transport_encoded_capacity_peak_bytes": 501,
+                  "adapter_delivery_capacity_peak_bytes": 512,
+                  "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+                }
+              ],
+              "native_metadata": {
+                "retained_sources": 1,
+                "retained_bytes": 3822,
+                "cap_bytes": 8388608,
+                "skipped_sources": 0,
+                "scope": "this Prepared only; immutable version-bound parser pages; never a data cache"
+              },
+              "native_strategies": [
+                {
+                  "asset_id": "science",
+                  "task_reserved_bytes": 146941,
+                  "strategy": {
+                    "read_scope": "planned_windows",
+                    "retained_selection_bytes": 0,
+                    "decoded_cache_limit_bytes": 10240,
+                    "coalesced_groups": 0,
+                    "max_encoded_group_reservation_bytes": 0,
+                    "codec_working_bytes": 131072
+                  }
+                }
+              ]
+            },
+            "transport": {},
+            "decoded_source_chunks": 0,
+            "filled_source_chunks": 0,
+            "first_output_seconds": 0.000996959,
+            "assembly_seconds": 0.0,
+            "source_retrieval_seconds": 0.002378043,
+            "allocation_seconds": null,
+            "copying_seconds": null,
+            "output_setup_seconds": 0.0,
+            "output_finalize_seconds": 0.0,
+            "output_io": null,
+            "native_materialized_bytes": null,
+            "source_data_requests": 6,
+            "source_data_bytes": 2775,
+            "chunks": 20,
+            "decoded_bytes": 7888,
+            "non_nodata_pixels": 3678,
+            "planning_seconds": 0.116897,
+            "source_open_seconds": 0.000421959,
+            "read_decode_seconds": 0.0026074569999999997,
+            "sink_seconds": 0.00016833399999999996,
+            "masking_seconds": 0.0,
+            "remote_requests": null,
+            "remote_bytes": null
+          }
+        },
+        "gets": 8,
+        "heads": 5
+      },
+      {
+        "name": "http-short-once",
+        "passed": true,
+        "exit_code": 0,
+        "chunks": 20,
+        "peak_rss_bytes": 14155776,
+        "seconds": 0.14360200008377433,
+        "last": {
+          "type": "complete",
+          "chunks": 20,
+          "valid_pixels": 3678,
+          "native_sum": 108424397.0,
+          "first_chunk_seconds": 0.125944416,
+          "prepare_seconds": 0.123344916,
+          "seconds": 0.130738958,
+          "observed": {
+            "source_reads": [],
+            "scheduler": {
+              "workers": 1,
+              "per_host": 4,
+              "buffer_bytes": 16777216,
+              "reserved_bytes_peak": 150763,
+              "reader_state_reserved_bytes": 0,
+              "prepared_native_metadata_bytes": 3822,
+              "prepared_v3_metadata_index_bytes": 0,
+              "active_workers_peak": 1,
+              "completed_tasks": 20,
+              "admitted_jobs": 1,
+              "cog_reader_scope": "selection",
+              "seconds": 0.00407175,
+              "order": "plan",
+              "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+              "native_buffers": [
+                {
+                  "asset_id": "science",
+                  "transport_encoded_capacity_peak_bytes": 501,
+                  "adapter_delivery_capacity_peak_bytes": 512,
+                  "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+                }
+              ],
+              "native_metadata": {
+                "retained_sources": 1,
+                "retained_bytes": 3822,
+                "cap_bytes": 8388608,
+                "skipped_sources": 0,
+                "scope": "this Prepared only; immutable version-bound parser pages; never a data cache"
+              },
+              "native_strategies": [
+                {
+                  "asset_id": "science",
+                  "task_reserved_bytes": 146941,
+                  "strategy": {
+                    "read_scope": "planned_windows",
+                    "retained_selection_bytes": 0,
+                    "decoded_cache_limit_bytes": 10240,
+                    "coalesced_groups": 0,
+                    "max_encoded_group_reservation_bytes": 0,
+                    "codec_working_bytes": 131072
+                  }
+                }
+              ]
+            },
+            "transport": {},
+            "decoded_source_chunks": 0,
+            "filled_source_chunks": 0,
+            "first_output_seconds": 0.001085209,
+            "assembly_seconds": 0.0,
+            "source_retrieval_seconds": 0.002657708,
+            "allocation_seconds": null,
+            "copying_seconds": null,
+            "output_setup_seconds": 0.0,
+            "output_finalize_seconds": 0.0,
+            "output_io": null,
+            "native_materialized_bytes": null,
+            "source_data_requests": 6,
+            "source_data_bytes": 2775,
+            "chunks": 20,
+            "decoded_bytes": 7888,
+            "non_nodata_pixels": 3678,
+            "planning_seconds": 0.123085625,
+            "source_open_seconds": 0.000455958,
+            "read_decode_seconds": 0.0029372510000000005,
+            "sink_seconds": 0.000241083,
+            "masking_seconds": 0.0,
+            "remote_requests": null,
+            "remote_bytes": null
+          }
+        },
+        "gets": 8,
+        "heads": 5
+      },
+      {
+        "name": "http-503",
+        "passed": true,
+        "exit_code": 1,
+        "chunks": 0,
+        "peak_rss_bytes": 12140544,
+        "seconds": 0.34910662518814206,
+        "last": {
+          "type": "aborted",
+          "error": "prepare: native COG range failed after bounded retries"
+        },
+        "gets": 3,
+        "heads": 2
+      },
+      {
+        "name": "http-short",
+        "passed": true,
+        "exit_code": 1,
+        "chunks": 0,
+        "peak_rss_bytes": 12206080,
+        "seconds": 0.34745329106226563,
+        "last": {
+          "type": "aborted",
+          "error": "prepare: native COG range failed after bounded retries"
+        },
+        "gets": 3,
+        "heads": 2
+      },
+      {
+        "name": "http-200",
+        "passed": true,
+        "exit_code": 1,
+        "chunks": 0,
+        "peak_rss_bytes": 12058624,
+        "seconds": 0.023438249714672565,
+        "last": {
+          "type": "aborted",
+          "error": "prepare: native COG invalid range response or source version conflict"
+        },
+        "gets": 1,
+        "heads": 2
+      },
+      {
+        "name": "http-range",
+        "passed": true,
+        "exit_code": 1,
+        "chunks": 0,
+        "peak_rss_bytes": 12025856,
+        "seconds": 0.018627666868269444,
+        "last": {
+          "type": "aborted",
+          "error": "prepare: native COG invalid range response or source version conflict"
+        },
+        "gets": 1,
+        "heads": 2
+      },
+      {
+        "name": "http-total",
+        "passed": true,
+        "exit_code": 1,
+        "chunks": 0,
+        "peak_rss_bytes": 12091392,
+        "seconds": 0.01601904071867466,
+        "last": {
+          "type": "aborted",
+          "error": "prepare: native COG invalid range response or source version conflict"
+        },
+        "gets": 1,
+        "heads": 2
+      },
+      {
+        "name": "http-length",
+        "passed": true,
+        "exit_code": 1,
+        "chunks": 0,
+        "peak_rss_bytes": 12075008,
+        "seconds": 0.015102916397154331,
+        "last": {
+          "type": "aborted",
+          "error": "prepare: native COG invalid range response or source version conflict"
+        },
+        "gets": 1,
+        "heads": 2
+      },
+      {
+        "name": "http-missing-etag",
+        "passed": true,
+        "exit_code": 1,
+        "chunks": 0,
+        "peak_rss_bytes": 12091392,
+        "seconds": 0.014129208866506815,
+        "last": {
+          "type": "aborted",
+          "error": "prepare: native COG invalid range response or source version conflict"
+        },
+        "gets": 1,
+        "heads": 2
+      },
+      {
+        "name": "http-wrong-etag",
+        "passed": true,
+        "exit_code": 1,
+        "chunks": 0,
+        "peak_rss_bytes": 12058624,
+        "seconds": 0.011384333949536085,
+        "last": {
+          "type": "aborted",
+          "error": "prepare: native COG invalid range response or source version conflict"
+        },
+        "gets": 1,
+        "heads": 2
+      },
+      {
+        "name": "http-encoding",
+        "passed": true,
+        "exit_code": 1,
+        "chunks": 0,
+        "peak_rss_bytes": 12042240,
+        "seconds": 0.009739583358168602,
+        "last": {
+          "type": "aborted",
+          "error": "prepare: native COG invalid range response or source version conflict"
+        },
+        "gets": 1,
+        "heads": 2
+      },
+      {
+        "name": "http-412",
+        "passed": true,
+        "exit_code": 1,
+        "chunks": 0,
+        "peak_rss_bytes": 12075008,
+        "seconds": 0.009985665790736675,
+        "last": {
+          "type": "aborted",
+          "error": "prepare: native COG invalid range response or source version conflict"
+        },
+        "gets": 1,
+        "heads": 2
+      },
+      {
+        "name": "late-remote-mutation",
+        "passed": true,
+        "exit_code": 1,
+        "chunks": 1,
+        "peak_rss_bytes": 14024704,
+        "seconds": 0.012265041004866362,
+        "last": {
+          "type": "aborted",
+          "error": "execution: native COG invalid range response or source version conflict"
+        }
+      },
+      {
+        "name": "cancel",
+        "passed": true,
+        "exit_code": 1,
+        "chunks": 1,
+        "peak_rss_bytes": 14008320,
+        "seconds": 0.012253833003342152,
+        "last": {
+          "type": "aborted",
+          "error": "execution: acquisition cancelled"
+        }
+      },
+      {
+        "name": "sink-failure",
+        "passed": true,
+        "exit_code": 1,
+        "chunks": 0,
+        "peak_rss_bytes": 14041088,
+        "seconds": 0.012457999866455793,
+        "last": {
+          "type": "aborted",
+          "error": "delivered chunk exceeds consumer payload budget"
+        }
+      },
+      {
+        "name": "late-local-mutation",
+        "passed": true,
+        "exit_code": 1,
+        "chunks": 20,
+        "peak_rss_bytes": 10485760,
+        "seconds": 0.018595625180751085,
+        "last": {
+          "type": "aborted",
+          "error": "source version conflict: local data or metadata changed since preparation; prepare again"
+        }
+      }
+    ],
+    "binary_sha256": "8f34f264a9b296494077f21cddad947b76cc7e7d74d2e455e04408d9d28320f5",
+    "harness_sha256": "dba776bcad99a6f42b33fde8a12aaa66069b65320e9630e43aef775ca25e5839"
+  },
+  "native_cog_exact": {
+    "passed": true,
+    "rows": [
+      {
+        "workload": "many-small",
+        "samples_compared_bit_for_bit": 147456,
+        "chunks": 16,
+        "complete": true,
+        "expected_sha256": "8985457d4a01eafc18bcad615d062f6ee09ec3d760948906110bb2de613b6a86"
+      },
+      {
+        "workload": "several-large",
+        "samples_compared_bit_for_bit": 25165824,
+        "chunks": 384,
+        "complete": true,
+        "expected_sha256": "dd407efabdd9c3875b6d961c9e1516a7f34fd9b3e005e31177653302ce170f6a"
+      },
+      {
+        "workload": "overlap-a",
+        "samples_compared_bit_for_bit": 3538944,
+        "chunks": 54,
+        "complete": true,
+        "expected_sha256": "95026d5d1f7fc0c5f5440329e95feaf40cbe7349950c2b2eb75513c15e255377"
+      },
+      {
+        "workload": "overlap-b",
+        "samples_compared_bit_for_bit": 3538944,
+        "chunks": 54,
+        "complete": true,
+        "expected_sha256": "5a9286e742fb743f2f1c5276cdd2328d1ec69f5a02cb15d5694b15abd14016ea"
+      }
+    ],
+    "mirror_index_sha256": "364121a9ef46437772834fae8a0d84797063320087bc1acbfdf154afb5e70122",
+    "binary_sha256": "c481c43f623b8983b780d6d5fa3d930c31abfa222854fa12829261529bd5c455",
+    "harness_sha256": "828bad54bf92a3abfe8f907b38e465777dfe49ea01bc064b5192285849fb6108"
+  },
+  "streaming_consumer": {
+    "results": [
+      {
+        "case": "two-remote-cogs",
+        "passed": true,
+        "chunks": 2,
+        "peak_rss_bytes": 13762560
+      },
+      {
+        "case": "cancel-after-delivery",
+        "passed": true
+      },
+      {
+        "case": "already-read-cog-mutated-after-delivery",
+        "passed": true,
+        "provisional_chunks": 2
+      },
+      {
+        "case": "catalog-consumer-and-post-delivery-mutation",
+        "passed": true,
+        "peak_rss_bytes": 15695872
+      },
+      {
+        "case": "two-remote-uint16-zarr",
+        "passed": true,
+        "chunks": 128,
+        "peak_rss_bytes": 20332544
+      },
+      {
+        "case": "zarr-mutated-after-delivery",
+        "passed": true
+      },
+      {
+        "case": "remote-float32-nan-reversed-swapped-axes",
+        "passed": true,
+        "chunks": 8,
+        "peak_rss_bytes": 16449536
+      }
+    ],
+    "consumer_sha256": "8f34f264a9b296494077f21cddad947b76cc7e7d74d2e455e04408d9d28320f5",
+    "rust_source_sha256": "869d44a05e017eb6a28b881d76fbf76805cf5cc9023d225cd9bb1069cf31f9a1",
+    "source_binding": "current source tree",
+    "rss_limit_bytes": 201326592,
+    "memory_scope": "consumer process RSS including runtime/GDAL; payload limit 2 MiB, queue 0, working budget per request"
+  }
+}

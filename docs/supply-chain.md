@@ -37,6 +37,20 @@ macOS/Linux still use the established native codec stack. Gzip remains flate2
 1.1.10; native COG still selects zlib-rs 0.6.8. The root and separate consumer
 lockfiles are updated together. Python reference environments are unchanged.
 
+The v3 input path enables the already pinned sharding/Zstd implementations for
+reading in all feature builds. Direct `zstd =0.13.3` and `base64 =0.22.1` edges
+reuse existing locked packages: no registry version is added by input integration.
+The updated consumer lock records the same edges. These are codec/admission
+helpers around the established libraries, not new format implementations.
+
+Current input comparisons use a **separate testing-only** environment with
+Zarr-Python 3.4.1, xarray 2026.9.0 and NumPy 2.3.4, including current shard
+coalescing. [The exact freeze](zarr-v3-input/reference.txt) is separate from the
+older output/v2 reference environments and the acquisition runtime. It was
+installed for current-reader comparison, without the historical October 11
+cutoff; it is not covered by the older age inventory. Python remains absent
+from production acquisition dependencies. All versions are pinned for replay.
+
 The sections below retain the dependency history of the preceding milestones.
 
 ## STAC milestone

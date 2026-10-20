@@ -71,7 +71,7 @@ fn store(a: &Asset) -> Result<Arc<crate::storage::Objects>> {
 fn json(source: &crate::storage::Objects, key: &str) -> Result<serde_json::Value> {
     source.json(key)
 }
-fn name(path: &str) -> Result<&str> {
+pub(crate) fn name(path: &str) -> Result<&str> {
     let s = path.strip_prefix('/').unwrap_or(path);
     if s.is_empty()
         || s == "."
@@ -175,15 +175,16 @@ fn sizes(m: &serde_json::Value, k: &str) -> Result<Vec<usize>> {
         })
         .collect()
 }
-struct Dataset {
-    layout: Layout,
-    times: Vec<i64>,
-    x: Vec<f64>,
-    y: Vec<f64>,
-    root_attrs: serde_json::Value,
-    axes: [String; 2],
-    raw_times: Vec<i64>,
-    conventional: bool,
+pub(crate) struct Dataset {
+    pub(crate) layout: Layout,
+    pub(crate) times: Vec<chrono::DateTime<chrono::Utc>>,
+    pub(crate) x: Vec<f64>,
+    pub(crate) y: Vec<f64>,
+    pub(crate) root_attrs: serde_json::Value,
+    pub(crate) axes: [String; 2],
+    pub(crate) raw_times: Vec<i64>,
+    pub(crate) conventional: bool,
+    pub(crate) mapping: Option<(String, serde_json::Value)>,
 }
 fn inspect_on(r: &Request, s: Arc<crate::storage::Objects>) -> Result<Dataset> {
     let root = s.as_ref();
@@ -366,6 +367,10 @@ fn inspect_on(r: &Request, s: Arc<crate::storage::Objects>) -> Result<Dataset> {
             }
         }
     }
+    let times = times
+        .into_iter()
+        .map(|v| chrono::DateTime::from_timestamp(v, 0).expect("validated time"))
+        .collect();
     Ok(Dataset {
         layout: Layout {
             width: x.len(),
@@ -387,6 +392,7 @@ fn inspect_on(r: &Request, s: Arc<crate::storage::Objects>) -> Result<Dataset> {
         axes,
         raw_times,
         conventional,
+        mapping: None,
     })
 }
 pub(crate) fn plan_asset(a: &Asset, r: &Request, p: &mut Plan) -> Result<()> {
@@ -427,9 +433,7 @@ pub(crate) fn plan_asset_on(
     };
     let mut ti = Vec::new();
     for (i, t) in d.times.iter().enumerate() {
-        let datetime = chrono::DateTime::from_timestamp(*t, 0)
-            .ok_or("time outside supported timestamp range")?
-            .to_rfc3339();
+        let datetime = t.to_rfc3339();
         let mut observation = a.clone();
         observation.datetime = Some(datetime);
         if crate::planner::time_matches(&observation, &r.time)? {
@@ -550,9 +554,7 @@ pub(crate) fn plan_asset_on(
             timestamps: ti
                 .iter()
                 .map(|i| {
-                    chrono::DateTime::from_timestamp(d.times[*i], 0)
-                        .expect("validated timestamp")
-                        .to_rfc3339()
+                    d.times[*i].to_rfc3339()
                 })
                 .collect(),
             dimensions: Some(DimensionSelection {
@@ -628,20 +630,33 @@ type LoggedObjects = zarrs::storage::storage_adapter::usage_log::UsageLogStorage
 /// Prepared reader for one selected Zarr array. Its storage handles and usage
 /// trace stay on the worker that owns it; each planned source chunk is decoded
 /// at most once as the scheduler calls `execute_node`.
+enum Input {
+    V2 {
+        array: Array<crate::zarr_decode::Checked<LoggedObjects>>,
+        timed: Arc<crate::zarr_io::Timed<crate::storage::Objects>>,
+    },
+    V3(crate::zarr_v3::Reader),
+}
 pub(crate) struct SelectedReader {
     asset_id: String,
     key_prefix: String,
-    array: Array<crate::zarr_decode::Checked<LoggedObjects>>,
-    timed: Arc<crate::zarr_io::Timed<crate::storage::Objects>>,
+    input: Input,
+    retrieval_seconds: f64,
     trace: Arc<std::sync::Mutex<ReadTrace>>,
-    dataset: Dataset,
+    dataset: Arc<Dataset>,
     layout: Layout,
     window: Window,
     dimensions: DimensionSelection,
     y_index: usize,
     x_index: usize,
 }
-
+fn dataset_on(r: &Request, a: &Asset, sources: &crate::storage::Sources) -> Result<Arc<Dataset>> {
+    if a.format == Format::ZarrV3 {
+        sources.v3.dataset(&a.id)
+    } else {
+        Ok(Arc::new(inspect_on(r, sources.get(a)?)?))
+    }
+}
 impl SelectedReader {
     pub(crate) fn new(
         r: &Request,
@@ -649,31 +664,39 @@ impl SelectedReader {
         sources: &crate::storage::Sources,
         selected: &Selected,
     ) -> Result<Self> {
-        let s = sources.get(a)?;
-        let d = inspect_on(r, s.clone())?;
+        let d = dataset_on(r, a, sources)?;
         let layout = selected.layout.as_ref().ok_or("missing layout")?;
         let Variable::Dataset { path } = &layout.variable else {
             return fail("missing dataset variable");
         };
         let path = name(path)?;
-        let timed = Arc::new(crate::zarr_io::Timed::new(s));
         let trace = Arc::new(std::sync::Mutex::new(ReadTrace::default()));
-        let logged = Arc::new(
-            zarrs::storage::storage_adapter::usage_log::UsageLogStorageAdapter::new(
-                timed.clone(),
-                trace.clone(),
-                String::new,
-            ),
-        );
-        let array = crate::zarr_decode::array(
-            logged,
-            path,
-            json(sources.get(a)?.as_ref(), &format!("{path}/.zarray"))?,
-            json(sources.get(a)?.as_ref(), &format!("{path}/.zattrs"))?,
-            &r.budget,
-        )?;
-        *trace.lock().map_err(|_| "trace lock poisoned")? = ReadTrace::default();
-        timed.reset();
+        let input = if a.format == Format::ZarrV3 {
+            Input::V3(crate::zarr_v3::Reader::new(
+                sources.v3.binding(&a.id, path)?,
+                &r.budget,
+            )?)
+        } else {
+            let s = sources.get(a)?;
+            let timed = Arc::new(crate::zarr_io::Timed::new(s.clone()));
+            let logged = Arc::new(
+                zarrs::storage::storage_adapter::usage_log::UsageLogStorageAdapter::new(
+                    timed.clone(),
+                    trace.clone(),
+                    String::new,
+                ),
+            );
+            let array = crate::zarr_decode::array(
+                logged,
+                path,
+                json(&s, &format!("{path}/.zarray"))?,
+                json(&s, &format!("{path}/.zattrs"))?,
+                &r.budget,
+            )?;
+            *trace.lock().map_err(|_| "trace lock poisoned")? = ReadTrace::default();
+            timed.reset();
+            Input::V2 { array, timed }
+        };
         let dims = selected
             .dimensions
             .as_ref()
@@ -684,19 +707,18 @@ impl SelectedReader {
             .iter()
             .position(|v| v == &d.axes[1])
             .ok_or("missing latitude/y dimension")?;
-        let xi = 3 - yi;
         Ok(Self {
             asset_id: a.id.clone(),
             key_prefix: format!("{path}/"),
-            array,
-            timed,
+            input,
+            retrieval_seconds: 0.,
             trace,
             dataset: d,
             layout: layout.clone(),
             window: selected.window.clone(),
             dimensions: dims,
             y_index: yi,
-            x_index: xi,
+            x_index: 3 - yi,
         })
     }
 
@@ -725,20 +747,38 @@ impl SelectedReader {
         let w = &self.window;
         let t = Instant::now();
         let idx = indices.iter().map(|v| *v as u64).collect::<Vec<_>>();
-        let native = if d.conventional {
-            crate::Pixels::Float32(self.array.retrieve_chunk_opt::<Vec<f32>>(&idx, &serial())?)
-        } else {
-            crate::Pixels::UInt16(self.array.retrieve_chunk_opt::<Vec<u16>>(&idx, &serial())?)
+        let (native, present) = match &self.input {
+            Input::V2 { array, .. } => {
+                let pixels = if layout.dtype == "<f4" {
+                    crate::Pixels::Float32(array.retrieve_chunk_opt::<Vec<f32>>(&idx, &serial())?)
+                } else {
+                    crate::Pixels::UInt16(array.retrieve_chunk_opt::<Vec<u16>>(&idx, &serial())?)
+                };
+                let present = self
+                    .trace
+                    .lock()
+                    .map_err(|_| "trace lock poisoned")?
+                    .keys
+                    .get(key)
+                    .is_some_and(|(_, b)| *b > 0);
+                (pixels, present)
+            }
+            Input::V3(reader) => {
+                let (pixels, present, bytes, seconds) = reader.read(indices)?;
+                self.retrieval_seconds += seconds;
+                if present {
+                    let mut trace = self.trace.lock().map_err(|_| "trace lock poisoned")?;
+                    trace.requests += 1;
+                    trace.bytes += bytes as u64;
+                    let entry = trace.keys.entry(key.clone()).or_default();
+                    entry.0 += 1;
+                    entry.1 += bytes as u64;
+                }
+                (pixels, present)
+            }
         };
         report.read_decode_seconds += t.elapsed().as_secs_f64();
-        if self
-            .trace
-            .lock()
-            .map_err(|_| "trace lock poisoned")?
-            .keys
-            .get(key)
-            .is_some_and(|(_, bytes)| *bytes > 0)
-        {
+        if present {
             report.decoded_source_chunks += 1;
         } else {
             report.filled_source_chunks += 1;
@@ -761,7 +801,7 @@ impl SelectedReader {
                     let height = (y1 - y).min(r.budget.chunk_edge);
                     let assembly = Instant::now();
                     let alloc = Instant::now();
-                    let mut pixels = if d.conventional {
+                    let mut pixels = if layout.dtype == "<f4" {
                         crate::Pixels::Float32(vec![f32::NAN; width * height])
                     } else {
                         crate::Pixels::UInt16(vec![0; width * height])
@@ -796,11 +836,7 @@ impl SelectedReader {
                     let chunk = crate::Chunk {
                         node_id: node.id,
                         asset_id: self.asset_id.clone(),
-                        datetime: Some(
-                            chrono::DateTime::from_timestamp(d.times[ti], 0)
-                                .ok_or("invalid time")?
-                                .to_rfc3339(),
-                        ),
+                        datetime: Some(d.times[ti].to_rfc3339()),
                         variable: layout.variable.clone(),
                         indices: vec![ti],
                         transform: crate::spatial::window_transform(layout, &window),
@@ -827,8 +863,13 @@ impl SelectedReader {
     }
 
     pub(crate) fn finish(&self, report: &mut crate::ExecutionReport) -> Result<()> {
-        report.source_retrieval_seconds =
-            Some(report.source_retrieval_seconds.unwrap_or(0.) + self.timed.read_seconds());
+        report.source_retrieval_seconds = Some(
+            report.source_retrieval_seconds.unwrap_or(0.)
+                + match &self.input {
+                    Input::V2 { timed, .. } => timed.read_seconds(),
+                    Input::V3(_) => self.retrieval_seconds,
+                },
+        );
         let trace = self.trace.lock().map_err(|_| "trace lock poisoned")?;
         report.source_data_requests =
             Some(report.source_data_requests.unwrap_or(0) + trace.requests);
@@ -891,28 +932,67 @@ fn output_array(
     path: &str,
     shape: Vec<usize>,
     chunks: Vec<usize>,
+    format: &Format,
 ) -> Result<Array<OutputStore>> {
-    let mut m = json(source, &format!("{path}/.zarray"))?;
-    // Source storage filters have already been decoded. Do not quantize twice.
+    let (mut m, mut attrs) = if *format == Format::ZarrV3 {
+        let original = source.json(&format!("{path}/zarr.json"))?;
+        let dtype = match original["data_type"].as_str() {
+            Some("uint16") => "<u2",
+            Some("float32") => "<f4",
+            Some("float64") => "<f8",
+            Some("int64") => "<i8",
+            _ => return fail("unsupported v3 output dtype"),
+        };
+        let mut attrs = crate::zarr_v3::attrs(source, path)?;
+        attrs["_ARRAY_DIMENSIONS"] = original["dimension_names"].clone();
+        // V3 storage fill is a valid value unless CF explicitly marks it missing.
+        // V2 materialization records that CF marker and keeps the original v3
+        // storage metadata separately in the completion manifest.
+        let fill = if shape.len() == 3 {
+            crate::zarr_v3::missing(&attrs, dtype)?
+                .map(|n| {
+                    if n.is_nan() {
+                        serde_json::json!("NaN")
+                    } else if dtype == "<u2" {
+                        serde_json::json!(n as u16)
+                    } else {
+                        serde_json::json!(n)
+                    }
+                })
+                .unwrap_or(serde_json::Value::Null)
+        } else {
+            serde_json::Value::Null
+        };
+        for key in ["_FillValue", "missing_value"] {
+            if attrs.get(key).is_some() {
+                attrs[key] = fill.clone();
+            }
+        }
+        (
+            serde_json::json!({"zarr_format":2,"shape":shape,"chunks":chunks,"dtype":dtype,"compressor":null,"filters":null,"fill_value":fill,"order":"C","dimension_separator":"."}),
+            attrs,
+        )
+    } else {
+        (
+            json(source, &format!("{path}/.zarray"))?,
+            json(source, &format!("{path}/.zattrs"))?,
+        )
+    };
     m["filters"] = serde_json::Value::Null;
     m["shape"] = serde_json::json!(shape);
     m["chunks"] = serde_json::json!(chunks);
-    // zarrs owns metadata validation, chunk encoding and writing.
     let mut array =
         Array::new_with_metadata(target, &format!("/{path}"), serde_json::from_value(m)?)?;
-    let mut attrs = json(source, &format!("{path}/.zattrs"))?;
     if attrs["_ARRAY_DIMENSIONS"]
         .as_array()
         .is_some_and(|v| v.len() == 3)
         && matches!(
             attrs["_ARRAY_DIMENSIONS"][1].as_str(),
-            Some("longitude" | "lon")
+            Some("longitude" | "lon" | "x")
         )
     {
-        attrs["_ARRAY_DIMENSIONS"] = {
-            let dims = attrs["_ARRAY_DIMENSIONS"].as_array().unwrap();
-            serde_json::json!([dims[0], dims[2], dims[1]])
-        };
+        let dims = attrs["_ARRAY_DIMENSIONS"].as_array().unwrap();
+        attrs["_ARRAY_DIMENSIONS"] = serde_json::json!([dims[0], dims[2], dims[1]]);
     }
     *array.attributes_mut() = serde_json::from_value(attrs)?;
     array.store_metadata_opt(
@@ -993,7 +1073,7 @@ pub(crate) fn fetch_on(
                 continue;
             }
             let source_store = sources.get(a)?;
-            let d = inspect_on(r, source_store.clone())?;
+            let d = dataset_on(r, a, sources)?;
             let s = Arc::new(OutputStore::new(Arc::new(Metrics::new(Arc::new(
                 Store::new(root.join(format!("{}.zarr", a.id)))?,
             )))));
@@ -1009,14 +1089,14 @@ pub(crate) fn fetch_on(
             for sel in &selected {
                 if let Variable::Dataset { path } = &sel.layout.as_ref().unwrap().variable {
                     let n = name(path)?;
-                    source_arrays.insert(n.into(),serde_json::json!({"metadata":json(&source_store,&format!("{n}/.zarray"))?,"attributes":json(&source_store,&format!("{n}/.zattrs"))?}));
+                    source_arrays.insert(n.into(), if a.format==Format::ZarrV3 { source_store.json(&format!("{n}/zarr.json"))? } else { serde_json::json!({"metadata":json(&source_store,&format!("{n}/.zarray"))?,"attributes":json(&source_store,&format!("{n}/.zattrs"))?}) });
                 }
             }
             original_metadata.insert(
                 a.id.clone(),
                 serde_json::json!({"group_attributes":d.root_attrs,"arrays":source_arrays}),
             );
-            let mut attrs = d.root_attrs;
+            let mut attrs = d.root_attrs.clone();
             if d.conventional {
                 for (axis, values, start, count) in
                     [("lon", &d.x, w.x, w.width), ("lat", &d.y, w.y, w.height)]
@@ -1059,10 +1139,7 @@ pub(crate) fn fetch_on(
                     ("time_coverage_end", *indices.last().unwrap()),
                 ] {
                     if attrs.get(key).is_some() {
-                        attrs[key] =
-                            serde_json::json!(chrono::DateTime::from_timestamp(d.times[ti], 0)
-                                .unwrap()
-                                .to_rfc3339());
+                        attrs[key] = serde_json::json!(d.times[ti].to_rfc3339());
                     }
                 }
                 attrs
@@ -1070,7 +1147,7 @@ pub(crate) fn fetch_on(
                     .unwrap()
                     .remove("time_coverage_duration");
             }
-            if !d.conventional {
+            if !d.conventional || attrs["tile_ripper_grid"].is_object() {
                 attrs["tile_ripper_grid"]["transform"] =
                     serde_json::json!(crate::spatial::window_transform(&d.layout, w));
             }
@@ -1087,6 +1164,7 @@ pub(crate) fn fetch_on(
                     axis,
                     vec![values.len()],
                     vec![values.len()],
+                    &a.format,
                 )?;
                 ar.store_array_subset_opt(&ar.subset_all(), values, &serial())?;
             }
@@ -1097,8 +1175,26 @@ pub(crate) fn fetch_on(
                 "time",
                 vec![times.len()],
                 vec![times.len()],
+                &a.format,
             )?;
             ar.store_array_subset_opt(&ar.subset_all(), &times, &serial())?;
+            if let Some((mapping, attrs)) = &d.mapping {
+                let mut ar = Array::new_with_metadata(
+                    s.clone(),
+                    &format!("/{mapping}"),
+                    serde_json::from_value(
+                        serde_json::json!({"zarr_format":2,"shape":[],"chunks":[],"dtype":"<i8","compressor":null,"filters":null,"fill_value":null,"order":"C"}),
+                    )?,
+                )?;
+                let mut attrs = attrs.clone();
+                attrs["_ARRAY_DIMENSIONS"] = serde_json::json!([]);
+                *ar.attributes_mut() = serde_json::from_value(attrs)?;
+                ar.store_metadata_opt(
+                    &zarrs::array::ArrayMetadataOptions::default()
+                        .with_include_zarrs_metadata(false),
+                )?;
+                ar.store_chunk_opt(&[], &[0i64], &serial())?;
+            }
             for sel in selected {
                 let Variable::Dataset { path } = &sel.layout.as_ref().unwrap().variable else {
                     unreachable!()
@@ -1114,6 +1210,7 @@ pub(crate) fn fetch_on(
                         r.budget.chunk_edge.min(w.height),
                         r.budget.chunk_edge.min(w.width),
                     ],
+                    &a.format,
                 )?;
                 outputs.insert(
                     (a.id.clone(), n.to_string()),

@@ -1,0 +1,68 @@
+[
+  {
+    "sharded": false,
+    "codec": "blosc-lz4-bitshuffle",
+    "index_crc": true,
+    "samples": 1728,
+    "valid": 1695,
+    "chunks": 144
+  },
+  {
+    "sharded": false,
+    "codec": "blosc-zstd-bitshuffle",
+    "index_crc": true,
+    "samples": 1728,
+    "valid": 1695,
+    "chunks": 144
+  },
+  {
+    "sharded": false,
+    "codec": "blosc-zstd-noshuffle",
+    "index_crc": true,
+    "samples": 1728,
+    "valid": 1695,
+    "chunks": 144
+  },
+  {
+    "sharded": true,
+    "codec": "blosc-lz4-bitshuffle",
+    "index_crc": true,
+    "samples": 1728,
+    "valid": 1695,
+    "chunks": 144
+  },
+  {
+    "sharded": true,
+    "codec": "blosc-zstd-bitshuffle",
+    "index_crc": true,
+    "samples": 1728,
+    "valid": 1695,
+    "chunks": 144
+  },
+  {
+    "sharded": true,
+    "codec": "blosc-zstd-noshuffle",
+    "index_crc": true,
+    "samples": 1728,
+    "valid": 1695,
+    "chunks": 144
+  },
+  {
+    "sharded": true,
+    "codec": "raw",
+    "index_crc": false,
+    "samples": 1728,
+    "valid": 1695,
+    "chunks": 144
+  },
+  {
+    "rejected": "outer-gzip",
+    "before_delivery": true,
+    "error": "Error: \"prepare: outer codecs require full-shard retrieval; this selective profile refuses them\"\n"
+  },
+  {
+    "rejected": "non-time-first",
+    "before_delivery": true,
+    "error": "Error: \"prepare: v3 profile requires time-first rank-three arrays\"\n"
+  }
+]

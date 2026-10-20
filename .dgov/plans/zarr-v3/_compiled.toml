@@ -1,6 +1,6 @@
 [plan]
 name = "zarr-v3"
-source_mtime_max = "2026-10-20T21:12:28.557956Z"
+source_mtime_max = "2026-10-20T22:34:47.631874Z"
 sop_set_hash = ""
 
 [tasks."tasks/input.input"]
@@ -17,7 +17,7 @@ commit_message = ""
 depends_on = ["tasks/output.output"]
 timeout_s = 0
 test_cmd = "cargo test --locked --all-features"
-files.create = ["src/zarr_v3.rs", "tests/zarr_v3.rs", "bench/zarr_v3_acquisition.py", "docs/zarr-v3/report.md"]
+files.create = ["src/zarr_v3.rs", "tests/zarr_v3.rs", "bench/zarr_v3_input.py", "bench/zarr_v3_compare.py", "bench/zarr_v3_public.py", "bench/zarr_v3_regressions.py", "bench/zarr_v3_linux.sh", "examples/zarr_subset_oracle.rs", "examples/zarr-v3-gfs.json", "docs/zarr-v3-input/report.md", "docs/zarr-v3-input/workflow.md"]
 files.edit = ["Cargo.toml", "Cargo.lock", "src/lib.rs", "src/model.rs", "src/planner.rs", "src/storage.rs", "src/zarr.rs", "src/zarr_acquire.rs", "src/zarr_decode.rs", "src/scheduler.rs", "src/acquisition.rs", "src/execute.rs", "README.md", "docs/supply-chain.md"]
 
 [tasks."tasks/output.output"]

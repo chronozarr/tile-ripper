@@ -20,6 +20,103 @@ pub(crate) struct Checked<T> {
     blosc_format: u8,
     bitshuffle: bool,
 }
+/// Standard v3 ordinary chunks, including the inner chunks selected by zarrs.
+/// The existing fixed-output admission is shared with v2; no format decoder is
+/// replaced. Only gzip/Zstd are bounded before the bytes codec sees the result.
+pub(crate) fn array_v3<T: ReadableStorageTraits + 'static>(
+    inner: Arc<T>,
+    path: &str,
+    mut metadata: serde_json::Value,
+    budget: &Budget,
+) -> Result<Array<Checked<T>>> {
+    let element = match metadata["data_type"].as_str() {
+        Some("uint16") => 2,
+        Some("float32") => 4,
+        Some("float64" | "int64") => 8,
+        _ => return fail("v3 admitted dtypes are UInt16/Float32, Float64/Int64 coordinates"),
+    };
+    let chunks = metadata["chunk_grid"]["configuration"]["chunk_shape"]
+        .as_array()
+        .ok_or("missing regular chunk shape")?;
+    if chunks.is_empty() || chunks.len() > 3 {
+        return fail("unsupported v3 chunk rank");
+    }
+    let expected = chunks.iter().try_fold(element, |n: usize, c| {
+        let size = c
+            .as_u64()
+            .and_then(|v| usize::try_from(v).ok())
+            .filter(|v| *v > 0)
+            .ok_or("invalid v3 chunk dimension")?;
+        n.checked_mul(size).ok_or("v3 chunk size overflow")
+    })?;
+    if expected > budget.buffer_bytes / 2 {
+        return fail("decoded v3 inner chunk exceeds half buffer_bytes");
+    }
+    if metadata["chunk_grid"]["name"] != "regular"
+        || metadata
+            .get("storage_transformers")
+            .is_some_and(|v| v.as_array().is_none_or(|a| !a.is_empty()))
+    {
+        return fail("v3 requires a regular grid without storage transformers");
+    }
+    let codecs = metadata["codecs"].as_array().ok_or("missing v3 codecs")?;
+    if codecs.is_empty()
+        || codecs.len() > 2
+        || codecs[0]["name"] != "bytes"
+        || codecs[0]["configuration"]["endian"] != "little"
+    {
+        return fail("v3 requires little-endian bytes and at most one admitted lossless codec");
+    }
+    let codec = codecs
+        .get(1)
+        .map(|v| v["name"].as_str().ok_or("invalid codec name"))
+        .transpose()?
+        .map(str::to_owned);
+    let config = codecs
+        .get(1)
+        .map(|v| v["configuration"].clone())
+        .unwrap_or_default();
+    match codec.as_deref() {
+        None => {}
+        Some("gzip") if config["level"].as_u64().is_some_and(|v| v <= 9) => {}
+        Some("zstd") => {}
+        Some("blosc")
+            if matches!(config["cname"].as_str(), Some("lz4" | "zstd"))
+                && matches!(
+                    config["shuffle"].as_str(),
+                    Some("noshuffle" | "shuffle" | "bitshuffle")
+                )
+                && config["typesize"].as_u64() == Some(element as u64)
+                && config["clevel"].as_u64().is_some_and(|v| v <= 9)
+                && config["blocksize"].as_u64() == Some(0) => {}
+        _ => return fail("unsupported v3 codec profile: bytes, gzip, Zstd or Blosc LZ4/Zstd"),
+    }
+    // Instantiate the original chain as well, so the library validates every
+    // codec field before removing a codec whose output is checked here.
+    let _ = Array::new_with_metadata(
+        inner.clone(),
+        &format!("/{path}"),
+        serde_json::from_value(metadata.clone())?,
+    )?;
+    if matches!(codec.as_deref(), Some("gzip" | "zstd")) {
+        metadata["codecs"].as_array_mut().unwrap().truncate(1);
+    }
+    let store = Arc::new(Checked {
+        inner,
+        prefix: format!("{path}/"),
+        expected,
+        cap: budget.buffer_bytes / 2,
+        codec,
+        element,
+        blosc_format: if config["cname"] == "zstd" { 4 } else { 1 },
+        bitshuffle: config["shuffle"] == "bitshuffle",
+    });
+    Ok(Array::new_with_metadata(
+        store,
+        &format!("/{path}"),
+        serde_json::from_value(metadata)?,
+    )?)
+}
 pub(crate) fn array<T: ReadableStorageTraits + 'static>(
     inner: Arc<T>,
     path: &str,
@@ -93,6 +190,24 @@ fn gzip(bytes: &[u8], expected: usize) -> Result<Vec<u8>> {
     }
     Ok(out)
 }
+fn zstd_chunk(bytes: &[u8], expected: usize) -> Result<Vec<u8>> {
+    let size =
+        zstd::zstd_safe::find_frame_compressed_size(bytes).map_err(|_| "invalid Zstd frame")?;
+    if size != bytes.len() {
+        return fail("trailing or concatenated Zstd frames unsupported");
+    }
+    if zstd::zstd_safe::get_frame_content_size(bytes)
+        .map_err(|_| "invalid Zstd content size")?
+        .is_some_and(|size| size != expected as u64)
+    {
+        return fail("Zstd frame content size differs from validated chunk size");
+    }
+    let decoded = zstd::bulk::decompress(bytes, expected)?;
+    if decoded.len() != expected {
+        return fail("Zstd decoded size differs from validated chunk size");
+    }
+    Ok(decoded)
+}
 impl<T: ReadableStorageTraits> ReadableStorageTraits for Checked<T> {
     fn get(&self, key: &s::StoreKey) -> std::result::Result<s::MaybeBytes, s::StorageError> {
         let result = (|| -> Result<s::MaybeBytes> {
@@ -105,7 +220,16 @@ impl<T: ReadableStorageTraits> ReadableStorageTraits for Checked<T> {
                 return fail("encoded object exceeds half buffer_bytes");
             }
             let Some(bytes) = self.inner.get(key)? else {
-                if ["time/", "x/", "y/", "latitude/", "longitude/"].contains(&self.prefix.as_str())
+                if [
+                    "time/",
+                    "x/",
+                    "y/",
+                    "latitude/",
+                    "longitude/",
+                    "lat/",
+                    "lon/",
+                ]
+                .contains(&self.prefix.as_str())
                 {
                     return fail("required coordinate chunk is missing");
                 }
@@ -119,6 +243,7 @@ impl<T: ReadableStorageTraits> ReadableStorageTraits for Checked<T> {
             }
             match self.codec.as_deref() {
                 Some("gzip") => Ok(Some(gzip(&bytes, self.expected)?.into())),
+                Some("zstd") => Ok(Some(zstd_chunk(&bytes, self.expected)?.into())),
                 Some("blosc") => {
                     if bytes.len() < 16 {
                         return fail("truncated Blosc header");
@@ -194,6 +319,18 @@ mod tests {
         let mut e = flate2::write::GzEncoder::new(Vec::new(), flate2::Compression::default());
         e.write_all(data).unwrap();
         e.finish().unwrap()
+    }
+    #[test]
+    fn zstd_fixed_output_rejects_size_bombs_crc_and_trailing_frames() {
+        let valid = zstd::bulk::compress(&[7; 32], 1).unwrap();
+        assert_eq!(zstd_chunk(&valid, 32).unwrap(), vec![7; 32]);
+        assert!(zstd_chunk(&valid[..valid.len() - 1], 32).is_err());
+        assert!(zstd_chunk(&valid, 31).is_err());
+        let mut two = valid.clone();
+        two.extend_from_slice(&valid);
+        assert!(zstd_chunk(&two, 32).is_err());
+        let bomb = zstd::bulk::compress(&vec![0; 16 * 1024 * 1024], 1).unwrap();
+        assert!(zstd_chunk(&bomb, 32).is_err());
     }
     #[test]
     fn fixed_allocation_rejects_bombs_truncation_crc_and_trailing_members() {

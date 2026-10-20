@@ -20,12 +20,14 @@ chrono = { version = "=0.4.42", default-features = false, features = ["std"] }
 stac = { version = "=0.17.6", features = ["std"] }
 stac-io = "=0.3.4"
 tokio = { version = "=1.48.0", features = ["rt"] }
-zarrs = { version = "=0.23.14", default-features = false, features = ["filesystem", "gzip", "blosc", "crc32c"] }
+zarrs = { version = "=0.23.14", default-features = false, features = ["filesystem", "gzip", "blosc", "crc32c", "sharding", "zstd"] }
 # Scoped copy of the existing filesystem dependency; see its patch note.
 zarrs_filesystem = { version = "=0.3.13", path = "vendor/zarrs_filesystem" }
 
 reqwest = { version = "=0.13.5", features = ["blocking"] }
 flate2 = "=1.1.10"
+zstd = "=0.13.3"
+base64 = "=0.22.1"
 ctrlc = { version = "=3.5.2", features = ["termination"] }
 
 tiff-reader = { version = "=0.9.0", default-features = false, optional = true }

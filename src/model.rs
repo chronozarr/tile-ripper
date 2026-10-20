@@ -47,7 +47,14 @@ pub struct Asset {
 pub enum Format {
     Cog,
     ZarrV2,
+    ZarrV3,
 }
+impl Format {
+    pub(crate) fn is_zarr(self) -> bool {
+        matches!(self, Self::ZarrV2 | Self::ZarrV3)
+    }
+}
+
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub enum Spatial {

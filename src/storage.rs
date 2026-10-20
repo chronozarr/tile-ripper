@@ -18,28 +18,44 @@ use zarrs::{
     storage::{self as s, ReadableStorageTraits},
 };
 
-pub(crate) fn has_remote_zarr(r: &Request) -> bool {
-    matches!(&r.source,Source::Assets{assets} if assets.iter().any(|a|a.format==Format::ZarrV2 && cog::remote(&a.locator)))
+pub(crate) fn requires_zarr_bindings(r: &Request) -> bool {
+    matches!(&r.source,Source::Assets{assets} if assets.iter().any(|a|a.format == Format::ZarrV3 || (a.format == Format::ZarrV2 && cog::remote(&a.locator))))
 }
 #[derive(Default)]
-pub(crate) struct Sources(
-    BTreeMap<String, Arc<Objects>>,
-    #[cfg(feature = "native-cog")] pub(crate) crate::native_cog::Snapshots,
-);
+pub(crate) struct Sources {
+    objects: BTreeMap<String, Arc<Objects>>,
+    #[cfg(feature = "native-cog")]
+    pub(crate) native: crate::native_cog::Snapshots,
+    pub(crate) v3: crate::zarr_v3::Context,
+}
+
 impl Sources {
     pub fn new(r: &Request) -> Result<Self> {
         let mut sources = Self::default();
         #[cfg(feature = "native-cog")]
         {
-            sources.1 = crate::native_cog::Snapshots::new(r.budget.buffer_bytes);
+            sources.native = crate::native_cog::Snapshots::new(r.budget.buffer_bytes);
         }
         let mut shared_client: Option<Arc<Client>> = None;
         let metadata_budget = Arc::new(MetadataBudget::new(r.budget.buffer_bytes / 2));
         if let Source::Assets { assets } = &r.source {
-            for a in assets
-                .iter()
-                .filter(|a| a.format == Format::ZarrV2 && cog::remote(&a.locator))
-            {
+            for a in assets.iter().filter(|a| {
+                a.format == Format::ZarrV3
+                    || (a.format == Format::ZarrV2 && cog::remote(&a.locator))
+            }) {
+                if a.format == Format::ZarrV3 && !cog::remote(&a.locator) {
+                    if a.etag.is_some() {
+                        return fail("local Zarr cannot use an HTTP ETag");
+                    }
+                    sources.objects.insert(
+                        a.id.clone(),
+                        crate::zarr_v3::metadata_view(
+                            Arc::new(Objects::Local(FilesystemStore::new(&a.locator)?)),
+                            &r.budget,
+                        )?,
+                    );
+                    continue;
+                }
                 if a.etag.is_some() {
                     return fail("HTTP groups use per-object versions, not one asset ETag");
                 }
@@ -51,18 +67,20 @@ impl Sources {
                         client
                     }
                 };
-                sources.0.insert(
-                    a.id.clone(),
-                    crate::zarr_acquire::metadata_view(
-                        Arc::new(Objects::Http(Http::new(
-                            &a.locator,
-                            &r.budget,
-                            client.clone(),
-                            metadata_budget.clone(),
-                        )?)),
-                        &r.budget,
-                    )?,
-                );
+                let mut http = Http::new(
+                    &a.locator,
+                    &r.budget,
+                    client.clone(),
+                    metadata_budget.clone(),
+                )?;
+                http.validate_data = a.format == Format::ZarrV3;
+                let source = Arc::new(Objects::Http(http));
+                let source = if a.format == Format::ZarrV3 {
+                    crate::zarr_v3::metadata_view(source, &r.budget)?
+                } else {
+                    crate::zarr_acquire::metadata_view(source, &r.budget)?
+                };
+                sources.objects.insert(a.id.clone(), source);
             }
         }
         if metadata_budget.used() > metadata_budget.cap {
@@ -71,7 +89,7 @@ impl Sources {
         Ok(sources)
     }
     pub fn get(&self, a: &Asset) -> Result<Arc<Objects>> {
-        if let Some(s) = self.0.get(&a.id) {
+        if let Some(s) = self.objects.get(&a.id) {
             return Ok(s.clone());
         }
         if cog::remote(&a.locator) {
@@ -83,8 +101,9 @@ impl Sources {
         Ok(Arc::new(Objects::Local(FilesystemStore::new(&a.locator)?)))
     }
     pub fn seal(&self) -> Result<()> {
+        self.v3.validate()?;
         self.phase("prepare_validation");
-        for s in self.0.values() {
+        for s in self.objects.values() {
             if let Some(h) = s.http() {
                 h.seal()?;
             }
@@ -92,7 +111,8 @@ impl Sources {
         Ok(())
     }
     pub fn validate(&self) -> Result<()> {
-        for s in self.0.values() {
+        self.v3.validate()?;
+        for s in self.objects.values() {
             if let Some(h) = s.http() {
                 h.validate()?;
             }
@@ -100,7 +120,7 @@ impl Sources {
         Ok(())
     }
     pub fn phase(&self, phase: &'static str) {
-        for source in self.0.values() {
+        for source in self.objects.values() {
             if let Some(http) = source.http() {
                 let mut state = http.state.lock().unwrap();
                 state.phase = phase;
@@ -109,25 +129,38 @@ impl Sources {
         }
     }
     pub fn describe(&self, id: &str) -> serde_json::Value {
-        self.0.get(id).map_or(serde_json::Value::Null, |s| {
+        self.objects.get(id).map_or(serde_json::Value::Null, |s| {
             s.http().map_or(serde_json::Value::Null, |h| {
                 serde_json::json!(h.state.lock().unwrap().versions)
             })
         })
     }
+    pub(crate) fn v3_prepared_bytes(&self) -> usize {
+        if self.v3.bytes() == 0 {
+            return 0;
+        }
+        self.v3.bytes()
+            + self
+                .objects
+                .values()
+                .map(|s| {
+                    s.overlay_bytes() + s.http().map_or(0, |h| h.state.lock().unwrap().cached_bytes)
+                })
+                .sum::<usize>()
+    }
     pub fn stats(&self) -> serde_json::Value {
         serde_json::json!(self
-            .0
+            .objects
             .iter()
-            .map(|(id, source)| {
-                let http = source.http().unwrap();
+            .filter_map(|(id, source)| {
+                let http = source.http()?;
                 let state = http.state.lock().unwrap();
                 let mut stats = serde_json::json!(state.stats);
                 stats["cached_metadata_bytes"] = serde_json::json!(state.cached_bytes);
                 stats["metadata_overlay_bytes"] = serde_json::json!(source.overlay_bytes());
                 stats["cache_limit_bytes"] = serde_json::json!(http.cap);
                 stats["object_identities"] = serde_json::json!(state.versions.len());
-                (id.clone(), stats)
+                Some((id.clone(), stats))
             })
             .collect::<BTreeMap<_, _>>())
     }
@@ -167,6 +200,60 @@ pub(crate) enum Objects {
     },
 }
 impl Objects {
+    /// Bounded physical ranges for the v3 adapter. V2 keeps its established
+    /// whole-object trait behavior, including its accounting and cache policy.
+    pub(crate) fn ranges(
+        &self,
+        key: &s::StoreKey,
+        ranges: &[s::byte_range::ByteRange],
+    ) -> Result<Option<Vec<s::Bytes>>> {
+        match self {
+            Self::Http(http) => {
+                let size = self
+                    .size_key(key)?
+                    .ok_or("range target is absent or unpinned")?;
+                let mut out = Vec::new();
+                for range in ranges {
+                    let (start, end) = match *range {
+                        s::byte_range::ByteRange::FromStart(start, length) => (
+                            start,
+                            length
+                                .map_or(Some(size), |n| start.checked_add(n))
+                                .ok_or("byte range overflow")?,
+                        ),
+                        s::byte_range::ByteRange::Suffix(length) => (
+                            size.checked_sub(length)
+                                .ok_or("index exceeds object size")?,
+                            size,
+                        ),
+                    };
+                    if start >= end || end > size {
+                        return fail("invalid bounded object range");
+                    }
+                    let (_, bytes) = http
+                        .request(key, Access::Range { start, end })?
+                        .ok_or("bound range target disappeared")?;
+                    out.push(bytes.into());
+                }
+                Ok(Some(out))
+            }
+            Self::Local(store) => {
+                let Some(values) = store.get_partial_many(key, Box::new(ranges.iter().copied()))?
+                else {
+                    return Ok(None);
+                };
+                Ok(Some(values.collect::<std::result::Result<Vec<_>, _>>()?))
+            }
+            Self::Overlay { origin, .. } => origin.ranges(key, ranges),
+        }
+    }
+    pub(crate) fn local_path(&self, key: &s::StoreKey) -> Option<std::path::PathBuf> {
+        match self {
+            Self::Local(store) => Some(store.key_to_fspath(key)),
+            Self::Overlay { origin, .. } => origin.local_path(key),
+            Self::Http(_) => None,
+        }
+    }
     fn overlay_bytes(&self) -> usize {
         match self {
             Self::Overlay { entries, origin } => {
@@ -347,6 +434,7 @@ struct Stats {
     retries: u64,
     seconds: f64,
     objects: BTreeMap<String, Counts>,
+    ranges: BTreeMap<String, Counts>,
 }
 #[derive(Default)]
 struct State {
@@ -364,12 +452,14 @@ pub(crate) struct Http {
     nodes: usize,
     state: Mutex<State>,
     metadata_budget: Arc<MetadataBudget>,
+    validate_data: bool,
 }
 #[derive(Clone, Copy)]
 enum Access {
     Get,
     MetadataHead,
     DataHead,
+    Range { start: u64, end: u64 },
 }
 impl Http {
     fn build_client() -> Result<Client> {
@@ -410,6 +500,7 @@ impl Http {
                 ..State::default()
             }),
             metadata_budget,
+            validate_data: false,
         })
     }
     fn get(&self, key: &s::StoreKey) -> Result<s::MaybeBytes> {
@@ -459,7 +550,7 @@ impl Http {
             .unwrap()
             .versions
             .iter()
-            .filter(|(_, v)| v.as_ref().is_none_or(|v| v.metadata))
+            .filter(|(_, v)| self.validate_data || v.as_ref().is_none_or(|v| v.metadata))
             .map(|(k, _)| k.clone())
             .collect();
         parallel_map(&keys, |key| {
@@ -475,8 +566,12 @@ impl Http {
         })
     }
     fn request(&self, key: &s::StoreKey, access: Access) -> Result<Option<(Version, Vec<u8>)>> {
-        let head = !matches!(access, Access::Get);
+        let head = matches!(access, Access::MetadataHead | Access::DataHead);
         let data_head = matches!(access, Access::DataHead);
+        let range = match access {
+            Access::Range { start, end } => Some((start, end)),
+            _ => None,
+        };
         let key_string = key.as_str();
         let url = self
             .base
@@ -495,11 +590,27 @@ impl Http {
         if !head && self.state.lock().unwrap().sealed && known.is_none() {
             return fail("execution attempted an unplanned HTTP object");
         }
+        if let Some((start, end)) = range {
+            let expected = known
+                .as_ref()
+                .and_then(|v| v.as_ref())
+                .ok_or("range requires a pinned object version")?;
+            if !self.validate_data
+                || start >= end
+                || end > expected.size
+                || end - start > self.cap as u64
+            {
+                return fail("range exceeds admitted object or buffer bounds");
+            }
+        }
         for attempt in 0..3 {
             let started = Instant::now();
             let mut req = self
                 .client
                 .request(if head { Method::HEAD } else { Method::GET }, url.clone());
+            if let Some((start, end)) = range {
+                req = req.header(header::RANGE, format!("bytes={start}-{}", end - 1));
+            }
             if let Some(expected) = &known {
                 req = match expected {
                     Some(v) => req.header(header::IF_MATCH, &v.etag),
@@ -529,11 +640,19 @@ impl Http {
                     }
                     return Ok(None);
                 }
-                if status != 200 {
+                if status != if range.is_some() { 206 } else { 200 } {
                     return fail("HTTP object request rejected (unsupported status or redirect)");
                 }
                 if known == Some(None) {
                     return fail("previously missing HTTP object appeared; prepare again");
+                }
+                if range.is_some()
+                    && response
+                        .headers()
+                        .get(header::CONTENT_ENCODING)
+                        .is_some_and(|v| v != "identity")
+                {
+                    return fail("encoded HTTP range responses are unsupported");
                 }
                 let etag = response
                     .headers()
@@ -547,7 +666,15 @@ impl Http {
                     .get(header::CONTENT_LENGTH)
                     .and_then(|v| v.to_str().ok())
                     .and_then(|v| v.parse::<u64>().ok());
-                if length.is_some_and(|n| n > self.cap as u64) {
+                if length.is_some_and(|n| n > self.cap as u64)
+                    && !(head
+                        && self.validate_data
+                        && (data_head
+                            || known
+                                .as_ref()
+                                .and_then(|v| v.as_ref())
+                                .is_some_and(|v| !v.metadata)))
+                {
                     return fail("HTTP object exceeds half buffer_bytes");
                 }
                 if !head {
@@ -563,7 +690,24 @@ impl Http {
                         return fail("retryable interrupted HTTP body");
                     }
                 }
-                let size = if head {
+                let size = if let Some((start, end)) = range {
+                    let expected = known
+                        .as_ref()
+                        .and_then(|v| v.as_ref())
+                        .expect("admitted range");
+                    let content_range = format!("bytes {start}-{}/{}", end - 1, expected.size);
+                    if response
+                        .headers()
+                        .get(header::CONTENT_RANGE)
+                        .and_then(|v| v.to_str().ok())
+                        != Some(content_range.as_str())
+                        || length != Some(end - start)
+                        || body.len() as u64 != end - start
+                    {
+                        return fail("invalid HTTP range framing");
+                    }
+                    expected.size
+                } else if head {
                     length.ok_or("HTTP HEAD requires Content-Length")?
                 } else {
                     body.len() as u64
@@ -587,6 +731,20 @@ impl Http {
             })();
             {
                 let mut state = self.state.lock().unwrap();
+                if let Some((start, end)) = range {
+                    let entry = state
+                        .stats
+                        .ranges
+                        .entry(format!("{key_string} {start}:{end}"))
+                        .or_default();
+                    entry.attempts += 1;
+                    entry.bytes += body.len() as u64;
+                    entry.seconds += started.elapsed().as_secs_f64();
+                    *entry.statuses.entry(status).or_default() += 1;
+                    if attempt > 0 {
+                        entry.retries += 1;
+                    }
+                }
                 state.stats.requests += 1;
                 state.stats.bytes += body.len() as u64;
                 state.stats.seconds += started.elapsed().as_secs_f64();
@@ -690,7 +848,7 @@ pub(crate) fn worker_count() -> Result<usize> {
 
 /// Execute each distinct key once with bounded scoped workers and restore the
 /// caller's order, including duplicate positions in the requested result.
-fn parallel_map<T, F>(keys: &[String], f: F) -> Result<Vec<T>>
+pub(crate) fn parallel_map<T, F>(keys: &[String], f: F) -> Result<Vec<T>>
 where
     T: Clone + Send,
     F: Fn(&str) -> Result<T> + Sync,

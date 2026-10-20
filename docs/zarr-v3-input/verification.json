@@ -1,0 +1,35 @@
+{
+  "source_parent_commit": "fda7c43",
+  "rust_source_and_manifest_sha256": "613c3b0164cbc689b4643eb85ff25462e409b5960cb30d3a9830ff85c1f040a2",
+  "binary_sha256": {
+    "target/zarr-v3-input/release/tile-ripper": "5ae2e52b2c88ddfe5d25320e55c8c46f1008530a8db558aaea521e37098380fe",
+    "target/zarr-v3-input/release/examples/zarr_subset_oracle": "6ca2f8e4ef7f6e114a12a14c1b591d637165e34f168e3be5fc7b1847e5f9a72f"
+  },
+  "feature_matrix": "regressions/rust.json",
+  "msrv": {
+    "version": "1.91.0",
+    "command": "CARGO_INCREMENTAL=0 CARGO_PROFILE_DEV_DEBUG=0 CARGO_PROFILE_TEST_DEBUG=0 cargo +1.91.0 test --locked --no-default-features --features native-cog --test zarr_v3 --target-dir target/msrv91",
+    "passed": 5,
+    "cache_removed_after_validation": true
+  },
+  "macos_runtime_dependencies": "target/zarr-v3-input/release/tile-ripper:\n\t/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1356.0.0)\n\t/usr/lib/libobjc.A.dylib (compatibility version 1.0.0, current version 228.0.0)\n\t/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation (compatibility version 300.0.0, current version 4201.0.0)\n\t/System/Library/Frameworks/Security.framework/Versions/A/Security (compatibility version 1.0.0, current version 61901.60.40)\n\t/System/Library/Frameworks/SystemConfiguration.framework/Versions/A/SystemConfiguration (compatibility version 1.0.0, current version 1385.60.3)\n\t/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation (compatibility version 150.0.0, current version 4201.0.0)\n\t/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2000.67.0)\n\t/usr/lib/libiconv.2.dylib (compatibility version 7.0.0, current version 7.0.0)\n",
+  "input_checks": {
+    "codec_axis_profiles": 40,
+    "chunk_fill_key_profiles": 3,
+    "all_NaN_bit_profiles": 2,
+    "transport_corruption_cancel_mutation_cases": 27,
+    "memory_cells": 16,
+    "benchmark_cells": 48,
+    "public_raw_bit_samples": 8,
+    "prepared_reuse_executions": 2,
+    "additional_codec_admission_cases": 9
+  },
+  "final_targeted_tests": "cargo test --locked --all-features --test zarr_v3: 5 passed; strict all-feature all-target clippy passed",
+  "production_encoder_replaced": false,
+  "default_output": "uncompressed Zarr v2",
+  "default_GDAL_policy_changed": false,
+  "publication_protocol_changed": false,
+  "no_HDF5_NetCDF_downstream_integration": true,
+  "reference": "reference.txt",
+  "performance_isolation": "The final 48-cell comparison ran after builds, correctness/fault/public/memory jobs finished; no concurrent validation/build job. Earlier pilot with one fewer Python validation round is excluded, retained only in ignored prototype-output."
+}

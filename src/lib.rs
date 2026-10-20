@@ -36,3 +36,5 @@ pub mod stream;
 
 #[cfg(feature = "native-cog")]
 mod native_cog;
+
+mod zarr_v3;
