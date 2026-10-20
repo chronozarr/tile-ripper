@@ -60,6 +60,11 @@ include cancellation, completion checks and manual concurrency overrides.
 the performance gate. [Measured results and the interoperability recommendation](docs/acquisition-engine/report.md)
 retain wins, ties and losses; no public-provider speed advantage is promised.
 
+The [standalone native statistics consumer](consumers/native-stats/README.md) uses
+the public API with provisional chunks and a validated completion receipt. The
+[real Sentinel multi-scene gate](docs/production-streaming/report.md) compares
+version-pinned native acquisitions with a tuned GDAL reader.
+
 ## Supported sources and limits
 
 | Source | Supported selection and output |

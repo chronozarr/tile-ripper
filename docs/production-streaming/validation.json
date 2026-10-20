@@ -1,0 +1,143 @@
+{
+  "rust": {
+    "passed": 52,
+    "failed": 0,
+    "ignored_http_driven": 2
+  },
+  "consumer": {
+    "results": [
+      {
+        "case": "two-remote-cogs",
+        "passed": true,
+        "chunks": 2,
+        "peak_rss_bytes": 52297728
+      },
+      {
+        "case": "cancel-after-delivery",
+        "passed": true
+      },
+      {
+        "case": "already-read-cog-mutated-after-delivery",
+        "passed": true,
+        "provisional_chunks": 2
+      },
+      {
+        "case": "catalog-consumer-and-post-delivery-mutation",
+        "passed": true,
+        "peak_rss_bytes": 57163776
+      },
+      {
+        "case": "two-remote-uint16-zarr",
+        "passed": true,
+        "chunks": 128,
+        "peak_rss_bytes": 46170112
+      },
+      {
+        "case": "zarr-mutated-after-delivery",
+        "passed": true
+      },
+      {
+        "case": "remote-float32-nan-reversed-swapped-axes",
+        "passed": true,
+        "chunks": 8,
+        "peak_rss_bytes": 41811968
+      }
+    ],
+    "consumer_sha256": "30ccb253256a90d09437fea41afecb0fd8703595cb8519fa0941c02768497060",
+    "rust_source_sha256": "cd537d5f59c338ecb6b4797f1d45c9ba4b1a74413dee7ad5c1c4536afe1fccea",
+    "source_binding": "current source tree",
+    "rss_limit_bytes": 201326592,
+    "memory_scope": "consumer process RSS including runtime/GDAL; payload limit 2 MiB, queue 0, working budget per request"
+  },
+  "serial_consumer": {
+    "results": [
+      {
+        "case": "two-remote-cogs",
+        "passed": true,
+        "chunks": 2,
+        "peak_rss_bytes": 52477952
+      },
+      {
+        "case": "cancel-after-delivery",
+        "passed": true
+      },
+      {
+        "case": "already-read-cog-mutated-after-delivery",
+        "passed": true,
+        "provisional_chunks": 2
+      },
+      {
+        "case": "catalog-consumer-and-post-delivery-mutation",
+        "passed": true,
+        "peak_rss_bytes": 57147392
+      },
+      {
+        "case": "two-remote-uint16-zarr",
+        "passed": true,
+        "chunks": 128,
+        "peak_rss_bytes": 46465024
+      },
+      {
+        "case": "zarr-mutated-after-delivery",
+        "passed": true
+      },
+      {
+        "case": "remote-float32-nan-reversed-swapped-axes",
+        "passed": true,
+        "chunks": 8,
+        "peak_rss_bytes": 41811968
+      }
+    ],
+    "consumer_sha256": "ee5e04cf0e8c297e17b0192671d2be8a4d1426aa99f218cc642b486d05147880",
+    "rust_source_sha256": "61deef64faf6f01d61e8b2510ed8ffcb6ca075224c9a4f1502e1701a2354f82d",
+    "source_binding": "preserved binary receipt",
+    "rss_limit_bytes": 201326592,
+    "memory_scope": "consumer process RSS including runtime/GDAL; payload limit 2 MiB, queue 0, working budget per request"
+  },
+  "gdal_snapshot_control": [
+    {
+      "case": "conditional-native-statistics",
+      "passed": true
+    },
+    {
+      "case": "late-mutation-no-completion",
+      "passed": true
+    },
+    {
+      "case": "late-mutation-file-cleanup",
+      "passed": true
+    }
+  ],
+  "regression": {
+    "http_cases_passed": 83,
+    "stac_cases_passed": 8,
+    "local_oracle_and_multi_store": "passed",
+    "performance_smoke": "passed"
+  },
+  "format_and_strict_lint": "Rust root/all-targets and standalone consumer passed; new Python harnesses passed ruff",
+  "sonnet_review": "Unavailable: both requested Sonnet invocations failed with expired OAuth access token before repository inspection",
+  "dgov": "3 tasks / 2 dependency edges structurally compiled in dry-run; execution manual (no repository provider configured)",
+  "core_commit": "cadb623",
+  "serial_commit": "1b141a4",
+  "raw_outputs": "ignored prototype-output/production-streaming",
+  "memory_gate": {
+    "default_workers_4": "3 RSS misses in the matched latency matrix; scientific outputs independently rechecked",
+    "fixed_workers_2": "24/24 native acquisitions pass scientific and 192-MiB RSS gates"
+  },
+  "rss_method_probe": {
+    "python": "3.10.14 (main, Aug 14 2024, 05:14:46) [Clang 18.1.8 ]",
+    "platform": "darwin",
+    "before": {
+      "Popen_wait4_peak_rss": 1277952,
+      "posix_spawn_wait4_peak_rss": 1277952
+    },
+    "after_256MiB_parent_allocation": {
+      "Popen_wait4_peak_rss": 1277952,
+      "posix_spawn_wait4_peak_rss": 1277952
+    }
+  },
+  "verification_log_sha256": {
+    "prototype-output/production-streaming/final-verified/rust-tests.log": "61e3aac4d6fea52a862990803afceb5e5cede822d837a1e5de7f95b190214545",
+    "prototype-output/production-streaming/final-verified/runner.log": "bd74850142f3524d4058a9584a113d914a99bc989bece51785ae8c19e28ffd5c"
+  }
+}

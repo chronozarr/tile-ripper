@@ -6,7 +6,7 @@ are no private imports or intermediate image files.
 
 ```sh
 CARGO_TARGET_DIR=target cargo build --release --locked --manifest-path consumers/native-stats/Cargo.toml
-GDAL_CACHEMAX=32 target/release/tile-ripper-native-stats request.json
+TILE_RIPPER_WORKERS=2 GDAL_CACHEMAX=32 target/release/tile-ripper-native-stats request.json
 prototype-output/zarr-env/bin/python bench/consumer_validation.py
 ```
 
@@ -38,3 +38,8 @@ any memory it retains.
 waits for a line on stdin after delivery, allowing the external test to mutate
 an already-read source before allowing completion. Neither is a production
 scheduler feature. `--max-chunk-bytes N` adjusts the consumer's payload check.
+
+The real COG gate uses this fixed two-worker recipe for its 192-MiB RSS target.
+The default four-worker profile exceeded that target in three latency-matrix
+runs, while all 24 two-worker follow-up acquisitions passed. The working-buffer
+budget alone cannot guarantee a process RSS limit; see the gate report.

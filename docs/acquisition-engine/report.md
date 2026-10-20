@@ -1,5 +1,8 @@
 # Acquisition engine decision gate
 
+Raw `.gz` run archives linked below are retained locally and excluded from Git.
+The benchmark scripts and compact JSON summaries are versioned for reproduction.
+
 Development on `codex/acquisition-planner` implements the shared scheduler and
 native stream. The measured gains justify retaining them. Private-alpha
 distribution remains on hold: the evidence does not establish consistent

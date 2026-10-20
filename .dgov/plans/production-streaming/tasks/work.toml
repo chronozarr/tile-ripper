@@ -1,0 +1,41 @@
+[tasks.contract]
+summary = "Close COG completion validation gaps and document native stream contract"
+prompt = """
+Orient:
+Read src/stream.rs, acquisition.rs, stac_workflow.rs and tests/streaming.rs.
+Edit:
+Preserve simple public Rust stream API. Validate remote COG versions before and after execution, retain bit-exact values, document provisional delivery and successful finish.
+Verify:
+cargo test --locked; cargo clippy --locked --all-targets -- -D warnings
+"""
+role = "worker"
+files = { edit = ["src/acquisition.rs", "src/stac_workflow.rs", "src/stream.rs", "tests/streaming.rs", "docs/acquisition-engine/streaming.md"] }
+test_cmd = "cargo test --locked"
+[tasks.consumer]
+summary = "Validate a standalone path-dependent Rust consumer against Python oracles"
+prompt = """
+Orient:
+Read the public streaming API and existing Python independent scientific oracles.
+Edit:
+Create a separate consumer crate using public APIs, O(1) aggregate state, provisional NDJSON summaries and a validated final commit. Exercise remote success, cancellation and mutation after delivery.
+Verify:
+prototype-output/zarr-env/bin/python bench/consumer_validation.py
+"""
+role = "worker"
+depends_on = ["contract"]
+files = { create = ["consumers/native-stats/Cargo.toml", "consumers/native-stats/src/main.rs", "bench/consumer_validation.py"] }
+test_cmd = "prototype-output/zarr-env/bin/python bench/consumer_validation.py"
+[tasks.evidence]
+summary = "Freeze and replay real Sentinel COG ranges against tuned GDAL"
+prompt = """
+Orient:
+Inspect frozen scene references and existing controlled benchmark harnesses.
+Edit:
+Build a bounded version-pinned range mirror with original COG layouts; benchmark small/large/multidate/multiband and overlapping requests. Measure metadata separately before deciding whether to optimize. Retain compact reports, exclude imagery and raw generated data from commits.
+Verify:
+prototype-output/zarr-env/bin/python bench/real_multiscene.py --help
+"""
+role = "worker"
+depends_on = ["consumer"]
+files = { create = ["bench/real_multiscene.py", "docs/production-streaming/report.md", "docs/production-streaming/protocol.md", "docs/production-streaming/sources.json", "docs/production-streaming/summary.json", "docs/production-streaming/validation.json", "bench/gdal_snapshot_worker.py", "bench/gdal_snapshot_checks.py", "bench/snapshot_comparison.py", "bench/stream_memory_gate.py"] }
+test_cmd = "prototype-output/zarr-env/bin/python bench/real_multiscene.py --help"

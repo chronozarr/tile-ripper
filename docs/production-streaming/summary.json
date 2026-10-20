@@ -1,0 +1,5512 @@
+{
+  "schema_version": 1,
+  "local_date": "2026-10-19",
+  "primary_comparison": "matched source-validation GDAL workflow",
+  "matrices": {
+    "matched_fast": {
+      "summary": [
+        {
+          "workload": "many-small",
+          "mode": "rust-stream",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 0.2842797921039164,
+            "min": 0.2782597918994725,
+            "max": 0.2902974169701338
+          },
+          "first_chunk_seconds": {
+            "median": 0.072439833,
+            "min": 0.071241167,
+            "max": 0.074378208
+          },
+          "first_materialized_seconds": null,
+          "prepare_seconds": {
+            "median": 0.047058583,
+            "min": 0.046208375,
+            "max": 0.048242916
+          },
+          "materialization_seconds": {
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0
+          },
+          "peak_rss_bytes": {
+            "median": 104480768,
+            "min": 102957056,
+            "max": 107233280
+          },
+          "cog_identity_validation_seconds": {
+            "median": 0.01211875,
+            "min": 0.012066542,
+            "max": 0.012223417
+          },
+          "layout_inspection_seconds": {
+            "median": 0.037654915,
+            "min": 0.03691442,
+            "max": 0.03876154099999999
+          },
+          "planning_compute_seconds": {
+            "median": 0.001254876000000002,
+            "min": 0.0011524139999999974,
+            "max": 0.0015340430000000127
+          },
+          "initial_validation_seconds": null,
+          "final_validation_seconds": null,
+          "metadata_worker_seconds": null,
+          "planning_worker_seconds": null,
+          "http_medians": {
+            "head": 80,
+            "get": 48,
+            "range_get": 48,
+            "conditional": 80,
+            "body_bytes": 26886144,
+            "head_peak": 3
+          }
+        },
+        {
+          "workload": "many-small",
+          "mode": "gdal-snapshot-stream",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 0.32635337486863136,
+            "min": 0.32141666673123837,
+            "max": 0.3270870829001069
+          },
+          "first_chunk_seconds": {
+            "median": 0.07563637476414442,
+            "min": 0.07438158337026834,
+            "max": 0.07607729127630591
+          },
+          "first_materialized_seconds": null,
+          "prepare_seconds": null,
+          "materialization_seconds": {
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0
+          },
+          "peak_rss_bytes": {
+            "median": 120504320,
+            "min": 118816768,
+            "max": 120619008
+          },
+          "cog_identity_validation_seconds": null,
+          "layout_inspection_seconds": null,
+          "planning_compute_seconds": null,
+          "initial_validation_seconds": {
+            "median": 0.015802749898284674,
+            "min": 0.014834750443696976,
+            "max": 0.015817416831851006
+          },
+          "final_validation_seconds": {
+            "median": 0.009253917261958122,
+            "min": 0.00901529099792242,
+            "max": 0.009352332912385464
+          },
+          "metadata_worker_seconds": {
+            "median": 0.16135229403153062,
+            "min": 0.16117874952033162,
+            "max": 0.16352412896230817
+          },
+          "planning_worker_seconds": {
+            "median": 0.000529162585735321,
+            "min": 0.0005264994688332081,
+            "max": 0.0005328729748725891
+          },
+          "http_medians": {
+            "head": 64,
+            "get": 32,
+            "range_get": 32,
+            "conditional": 96,
+            "body_bytes": 26361856,
+            "head_peak": 3
+          }
+        },
+        {
+          "workload": "many-small",
+          "mode": "rust-file",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 0.2905837092548609,
+            "min": 0.2873995411209762,
+            "max": 0.2927119159139693
+          },
+          "first_chunk_seconds": null,
+          "first_materialized_seconds": {
+            "median": 0.026449125,
+            "min": 0.025793334,
+            "max": 0.027121166999999998
+          },
+          "prepare_seconds": {
+            "median": 0.046922958,
+            "min": 0.04659575,
+            "max": 0.047062958
+          },
+          "materialization_seconds": {
+            "median": 0.0077585810000000005,
+            "min": 0.006617874000000001,
+            "max": 0.007874292
+          },
+          "peak_rss_bytes": {
+            "median": 106348544,
+            "min": 105922560,
+            "max": 108003328
+          },
+          "cog_identity_validation_seconds": {
+            "median": 0.012366915999999999,
+            "min": 0.012350040999999999,
+            "max": 0.012605833
+          },
+          "layout_inspection_seconds": {
+            "median": 0.03793029300000001,
+            "min": 0.03760908599999999,
+            "max": 0.037959626999999996
+          },
+          "planning_compute_seconds": {
+            "median": 0.0011921230000000033,
+            "min": 0.0011817470000000038,
+            "max": 0.001286081999999987
+          },
+          "initial_validation_seconds": null,
+          "final_validation_seconds": null,
+          "metadata_worker_seconds": null,
+          "planning_worker_seconds": null,
+          "http_medians": {
+            "head": 80,
+            "get": 48,
+            "range_get": 48,
+            "conditional": 80,
+            "body_bytes": 26886144,
+            "head_peak": 4
+          }
+        },
+        {
+          "workload": "many-small",
+          "mode": "gdal-snapshot-file",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 0.3338038749061525,
+            "min": 0.3334353342652321,
+            "max": 0.33489800011739135
+          },
+          "first_chunk_seconds": null,
+          "first_materialized_seconds": {
+            "median": 0.07944729225710034,
+            "min": 0.07890979200601578,
+            "max": 0.08060774998739362
+          },
+          "prepare_seconds": null,
+          "materialization_seconds": {
+            "median": 0.021079957485198975,
+            "min": 0.019047166220843792,
+            "max": 0.0211446238681674
+          },
+          "peak_rss_bytes": {
+            "median": 121913344,
+            "min": 121864192,
+            "max": 130203648
+          },
+          "cog_identity_validation_seconds": null,
+          "layout_inspection_seconds": null,
+          "planning_compute_seconds": null,
+          "initial_validation_seconds": {
+            "median": 0.015098750125616789,
+            "min": 0.014556500129401684,
+            "max": 0.01580600021407008
+          },
+          "final_validation_seconds": {
+            "median": 0.009281875099986792,
+            "min": 0.009210499934852123,
+            "max": 0.009340042248368263
+          },
+          "metadata_worker_seconds": {
+            "median": 0.16372354328632355,
+            "min": 0.1634960426017642,
+            "max": 0.16472333436831832
+          },
+          "planning_worker_seconds": {
+            "median": 0.0005645840428769588,
+            "min": 0.0005349167622625828,
+            "max": 0.0005659968592226505
+          },
+          "http_medians": {
+            "head": 64,
+            "get": 32,
+            "range_get": 32,
+            "conditional": 96,
+            "body_bytes": 26361856,
+            "head_peak": 3
+          }
+        },
+        {
+          "workload": "several-large",
+          "mode": "rust-stream",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 0.6743224579840899,
+            "min": 0.6723640002310276,
+            "max": 0.7008800422772765
+          },
+          "first_chunk_seconds": {
+            "median": 0.050645709,
+            "min": 0.048187167,
+            "max": 0.05467775
+          },
+          "first_materialized_seconds": null,
+          "prepare_seconds": {
+            "median": 0.03334675,
+            "min": 0.0315605,
+            "max": 0.035873166
+          },
+          "materialization_seconds": {
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0
+          },
+          "peak_rss_bytes": {
+            "median": 170393600,
+            "min": 169295872,
+            "max": 184434688
+          },
+          "cog_identity_validation_seconds": {
+            "median": 0.009664958000000001,
+            "min": 0.009302167,
+            "max": 0.010561125000000001
+          },
+          "layout_inspection_seconds": {
+            "median": 0.024738541,
+            "min": 0.023365458999999998,
+            "max": 0.026835043000000003
+          },
+          "planning_compute_seconds": {
+            "median": 0.0007319170000000021,
+            "min": 0.0006572490000000021,
+            "max": 0.0009440399999999967
+          },
+          "initial_validation_seconds": null,
+          "final_validation_seconds": null,
+          "metadata_worker_seconds": null,
+          "planning_worker_seconds": null,
+          "http_medians": {
+            "head": 33,
+            "get": 48,
+            "range_get": 48,
+            "conditional": 63,
+            "body_bytes": 75988992,
+            "head_peak": 2
+          }
+        },
+        {
+          "workload": "several-large",
+          "mode": "gdal-snapshot-stream",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 0.3639091248624027,
+            "min": 0.3596069999039173,
+            "max": 0.36944016674533486
+          },
+          "first_chunk_seconds": {
+            "median": 0.08468300011008978,
+            "min": 0.0839602081105113,
+            "max": 0.08474154211580753
+          },
+          "first_materialized_seconds": null,
+          "prepare_seconds": null,
+          "materialization_seconds": {
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0
+          },
+          "peak_rss_bytes": {
+            "median": 183304192,
+            "min": 175390720,
+            "max": 185057280
+          },
+          "cog_identity_validation_seconds": null,
+          "layout_inspection_seconds": null,
+          "planning_compute_seconds": null,
+          "initial_validation_seconds": {
+            "median": 0.010333582758903503,
+            "min": 0.010029000230133533,
+            "max": 0.010572874918580055
+          },
+          "final_validation_seconds": {
+            "median": 0.004499957896769047,
+            "min": 0.004096666816622019,
+            "max": 0.004549792036414146
+          },
+          "metadata_worker_seconds": {
+            "median": 0.2912107086740434,
+            "min": 0.28728595981374383,
+            "max": 0.2917505018413067
+          },
+          "planning_worker_seconds": {
+            "median": 0.00020712753757834435,
+            "min": 0.0002050427719950676,
+            "max": 0.00020870845764875412
+          },
+          "http_medians": {
+            "head": 24,
+            "get": 30,
+            "range_get": 30,
+            "conditional": 54,
+            "body_bytes": 56819712,
+            "head_peak": 3
+          }
+        },
+        {
+          "workload": "several-large",
+          "mode": "rust-file",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 0.6537724169902503,
+            "min": 0.6341949580237269,
+            "max": 0.7050644578412175
+          },
+          "first_chunk_seconds": null,
+          "first_materialized_seconds": {
+            "median": 0.017024334000000002,
+            "min": 0.016923292,
+            "max": 0.017748791
+          },
+          "prepare_seconds": {
+            "median": 0.032028417,
+            "min": 0.030658375,
+            "max": 0.036157584
+          },
+          "materialization_seconds": {
+            "median": 0.128148209,
+            "min": 0.11936792200000004,
+            "max": 0.16026299699999985
+          },
+          "peak_rss_bytes": {
+            "median": 171573248,
+            "min": 169000960,
+            "max": 183975936
+          },
+          "cog_identity_validation_seconds": {
+            "median": 0.010023792,
+            "min": 0.009141124,
+            "max": 0.011598708
+          },
+          "layout_inspection_seconds": {
+            "median": 0.024435416999999994,
+            "min": 0.023743,
+            "max": 0.027021208999999997
+          },
+          "planning_compute_seconds": {
+            "median": 0.0007519580000000074,
+            "min": 0.0006660830000000013,
+            "max": 0.0010040410000000041
+          },
+          "initial_validation_seconds": null,
+          "final_validation_seconds": null,
+          "metadata_worker_seconds": null,
+          "planning_worker_seconds": null,
+          "http_medians": {
+            "head": 37,
+            "get": 48,
+            "range_get": 48,
+            "conditional": 67,
+            "body_bytes": 75988992,
+            "head_peak": 2
+          }
+        },
+        {
+          "workload": "several-large",
+          "mode": "gdal-snapshot-file",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 0.46940850000828505,
+            "min": 0.4615072086453438,
+            "max": 0.4974275827407837
+          },
+          "first_chunk_seconds": null,
+          "first_materialized_seconds": {
+            "median": 0.08915900019928813,
+            "min": 0.08826137473806739,
+            "max": 0.09001166606321931
+          },
+          "prepare_seconds": null,
+          "materialization_seconds": {
+            "median": 0.4906810666434467,
+            "min": 0.4830713290721178,
+            "max": 0.5435589966364205
+          },
+          "peak_rss_bytes": {
+            "median": 178159616,
+            "min": 177176576,
+            "max": 180404224
+          },
+          "cog_identity_validation_seconds": null,
+          "layout_inspection_seconds": null,
+          "planning_compute_seconds": null,
+          "initial_validation_seconds": {
+            "median": 0.010092791635543108,
+            "min": 0.009889915585517883,
+            "max": 0.010638416279107332
+          },
+          "final_validation_seconds": {
+            "median": 0.0041702501475811005,
+            "min": 0.004023374989628792,
+            "max": 0.004304624628275633
+          },
+          "metadata_worker_seconds": {
+            "median": 0.29450058471411467,
+            "min": 0.2856519166380167,
+            "max": 0.2957594571635127
+          },
+          "planning_worker_seconds": {
+            "median": 0.00021983357146382332,
+            "min": 0.00020633218809962273,
+            "max": 0.0002565830945968628
+          },
+          "http_medians": {
+            "head": 24,
+            "get": 30,
+            "range_get": 30,
+            "conditional": 54,
+            "body_bytes": 56819712,
+            "head_peak": 4
+          }
+        },
+        {
+          "workload": "overlap-a",
+          "mode": "rust-stream",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 0.4570524590089917,
+            "min": 0.45509791700169444,
+            "max": 0.4643563749268651
+          },
+          "first_chunk_seconds": {
+            "median": 0.052981083,
+            "min": 0.052899417,
+            "max": 0.054258542
+          },
+          "first_materialized_seconds": null,
+          "prepare_seconds": {
+            "median": 0.032433042,
+            "min": 0.032133667,
+            "max": 0.0325465
+          },
+          "materialization_seconds": {
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0
+          },
+          "peak_rss_bytes": {
+            "median": 149143552,
+            "min": 147619840,
+            "max": 152600576
+          },
+          "cog_identity_validation_seconds": {
+            "median": 0.010136916,
+            "min": 0.009618042,
+            "max": 0.010169875
+          },
+          "layout_inspection_seconds": {
+            "median": 0.02435275,
+            "min": 0.024174665999999997,
+            "max": 0.024447959000000005
+          },
+          "planning_compute_seconds": {
+            "median": 0.0006065420000000016,
+            "min": 0.0005500409999999942,
+            "max": 0.0006117500000000012
+          },
+          "initial_validation_seconds": null,
+          "final_validation_seconds": null,
+          "metadata_worker_seconds": null,
+          "planning_worker_seconds": null,
+          "http_medians": {
+            "head": 33,
+            "get": 42,
+            "range_get": 42,
+            "conditional": 57,
+            "body_bytes": 57180160,
+            "head_peak": 2
+          }
+        },
+        {
+          "workload": "overlap-a",
+          "mode": "gdal-snapshot-stream",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 0.38074170891195536,
+            "min": 0.37139070872217417,
+            "max": 0.38845558324828744
+          },
+          "first_chunk_seconds": {
+            "median": 0.08246833318844438,
+            "min": 0.08213083306327462,
+            "max": 0.08448708290234208
+          },
+          "first_materialized_seconds": null,
+          "prepare_seconds": null,
+          "materialization_seconds": {
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0
+          },
+          "peak_rss_bytes": {
+            "median": 179322880,
+            "min": 178552832,
+            "max": 187777024
+          },
+          "cog_identity_validation_seconds": null,
+          "layout_inspection_seconds": null,
+          "planning_compute_seconds": null,
+          "initial_validation_seconds": {
+            "median": 0.009831041097640991,
+            "min": 0.009717707987874746,
+            "max": 0.00985054112970829
+          },
+          "final_validation_seconds": {
+            "median": 0.004168749786913395,
+            "min": 0.004068124573677778,
+            "max": 0.004385333973914385
+          },
+          "metadata_worker_seconds": {
+            "median": 0.28923866618424654,
+            "min": 0.266315458342433,
+            "max": 0.289316248614341
+          },
+          "planning_worker_seconds": {
+            "median": 0.0002215839922428131,
+            "min": 0.00021520722657442093,
+            "max": 0.00022645853459835052
+          },
+          "http_medians": {
+            "head": 24,
+            "get": 41,
+            "range_get": 41,
+            "conditional": 65,
+            "body_bytes": 66174976,
+            "head_peak": 2
+          }
+        },
+        {
+          "workload": "overlap-a",
+          "mode": "rust-file",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 0.47078724997118115,
+            "min": 0.4689879999496043,
+            "max": 0.4708241247572005
+          },
+          "first_chunk_seconds": null,
+          "first_materialized_seconds": {
+            "median": 0.021291334000000002,
+            "min": 0.021196582999999998,
+            "max": 0.02195375
+          },
+          "prepare_seconds": {
+            "median": 0.031312375,
+            "min": 0.031035709,
+            "max": 0.031403625
+          },
+          "materialization_seconds": {
+            "median": 0.022331246,
+            "min": 0.021924292999999997,
+            "max": 0.024113085000000003
+          },
+          "peak_rss_bytes": {
+            "median": 153157632,
+            "min": 147587072,
+            "max": 153419776
+          },
+          "cog_identity_validation_seconds": {
+            "median": 0.009551916,
+            "min": 0.009518417,
+            "max": 0.009655209
+          },
+          "layout_inspection_seconds": {
+            "median": 0.023961085,
+            "min": 0.023950917999999998,
+            "max": 0.024115669
+          },
+          "planning_compute_seconds": {
+            "median": 0.0005749560000000015,
+            "min": 0.0005167060000000022,
+            "max": 0.0005807070000000032
+          },
+          "initial_validation_seconds": null,
+          "final_validation_seconds": null,
+          "metadata_worker_seconds": null,
+          "planning_worker_seconds": null,
+          "http_medians": {
+            "head": 35,
+            "get": 42,
+            "range_get": 42,
+            "conditional": 59,
+            "body_bytes": 57180160,
+            "head_peak": 2
+          }
+        },
+        {
+          "workload": "overlap-a",
+          "mode": "gdal-snapshot-file",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 0.3959273328073323,
+            "min": 0.3885763753205538,
+            "max": 0.3985370001755655
+          },
+          "first_chunk_seconds": null,
+          "first_materialized_seconds": {
+            "median": 0.08858500001952052,
+            "min": 0.08732970803976059,
+            "max": 0.09238783409819007
+          },
+          "prepare_seconds": null,
+          "materialization_seconds": {
+            "median": 0.052541039418429136,
+            "min": 0.04570628656074405,
+            "max": 0.0688820006325841
+          },
+          "peak_rss_bytes": {
+            "median": 184483840,
+            "min": 182517760,
+            "max": 195608576
+          },
+          "cog_identity_validation_seconds": null,
+          "layout_inspection_seconds": null,
+          "planning_compute_seconds": null,
+          "initial_validation_seconds": {
+            "median": 0.010081625077873468,
+            "min": 0.009531042072921991,
+            "max": 0.011648791376501322
+          },
+          "final_validation_seconds": {
+            "median": 0.0041596670635044575,
+            "min": 0.004130374640226364,
+            "max": 0.0041642081923782825
+          },
+          "metadata_worker_seconds": {
+            "median": 0.2898301682434976,
+            "min": 0.2661487911827862,
+            "max": 0.31469983188435435
+          },
+          "planning_worker_seconds": {
+            "median": 0.0002093748189508915,
+            "min": 0.00020579062402248383,
+            "max": 0.0002544159069657326
+          },
+          "http_medians": {
+            "head": 24,
+            "get": 45,
+            "range_get": 45,
+            "conditional": 69,
+            "body_bytes": 67665920,
+            "head_peak": 3
+          }
+        },
+        {
+          "workload": "overlap-b",
+          "mode": "rust-stream",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 0.49793250020593405,
+            "min": 0.4961760831065476,
+            "max": 0.499208000022918
+          },
+          "first_chunk_seconds": {
+            "median": 0.083989041,
+            "min": 0.083241292,
+            "max": 0.084913292
+          },
+          "first_materialized_seconds": null,
+          "prepare_seconds": {
+            "median": 0.032204958,
+            "min": 0.03216125,
+            "max": 0.032769
+          },
+          "materialization_seconds": {
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0
+          },
+          "peak_rss_bytes": {
+            "median": 171835392,
+            "min": 162643968,
+            "max": 173932544
+          },
+          "cog_identity_validation_seconds": {
+            "median": 0.009718792,
+            "min": 0.009638249,
+            "max": 0.010791042
+          },
+          "layout_inspection_seconds": {
+            "median": 0.024265167,
+            "min": 0.023995416000000002,
+            "max": 0.024464791000000003
+          },
+          "planning_compute_seconds": {
+            "median": 0.0006064580000000007,
+            "min": 0.0005284179999999992,
+            "max": 0.0006127499999999952
+          },
+          "initial_validation_seconds": null,
+          "final_validation_seconds": null,
+          "metadata_worker_seconds": null,
+          "planning_worker_seconds": null,
+          "http_medians": {
+            "head": 33,
+            "get": 31,
+            "range_get": 31,
+            "conditional": 46,
+            "body_bytes": 49381376,
+            "head_peak": 2
+          }
+        },
+        {
+          "workload": "overlap-b",
+          "mode": "gdal-snapshot-stream",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 0.38861916679888964,
+            "min": 0.3873550002463162,
+            "max": 0.3893490000627935
+          },
+          "first_chunk_seconds": {
+            "median": 0.135282542090863,
+            "min": 0.1352528748102486,
+            "max": 0.13583862502127886
+          },
+          "first_materialized_seconds": null,
+          "prepare_seconds": null,
+          "materialization_seconds": {
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0
+          },
+          "peak_rss_bytes": {
+            "median": 172343296,
+            "min": 170508288,
+            "max": 176750592
+          },
+          "cog_identity_validation_seconds": null,
+          "layout_inspection_seconds": null,
+          "planning_compute_seconds": null,
+          "initial_validation_seconds": {
+            "median": 0.009603917133063078,
+            "min": 0.009415499866008759,
+            "max": 0.01011554105207324
+          },
+          "final_validation_seconds": {
+            "median": 0.00398312509059906,
+            "min": 0.0039363750256598,
+            "max": 0.004208292346447706
+          },
+          "metadata_worker_seconds": {
+            "median": 0.14307629317045212,
+            "min": 0.14039154117926955,
+            "max": 0.1444638343527913
+          },
+          "planning_worker_seconds": {
+            "median": 0.00021146051585674286,
+            "min": 0.0002098330296576023,
+            "max": 0.00021624984219670296
+          },
+          "http_medians": {
+            "head": 24,
+            "get": 18,
+            "range_get": 18,
+            "conditional": 42,
+            "body_bytes": 38043648,
+            "head_peak": 2
+          }
+        },
+        {
+          "workload": "overlap-b",
+          "mode": "rust-file",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 0.49510750034824014,
+            "min": 0.49500274984166026,
+            "max": 0.5010795001871884
+          },
+          "first_chunk_seconds": null,
+          "first_materialized_seconds": {
+            "median": 0.052216000000000005,
+            "min": 0.051907458,
+            "max": 0.053342584
+          },
+          "prepare_seconds": {
+            "median": 0.031471209,
+            "min": 0.031311917,
+            "max": 0.03478225
+          },
+          "materialization_seconds": {
+            "median": 0.020821542,
+            "min": 0.020591128999999996,
+            "max": 0.021017585000000005
+          },
+          "peak_rss_bytes": {
+            "median": 174276608,
+            "min": 165265408,
+            "max": 176652288
+          },
+          "cog_identity_validation_seconds": {
+            "median": 0.009667791,
+            "min": 0.009596376,
+            "max": 0.011852208000000001
+          },
+          "layout_inspection_seconds": {
+            "median": 0.024042207999999995,
+            "min": 0.024029500000000002,
+            "max": 0.025303998
+          },
+          "planning_compute_seconds": {
+            "median": 0.0005890019999999982,
+            "min": 0.0005476670000000051,
+            "max": 0.000597124999999997
+          },
+          "initial_validation_seconds": null,
+          "final_validation_seconds": null,
+          "metadata_worker_seconds": null,
+          "planning_worker_seconds": null,
+          "http_medians": {
+            "head": 33,
+            "get": 31,
+            "range_get": 31,
+            "conditional": 46,
+            "body_bytes": 49381376,
+            "head_peak": 2
+          }
+        },
+        {
+          "workload": "overlap-b",
+          "mode": "gdal-snapshot-file",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 0.38505362486466765,
+            "min": 0.3841530838981271,
+            "max": 0.38654083386063576
+          },
+          "first_chunk_seconds": null,
+          "first_materialized_seconds": {
+            "median": 0.16064524976536632,
+            "min": 0.1596985417418182,
+            "max": 0.16162308398634195
+          },
+          "prepare_seconds": null,
+          "materialization_seconds": {
+            "median": 0.06575967138633132,
+            "min": 0.05261083506047726,
+            "max": 0.06582779018208385
+          },
+          "peak_rss_bytes": {
+            "median": 213762048,
+            "min": 204980224,
+            "max": 215990272
+          },
+          "cog_identity_validation_seconds": null,
+          "layout_inspection_seconds": null,
+          "planning_compute_seconds": null,
+          "initial_validation_seconds": {
+            "median": 0.009690416976809502,
+            "min": 0.009423833806067705,
+            "max": 0.009771833196282387
+          },
+          "final_validation_seconds": {
+            "median": 0.004131124820560217,
+            "min": 0.004125041887164116,
+            "max": 0.004208957776427269
+          },
+          "metadata_worker_seconds": {
+            "median": 0.2884834581054747,
+            "min": 0.26155379228293896,
+            "max": 0.290243876632303
+          },
+          "planning_worker_seconds": {
+            "median": 0.0002033342607319355,
+            "min": 0.00020070886239409447,
+            "max": 0.00021737534552812576
+          },
+          "http_medians": {
+            "head": 24,
+            "get": 25,
+            "range_get": 25,
+            "conditional": 49,
+            "body_bytes": 47431680,
+            "head_peak": 3
+          }
+        }
+      ],
+      "pilot_tuning": {
+        "many-small/gdal-snapshot-stream": [
+          {
+            "workers": 1,
+            "wall_seconds": 0.5249047908000648,
+            "passed": true
+          },
+          {
+            "workers": 2,
+            "wall_seconds": 0.3706970838829875,
+            "passed": true
+          },
+          {
+            "workers": 4,
+            "wall_seconds": 0.3232435826212168,
+            "passed": true
+          },
+          {
+            "workers": 8,
+            "wall_seconds": 0.32742470782250166,
+            "passed": true
+          }
+        ],
+        "many-small/gdal-snapshot-file": [
+          {
+            "workers": 1,
+            "wall_seconds": 0.5325409998185933,
+            "passed": true
+          },
+          {
+            "workers": 2,
+            "wall_seconds": 0.385453375056386,
+            "passed": true
+          },
+          {
+            "workers": 4,
+            "wall_seconds": 0.3344280831515789,
+            "passed": true
+          },
+          {
+            "workers": 8,
+            "wall_seconds": 0.33882166678085923,
+            "passed": true
+          }
+        ],
+        "several-large/gdal-snapshot-stream": [
+          {
+            "workers": 1,
+            "wall_seconds": 0.7200036668218672,
+            "passed": true
+          },
+          {
+            "workers": 2,
+            "wall_seconds": 0.46982008405029774,
+            "passed": true
+          },
+          {
+            "workers": 4,
+            "wall_seconds": 0.39681079098954797,
+            "passed": true
+          },
+          {
+            "workers": 8,
+            "wall_seconds": 0.3664632081054151,
+            "passed": true
+          }
+        ],
+        "several-large/gdal-snapshot-file": [
+          {
+            "workers": 1,
+            "wall_seconds": 0.8789087501354516,
+            "passed": true
+          },
+          {
+            "workers": 2,
+            "wall_seconds": 0.6111395000480115,
+            "passed": true
+          },
+          {
+            "workers": 4,
+            "wall_seconds": 0.5546506666578352,
+            "passed": true
+          },
+          {
+            "workers": 8,
+            "wall_seconds": 0.47360679181292653,
+            "passed": true
+          }
+        ],
+        "overlap-a/gdal-snapshot-stream": [
+          {
+            "workers": 1,
+            "wall_seconds": 0.6598220421001315,
+            "passed": true
+          },
+          {
+            "workers": 2,
+            "wall_seconds": 0.4386361655779183,
+            "passed": true
+          },
+          {
+            "workers": 4,
+            "wall_seconds": 0.38238029228523374,
+            "passed": true
+          },
+          {
+            "workers": 8,
+            "wall_seconds": 0.36644316697493196,
+            "passed": true
+          }
+        ],
+        "overlap-a/gdal-snapshot-file": [
+          {
+            "workers": 1,
+            "wall_seconds": 0.6812780420295894,
+            "passed": true
+          },
+          {
+            "workers": 2,
+            "wall_seconds": 0.4665599577128887,
+            "passed": true
+          },
+          {
+            "workers": 4,
+            "wall_seconds": 0.4048127089627087,
+            "passed": true
+          },
+          {
+            "workers": 8,
+            "wall_seconds": 0.3863820838741958,
+            "passed": true
+          }
+        ],
+        "overlap-b/gdal-snapshot-stream": [
+          {
+            "workers": 1,
+            "wall_seconds": 0.6277226251550019,
+            "passed": true
+          },
+          {
+            "workers": 2,
+            "wall_seconds": 0.43281800020486116,
+            "passed": true
+          },
+          {
+            "workers": 4,
+            "wall_seconds": 0.38664591684937477,
+            "passed": true
+          },
+          {
+            "workers": 8,
+            "wall_seconds": 0.4006832498125732,
+            "passed": true
+          }
+        ],
+        "overlap-b/gdal-snapshot-file": [
+          {
+            "workers": 1,
+            "wall_seconds": 0.648841334041208,
+            "passed": true
+          },
+          {
+            "workers": 2,
+            "wall_seconds": 0.4603191246278584,
+            "passed": true
+          },
+          {
+            "workers": 4,
+            "wall_seconds": 0.413115999661386,
+            "passed": true
+          },
+          {
+            "workers": 8,
+            "wall_seconds": 0.3911160407587886,
+            "passed": true
+          }
+        ]
+      },
+      "binaries": {
+        "target/release/tile-ripper": "6e9dda7e0298dc117dac777fbbc33dd233ad259070a212654bd89f0252a4afa9",
+        "target/release/tile-ripper-native-stats": "30ccb253256a90d09437fea41afecb0fd8703595cb8519fa0941c02768497060"
+      },
+      "source_sha256": "cd537d5f59c338ecb6b4797f1d45c9ba4b1a74413dee7ad5c1c4536afe1fccea",
+      "artifact_sha256": {
+        "Cargo.lock": "5000664728ac0d99bcb9ad2147a18415ffbf2a63f3818844e01e21b3585658b4",
+        "consumers/native-stats/Cargo.lock": "f6966f52f7c8474b745206852058a8bcf68fcd31397c9b0a938e1e69879854e5",
+        "bench/snapshot_comparison.py": "ccbf2d4594b4954986cbc4a3c6c68a1727c268a95e2a3e8627f2abf6aaf667e7",
+        "bench/real_multiscene.py": "adb4bcc1d1b0499fa01a6d0ccdfa1e7426b8fee6f6d512dd81d94a1b9f4cd0b1",
+        "bench/gdal_snapshot_worker.py": "3db0078faf4318b260d1646bfe972adaea96d3e6d4428959b544345efd68dfac",
+        "bench/consumer_validation.py": "8f680f33cb90105c7f1aafa8984f43e29dbe0cda259b333f5c2bb1f289522a74",
+        "bench/acquisition_engine.py": "3ff55ef150bf7a5bcdb925d7b05967d2334510a25e5ba96ab554081b54649044"
+      },
+      "environment": {
+        "python": "3.10.14 (main, Aug 14 2024, 05:14:46) [Clang 18.1.8 ]",
+        "python_gdal": "3.10.3",
+        "rust_gdal": "3.12.4",
+        "overrides": {
+          "GDAL_DISABLE_READDIR_ON_OPEN": "EMPTY_DIR",
+          "GDAL_INGESTED_BYTES_AT_OPEN": "32768",
+          "GDAL_HTTP_MAX_RETRY": "3",
+          "GDAL_HTTP_TIMEOUT": "45",
+          "GDAL_CACHEMAX": "32",
+          "GDAL_HTTP_MULTIRANGE": "SERIAL",
+          "GDAL_NUM_THREADS": "1"
+        }
+      },
+      "link": {
+        "latency_ms": 0,
+        "bandwidth_mbps": 0
+      },
+      "raw_rows": 48,
+      "raw_sha256": "51ccd5cd940c65afac66b417e88d0c50822799b0e60aff9a7acaf370fead9c90",
+      "raw_path": "prototype-output/production-streaming/real/matched-fast-0ms-0mbit/runs.jsonl"
+    },
+    "matched_latency": {
+      "summary": [
+        {
+          "workload": "many-small",
+          "mode": "rust-stream",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 2.952989916782826,
+            "min": 2.94919762481004,
+            "max": 2.9599418747238815
+          },
+          "first_chunk_seconds": {
+            "median": 1.095473666,
+            "min": 1.091160708,
+            "max": 1.099862959
+          },
+          "first_materialized_seconds": null,
+          "prepare_seconds": {
+            "median": 0.505981833,
+            "min": 0.503703333,
+            "max": 0.506893084
+          },
+          "materialization_seconds": {
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0
+          },
+          "peak_rss_bytes": {
+            "median": 111738880,
+            "min": 108740608,
+            "max": 114671616
+          },
+          "cog_identity_validation_seconds": {
+            "median": 0.13642725,
+            "min": 0.13577983300000002,
+            "max": 0.138601042
+          },
+          "layout_inspection_seconds": {
+            "median": 0.448377124,
+            "min": 0.44436850199999994,
+            "max": 0.44867362299999985
+          },
+          "planning_compute_seconds": {
+            "median": 0.007244377000000135,
+            "min": 0.0071555429999999864,
+            "max": 0.008876623000000083
+          },
+          "initial_validation_seconds": null,
+          "final_validation_seconds": null,
+          "metadata_worker_seconds": null,
+          "planning_worker_seconds": null,
+          "http_medians": {
+            "head": 80,
+            "get": 48,
+            "range_get": 48,
+            "conditional": 80,
+            "body_bytes": 26886144,
+            "head_peak": 4
+          }
+        },
+        {
+          "workload": "many-small",
+          "mode": "gdal-snapshot-stream",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 2.509619750082493,
+            "min": 2.4992410843260586,
+            "max": 2.52152358321473
+          },
+          "first_chunk_seconds": {
+            "median": 1.141369333025068,
+            "min": 1.1400794996879995,
+            "max": 1.168784917332232
+          },
+          "first_materialized_seconds": null,
+          "prepare_seconds": null,
+          "materialization_seconds": {
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0
+          },
+          "peak_rss_bytes": {
+            "median": 154140672,
+            "min": 147668992,
+            "max": 156368896
+          },
+          "cog_identity_validation_seconds": null,
+          "layout_inspection_seconds": null,
+          "planning_compute_seconds": null,
+          "initial_validation_seconds": {
+            "median": 0.05701116565614939,
+            "min": 0.05589020811021328,
+            "max": 0.060173166915774345
+          },
+          "final_validation_seconds": {
+            "median": 0.049535667058080435,
+            "min": 0.04925583302974701,
+            "max": 0.050364917144179344
+          },
+          "metadata_worker_seconds": {
+            "median": 0.9775040438398719,
+            "min": 0.9094698326662183,
+            "max": 0.9874381669797003
+          },
+          "planning_worker_seconds": {
+            "median": 0.000535791739821434,
+            "min": 0.0005245818756520748,
+            "max": 0.0006355829536914825
+          },
+          "http_medians": {
+            "head": 64,
+            "get": 32,
+            "range_get": 32,
+            "conditional": 96,
+            "body_bytes": 26361856,
+            "head_peak": 5
+          }
+        },
+        {
+          "workload": "many-small",
+          "mode": "rust-file",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 2.958439165726304,
+            "min": 2.9162584580481052,
+            "max": 2.9651345419697464
+          },
+          "first_chunk_seconds": null,
+          "first_materialized_seconds": {
+            "median": 0.588442917,
+            "min": 0.586295833,
+            "max": 0.589137875
+          },
+          "prepare_seconds": {
+            "median": 0.501851625,
+            "min": 0.466442,
+            "max": 0.504074334
+          },
+          "materialization_seconds": {
+            "median": 0.012131333000000001,
+            "min": 0.011835416999999999,
+            "max": 0.012680666
+          },
+          "peak_rss_bytes": {
+            "median": 121782272,
+            "min": 115933184,
+            "max": 122109952
+          },
+          "cog_identity_validation_seconds": {
+            "median": 0.133440833,
+            "min": 0.13311775,
+            "max": 0.135070291
+          },
+          "layout_inspection_seconds": {
+            "median": 0.4455081659999999,
+            "min": 0.415526086,
+            "max": 0.45018737300000006
+          },
+          "planning_compute_seconds": {
+            "median": 0.006494293999999956,
+            "min": 0.004946538999999972,
+            "max": 0.008336709000000053
+          },
+          "initial_validation_seconds": null,
+          "final_validation_seconds": null,
+          "metadata_worker_seconds": null,
+          "planning_worker_seconds": null,
+          "http_medians": {
+            "head": 80,
+            "get": 48,
+            "range_get": 48,
+            "conditional": 80,
+            "body_bytes": 26886144,
+            "head_peak": 4
+          }
+        },
+        {
+          "workload": "many-small",
+          "mode": "gdal-snapshot-file",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 2.502083582803607,
+            "min": 2.499758791178465,
+            "max": 2.5041978750377893
+          },
+          "first_chunk_seconds": null,
+          "first_materialized_seconds": {
+            "median": 1.148606332950294,
+            "min": 1.1445945831947029,
+            "max": 1.151664124801755
+          },
+          "prepare_seconds": null,
+          "materialization_seconds": {
+            "median": 0.02380924904718995,
+            "min": 0.021923042368143797,
+            "max": 0.02641175128519535
+          },
+          "peak_rss_bytes": {
+            "median": 150667264,
+            "min": 150355968,
+            "max": 150929408
+          },
+          "cog_identity_validation_seconds": null,
+          "layout_inspection_seconds": null,
+          "planning_compute_seconds": null,
+          "initial_validation_seconds": {
+            "median": 0.05617758398875594,
+            "min": 0.05492120794951916,
+            "max": 0.05654366593807936
+          },
+          "final_validation_seconds": {
+            "median": 0.049950041342526674,
+            "min": 0.04731345921754837,
+            "max": 0.050300583243370056
+          },
+          "metadata_worker_seconds": {
+            "median": 1.0157186216674745,
+            "min": 0.968937998637557,
+            "max": 1.0239813327789307
+          },
+          "planning_worker_seconds": {
+            "median": 0.0005405810661613941,
+            "min": 0.0005065812729299068,
+            "max": 0.0005454542115330696
+          },
+          "http_medians": {
+            "head": 64,
+            "get": 32,
+            "range_get": 32,
+            "conditional": 96,
+            "body_bytes": 26361856,
+            "head_peak": 5
+          }
+        },
+        {
+          "workload": "several-large",
+          "mode": "rust-stream",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 8.207796208560467,
+            "min": 8.016284291166812,
+            "max": 8.215120958164334
+          },
+          "first_chunk_seconds": {
+            "median": 0.409775542,
+            "min": 0.403971334,
+            "max": 0.424823458
+          },
+          "first_materialized_seconds": null,
+          "prepare_seconds": {
+            "median": 0.1942545,
+            "min": 0.19011825,
+            "max": 0.196316208
+          },
+          "materialization_seconds": {
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0
+          },
+          "peak_rss_bytes": {
+            "median": 168886272,
+            "min": 167034880,
+            "max": 200048640
+          },
+          "cog_identity_validation_seconds": {
+            "median": 0.070121375,
+            "min": 0.06815291700000001,
+            "max": 0.070422792
+          },
+          "layout_inspection_seconds": {
+            "median": 0.165709833,
+            "min": 0.161001875,
+            "max": 0.167988
+          },
+          "planning_compute_seconds": {
+            "median": 0.0011478330000000148,
+            "min": 0.0010360829999999932,
+            "max": 0.001501458000000011
+          },
+          "initial_validation_seconds": null,
+          "final_validation_seconds": null,
+          "metadata_worker_seconds": null,
+          "planning_worker_seconds": null,
+          "http_medians": {
+            "head": 48,
+            "get": 48,
+            "range_get": 48,
+            "conditional": 78,
+            "body_bytes": 75988992,
+            "head_peak": 4
+          }
+        },
+        {
+          "workload": "several-large",
+          "mode": "gdal-snapshot-stream",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 4.88521825009957,
+            "min": 4.855627208016813,
+            "max": 4.892769500147551
+          },
+          "first_chunk_seconds": {
+            "median": 0.839221625123173,
+            "min": 0.8235892080701888,
+            "max": 0.8510307082906365
+          },
+          "first_materialized_seconds": null,
+          "prepare_seconds": null,
+          "materialization_seconds": {
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0
+          },
+          "peak_rss_bytes": {
+            "median": 223182848,
+            "min": 222986240,
+            "max": 224952320
+          },
+          "cog_identity_validation_seconds": null,
+          "layout_inspection_seconds": null,
+          "planning_compute_seconds": null,
+          "initial_validation_seconds": {
+            "median": 0.03031070763245225,
+            "min": 0.029482457786798477,
+            "max": 0.031362750101834536
+          },
+          "final_validation_seconds": {
+            "median": 0.02555883303284645,
+            "min": 0.025373749900609255,
+            "max": 0.02635062485933304
+          },
+          "metadata_worker_seconds": {
+            "median": 0.43707233387976885,
+            "min": 0.38533870968967676,
+            "max": 0.4455480403266847
+          },
+          "planning_worker_seconds": {
+            "median": 0.00023112399503588676,
+            "min": 0.0002027498558163643,
+            "max": 0.00023700017482042313
+          },
+          "http_medians": {
+            "head": 24,
+            "get": 30,
+            "range_get": 30,
+            "conditional": 54,
+            "body_bytes": 56819712,
+            "head_peak": 5
+          }
+        },
+        {
+          "workload": "several-large",
+          "mode": "rust-file",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 8.00364579167217,
+            "min": 7.9557773331180215,
+            "max": 8.16421066597104
+          },
+          "first_chunk_seconds": null,
+          "first_materialized_seconds": {
+            "median": 0.216464875,
+            "min": 0.20997733400000002,
+            "max": 0.233569416
+          },
+          "prepare_seconds": {
+            "median": 0.192160291,
+            "min": 0.191309667,
+            "max": 0.194228958
+          },
+          "materialization_seconds": {
+            "median": 0.18464341,
+            "min": 0.14921349200000003,
+            "max": 0.18769012200000001
+          },
+          "peak_rss_bytes": {
+            "median": 207011840,
+            "min": 186957824,
+            "max": 223592448
+          },
+          "cog_identity_validation_seconds": {
+            "median": 0.07000229200000001,
+            "min": 0.067644083,
+            "max": 0.07061575
+          },
+          "layout_inspection_seconds": {
+            "median": 0.164787166,
+            "min": 0.164055084,
+            "max": 0.166468291
+          },
+          "planning_compute_seconds": {
+            "median": 0.0013047929999999985,
+            "min": 0.0011000410000000238,
+            "max": 0.0014640009999999926
+          },
+          "initial_validation_seconds": null,
+          "final_validation_seconds": null,
+          "metadata_worker_seconds": null,
+          "planning_worker_seconds": null,
+          "http_medians": {
+            "head": 48,
+            "get": 48,
+            "range_get": 48,
+            "conditional": 78,
+            "body_bytes": 75988992,
+            "head_peak": 4
+          }
+        },
+        {
+          "workload": "several-large",
+          "mode": "gdal-snapshot-file",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 4.90616041701287,
+            "min": 4.863577416166663,
+            "max": 4.906468041241169
+          },
+          "first_chunk_seconds": null,
+          "first_materialized_seconds": {
+            "median": 0.8375314171425998,
+            "min": 0.8280034591443837,
+            "max": 0.8451314587146044
+          },
+          "prepare_seconds": null,
+          "materialization_seconds": {
+            "median": 0.26792107662186027,
+            "min": 0.25700858142226934,
+            "max": 0.4128229538910091
+          },
+          "peak_rss_bytes": {
+            "median": 214761472,
+            "min": 214499328,
+            "max": 225705984
+          },
+          "cog_identity_validation_seconds": null,
+          "layout_inspection_seconds": null,
+          "planning_compute_seconds": null,
+          "initial_validation_seconds": {
+            "median": 0.03081254241988063,
+            "min": 0.030058082658797503,
+            "max": 0.030949583277106285
+          },
+          "final_validation_seconds": {
+            "median": 0.024483749642968178,
+            "min": 0.024162624962627888,
+            "max": 0.024774041958153248
+          },
+          "metadata_worker_seconds": {
+            "median": 0.4170418749563396,
+            "min": 0.32824225118383765,
+            "max": 0.4212480396963656
+          },
+          "planning_worker_seconds": {
+            "median": 0.0002249167300760746,
+            "min": 0.0002216254360973835,
+            "max": 0.00029162364080548286
+          },
+          "http_medians": {
+            "head": 24,
+            "get": 30,
+            "range_get": 30,
+            "conditional": 54,
+            "body_bytes": 56819712,
+            "head_peak": 5
+          }
+        },
+        {
+          "workload": "overlap-a",
+          "mode": "rust-stream",
+          "runs": 3,
+          "failures": 2,
+          "wall_seconds": {
+            "median": 8.118282041978091,
+            "min": 8.118282041978091,
+            "max": 8.118282041978091
+          },
+          "first_chunk_seconds": {
+            "median": 0.632186375,
+            "min": 0.632186375,
+            "max": 0.632186375
+          },
+          "first_materialized_seconds": null,
+          "prepare_seconds": {
+            "median": 0.211602083,
+            "min": 0.211602083,
+            "max": 0.211602083
+          },
+          "materialization_seconds": {
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0
+          },
+          "peak_rss_bytes": {
+            "median": 186728448,
+            "min": 186728448,
+            "max": 186728448
+          },
+          "cog_identity_validation_seconds": {
+            "median": 0.069032833,
+            "min": 0.069032833,
+            "max": 0.069032833
+          },
+          "layout_inspection_seconds": {
+            "median": 0.167880999,
+            "min": 0.167880999,
+            "max": 0.167880999
+          },
+          "planning_compute_seconds": {
+            "median": 0.015528666999999996,
+            "min": 0.015528666999999996,
+            "max": 0.015528666999999996
+          },
+          "initial_validation_seconds": null,
+          "final_validation_seconds": null,
+          "metadata_worker_seconds": null,
+          "planning_worker_seconds": null,
+          "http_medians": {
+            "head": 38,
+            "get": 54,
+            "range_get": 54,
+            "conditional": 74,
+            "body_bytes": 95027200,
+            "head_peak": 4
+          }
+        },
+        {
+          "workload": "overlap-a",
+          "mode": "gdal-snapshot-stream",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 4.881450125016272,
+            "min": 4.867075500078499,
+            "max": 4.911958833225071
+          },
+          "first_chunk_seconds": {
+            "median": 0.5969809577800333,
+            "min": 0.5769087909720838,
+            "max": 0.6051224577240646
+          },
+          "first_materialized_seconds": null,
+          "prepare_seconds": null,
+          "materialization_seconds": {
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0
+          },
+          "peak_rss_bytes": {
+            "median": 190332928,
+            "min": 187793408,
+            "max": 197115904
+          },
+          "cog_identity_validation_seconds": null,
+          "layout_inspection_seconds": null,
+          "planning_compute_seconds": null,
+          "initial_validation_seconds": {
+            "median": 0.02843333315104246,
+            "min": 0.02718120813369751,
+            "max": 0.03053487464785576
+          },
+          "final_validation_seconds": {
+            "median": 0.023998749908059835,
+            "min": 0.02375095896422863,
+            "max": 0.025569125078618526
+          },
+          "metadata_worker_seconds": {
+            "median": 0.2742603328078985,
+            "min": 0.2579054571688175,
+            "max": 0.2763240421190858
+          },
+          "planning_worker_seconds": {
+            "median": 0.0002501262351870537,
+            "min": 0.00022137444466352463,
+            "max": 0.00031325221061706543
+          },
+          "http_medians": {
+            "head": 24,
+            "get": 30,
+            "range_get": 30,
+            "conditional": 54,
+            "body_bytes": 56819712,
+            "head_peak": 4
+          }
+        },
+        {
+          "workload": "overlap-a",
+          "mode": "rust-file",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 8.259524541907012,
+            "min": 8.127122750040144,
+            "max": 8.314565041102469
+          },
+          "first_chunk_seconds": null,
+          "first_materialized_seconds": {
+            "median": 0.426289834,
+            "min": 0.41906374900000004,
+            "max": 0.442022625
+          },
+          "prepare_seconds": {
+            "median": 0.188449458,
+            "min": 0.186423125,
+            "max": 0.19138725
+          },
+          "materialization_seconds": {
+            "median": 0.03379358300000001,
+            "min": 0.024294588,
+            "max": 0.03853157899999999
+          },
+          "peak_rss_bytes": {
+            "median": 187154432,
+            "min": 183746560,
+            "max": 188547072
+          },
+          "cog_identity_validation_seconds": {
+            "median": 0.068352709,
+            "min": 0.068095209,
+            "max": 0.07058962499999999
+          },
+          "layout_inspection_seconds": {
+            "median": 0.16109279199999998,
+            "min": 0.1607015,
+            "max": 0.164302209
+          },
+          "planning_compute_seconds": {
+            "median": 0.000926874000000022,
+            "min": 0.0007199999999999984,
+            "max": 0.0011901239999999869
+          },
+          "initial_validation_seconds": null,
+          "final_validation_seconds": null,
+          "metadata_worker_seconds": null,
+          "planning_worker_seconds": null,
+          "http_medians": {
+            "head": 40,
+            "get": 55,
+            "range_get": 55,
+            "conditional": 77,
+            "body_bytes": 96600064,
+            "head_peak": 4
+          }
+        },
+        {
+          "workload": "overlap-a",
+          "mode": "gdal-snapshot-file",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 4.881035709287971,
+            "min": 4.8777342909015715,
+            "max": 4.903039041906595
+          },
+          "first_chunk_seconds": null,
+          "first_materialized_seconds": {
+            "median": 0.5910076661966741,
+            "min": 0.588539042044431,
+            "max": 0.5944406660273671
+          },
+          "prepare_seconds": null,
+          "materialization_seconds": {
+            "median": 0.04034825414419174,
+            "min": 0.040011913515627384,
+            "max": 0.05408554198220372
+          },
+          "peak_rss_bytes": {
+            "median": 187645952,
+            "min": 178667520,
+            "max": 196280320
+          },
+          "cog_identity_validation_seconds": null,
+          "layout_inspection_seconds": null,
+          "planning_compute_seconds": null,
+          "initial_validation_seconds": {
+            "median": 0.029557583387941122,
+            "min": 0.029084874782711267,
+            "max": 0.03079666569828987
+          },
+          "final_validation_seconds": {
+            "median": 0.02410379145294428,
+            "min": 0.022482834290713072,
+            "max": 0.02619270794093609
+          },
+          "metadata_worker_seconds": {
+            "median": 0.2722460418008268,
+            "min": 0.26072500040754676,
+            "max": 0.27619566675275564
+          },
+          "planning_worker_seconds": {
+            "median": 0.0002414570190012455,
+            "min": 0.0002309163101017475,
+            "max": 0.00024908222258090973
+          },
+          "http_medians": {
+            "head": 24,
+            "get": 30,
+            "range_get": 30,
+            "conditional": 54,
+            "body_bytes": 56819712,
+            "head_peak": 4
+          }
+        },
+        {
+          "workload": "overlap-b",
+          "mode": "rust-stream",
+          "runs": 3,
+          "failures": 1,
+          "wall_seconds": {
+            "median": 5.35088977124542,
+            "min": 5.34859862504527,
+            "max": 5.35318091744557
+          },
+          "first_chunk_seconds": {
+            "median": 0.9988324580000001,
+            "min": 0.998016333,
+            "max": 0.999648583
+          },
+          "first_materialized_seconds": null,
+          "prepare_seconds": {
+            "median": 0.189842833,
+            "min": 0.185793166,
+            "max": 0.1938925
+          },
+          "materialization_seconds": {
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0
+          },
+          "peak_rss_bytes": {
+            "median": 196706304.0,
+            "min": 194363392,
+            "max": 199049216
+          },
+          "cog_identity_validation_seconds": {
+            "median": 0.067586833,
+            "min": 0.066573542,
+            "max": 0.068600124
+          },
+          "layout_inspection_seconds": {
+            "median": 0.16240697850000002,
+            "min": 0.158720583,
+            "max": 0.16609337400000002
+          },
+          "planning_compute_seconds": {
+            "median": 0.001153938499999993,
+            "min": 0.0008833759999999913,
+            "max": 0.0014245009999999947
+          },
+          "initial_validation_seconds": null,
+          "final_validation_seconds": null,
+          "metadata_worker_seconds": null,
+          "planning_worker_seconds": null,
+          "http_medians": {
+            "head": 48.0,
+            "get": 36.0,
+            "range_get": 36.0,
+            "conditional": 66.0,
+            "body_bytes": 57409536.0,
+            "head_peak": 4.0
+          }
+        },
+        {
+          "workload": "overlap-b",
+          "mode": "gdal-snapshot-stream",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 3.3569139163009822,
+            "min": 3.349849332589656,
+            "max": 3.3633470418863
+          },
+          "first_chunk_seconds": {
+            "median": 3.0579835418611765,
+            "min": 3.055900041013956,
+            "max": 3.0645188339985907
+          },
+          "first_materialized_seconds": null,
+          "prepare_seconds": null,
+          "materialization_seconds": {
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0
+          },
+          "peak_rss_bytes": {
+            "median": 219430912,
+            "min": 206340096,
+            "max": 226541568
+          },
+          "cog_identity_validation_seconds": null,
+          "layout_inspection_seconds": null,
+          "planning_compute_seconds": null,
+          "initial_validation_seconds": {
+            "median": 0.02930445782840252,
+            "min": 0.029258749913424253,
+            "max": 0.03011833317577839
+          },
+          "final_validation_seconds": {
+            "median": 0.02320962492376566,
+            "min": 0.022546000313013792,
+            "max": 0.024149958975613117
+          },
+          "metadata_worker_seconds": {
+            "median": 0.34185683308169246,
+            "min": 0.3099354156292975,
+            "max": 0.3562542926520109
+          },
+          "planning_worker_seconds": {
+            "median": 0.00025579240173101425,
+            "min": 0.0002134190872311592,
+            "max": 0.0002566264010965824
+          },
+          "http_medians": {
+            "head": 24,
+            "get": 18,
+            "range_get": 18,
+            "conditional": 42,
+            "body_bytes": 38043648,
+            "head_peak": 5
+          }
+        },
+        {
+          "workload": "overlap-b",
+          "mode": "rust-file",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 5.3432315001264215,
+            "min": 5.323377499822527,
+            "max": 5.390078334137797
+          },
+          "first_chunk_seconds": null,
+          "first_materialized_seconds": {
+            "median": 0.815028541,
+            "min": 0.8127694169999999,
+            "max": 0.8192417089999999
+          },
+          "prepare_seconds": {
+            "median": 0.189158583,
+            "min": 0.187681542,
+            "max": 0.191964458
+          },
+          "materialization_seconds": {
+            "median": 0.024005164,
+            "min": 0.022278790999999992,
+            "max": 0.027422292000000004
+          },
+          "peak_rss_bytes": {
+            "median": 205094912,
+            "min": 200392704,
+            "max": 209928192
+          },
+          "cog_identity_validation_seconds": {
+            "median": 0.069255417,
+            "min": 0.068428958,
+            "max": 0.069483167
+          },
+          "layout_inspection_seconds": {
+            "median": 0.161640625,
+            "min": 0.160254709,
+            "max": 0.164757166
+          },
+          "planning_compute_seconds": {
+            "median": 0.0010290429999999795,
+            "min": 0.0009249999999999814,
+            "max": 0.001193291000000013
+          },
+          "initial_validation_seconds": null,
+          "final_validation_seconds": null,
+          "metadata_worker_seconds": null,
+          "planning_worker_seconds": null,
+          "http_medians": {
+            "head": 48,
+            "get": 36,
+            "range_get": 36,
+            "conditional": 66,
+            "body_bytes": 57409536,
+            "head_peak": 4
+          }
+        },
+        {
+          "workload": "overlap-b",
+          "mode": "gdal-snapshot-file",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 3.370186542160809,
+            "min": 3.3673356659710407,
+            "max": 3.3703926247544587
+          },
+          "first_chunk_seconds": null,
+          "first_materialized_seconds": {
+            "median": 3.0653729997575283,
+            "min": 3.0653574159368873,
+            "max": 3.079411792103201
+          },
+          "prepare_seconds": null,
+          "materialization_seconds": {
+            "median": 0.04287078930065036,
+            "min": 0.0399374202825129,
+            "max": 0.07150729093700647
+          },
+          "peak_rss_bytes": {
+            "median": 219791360,
+            "min": 216498176,
+            "max": 223428608
+          },
+          "cog_identity_validation_seconds": null,
+          "layout_inspection_seconds": null,
+          "planning_compute_seconds": null,
+          "initial_validation_seconds": {
+            "median": 0.029152083210647106,
+            "min": 0.028996999841183424,
+            "max": 0.030372916255146265
+          },
+          "final_validation_seconds": {
+            "median": 0.024118040688335896,
+            "min": 0.022464457899332047,
+            "max": 0.024244125001132488
+          },
+          "metadata_worker_seconds": {
+            "median": 0.3503041658550501,
+            "min": 0.33822766644880176,
+            "max": 0.38320549903437495
+          },
+          "planning_worker_seconds": {
+            "median": 0.00020445697009563446,
+            "min": 0.00020120805129408836,
+            "max": 0.0002489173784852028
+          },
+          "http_medians": {
+            "head": 24,
+            "get": 18,
+            "range_get": 18,
+            "conditional": 42,
+            "body_bytes": 38043648,
+            "head_peak": 5
+          }
+        }
+      ],
+      "pilot_tuning": {
+        "many-small/gdal-snapshot-stream": [
+          {
+            "workers": 1,
+            "wall_seconds": 4.273093458265066,
+            "passed": true
+          },
+          {
+            "workers": 2,
+            "wall_seconds": 2.902581417001784,
+            "passed": true
+          },
+          {
+            "workers": 4,
+            "wall_seconds": 2.529482249636203,
+            "passed": true
+          },
+          {
+            "workers": 8,
+            "wall_seconds": 2.4996244171634316,
+            "passed": true
+          }
+        ],
+        "many-small/gdal-snapshot-file": [
+          {
+            "workers": 1,
+            "wall_seconds": 4.403859790880233,
+            "passed": true
+          },
+          {
+            "workers": 2,
+            "wall_seconds": 2.9396777912043035,
+            "passed": true
+          },
+          {
+            "workers": 4,
+            "wall_seconds": 2.578565292060375,
+            "passed": true
+          },
+          {
+            "workers": 8,
+            "wall_seconds": 2.502861499786377,
+            "passed": true
+          }
+        ],
+        "several-large/gdal-snapshot-stream": [
+          {
+            "workers": 1,
+            "wall_seconds": 7.065363499801606,
+            "passed": true
+          },
+          {
+            "workers": 2,
+            "wall_seconds": 5.156475292053074,
+            "passed": true
+          },
+          {
+            "workers": 4,
+            "wall_seconds": 4.957803917117417,
+            "passed": true
+          },
+          {
+            "workers": 8,
+            "wall_seconds": 4.906579584348947,
+            "passed": true
+          }
+        ],
+        "several-large/gdal-snapshot-file": [
+          {
+            "workers": 1,
+            "wall_seconds": 7.72074866713956,
+            "passed": true
+          },
+          {
+            "workers": 2,
+            "wall_seconds": 5.237007167190313,
+            "passed": true
+          },
+          {
+            "workers": 4,
+            "wall_seconds": 4.945674917194992,
+            "passed": true
+          },
+          {
+            "workers": 8,
+            "wall_seconds": 4.904989290982485,
+            "passed": true
+          }
+        ],
+        "overlap-a/gdal-snapshot-stream": [
+          {
+            "workers": 1,
+            "wall_seconds": 6.877713792026043,
+            "passed": true
+          },
+          {
+            "workers": 2,
+            "wall_seconds": 5.117220750078559,
+            "passed": true
+          },
+          {
+            "workers": 4,
+            "wall_seconds": 4.905506374780089,
+            "passed": true
+          },
+          {
+            "workers": 8,
+            "wall_seconds": 5.097970541100949,
+            "passed": true
+          }
+        ],
+        "overlap-a/gdal-snapshot-file": [
+          {
+            "workers": 1,
+            "wall_seconds": 6.992808333132416,
+            "passed": true
+          },
+          {
+            "workers": 2,
+            "wall_seconds": 5.113790708128363,
+            "passed": true
+          },
+          {
+            "workers": 4,
+            "wall_seconds": 4.914886916987598,
+            "passed": true
+          },
+          {
+            "workers": 8,
+            "wall_seconds": 5.308733417186886,
+            "passed": true
+          }
+        ],
+        "overlap-b/gdal-snapshot-stream": [
+          {
+            "workers": 1,
+            "wall_seconds": 4.899685790762305,
+            "passed": true
+          },
+          {
+            "workers": 2,
+            "wall_seconds": 3.5372141655534506,
+            "passed": true
+          },
+          {
+            "workers": 4,
+            "wall_seconds": 3.38102141674608,
+            "passed": true
+          },
+          {
+            "workers": 8,
+            "wall_seconds": 3.3420088328421116,
+            "passed": true
+          }
+        ],
+        "overlap-b/gdal-snapshot-file": [
+          {
+            "workers": 1,
+            "wall_seconds": 4.885819582734257,
+            "passed": true
+          },
+          {
+            "workers": 2,
+            "wall_seconds": 3.526533250231296,
+            "passed": true
+          },
+          {
+            "workers": 4,
+            "wall_seconds": 3.395013500005007,
+            "passed": true
+          },
+          {
+            "workers": 8,
+            "wall_seconds": 3.385538791771978,
+            "passed": true
+          }
+        ]
+      },
+      "binaries": {
+        "target/release/tile-ripper": "6e9dda7e0298dc117dac777fbbc33dd233ad259070a212654bd89f0252a4afa9",
+        "target/release/tile-ripper-native-stats": "30ccb253256a90d09437fea41afecb0fd8703595cb8519fa0941c02768497060"
+      },
+      "source_sha256": "cd537d5f59c338ecb6b4797f1d45c9ba4b1a74413dee7ad5c1c4536afe1fccea",
+      "artifact_sha256": {
+        "Cargo.lock": "5000664728ac0d99bcb9ad2147a18415ffbf2a63f3818844e01e21b3585658b4",
+        "consumers/native-stats/Cargo.lock": "f6966f52f7c8474b745206852058a8bcf68fcd31397c9b0a938e1e69879854e5",
+        "bench/snapshot_comparison.py": "ccbf2d4594b4954986cbc4a3c6c68a1727c268a95e2a3e8627f2abf6aaf667e7",
+        "bench/real_multiscene.py": "adb4bcc1d1b0499fa01a6d0ccdfa1e7426b8fee6f6d512dd81d94a1b9f4cd0b1",
+        "bench/gdal_snapshot_worker.py": "3db0078faf4318b260d1646bfe972adaea96d3e6d4428959b544345efd68dfac",
+        "bench/consumer_validation.py": "8f680f33cb90105c7f1aafa8984f43e29dbe0cda259b333f5c2bb1f289522a74",
+        "bench/acquisition_engine.py": "3ff55ef150bf7a5bcdb925d7b05967d2334510a25e5ba96ab554081b54649044"
+      },
+      "environment": {
+        "python": "3.10.14 (main, Aug 14 2024, 05:14:46) [Clang 18.1.8 ]",
+        "python_gdal": "3.10.3",
+        "rust_gdal": "3.12.4",
+        "overrides": {
+          "GDAL_DISABLE_READDIR_ON_OPEN": "EMPTY_DIR",
+          "GDAL_INGESTED_BYTES_AT_OPEN": "32768",
+          "GDAL_HTTP_MAX_RETRY": "3",
+          "GDAL_HTTP_TIMEOUT": "45",
+          "GDAL_CACHEMAX": "32",
+          "GDAL_HTTP_MULTIRANGE": "SERIAL",
+          "GDAL_NUM_THREADS": "1"
+        }
+      },
+      "link": {
+        "latency_ms": 8.0,
+        "bandwidth_mbps": 100.0
+      },
+      "raw_rows": 48,
+      "raw_sha256": "8ddf2f67090c464960f8a7ce5a841f684f2c3ab250e56be91674fc2b4567cda3",
+      "raw_path": "prototype-output/production-streaming/real/matched-latency-8ms-100mbit/runs.jsonl"
+    },
+    "reader_fast": {
+      "summary": [
+        {
+          "workload": "many-small",
+          "mode": "rust-stream",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 0.2877210839651525,
+            "min": 0.28581916727125645,
+            "max": 0.28870337503030896
+          },
+          "first_chunk_seconds": {
+            "median": 0.074070375,
+            "min": 0.073832041,
+            "max": 0.074423916
+          },
+          "prepare_seconds": {
+            "median": 0.048263833,
+            "min": 0.047709625,
+            "max": 0.048271666
+          },
+          "materialization_seconds": {
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0
+          },
+          "peak_rss_bytes": {
+            "median": 107249664,
+            "min": 104480768,
+            "max": 108576768
+          },
+          "cog_identity_validation_seconds": {
+            "median": 0.013046791,
+            "min": 0.0127975,
+            "max": 0.013666998999999999
+          },
+          "layout_inspection_seconds": {
+            "median": 0.037836752,
+            "min": 0.036794331,
+            "max": 0.0383865
+          },
+          "planning_compute_seconds": {
+            "median": 0.0012145830000000052,
+            "min": 0.001185956000000002,
+            "max": 0.0012154190000000023
+          },
+          "http_medians": {
+            "head": 80,
+            "get": 48,
+            "body_bytes": 26886144
+          }
+        },
+        {
+          "workload": "many-small",
+          "mode": "gdal-stream",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 0.2976608327589929,
+            "min": 0.29268541606143117,
+            "max": 0.30451987497508526
+          },
+          "first_chunk_seconds": {
+            "median": 0.04492050036787987,
+            "min": 0.044223582837730646,
+            "max": 0.05457824980840087
+          },
+          "prepare_seconds": null,
+          "materialization_seconds": {
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0
+          },
+          "peak_rss_bytes": {
+            "median": 121815040,
+            "min": 121765888,
+            "max": 121815040
+          },
+          "cog_identity_validation_seconds": null,
+          "layout_inspection_seconds": null,
+          "planning_compute_seconds": null,
+          "http_medians": {
+            "head": 16,
+            "get": 32,
+            "body_bytes": 26361856
+          }
+        },
+        {
+          "workload": "many-small",
+          "mode": "rust-file",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 0.29235637513920665,
+            "min": 0.29093150002881885,
+            "max": 0.2953368751332164
+          },
+          "first_chunk_seconds": null,
+          "prepare_seconds": {
+            "median": 0.048542083,
+            "min": 0.047756625,
+            "max": 0.049037125
+          },
+          "materialization_seconds": {
+            "median": 0.006553707,
+            "min": 0.006449041,
+            "max": 0.006594541999999999
+          },
+          "peak_rss_bytes": {
+            "median": 105775104,
+            "min": 105676800,
+            "max": 109936640
+          },
+          "cog_identity_validation_seconds": {
+            "median": 0.013211666,
+            "min": 0.012864167,
+            "max": 0.013344625
+          },
+          "layout_inspection_seconds": {
+            "median": 0.038755583,
+            "min": 0.037662417000000004,
+            "max": 0.039092169
+          },
+          "planning_compute_seconds": {
+            "median": 0.0012392499999999973,
+            "min": 0.0011555829999999948,
+            "max": 0.0012773309999999996
+          },
+          "http_medians": {
+            "head": 80,
+            "get": 48,
+            "body_bytes": 26886144
+          }
+        },
+        {
+          "workload": "many-small",
+          "mode": "gdal-file",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 0.27138529205694795,
+            "min": 0.27100537484511733,
+            "max": 0.2760123750194907
+          },
+          "first_chunk_seconds": null,
+          "prepare_seconds": null,
+          "materialization_seconds": {
+            "median": 0.015478666871786118,
+            "min": 0.014746418688446283,
+            "max": 0.017148288898169994
+          },
+          "peak_rss_bytes": {
+            "median": 118456320,
+            "min": 118407168,
+            "max": 122847232
+          },
+          "cog_identity_validation_seconds": null,
+          "layout_inspection_seconds": null,
+          "planning_compute_seconds": null,
+          "http_medians": {
+            "head": 16,
+            "get": 32,
+            "body_bytes": 26361856
+          }
+        },
+        {
+          "workload": "several-large",
+          "mode": "rust-stream",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 0.6770704169757664,
+            "min": 0.6724512497894466,
+            "max": 0.6797634172253311
+          },
+          "first_chunk_seconds": {
+            "median": 0.053008959,
+            "min": 0.052677083,
+            "max": 0.053899875
+          },
+          "prepare_seconds": {
+            "median": 0.035419708,
+            "min": 0.035016459,
+            "max": 0.035444416
+          },
+          "materialization_seconds": {
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0
+          },
+          "peak_rss_bytes": {
+            "median": 164642816,
+            "min": 158187520,
+            "max": 166723584
+          },
+          "cog_identity_validation_seconds": {
+            "median": 0.010917293,
+            "min": 0.010821250000000001,
+            "max": 0.011465833
+          },
+          "layout_inspection_seconds": {
+            "median": 0.025484793000000002,
+            "min": 0.025077207,
+            "max": 0.025492289999999997
+          },
+          "planning_compute_seconds": {
+            "median": 0.0007129159999999975,
+            "min": 0.0006813760000000009,
+            "max": 0.0007293350000000011
+          },
+          "http_medians": {
+            "head": 33,
+            "get": 48,
+            "body_bytes": 75988992
+          }
+        },
+        {
+          "workload": "several-large",
+          "mode": "gdal-stream",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 0.35497666615992785,
+            "min": 0.3452303749509156,
+            "max": 0.3564032497815788
+          },
+          "first_chunk_seconds": {
+            "median": 0.0569167910143733,
+            "min": 0.049230999778956175,
+            "max": 0.05850116675719619
+          },
+          "prepare_seconds": null,
+          "materialization_seconds": {
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0
+          },
+          "peak_rss_bytes": {
+            "median": 175669248,
+            "min": 173244416,
+            "max": 187678720
+          },
+          "cog_identity_validation_seconds": null,
+          "layout_inspection_seconds": null,
+          "planning_compute_seconds": null,
+          "http_medians": {
+            "head": 6,
+            "get": 31,
+            "body_bytes": 58327040
+          }
+        },
+        {
+          "workload": "several-large",
+          "mode": "rust-file",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 0.634957832749933,
+            "min": 0.6328072501346469,
+            "max": 0.6527796247974038
+          },
+          "first_chunk_seconds": null,
+          "prepare_seconds": {
+            "median": 0.032912917,
+            "min": 0.03239575,
+            "max": 0.053185
+          },
+          "materialization_seconds": {
+            "median": 0.11716753800000002,
+            "min": 0.11677434,
+            "max": 0.11831401200000004
+          },
+          "peak_rss_bytes": {
+            "median": 171507712,
+            "min": 170934272,
+            "max": 171933696
+          },
+          "cog_identity_validation_seconds": {
+            "median": 0.010628625,
+            "min": 0.010188791,
+            "max": 0.029851624
+          },
+          "layout_inspection_seconds": {
+            "median": 0.024607832999999996,
+            "min": 0.024497750999999998,
+            "max": 0.025431124
+          },
+          "planning_compute_seconds": {
+            "median": 0.0006879150000000007,
+            "min": 0.0006878330000000057,
+            "max": 0.0007607100000000012
+          },
+          "http_medians": {
+            "head": 36,
+            "get": 48,
+            "body_bytes": 75988992
+          }
+        },
+        {
+          "workload": "several-large",
+          "mode": "gdal-file",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 0.41128441598266363,
+            "min": 0.40918179089203477,
+            "max": 0.41653050016611814
+          },
+          "first_chunk_seconds": null,
+          "prepare_seconds": null,
+          "materialization_seconds": {
+            "median": 0.6063052867539227,
+            "min": 0.5896685738116503,
+            "max": 0.6400642767548561
+          },
+          "peak_rss_bytes": {
+            "median": 171999232,
+            "min": 171360256,
+            "max": 181485568
+          },
+          "cog_identity_validation_seconds": null,
+          "layout_inspection_seconds": null,
+          "planning_compute_seconds": null,
+          "http_medians": {
+            "head": 6,
+            "get": 30,
+            "body_bytes": 56819712
+          }
+        },
+        {
+          "workload": "overlap-a",
+          "mode": "rust-stream",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 0.4614245421253145,
+            "min": 0.45605833316221833,
+            "max": 0.46530283289030194
+          },
+          "first_chunk_seconds": {
+            "median": 0.051849958,
+            "min": 0.051403875,
+            "max": 0.05357875
+          },
+          "prepare_seconds": {
+            "median": 0.03080675,
+            "min": 0.030579292,
+            "max": 0.032236959
+          },
+          "materialization_seconds": {
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0
+          },
+          "peak_rss_bytes": {
+            "median": 154124288,
+            "min": 153550848,
+            "max": 155713536
+          },
+          "cog_identity_validation_seconds": {
+            "median": 0.009271374999999998,
+            "min": 0.008966666,
+            "max": 0.009271624999999999
+          },
+          "layout_inspection_seconds": {
+            "median": 0.02380429,
+            "min": 0.023551039999999995,
+            "max": 0.025045832000000004
+          },
+          "planning_compute_seconds": {
+            "median": 0.000574085000000002,
+            "min": 0.0005428770000000041,
+            "max": 0.0006435019999999972
+          },
+          "http_medians": {
+            "head": 33,
+            "get": 42,
+            "body_bytes": 57180160
+          }
+        },
+        {
+          "workload": "overlap-a",
+          "mode": "gdal-stream",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 0.37132508400827646,
+            "min": 0.36895012483000755,
+            "max": 0.3780247080139816
+          },
+          "first_chunk_seconds": {
+            "median": 0.07284225011244416,
+            "min": 0.059787165839225054,
+            "max": 0.07814187509939075
+          },
+          "prepare_seconds": null,
+          "materialization_seconds": {
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0
+          },
+          "peak_rss_bytes": {
+            "median": 188940288,
+            "min": 185925632,
+            "max": 197804032
+          },
+          "cog_identity_validation_seconds": null,
+          "layout_inspection_seconds": null,
+          "planning_compute_seconds": null,
+          "http_medians": {
+            "head": 6,
+            "get": 42,
+            "body_bytes": 64602112
+          }
+        },
+        {
+          "workload": "overlap-a",
+          "mode": "rust-file",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 0.4720740420743823,
+            "min": 0.46999150002375245,
+            "max": 0.4745449158363044
+          },
+          "first_chunk_seconds": null,
+          "prepare_seconds": {
+            "median": 0.030547125,
+            "min": 0.029677542,
+            "max": 0.030625542
+          },
+          "materialization_seconds": {
+            "median": 0.024225918000000003,
+            "min": 0.023874457,
+            "max": 0.024347872
+          },
+          "peak_rss_bytes": {
+            "median": 161923072,
+            "min": 156155904,
+            "max": 168181760
+          },
+          "cog_identity_validation_seconds": {
+            "median": 0.009363917,
+            "min": 0.009221251,
+            "max": 0.009434541000000001
+          },
+          "layout_inspection_seconds": {
+            "median": 0.023449709,
+            "min": 0.023160708,
+            "max": 0.023877748999999997
+          },
+          "planning_compute_seconds": {
+            "median": 0.0005663330000000022,
+            "min": 0.0005399170000000009,
+            "max": 0.0006259170000000036
+          },
+          "http_medians": {
+            "head": 35,
+            "get": 42,
+            "body_bytes": 57180160
+          }
+        },
+        {
+          "workload": "overlap-a",
+          "mode": "gdal-file",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 0.3518652501516044,
+            "min": 0.3367784582078457,
+            "max": 0.35375550016760826
+          },
+          "first_chunk_seconds": null,
+          "prepare_seconds": null,
+          "materialization_seconds": {
+            "median": 0.051753958221524954,
+            "min": 0.04579203808680177,
+            "max": 0.054732960648834705
+          },
+          "peak_rss_bytes": {
+            "median": 186040320,
+            "min": 185876480,
+            "max": 186318848
+          },
+          "cog_identity_validation_seconds": null,
+          "layout_inspection_seconds": null,
+          "planning_compute_seconds": null,
+          "http_medians": {
+            "head": 6,
+            "get": 43,
+            "body_bytes": 66076672
+          }
+        },
+        {
+          "workload": "overlap-b",
+          "mode": "rust-stream",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 0.5016526249237359,
+            "min": 0.5010558748617768,
+            "max": 0.5038207080215216
+          },
+          "first_chunk_seconds": {
+            "median": 0.085386125,
+            "min": 0.083159375,
+            "max": 0.085458125
+          },
+          "prepare_seconds": {
+            "median": 0.032468583,
+            "min": 0.031810792,
+            "max": 0.0341845
+          },
+          "materialization_seconds": {
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0
+          },
+          "peak_rss_bytes": {
+            "median": 164806656,
+            "min": 161775616,
+            "max": 171851776
+          },
+          "cog_identity_validation_seconds": {
+            "median": 0.010826167,
+            "min": 0.009999999,
+            "max": 0.010937874
+          },
+          "layout_inspection_seconds": {
+            "median": 0.023942041,
+            "min": 0.023805041000000002,
+            "max": 0.025406040999999997
+          },
+          "planning_compute_seconds": {
+            "median": 0.0005678339999999997,
+            "min": 0.0005375839999999972,
+            "max": 0.0006625010000000028
+          },
+          "http_medians": {
+            "head": 33,
+            "get": 31,
+            "body_bytes": 49381376
+          }
+        },
+        {
+          "workload": "overlap-b",
+          "mode": "gdal-stream",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 0.3367587090469897,
+            "min": 0.31441629119217396,
+            "max": 0.34405945893377066
+          },
+          "first_chunk_seconds": {
+            "median": 0.10188958328217268,
+            "min": 0.09593329206109047,
+            "max": 0.10860991710796952
+          },
+          "prepare_seconds": null,
+          "materialization_seconds": {
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0
+          },
+          "peak_rss_bytes": {
+            "median": 196739072,
+            "min": 191234048,
+            "max": 205799424
+          },
+          "cog_identity_validation_seconds": null,
+          "layout_inspection_seconds": null,
+          "planning_compute_seconds": null,
+          "http_medians": {
+            "head": 6,
+            "get": 18,
+            "body_bytes": 38043648
+          }
+        },
+        {
+          "workload": "overlap-b",
+          "mode": "rust-file",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 0.49952600011602044,
+            "min": 0.4968691668473184,
+            "max": 0.5251402920112014
+          },
+          "first_chunk_seconds": null,
+          "prepare_seconds": {
+            "median": 0.032360333,
+            "min": 0.030854125,
+            "max": 0.033720834
+          },
+          "materialization_seconds": {
+            "median": 0.021542040000000005,
+            "min": 0.021306958999999997,
+            "max": 0.029345542999999995
+          },
+          "peak_rss_bytes": {
+            "median": 174374912,
+            "min": 165216256,
+            "max": 176439296
+          },
+          "cog_identity_validation_seconds": {
+            "median": 0.010825625,
+            "min": 0.00955075,
+            "max": 0.010966833
+          },
+          "layout_inspection_seconds": {
+            "median": 0.023557459000000003,
+            "min": 0.023518751,
+            "max": 0.025178582999999997
+          },
+          "planning_compute_seconds": {
+            "median": 0.0005296239999999994,
+            "min": 0.0005049999999999985,
+            "max": 0.0005717920000000015
+          },
+          "http_medians": {
+            "head": 33,
+            "get": 31,
+            "body_bytes": 49381376
+          }
+        },
+        {
+          "workload": "overlap-b",
+          "mode": "gdal-file",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 0.3130820831283927,
+            "min": 0.3056178749538958,
+            "max": 0.3314430001191795
+          },
+          "first_chunk_seconds": null,
+          "prepare_seconds": null,
+          "materialization_seconds": {
+            "median": 0.06159641593694687,
+            "min": 0.049984670244157314,
+            "max": 0.06426542112603784
+          },
+          "peak_rss_bytes": {
+            "median": 196313088,
+            "min": 194445312,
+            "max": 209469440
+          },
+          "cog_identity_validation_seconds": null,
+          "layout_inspection_seconds": null,
+          "planning_compute_seconds": null,
+          "http_medians": {
+            "head": 6,
+            "get": 18,
+            "body_bytes": 38043648
+          }
+        }
+      ],
+      "pilot_tuning": {
+        "many-small/gdal-stream": [
+          {
+            "workers": 1,
+            "wall_seconds": 0.4881420829333365,
+            "passed": true
+          },
+          {
+            "workers": 2,
+            "wall_seconds": 0.35092058312147856,
+            "passed": true
+          },
+          {
+            "workers": 4,
+            "wall_seconds": 0.2893836246803403,
+            "passed": true
+          },
+          {
+            "workers": 8,
+            "wall_seconds": 0.30049895914271474,
+            "passed": true
+          }
+        ],
+        "many-small/gdal-file": [
+          {
+            "workers": 1,
+            "wall_seconds": 0.47137225000187755,
+            "passed": true
+          },
+          {
+            "workers": 2,
+            "wall_seconds": 0.32839420810341835,
+            "passed": true
+          },
+          {
+            "workers": 4,
+            "wall_seconds": 0.26401029201224446,
+            "passed": true
+          },
+          {
+            "workers": 8,
+            "wall_seconds": 0.267918833065778,
+            "passed": true
+          }
+        ],
+        "several-large/gdal-stream": [
+          {
+            "workers": 1,
+            "wall_seconds": 0.7168629169464111,
+            "passed": true
+          },
+          {
+            "workers": 2,
+            "wall_seconds": 0.46348525024950504,
+            "passed": true
+          },
+          {
+            "workers": 4,
+            "wall_seconds": 0.38588195806369185,
+            "passed": true
+          },
+          {
+            "workers": 8,
+            "wall_seconds": 0.36013170797377825,
+            "passed": true
+          }
+        ],
+        "several-large/gdal-file": [
+          {
+            "workers": 1,
+            "wall_seconds": 0.8475845418870449,
+            "passed": true
+          },
+          {
+            "workers": 2,
+            "wall_seconds": 0.5665002502501011,
+            "passed": true
+          },
+          {
+            "workers": 4,
+            "wall_seconds": 0.4188903751783073,
+            "passed": true
+          },
+          {
+            "workers": 8,
+            "wall_seconds": 0.41410283371806145,
+            "passed": true
+          }
+        ],
+        "overlap-a/gdal-stream": [
+          {
+            "workers": 1,
+            "wall_seconds": 0.6481442907825112,
+            "passed": true
+          },
+          {
+            "workers": 2,
+            "wall_seconds": 0.4623607499524951,
+            "passed": true
+          },
+          {
+            "workers": 4,
+            "wall_seconds": 0.36936545884236693,
+            "passed": true
+          },
+          {
+            "workers": 8,
+            "wall_seconds": 0.3583947499282658,
+            "passed": true
+          }
+        ],
+        "overlap-a/gdal-file": [
+          {
+            "workers": 1,
+            "wall_seconds": 0.6337089999578893,
+            "passed": true
+          },
+          {
+            "workers": 2,
+            "wall_seconds": 0.4357368750497699,
+            "passed": true
+          },
+          {
+            "workers": 4,
+            "wall_seconds": 0.3736780830658972,
+            "passed": true
+          },
+          {
+            "workers": 8,
+            "wall_seconds": 0.333813791628927,
+            "passed": true
+          }
+        ],
+        "overlap-b/gdal-stream": [
+          {
+            "workers": 1,
+            "wall_seconds": 0.6114814998582006,
+            "passed": true
+          },
+          {
+            "workers": 2,
+            "wall_seconds": 0.43410608312115073,
+            "passed": true
+          },
+          {
+            "workers": 4,
+            "wall_seconds": 0.3830007091164589,
+            "passed": true
+          },
+          {
+            "workers": 8,
+            "wall_seconds": 0.32868258375674486,
+            "passed": true
+          }
+        ],
+        "overlap-b/gdal-file": [
+          {
+            "workers": 1,
+            "wall_seconds": 0.6211017076857388,
+            "passed": true
+          },
+          {
+            "workers": 2,
+            "wall_seconds": 0.417003707960248,
+            "passed": true
+          },
+          {
+            "workers": 4,
+            "wall_seconds": 0.3568512089550495,
+            "passed": true
+          },
+          {
+            "workers": 8,
+            "wall_seconds": 0.32787241600453854,
+            "passed": true
+          }
+        ]
+      },
+      "binaries": {
+        "target/release/tile-ripper": "6e9dda7e0298dc117dac777fbbc33dd233ad259070a212654bd89f0252a4afa9",
+        "target/release/tile-ripper-native-stats": "30ccb253256a90d09437fea41afecb0fd8703595cb8519fa0941c02768497060"
+      },
+      "source_sha256": "cd537d5f59c338ecb6b4797f1d45c9ba4b1a74413dee7ad5c1c4536afe1fccea",
+      "artifact_sha256": {
+        "Cargo.lock": "5000664728ac0d99bcb9ad2147a18415ffbf2a63f3818844e01e21b3585658b4",
+        "consumers/native-stats/Cargo.lock": "f6966f52f7c8474b745206852058a8bcf68fcd31397c9b0a938e1e69879854e5",
+        "bench/real_multiscene.py": "adb4bcc1d1b0499fa01a6d0ccdfa1e7426b8fee6f6d512dd81d94a1b9f4cd0b1",
+        "bench/consumer_validation.py": "dec015b844a66f44d0e90deeb1414e08e9780cfd7d6b5d7700b340b490d83e44",
+        "bench/acquisition_engine.py": "3ff55ef150bf7a5bcdb925d7b05967d2334510a25e5ba96ab554081b54649044"
+      },
+      "environment": {
+        "platform": "macOS-26.6.2-arm64-arm-64bit",
+        "python": "3.10.14 (main, Aug 14 2024, 05:14:46) [Clang 18.1.8 ]",
+        "rasterio": "1.4.4",
+        "python_gdal": "3.10.3",
+        "rust_gdal": "3.12.4",
+        "overrides": {
+          "GDAL_DISABLE_READDIR_ON_OPEN": "EMPTY_DIR",
+          "GDAL_INGESTED_BYTES_AT_OPEN": "32768",
+          "GDAL_HTTP_MAX_RETRY": "3",
+          "GDAL_HTTP_TIMEOUT": "45",
+          "GDAL_CACHEMAX": "32",
+          "GDAL_HTTP_MULTIRANGE": "SERIAL",
+          "GDAL_NUM_THREADS": "1"
+        }
+      },
+      "link": {
+        "latency_ms": 0,
+        "bandwidth_mbps": 0
+      },
+      "raw_rows": 48,
+      "raw_sha256": "e23577910ebd8553136d260f3b63f9b19647e6f73bad9d83069cb2d4deb5b602",
+      "raw_path": "prototype-output/production-streaming/real/accepted-fast-0ms-0mbit/runs.jsonl"
+    },
+    "reader_latency": {
+      "summary": [
+        {
+          "workload": "many-small",
+          "mode": "rust-stream",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 2.9061169158667326,
+            "min": 2.903510875068605,
+            "max": 2.979641667101532
+          },
+          "first_chunk_seconds": {
+            "median": 1.045870417,
+            "min": 1.032232666,
+            "max": 1.0943375419999999
+          },
+          "prepare_seconds": {
+            "median": 0.478056333,
+            "min": 0.471911834,
+            "max": 0.4983495
+          },
+          "materialization_seconds": {
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0
+          },
+          "peak_rss_bytes": {
+            "median": 114049024,
+            "min": 113311744,
+            "max": 115605504
+          },
+          "cog_identity_validation_seconds": {
+            "median": 0.142894125,
+            "min": 0.142544748,
+            "max": 0.144887708
+          },
+          "layout_inspection_seconds": {
+            "median": 0.42266550199999997,
+            "min": 0.41725958299999993,
+            "max": 0.444284373
+          },
+          "planning_compute_seconds": {
+            "median": 0.0033662080000000927,
+            "min": 0.0033373769999999747,
+            "max": 0.0035286230000000085
+          },
+          "http_medians": {
+            "head": 80,
+            "get": 48,
+            "body_bytes": 26886144
+          }
+        },
+        {
+          "workload": "many-small",
+          "mode": "gdal-stream",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 2.388186040800065,
+            "min": 2.3579107499681413,
+            "max": 2.3985089170746505
+          },
+          "first_chunk_seconds": {
+            "median": 1.0897444169968367,
+            "min": 1.0177996247075498,
+            "max": 1.095203542150557
+          },
+          "prepare_seconds": null,
+          "materialization_seconds": {
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0
+          },
+          "peak_rss_bytes": {
+            "median": 152518656,
+            "min": 152485888,
+            "max": 154796032
+          },
+          "cog_identity_validation_seconds": null,
+          "layout_inspection_seconds": null,
+          "planning_compute_seconds": null,
+          "http_medians": {
+            "head": 16,
+            "get": 32,
+            "body_bytes": 26361856
+          }
+        },
+        {
+          "workload": "many-small",
+          "mode": "rust-file",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 2.9296739171259105,
+            "min": 2.9106096671894193,
+            "max": 2.9543411252088845
+          },
+          "first_chunk_seconds": null,
+          "prepare_seconds": {
+            "median": 0.480400583,
+            "min": 0.478907667,
+            "max": 0.483309875
+          },
+          "materialization_seconds": {
+            "median": 0.008968208,
+            "min": 0.008882333,
+            "max": 0.009349501
+          },
+          "peak_rss_bytes": {
+            "median": 115916800,
+            "min": 115736576,
+            "max": 116916224
+          },
+          "cog_identity_validation_seconds": {
+            "median": 0.13978870899999998,
+            "min": 0.135476292,
+            "max": 0.150094583
+          },
+          "layout_inspection_seconds": {
+            "median": 0.4301325000000001,
+            "min": 0.42419741699999997,
+            "max": 0.43104720799999996
+          },
+          "planning_compute_seconds": {
+            "median": 0.0033458340000000475,
+            "min": 0.003319291999999918,
+            "max": 0.003594500000000056
+          },
+          "http_medians": {
+            "head": 80,
+            "get": 48,
+            "body_bytes": 26886144
+          }
+        },
+        {
+          "workload": "many-small",
+          "mode": "gdal-file",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 2.3406838746741414,
+            "min": 2.328181667253375,
+            "max": 2.3675817092880607
+          },
+          "first_chunk_seconds": null,
+          "prepare_seconds": null,
+          "materialization_seconds": {
+            "median": 0.017977917566895485,
+            "min": 0.01603158377110958,
+            "max": 0.020655417814850807
+          },
+          "peak_rss_bytes": {
+            "median": 150175744,
+            "min": 149553152,
+            "max": 150618112
+          },
+          "cog_identity_validation_seconds": null,
+          "layout_inspection_seconds": null,
+          "planning_compute_seconds": null,
+          "http_medians": {
+            "head": 16,
+            "get": 32,
+            "body_bytes": 26361856
+          }
+        },
+        {
+          "workload": "several-large",
+          "mode": "rust-stream",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 8.358151208143681,
+            "min": 8.32960679102689,
+            "max": 8.363506750203669
+          },
+          "first_chunk_seconds": {
+            "median": 0.435999292,
+            "min": 0.434212625,
+            "max": 0.441067167
+          },
+          "prepare_seconds": {
+            "median": 0.201814375,
+            "min": 0.199070667,
+            "max": 0.203216542
+          },
+          "materialization_seconds": {
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0
+          },
+          "peak_rss_bytes": {
+            "median": 176783360,
+            "min": 166379520,
+            "max": 179863552
+          },
+          "cog_identity_validation_seconds": {
+            "median": 0.070481292,
+            "min": 0.068651459,
+            "max": 0.072333126
+          },
+          "layout_inspection_seconds": {
+            "median": 0.171765041,
+            "min": 0.170419542,
+            "max": 0.173079501
+          },
+          "planning_compute_seconds": {
+            "median": 0.0013664570000000154,
+            "min": 0.0009522079999999822,
+            "max": 0.0016647089999999864
+          },
+          "http_medians": {
+            "head": 48,
+            "get": 48,
+            "body_bytes": 75988992
+          }
+        },
+        {
+          "workload": "several-large",
+          "mode": "gdal-stream",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 4.844976458698511,
+            "min": 4.8384422501549125,
+            "max": 4.850191708188504
+          },
+          "first_chunk_seconds": {
+            "median": 0.8111594161018729,
+            "min": 0.8094801250845194,
+            "max": 0.8257525837980211
+          },
+          "prepare_seconds": null,
+          "materialization_seconds": {
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0
+          },
+          "peak_rss_bytes": {
+            "median": 222576640,
+            "min": 218202112,
+            "max": 224182272
+          },
+          "cog_identity_validation_seconds": null,
+          "layout_inspection_seconds": null,
+          "planning_compute_seconds": null,
+          "http_medians": {
+            "head": 6,
+            "get": 30,
+            "body_bytes": 56819712
+          }
+        },
+        {
+          "workload": "several-large",
+          "mode": "rust-file",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 8.376422542147338,
+            "min": 8.338426791597158,
+            "max": 8.420842166990042
+          },
+          "first_chunk_seconds": null,
+          "prepare_seconds": {
+            "median": 0.2035085,
+            "min": 0.198034917,
+            "max": 0.204258625
+          },
+          "materialization_seconds": {
+            "median": 0.229996577,
+            "min": 0.21723275399999994,
+            "max": 0.23757228599999994
+          },
+          "peak_rss_bytes": {
+            "median": 187629568,
+            "min": 174047232,
+            "max": 191037440
+          },
+          "cog_identity_validation_seconds": {
+            "median": 0.072124459,
+            "min": 0.070591876,
+            "max": 0.072767792
+          },
+          "layout_inspection_seconds": {
+            "median": 0.174480875,
+            "min": 0.17006000000000002,
+            "max": 0.17540462599999998
+          },
+          "planning_compute_seconds": {
+            "median": 0.0019975820000000255,
+            "min": 0.0012618749999999956,
+            "max": 0.0020642919999999954
+          },
+          "http_medians": {
+            "head": 48,
+            "get": 48,
+            "body_bytes": 75988992
+          }
+        },
+        {
+          "workload": "several-large",
+          "mode": "gdal-file",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 4.821406582836062,
+            "min": 4.8187110419385135,
+            "max": 4.829695333726704
+          },
+          "first_chunk_seconds": null,
+          "prepare_seconds": null,
+          "materialization_seconds": {
+            "median": 0.3457467816770077,
+            "min": 0.3181737852282822,
+            "max": 0.3607738181017339
+          },
+          "peak_rss_bytes": {
+            "median": 212123648,
+            "min": 210059264,
+            "max": 216367104
+          },
+          "cog_identity_validation_seconds": null,
+          "layout_inspection_seconds": null,
+          "planning_compute_seconds": null,
+          "http_medians": {
+            "head": 6,
+            "get": 30,
+            "body_bytes": 56819712
+          }
+        },
+        {
+          "workload": "overlap-a",
+          "mode": "rust-stream",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 8.370750500354916,
+            "min": 8.1934713749215,
+            "max": 8.902098457794636
+          },
+          "first_chunk_seconds": {
+            "median": 0.633557541,
+            "min": 0.619764125,
+            "max": 0.858964792
+          },
+          "prepare_seconds": {
+            "median": 0.195821375,
+            "min": 0.195191083,
+            "max": 0.201720875
+          },
+          "materialization_seconds": {
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0
+          },
+          "peak_rss_bytes": {
+            "median": 167739392,
+            "min": 161726464,
+            "max": 176553984
+          },
+          "cog_identity_validation_seconds": {
+            "median": 0.072608125,
+            "min": 0.071772416,
+            "max": 0.072814084
+          },
+          "layout_inspection_seconds": {
+            "median": 0.16754225100000003,
+            "min": 0.164755293,
+            "max": 0.171933376
+          },
+          "planning_compute_seconds": {
+            "median": 0.0011077489999999912,
+            "min": 0.0008160399999999624,
+            "max": 0.001557914999999993
+          },
+          "http_medians": {
+            "head": 40,
+            "get": 55,
+            "body_bytes": 96731136
+          }
+        },
+        {
+          "workload": "overlap-a",
+          "mode": "gdal-stream",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 4.899158791638911,
+            "min": 4.891192208044231,
+            "max": 4.908292917069048
+          },
+          "first_chunk_seconds": {
+            "median": 0.5806272923946381,
+            "min": 0.5723088751547039,
+            "max": 0.5823187083005905
+          },
+          "prepare_seconds": null,
+          "materialization_seconds": {
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0
+          },
+          "peak_rss_bytes": {
+            "median": 185630720,
+            "min": 185368576,
+            "max": 187006976
+          },
+          "cog_identity_validation_seconds": null,
+          "layout_inspection_seconds": null,
+          "planning_compute_seconds": null,
+          "http_medians": {
+            "head": 6,
+            "get": 30,
+            "body_bytes": 56819712
+          }
+        },
+        {
+          "workload": "overlap-a",
+          "mode": "rust-file",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 8.214581791311502,
+            "min": 8.201228084042668,
+            "max": 8.3667545421049
+          },
+          "first_chunk_seconds": null,
+          "prepare_seconds": {
+            "median": 0.196990375,
+            "min": 0.196978917,
+            "max": 0.201097625
+          },
+          "materialization_seconds": {
+            "median": 0.045039129,
+            "min": 0.04266508,
+            "max": 0.049568378
+          },
+          "peak_rss_bytes": {
+            "median": 174456832,
+            "min": 166510592,
+            "max": 174784512
+          },
+          "cog_identity_validation_seconds": {
+            "median": 0.071252749,
+            "min": 0.070553124,
+            "max": 0.072487459
+          },
+          "layout_inspection_seconds": {
+            "median": 0.169296958,
+            "min": 0.168351125,
+            "max": 0.172973667
+          },
+          "planning_compute_seconds": {
+            "median": 0.0007912090000000149,
+            "min": 0.0007367920000000139,
+            "max": 0.0014602489999999968
+          },
+          "http_medians": {
+            "head": 38,
+            "get": 54,
+            "body_bytes": 95010816
+          }
+        },
+        {
+          "workload": "overlap-a",
+          "mode": "gdal-file",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 4.871087457984686,
+            "min": 4.861528459005058,
+            "max": 4.882669375278056
+          },
+          "first_chunk_seconds": null,
+          "prepare_seconds": null,
+          "materialization_seconds": {
+            "median": 0.06376650836318731,
+            "min": 0.05625066440552473,
+            "max": 0.06514166668057442
+          },
+          "peak_rss_bytes": {
+            "median": 179601408,
+            "min": 178683904,
+            "max": 184877056
+          },
+          "cog_identity_validation_seconds": null,
+          "layout_inspection_seconds": null,
+          "planning_compute_seconds": null,
+          "http_medians": {
+            "head": 6,
+            "get": 30,
+            "body_bytes": 56819712
+          }
+        },
+        {
+          "workload": "overlap-b",
+          "mode": "rust-stream",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 5.421370709314942,
+            "min": 5.4136308752931654,
+            "max": 5.441551584284753
+          },
+          "first_chunk_seconds": {
+            "median": 1.011458042,
+            "min": 1.008936458,
+            "max": 1.018191792
+          },
+          "prepare_seconds": {
+            "median": 0.193407875,
+            "min": 0.190607833,
+            "max": 0.198476834
+          },
+          "materialization_seconds": {
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0
+          },
+          "peak_rss_bytes": {
+            "median": 194035712,
+            "min": 193675264,
+            "max": 194052096
+          },
+          "cog_identity_validation_seconds": {
+            "median": 0.068945167,
+            "min": 0.068915209,
+            "max": 0.070762001
+          },
+          "layout_inspection_seconds": {
+            "median": 0.16554791600000002,
+            "min": 0.1634945,
+            "max": 0.17025325
+          },
+          "planning_compute_seconds": {
+            "median": 0.0009031670000000103,
+            "min": 0.0006842089999999912,
+            "max": 0.0009552920000000242
+          },
+          "http_medians": {
+            "head": 48,
+            "get": 36,
+            "body_bytes": 57409536
+          }
+        },
+        {
+          "workload": "overlap-b",
+          "mode": "gdal-stream",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 3.3575014998205006,
+            "min": 3.355541582684964,
+            "max": 3.357766208704561
+          },
+          "first_chunk_seconds": {
+            "median": 3.053508915938437,
+            "min": 3.0445722080767155,
+            "max": 3.056002583820373
+          },
+          "prepare_seconds": null,
+          "materialization_seconds": {
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0
+          },
+          "peak_rss_bytes": {
+            "median": 220643328,
+            "min": 219168768,
+            "max": 222216192
+          },
+          "cog_identity_validation_seconds": null,
+          "layout_inspection_seconds": null,
+          "planning_compute_seconds": null,
+          "http_medians": {
+            "head": 6,
+            "get": 18,
+            "body_bytes": 38043648
+          }
+        },
+        {
+          "workload": "overlap-b",
+          "mode": "rust-file",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 5.425465958658606,
+            "min": 5.413922708015889,
+            "max": 5.438438832759857
+          },
+          "first_chunk_seconds": null,
+          "prepare_seconds": {
+            "median": 0.197365958,
+            "min": 0.194863125,
+            "max": 0.198405542
+          },
+          "materialization_seconds": {
+            "median": 0.024875662000000003,
+            "min": 0.02380791699999999,
+            "max": 0.026549292
+          },
+          "peak_rss_bytes": {
+            "median": 197378048,
+            "min": 196902912,
+            "max": 199245824
+          },
+          "cog_identity_validation_seconds": {
+            "median": 0.07015521,
+            "min": 0.069530874,
+            "max": 0.070313916
+          },
+          "layout_inspection_seconds": {
+            "median": 0.170313458,
+            "min": 0.167139875,
+            "max": 0.170561374
+          },
+          "planning_compute_seconds": {
+            "median": 0.000871624999999987,
+            "min": 0.0006980840000000155,
+            "max": 0.0012605430000000029
+          },
+          "http_medians": {
+            "head": 48,
+            "get": 36,
+            "body_bytes": 57409536
+          }
+        },
+        {
+          "workload": "overlap-b",
+          "mode": "gdal-file",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 3.3330867080949247,
+            "min": 3.332427540794015,
+            "max": 3.3362210406921804
+          },
+          "first_chunk_seconds": null,
+          "prepare_seconds": null,
+          "materialization_seconds": {
+            "median": 0.04442804539576173,
+            "min": 0.0444248765707016,
+            "max": 0.05282921018078923
+          },
+          "peak_rss_bytes": {
+            "median": 216383488,
+            "min": 205881344,
+            "max": 219463680
+          },
+          "cog_identity_validation_seconds": null,
+          "layout_inspection_seconds": null,
+          "planning_compute_seconds": null,
+          "http_medians": {
+            "head": 6,
+            "get": 18,
+            "body_bytes": 38043648
+          }
+        }
+      ],
+      "pilot_tuning": {
+        "many-small/gdal-stream": [
+          {
+            "workers": 1,
+            "wall_seconds": 3.8718359996564686,
+            "passed": true
+          },
+          {
+            "workers": 2,
+            "wall_seconds": 2.6992167090065777,
+            "passed": true
+          },
+          {
+            "workers": 4,
+            "wall_seconds": 2.398964459076524,
+            "passed": true
+          },
+          {
+            "workers": 8,
+            "wall_seconds": 2.3622959996573627,
+            "passed": true
+          }
+        ],
+        "many-small/gdal-file": [
+          {
+            "workers": 1,
+            "wall_seconds": 3.7788593750447035,
+            "passed": true
+          },
+          {
+            "workers": 2,
+            "wall_seconds": 2.5661364579573274,
+            "passed": true
+          },
+          {
+            "workers": 4,
+            "wall_seconds": 2.394126624800265,
+            "passed": true
+          },
+          {
+            "workers": 8,
+            "wall_seconds": 2.3338523749262094,
+            "passed": true
+          }
+        ],
+        "several-large/gdal-stream": [
+          {
+            "workers": 1,
+            "wall_seconds": 6.930272208061069,
+            "passed": true
+          },
+          {
+            "workers": 2,
+            "wall_seconds": 5.127114666625857,
+            "passed": true
+          },
+          {
+            "workers": 4,
+            "wall_seconds": 4.898772709071636,
+            "passed": true
+          },
+          {
+            "workers": 8,
+            "wall_seconds": 4.808626833371818,
+            "passed": true
+          }
+        ],
+        "several-large/gdal-file": [
+          {
+            "workers": 1,
+            "wall_seconds": 7.592178584076464,
+            "passed": true
+          },
+          {
+            "workers": 2,
+            "wall_seconds": 5.153436165768653,
+            "passed": true
+          },
+          {
+            "workers": 4,
+            "wall_seconds": 4.896419833414257,
+            "passed": true
+          },
+          {
+            "workers": 8,
+            "wall_seconds": 4.816250208299607,
+            "passed": true
+          }
+        ],
+        "overlap-a/gdal-stream": [
+          {
+            "workers": 1,
+            "wall_seconds": 6.7911165417172015,
+            "passed": true
+          },
+          {
+            "workers": 2,
+            "wall_seconds": 5.0821083332411945,
+            "passed": true
+          },
+          {
+            "workers": 4,
+            "wall_seconds": 4.89742216700688,
+            "passed": true
+          },
+          {
+            "workers": 8,
+            "wall_seconds": 5.066256249789149,
+            "passed": true
+          }
+        ],
+        "overlap-a/gdal-file": [
+          {
+            "workers": 1,
+            "wall_seconds": 6.854693917091936,
+            "passed": true
+          },
+          {
+            "workers": 2,
+            "wall_seconds": 5.0502963326871395,
+            "passed": true
+          },
+          {
+            "workers": 4,
+            "wall_seconds": 4.874375417362899,
+            "passed": true
+          },
+          {
+            "workers": 8,
+            "wall_seconds": 5.266197834163904,
+            "passed": true
+          }
+        ],
+        "overlap-b/gdal-stream": [
+          {
+            "workers": 1,
+            "wall_seconds": 4.73781408322975,
+            "passed": true
+          },
+          {
+            "workers": 2,
+            "wall_seconds": 3.5135781252756715,
+            "passed": true
+          },
+          {
+            "workers": 4,
+            "wall_seconds": 3.3657377078197896,
+            "passed": true
+          },
+          {
+            "workers": 8,
+            "wall_seconds": 3.3506235000677407,
+            "passed": true
+          }
+        ],
+        "overlap-b/gdal-file": [
+          {
+            "workers": 1,
+            "wall_seconds": 4.7443810841068625,
+            "passed": true
+          },
+          {
+            "workers": 2,
+            "wall_seconds": 3.49678362486884,
+            "passed": true
+          },
+          {
+            "workers": 4,
+            "wall_seconds": 3.374549166765064,
+            "passed": true
+          },
+          {
+            "workers": 8,
+            "wall_seconds": 3.3297220831736922,
+            "passed": true
+          }
+        ]
+      },
+      "binaries": {
+        "target/release/tile-ripper": "6e9dda7e0298dc117dac777fbbc33dd233ad259070a212654bd89f0252a4afa9",
+        "target/release/tile-ripper-native-stats": "30ccb253256a90d09437fea41afecb0fd8703595cb8519fa0941c02768497060"
+      },
+      "source_sha256": "cd537d5f59c338ecb6b4797f1d45c9ba4b1a74413dee7ad5c1c4536afe1fccea",
+      "artifact_sha256": {
+        "Cargo.lock": "5000664728ac0d99bcb9ad2147a18415ffbf2a63f3818844e01e21b3585658b4",
+        "consumers/native-stats/Cargo.lock": "f6966f52f7c8474b745206852058a8bcf68fcd31397c9b0a938e1e69879854e5",
+        "bench/real_multiscene.py": "adb4bcc1d1b0499fa01a6d0ccdfa1e7426b8fee6f6d512dd81d94a1b9f4cd0b1",
+        "bench/consumer_validation.py": "8f680f33cb90105c7f1aafa8984f43e29dbe0cda259b333f5c2bb1f289522a74",
+        "bench/acquisition_engine.py": "3ff55ef150bf7a5bcdb925d7b05967d2334510a25e5ba96ab554081b54649044"
+      },
+      "environment": {
+        "platform": "macOS-26.6.2-arm64-arm-64bit",
+        "python": "3.10.14 (main, Aug 14 2024, 05:14:46) [Clang 18.1.8 ]",
+        "rasterio": "1.4.4",
+        "python_gdal": "3.10.3",
+        "rust_gdal": "3.12.4",
+        "overrides": {
+          "GDAL_DISABLE_READDIR_ON_OPEN": "EMPTY_DIR",
+          "GDAL_INGESTED_BYTES_AT_OPEN": "32768",
+          "GDAL_HTTP_MAX_RETRY": "3",
+          "GDAL_HTTP_TIMEOUT": "45",
+          "GDAL_CACHEMAX": "32",
+          "GDAL_HTTP_MULTIRANGE": "SERIAL",
+          "GDAL_NUM_THREADS": "1"
+        }
+      },
+      "link": {
+        "latency_ms": 8.0,
+        "bandwidth_mbps": 100.0
+      },
+      "raw_rows": 48,
+      "raw_sha256": "3c1796800330c224fe308d90b4e2149b8cfd6f4827ee7315c23c2c63d1b61545",
+      "raw_path": "prototype-output/production-streaming/real/accepted-latency-8ms-100mbit/runs.jsonl"
+    },
+    "serial_focused": {
+      "summary": [
+        {
+          "workload": "many-small",
+          "mode": "rust-stream",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 3.4498700839467347,
+            "min": 3.4381593340076506,
+            "max": 3.4544711667113006
+          },
+          "first_chunk_seconds": {
+            "median": 1.418920542,
+            "min": 1.415920833,
+            "max": 1.424008958
+          },
+          "prepare_seconds": {
+            "median": 0.693378875,
+            "min": 0.690420166,
+            "max": 0.695420041
+          },
+          "materialization_seconds": {
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0
+          },
+          "peak_rss_bytes": {
+            "median": 114163712,
+            "min": 110428160,
+            "max": 120258560
+          },
+          "cog_identity_validation_seconds": null,
+          "layout_inspection_seconds": null,
+          "planning_compute_seconds": null,
+          "http_medians": {
+            "head": 80,
+            "get": 48,
+            "body_bytes": 26886144
+          }
+        },
+        {
+          "workload": "many-small",
+          "mode": "gdal-stream",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 2.365451792255044,
+            "min": 2.3582164999097586,
+            "max": 2.3762762919068336
+          },
+          "first_chunk_seconds": {
+            "median": 1.0538468332961202,
+            "min": 1.0008692923001945,
+            "max": 1.0853772913105786
+          },
+          "prepare_seconds": null,
+          "materialization_seconds": {
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0
+          },
+          "peak_rss_bytes": {
+            "median": 155516928,
+            "min": 152895488,
+            "max": 156418048
+          },
+          "cog_identity_validation_seconds": null,
+          "layout_inspection_seconds": null,
+          "planning_compute_seconds": null,
+          "http_medians": {
+            "head": 16,
+            "get": 32,
+            "body_bytes": 26361856
+          }
+        },
+        {
+          "workload": "many-small",
+          "mode": "rust-file",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 3.458368374966085,
+            "min": 3.435342624783516,
+            "max": 3.9131209580227733
+          },
+          "first_chunk_seconds": null,
+          "prepare_seconds": {
+            "median": 0.685809667,
+            "min": 0.676374042,
+            "max": 0.686216084
+          },
+          "materialization_seconds": {
+            "median": 0.014197917,
+            "min": 0.012293126,
+            "max": 0.015095292
+          },
+          "peak_rss_bytes": {
+            "median": 117440512,
+            "min": 112836608,
+            "max": 120586240
+          },
+          "cog_identity_validation_seconds": null,
+          "layout_inspection_seconds": null,
+          "planning_compute_seconds": null,
+          "http_medians": {
+            "head": 80,
+            "get": 48,
+            "body_bytes": 26886144
+          }
+        },
+        {
+          "workload": "many-small",
+          "mode": "gdal-file",
+          "runs": 3,
+          "failures": 0,
+          "wall_seconds": {
+            "median": 2.329973875079304,
+            "min": 2.3291390421800315,
+            "max": 2.3321598754264414
+          },
+          "first_chunk_seconds": null,
+          "prepare_seconds": null,
+          "materialization_seconds": {
+            "median": 0.018644293304532766,
+            "min": 0.018269581720232964,
+            "max": 0.02134966477751732
+          },
+          "peak_rss_bytes": {
+            "median": 151781376,
+            "min": 149061632,
+            "max": 153010176
+          },
+          "cog_identity_validation_seconds": null,
+          "layout_inspection_seconds": null,
+          "planning_compute_seconds": null,
+          "http_medians": {
+            "head": 16,
+            "get": 32,
+            "body_bytes": 26361856
+          }
+        }
+      ],
+      "pilot_tuning": {
+        "many-small/gdal-stream": [
+          {
+            "workers": 1,
+            "wall_seconds": 3.978126125410199,
+            "passed": true
+          },
+          {
+            "workers": 2,
+            "wall_seconds": 2.7019604998640716,
+            "passed": true
+          },
+          {
+            "workers": 4,
+            "wall_seconds": 2.399061792064458,
+            "passed": true
+          },
+          {
+            "workers": 8,
+            "wall_seconds": 2.3662733752280474,
+            "passed": true
+          }
+        ],
+        "many-small/gdal-file": [
+          {
+            "workers": 1,
+            "wall_seconds": 3.940142166800797,
+            "passed": true
+          },
+          {
+            "workers": 2,
+            "wall_seconds": 2.6735702911391854,
+            "passed": true
+          },
+          {
+            "workers": 4,
+            "wall_seconds": 2.446760625112802,
+            "passed": true
+          },
+          {
+            "workers": 8,
+            "wall_seconds": 2.3239005003124475,
+            "passed": true
+          }
+        ]
+      },
+      "binaries": {
+        "prototype-output/production-streaming/serial-binaries/tile-ripper": "5f8c141ccd9af01ba5c8a3bb37143b012cb75da62d0b5a7b4268219f668149cd",
+        "prototype-output/production-streaming/serial-binaries/tile-ripper-native-stats": "ee5e04cf0e8c297e17b0192671d2be8a4d1426aa99f218cc642b486d05147880"
+      },
+      "source_sha256": "61deef64faf6f01d61e8b2510ed8ffcb6ca075224c9a4f1502e1701a2354f82d",
+      "artifact_sha256": {
+        "Cargo.lock": "5000664728ac0d99bcb9ad2147a18415ffbf2a63f3818844e01e21b3585658b4",
+        "consumers/native-stats/Cargo.lock": "f6966f52f7c8474b745206852058a8bcf68fcd31397c9b0a938e1e69879854e5",
+        "bench/real_multiscene.py": "adb4bcc1d1b0499fa01a6d0ccdfa1e7426b8fee6f6d512dd81d94a1b9f4cd0b1",
+        "bench/consumer_validation.py": "dec015b844a66f44d0e90deeb1414e08e9780cfd7d6b5d7700b340b490d83e44",
+        "bench/acquisition_engine.py": "3ff55ef150bf7a5bcdb925d7b05967d2334510a25e5ba96ab554081b54649044"
+      },
+      "environment": {
+        "platform": "macOS-26.6.2-arm64-arm-64bit",
+        "python": "3.10.14 (main, Aug 14 2024, 05:14:46) [Clang 18.1.8 ]",
+        "rasterio": "1.4.4",
+        "python_gdal": "3.10.3",
+        "rust_gdal": "3.12.4",
+        "overrides": {
+          "GDAL_DISABLE_READDIR_ON_OPEN": "EMPTY_DIR",
+          "GDAL_INGESTED_BYTES_AT_OPEN": "32768",
+          "GDAL_HTTP_MAX_RETRY": "3",
+          "GDAL_HTTP_TIMEOUT": "45",
+          "GDAL_CACHEMAX": "32",
+          "GDAL_HTTP_MULTIRANGE": "SERIAL",
+          "GDAL_NUM_THREADS": "1"
+        }
+      },
+      "link": {
+        "latency_ms": 8.0,
+        "bandwidth_mbps": 100.0
+      },
+      "raw_rows": 12,
+      "raw_sha256": "1d30c14aae8ca02a171d1c00ccd17c1da250cabaf02e8cdd9c1df3d8e1ffb998",
+      "raw_path": "prototype-output/production-streaming/real/accepted-serial-8ms-100mbit/runs.jsonl",
+      "metric_notes": [
+        "Planner computation was not instrumented in the preserved serial binary. Its earlier zero placeholder is invalidated here; raw source report is retained unchanged."
+      ]
+    }
+  },
+  "metadata_change": {
+    "wall_seconds": {
+      "serial_median": 3.4498700839467347,
+      "final_median": 2.9061169158667326,
+      "reduction_percent": 15.76155492377079
+    },
+    "prepare_seconds": {
+      "serial_median": 0.693378875,
+      "final_median": 0.478056333,
+      "reduction_percent": 31.05409607409801
+    },
+    "first_chunk_seconds": {
+      "serial_median": 1.418920542,
+      "final_median": 1.045870417,
+      "reduction_percent": 26.29112159262827
+    },
+    "identical_plans_and_chunk_records": 6,
+    "http_per_run": {
+      "head": 80,
+      "get": 48,
+      "body_bytes": 26886144
+    }
+  },
+  "source_manifest_sha256": "f3e04baa7c3f13f17ec20fea7794ca85c36ac4b29ea3243ddf0199e6bbdbf293",
+  "capture": {
+    "mirror_index_sha256": "364121a9ef46437772834fae8a0d84797063320087bc1acbfdf154afb5e70122",
+    "provider_requests": 60,
+    "provider_bytes": 82313216
+  },
+  "rss_limit_bytes": 201326592,
+  "initial_rss_failures": [
+    {
+      "workload": "overlap-a",
+      "rep": 0,
+      "scientific_correctness_rechecked": true,
+      "rss_lower_bound_bytes": 201326592,
+      "exact_initial_rss_and_process_wall": "not retained by the initial assertion-only gate; raw failure unchanged",
+      "consumer_completion_seconds": 8.059994667,
+      "validated_values": 3538944,
+      "stdout_sha256": "0d9584a3526777db07de41f488ee361461e55ed1c0d51047ad226aa8b89bc3d5"
+    },
+    {
+      "workload": "overlap-a",
+      "rep": 2,
+      "scientific_correctness_rechecked": true,
+      "rss_lower_bound_bytes": 201326592,
+      "exact_initial_rss_and_process_wall": "not retained by the initial assertion-only gate; raw failure unchanged",
+      "consumer_completion_seconds": 8.079075958,
+      "validated_values": 3538944,
+      "stdout_sha256": "54798bb697765e15ff9bc64f08788e2c8cbb1726b71060be578dcb509bfc434b"
+    },
+    {
+      "workload": "overlap-b",
+      "rep": 0,
+      "scientific_correctness_rechecked": true,
+      "rss_lower_bound_bytes": 201326592,
+      "exact_initial_rss_and_process_wall": "not retained by the initial assertion-only gate; raw failure unchanged",
+      "consumer_completion_seconds": 5.203585625,
+      "validated_values": 3538944,
+      "stdout_sha256": "b059cc2d42fc39cd6952aec80e0f265d451e9056bb84c1eb75db572d0618b71a"
+    }
+  ],
+  "memory_followup": {
+    "source_sha256": "cd537d5f59c338ecb6b4797f1d45c9ba4b1a74413dee7ad5c1c4536afe1fccea",
+    "mirror_index_sha256": "364121a9ef46437772834fae8a0d84797063320087bc1acbfdf154afb5e70122",
+    "rss_limit_bytes": 201326592,
+    "configuration": "fixed TILE_RIPPER_WORKERS=2, GDAL_CACHEMAX=32, queue=0, buffer=16 MiB",
+    "binaries": {
+      "target/release/tile-ripper": "6e9dda7e0298dc117dac777fbbc33dd233ad259070a212654bd89f0252a4afa9",
+      "target/release/tile-ripper-native-stats": "30ccb253256a90d09437fea41afecb0fd8703595cb8519fa0941c02768497060"
+    },
+    "rows": [
+      {
+        "exit_code": 0,
+        "wall_seconds": 8.155698624905199,
+        "peak_rss_bytes": 184434688,
+        "error": "",
+        "cog_identity_validation_seconds": 0.068695875,
+        "layout_inspection_seconds": 0.162392957,
+        "planning_compute_seconds": 0.0007434590000000019,
+        "mode": "rust-stream",
+        "workers": 4,
+        "http": {
+          "head": 40,
+          "get": 56,
+          "range_get": 56,
+          "body_bytes": 95240192,
+          "conditional": 78,
+          "errors": 0,
+          "head_active": 0,
+          "head_peak": 4
+        },
+        "first_chunk_seconds": 0.605456916,
+        "prepare_seconds": 0.18955425,
+        "metadata_worker_seconds": null,
+        "correctness": {
+          "chunks": 54,
+          "valid_pixels": 3538944,
+          "native_sum": 7440761236.0,
+          "values": 3538944,
+          "observations": 6
+        },
+        "materialization_seconds": 0.0,
+        "oracle_seconds_excluded": 1.0908247912302613,
+        "scientific_correctness_passed": true,
+        "rss_gate_passed": true,
+        "head_gate_passed": true,
+        "passed": true,
+        "workload": "overlap-a",
+        "rep": 0,
+        "latency_ms": 8,
+        "bandwidth_mbps": 100,
+        "diagnostic": true
+      },
+      {
+        "exit_code": 0,
+        "wall_seconds": 8.245566334109753,
+        "peak_rss_bytes": 188366848,
+        "error": "",
+        "cog_identity_validation_seconds": 0.067982376,
+        "layout_inspection_seconds": 0.16121237499999996,
+        "planning_compute_seconds": 0.0007305830000000346,
+        "mode": "rust-stream",
+        "workers": 4,
+        "http": {
+          "head": 40,
+          "get": 56,
+          "range_get": 56,
+          "body_bytes": 96681984,
+          "conditional": 78,
+          "errors": 0,
+          "head_active": 0,
+          "head_peak": 4
+        },
+        "first_chunk_seconds": 0.603466834,
+        "prepare_seconds": 0.187447417,
+        "metadata_worker_seconds": null,
+        "correctness": {
+          "chunks": 54,
+          "valid_pixels": 3538944,
+          "native_sum": 7440761236.0,
+          "values": 3538944,
+          "observations": 6
+        },
+        "materialization_seconds": 0.0,
+        "oracle_seconds_excluded": 1.0871027917601168,
+        "scientific_correctness_passed": true,
+        "rss_gate_passed": true,
+        "head_gate_passed": true,
+        "passed": true,
+        "workload": "overlap-a",
+        "rep": 1,
+        "latency_ms": 8,
+        "bandwidth_mbps": 100,
+        "diagnostic": true
+      },
+      {
+        "exit_code": 0,
+        "wall_seconds": 8.166749415919185,
+        "peak_rss_bytes": 194445312,
+        "error": "",
+        "cog_identity_validation_seconds": 0.067112,
+        "layout_inspection_seconds": 0.16081487500000002,
+        "planning_compute_seconds": 0.0008289169999999846,
+        "mode": "rust-stream",
+        "workers": 4,
+        "http": {
+          "head": 40,
+          "get": 55,
+          "range_get": 55,
+          "body_bytes": 95076352,
+          "conditional": 77,
+          "errors": 0,
+          "head_active": 0,
+          "head_peak": 4
+        },
+        "first_chunk_seconds": 0.602173458,
+        "prepare_seconds": 0.186482583,
+        "metadata_worker_seconds": null,
+        "correctness": {
+          "chunks": 54,
+          "valid_pixels": 3538944,
+          "native_sum": 7440761236.0,
+          "values": 3538944,
+          "observations": 6
+        },
+        "materialization_seconds": 0.0,
+        "oracle_seconds_excluded": 1.065453166142106,
+        "scientific_correctness_passed": true,
+        "rss_gate_passed": true,
+        "head_gate_passed": true,
+        "passed": true,
+        "workload": "overlap-a",
+        "rep": 2,
+        "latency_ms": 8,
+        "bandwidth_mbps": 100,
+        "diagnostic": true
+      },
+      {
+        "exit_code": 0,
+        "wall_seconds": 0.27188412472605705,
+        "peak_rss_bytes": 95633408,
+        "error": "",
+        "cog_identity_validation_seconds": 0.011146709,
+        "layout_inspection_seconds": 0.029382001999999997,
+        "planning_compute_seconds": 0.0009375810000000033,
+        "mode": "rust-stream",
+        "workers": 2,
+        "http": {
+          "head": 80,
+          "get": 48,
+          "range_get": 48,
+          "body_bytes": 26886144,
+          "conditional": 80,
+          "errors": 0,
+          "head_active": 0,
+          "head_peak": 2
+        },
+        "first_chunk_seconds": 0.054438375,
+        "prepare_seconds": 0.037685333,
+        "metadata_worker_seconds": null,
+        "correctness": {
+          "chunks": 16,
+          "valid_pixels": 147456,
+          "native_sum": 322927978.0,
+          "values": 147456,
+          "observations": 16
+        },
+        "materialization_seconds": 0.0,
+        "oracle_seconds_excluded": 0.1898902077227831,
+        "scientific_correctness_passed": true,
+        "rss_gate_passed": true,
+        "head_gate_passed": true,
+        "passed": true,
+        "workload": "many-small",
+        "rep": 0,
+        "latency_ms": 0,
+        "bandwidth_mbps": 0,
+        "diagnostic": false
+      },
+      {
+        "exit_code": 0,
+        "wall_seconds": 0.2541096252389252,
+        "peak_rss_bytes": 95698944,
+        "error": "",
+        "cog_identity_validation_seconds": 0.011353583,
+        "layout_inspection_seconds": 0.030653248999999997,
+        "planning_compute_seconds": 0.0012151260000000004,
+        "mode": "rust-stream",
+        "workers": 2,
+        "http": {
+          "head": 80,
+          "get": 48,
+          "range_get": 48,
+          "body_bytes": 26886144,
+          "conditional": 80,
+          "errors": 0,
+          "head_active": 0,
+          "head_peak": 2
+        },
+        "first_chunk_seconds": 0.0559045,
+        "prepare_seconds": 0.039394,
+        "metadata_worker_seconds": null,
+        "correctness": {
+          "chunks": 16,
+          "valid_pixels": 147456,
+          "native_sum": 322927978.0,
+          "values": 147456,
+          "observations": 16
+        },
+        "materialization_seconds": 0.0,
+        "oracle_seconds_excluded": 0.1910500843077898,
+        "scientific_correctness_passed": true,
+        "rss_gate_passed": true,
+        "head_gate_passed": true,
+        "passed": true,
+        "workload": "many-small",
+        "rep": 1,
+        "latency_ms": 0,
+        "bandwidth_mbps": 0,
+        "diagnostic": false
+      },
+      {
+        "exit_code": 0,
+        "wall_seconds": 0.2558731250464916,
+        "peak_rss_bytes": 95731712,
+        "error": "",
+        "cog_identity_validation_seconds": 0.011663459000000001,
+        "layout_inspection_seconds": 0.030592336,
+        "planning_compute_seconds": 0.0011759139999999967,
+        "mode": "rust-stream",
+        "workers": 2,
+        "http": {
+          "head": 80,
+          "get": 48,
+          "range_get": 48,
+          "body_bytes": 26886144,
+          "conditional": 80,
+          "errors": 0,
+          "head_active": 0,
+          "head_peak": 2
+        },
+        "first_chunk_seconds": 0.056438125,
+        "prepare_seconds": 0.039225208,
+        "metadata_worker_seconds": null,
+        "correctness": {
+          "chunks": 16,
+          "valid_pixels": 147456,
+          "native_sum": 322927978.0,
+          "values": 147456,
+          "observations": 16
+        },
+        "materialization_seconds": 0.0,
+        "oracle_seconds_excluded": 0.19711354188621044,
+        "scientific_correctness_passed": true,
+        "rss_gate_passed": true,
+        "head_gate_passed": true,
+        "passed": true,
+        "workload": "many-small",
+        "rep": 2,
+        "latency_ms": 0,
+        "bandwidth_mbps": 0,
+        "diagnostic": false
+      },
+      {
+        "exit_code": 0,
+        "wall_seconds": 0.5973725002259016,
+        "peak_rss_bytes": 153370624,
+        "error": "",
+        "cog_identity_validation_seconds": 0.010886666,
+        "layout_inspection_seconds": 0.024140583,
+        "planning_compute_seconds": 0.0009734999999999987,
+        "mode": "rust-stream",
+        "workers": 2,
+        "http": {
+          "head": 36,
+          "get": 48,
+          "range_get": 48,
+          "body_bytes": 75988992,
+          "conditional": 66,
+          "errors": 0,
+          "head_active": 0,
+          "head_peak": 2
+        },
+        "first_chunk_seconds": 0.05092225,
+        "prepare_seconds": 0.034008167,
+        "metadata_worker_seconds": null,
+        "correctness": {
+          "chunks": 384,
+          "valid_pixels": 25165823,
+          "native_sum": 53448838854.0,
+          "values": 25165824,
+          "observations": 6
+        },
+        "materialization_seconds": 0.0,
+        "oracle_seconds_excluded": 4.503969292156398,
+        "scientific_correctness_passed": true,
+        "rss_gate_passed": true,
+        "head_gate_passed": true,
+        "passed": true,
+        "workload": "several-large",
+        "rep": 0,
+        "latency_ms": 0,
+        "bandwidth_mbps": 0,
+        "diagnostic": false
+      },
+      {
+        "exit_code": 0,
+        "wall_seconds": 0.5551977921277285,
+        "peak_rss_bytes": 132857856,
+        "error": "",
+        "cog_identity_validation_seconds": 0.007659124,
+        "layout_inspection_seconds": 0.018502583,
+        "planning_compute_seconds": 0.0005717499999999993,
+        "mode": "rust-stream",
+        "workers": 2,
+        "http": {
+          "head": 32,
+          "get": 48,
+          "range_get": 48,
+          "body_bytes": 75988992,
+          "conditional": 62,
+          "errors": 0,
+          "head_active": 0,
+          "head_peak": 2
+        },
+        "first_chunk_seconds": 0.038300083,
+        "prepare_seconds": 0.02526825,
+        "metadata_worker_seconds": null,
+        "correctness": {
+          "chunks": 384,
+          "valid_pixels": 25165823,
+          "native_sum": 53448838854.0,
+          "values": 25165824,
+          "observations": 6
+        },
+        "materialization_seconds": 0.0,
+        "oracle_seconds_excluded": 4.36804695893079,
+        "scientific_correctness_passed": true,
+        "rss_gate_passed": true,
+        "head_gate_passed": true,
+        "passed": true,
+        "workload": "several-large",
+        "rep": 1,
+        "latency_ms": 0,
+        "bandwidth_mbps": 0,
+        "diagnostic": false
+      },
+      {
+        "exit_code": 0,
+        "wall_seconds": 0.5697044166736305,
+        "peak_rss_bytes": 161660928,
+        "error": "",
+        "cog_identity_validation_seconds": 0.008311875,
+        "layout_inspection_seconds": 0.019334623999999998,
+        "planning_compute_seconds": 0.0006535010000000008,
+        "mode": "rust-stream",
+        "workers": 2,
+        "http": {
+          "head": 36,
+          "get": 48,
+          "range_get": 48,
+          "body_bytes": 75988992,
+          "conditional": 66,
+          "errors": 0,
+          "head_active": 0,
+          "head_peak": 2
+        },
+        "first_chunk_seconds": 0.040340458,
+        "prepare_seconds": 0.026583333,
+        "metadata_worker_seconds": null,
+        "correctness": {
+          "chunks": 384,
+          "valid_pixels": 25165823,
+          "native_sum": 53448838854.0,
+          "values": 25165824,
+          "observations": 6
+        },
+        "materialization_seconds": 0.0,
+        "oracle_seconds_excluded": 4.300155499950051,
+        "scientific_correctness_passed": true,
+        "rss_gate_passed": true,
+        "head_gate_passed": true,
+        "passed": true,
+        "workload": "several-large",
+        "rep": 2,
+        "latency_ms": 0,
+        "bandwidth_mbps": 0,
+        "diagnostic": false
+      },
+      {
+        "exit_code": 0,
+        "wall_seconds": 0.3974561248905957,
+        "peak_rss_bytes": 130908160,
+        "error": "",
+        "cog_identity_validation_seconds": 0.008060666,
+        "layout_inspection_seconds": 0.018878042,
+        "planning_compute_seconds": 0.0004962500000000002,
+        "mode": "rust-stream",
+        "workers": 2,
+        "http": {
+          "head": 32,
+          "get": 36,
+          "range_get": 36,
+          "body_bytes": 57114624,
+          "conditional": 50,
+          "errors": 0,
+          "head_active": 0,
+          "head_peak": 2
+        },
+        "first_chunk_seconds": 0.040223208,
+        "prepare_seconds": 0.025258958,
+        "metadata_worker_seconds": null,
+        "correctness": {
+          "chunks": 54,
+          "valid_pixels": 3538944,
+          "native_sum": 7440761236.0,
+          "values": 3538944,
+          "observations": 6
+        },
+        "materialization_seconds": 0.0,
+        "oracle_seconds_excluded": 1.0402245000004768,
+        "scientific_correctness_passed": true,
+        "rss_gate_passed": true,
+        "head_gate_passed": true,
+        "passed": true,
+        "workload": "overlap-a",
+        "rep": 0,
+        "latency_ms": 0,
+        "bandwidth_mbps": 0,
+        "diagnostic": false
+      },
+      {
+        "exit_code": 0,
+        "wall_seconds": 0.41651020804420114,
+        "peak_rss_bytes": 139345920,
+        "error": "",
+        "cog_identity_validation_seconds": 0.009541458,
+        "layout_inspection_seconds": 0.022244459,
+        "planning_compute_seconds": 0.0008343749999999983,
+        "mode": "rust-stream",
+        "workers": 2,
+        "http": {
+          "head": 36,
+          "get": 36,
+          "range_get": 36,
+          "body_bytes": 57114624,
+          "conditional": 54,
+          "errors": 0,
+          "head_active": 0,
+          "head_peak": 2
+        },
+        "first_chunk_seconds": 0.045884333,
+        "prepare_seconds": 0.030266542,
+        "metadata_worker_seconds": null,
+        "correctness": {
+          "chunks": 54,
+          "valid_pixels": 3538944,
+          "native_sum": 7440761236.0,
+          "values": 3538944,
+          "observations": 6
+        },
+        "materialization_seconds": 0.0,
+        "oracle_seconds_excluded": 1.0696607502177358,
+        "scientific_correctness_passed": true,
+        "rss_gate_passed": true,
+        "head_gate_passed": true,
+        "passed": true,
+        "workload": "overlap-a",
+        "rep": 1,
+        "latency_ms": 0,
+        "bandwidth_mbps": 0,
+        "diagnostic": false
+      },
+      {
+        "exit_code": 0,
+        "wall_seconds": 0.40326870791614056,
+        "peak_rss_bytes": 133251072,
+        "error": "",
+        "cog_identity_validation_seconds": 0.00881425,
+        "layout_inspection_seconds": 0.020238583,
+        "planning_compute_seconds": 0.0007590840000000001,
+        "mode": "rust-stream",
+        "workers": 2,
+        "http": {
+          "head": 35,
+          "get": 36,
+          "range_get": 36,
+          "body_bytes": 57114624,
+          "conditional": 53,
+          "errors": 0,
+          "head_active": 0,
+          "head_peak": 2
+        },
+        "first_chunk_seconds": 0.042464416,
+        "prepare_seconds": 0.027538708,
+        "metadata_worker_seconds": null,
+        "correctness": {
+          "chunks": 54,
+          "valid_pixels": 3538944,
+          "native_sum": 7440761236.0,
+          "values": 3538944,
+          "observations": 6
+        },
+        "materialization_seconds": 0.0,
+        "oracle_seconds_excluded": 1.0808395412750542,
+        "scientific_correctness_passed": true,
+        "rss_gate_passed": true,
+        "head_gate_passed": true,
+        "passed": true,
+        "workload": "overlap-a",
+        "rep": 2,
+        "latency_ms": 0,
+        "bandwidth_mbps": 0,
+        "diagnostic": false
+      },
+      {
+        "exit_code": 0,
+        "wall_seconds": 0.4362805411219597,
+        "peak_rss_bytes": 130334720,
+        "error": "",
+        "cog_identity_validation_seconds": 0.008232918,
+        "layout_inspection_seconds": 0.018746001,
+        "planning_compute_seconds": 0.0004756659999999996,
+        "mode": "rust-stream",
+        "workers": 2,
+        "http": {
+          "head": 34,
+          "get": 36,
+          "range_get": 36,
+          "body_bytes": 57409536,
+          "conditional": 52,
+          "errors": 0,
+          "head_active": 0,
+          "head_peak": 2
+        },
+        "first_chunk_seconds": 0.066925416,
+        "prepare_seconds": 0.025210166,
+        "metadata_worker_seconds": null,
+        "correctness": {
+          "chunks": 54,
+          "valid_pixels": 3538944,
+          "native_sum": 7372630985.0,
+          "values": 3538944,
+          "observations": 6
+        },
+        "materialization_seconds": 0.0,
+        "oracle_seconds_excluded": 1.0631644581444561,
+        "scientific_correctness_passed": true,
+        "rss_gate_passed": true,
+        "head_gate_passed": true,
+        "passed": true,
+        "workload": "overlap-b",
+        "rep": 0,
+        "latency_ms": 0,
+        "bandwidth_mbps": 0,
+        "diagnostic": false
+      },
+      {
+        "exit_code": 0,
+        "wall_seconds": 0.40578966680914164,
+        "peak_rss_bytes": 130973696,
+        "error": "",
+        "cog_identity_validation_seconds": 0.0071065,
+        "layout_inspection_seconds": 0.018453668,
+        "planning_compute_seconds": 0.0006032909999999989,
+        "mode": "rust-stream",
+        "workers": 2,
+        "http": {
+          "head": 32,
+          "get": 36,
+          "range_get": 36,
+          "body_bytes": 55869440,
+          "conditional": 50,
+          "errors": 0,
+          "head_active": 0,
+          "head_peak": 2
+        },
+        "first_chunk_seconds": 0.057740333,
+        "prepare_seconds": 0.024493083,
+        "metadata_worker_seconds": null,
+        "correctness": {
+          "chunks": 54,
+          "valid_pixels": 3538944,
+          "native_sum": 7372630985.0,
+          "values": 3538944,
+          "observations": 6
+        },
+        "materialization_seconds": 0.0,
+        "oracle_seconds_excluded": 1.0439212080091238,
+        "scientific_correctness_passed": true,
+        "rss_gate_passed": true,
+        "head_gate_passed": true,
+        "passed": true,
+        "workload": "overlap-b",
+        "rep": 1,
+        "latency_ms": 0,
+        "bandwidth_mbps": 0,
+        "diagnostic": false
+      },
+      {
+        "exit_code": 0,
+        "wall_seconds": 0.43718254193663597,
+        "peak_rss_bytes": 134840320,
+        "error": "",
+        "cog_identity_validation_seconds": 0.008004874,
+        "layout_inspection_seconds": 0.019396833,
+        "planning_compute_seconds": 0.0006272920000000015,
+        "mode": "rust-stream",
+        "workers": 2,
+        "http": {
+          "head": 36,
+          "get": 36,
+          "range_get": 36,
+          "body_bytes": 57409536,
+          "conditional": 54,
+          "errors": 0,
+          "head_active": 0,
+          "head_peak": 2
+        },
+        "first_chunk_seconds": 0.067992209,
+        "prepare_seconds": 0.025885584,
+        "metadata_worker_seconds": null,
+        "correctness": {
+          "chunks": 54,
+          "valid_pixels": 3538944,
+          "native_sum": 7372630985.0,
+          "values": 3538944,
+          "observations": 6
+        },
+        "materialization_seconds": 0.0,
+        "oracle_seconds_excluded": 1.0360856661573052,
+        "scientific_correctness_passed": true,
+        "rss_gate_passed": true,
+        "head_gate_passed": true,
+        "passed": true,
+        "workload": "overlap-b",
+        "rep": 2,
+        "latency_ms": 0,
+        "bandwidth_mbps": 0,
+        "diagnostic": false
+      },
+      {
+        "exit_code": 0,
+        "wall_seconds": 3.1276327911764383,
+        "peak_rss_bytes": 99876864,
+        "error": "",
+        "cog_identity_validation_seconds": 0.247996874,
+        "layout_inspection_seconds": 0.41427937800000003,
+        "planning_compute_seconds": 0.00255024699999995,
+        "mode": "rust-stream",
+        "workers": 2,
+        "http": {
+          "head": 80,
+          "get": 48,
+          "range_get": 48,
+          "body_bytes": 26886144,
+          "conditional": 80,
+          "errors": 0,
+          "head_active": 0,
+          "head_peak": 2
+        },
+        "first_chunk_seconds": 0.883524625,
+        "prepare_seconds": 0.502736917,
+        "metadata_worker_seconds": null,
+        "correctness": {
+          "chunks": 16,
+          "valid_pixels": 147456,
+          "native_sum": 322927978.0,
+          "values": 147456,
+          "observations": 16
+        },
+        "materialization_seconds": 0.0,
+        "oracle_seconds_excluded": 0.1920335842296481,
+        "scientific_correctness_passed": true,
+        "rss_gate_passed": true,
+        "head_gate_passed": true,
+        "passed": true,
+        "workload": "many-small",
+        "rep": 0,
+        "latency_ms": 8,
+        "bandwidth_mbps": 100,
+        "diagnostic": false
+      },
+      {
+        "exit_code": 0,
+        "wall_seconds": 3.1327191251330078,
+        "peak_rss_bytes": 97435648,
+        "error": "",
+        "cog_identity_validation_seconds": 0.254321792,
+        "layout_inspection_seconds": 0.4350125420000001,
+        "planning_compute_seconds": 0.0049764159999998725,
+        "mode": "rust-stream",
+        "workers": 2,
+        "http": {
+          "head": 80,
+          "get": 48,
+          "range_get": 48,
+          "body_bytes": 26886144,
+          "conditional": 80,
+          "errors": 0,
+          "head_active": 0,
+          "head_peak": 2
+        },
+        "first_chunk_seconds": 0.902912666,
+        "prepare_seconds": 0.527915583,
+        "metadata_worker_seconds": null,
+        "correctness": {
+          "chunks": 16,
+          "valid_pixels": 147456,
+          "native_sum": 322927978.0,
+          "values": 147456,
+          "observations": 16
+        },
+        "materialization_seconds": 0.0,
+        "oracle_seconds_excluded": 0.18910162476822734,
+        "scientific_correctness_passed": true,
+        "rss_gate_passed": true,
+        "head_gate_passed": true,
+        "passed": true,
+        "workload": "many-small",
+        "rep": 1,
+        "latency_ms": 8,
+        "bandwidth_mbps": 100,
+        "diagnostic": false
+      },
+      {
+        "exit_code": 0,
+        "wall_seconds": 3.1460112081840634,
+        "peak_rss_bytes": 102514688,
+        "error": "",
+        "cog_identity_validation_seconds": 0.253370209,
+        "layout_inspection_seconds": 0.42270832999999997,
+        "planning_compute_seconds": 0.0056788790000000255,
+        "mode": "rust-stream",
+        "workers": 2,
+        "http": {
+          "head": 80,
+          "get": 48,
+          "range_get": 48,
+          "body_bytes": 26886144,
+          "conditional": 80,
+          "errors": 0,
+          "head_active": 0,
+          "head_peak": 2
+        },
+        "first_chunk_seconds": 0.891347291,
+        "prepare_seconds": 0.517681625,
+        "metadata_worker_seconds": null,
+        "correctness": {
+          "chunks": 16,
+          "valid_pixels": 147456,
+          "native_sum": 322927978.0,
+          "values": 147456,
+          "observations": 16
+        },
+        "materialization_seconds": 0.0,
+        "oracle_seconds_excluded": 0.20782462460920215,
+        "scientific_correctness_passed": true,
+        "rss_gate_passed": true,
+        "head_gate_passed": true,
+        "passed": true,
+        "workload": "many-small",
+        "rep": 2,
+        "latency_ms": 8,
+        "bandwidth_mbps": 100,
+        "diagnostic": false
+      },
+      {
+        "exit_code": 0,
+        "wall_seconds": 7.999731165822595,
+        "peak_rss_bytes": 160481280,
+        "error": "",
+        "cog_identity_validation_seconds": 0.099807959,
+        "layout_inspection_seconds": 0.161474041,
+        "planning_compute_seconds": 0.0012394589999999983,
+        "mode": "rust-stream",
+        "workers": 2,
+        "http": {
+          "head": 36,
+          "get": 48,
+          "range_get": 48,
+          "body_bytes": 75988992,
+          "conditional": 66,
+          "errors": 0,
+          "head_active": 0,
+          "head_peak": 2
+        },
+        "first_chunk_seconds": 0.427160416,
+        "prepare_seconds": 0.1998445,
+        "metadata_worker_seconds": null,
+        "correctness": {
+          "chunks": 384,
+          "valid_pixels": 25165823,
+          "native_sum": 53448838854.0,
+          "values": 25165824,
+          "observations": 6
+        },
+        "materialization_seconds": 0.0,
+        "oracle_seconds_excluded": 4.324646416585892,
+        "scientific_correctness_passed": true,
+        "rss_gate_passed": true,
+        "head_gate_passed": true,
+        "passed": true,
+        "workload": "several-large",
+        "rep": 0,
+        "latency_ms": 8,
+        "bandwidth_mbps": 100,
+        "diagnostic": false
+      },
+      {
+        "exit_code": 0,
+        "wall_seconds": 8.331979375332594,
+        "peak_rss_bytes": 141737984,
+        "error": "",
+        "cog_identity_validation_seconds": 0.101124499,
+        "layout_inspection_seconds": 0.164213042,
+        "planning_compute_seconds": 0.0012936669999999983,
+        "mode": "rust-stream",
+        "workers": 2,
+        "http": {
+          "head": 36,
+          "get": 48,
+          "range_get": 48,
+          "body_bytes": 75988992,
+          "conditional": 66,
+          "errors": 0,
+          "head_active": 0,
+          "head_peak": 2
+        },
+        "first_chunk_seconds": 0.432237583,
+        "prepare_seconds": 0.202558083,
+        "metadata_worker_seconds": null,
+        "correctness": {
+          "chunks": 384,
+          "valid_pixels": 25165823,
+          "native_sum": 53448838854.0,
+          "values": 25165824,
+          "observations": 6
+        },
+        "materialization_seconds": 0.0,
+        "oracle_seconds_excluded": 4.176923040766269,
+        "scientific_correctness_passed": true,
+        "rss_gate_passed": true,
+        "head_gate_passed": true,
+        "passed": true,
+        "workload": "several-large",
+        "rep": 1,
+        "latency_ms": 8,
+        "bandwidth_mbps": 100,
+        "diagnostic": false
+      },
+      {
+        "exit_code": 0,
+        "wall_seconds": 8.206280791666359,
+        "peak_rss_bytes": 148717568,
+        "error": "",
+        "cog_identity_validation_seconds": 0.099717208,
+        "layout_inspection_seconds": 0.16421866400000001,
+        "planning_compute_seconds": 0.000891794999999973,
+        "mode": "rust-stream",
+        "workers": 2,
+        "http": {
+          "head": 36,
+          "get": 48,
+          "range_get": 48,
+          "body_bytes": 75988992,
+          "conditional": 66,
+          "errors": 0,
+          "head_active": 0,
+          "head_peak": 2
+        },
+        "first_chunk_seconds": 0.446897417,
+        "prepare_seconds": 0.201764125,
+        "metadata_worker_seconds": null,
+        "correctness": {
+          "chunks": 384,
+          "valid_pixels": 25165823,
+          "native_sum": 53448838854.0,
+          "values": 25165824,
+          "observations": 6
+        },
+        "materialization_seconds": 0.0,
+        "oracle_seconds_excluded": 4.165136458817869,
+        "scientific_correctness_passed": true,
+        "rss_gate_passed": true,
+        "head_gate_passed": true,
+        "passed": true,
+        "workload": "several-large",
+        "rep": 2,
+        "latency_ms": 8,
+        "bandwidth_mbps": 100,
+        "diagnostic": false
+      },
+      {
+        "exit_code": 0,
+        "wall_seconds": 8.210492250043899,
+        "peak_rss_bytes": 143982592,
+        "error": "",
+        "cog_identity_validation_seconds": 0.098145291,
+        "layout_inspection_seconds": 0.16495870899999998,
+        "planning_compute_seconds": 0.0007584990000000236,
+        "mode": "rust-stream",
+        "workers": 2,
+        "http": {
+          "head": 36,
+          "get": 48,
+          "range_get": 48,
+          "body_bytes": 90193920,
+          "conditional": 66,
+          "errors": 0,
+          "head_active": 0,
+          "head_peak": 2
+        },
+        "first_chunk_seconds": 0.533068791,
+        "prepare_seconds": 0.201861125,
+        "metadata_worker_seconds": null,
+        "correctness": {
+          "chunks": 54,
+          "valid_pixels": 3538944,
+          "native_sum": 7440761236.0,
+          "values": 3538944,
+          "observations": 6
+        },
+        "materialization_seconds": 0.0,
+        "oracle_seconds_excluded": 1.0400350829586387,
+        "scientific_correctness_passed": true,
+        "rss_gate_passed": true,
+        "head_gate_passed": true,
+        "passed": true,
+        "workload": "overlap-a",
+        "rep": 0,
+        "latency_ms": 8,
+        "bandwidth_mbps": 100,
+        "diagnostic": false
+      },
+      {
+        "exit_code": 0,
+        "wall_seconds": 8.470610457938164,
+        "peak_rss_bytes": 142721024,
+        "error": "",
+        "cog_identity_validation_seconds": 0.10034225,
+        "layout_inspection_seconds": 0.164608376,
+        "planning_compute_seconds": 0.0006461239999999979,
+        "mode": "rust-stream",
+        "workers": 2,
+        "http": {
+          "head": 36,
+          "get": 48,
+          "range_get": 48,
+          "body_bytes": 93356032,
+          "conditional": 66,
+          "errors": 0,
+          "head_active": 0,
+          "head_peak": 2
+        },
+        "first_chunk_seconds": 0.526165666,
+        "prepare_seconds": 0.201574833,
+        "metadata_worker_seconds": null,
+        "correctness": {
+          "chunks": 54,
+          "valid_pixels": 3538944,
+          "native_sum": 7440761236.0,
+          "values": 3538944,
+          "observations": 6
+        },
+        "materialization_seconds": 0.0,
+        "oracle_seconds_excluded": 1.0268065421842039,
+        "scientific_correctness_passed": true,
+        "rss_gate_passed": true,
+        "head_gate_passed": true,
+        "passed": true,
+        "workload": "overlap-a",
+        "rep": 1,
+        "latency_ms": 8,
+        "bandwidth_mbps": 100,
+        "diagnostic": false
+      },
+      {
+        "exit_code": 0,
+        "wall_seconds": 8.29200908401981,
+        "peak_rss_bytes": 143130624,
+        "error": "",
+        "cog_identity_validation_seconds": 0.100409875,
+        "layout_inspection_seconds": 0.16648062600000002,
+        "planning_compute_seconds": 0.0006975409999999682,
+        "mode": "rust-stream",
+        "workers": 2,
+        "http": {
+          "head": 36,
+          "get": 48,
+          "range_get": 48,
+          "body_bytes": 91701248,
+          "conditional": 66,
+          "errors": 0,
+          "head_active": 0,
+          "head_peak": 2
+        },
+        "first_chunk_seconds": 0.529601,
+        "prepare_seconds": 0.2035235,
+        "metadata_worker_seconds": null,
+        "correctness": {
+          "chunks": 54,
+          "valid_pixels": 3538944,
+          "native_sum": 7440761236.0,
+          "values": 3538944,
+          "observations": 6
+        },
+        "materialization_seconds": 0.0,
+        "oracle_seconds_excluded": 1.0430049998685718,
+        "scientific_correctness_passed": true,
+        "rss_gate_passed": true,
+        "head_gate_passed": true,
+        "passed": true,
+        "workload": "overlap-a",
+        "rep": 2,
+        "latency_ms": 8,
+        "bandwidth_mbps": 100,
+        "diagnostic": false
+      },
+      {
+        "exit_code": 0,
+        "wall_seconds": 5.884349999949336,
+        "peak_rss_bytes": 140132352,
+        "error": "",
+        "cog_identity_validation_seconds": 0.098240876,
+        "layout_inspection_seconds": 0.16679179200000002,
+        "planning_compute_seconds": 0.0010266249999999755,
+        "mode": "rust-stream",
+        "workers": 2,
+        "http": {
+          "head": 36,
+          "get": 36,
+          "range_get": 36,
+          "body_bytes": 57409536,
+          "conditional": 54,
+          "errors": 0,
+          "head_active": 0,
+          "head_peak": 2
+        },
+        "first_chunk_seconds": 1.12535325,
+        "prepare_seconds": 0.204152875,
+        "metadata_worker_seconds": null,
+        "correctness": {
+          "chunks": 54,
+          "valid_pixels": 3538944,
+          "native_sum": 7372630985.0,
+          "values": 3538944,
+          "observations": 6
+        },
+        "materialization_seconds": 0.0,
+        "oracle_seconds_excluded": 1.028158166911453,
+        "scientific_correctness_passed": true,
+        "rss_gate_passed": true,
+        "head_gate_passed": true,
+        "passed": true,
+        "workload": "overlap-b",
+        "rep": 0,
+        "latency_ms": 8,
+        "bandwidth_mbps": 100,
+        "diagnostic": false
+      },
+      {
+        "exit_code": 0,
+        "wall_seconds": 5.895329082850367,
+        "peak_rss_bytes": 139476992,
+        "error": "",
+        "cog_identity_validation_seconds": 0.09911666699999999,
+        "layout_inspection_seconds": 0.16660608200000002,
+        "planning_compute_seconds": 0.001265292999999973,
+        "mode": "rust-stream",
+        "workers": 2,
+        "http": {
+          "head": 36,
+          "get": 36,
+          "range_get": 36,
+          "body_bytes": 57409536,
+          "conditional": 54,
+          "errors": 0,
+          "head_active": 0,
+          "head_peak": 2
+        },
+        "first_chunk_seconds": 1.119466834,
+        "prepare_seconds": 0.20497025,
+        "metadata_worker_seconds": null,
+        "correctness": {
+          "chunks": 54,
+          "valid_pixels": 3538944,
+          "native_sum": 7372630985.0,
+          "values": 3538944,
+          "observations": 6
+        },
+        "materialization_seconds": 0.0,
+        "oracle_seconds_excluded": 1.0278637087903917,
+        "scientific_correctness_passed": true,
+        "rss_gate_passed": true,
+        "head_gate_passed": true,
+        "passed": true,
+        "workload": "overlap-b",
+        "rep": 1,
+        "latency_ms": 8,
+        "bandwidth_mbps": 100,
+        "diagnostic": false
+      },
+      {
+        "exit_code": 0,
+        "wall_seconds": 5.890606999862939,
+        "peak_rss_bytes": 135036928,
+        "error": "",
+        "cog_identity_validation_seconds": 0.100004541,
+        "layout_inspection_seconds": 0.16216575,
+        "planning_compute_seconds": 0.0009152080000000007,
+        "mode": "rust-stream",
+        "workers": 2,
+        "http": {
+          "head": 36,
+          "get": 36,
+          "range_get": 36,
+          "body_bytes": 57409536,
+          "conditional": 54,
+          "errors": 0,
+          "head_active": 0,
+          "head_peak": 2
+        },
+        "first_chunk_seconds": 1.113800542,
+        "prepare_seconds": 0.199177958,
+        "metadata_worker_seconds": null,
+        "correctness": {
+          "chunks": 54,
+          "valid_pixels": 3538944,
+          "native_sum": 7372630985.0,
+          "values": 3538944,
+          "observations": 6
+        },
+        "materialization_seconds": 0.0,
+        "oracle_seconds_excluded": 1.0240145418792963,
+        "scientific_correctness_passed": true,
+        "rss_gate_passed": true,
+        "head_gate_passed": true,
+        "passed": true,
+        "workload": "overlap-b",
+        "rep": 2,
+        "latency_ms": 8,
+        "bandwidth_mbps": 100,
+        "diagnostic": false
+      }
+    ]
+  },
+  "ranking_rule": "Rust/GDAL median elapsed ratio <0.9 win, >1.1 loss, otherwise tie; three repetitions per cell, no universal or public-throughput claim"
+}

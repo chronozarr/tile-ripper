@@ -126,3 +126,10 @@ scratch, plans, reports, source identity tables and runtime allocations are
 additional. This is an admission/payload model, not a process RSS ceiling.
 The standalone demonstration uses capacity 0, a 2-MiB maximum delivered payload,
 no retained pixel arrays, and measures a separate 192-MiB process RSS gate.
+
+Remote COG version checks now use bounded batches and a shared pooled client.
+The existing worker/per-origin settings cap each whole batch conservatively;
+results and errors are restored to source order before pins or plans change.
+GDAL layout inspection remains serial, and meaningful pre/post source checks
+are retained. The [real-source gate](../production-streaming/report.md) records
+both the improvement and the remaining costs.
