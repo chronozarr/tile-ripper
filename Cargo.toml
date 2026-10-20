@@ -9,6 +9,7 @@ description = "Inspectable native acquisition for narrow STAC/COG and scientific
 default = ["gdal"]
 gdal = ["dep:gdal"]
 native-cog = ["dep:tiff-reader", "dep:geotiff-core", "dep:roxmltree", "dep:geo", "dep:proj4rs"]
+experimental-output = ["zarrs/sharding"]
 
 [dependencies]
 gdal = { version = "=0.19.0", optional = true }
@@ -19,6 +20,8 @@ stac = { version = "=0.17.6", features = ["std"] }
 stac-io = "=0.3.4"
 tokio = { version = "=1.48.0", features = ["rt"] }
 zarrs = { version = "=0.22.10", default-features = false, features = ["filesystem", "gzip", "blosc"] }
+# Scoped copy of the existing filesystem dependency; see its patch note.
+zarrs_filesystem = { version = "=0.3.13", path = "vendor/zarrs_filesystem" }
 
 reqwest = { version = "=0.13.5", features = ["blocking"] }
 flate2 = "=1.1.10"

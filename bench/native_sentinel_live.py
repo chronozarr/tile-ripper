@@ -19,7 +19,6 @@ from rasterio.warp import transform_geom
 from rasterio.windows import Window
 from shapely.geometry import shape
 
-import consumer_validation as consumer
 
 ROOT = Path(__file__).resolve().parents[1]
 WORK = ROOT / "prototype-output/native-sentinel/live"
@@ -77,6 +76,7 @@ def discover(request):
 
 
 def main():
+    import consumer_validation as consumer
     WORK.mkdir(parents=True, exist_ok=True)
     path = ROOT / "docs/native-sentinel/request.json"
     request = json.loads(path.read_text())

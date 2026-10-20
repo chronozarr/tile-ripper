@@ -1,0 +1,73 @@
+{
+  "stable_improvement_gate_passed": true,
+  "experimental_sharding_gate_passed": false,
+  "checks": [
+    {
+      "check": "tests-default-final",
+      "passed": 65,
+      "ignored": 2,
+      "failed": 0
+    },
+    {
+      "check": "tests-native-final",
+      "passed": 43,
+      "ignored": 3,
+      "failed": 0
+    },
+    {
+      "check": "tests-experimental-final",
+      "passed": 43,
+      "ignored": 3,
+      "failed": 0
+    },
+    {
+      "check": "tests-all-features",
+      "passed": 83,
+      "ignored": 4,
+      "failed": 0
+    },
+    {
+      "check": "clippy-default-final",
+      "passed": true
+    },
+    {
+      "check": "clippy-native-final",
+      "passed": true
+    },
+    {
+      "check": "clippy-all-features",
+      "passed": true
+    },
+    {
+      "check": "check-zarr-only-final",
+      "passed": true
+    },
+    {
+      "check": "consumer-build-final",
+      "passed": true
+    }
+  ],
+  "independent_receipts": [
+    "candidates.json",
+    "faults.json",
+    "interoperability-v2.json",
+    "live-default/live.json",
+    "live-candidates.json",
+    "memory.json",
+    "regressions.json",
+    "linux.json"
+  ],
+  "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+  "architecture": "arm64",
+  "rustc": "rustc 1.92.0 (ded5c06cf 2025-12-08)",
+  "baseline_commit": "82e21b15352471471900e03806dd6d7b22003afc",
+  "production_source_sha256": "a86b62c666b876f431fc6b06dbe27873f6862bdacc22efbbe0d6a74b54fcf427",
+  "registry_packages_and_checksums_unchanged": true,
+  "binaries": {
+    "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/durable-output/baseline-82e21b1": "a44a42df44908ef93d3c895e4022fe28a6f7690acb0d575167227d5333b6be62",
+    "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/target/scientific-output/release/tile-ripper": "98016f9ef24367c4fd455c98d317f4121fa21187c74ac3c1232647c57231de92",
+    "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/target/scientific-output/release/examples/durable_output_candidate": "0a0fd335caea76c928adba9be839716fa15f9adb8496783d9a99f208a52345ac"
+  },
+  "experimental_failure_count": 12,
+  "scope": "Rust test logs, strict clippy, Zarr-only compile, separate locked consumer build, macOS and Linux scientific/fault receipts. cargo fmt --check and git diff --check are separate closeout commands. Ignored external-fixture tests remain explicitly ignored; inherited independent harnesses are replayed in regressions.json."
+}

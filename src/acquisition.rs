@@ -56,7 +56,7 @@ fn cog_runtime(runtime: &Runtime) -> bool {
 #[derive(Clone)]
 pub struct Prepared {
     runtime: std::sync::Arc<Runtime>,
-    inspection: Value,
+    inspection: std::sync::Arc<Value>,
     output: Sink,
 }
 impl Prepared {
@@ -67,7 +67,12 @@ impl Prepared {
         }
     }
     pub fn explain(&self) -> Value {
-        self.inspection.clone()
+        self.inspection.as_ref().clone()
+    }
+    pub(crate) fn output_budget(&self) -> Result<Budget> {
+        Ok(serde_json::from_value(
+            self.inspection["output_budget"].clone(),
+        )?)
     }
     pub fn human(&self) -> String {
         let mut s = String::from("Tile-Ripper inspection (not a saved execution plan)\n");
@@ -290,7 +295,7 @@ impl Prepared {
             manifest["status"] = json!("complete");
             manifest["sources"] = self.inspection["sources"].clone();
             manifest["outputs"] = outputs;
-            manifest["inspection"] = self.inspection.clone();
+            manifest["inspection"] = self.explain();
             manifest["processing"] = json!([
                 "native stored values; no calibration",
                 "native grids and coordinates; no reprojection, interpolation, mosaic or composite",
@@ -340,6 +345,25 @@ impl Prepared {
         matches!(
             strategy(&self.runtime, &self.output),
             OutputStrategy::ZarrObservations
+        )
+    }
+    /// Evaluate lossless encoding/chunk layouts through the same transactional
+    /// COG sink. Ordinary fetch retains its original uncompressed Zarr v2 layout.
+    pub fn fetch_scientific_with_options(
+        &self,
+        options: crate::ScientificOutputOptions,
+        cancelled: std::sync::Arc<std::sync::atomic::AtomicBool>,
+    ) -> Result<Value> {
+        if !self.scientific_output() {
+            return Err(
+                "scientific output options require COG/STAC with a zarr_directory sink".into(),
+            );
+        }
+        crate::scientific_output::fetch_with_options(
+            self.clone(),
+            destination(&self.output)?,
+            cancelled,
+            options,
         )
     }
 }
@@ -501,7 +525,7 @@ fn prepare_inner(request: &Request, cache: &mut LayoutCache) -> Result<Prepared>
     sanitize(&mut inspection);
     Ok(Prepared {
         runtime: std::sync::Arc::new(runtime),
-        inspection,
+        inspection: std::sync::Arc::new(inspection),
         output: request.sink.clone(),
     })
 }

@@ -36,7 +36,9 @@ grids and streams masked UInt16 chunks with pinned provenance. The
 [scientific output workflow](docs/scientific-output/workflow.md) saves actual
 values to portable Zarr v2, with separate observation groups for different dates,
 bands and grids. Open a group with ordinary Python Zarr/xarray; Rust code is not
-needed. Direct COG assets
+needed. The [durable-output measurements and safety gate](docs/durable-output/report.md)
+cover transactional synchronization, lossless encoding candidates and bounded
+streaming; ordinary fetch retains uncompressed Zarr v2. Direct COG assets
 and native bounds remain supported for [the admitted TIFF profiles](docs/native-cog/report.md).
 GeoTIFF writing requires the optional `gdal` feature. Zarr-only builds can omit
 both features. C/C++ codec build tools remain required; see

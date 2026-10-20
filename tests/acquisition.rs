@@ -609,3 +609,78 @@ fn empty_scientific_fetch_admits_metadata_before_creating_output() {
         .contains("output object bookkeeping"));
     assert!(!f.root.join("out.zarr").exists());
 }
+
+#[test]
+fn scientific_encoding_and_unequal_chunk_layouts_preserve_values() {
+    for encoding in [
+        ScientificEncoding::Uncompressed,
+        ScientificEncoding::Gzip,
+        ScientificEncoding::BloscZstd,
+    ] {
+        for edge in [2, 7] {
+            let mut f = fixture(Format::Cog);
+            let out = f.root.join("candidate.zarr");
+            f.request.sink = Sink::ZarrDirectory {
+                path: out.to_string_lossy().into(),
+            };
+            f.request.budget.buffer_bytes = 4 * 1024 * 1024;
+            let p = acquisition::prepare(&f.request, &mut LayoutCache::default()).unwrap();
+            let manifest = p
+                .fetch_scientific_with_options(
+                    ScientificOutputOptions {
+                        chunk_edge: edge,
+                        encoding,
+                    },
+                    Default::default(),
+                )
+                .unwrap();
+            assert_eq!(manifest["status"], "complete");
+            let store = Arc::new(FilesystemStore::new(&out).unwrap());
+            let ar = Array::open(store.clone(), "/observations/000000/values").unwrap();
+            let values = ar
+                .retrieve_array_subset_elements::<u16>(&ar.subset_all())
+                .unwrap();
+            let ar = Array::open(store, "/observations/000000/valid").unwrap();
+            let valid = ar
+                .retrieve_array_subset_elements::<u8>(&ar.subset_all())
+                .unwrap();
+            for y in 0..6 {
+                for x in 0..6 {
+                    let expected = if y + 1 >= 4 && x + 1 >= 4 {
+                        0
+                    } else {
+                        ((y + 1) * 8 + x + 1 + 65) as u16
+                    };
+                    assert_eq!(values[y * 6 + x], expected);
+                    assert_eq!(valid[y * 6 + x], u8::from(expected != 0));
+                }
+            }
+        }
+    }
+}
+
+#[test]
+fn scientific_candidate_rejects_invalid_or_unreserved_buffers_before_staging() {
+    let mut f = fixture(Format::Cog);
+    let out = f.root.join("rejected.zarr");
+    f.request.sink = Sink::ZarrDirectory {
+        path: out.to_string_lossy().into(),
+    };
+    let p = acquisition::prepare(&f.request, &mut LayoutCache::default()).unwrap();
+    for (edge, encoding) in [
+        (0, ScientificEncoding::Uncompressed),
+        (4, ScientificEncoding::Gzip),
+    ] {
+        assert!(p
+            .fetch_scientific_with_options(
+                ScientificOutputOptions {
+                    chunk_edge: edge,
+                    encoding
+                },
+                Default::default()
+            )
+            .is_err());
+        assert!(!out.exists());
+        assert_eq!(fs::read_dir(&f.root).unwrap().count(), 1);
+    }
+}

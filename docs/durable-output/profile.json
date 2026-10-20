@@ -1,0 +1,812 @@
+{
+  "profiles": [
+    {
+      "workload": "small",
+      "mode": "old",
+      "wall_seconds": 0.4848665832541883,
+      "source_http_seconds": 0.019202624,
+      "source_read_decode_seconds": 0.0583855,
+      "native_decode_copy_residual_seconds": 0.038367666,
+      "sync_seconds": 0.39862400000000003,
+      "file_open_create_seconds": 0.010340999,
+      "file_write_seconds": 0.007997002,
+      "mkdir_seconds": 0.003444,
+      "stages": {
+        "cog_identity_batch": 0.011389125,
+        "cog_layout_inspection": 0.0034455429999999997,
+        "native_planning_with_layout": 0.003798458
+      },
+      "writer_reservation_bytes": 73728,
+      "scheduler_reservation_bytes": 11932307,
+      "encode_library_seconds": null,
+      "warm_independent_reads": {
+        "full": {
+          "wall_seconds": 0.013551124837249517,
+          "cpu_seconds": 0.01254400000000011
+        },
+        "subset": {
+          "wall_seconds": 0.016868041828274727,
+          "cpu_seconds": 0.016296000000000088
+        }
+      }
+    },
+    {
+      "workload": "small",
+      "mode": "raw",
+      "wall_seconds": 0.09726700000464916,
+      "source_http_seconds": 0.022469082,
+      "source_read_decode_seconds": 0.060775417,
+      "native_decode_copy_residual_seconds": 0.038699874999999995,
+      "sync_seconds": 0.012947997,
+      "file_open_create_seconds": 0.004775997999999999,
+      "file_write_seconds": 0.001565004,
+      "mkdir_seconds": 0.001497,
+      "stages": {
+        "atomic_publication": 0.000128209,
+        "cog_identity_batch": 0.01048775,
+        "cog_layout_inspection": 0.003307916,
+        "final_directory_sync": 0.001535958,
+        "manifest_generation": 3.0042e-05,
+        "manifest_serialization": 0.000140333,
+        "manifest_write": 0.000162042,
+        "native_planning_with_layout": 0.003658333,
+        "output_setup": 0.011589459,
+        "postpublish_device_flush": 0.004447291,
+        "prepublish_device_flush": 0.005622083,
+        "publication_parent_sync": 3.6375e-05,
+        "publication_total": 0.012613625,
+        "source_stream_including_backpressure": 0.036105625
+      },
+      "writer_reservation_bytes": 350208,
+      "scheduler_reservation_bytes": 11932307,
+      "encode_library_seconds": 0.0001382070000000012,
+      "warm_independent_reads": {
+        "full": {
+          "wall_seconds": 0.013101582881063223,
+          "cpu_seconds": 0.012046000000000001
+        },
+        "subset": {
+          "wall_seconds": 0.017687290906906128,
+          "cpu_seconds": 0.0173080000000001
+        }
+      }
+    },
+    {
+      "workload": "small",
+      "mode": "gzip",
+      "wall_seconds": 0.08669558307155967,
+      "source_http_seconds": 0.021808583,
+      "source_read_decode_seconds": 0.058975334000000004,
+      "native_decode_copy_residual_seconds": 0.037010043000000006,
+      "sync_seconds": 0.013518003,
+      "file_open_create_seconds": 0.004397002,
+      "file_write_seconds": 0.001830997,
+      "mkdir_seconds": 0.001369999,
+      "stages": {
+        "atomic_publication": 0.000129917,
+        "cog_identity_batch": 0.010297208,
+        "cog_layout_inspection": 0.0029993339999999998,
+        "final_directory_sync": 0.001574875,
+        "manifest_generation": 2.925e-05,
+        "manifest_serialization": 0.00014,
+        "manifest_write": 0.00016275,
+        "native_planning_with_layout": 0.003316417,
+        "output_setup": 0.010529167,
+        "postpublish_device_flush": 0.004646708,
+        "prepublish_device_flush": 0.005641125,
+        "publication_parent_sync": 3.875e-05,
+        "publication_total": 0.01317325,
+        "source_stream_including_backpressure": 0.036704542
+      },
+      "writer_reservation_bytes": 1398784,
+      "scheduler_reservation_bytes": 11932307,
+      "encode_library_seconds": 0.0005620380000000008,
+      "warm_independent_reads": {
+        "full": {
+          "wall_seconds": 0.013530000112950802,
+          "cpu_seconds": 0.012971999999999984
+        },
+        "subset": {
+          "wall_seconds": 0.017646457999944687,
+          "cpu_seconds": 0.017265000000000086
+        }
+      }
+    },
+    {
+      "workload": "small",
+      "mode": "blosc_zstd",
+      "wall_seconds": 0.09041258413344622,
+      "source_http_seconds": 0.022594834,
+      "source_read_decode_seconds": 0.06292320800000001,
+      "native_decode_copy_residual_seconds": 0.04032837400000001,
+      "sync_seconds": 0.013477,
+      "file_open_create_seconds": 0.005198001000000001,
+      "file_write_seconds": 0.0016479989999999998,
+      "mkdir_seconds": 0.001566003,
+      "stages": {
+        "atomic_publication": 0.000127958,
+        "cog_identity_batch": 0.010565542,
+        "cog_layout_inspection": 0.0032175829999999996,
+        "final_directory_sync": 0.00163475,
+        "manifest_generation": 2.8375e-05,
+        "manifest_serialization": 0.000148459,
+        "manifest_write": 0.000148209,
+        "native_planning_with_layout": 0.003541458,
+        "output_setup": 0.012404166,
+        "postpublish_device_flush": 0.004341125,
+        "prepublish_device_flush": 0.005731834,
+        "publication_parent_sync": 3.7958e-05,
+        "publication_total": 0.012625709,
+        "source_stream_including_backpressure": 0.038222334
+      },
+      "writer_reservation_bytes": 1398784,
+      "scheduler_reservation_bytes": 11932307,
+      "encode_library_seconds": 0.00043216599999999934,
+      "warm_independent_reads": {
+        "full": {
+          "wall_seconds": 0.01666225027292967,
+          "cpu_seconds": 0.014504999999999768
+        },
+        "subset": {
+          "wall_seconds": 0.024344750214368105,
+          "cpu_seconds": 0.020241000000000398
+        }
+      }
+    },
+    {
+      "workload": "small",
+      "mode": "raw128",
+      "wall_seconds": 0.09079799987375736,
+      "source_http_seconds": 0.022214291999999997,
+      "source_read_decode_seconds": 0.059417584,
+      "native_decode_copy_residual_seconds": 0.037203292000000006,
+      "sync_seconds": 0.012632002,
+      "file_open_create_seconds": 0.005073997,
+      "file_write_seconds": 0.001670998,
+      "mkdir_seconds": 0.001534999,
+      "stages": {
+        "atomic_publication": 0.000161292,
+        "cog_identity_batch": 0.010078542,
+        "cog_layout_inspection": 0.002993208,
+        "final_directory_sync": 0.001465917,
+        "manifest_generation": 2.9042e-05,
+        "manifest_serialization": 0.000142958,
+        "manifest_write": 0.000172083,
+        "native_planning_with_layout": 0.003313833,
+        "output_setup": 0.012241167,
+        "postpublish_device_flush": 0.004355542,
+        "prepublish_device_flush": 0.005281375,
+        "publication_parent_sync": 3.8667e-05,
+        "publication_total": 0.011807042,
+        "source_stream_including_backpressure": 0.035060334
+      },
+      "writer_reservation_bytes": 350208,
+      "scheduler_reservation_bytes": 11932307,
+      "encode_library_seconds": 0.00013050200000000047,
+      "warm_independent_reads": {
+        "full": {
+          "wall_seconds": 0.012841874733567238,
+          "cpu_seconds": 0.012334000000000067
+        },
+        "subset": {
+          "wall_seconds": 0.015892791096121073,
+          "cpu_seconds": 0.015585000000000182
+        }
+      }
+    },
+    {
+      "workload": "small",
+      "mode": "raw512",
+      "wall_seconds": 0.0917359166778624,
+      "source_http_seconds": 0.022195252,
+      "source_read_decode_seconds": 0.061583499,
+      "native_decode_copy_residual_seconds": 0.040289873000000004,
+      "sync_seconds": 0.012786001,
+      "file_open_create_seconds": 0.00525,
+      "file_write_seconds": 0.001749998,
+      "mkdir_seconds": 0.001651001,
+      "stages": {
+        "atomic_publication": 0.000146084,
+        "cog_identity_batch": 0.010981583999999999,
+        "cog_layout_inspection": 0.003635292,
+        "final_directory_sync": 0.001650625,
+        "manifest_generation": 2.9542e-05,
+        "manifest_serialization": 0.000154791,
+        "manifest_write": 0.000159625,
+        "native_planning_with_layout": 0.003997291,
+        "output_setup": 0.012541916,
+        "postpublish_device_flush": 0.004521583,
+        "prepublish_device_flush": 0.005013459,
+        "publication_parent_sync": 3.5875e-05,
+        "publication_total": 0.012295375,
+        "source_stream_including_backpressure": 0.037637958
+      },
+      "writer_reservation_bytes": 350208,
+      "scheduler_reservation_bytes": 11932307,
+      "encode_library_seconds": 0.00017033099999999633,
+      "warm_independent_reads": {
+        "full": {
+          "wall_seconds": 0.013793667312711477,
+          "cpu_seconds": 0.01291399999999987
+        },
+        "subset": {
+          "wall_seconds": 0.018662458285689354,
+          "cpu_seconds": 0.017403999999999975
+        }
+      }
+    },
+    {
+      "workload": "small",
+      "mode": "sharded",
+      "wall_seconds": 0.08548783278092742,
+      "source_http_seconds": 0.021111499,
+      "source_read_decode_seconds": 0.059645583,
+      "native_decode_copy_residual_seconds": 0.038534084,
+      "sync_seconds": 0.012317002,
+      "file_open_create_seconds": 0.003345997,
+      "file_write_seconds": 0.001249998,
+      "mkdir_seconds": 0.001535001,
+      "stages": {
+        "atomic_publication": 0.000137667,
+        "cog_identity_batch": 0.01064225,
+        "cog_layout_inspection": 0.003564457,
+        "final_directory_sync": 0.001495083,
+        "manifest_generation": 2.8083e-05,
+        "manifest_serialization": 0.000164792,
+        "manifest_write": 0.000182416,
+        "native_planning_with_layout": 0.003882084,
+        "output_setup": 0.00932425,
+        "postpublish_device_flush": 0.004616791,
+        "prepublish_device_flush": 0.005609041,
+        "publication_parent_sync": 3.5625e-05,
+        "publication_total": 0.012782917,
+        "source_stream_including_backpressure": 0.0364965
+      },
+      "writer_reservation_bytes": 2283520,
+      "scheduler_reservation_bytes": 11932307,
+      "encode_library_seconds": 0.0010845839999999991,
+      "warm_independent_reads": {
+        "full": {
+          "wall_seconds": 0.01886195782572031,
+          "cpu_seconds": 0.014656000000000002
+        },
+        "subset": {
+          "wall_seconds": 0.023508666083216667,
+          "cpu_seconds": 0.018213000000000035
+        }
+      }
+    },
+    {
+      "workload": "small",
+      "mode": "stream",
+      "wall_seconds": 0.05768112512305379,
+      "source_http_seconds": 0.021715876000000002,
+      "source_read_decode_seconds": 0.059459626,
+      "native_decode_copy_residual_seconds": 0.037010335000000005,
+      "sync_seconds": 0.0,
+      "file_open_create_seconds": 0.0,
+      "file_write_seconds": 0.0,
+      "mkdir_seconds": 0.0,
+      "stages": {
+        "cog_identity_batch": 0.008791750000000001,
+        "cog_layout_inspection": 0.0034555410000000003,
+        "native_planning_with_layout": 0.003827417
+      },
+      "writer_reservation_bytes": 0,
+      "scheduler_reservation_bytes": 11932307,
+      "encode_library_seconds": 0
+    },
+    {
+      "workload": "medium",
+      "mode": "old",
+      "wall_seconds": 1.0306961671449244,
+      "source_http_seconds": 0.030992501,
+      "source_read_decode_seconds": 0.102055915,
+      "native_decode_copy_residual_seconds": 0.05517641599999999,
+      "sync_seconds": 0.796198004,
+      "file_open_create_seconds": 0.033447999,
+      "file_write_seconds": 0.029472003,
+      "mkdir_seconds": 0.005167999,
+      "stages": {
+        "cog_identity_batch": 0.050999166,
+        "cog_layout_inspection": 0.012552792,
+        "native_planning_with_layout": 0.012973917
+      },
+      "writer_reservation_bytes": 524288,
+      "scheduler_reservation_bytes": 12865011,
+      "encode_library_seconds": null,
+      "warm_independent_reads": {
+        "full": {
+          "wall_seconds": 0.09931587520986795,
+          "cpu_seconds": 0.029691000000000134
+        },
+        "subset": {
+          "wall_seconds": 0.1283225421793759,
+          "cpu_seconds": 0.03115800000000002
+        }
+      }
+    },
+    {
+      "workload": "medium",
+      "mode": "raw",
+      "wall_seconds": 0.10873129172250628,
+      "source_http_seconds": 0.016059167,
+      "source_read_decode_seconds": 0.060827502,
+      "native_decode_copy_residual_seconds": 0.044768335,
+      "sync_seconds": 0.017441003,
+      "file_open_create_seconds": 0.008007997999999999,
+      "file_write_seconds": 0.003376998,
+      "mkdir_seconds": 0.001646999,
+      "stages": {
+        "atomic_publication": 0.000148166,
+        "cog_identity_batch": 0.010196918,
+        "cog_layout_inspection": 0.004031333,
+        "final_directory_sync": 0.001504333,
+        "manifest_generation": 3.075e-05,
+        "manifest_serialization": 0.000170541,
+        "manifest_write": 0.000144333,
+        "native_planning_with_layout": 0.004444667,
+        "output_setup": 0.013558041,
+        "postpublish_device_flush": 0.004608333,
+        "prepublish_device_flush": 0.008057416,
+        "publication_parent_sync": 3.8708e-05,
+        "publication_total": 0.015628333,
+        "source_stream_including_backpressure": 0.043811541
+      },
+      "writer_reservation_bytes": 2490368,
+      "scheduler_reservation_bytes": 12865011,
+      "encode_library_seconds": 0.0003159959999999969,
+      "warm_independent_reads": {
+        "full": {
+          "wall_seconds": 0.02561479201540351,
+          "cpu_seconds": 0.020553000000000043
+        },
+        "subset": {
+          "wall_seconds": 0.020697542000561953,
+          "cpu_seconds": 0.017120999999999498
+        }
+      }
+    },
+    {
+      "workload": "medium",
+      "mode": "gzip",
+      "wall_seconds": 0.13435395900160074,
+      "source_http_seconds": 0.018034375000000002,
+      "source_read_decode_seconds": 0.07387058299999999,
+      "native_decode_copy_residual_seconds": 0.055047122999999996,
+      "sync_seconds": 0.019988001000000002,
+      "file_open_create_seconds": 0.008765998,
+      "file_write_seconds": 0.003139001,
+      "mkdir_seconds": 0.001730001,
+      "stages": {
+        "atomic_publication": 0.000220584,
+        "cog_identity_batch": 0.012062291,
+        "cog_layout_inspection": 0.004552792,
+        "final_directory_sync": 0.001948791,
+        "manifest_generation": 3.0375e-05,
+        "manifest_serialization": 0.000205584,
+        "manifest_write": 0.00015275,
+        "native_planning_with_layout": 0.004981625,
+        "output_setup": 0.015807083,
+        "postpublish_device_flush": 0.005579208,
+        "prepublish_device_flush": 0.009675625,
+        "publication_parent_sync": 3.8917e-05,
+        "publication_total": 0.018805166,
+        "source_stream_including_backpressure": 0.065967417
+      },
+      "writer_reservation_bytes": 3538944,
+      "scheduler_reservation_bytes": 12865011,
+      "encode_library_seconds": 0.02271325,
+      "warm_independent_reads": {
+        "full": {
+          "wall_seconds": 0.03385233320295811,
+          "cpu_seconds": 0.03262199999999993
+        },
+        "subset": {
+          "wall_seconds": 0.029199625365436077,
+          "cpu_seconds": 0.021370999999999363
+        }
+      }
+    },
+    {
+      "workload": "medium",
+      "mode": "blosc_zstd",
+      "wall_seconds": 0.13693029200658202,
+      "source_http_seconds": 0.022375791,
+      "source_read_decode_seconds": 0.07306346,
+      "native_decode_copy_residual_seconds": 0.050687669,
+      "sync_seconds": 0.032271001,
+      "file_open_create_seconds": 0.008916998,
+      "file_write_seconds": 0.0041110009999999995,
+      "mkdir_seconds": 0.001827999,
+      "stages": {
+        "atomic_publication": 0.000158125,
+        "cog_identity_batch": 0.012439208,
+        "cog_layout_inspection": 0.004515083,
+        "final_directory_sync": 0.002125917,
+        "manifest_generation": 3.625e-05,
+        "manifest_serialization": 0.000239791,
+        "manifest_write": 0.000237583,
+        "native_planning_with_layout": 0.004937417,
+        "output_setup": 0.015161125,
+        "postpublish_device_flush": 0.006372334,
+        "prepublish_device_flush": 0.009273542,
+        "publication_parent_sync": 4.7542e-05,
+        "publication_total": 0.019021,
+        "source_stream_including_backpressure": 0.058574458
+      },
+      "writer_reservation_bytes": 3538944,
+      "scheduler_reservation_bytes": 12865011,
+      "encode_library_seconds": 0.009561798999999996,
+      "warm_independent_reads": {
+        "full": {
+          "wall_seconds": 0.028072583954781294,
+          "cpu_seconds": 0.028413999999999717
+        },
+        "subset": {
+          "wall_seconds": 0.021850875113159418,
+          "cpu_seconds": 0.019223999999999908
+        }
+      }
+    },
+    {
+      "workload": "medium",
+      "mode": "raw128",
+      "wall_seconds": 0.15307700028643012,
+      "source_http_seconds": 0.020090417,
+      "source_read_decode_seconds": 0.07740566499999998,
+      "native_decode_copy_residual_seconds": 0.057315247999999985,
+      "sync_seconds": 0.026786001,
+      "file_open_create_seconds": 0.021536996,
+      "file_write_seconds": 0.013237001,
+      "mkdir_seconds": 0.00201,
+      "stages": {
+        "atomic_publication": 0.000155959,
+        "cog_identity_batch": 0.011507958,
+        "cog_layout_inspection": 0.0060405829999999995,
+        "final_directory_sync": 0.002286625,
+        "manifest_generation": 3.2042e-05,
+        "manifest_serialization": 0.000219542,
+        "manifest_write": 0.000179625,
+        "native_planning_with_layout": 0.006399791,
+        "output_setup": 0.018799791,
+        "postpublish_device_flush": 0.006069084,
+        "prepublish_device_flush": 0.010141708,
+        "publication_parent_sync": 4.5084e-05,
+        "publication_total": 0.019450583,
+        "source_stream_including_backpressure": 0.080847084
+      },
+      "writer_reservation_bytes": 917504,
+      "scheduler_reservation_bytes": 12865011,
+      "encode_library_seconds": 0.027749385999999994,
+      "warm_independent_reads": {
+        "full": {
+          "wall_seconds": 0.05635849991813302,
+          "cpu_seconds": 0.046625999999999834
+        },
+        "subset": {
+          "wall_seconds": 0.02188233332708478,
+          "cpu_seconds": 0.01840900000000012
+        }
+      }
+    },
+    {
+      "workload": "medium",
+      "mode": "raw512",
+      "wall_seconds": 0.13841566676273942,
+      "source_http_seconds": 0.016800001000000002,
+      "source_read_decode_seconds": 0.06699195699999999,
+      "native_decode_copy_residual_seconds": 0.05019195599999999,
+      "sync_seconds": 0.024103997999999998,
+      "file_open_create_seconds": 0.009807999999999999,
+      "file_write_seconds": 0.010663001,
+      "mkdir_seconds": 0.002063999,
+      "stages": {
+        "atomic_publication": 0.000238125,
+        "cog_identity_batch": 0.017311459,
+        "cog_layout_inspection": 0.005924957999999999,
+        "final_directory_sync": 0.001753417,
+        "manifest_generation": 3.1625e-05,
+        "manifest_serialization": 0.000207167,
+        "manifest_write": 0.000287292,
+        "native_planning_with_layout": 0.006315459,
+        "output_setup": 0.016408625,
+        "postpublish_device_flush": 0.009205042,
+        "prepublish_device_flush": 0.008097541,
+        "publication_parent_sync": 5.3208e-05,
+        "publication_total": 0.020050458,
+        "source_stream_including_backpressure": 0.056137
+      },
+      "writer_reservation_bytes": 8781824,
+      "scheduler_reservation_bytes": 12865011,
+      "encode_library_seconds": 0.0011120869999999973,
+      "warm_independent_reads": {
+        "full": {
+          "wall_seconds": 0.019098457880318165,
+          "cpu_seconds": 0.015300000000000091
+        },
+        "subset": {
+          "wall_seconds": 0.024343749973922968,
+          "cpu_seconds": 0.019042000000000225
+        }
+      }
+    },
+    {
+      "workload": "medium",
+      "mode": "stream",
+      "wall_seconds": 0.07245300011709332,
+      "source_http_seconds": 0.020931374,
+      "source_read_decode_seconds": 0.069942959,
+      "native_decode_copy_residual_seconds": 0.049011584999999996,
+      "sync_seconds": 0.0,
+      "file_open_create_seconds": 0.0,
+      "file_write_seconds": 0.0,
+      "mkdir_seconds": 0.0,
+      "stages": {
+        "cog_identity_batch": 0.011211833000000001,
+        "cog_layout_inspection": 0.004839625,
+        "native_planning_with_layout": 0.005262875
+      },
+      "writer_reservation_bytes": 0,
+      "scheduler_reservation_bytes": 12865011,
+      "encode_library_seconds": 0
+    },
+    {
+      "workload": "large",
+      "mode": "old",
+      "wall_seconds": 4.845935916993767,
+      "source_http_seconds": 0.058813957999999986,
+      "source_read_decode_seconds": 0.2682742439999997,
+      "native_decode_copy_residual_seconds": 0.20946028599999972,
+      "sync_seconds": 4.449419997,
+      "file_open_create_seconds": 0.146233005,
+      "file_write_seconds": 0.112458995,
+      "mkdir_seconds": 0.003519999,
+      "stages": {
+        "cog_identity_batch": 0.011550623999999999,
+        "cog_layout_inspection": 0.0043454999999999995,
+        "native_planning_with_layout": 0.005414584
+      },
+      "writer_reservation_bytes": 524288,
+      "scheduler_reservation_bytes": 10464441,
+      "encode_library_seconds": null,
+      "warm_independent_reads": {
+        "full": {
+          "wall_seconds": 0.24972741585224867,
+          "cpu_seconds": 0.16543500000000222
+        },
+        "subset": {
+          "wall_seconds": 0.054072500206530094,
+          "cpu_seconds": 0.02307300000000012
+        }
+      }
+    },
+    {
+      "workload": "large",
+      "mode": "raw",
+      "wall_seconds": 0.5266229999251664,
+      "source_http_seconds": 0.05110587400000001,
+      "source_read_decode_seconds": 0.2532161280000002,
+      "native_decode_copy_residual_seconds": 0.20227988100000022,
+      "sync_seconds": 0.05584501,
+      "file_open_create_seconds": 0.058957997,
+      "file_write_seconds": 0.079270002,
+      "mkdir_seconds": 0.001803,
+      "stages": {
+        "atomic_publication": 0.000186,
+        "cog_identity_batch": 0.018651915999999998,
+        "cog_layout_inspection": 0.006875499,
+        "final_directory_sync": 0.003482291,
+        "manifest_generation": 3.3833e-05,
+        "manifest_serialization": 0.000608875,
+        "manifest_write": 0.000314917,
+        "native_planning_with_layout": 0.007418834,
+        "output_setup": 0.024436,
+        "postpublish_device_flush": 0.004397416,
+        "prepublish_device_flush": 0.008715,
+        "publication_parent_sync": 3.5959e-05,
+        "publication_total": 0.017778875,
+        "source_stream_including_backpressure": 0.450619958
+      },
+      "writer_reservation_bytes": 2490368,
+      "scheduler_reservation_bytes": 10464441,
+      "encode_library_seconds": 0.004225713999999971,
+      "warm_independent_reads": {
+        "full": {
+          "wall_seconds": 0.2555870832875371,
+          "cpu_seconds": 0.16342000000000034
+        },
+        "subset": {
+          "wall_seconds": 0.02842233283445239,
+          "cpu_seconds": 0.018933000000000533
+        }
+      }
+    },
+    {
+      "workload": "large",
+      "mode": "gzip",
+      "wall_seconds": 0.8160529588349164,
+      "source_http_seconds": 0.05337037500000001,
+      "source_read_decode_seconds": 0.25810641799999995,
+      "native_decode_copy_residual_seconds": 0.20473604299999992,
+      "sync_seconds": 0.056505,
+      "file_open_create_seconds": 0.074865999,
+      "file_write_seconds": 0.029108994,
+      "mkdir_seconds": 0.001789998,
+      "stages": {
+        "atomic_publication": 0.000335667,
+        "cog_identity_batch": 0.01416025,
+        "cog_layout_inspection": 0.007560709,
+        "final_directory_sync": 0.002736709,
+        "manifest_generation": 3.35e-05,
+        "manifest_serialization": 0.000595834,
+        "manifest_write": 0.000274625,
+        "native_planning_with_layout": 0.008167625,
+        "output_setup": 0.02820275,
+        "postpublish_device_flush": 0.004769542,
+        "prepublish_device_flush": 0.008327084,
+        "publication_parent_sync": 4.825e-05,
+        "publication_total": 0.017375958,
+        "source_stream_including_backpressure": 0.734340042
+      },
+      "writer_reservation_bytes": 3538944,
+      "scheduler_reservation_bytes": 10464441,
+      "encode_library_seconds": 0.3503146829999996,
+      "warm_independent_reads": {
+        "full": {
+          "wall_seconds": 0.3433579159900546,
+          "cpu_seconds": 0.32113100000000117
+        },
+        "subset": {
+          "wall_seconds": 0.04202516656368971,
+          "cpu_seconds": 0.024354999999999905
+        }
+      }
+    },
+    {
+      "workload": "large",
+      "mode": "blosc_zstd",
+      "wall_seconds": 0.6667814590036869,
+      "source_http_seconds": 0.059755667,
+      "source_read_decode_seconds": 0.2735557619999999,
+      "native_decode_copy_residual_seconds": 0.2138000949999999,
+      "sync_seconds": 0.059568005,
+      "file_open_create_seconds": 0.072964997,
+      "file_write_seconds": 0.038610986,
+      "mkdir_seconds": 0.002141001,
+      "stages": {
+        "atomic_publication": 0.000145042,
+        "cog_identity_batch": 0.017068417,
+        "cog_layout_inspection": 0.008867333,
+        "final_directory_sync": 0.00278125,
+        "manifest_generation": 6.8667e-05,
+        "manifest_serialization": 0.000763042,
+        "manifest_write": 0.000296,
+        "native_planning_with_layout": 0.009542375,
+        "output_setup": 0.027643125,
+        "postpublish_device_flush": 0.004909875,
+        "prepublish_device_flush": 0.012328458,
+        "publication_parent_sync": 9.1792e-05,
+        "publication_total": 0.0237905,
+        "source_stream_including_backpressure": 0.558746042
+      },
+      "writer_reservation_bytes": 3538944,
+      "scheduler_reservation_bytes": 10464441,
+      "encode_library_seconds": 0.11706006700000003,
+      "warm_independent_reads": {
+        "full": {
+          "wall_seconds": 0.3323905826546252,
+          "cpu_seconds": 0.27726200000000034
+        },
+        "subset": {
+          "wall_seconds": 0.026838416699320078,
+          "cpu_seconds": 0.020662000000001512
+        }
+      }
+    },
+    {
+      "workload": "large",
+      "mode": "raw128",
+      "wall_seconds": 1.7173291249200702,
+      "source_http_seconds": 0.049006330999999986,
+      "source_read_decode_seconds": 0.2445389889999999,
+      "native_decode_copy_residual_seconds": 0.19553265799999991,
+      "sync_seconds": 0.189431001,
+      "file_open_create_seconds": 0.309097989,
+      "file_write_seconds": 0.198267017,
+      "mkdir_seconds": 0.001836996,
+      "stages": {
+        "atomic_publication": 0.0001655,
+        "cog_identity_batch": 0.014426583,
+        "cog_layout_inspection": 0.0044404579999999996,
+        "final_directory_sync": 0.004544834,
+        "manifest_generation": 3.7875e-05,
+        "manifest_serialization": 0.000608791,
+        "manifest_write": 0.0002675,
+        "native_planning_with_layout": 0.005035583,
+        "output_setup": 0.034031791,
+        "postpublish_device_flush": 0.013031417,
+        "prepublish_device_flush": 0.009251917,
+        "publication_parent_sync": 5.6042e-05,
+        "publication_total": 0.034046416,
+        "source_stream_including_backpressure": 1.3662045
+      },
+      "writer_reservation_bytes": 917504,
+      "scheduler_reservation_bytes": 10464441,
+      "encode_library_seconds": 0.6874551299999988,
+      "warm_independent_reads": {
+        "full": {
+          "wall_seconds": 0.7649479173123837,
+          "cpu_seconds": 0.5574869999999983
+        },
+        "subset": {
+          "wall_seconds": 0.04481804138049483,
+          "cpu_seconds": 0.020785000000000053
+        }
+      }
+    },
+    {
+      "workload": "large",
+      "mode": "raw512",
+      "wall_seconds": 1.154285832773894,
+      "source_http_seconds": 0.06488108100000001,
+      "source_read_decode_seconds": 0.29297154200000003,
+      "native_decode_copy_residual_seconds": 0.22809046100000002,
+      "sync_seconds": 0.102851992,
+      "file_open_create_seconds": 0.108970989,
+      "file_write_seconds": 0.15696400500000002,
+      "mkdir_seconds": 0.005539001,
+      "stages": {
+        "atomic_publication": 0.000159417,
+        "cog_identity_batch": 0.023632375,
+        "cog_layout_inspection": 0.008069334000000001,
+        "final_directory_sync": 0.002457583,
+        "manifest_generation": 3.7083e-05,
+        "manifest_serialization": 0.000881666,
+        "manifest_write": 0.000254584,
+        "native_planning_with_layout": 0.008630291,
+        "output_setup": 0.045731333,
+        "postpublish_device_flush": 0.01327325,
+        "prepublish_device_flush": 0.009418667,
+        "publication_parent_sync": 4.1625e-05,
+        "publication_total": 0.0280535,
+        "source_stream_including_backpressure": 0.989157042
+      },
+      "writer_reservation_bytes": 8781824,
+      "scheduler_reservation_bytes": 10464441,
+      "encode_library_seconds": 0.02666057500000002,
+      "warm_independent_reads": {
+        "full": {
+          "wall_seconds": 0.10450141690671444,
+          "cpu_seconds": 0.06687499999999957
+        },
+        "subset": {
+          "wall_seconds": 0.052178625017404556,
+          "cpu_seconds": 0.023565999999998866
+        }
+      }
+    },
+    {
+      "workload": "large",
+      "mode": "stream",
+      "wall_seconds": 0.36883824970573187,
+      "source_http_seconds": 0.05167808400000001,
+      "source_read_decode_seconds": 0.26619828800000034,
+      "native_decode_copy_residual_seconds": 0.21452020400000033,
+      "sync_seconds": 0.0,
+      "file_open_create_seconds": 0.0,
+      "file_write_seconds": 0.0,
+      "mkdir_seconds": 0.0,
+      "stages": {
+        "cog_identity_batch": 0.013758540999999999,
+        "cog_layout_inspection": 0.012908209,
+        "native_planning_with_layout": 0.01357475
+      },
+      "writer_reservation_bytes": 0,
+      "scheduler_reservation_bytes": 10464441,
+      "encode_library_seconds": 0
+    }
+  ],
+  "scope": "Three matched warm-local repetitions per successful mode. Source worker durations overlap sink wall time; decode residual includes copying and reader bookkeeping. File open/create, pwrite/write and sync timers are syscall-facing. Directory walks and unwrapped stat work remain within setup/final-directory-stage and residual costs, not a claimed exhaustive syscall trace. Original encode-only field is unmeasured (null), not zero. Original writer bottleneck is independently timed by its actual sync calls.",
+  "baseline_commit": "82e21b15352471471900e03806dd6d7b22003afc"
+}

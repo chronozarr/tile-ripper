@@ -56,9 +56,9 @@ def invoke(args, binary=BIN, env=None):
         peak_rss_bytes=usage.ru_maxrss*(1 if sys.platform=="darwin" else 1024))
 
 
-def verify(output, request, local_sources=None):
+def verify(output, request, local_sources=None, expected_format="zarr_v2"):
     manifest = json.loads((output / "manifest.json").read_text())
-    assert manifest["status"] == "complete" and manifest["format"] == "zarr_v2"
+    assert manifest["status"] == "complete" and manifest["format"] == expected_format
     root = zarr.open_group(str(output), mode="r")
     assert root.attrs["status"] == "complete"
     sources = {s["asset_id"]:s for s in manifest["sources"]}

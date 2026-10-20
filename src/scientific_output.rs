@@ -15,15 +15,55 @@ use std::{
 use zarrs::{
     array::{Array, ArrayMetadataOptions},
     array_subset::ArraySubset,
-    filesystem::FilesystemStore,
     group::Group,
     storage::{
         storage_adapter::performance_metrics::PerformanceMetricsStorageAdapter, StoreKey,
         WritableStorageTraits,
     },
 };
+use zarrs_filesystem::{FilesystemStore, FilesystemStoreOptions};
 type Metrics = PerformanceMetricsStorageAdapter<FilesystemStore>;
 type Store = crate::zarr_io::Timed<Metrics>;
+
+/// Lossless scientific-output candidates. The ordinary fetch stays Zarr v2,
+/// uncompressed. V3 is deliberately gated at build time.
+#[derive(Clone, Copy, Debug, serde::Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ScientificEncoding {
+    Uncompressed,
+    Gzip,
+    BloscZstd,
+    #[cfg(feature = "experimental-output")]
+    ExperimentalV3ShardedGzip,
+}
+impl ScientificEncoding {
+    fn version(self) -> u8 {
+        match self {
+            #[cfg(feature = "experimental-output")]
+            Self::ExperimentalV3ShardedGzip => 3,
+            _ => 2,
+        }
+    }
+    fn compressor(self) -> Value {
+        match self {
+            Self::Uncompressed => Value::Null,
+            Self::Gzip => json!({"id":"gzip","level":1}),
+            Self::BloscZstd => {
+                json!({"id":"blosc","cname":"zstd","clevel":1,"shuffle":1,"blocksize":0})
+            }
+            #[cfg(feature = "experimental-output")]
+            Self::ExperimentalV3ShardedGzip => Value::Null,
+        }
+    }
+}
+/// Output buffers are bounded by this edge, independently of source deliveries.
+/// Each encode call releases its scratch before the next; no scene/shard cache
+/// is retained across calls or observations. See the output_io reservation.
+#[derive(Clone, Copy, Debug)]
+pub struct ScientificOutputOptions {
+    pub chunk_edge: usize,
+    pub encoding: ScientificEncoding,
+}
 
 fn selections(plan: &Plan) -> Vec<&Selected> {
     let mut selected: Vec<_> = plan.selected.iter().collect();
@@ -53,6 +93,7 @@ pub(crate) fn outputs(plan: &Plan) -> Value {
             "aoi_mask_applied":s.mask_geometry.is_some(),"validity":"valid = aoi_mask AND values != source nodata; 0 invalid, 1 valid"})
     }).collect::<Vec<_>>())
 }
+#[allow(clippy::too_many_arguments)]
 fn array(
     store: Arc<Store>,
     path: &str,
@@ -61,19 +102,52 @@ fn array(
     dtype: &str,
     fill: Value,
     attrs: Value,
+    encoding: ScientificEncoding,
 ) -> Result<Array<Store>> {
-    let metadata = json!({"zarr_format":2,"shape":shape,"chunks":chunks,"dtype":dtype,
-        "order":"C","filters":null,"compressor":null,"fill_value":fill});
+    let compressor = if shape.len() == 3 {
+        encoding.compressor()
+    } else {
+        Value::Null
+    };
+    #[allow(unused_mut)]
+    let mut metadata = json!({"zarr_format":2,"shape":shape,"chunks":chunks,"dtype":dtype,
+        "order":"C","filters":null,"compressor":compressor,"fill_value":fill});
+    #[cfg(feature = "experimental-output")]
+    if encoding.version() == 3 {
+        let bytes = json!({"name":"bytes","configuration":{"endian":"little"}});
+        let mut outer = chunks.to_vec();
+        let codecs = if shape.len() == 3 {
+            // One 2x2 shard, encoded by zarrs with no retained application cache.
+            outer[1] *= 2;
+            outer[2] *= 2;
+            json!([{"name":"sharding_indexed","configuration":{"chunk_shape":chunks,
+                "codecs":[bytes,{"name":"gzip","configuration":{"level":1}}],
+                "index_codecs":[{"name":"bytes","configuration":{"endian":"little"}}],
+                "index_location":"end"}}])
+        } else {
+            json!([bytes])
+        };
+        metadata = json!({"zarr_format":3,"node_type":"array","shape":shape,
+            "data_type":match dtype {"<u2"=>"uint16","|u1"=>"uint8","<f8"=>"float64","<i8"=>"int64","<i4"=>"int32",_=>return Err("unsupported output dtype".into())},
+            "chunk_grid":{"name":"regular","configuration":{"chunk_shape":outer}},
+            "chunk_key_encoding":{"name":"v2","configuration":{"separator":"."}},
+            "fill_value":if fill.is_null(){json!(0)}else{fill},"codecs":codecs,
+            "dimension_names":attrs["_ARRAY_DIMENSIONS"]});
+    }
     let mut a = Array::new_with_metadata(store, path, serde_json::from_value(metadata)?)?;
     *a.attributes_mut() = serde_json::from_value(attrs)?;
     a.store_metadata_opt(&ArrayMetadataOptions::default().with_include_zarrs_metadata(false))?;
     Ok(a)
 }
-fn group(store: Arc<Store>, path: &str, attrs: Value) -> Result<()> {
+fn group(store: Arc<Store>, path: &str, attrs: Value, encoding: ScientificEncoding) -> Result<()> {
     let mut g = Group::new_with_metadata(
         store,
         path,
-        serde_json::from_value(json!({"zarr_format":2}))?,
+        serde_json::from_value(if encoding.version() == 3 {
+            json!({"zarr_format":3,"node_type":"group"})
+        } else {
+            json!({"zarr_format":2})
+        })?,
     )?;
     *g.attributes_mut() = serde_json::from_value(attrs)?;
     g.store_metadata()?;
@@ -83,6 +157,18 @@ fn serial() -> zarrs::array::codec::CodecOptions {
     let mut options = zarrs::array::codec::CodecOptions::default();
     options.set_concurrent_target(1);
     options
+}
+fn encode_call<T, E>(
+    store: &Store,
+    seconds: &mut f64,
+    f: impl FnOnce() -> std::result::Result<T, E>,
+) -> std::result::Result<T, E> {
+    let io = store.read_seconds() + store.write_seconds();
+    let t = Instant::now();
+    let result = f();
+    *seconds +=
+        (t.elapsed().as_secs_f64() - (store.read_seconds() + store.write_seconds() - io)).max(0.);
+    result
 }
 fn check_cancelled(flag: &AtomicBool) -> Result<()> {
     if flag.load(Ordering::Acquire) {
@@ -137,17 +223,38 @@ struct Observation {
     valid: Array<Store>,
     aoi: Array<Store>,
     geometry: Option<crate::spatial::Geometry>,
-    chunk_shape: [usize; 2],
 }
 
 pub(crate) fn fetch(prepared: Prepared, path: &str, cancelled: Arc<AtomicBool>) -> Result<Value> {
+    let budget = prepared.output_budget()?;
+    fetch_with_options(
+        prepared,
+        path,
+        cancelled,
+        ScientificOutputOptions {
+            chunk_edge: budget.chunk_edge,
+            encoding: ScientificEncoding::Uncompressed,
+        },
+    )
+}
+
+pub(crate) fn fetch_with_options(
+    prepared: Prepared,
+    path: &str,
+    cancelled: Arc<AtomicBool>,
+    options: ScientificOutputOptions,
+) -> Result<Value> {
     let started = Instant::now();
     let inspection = prepared.explain();
     let budget: Budget = serde_json::from_value(inspection["output_budget"].clone())?;
+    if options.chunk_edge == 0 {
+        return Err("output chunk_edge must be positive".into());
+    }
+    let encoding = options.encoding;
     if budget.buffer_bytes < 16 {
         return Err("scientific output needs at least 16 buffer_bytes".into());
     }
-    let coordinate_edge = budget.chunk_edge.min(budget.buffer_bytes / 16);
+    let coordinate_edge = options.chunk_edge.min(budget.buffer_bytes / 16);
     let plan = prepared.plan();
     let selected = selections(plan);
     let mut objects = 5usize; // two groups plus manifest, each group has two objects
@@ -179,8 +286,8 @@ pub(crate) fn fetch(prepared: Prepared, path: &str, cancelled: Arc<AtomicBool>) 
         } else if s.mask_geometry.is_some() {
             return Err("AOI output requires representable source nodata".into());
         }
-        let edge_y = budget.chunk_edge.min(s.window.height);
-        let edge_x = budget.chunk_edge.min(s.window.width);
+        let edge_y = options.chunk_edge.min(s.window.height);
+        let edge_x = options.chunk_edge.min(s.window.width);
         let bytes = edge_y
             .checked_mul(edge_x)
             .and_then(|n| n.checked_mul(2))
@@ -221,10 +328,40 @@ pub(crate) fn fetch(prepared: Prepared, path: &str, cancelled: Arc<AtomicBool>) 
             );
         }
     }
+    // Explicit per-call payload/mask/encode reservation. A sharded library call
+    // may materialize one whole shard; bound that too, never a whole scene.
+    let source_area = expected
+        .values()
+        .map(|(_, w)| w.width * w.height)
+        .max()
+        .unwrap_or(0);
+    let output_area = selected
+        .iter()
+        .map(|s| options.chunk_edge.min(s.window.width) * options.chunk_edge.min(s.window.height))
+        .max()
+        .unwrap_or(0);
+    let shard_factor = if encoding.version() == 3 { 4 } else { 1 };
+    let codec_workspace = if matches!(encoding, ScientificEncoding::Uncompressed) {
+        0
+    } else {
+        1024 * 1024
+    };
+    let reservation = output_area
+        .checked_mul(shard_factor)
+        .and_then(|n| n.checked_mul(32))
+        .and_then(|n| n.checked_add(source_area.checked_mul(6)?))
+        .and_then(|n| n.checked_add(codec_workspace))
+        .ok_or("output reservation overflow")?;
+    if reservation > budget.buffer_bytes {
+        return Err("scientific output encode/shard reservation exceeds buffer_bytes; reduce output chunk_edge or raise buffer budget".into());
+    }
     check_cancelled(&cancelled)?;
     let transaction = Transaction::new(Path::new(path))?;
-    let metrics = Arc::new(Metrics::new(Arc::new(FilesystemStore::new(
+    let mut filesystem_options = FilesystemStoreOptions::default();
+    filesystem_options.defer_device_flush(true);
+    let metrics = Arc::new(Metrics::new(Arc::new(FilesystemStore::new_with_options(
         &transaction.stage,
+        filesystem_options,
     )?)));
     let store = Arc::new(Store::new(metrics.clone()));
     let output_records = outputs(plan);
@@ -233,11 +370,13 @@ pub(crate) fn fetch(prepared: Prepared, path: &str, cancelled: Arc<AtomicBool>) 
         "observations":output_records,"logical_request":inspection["logical_request"],
         "sources":inspection["sources"],"query":inspection["query"],
         "processing":"native stored values; no calibration, reprojection, resampling or mosaic",
-        "software":{"name":"tile-ripper","version":env!("CARGO_PKG_VERSION"),"writer":"zarrs 0.22.10","zarr_format":2}});
-    group(store.clone(), "/", root_attrs.clone())?;
-    group(store.clone(), "/observations", json!({}))?;
+        "software":{"name":"tile-ripper","version":env!("CARGO_PKG_VERSION"),"writer":"zarrs 0.22.10","zarr_format":encoding.version()},
+        "output_encoding":encoding,"output_chunk_edge":options.chunk_edge});
+    group(store.clone(), "/", root_attrs.clone(), encoding)?;
+    group(store.clone(), "/observations", json!({}), encoding)?;
     let mut observations = Vec::new();
-    let mut writer_peak = 0;
+    let mut writer_peak = reservation;
+    let mut encode_seconds = 0.;
     for (i, s) in selected.iter().enumerate() {
         check_cancelled(&cancelled)?;
         let l = s.layout.as_ref().unwrap();
@@ -268,6 +407,7 @@ pub(crate) fn fetch(prepared: Prepared, path: &str, cancelled: Arc<AtomicBool>) 
             "source":source,"source_window":s.window,"source_grid":l,"transform":t,"crs":l.crs,
             "source_nodata":l.nodata,"source_scale":l.scale,"source_offset":l.offset,
             "aoi_mask_applied":s.mask_geometry.is_some(),"time_missing":s.datetime.is_none()}),
+            encoding,
         )?;
         for (axis, len, origin, step) in [
             ("x", s.window.width, t[0], t[1]),
@@ -298,6 +438,7 @@ pub(crate) fn fetch(prepared: Prepared, path: &str, cancelled: Arc<AtomicBool>) 
                 "<f8",
                 Value::Null,
                 attrs,
+                encoding,
             )?;
             for start in (0..len).step_by(edge) {
                 check_cancelled(&cancelled)?;
@@ -305,14 +446,16 @@ pub(crate) fn fetch(prepared: Prepared, path: &str, cancelled: Arc<AtomicBool>) 
                     .map(|j| origin + (j as f64 + 0.5) * step)
                     .collect();
                 writer_peak = writer_peak.max(edge * 16);
-                a.store_array_subset_elements_opt(
-                    &ArraySubset::new_with_start_shape(
-                        vec![start as u64],
-                        vec![values.len() as u64],
-                    )?,
-                    &values,
-                    &serial(),
-                )?;
+                encode_call(&store, &mut encode_seconds, || {
+                    a.store_array_subset_elements_opt(
+                        &ArraySubset::new_with_start_shape(
+                            vec![start as u64],
+                            vec![values.len() as u64],
+                        )?,
+                        &values,
+                        &serial(),
+                    )
+                })?;
             }
         }
         let time = array(
@@ -323,8 +466,11 @@ pub(crate) fn fetch(prepared: Prepared, path: &str, cancelled: Arc<AtomicBool>) 
             "<i8",
             Value::Null,
             json!({"_ARRAY_DIMENSIONS":["time"],"standard_name":"time","units":"nanoseconds since 1970-01-01 00:00:00","calendar":"proleptic_gregorian"}),
+            encoding,
         )?;
-        time.store_chunk_elements_opt(&[0], &[time_value], &serial())?;
+        encode_call(&store, &mut encode_seconds, || {
+            time.store_chunk_elements_opt(&[0], &[time_value], &serial())
+        })?;
         let crs = array(
             store.clone(),
             &format!("{base}/spatial_ref"),
@@ -333,13 +479,16 @@ pub(crate) fn fetch(prepared: Prepared, path: &str, cancelled: Arc<AtomicBool>) 
             "<i4",
             Value::Null,
             crs_attributes(&l.crs, t),
+            encoding,
         )?;
-        crs.store_chunk_elements_opt(&[], &[0i32], &serial())?;
+        encode_call(&store, &mut encode_seconds, || {
+            crs.store_chunk_elements_opt(&[], &[0i32], &serial())
+        })?;
         let shape = [1, s.window.height, s.window.width];
         let chunks = [
             1,
-            budget.chunk_edge.min(s.window.height),
-            budget.chunk_edge.min(s.window.width),
+            options.chunk_edge.min(s.window.height),
+            options.chunk_edge.min(s.window.width),
         ];
         let mut attrs = json!({"_ARRAY_DIMENSIONS":["time","y","x"],"grid_mapping":"spatial_ref",
             "ancillary_variables":"valid aoi_mask","source_nodata":l.nodata,
@@ -362,6 +511,7 @@ pub(crate) fn fetch(prepared: Prepared, path: &str, cancelled: Arc<AtomicBool>) 
             "<u2",
             json!(l.nodata.map(|n| n as u16)),
             attrs,
+            encoding,
         )?;
         let mask_attrs = |name: &str| json!({"_ARRAY_DIMENSIONS":["time","y","x"],"grid_mapping":"spatial_ref","long_name":name,"flag_values":[0,1],"flag_meanings":"excluded included"});
         let valid = array(
@@ -372,6 +522,7 @@ pub(crate) fn fetch(prepared: Prepared, path: &str, cancelled: Arc<AtomicBool>) 
             "|u1",
             json!(0),
             mask_attrs("AOI included and not source nodata"),
+            encoding,
         )?;
         let aoi = array(
             store.clone(),
@@ -381,6 +532,7 @@ pub(crate) fn fetch(prepared: Prepared, path: &str, cancelled: Arc<AtomicBool>) 
             "|u1",
             json!(0),
             mask_attrs("AOI pixel center inclusion; source nodata may still be included"),
+            encoding,
         )?;
         observations.push(Observation {
             selected: (*s).clone(),
@@ -392,10 +544,11 @@ pub(crate) fn fetch(prepared: Prepared, path: &str, cancelled: Arc<AtomicBool>) 
                 .as_ref()
                 .map(|g| crate::spatial::from_geojson(g, &l.crs))
                 .transpose()?,
-            chunk_shape: [chunks[1], chunks[2]],
         });
     }
     let setup_seconds = started.elapsed().as_secs_f64();
+    crate::diagnostics::profile_stage("output_setup", setup_seconds);
+    let source_stream = Instant::now();
     let mut stream = crate::stream::ChunkStream::start_cancellable(
         prepared,
         crate::stream::StreamOptions { capacity: 0 },
@@ -439,11 +592,15 @@ pub(crate) fn fetch(prepared: Prepared, path: &str, cancelled: Arc<AtomicBool>) 
             ],
             vec![1, window.height as u64, window.width as u64],
         )?;
-        o.values
-            .store_array_subset_elements_opt(&subset, values, &serial())?;
+        encode_call(&store, &mut encode_seconds, || {
+            o.values
+                .store_array_subset_elements_opt(&subset, values, &serial())
+        })?;
         let valid: Vec<u8> = c.validity().map(u8::from).collect();
-        o.valid
-            .store_array_subset_elements_opt(&subset, &valid, &serial())?;
+        encode_call(&store, &mut encode_seconds, || {
+            o.valid
+                .store_array_subset_elements_opt(&subset, &valid, &serial())
+        })?;
         let mask = o
             .geometry
             .as_ref()
@@ -453,15 +610,20 @@ pub(crate) fn fetch(prepared: Prepared, path: &str, cancelled: Arc<AtomicBool>) 
             .as_ref()
             .map(|m| m.data().to_vec())
             .unwrap_or_else(|| vec![1; values.len()]);
-        o.aoi
-            .store_array_subset_elements_opt(&subset, &aoi, &serial())?;
-        // One delivered payload, two byte masks and bounded library encode/pad
-        // scratch. This is a conservative explicit-buffer count, not an RSS cap.
-        writer_peak = writer_peak.max(o.chunk_shape.iter().product::<usize>() * 8);
+        encode_call(&store, &mut encode_seconds, || {
+            o.aoi
+                .store_array_subset_elements_opt(&subset, &aoi, &serial())
+        })?;
+        // Payload and encode scratch were admitted before creating staging;
+        // these temporaries are dropped before accepting the next delivery.
         first_output.get_or_insert_with(|| started.elapsed().as_secs_f64());
         sink_seconds += write_start.elapsed().as_secs_f64();
     }
     let mut report = stream.finish()?;
+    crate::diagnostics::profile_stage(
+        "source_stream_including_backpressure",
+        source_stream.elapsed().as_secs_f64(),
+    );
     if written.len() != expected.len() || report.chunks != written.len() {
         return Err("incomplete COG output coverage".into());
     }
@@ -469,7 +631,7 @@ pub(crate) fn fetch(prepared: Prepared, path: &str, cancelled: Arc<AtomicBool>) 
     let finalize = Instant::now();
     let mut attrs = root_attrs;
     attrs["status"] = json!("complete");
-    group(store.clone(), "/", attrs)?;
+    group(store.clone(), "/", attrs, encoding)?;
     report.output_setup_seconds = setup_seconds;
     report.first_output_seconds = first_output;
     report.sink_seconds = sink_seconds;
@@ -481,18 +643,33 @@ pub(crate) fn fetch(prepared: Prepared, path: &str, cancelled: Arc<AtomicBool>) 
         buffered_bytes_peak: writer_peak,
         storage_read_seconds: store.read_seconds(),
         storage_write_seconds: store.write_seconds(),
+        encode_seconds,
         ..Default::default()
     });
     report.output_finalize_seconds = finalize.elapsed().as_secs_f64();
-    let manifest = json!({"schema_version":3,"document_type":"acquisition_result","status":"complete",
-        "format":"zarr_v2","writer":"zarrs 0.22.10","sources":inspection["sources"],"outputs":output_records,
-        "inspection":inspection,"observed":report,"processing":["native stored UInt16 values; calibration is metadata only","one source asset/band and native grid per observation; chronological order","no reprojection, resampling, mosaicking or implicit alignment","valid and aoi_mask distinguish source nodata from excluded AOI centers"],
-        "completion":{"stream_finish":"successful","publication":"atomic no-replace sibling rename","existing_destination":"refused; replacement is never implicit","scope":"validated provider ETags or local size/mtime, not an atomic multi-object snapshot"}});
+    let manifest_start = Instant::now();
+    let mut manifest = json!({"schema_version":3,"document_type":"acquisition_result","status":"complete",
+        "format":format!("zarr_v{}",encoding.version()),"writer":"zarrs 0.22.10","sources":inspection["sources"],"outputs":output_records,
+        "output_encoding":encoding,"output_chunk_edge":options.chunk_edge,
+        "observed":report,"processing":["native stored UInt16 values; calibration is metadata only","one source asset/band and native grid per observation; chronological order","no reprojection, resampling, mosaicking or implicit alignment","valid and aoi_mask distinguish source nodata from excluded AOI centers"],
+        "completion":{"stream_finish":"successful","publication":"atomic no-replace sibling rename","existing_destination":"refused; replacement is never implicit","scope":"validated provider ETags or local size/mtime, not an atomic multi-object snapshot",
+            "synchronization":"file contents and metadata before closing every writer handle; bottom-up directories and pre-publication barrier; rename; parent synchronization and post-publication barrier",
+            "memory_scope":"output_io.buffered_bytes_peak is a separate bounded per-encode reservation including delivered payload, masks, output scratch and codec allowance; add scheduler reservations; neither is an RSS ceiling"}});
+    manifest["inspection"] = inspection;
+    crate::diagnostics::profile_stage(
+        "manifest_generation",
+        manifest_start.elapsed().as_secs_f64(),
+    );
+    let serialization = Instant::now();
+    let bytes = serde_json::to_vec_pretty(&manifest)?;
+    crate::diagnostics::profile_stage(
+        "manifest_serialization",
+        serialization.elapsed().as_secs_f64(),
+    );
     // Metrics above exclude this manifest (like the existing output adapter).
-    store.set(
-        &StoreKey::new("manifest.json")?,
-        serde_json::to_vec_pretty(&manifest)?.into(),
-    )?;
+    let write = Instant::now();
+    store.set(&StoreKey::new("manifest.json")?, bytes.into())?;
+    crate::diagnostics::profile_stage("manifest_write", write.elapsed().as_secs_f64());
     drop(observations);
     drop(store);
     drop(metrics);
@@ -537,26 +714,88 @@ impl Transaction {
         Err("cannot reserve a unique staging directory".into())
     }
     fn publish(self, cancelled: &AtomicBool) -> Result<()> {
-        // zarrs synchronises every object. Persist the directory entries too.
-        fn sync_dirs(path: &Path) -> Result<()> {
+        let publication = Instant::now();
+        // Every file has already been fsynced on its original writing handle.
+        // Reopening files here instead would risk missing prior write-back errors.
+        fn sync_dirs(path: &Path, cancelled: &AtomicBool) -> Result<()> {
+            check_cancelled(cancelled)?;
             for e in fs::read_dir(path)? {
-                let p = e?.path();
-                if p.is_dir() {
-                    sync_dirs(&p)?;
+                let e = e?;
+                if e.file_type()?.is_dir() {
+                    sync_dirs(&e.path(), cancelled)?;
                 }
             }
-            fs::File::open(path)?.sync_all()?;
+            host_sync(&fs::File::open(path)?)?;
             Ok(())
         }
-        sync_dirs(&self.stage)?;
+        let t = Instant::now();
+        sync_dirs(&self.stage, cancelled)?;
+        // Include newly created destination ancestors, not just the immediate
+        // parent. Persist the hidden sibling's name before its commit rename.
+        for ancestor in self.destination.parent().unwrap().ancestors() {
+            check_cancelled(cancelled)?;
+            host_sync(&fs::File::open(ancestor)?)?;
+        }
+        crate::diagnostics::profile_stage("final_directory_sync", t.elapsed().as_secs_f64());
+        let barrier = fs::OpenOptions::new()
+            .read(true)
+            .write(true)
+            .open(self.stage.join("manifest.json"))?;
+        let t = Instant::now();
+        device_barrier(&barrier)?;
+        crate::diagnostics::profile_stage("prepublish_device_flush", t.elapsed().as_secs_f64());
         check_cancelled(cancelled)?;
+        let t = Instant::now();
         rename_new(&self.stage, &self.destination)?;
-        // Publication is the commit point. A crash before parent fsync can lose
-        // the name on some filesystems; it cannot expose a partial acquisition.
-        if let Some(parent) = self.destination.parent() {
-            let _ = fs::File::open(parent).and_then(|f| f.sync_all());
+        crate::diagnostics::profile_stage("atomic_publication", t.elapsed().as_secs_f64());
+        // Rename is the commit point. A failure after it must leave the complete
+        // destination in place and explicitly report its unconfirmed durability.
+        let post_commit = || -> Result<()> {
+            let t = Instant::now();
+            host_sync(&fs::File::open(self.destination.parent().unwrap())?)?;
+            crate::diagnostics::profile_stage("publication_parent_sync", t.elapsed().as_secs_f64());
+            let t = Instant::now();
+            device_barrier(&barrier)?;
+            crate::diagnostics::profile_stage(
+                "postpublish_device_flush",
+                t.elapsed().as_secs_f64(),
+            );
+            Ok(())
+        };
+        post_commit().map_err(|e| format!("complete output was published at {}, but final synchronization failed; durability is unconfirmed: {e}", self.destination.display()))?;
+        crate::diagnostics::profile_stage("publication_total", publication.elapsed().as_secs_f64());
+        Ok(())
+    }
+}
+
+fn host_sync(file: &fs::File) -> Result<()> {
+    #[cfg(target_os = "macos")]
+    {
+        use std::os::fd::AsRawFd;
+        if unsafe { libc::fsync(file.as_raw_fd()) } != 0 {
+            return Err(std::io::Error::last_os_error().into());
         }
         Ok(())
+    }
+    #[cfg(not(target_os = "macos"))]
+    {
+        Ok(file.sync_all()?)
+    }
+}
+fn device_barrier(file: &fs::File) -> Result<()> {
+    #[cfg(target_os = "macos")]
+    {
+        use std::os::fd::AsRawFd;
+        // Unlike Rust's sync_all, do not silently fall back to fsync if the
+        // device refuses the stronger barrier that this strategy requires.
+        if unsafe { libc::fcntl(file.as_raw_fd(), libc::F_FULLFSYNC) } != 0 {
+            return Err(std::io::Error::last_os_error().into());
+        }
+        Ok(())
+    }
+    #[cfg(not(target_os = "macos"))]
+    {
+        Ok(file.sync_all()?)
     }
 }
 impl Drop for Transaction {
@@ -617,7 +856,7 @@ mod tests {
         let r = root();
         let dest = r.join("result.zarr");
         let tx = Transaction::new(&dest).unwrap();
-        fs::write(tx.stage.join("provisional"), b"data").unwrap();
+        fs::write(tx.stage.join("manifest.json"), b"complete").unwrap();
         fs::create_dir(&dest).unwrap(); // even empty destinations must survive
         assert!(tx.publish(&AtomicBool::new(false)).is_err());
         assert!(dest.is_dir());
@@ -639,6 +878,55 @@ mod tests {
         let tx = Transaction::new(&dest).unwrap();
         drop(tx);
         assert_eq!(fs::read_dir(&r).unwrap().count(), 1);
+        fs::remove_dir_all(r).unwrap();
+    }
+    #[test]
+    fn publication_rejects_files_and_dangling_links_created_after_staging() {
+        use std::os::unix::fs::symlink;
+        for link in [false, true] {
+            let r = root();
+            let dest = r.join("result.zarr");
+            let tx = Transaction::new(&dest).unwrap();
+            fs::write(tx.stage.join("manifest.json"), b"complete").unwrap();
+            if link {
+                symlink("missing", &dest).unwrap();
+            } else {
+                fs::write(&dest, b"winner").unwrap();
+            }
+            assert!(tx.publish(&AtomicBool::new(false)).is_err());
+            if link {
+                assert_eq!(fs::read_link(&dest).unwrap(), Path::new("missing"));
+            } else {
+                assert_eq!(fs::read(&dest).unwrap(), b"winner");
+            }
+            assert_eq!(fs::read_dir(&r).unwrap().count(), 1);
+            fs::remove_dir_all(r).unwrap();
+        }
+    }
+    #[test]
+    fn successful_nested_publication_has_all_data_and_no_staging_name() {
+        let r = root();
+        let dest = r.join("new/ancestors/result.zarr");
+        let tx = Transaction::new(&dest).unwrap();
+        // Exercise the actual store path, including file synchronisation.
+        let mut options = FilesystemStoreOptions::default();
+        options.defer_device_flush(true);
+        let store = FilesystemStore::new_with_options(&tx.stage, options).unwrap();
+        store
+            .set(
+                &StoreKey::new("manifest.json").unwrap(),
+                b"complete".to_vec().into(),
+            )
+            .unwrap();
+        store
+            .set(
+                &StoreKey::new("group/chunk").unwrap(),
+                b"pixels".to_vec().into(),
+            )
+            .unwrap();
+        tx.publish(&AtomicBool::new(false)).unwrap();
+        assert_eq!(fs::read(dest.join("group/chunk")).unwrap(), b"pixels");
+        assert_eq!(fs::read_dir(dest.parent().unwrap()).unwrap().count(), 1);
         fs::remove_dir_all(r).unwrap();
     }
 }

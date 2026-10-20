@@ -49,6 +49,25 @@ in `bench/zarr-requirements.txt`, installed with the same uv cutoff. Existing
 study and ChronoZarr environments were not changed. This remains an age/license
 inventory, not a vulnerability certification.
 
+## Durable scientific output
+
+The writer remains zarrs 0.22.10, with its existing gzip and Blosc codecs. The
+optional `experimental-output` feature enables the same library's sharding
+implementation; no new registry packages or versions are needed. A direct path
+dependency retains an exact copy of the already locked zarrs_filesystem 0.3.13
+with a small, default-off macOS synchronization option. It preserves upstream
+MIT/Apache notices; [the patch note](../vendor/zarrs_filesystem/TILE-RIPPER-PATCH.md)
+describes every source change. The unchanged registry copy remains available to
+existing Zarr readers/writers. The scoped path dependency also works from the
+separate path-dependent consumer crate without requiring downstream Cargo patch
+directives. The lock files record both identities.
+
+The independent Python 3.13 reference uses numpy 2.2.6, xarray 2025.6.1,
+Zarr-Python 3.1.3 and Numcodecs 0.16.3, matching the earlier Linux reader versions,
+plus rasterio 1.4.4, shapely 2.1.2, pyproj 3.7.1 and requests 2.32.5. It is
+isolated under ignored prototype-output, separate from the existing Python 3.10 /
+Zarr-Python 2.18.3 oracle and the Rust acquisition runtime.
+
 
 ## Unified lifecycle milestone
 

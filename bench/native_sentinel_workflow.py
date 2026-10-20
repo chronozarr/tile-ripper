@@ -14,7 +14,6 @@ from rasterio.features import geometry_mask
 from rasterio.warp import transform_geom
 from rasterio.windows import Window
 
-import consumer_validation as consumer
 import stac_workflow as fixture
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -80,6 +79,7 @@ def verify(result, request, server):
 
 
 def main():
+    import consumer_validation as consumer
     WORK.mkdir(parents=True, exist_ok=True)
     consumer.BIN = BIN
     server = fixture.Server(("127.0.0.1", 0), fixture.Handler)

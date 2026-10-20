@@ -143,7 +143,8 @@ is not a process RSS limit. Output object bookkeeping is admitted against
 All new COG-to-Zarr work occurs in a unique hidden sibling such as
 `.sentinel.zarr.partial-PID-ID`. Every zarrs object write synchronizes its file.
 After stream completion, the writer finalizes metadata and `manifest.json`,
-synchronizes staged directory entries, then publishes through an atomic
+synchronizes staged directory entries and destination ancestors, requires a
+pre-publication barrier, then publishes through an atomic
 **no-replace** rename on macOS/Linux. The destination can only refer to completed
 data. Existing files, directories and symlinks are refused, including a destination
 created by another process just before publication. No automatic replacement or
@@ -152,13 +153,24 @@ backup policy is provided; choose a new name.
 Acquisition errors, consumer/write errors, final source-version conflicts and
 cooperative SIGINT/SIGTERM/SIGHUP remove the owned staging directory and return
 failure. Cancellation can wait for an in-flight bounded HTTP operation to return.
+Cancellation racing with the final rename may commit; a committed acquisition
+finishes its synchronization protocol.
 If cleanup fails, the error identifies the incomplete staging path. SIGKILL or
 power loss may retain a hidden sibling; retries ignore it and never adopt it.
 Inspect such a sibling before removing it. Trust only the requested published
 destination with its complete manifest and a successful CLI exit. There is no
-resumption of interrupted writes. Parent-directory sync after publication is
-best effort: power-loss name durability and nonlocal filesystem semantics are
-not certified. Per-object ETags/local size and mtime checks are inherited; they
+resumption of interrupted writes. A hidden sibling remains uncommitted even if
+its staged metadata already says `complete`.
+
+Parent-directory synchronization and the post-publication barrier are checked.
+Failure after rename retains the complete dataset and returns an explicit
+"published ... durability is unconfirmed" error. On macOS, each writer handle
+performs POSIX `fsync` before closing, with two checked `F_FULLFSYNC` device
+barriers at publication, replacing a device flush on every object. Linux retains
+per-file `sync_all`/`fsync`. This is a local-filesystem protocol, not a power-cut
+certification or a guarantee for network filesystems and arbitrary devices.
+See the [current durable-output gate](../durable-output/report.md).
+Per-object ETags/local size and mtime checks are inherited; they
 are not an atomic snapshot of a changing catalog or collection of objects.
 
 Default GDAL GeoTIFF output and existing direct-Zarr acquisition retain their
