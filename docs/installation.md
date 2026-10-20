@@ -78,7 +78,10 @@ Use the [GDAL-free Sentinel workflow](native-sentinel/workflow.md) for WGS84
 polygon/date/band STAC requests and masked native chunks, or direct assets with
 bounds in their exact source CRS. The native path maps WGS84 longitude/latitude
 only to supported nearby Sentinel WGS84 UTM grids; it does not reproject raster
-values. Zarr acquisition and native Zarr output retain their existing profiles.
+values. [GDAL-free scientific output](scientific-output/workflow.md) now supports
+`fetch --gdal-free --output ./sentinel.zarr`, including actual stored UInt16
+values and per-observation coordinates, masks and provenance. No Rust consumer
+or Python installation is needed to create it. Zarr acquisition and native Zarr output retain their existing profiles.
 GeoTIFF output requires GDAL and fails explicitly when it is disabled.
 
 For a comparison build, `cargo build --features native-cog` includes both readers.

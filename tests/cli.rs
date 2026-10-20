@@ -109,12 +109,19 @@ fn invalid_inherited_cog_backend_is_rejected_before_catalog_discovery() {
 
 #[test]
 #[cfg(all(not(feature = "gdal"), feature = "native-cog"))]
-fn gdal_free_cog_fetch_has_an_actionable_stream_alternative_before_network() {
-    let result = run(&["fetch", "docs/native-sentinel/request.json", "--gdal-free"]);
+fn gdal_free_geotiff_fetch_has_an_actionable_zarr_alternative_before_network() {
+    let result = run(&[
+        "fetch",
+        "docs/native-sentinel/request.json",
+        "--gdal-free",
+        "--output",
+        "unused",
+        "--output-format",
+        "geotiff",
+    ]);
     assert!(!result.status.success());
     let error = String::from_utf8_lossy(&result.stderr);
-    assert!(error.contains("use stream --gdal-free"), "{error}");
-    assert!(error.contains("Prepared::into_stream"), "{error}");
+    assert!(error.contains("--output-format zarr_v2"), "{error}");
 }
 
 struct Fixture(std::path::PathBuf);

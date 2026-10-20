@@ -26,15 +26,17 @@ For Sentinel-2 polygon/date/band acquisition without GDAL:
 
 ```sh
 cargo build --release --locked --no-default-features --features native-cog
-cargo build --release --locked --manifest-path consumers/native-stats/Cargo.toml \
-  --no-default-features --features native-cog --target-dir target/native-consumer
-TILE_RIPPER_WORKERS=2 ./target/native-consumer/release/tile-ripper-native-stats docs/native-sentinel/request.json
-./target/release/tile-ripper stream docs/native-sentinel/request.json --gdal-free
+./target/release/tile-ripper fetch docs/native-sentinel/request.json \
+  --gdal-free --workers 2 --output ./sentinel.zarr
 ```
 
 The [complete workflow](docs/native-sentinel/workflow.md) accepts ordinary WGS84
 polygons, discovers Earth Search Sentinel-2 bands, maps the AOI to supported UTM
-grids and streams masked UInt16 chunks with pinned provenance. Direct COG assets
+grids and streams masked UInt16 chunks with pinned provenance. The
+[scientific output workflow](docs/scientific-output/workflow.md) saves actual
+values to portable Zarr v2, with separate observation groups for different dates,
+bands and grids. Open a group with ordinary Python Zarr/xarray; Rust code is not
+needed. Direct COG assets
 and native bounds remain supported for [the admitted TIFF profiles](docs/native-cog/report.md).
 GeoTIFF writing requires the optional `gdal` feature. Zarr-only builds can omit
 both features. C/C++ codec build tools remain required; see
@@ -92,7 +94,7 @@ version-pinned native acquisitions with a tuned GDAL reader.
 
 | Source | Supported selection and output |
 | --- | --- |
-| Earth Search Sentinel-2 C1 L2A | STAC dates, geographic bounds/Polygon, named native UInt16 bands; GDAL-free masked native stream, optional GDAL GeoTIFF output |
+| Earth Search Sentinel-2 C1 L2A | STAC dates, geographic bounds/Polygon, named native UInt16 bands; GDAL-free per-observation Zarr v2 or masked native stream, optional GDAL GeoTIFF output |
 | WeatherBench2 ERA5 64×32 product above | Anonymous HTTP Zarr v2, Float32/NaN, `(time,longitude,latitude)`; native Zarr subset |
 | NASA POWER IMERG daily spatial | Anonymous HTTP Zarr v2, Float32/NaN, `(time,lat,lon)`, verified daily time and storage filter; native Zarr subset |
 | Local custom-grid Zarr / direct GeoTIFF | Narrow UInt16 profiles; [advanced lifecycle](docs/unified-workflow.md) and [local Zarr](docs/zarr-workflow.md) |

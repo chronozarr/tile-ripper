@@ -22,9 +22,13 @@ zarrs = { version = "=0.22.10", default-features = false, features = ["filesyste
 
 reqwest = { version = "=0.13.5", features = ["blocking"] }
 flate2 = "=1.1.10"
+ctrlc = { version = "=3.5.2", features = ["termination"] }
 
 tiff-reader = { version = "=0.9.0", default-features = false, optional = true }
 geotiff-core = { version = "=0.9.0", optional = true }
 roxmltree = { version = "=0.21.1", optional = true }
 geo = { version = "=0.33.1", default-features = false, optional = true }
 proj4rs = { version = "=0.2.1", default-features = false, optional = true }
+
+[target.'cfg(unix)'.dependencies]
+libc = "=0.2.190"

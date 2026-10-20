@@ -35,12 +35,18 @@ pub struct ChunkStream {
 }
 impl ChunkStream {
     pub(crate) fn start(prepared: Prepared, options: StreamOptions) -> Result<Self> {
+        Self::start_cancellable(prepared, options, Arc::new(AtomicBool::new(false)))
+    }
+    pub(crate) fn start_cancellable(
+        prepared: Prepared,
+        options: StreamOptions,
+        cancelled: Arc<AtomicBool>,
+    ) -> Result<Self> {
         if options.capacity > 64 {
             return Err("stream capacity must be between 0 and 64".into());
         }
         let provenance = prepared.explain();
         let (sender, receiver) = mpsc::sync_channel(options.capacity);
-        let cancelled = Arc::new(AtomicBool::new(false));
         let flag = cancelled.clone();
         let worker = std::thread::Builder::new()
             .name("tile-ripper-stream".into())
@@ -128,7 +134,10 @@ impl Iterator for ChunkStream {
 }
 impl Drop for ChunkStream {
     fn drop(&mut self) {
-        self.cancel();
+        // Completion leaves a shared fetch token available for finalization.
+        if self.worker.is_some() {
+            self.cancel();
+        }
         self.receiver.take();
         self.join();
     }

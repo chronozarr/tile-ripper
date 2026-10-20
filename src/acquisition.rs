@@ -14,10 +14,14 @@ enum OutputStrategy {
     GeoTiffChunks,
     GeoTiffAssets,
     ZarrGroups,
+    ZarrObservations,
 }
 fn strategy(runtime: &Runtime, sink: &Sink) -> OutputStrategy {
     if matches!(sink, Sink::Callback) {
         return OutputStrategy::Callback;
+    }
+    if matches!(sink, Sink::ZarrDirectory { .. }) && cog_runtime(runtime) {
+        return OutputStrategy::ZarrObservations;
     }
     match runtime {
         Runtime::Catalog(_) => OutputStrategy::GeoTiffAssets,
@@ -40,15 +44,24 @@ enum Runtime {
     },
     Catalog(Box<stac_workflow::Prepared>),
 }
+fn cog_runtime(runtime: &Runtime) -> bool {
+    match runtime {
+        Runtime::Catalog(_) => true,
+        Runtime::Direct { request, .. } => {
+            matches!(&request.source, Source::Assets { assets } if assets.iter().all(|a| a.format == Format::Cog))
+        }
+    }
+}
 /// Runtime bindings and source-version checks stay private and nonserializable.
+#[derive(Clone)]
 pub struct Prepared {
-    runtime: Runtime,
+    runtime: std::sync::Arc<Runtime>,
     inspection: Value,
     output: Sink,
 }
 impl Prepared {
     pub fn plan(&self) -> &Plan {
-        match &self.runtime {
+        match self.runtime.as_ref() {
             Runtime::Direct { plan, .. } => plan,
             Runtime::Catalog(p) => p.plan(),
         }
@@ -171,7 +184,7 @@ impl Prepared {
         sink: impl FnMut(Chunk) -> Result<()>,
     ) -> Result<ExecutionReport> {
         let _quiet = crate::diagnostics::QuietNative::enter();
-        match &self.runtime {
+        match self.runtime.as_ref() {
             Runtime::Direct {
                 request,
                 plan,
@@ -208,10 +221,13 @@ impl Prepared {
     }
     /// Native format writers are retained. Only the provenance envelope is unified.
     pub fn fetch(&self) -> Result<Value> {
+        if self.scientific_output() {
+            return self.fetch_cancellable(Default::default());
+        }
         let _quiet = crate::diagnostics::QuietNative::enter();
         let fetch_started = Instant::now();
         destination(&self.output)?;
-        let (root, legacy) = match &self.runtime {
+        let (root, legacy) = match self.runtime.as_ref() {
             Runtime::Direct {
                 request,
                 plan,
@@ -308,6 +324,24 @@ impl Prepared {
         }
         result
     }
+    /// COG-to-Zarr materialization uses the public provisional chunk stream and
+    /// shares this cancellation flag with its producer. Other sinks keep their
+    /// existing fetch interface.
+    pub fn fetch_cancellable(
+        &self,
+        cancelled: std::sync::Arc<std::sync::atomic::AtomicBool>,
+    ) -> Result<Value> {
+        if !self.scientific_output() {
+            return Err("cancellable fetch requires COG/STAC with a zarr_directory sink".into());
+        }
+        crate::scientific_output::fetch(self.clone(), destination(&self.output)?, cancelled)
+    }
+    pub fn scientific_output(&self) -> bool {
+        matches!(
+            strategy(&self.runtime, &self.output),
+            OutputStrategy::ZarrObservations
+        )
+    }
 }
 pub fn plan(request: &Request, cache: &mut LayoutCache) -> Result<Value> {
     Ok(prepare(request, cache)?.explain())
@@ -339,10 +373,8 @@ fn prepare_inner(request: &Request, cache: &mut LayoutCache) -> Result<Prepared>
         }
         Source::Assets { assets } => {
             crate::planner::validate(request)?;
-            if (assets.iter().any(|a| a.format == Format::ZarrV2)
-                && matches!(request.sink, Sink::GeoTiffDirectory { .. }))
-                || (assets.iter().any(|a| a.format == Format::Cog)
-                    && matches!(request.sink, Sink::ZarrDirectory { .. }))
+            if assets.iter().any(|a| a.format == Format::ZarrV2)
+                && matches!(request.sink, Sink::GeoTiffDirectory { .. })
             {
                 return Err("output capability unsupported: choose directory to preserve the native source format".into());
             }
@@ -464,10 +496,11 @@ fn prepare_inner(request: &Request, cache: &mut LayoutCache) -> Result<Prepared>
         )
     });
     inspection["logical_request"] = json!({"spatial":request.spatial,"time":request.time,"variables":request.variables,"grid":request.grid});
+    inspection["output_budget"] = json!(request.budget);
     inspection["output_estimates"] = json!({"native_value_bytes": native_value_bytes, "encoded_file_bytes":null,"note":"estimate of native value payload only; coordinates, metadata, encoding, and filesystem overhead excluded; encoded output size unknown"});
     sanitize(&mut inspection);
     Ok(Prepared {
-        runtime,
+        runtime: std::sync::Arc::new(runtime),
         inspection,
         output: request.sink.clone(),
     })
@@ -522,9 +555,6 @@ fn as_stac(r: &Request) -> Result<stac_workflow::StacRequest> {
     limits.buffer_bytes = r.budget.buffer_bytes;
     limits.chunk_edge = r.budget.chunk_edge;
     limits.max_nodes = r.budget.max_nodes;
-    if matches!(r.sink, Sink::ZarrDirectory { .. }) {
-        return Err("STAC/COG cannot write a Zarr sink; choose directory/native output".into());
-    }
     let output = match &r.sink {
         Sink::Callback => "unused-callback".into(),
         s => destination(s)?.into(),
@@ -581,6 +611,9 @@ pub fn from_stac(r: stac_workflow::StacRequest) -> Request {
 fn outputs(p: &Plan, mode: OutputStrategy) -> Value {
     if matches!(mode, OutputStrategy::Callback) {
         return json!([]);
+    }
+    if matches!(mode, OutputStrategy::ZarrObservations) {
+        return crate::scientific_output::outputs(p);
     }
     let zarr = matches!(mode, OutputStrategy::ZarrGroups);
     let mut out = Vec::new();

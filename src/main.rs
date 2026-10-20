@@ -25,6 +25,7 @@ fn run() -> Result<()> {
         per_host,
         backend,
         gdal_free,
+        output_format,
     } = options;
     if let Some(backend) = backend {
         env::set_var("TILE_RIPPER_COG_BACKEND", backend.name());
@@ -83,13 +84,42 @@ fn run() -> Result<()> {
     }
     if command == "stream" {
         request.sink = Sink::Callback;
+    } else {
+        let path = match &request.sink {
+            Sink::Directory { path }
+            | Sink::ZarrDirectory { path }
+            | Sink::GeoTiffDirectory { path } => Some(path.clone()),
+            Sink::Callback => None,
+        };
+        if let Some(path) = path {
+            request.sink = match output_format.as_deref() {
+                Some("zarr_v2") => Sink::ZarrDirectory { path },
+                Some("geotiff") => Sink::GeoTiffDirectory { path },
+                Some("native") => Sink::Directory { path },
+                None if gdal_free
+                    && cog_source(&request.source)
+                    && matches!(request.sink, Sink::Directory { .. }) =>
+                {
+                    Sink::ZarrDirectory { path }
+                }
+                _ => request.sink,
+            };
+        } else if output_format.is_some() {
+            return Err(
+                "--output-format requires a directory sink; supply --output NEW_DIRECTORY".into(),
+            );
+        }
     }
     if cog_source(&request.source) {
         // Resolve the selected reader before discovery or source inspection.
         tile_ripper::cog::backend()?;
     }
-    if command == "fetch" && !cfg!(feature = "gdal") && cog_source(&request.source) {
-        return Err("COG/STAC fetch writes GeoTIFF and requires the gdal feature; use stream --gdal-free for chunk descriptors or the Rust Prepared::into_stream API for native values, or build with --features gdal for GeoTIFF output".into());
+    if command == "fetch"
+        && !cfg!(feature = "gdal")
+        && cog_source(&request.source)
+        && !matches!(request.sink, Sink::ZarrDirectory { .. })
+    {
+        return Err("GeoTIFF output requires GDAL; use --gdal-free or --output-format zarr_v2 for scientific Zarr output".into());
     }
     if discover_only && command != "plan" {
         return Err("--discover-only requires plan".into());
@@ -105,6 +135,14 @@ fn run() -> Result<()> {
     }
     if human {
         eprintln!("Inspecting source metadata and native selection…");
+    }
+    let cancelled = std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false));
+    if command == "fetch"
+        && cog_source(&request.source)
+        && matches!(request.sink, Sink::ZarrDirectory { .. })
+    {
+        let flag = cancelled.clone();
+        ctrlc::set_handler(move || flag.store(true, std::sync::atomic::Ordering::Release))?;
     }
     let value = if discover_only {
         acquisition::discover(&request)?
@@ -148,7 +186,11 @@ fn run() -> Result<()> {
                 if human {
                     eprintln!("Fetching native pixels; validating source identities…");
                 }
-                prepared.fetch()?
+                if prepared.scientific_output() {
+                    prepared.fetch_cancellable(cancelled)?
+                } else {
+                    prepared.fetch()?
+                }
             }
             _ => return Err("expected plan, fetch or stream".into()),
         }

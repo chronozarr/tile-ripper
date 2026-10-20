@@ -503,3 +503,109 @@ fn output_object_bookkeeping_is_bounded_before_directory_creation() {
         .contains("output object bookkeeping"));
     assert!(!f.root.join("out").exists());
 }
+
+#[test]
+fn cog_zarr_fetch_preserves_values_masks_coordinates_and_time() {
+    let mut f = fixture(Format::Cog);
+    let out = f.root.join("scientific.zarr");
+    f.request.sink = Sink::ZarrDirectory {
+        path: out.to_string_lossy().into(),
+    };
+    let p = acquisition::prepare(&f.request, &mut LayoutCache::default()).unwrap();
+    let mut expected = std::collections::BTreeMap::new();
+    p.execute(|c| {
+        for y in 0..c.window.height {
+            for x in 0..c.window.width {
+                expected.insert(
+                    (c.window.y + y, c.window.x + x),
+                    c.pixels.as_u16().unwrap()[y * c.window.width + x],
+                );
+            }
+        }
+        Ok(())
+    })
+    .unwrap();
+    let manifest = p.fetch().unwrap();
+    assert_eq!(manifest["format"], "zarr_v2");
+    assert_eq!(manifest["status"], "complete");
+    assert!(
+        manifest["observed"]["output_io"]["buffered_bytes_peak"]
+            .as_u64()
+            .unwrap()
+            <= 8192
+    );
+    let store = Arc::new(FilesystemStore::new(&out).unwrap());
+    let array =
+        |name: &str| Array::open(store.clone(), &format!("/observations/000000/{name}")).unwrap();
+    let a = array("values");
+    let values = a
+        .retrieve_array_subset_elements::<u16>(&a.subset_all())
+        .unwrap();
+    let a = array("valid");
+    let valid = a
+        .retrieve_array_subset_elements::<u8>(&a.subset_all())
+        .unwrap();
+    let a = array("aoi_mask");
+    assert!(a
+        .retrieve_array_subset_elements::<u8>(&a.subset_all())
+        .unwrap()
+        .iter()
+        .all(|v| *v == 1));
+    for y in 0..6 {
+        for x in 0..6 {
+            let v = expected[&(y + 1, x + 1)];
+            assert_eq!(values[y * 6 + x], v);
+            assert_eq!(valid[y * 6 + x], u8::from(v != 0));
+        }
+    }
+    let a = array("time");
+    assert_eq!(
+        a.retrieve_array_subset_elements::<i64>(&a.subset_all())
+            .unwrap(),
+        vec![1735776000000000000]
+    );
+    let a = array("x");
+    assert_eq!(
+        a.retrieve_array_subset_elements::<f64>(&a.subset_all())
+            .unwrap(),
+        vec![15., 25., 35., 45., 55., 65.]
+    );
+    assert!(p.fetch().is_err());
+}
+
+#[test]
+fn cancelled_scientific_fetch_creates_no_destination_or_staging_directory() {
+    let mut f = fixture(Format::Cog);
+    f.request.sink = Sink::ZarrDirectory {
+        path: f.root.join("out.zarr").to_string_lossy().into(),
+    };
+    let p = acquisition::prepare(&f.request, &mut LayoutCache::default()).unwrap();
+    let flag = Arc::new(std::sync::atomic::AtomicBool::new(true));
+    assert!(p
+        .fetch_cancellable(flag)
+        .unwrap_err()
+        .to_string()
+        .contains("cancelled"));
+    assert!(!f.root.join("out.zarr").exists());
+    assert_eq!(fs::read_dir(&f.root).unwrap().count(), 1);
+}
+
+#[test]
+fn empty_scientific_fetch_admits_metadata_before_creating_output() {
+    let mut f = fixture(Format::Cog);
+    f.request.sink = Sink::ZarrDirectory {
+        path: f.root.join("out.zarr").to_string_lossy().into(),
+    };
+    f.request.time = Some(Time::Instants {
+        values: vec!["2000-01-01T00:00:00Z".into()],
+    });
+    f.request.budget.max_nodes = 1;
+    let p = acquisition::prepare(&f.request, &mut LayoutCache::default()).unwrap();
+    assert!(p.plan().selected.is_empty());
+    assert!(p
+        .fetch()
+        .unwrap_err()
+        .to_string()
+        .contains("output object bookkeeping"));
+    assert!(!f.root.join("out.zarr").exists());
+}

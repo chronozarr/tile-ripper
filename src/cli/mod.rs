@@ -9,6 +9,7 @@ const HELP: &str = r#"tile-ripper plan|fetch|stream [request.json] [options]
   --start RFC3339 --end RFC3339      inclusive endpoints
   --variables NAME[,NAME]           native array names or STAC bands
   --output NEW_DIRECTORY            required for direct fetch
+  --output-format zarr_v2|geotiff|native   GDAL-free COG defaults to zarr_v2
   --buffer-mib N                    payload budget (default 32; not RSS)
   --workers N --per-host N           concurrent reader operations (1..64)
   --backend native|gdal             COG reader; overrides TILE_RIPPER_COG_BACKEND
@@ -25,7 +26,8 @@ GDAL-free Sentinel-2: build --no-default-features --features native-cog, then:
     --collection sentinel-2-c1-l2a --aoi polygon.geojson \
     --start 2025-07-28T00:00:00Z --end 2025-07-28T23:59:59Z --variables B04,B08 --gdal-free
 Native supports narrow tiled single-band UInt16 COGs; unsupported profiles fail.
-GeoTIFF output needs GDAL; stream and the Rust API accept native COG data without it.
+GDAL-free fetch writes native scientific values to per-observation Zarr v2 groups.
+Use --output-format zarr_v2 in a GDAL build; GeoTIFF output still needs GDAL.
 Install, supported profiles, Rust examples: docs/native-http/cli.md. No resampling or compositing."#;
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Backend {
@@ -51,6 +53,7 @@ pub struct Options {
     pub per_host: Option<usize>,
     pub backend: Option<Backend>,
     pub gdal_free: bool,
+    pub output_format: Option<String>,
 }
 pub fn parse(args: &[String]) -> Result<Option<Options>> {
     if args.is_empty() || args.iter().any(|s| s == "--help" || s == "-h") {
@@ -77,7 +80,7 @@ pub fn parse(args: &[String]) -> Result<Option<Options>> {
             "--gdal-free" => gdal_free = true,
             key @ ("--source" | "--format" | "--collection" | "--bbox" | "--aoi" | "--start"
             | "--end" | "--variables" | "--buffer-mib" | "--output" | "--cache"
-            | "--workers" | "--per-host" | "--backend") => {
+            | "--workers" | "--per-host" | "--backend" | "--output-format") => {
                 i += 1;
                 let value = args
                     .get(i)
@@ -108,6 +111,13 @@ pub fn parse(args: &[String]) -> Result<Option<Options>> {
         })
         .transpose()?;
     validate_backend(backend, gdal_free)?;
+    let output_format = flags.remove("--output-format");
+    if output_format
+        .as_deref()
+        .is_some_and(|s| !["zarr_v2", "geotiff", "native"].contains(&s))
+    {
+        return Err("--output-format requires zarr_v2, geotiff or native".into());
+    }
     let mut resource = |key: &str| -> Result<Option<usize>> {
         flags
             .remove(key)
@@ -250,6 +260,7 @@ pub fn parse(args: &[String]) -> Result<Option<Options>> {
         per_host,
         backend,
         gdal_free,
+        output_format,
     }))
 }
 

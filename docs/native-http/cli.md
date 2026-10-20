@@ -86,9 +86,13 @@ The chunks remain provisional until the final receipt and a successful process
 exit. For array values and scientific analysis, use the public Rust API or the
 [native statistics consumer](../../consumers/native-stats/README.md).
 
-`fetch` writes GeoTIFF for COG/STAC sources and requires the `gdal` feature.
-GDAL-free COG fetch fails before discovery with the stream/API alternative.
-Existing Zarr v2 fetch and Zarr output work without GDAL.
+For COG/STAC, `fetch --gdal-free --output ./sentinel.zarr` writes actual UInt16
+values to Zarr v2 observation groups. Use `--output-format zarr_v2` to request
+the same sink in a GDAL build, or JSON `sink: {"kind":"zarr_directory","path":"..."}`.
+Without `--gdal-free`, the default native-format directory sink still writes
+GeoTIFF and requires the `gdal` feature. `--output-format geotiff` selects it
+explicitly. Existing Zarr-source fetch retains its previous layout.
+See [scientific output, independent readers and completion rules](../scientific-output/workflow.md).
 
 ## Public Rust library
 

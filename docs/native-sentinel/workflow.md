@@ -5,6 +5,16 @@ pkg-config. No GDAL, PROJ, libtiff or Python installation is needed to acquire
 and consume data. Existing Zarr/TLS native-code dependencies still require the
 C/C++ build tools; the runtime retains OS libraries including C++.
 
+For a saved dataset that opens with ordinary Zarr/xarray, use the
+[scientific output workflow](../scientific-output/workflow.md):
+
+```sh
+tile-ripper fetch docs/native-sentinel/request.json --gdal-free --workers 2 \
+  --output ./sentinel.zarr
+```
+
+The remaining examples describe incremental Rust/statistics consumers.
+
 ```sh
 cargo install --path . --locked --no-default-features --features native-cog \
   --root /absolute/path/to/new-native-install

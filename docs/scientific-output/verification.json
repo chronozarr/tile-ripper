@@ -1,0 +1,166 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "command": [
+        "cargo",
+        "test",
+        "--locked"
+      ],
+      "passed": true,
+      "log_sha256": "e70ea3375bb72d8c4c667efd47f5d5d552c872ebac6794290e0bcfe0e73b28ba",
+      "tests_passed": 61,
+      "tests_ignored": 2
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--no-default-features",
+        "--features",
+        "native-cog"
+      ],
+      "passed": true,
+      "log_sha256": "a96ac6f3e60d21e65f3333c6540eba3b93b118b215e9868e09f50fd421be873f",
+      "tests_passed": 41,
+      "tests_ignored": 3
+    },
+    {
+      "command": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "passed": true,
+      "log_sha256": "4bd72f0aa5d869b488cecad8db811f2e1a6309fb40bf33c35a5f5af0f1d1f7a5"
+    },
+    {
+      "command": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--all-targets",
+        "--no-default-features",
+        "--features",
+        "native-cog",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "passed": true,
+      "log_sha256": "4f27ac380b22e1d975eee20ce727fa8cbc09061177f6253af0777fd4de7b7506"
+    },
+    {
+      "command": [
+        "cargo",
+        "check",
+        "--locked",
+        "--no-default-features"
+      ],
+      "passed": true,
+      "log_sha256": "a84d238e43a433e089bad1a84ca921146ec49f4fa9a2862b03ba6adfbee6e577"
+    },
+    {
+      "command": [
+        "cargo",
+        "fmt",
+        "--check"
+      ],
+      "passed": true,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "passed": true,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "prototype-output/zarr-env/bin/python",
+        "-m",
+        "py_compile",
+        "bench/scientific_output.py",
+        "bench/scientific_output_benchmark.py",
+        "bench/scientific_output_regressions.py",
+        "bench/scientific_output_runtime.py"
+      ],
+      "passed": true,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "base_commit": "e9b5de59993d114ffdd5fe29f359a2392f45d99d",
+  "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+  "source_sha256": {
+    "src/acquisition.rs": "a379da2c4e87cf8917ddaa9fb058c046c71b0e2199c69e7172b21c341226fba2",
+    "src/cli/mod.rs": "a102580f5749bf2dca4293d3ec3f9140dff9aaa89d5b930caea2b0ff9f0bae27",
+    "src/cog.rs": "47f1003427aa69dd838e23e748d7880bb00c025d45a1c53284a108a90f6e13a6",
+    "src/cog_gdal.rs": "a8238ee35126059ac8413681cc9478153f33fce963d30a73ca4ae1f06f2a55e4",
+    "src/cog_gdal_reader.rs": "cfe62e5925059cada6df6926d568f8ed2ea60b5ce6307d454dfc9591617559cc",
+    "src/cog_range.rs": "d9c46c90379065336e22033f571a201eab6a7a0d8cfe1c740d60459370e8c094",
+    "src/diagnostics.rs": "2c225babd4c7cc7ecb7a381636277e154c2dd8574fb0a55c17750c77b391658b",
+    "src/diagnostics_gdal.rs": "991cd459830bd2154862eaedb7cdfc53c18a310d3c9fe476bc7195b33f719efe",
+    "src/execute.rs": "994a765d68718ba15a99d3b4070f40e06dae1172013da5c1f961c86a27a86935",
+    "src/lib.rs": "70a7210cd62bccbd3aaa6f784a4fb32559138f54b7a8396b38f78e88fecde888",
+    "src/main.rs": "47baf8634891e3376c622be0bead5f9f2c4ef499277d9d4658c25f62989cd7cd",
+    "src/model.rs": "e38b45417dc74169c48166eee4a1a31e1cfcf60e89e40a9a65ebdd2d43af1c5c",
+    "src/native_cog.rs": "2c564b6ad48e8d3d76c7b9e482639a8c3ad0b7acde3a474542a4704798fa21b8",
+    "src/pixels.rs": "2d65e96fdff5e79d0d34d22ee459f94e4b37ff6c5ef821056283943465787a65",
+    "src/planner.rs": "1fd3f37157d7aadc84476f48e4e14cc17ccd85ffefb3d7e6ed73757bc8c0cdb4",
+    "src/scheduler.rs": "abd0beca64498d57695616fe2d226e02f59dacf6d5ed1e5e9b6fa6e0699d43fb",
+    "src/scientific_output.rs": "c52a8a0b16697933012289016c6cdce8f1cffbb95c4b833f17352126c9dd3cbd",
+    "src/spatial.rs": "81cdbf75401933ff02511dc900587067e6a3002bfafddf8ff0b472e0e1404184",
+    "src/spatial_gdal.rs": "e39be8da1bd164e421cc1e61349aea0b56c0aedd9d5c19ecb4118a4020704228",
+    "src/spatial_native.rs": "efd4fa4c771a383c01b1c8e6c1d8e3a1fefcdc030596232d9555df6d3301f1a4",
+    "src/stac_workflow.rs": "51a6236b813b05ee032bbab6dc56ea548ca3dbb4fdfff3e93aa846433a12eed9",
+    "src/storage.rs": "2d2641b6b1d1eae9f656f9f90f8c7a60aba708f163697bdf4e00db86d996afe1",
+    "src/stream.rs": "0a10f91d53dd9778e5f46a7580ebb8a9e77948384fc651fecea227636e174972",
+    "src/zarr.rs": "cd1af3e766e9697a157a61b41919b0c97d7a8e22c469c9872eba2d67101715ae",
+    "src/zarr_acquire.rs": "2cf7bf41a5876725cb45c492a7f7f60ade3d6e7ddd368b08f0334ab8fc944340",
+    "src/zarr_decode.rs": "d69add0d89a8caa74aeb8a3ad2f675e272f3da3f1e74ad50ec39a32fb4ed4ccf",
+    "src/zarr_io.rs": "b2c2ffd76b9c00a20795ab12d654857d524897206a666e3c684a5afe1288a835",
+    "Cargo.toml": "eb48403ae6437f72708c816b8eef316c1b82c2ebaaac004729bd767c633a3493",
+    "Cargo.lock": "287446fafaa71eec87d7b9bd6c12994587d6b28b4d469ab9643f264d1423cd63"
+  },
+  "binary_sha256": {
+    "target/scientific-output/release/tile-ripper": "a44a42df44908ef93d3c895e4022fe28a6f7690acb0d575167227d5333b6be62",
+    "target/scientific-output-gdal/release/tile-ripper": "a108be76d9c5421bb13153d8b4452032435f54cbb1f0fd140524b0691d53e8e4",
+    "prototype-output/scientific-output/linux-tile-ripper": "36358573bc9242462cf4e359daf92d39fc57b59c5b52d7974f0b2caa207eb7b3"
+  },
+  "rustc": "rustc 1.92.0 (ded5c06cf 2025-12-08)",
+  "images": [
+    "[\"rust@sha256:bf3368a992915f128293ac76917ab6e561e4dda883273c8f5c9f6f8ea37a378e\"] sha256:2524356c645558866050e7327090261ea03756cc300047329c28f3298ca27c46",
+    "[\"python@sha256:70729b46c69b4f1e97c4822c1af3df53a1476cf5ddc6c087c0c10bc3a5678c2f\"] sha256:3874bc630edcb02f7cecf971aa3dcdec11497788d553b35e9e3b3ac0187da15e"
+  ],
+  "clean_linux_install": {
+    "elapsed": "2:33.13",
+    "peak_build_rss_bytes": 1359306752,
+    "log_sha256": "40b7cf60545a26cbcc6874ec87f5dec695b95dccc319accb8cb38e550c1cd0bd",
+    "empty_container_target": true,
+    "registry_source_cache_reused": true
+  },
+  "macos_linkage": "target/scientific-output/release/tile-ripper:\n\t/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1356.0.0)\n\t/usr/lib/libobjc.A.dylib (compatibility version 1.0.0, current version 228.0.0)\n\t/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation (compatibility version 300.0.0, current version 4201.0.0)\n\t/System/Library/Frameworks/Security.framework/Versions/A/Security (compatibility version 1.0.0, current version 61901.60.40)\n\t/System/Library/Frameworks/SystemConfiguration.framework/Versions/A/SystemConfiguration (compatibility version 1.0.0, current version 1385.60.3)\n\t/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation (compatibility version 150.0.0, current version 4201.0.0)\n\t/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2000.67.0)\n\t/usr/lib/libiconv.2.dylib (compatibility version 7.0.0, current version 7.0.0)\n",
+  "linux_native_dependency_tree_sha256": "1a5d0943e2f3434e1cb006aa061803705a86adfc3045082ca48851025768e1a6",
+  "reader_initial_attempt": {
+    "passed": false,
+    "reason": "Numcodecs 0.13.1 source build on Python 3.13 ARM64 could not find gcc; used Zarr-Python 3.1.3 / Numcodecs 0.16.3 wheels for the successful clean-runtime proof.",
+    "log_sha256": "4ea5356886084b83a84dd68a1fb6cdedd70c2bdbc35d25545af6fffbed80b0d6"
+  },
+  "python_reference": {
+    "python": "3.10.14",
+    "numpy": "2.2.6",
+    "xarray": "2025.6.1",
+    "zarr": "2.18.3",
+    "rasterio": "1.4.4",
+    "shapely": "2.1.2",
+    "pyproj": "3.7.1"
+  }
+}

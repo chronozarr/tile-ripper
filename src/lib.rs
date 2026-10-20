@@ -30,6 +30,7 @@ mod pixels;
 pub use pixels::Pixels;
 
 mod scheduler;
+mod scientific_output;
 pub mod stream;
 
 #[cfg(feature = "native-cog")]
