@@ -660,7 +660,7 @@ impl Http {
     }
 }
 
-fn worker_count() -> Result<usize> {
+pub(crate) fn worker_count() -> Result<usize> {
     fn configured(name: &str, default: usize) -> Result<usize> {
         let value = match std::env::var(name) {
             Ok(value) => value

@@ -141,8 +141,8 @@ impl Discovered {
         }
         plan.estimates.selected_compressed_payload_bytes = payload;
         plan.estimates.remote_requests =
-            Some(tile_reads.len() as u64 + 5 * plan.selected.len() as u64);
-        plan.estimates.note = "ESTIMATE: one GET per distinct selected non-sparse tile plus three HEADs (identity, plan open, execution open) and two metadata GETs per asset. GDAL may merge, round, reread, retry, or issue extra metadata reads. Payload excludes metadata and transport overhead; observed counters are separate. Metadata inspections of assets rejected after pixel-center checks are not included.".into();
+            Some(tile_reads.len() as u64 + 7 * plan.selected.len() as u64);
+        plan.estimates.note = "ESTIMATE: one GET per distinct selected non-sparse tile plus five HEADs (identity, plan open, pre/post validation, execution open) and two metadata GETs per asset. GDAL may merge, round, reread, retry, or issue extra metadata reads. Payload excludes metadata and transport overhead; observed counters are separate. Metadata inspections of assets rejected after pixel-center checks are not included.".into();
         let pixels = plan
             .selected
             .iter()
@@ -600,6 +600,7 @@ fn remote_identities(core: &Request, limits: &Limits) -> Result<Vec<(usize, Obje
     if remote.is_empty() {
         return Ok(Vec::new());
     }
+    let started = Instant::now();
     let runtime = tokio::runtime::Builder::new_current_thread()
         .enable_all()
         .build()?;
@@ -607,48 +608,59 @@ fn remote_identities(core: &Request, limits: &Limits) -> Result<Vec<(usize, Obje
         .timeout(Duration::from_secs(limits.timeout_seconds))
         .user_agent("tile-ripper/0.1")
         .build()?;
-    let mut identities = Vec::with_capacity(remote.len());
-    for (i, asset) in remote {
-        let mut attempt = 0;
-        let response = loop {
-            attempt += 1;
-            let result = runtime.block_on(async { client.head(&asset.locator).send().await });
-            match result {
-                Ok(r) if r.status().is_success() => break r,
-                Ok(r) if r.status().is_client_error() && r.status().as_u16() != 429 => {
-                    return fail("asset identity HEAD rejected by provider (credentials omitted)")
-                }
-                _ if attempt <= limits.max_retries => {
-                    std::thread::sleep(Duration::from_secs(u64::from(attempt)))
-                }
-                _ => {
-                    return fail(
-                        "asset identity HEAD failed after bounded retries (credentials omitted)",
-                    )
-                }
+    let width = crate::storage::worker_count()?;
+    let result = runtime.block_on(async {
+        let mut identities = Vec::with_capacity(remote.len());
+        // A bounded batch uses one pooled async client, and never opens GDAL
+        // handles concurrently. Conservative global <= per-origin width respects
+        // both operation limits even when a batch spans several origins.
+        for batch in remote.chunks(width) {
+            let mut pending = tokio::task::JoinSet::new();
+            for (i, asset) in batch {
+                let (i, asset, client) = (*i, (*asset).clone(), client.clone());
+                let retries = limits.max_retries;
+                pending.spawn(async move {
+                    let result = async {
+                        let mut attempt = 0;
+                        let response = loop {
+                            attempt += 1;
+                            match client.head(&asset.locator).send().await {
+                                Ok(r) if r.status().is_success() => break r,
+                                Ok(r) if r.status().is_client_error() && r.status().as_u16() != 429 => {
+                                    return fail("asset identity HEAD rejected by provider (credentials omitted)")
+                                }
+                                _ if attempt <= retries => {
+                                    // Async delay lets other admitted HEADs progress.
+                                    tokio::time::sleep(Duration::from_secs(u64::from(attempt))).await;
+                                }
+                                _ => return fail("asset identity HEAD failed after bounded retries (credentials omitted)"),
+                            }
+                        };
+                        let etag = response.headers().get("etag")
+                            .and_then(|v| v.to_str().ok())
+                            .filter(|v| !v.is_empty() && !v.starts_with("W/"))
+                            .ok_or("supported source must expose a strong ETag for conditional extraction")?.to_owned();
+                        if asset.etag.as_ref().is_some_and(|expected| *expected != etag) {
+                            return fail("source version conflict: requested ETag differs from current source");
+                        }
+                        let bytes = response.headers().get("content-length")
+                            .and_then(|v| v.to_str().ok()).and_then(|v| v.parse().ok())
+                            .ok_or("source HEAD missing content-length")?;
+                        Ok(ObjectIdentity { etag, bytes })
+                    }.await;
+                    // Keep error ordering deterministic as well as source order.
+                    (i, result)
+                });
             }
-        };
-        let etag = response
-            .headers()
-            .get("etag")
-            .and_then(|v| v.to_str().ok())
-            .filter(|v| !v.is_empty() && !v.starts_with("W/"))
-            .ok_or("supported source must expose a strong ETag for conditional extraction")?
-            .to_owned();
-        if asset
-            .etag
-            .as_ref()
-            .is_some_and(|expected| *expected != etag)
-        {
-            return fail("source version conflict: requested ETag differs from current source");
+            let mut completed = Vec::with_capacity(batch.len());
+            while let Some(result) = pending.join_next().await {
+                completed.push(result.map_err(|_| "COG identity worker failed")?);
+            }
+            completed.sort_by_key(|(i, _)| *i);
+            for (i, result) in completed { identities.push((i, result?)); }
         }
-        let bytes = response
-            .headers()
-            .get("content-length")
-            .and_then(|v| v.to_str().ok())
-            .and_then(|v| v.parse().ok())
-            .ok_or("source HEAD missing content-length")?;
-        identities.push((i, ObjectIdentity { etag, bytes }));
-    }
-    Ok(identities)
+        Ok(identities)
+    });
+    crate::diagnostics::profile_stage("cog_identity_batch", started.elapsed().as_secs_f64());
+    result
 }

@@ -28,7 +28,12 @@ impl FormatPlanner for CogPlanner<'_> {
             let Variable::Band { index } = variable else {
                 return fail("COG requires integer band selectors");
             };
+            let inspection = std::time::Instant::now();
             let (layout, cached) = self.cache.resolve(asset, *index)?;
+            crate::diagnostics::profile_stage(
+                "cog_layout_inspection",
+                inspection.elapsed().as_secs_f64(),
+            );
             let mask = crate::spatial::native_mask(&request.spatial, &layout)?;
             let spatial = if let Some(g) = &mask {
                 if g.is_empty() || g.area() <= 0. {
@@ -266,6 +271,7 @@ pub(crate) fn plan_on(
     sources: &crate::storage::Sources,
 ) -> Result<Plan> {
     let _quiet = crate::diagnostics::QuietNative::enter();
+    let started = std::time::Instant::now();
     let assets = validate(request)?;
     let mut p=Plan { schema_version:3,selected:vec![],nodes:vec![],estimates:Estimates {
         selected_compressed_payload_bytes:Some(0),remote_requests:None,
@@ -288,5 +294,9 @@ pub(crate) fn plan_on(
             .iter()
             .any(|n| n.asset_id == s.asset_id && matches!(n.operation, Operation::Read { .. }))
     });
+    crate::diagnostics::profile_stage(
+        "native_planning_with_layout",
+        started.elapsed().as_secs_f64(),
+    );
     Ok(p)
 }
