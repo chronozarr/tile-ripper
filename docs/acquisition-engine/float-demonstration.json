@@ -1,0 +1,236 @@
+{
+  "source": "synthetic local float fixture; no external requests",
+  "request": {
+    "source": {
+      "kind": "assets",
+      "assets": [
+        {
+          "id": "float",
+          "locator": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/acquisition-engine/demos/float.zarr",
+          "format": "zarr_v2"
+        }
+      ]
+    },
+    "spatial": {
+      "kind": "bounds",
+      "crs": "EPSG:4326",
+      "bbox": [
+        -80,
+        35,
+        -79.7,
+        35.3
+      ]
+    },
+    "time": null,
+    "variables": [
+      {
+        "kind": "dataset",
+        "path": "temp"
+      }
+    ],
+    "grid": {
+      "kind": "native"
+    },
+    "sink": {
+      "kind": "callback"
+    },
+    "budget": {
+      "buffer_bytes": 4194304,
+      "max_nodes": 100000,
+      "chunk_edge": 2
+    }
+  },
+  "cli_chunks": 8,
+  "cli_completion": {
+    "type": "complete",
+    "observed": {
+      "source_reads": [
+        {
+          "asset_id": "float",
+          "key": "temp/0.0.0",
+          "requests": 1,
+          "bytes": 16
+        },
+        {
+          "asset_id": "float",
+          "key": "temp/0.0.1",
+          "requests": 1,
+          "bytes": 16
+        },
+        {
+          "asset_id": "float",
+          "key": "temp/0.1.0",
+          "requests": 1,
+          "bytes": 16
+        },
+        {
+          "asset_id": "float",
+          "key": "temp/0.1.1",
+          "requests": 1,
+          "bytes": 16
+        },
+        {
+          "asset_id": "float",
+          "key": "temp/1.0.0",
+          "requests": 1,
+          "bytes": 16
+        },
+        {
+          "asset_id": "float",
+          "key": "temp/1.0.1",
+          "requests": 1,
+          "bytes": 16
+        },
+        {
+          "asset_id": "float",
+          "key": "temp/1.1.0",
+          "requests": 1,
+          "bytes": 16
+        },
+        {
+          "asset_id": "float",
+          "key": "temp/1.1.1",
+          "requests": 1,
+          "bytes": 16
+        }
+      ],
+      "scheduler": {
+        "workers": 4,
+        "per_host": 4,
+        "buffer_bytes": 4194304,
+        "reserved_bytes_peak": 1152,
+        "reader_state_reserved_bytes": 768,
+        "active_workers_peak": 4,
+        "completed_tasks": 8,
+        "seconds": 0.003897583,
+        "order": "plan",
+        "memory_scope": "conservative reader working reservations; excludes process/runtime, GDAL cache, prepared metadata and caller retention"
+      },
+      "transport": {},
+      "decoded_source_chunks": 8,
+      "filled_source_chunks": 0,
+      "first_output_seconds": 0.003223333,
+      "assembly_seconds": 5.876e-06,
+      "source_retrieval_seconds": 0.0036488330000000006,
+      "allocation_seconds": 7.08e-07,
+      "copying_seconds": 7.92e-07,
+      "output_setup_seconds": 0.0,
+      "output_finalize_seconds": 0.0,
+      "output_io": null,
+      "native_materialized_bytes": 128,
+      "source_data_requests": 8,
+      "source_data_bytes": 128,
+      "chunks": 8,
+      "decoded_bytes": 72,
+      "non_nodata_pixels": 17,
+      "planning_seconds": 0.008666375,
+      "source_open_seconds": 0.010115207,
+      "read_decode_seconds": 0.0037080409999999996,
+      "sink_seconds": 4.457e-06,
+      "masking_seconds": 0.0,
+      "remote_requests": null,
+      "remote_bytes": null
+    }
+  },
+  "consumer": {
+    "status": "complete",
+    "first_chunk_seconds": 0.008417917,
+    "seconds": 0.008959875,
+    "valid_pixels": 17,
+    "native_sum": 153.0,
+    "observed": {
+      "source_reads": [
+        {
+          "asset_id": "float",
+          "key": "temp/0.0.0",
+          "requests": 1,
+          "bytes": 16
+        },
+        {
+          "asset_id": "float",
+          "key": "temp/0.0.1",
+          "requests": 1,
+          "bytes": 16
+        },
+        {
+          "asset_id": "float",
+          "key": "temp/0.1.0",
+          "requests": 1,
+          "bytes": 16
+        },
+        {
+          "asset_id": "float",
+          "key": "temp/0.1.1",
+          "requests": 1,
+          "bytes": 16
+        },
+        {
+          "asset_id": "float",
+          "key": "temp/1.0.0",
+          "requests": 1,
+          "bytes": 16
+        },
+        {
+          "asset_id": "float",
+          "key": "temp/1.0.1",
+          "requests": 1,
+          "bytes": 16
+        },
+        {
+          "asset_id": "float",
+          "key": "temp/1.1.0",
+          "requests": 1,
+          "bytes": 16
+        },
+        {
+          "asset_id": "float",
+          "key": "temp/1.1.1",
+          "requests": 1,
+          "bytes": 16
+        }
+      ],
+      "scheduler": {
+        "workers": 4,
+        "per_host": 4,
+        "buffer_bytes": 4194304,
+        "reserved_bytes_peak": 1152,
+        "reader_state_reserved_bytes": 768,
+        "active_workers_peak": 4,
+        "completed_tasks": 8,
+        "seconds": 0.003120792,
+        "order": "plan",
+        "memory_scope": "conservative reader working reservations; excludes process/runtime, GDAL cache, prepared metadata and caller retention"
+      },
+      "transport": {},
+      "decoded_source_chunks": 8,
+      "filled_source_chunks": 0,
+      "first_output_seconds": 0.002658292,
+      "assembly_seconds": 5.249e-06,
+      "source_retrieval_seconds": 0.00020487499999999998,
+      "allocation_seconds": 7.11e-07,
+      "copying_seconds": 6.67e-07,
+      "output_setup_seconds": 0.0,
+      "output_finalize_seconds": 0.0,
+      "output_io": null,
+      "native_materialized_bytes": 128,
+      "source_data_requests": 8,
+      "source_data_bytes": 128,
+      "chunks": 8,
+      "decoded_bytes": 72,
+      "non_nodata_pixels": 17,
+      "planning_seconds": 0.005549709,
+      "source_open_seconds": 0.01111204,
+      "read_decode_seconds": 0.000258875,
+      "sink_seconds": 1.5206999999999999e-05,
+      "masking_seconds": 0.0,
+      "remote_requests": null,
+      "remote_bytes": null
+    },
+    "digests": []
+  },
+  "expected_valid_pixels": 17,
+  "expected_native_sum": 153.0,
+  "exact": true,
+  "binary_sha256": "8553d9dea1d5f906553b553cf9478732237c211c6df3135eb9c0ccd6c84d42a0",
+  "consumer_sha256": "f8306d8bf7b8470b877f4e2e746e5b9b0477ee620ffce480e9471c27d2db8e09"
+}

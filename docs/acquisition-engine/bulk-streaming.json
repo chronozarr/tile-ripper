@@ -1,0 +1,92 @@
+[
+  {
+    "regime": "bulk-fast",
+    "invocation": [
+      "bench/acquisition_bulk_stream.py",
+      "--reps",
+      "5",
+      "--latency-ms",
+      "0",
+      "--bandwidth-mbps",
+      "800",
+      "--output",
+      "prototype-output/acquisition-engine/bulk-fast"
+    ],
+    "cli_sha256": "8553d9dea1d5f906553b553cf9478732237c211c6df3135eb9c0ccd6c84d42a0",
+    "consumer_sha256": "f8306d8bf7b8470b877f4e2e746e5b9b0477ee620ffce480e9471c27d2db8e09",
+    "consumer_source_sha256": "f05eb223b21675790f053002bb00fac811b65df618798a87bf0c8416ee6d84e6",
+    "fixture_content_sha256": "65b262d7f209cf4a833f9d87767246d56417a2ab29c11af50da584a65ffb6426",
+    "fixture": {
+      "values": 67108864,
+      "native_bytes": 134217728,
+      "sum": 2013419445464,
+      "chunks": 1024
+    },
+    "scope": "loopback; warm OS cache; identical source selection and version checks; file output fsyncs data objects, stream performs no disk output; consumer count/sum exact, full file oracle outside timed process; producer source/read+decode/sink timers overlap",
+    "summary": [
+      {
+        "reader": "file",
+        "n": 5,
+        "successes": 5,
+        "wall_median_seconds": 5.749601874966174,
+        "first_native_chunk_median_seconds": null,
+        "peak_rss_max_bytes": 108920832,
+        "median_body_bytes": 134345183
+      },
+      {
+        "reader": "native-stream",
+        "n": 5,
+        "successes": 5,
+        "wall_median_seconds": 1.62473399983719,
+        "first_native_chunk_median_seconds": 0.093382458,
+        "peak_rss_max_bytes": 82083840,
+        "median_body_bytes": 134345183
+      }
+    ]
+  },
+  {
+    "regime": "bulk-latency",
+    "invocation": [
+      "bench/acquisition_bulk_stream.py",
+      "--reps",
+      "5",
+      "--latency-ms",
+      "8",
+      "--bandwidth-mbps",
+      "100",
+      "--output",
+      "prototype-output/acquisition-engine/bulk-latency"
+    ],
+    "cli_sha256": "8553d9dea1d5f906553b553cf9478732237c211c6df3135eb9c0ccd6c84d42a0",
+    "consumer_sha256": "f8306d8bf7b8470b877f4e2e746e5b9b0477ee620ffce480e9471c27d2db8e09",
+    "consumer_source_sha256": "f05eb223b21675790f053002bb00fac811b65df618798a87bf0c8416ee6d84e6",
+    "fixture_content_sha256": "3fac590193e547202d3b7f2559d7d307888e00500f5e70bebaf15d0c552b452c",
+    "fixture": {
+      "values": 67108864,
+      "native_bytes": 134217728,
+      "sum": 2013419445464,
+      "chunks": 1024
+    },
+    "scope": "loopback; warm OS cache; identical source selection and version checks; file output fsyncs data objects, stream performs no disk output; consumer count/sum exact, full file oracle outside timed process; producer source/read+decode/sink timers overlap",
+    "summary": [
+      {
+        "reader": "file",
+        "n": 5,
+        "successes": 5,
+        "wall_median_seconds": 15.599112333264202,
+        "first_native_chunk_median_seconds": null,
+        "peak_rss_max_bytes": 108265472,
+        "median_body_bytes": 134345183
+      },
+      {
+        "reader": "native-stream",
+        "n": 5,
+        "successes": 5,
+        "wall_median_seconds": 16.815963540691882,
+        "first_native_chunk_median_seconds": 2.802609708,
+        "peak_rss_max_bytes": 84295680,
+        "median_body_bytes": 134345183
+      }
+    ]
+  }
+]

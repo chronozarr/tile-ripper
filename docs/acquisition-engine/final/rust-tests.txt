@@ -1,0 +1,120 @@
+   Compiling tile-ripper v0.1.0-alpha.1 (/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.51s
+     Running unittests src/lib.rs (target/debug/deps/tile_ripper-95a286bceea858fa)
+
+running 8 tests
+test storage::tests::metadata_budget_is_shared_bounded_and_releasable ... ok
+test zarr_acquire::tests::trace_counts_full_partial_and_absent_reads ... ok
+test storage::tests::retry_after_respects_seconds_dates_and_bounded_waits ... ok
+test diagnostics::tests::native_handler_is_scoped_and_restored_on_unwind ... ok
+test spatial::coordinate_tests::rounded_centers_use_actual_midpoints_in_both_directions ... ok
+test acquisition::tests::nested_provenance_urls_are_sanitized ... ok
+test storage::tests::bounded_parallel_map_deduplicates_and_restores_order ... ok
+test zarr_decode::tests::fixed_allocation_rejects_bombs_truncation_crc_and_trailing_members ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.19s
+
+     Running unittests src/main.rs (target/debug/deps/tile_ripper-3c962245f4722a48)
+
+running 4 tests
+test cli::tests::malformed_selection_is_rejected_before_preparation ... ok
+test cli::tests::streaming_and_resource_overrides_use_the_shared_request ... ok
+test cli::tests::catalog_flags_and_observed_transport_are_format_independent ... ok
+test cli::tests::direct_flags_produce_shared_request_and_dry_run_never_fetches ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/acquisition.rs (target/debug/deps/acquisition-b6cde5172af06049)
+
+running 9 tests
+test diagnostics_remove_signed_urls_and_invalid_catalog_semantics ... ok
+test output_object_bookkeeping_is_bounded_before_directory_creation ... ok
+test missing_chunk_creation_conflicts_and_inspection_cannot_modify_execution ... ok
+test unsupported_missing_and_source_changes_fail_before_callbacks ... ok
+test local_references_preserve_literal_question_marks ... ok
+test empty_time_queries_and_partial_edges_share_the_lifecycle ... ok
+test same_public_lifecycle_preserves_native_selection_and_provenance ... ok
+test cancellation_mutation_during_execution_and_corrupt_cleanup ... ok
+test buffered_output_eviction_preserves_values_and_deterministic_objects ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.88s
+
+     Running tests/cf_zarr.rs (target/debug/deps/cf_zarr-02c52e8a525d9001)
+
+running 2 tests
+test imerg_sized_native_chunk_still_fits_the_existing_sixteen_mib_profile ... ok
+test conventional_float_callback_and_native_output_preserve_source_coordinates ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.12s
+
+     Running tests/cli.rs (target/debug/deps/cli-aa4c49df5ffe9f55)
+
+running 2 tests
+test existing_output_is_rejected_before_remote_inspection ... ok
+test help_and_actionable_errors_do_not_access_network_or_echo_secrets ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.47s
+
+     Running tests/planner.rs (target/debug/deps/planner-a92cc6bc581c0701)
+
+running 8 tests
+test disjoint_and_fractional_bounds_clip_correctly ... ok
+test rejects_unsupported_and_over_budget_before_io ... ok
+test empty_time_selection_no_pixels_and_invalid_time_rejected ... ok
+test zarr_chunk_objects_and_execution_preflight ... ok
+test duplicate_variables_node_budget_and_invalid_ids_rejected ... ok
+test native_pixels_tiles_georef_cache_and_sink_failure ... ok
+test output_preserves_metadata_and_never_overwrites ... ok
+test stale_local_cache_invalidates_after_source_replacement ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests/remote_zarr.rs (target/debug/deps/remote_zarr-d14b2456ac1b341b)
+
+running 2 tests
+test prepared_http_changes_and_cancellation ... ignored, run by bench/remote_zarr.py against its controlled HTTP fixture
+test private_or_signed_http_group_urls_fail_without_network_or_secret_diagnostics ... ok
+
+test result: ok. 1 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.11s
+
+     Running tests/stac_workflow.rs (target/debug/deps/stac_workflow-fa56b66ff3cf2122)
+
+running 4 tests
+test prepared_versions_do_not_reuse_another_snapshot_cache ... ignored, run by bench/stac_workflow.py with its bounded local HTTP fixture
+test references_strip_runtime_credentials ... ok
+Warning 1: Self-intersection at or near point 0.5 0.5
+test rejects_invalid_polygon_and_unsupported_provider_contract ... ok
+test masks_preserve_holes_and_use_native_pixel_centers ... ok
+
+test result: ok. 3 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/streaming.rs (target/debug/deps/streaming-3fd07258e1231081)
+
+running 8 tests
+test stream_preserves_deterministic_order_and_native_provenance ... ok
+test callback_error_cancels_after_one_delivered_chunk_and_drop_joins ... ok
+test zero_capacity_rendezvous_stream_and_invalid_capacity ... ok
+test cancelled_callback_can_rerun_the_same_prepared_execution ... ok
+test source_mutation_is_an_error_from_finish_instead_of_clean_eof ... ok
+test zarr_stream_delivers_each_selected_source_chunk_once_with_axes_and_values ... ok
+test stream_completion_reports_source_reads_and_scheduler_bound ... ok
+test slow_consumer_keeps_scheduler_reservations_bounded ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.82s
+
+     Running tests/zarr_workflow.rs (target/debug/deps/zarr_workflow-2181c1c5d52e53e2)
+
+running 4 tests
+test malformed_coordinates_are_rejected ... ok
+test rejects_incompatible_grid_codec_budget_and_aliases_before_sink ... ok
+test corrupt_data_cleans_new_output_and_empty_queries_write_only_manifest ... ok
+test shared_api_native_slices_values_fill_coordinates_and_metadata ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.33s
+
+   Doc-tests tile_ripper
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

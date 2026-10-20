@@ -1,0 +1,172 @@
+{
+  "cli_example_binary_sha256": {
+    "tile-ripper": "8553d9dea1d5f906553b553cf9478732237c211c6df3135eb9c0ccd6c84d42a0",
+    "examples/chunk_stream": "f8306d8bf7b8470b877f4e2e746e5b9b0477ee620ffce480e9471c27d2db8e09"
+  },
+  "recursive_src": {
+    "file_count": 19,
+    "method": "SHA-256 over sorted src/**/*.rs, relative path + NUL + file bytes",
+    "sha256": "8e8209917291fc9536c88af7de2faee9d2c0b587785dcea0ca516b3f7c70afed"
+  },
+  "final_83_http_checks": {
+    "remote_zarr": {
+      "cases": 28,
+      "passed": 28,
+      "categories": [
+        "normal",
+        "no-trailing-slash",
+        "uncompressed",
+        "corrupt",
+        "decoded-size-mismatch",
+        "gzip-bomb",
+        "gzip-truncated",
+        "consolidated",
+        "503",
+        "429",
+        "interrupt",
+        "permanent",
+        "mutate",
+        "appear",
+        "metadata",
+        "isolation",
+        "admission",
+        "coordinate",
+        "postmetadata",
+        "cancel",
+        "malformed",
+        "empty",
+        "oversize",
+        "empty-space",
+        "weak-etag",
+        "redirect",
+        "hybrid",
+        "credential_redaction"
+      ]
+    },
+    "cf_zarr": {
+      "orientations": {
+        "passed": 24,
+        "total": 24
+      },
+      "error_cases": {
+        "passed": 17,
+        "total": 17,
+        "categories": [
+          "dtype",
+          "dimensions",
+          "units",
+          "irregular",
+          "calendar",
+          "shape-overflow",
+          "chunk-bomb",
+          "truncated",
+          "blosc-bomb",
+          "empty-space",
+          "empty-time",
+          "http-503",
+          "missing",
+          "missing-coordinate",
+          "codec",
+          "codec-header",
+          "time-overflow"
+        ]
+      }
+    },
+    "second_zarr": {
+      "cases": 14,
+      "passed": 14,
+      "categories": [
+        "503",
+        "bad-filter",
+        "bad-units",
+        "empty",
+        "irregular",
+        "missing",
+        "normal"
+      ]
+    },
+    "total": 83
+  },
+  "stac": {
+    "checks": {
+      "pagination_exact_footprints_discover_only": {
+        "stac_requests": 3,
+        "stac_bytes": 3158,
+        "heads": 0,
+        "range_gets": 0,
+        "whole_gets": 0,
+        "raster_bytes": 0,
+        "response_seconds": 0.0,
+        "conditional_gets": 0,
+        "rejected_conditionals": 0,
+        "injected_failures": 0
+      },
+      "empty_query": true,
+      "footprint_overlap_without_selected_pixel_centers": true,
+      "no_silent_truncation": true,
+      "output_budget_preflight": true,
+      "changed_object_rejected": true,
+      "failed_read_output_cleanup": true,
+      "library_prepared_snapshots_do_not_share_stale_cache": true
+    },
+    "check_count": 8,
+    "runs": 4
+  },
+  "multi_store": {
+    "passed": true,
+    "single_chunks": 64,
+    "combined_chunks": 128,
+    "single_source_reads": 42,
+    "combined_source_reads": 84,
+    "metadata_get_bytes": 9168,
+    "buffer_bytes": 1048576,
+    "shared_metadata_cap_bytes": 524288,
+    "per_asset_reads_once": true,
+    "aggregate_metadata_budget_rejection": true,
+    "rejection_buffer_bytes": 65536
+  },
+  "local_zarr_oracle": {
+    "runs": 10,
+    "gates": 12,
+    "passed_gates": 12,
+    "validated_values": 149520
+  },
+  "persistent_resume": "Not exercised or claimed; HTTP retry and source-version revalidation are per-acquisition behaviors, not a persistent checkpoint/resume test.",
+  "legacy_docs_sha256": {
+    "remote-zarr-checks.json": "92bd8bd18734fbbc601e8914ba8c9fd9eb760e65064a0d59fb581ab8c1304cb1",
+    "cf-zarr-checks.json": "4b999b5f51a48916d21a2c7ffc330c7386577a27f86fdc3c25058c5926110b4c",
+    "second-zarr-checks.json": "ff1a6a2103ce833a8ad370e98d4765daff80481b5627c2847836fc507200afce",
+    "zarr-benchmark-results.json": "bbb5e48ae785321419ae3eacbb4554b1391d9c517212ee4dbe6f60c6d1411a5d"
+  },
+  "legacy_docs_restored": true,
+  "commands": {
+    "remote-zarr-checks": "prototype-output/zarr-env/bin/python -c \"remote_zarr.checks(); isolated WORK and fixture roots under prototype-output/acquisition-engine-final-final/regression\"",
+    "cf-zarr-checks": "prototype-output/zarr-env/bin/python -c \"cf_zarr.checks(); isolated WORK under prototype-output/acquisition-engine-final-final/regression/cf-zarr\"",
+    "second-zarr-checks": "prototype-output/zarr-env/bin/python -c \"second_zarr.checks(); isolated WORK under prototype-output/acquisition-engine-final-final/regression/second-zarr\"",
+    "stac-workflow": "prototype-output/zarr-env/bin/python bench/stac_workflow.py --reps 1 --output prototype-output/acquisition-engine-final-final/regression/stac",
+    "multi-store": "prototype-output/zarr-env/bin/python bench/acquisition_multi_store.py",
+    "local-zarr-oracle": "prototype-output/zarr-env/bin/python -c \"zarr_workflow.run(); isolated WORK under prototype-output/acquisition-engine-final-final/regression/zarr-workflow\""
+  },
+  "failure_categories_exercised": [
+    "HTTP 503/429 retry and exhaustion",
+    "interrupted response recovery",
+    "conditional ETag and source mutation rejection",
+    "missing/appearing/corrupt/truncated/oversize data objects",
+    "decoded-size mismatch and gzip bomb/truncation",
+    "weak ETag, redirects, malformed metadata, unsupported Zarr v3 hybrid",
+    "coordinate/calendar/dtype/codec/shape/time validation",
+    "empty spatial/time selections, cancellation, output cleanup and isolation"
+  ],
+  "rust_verification": {
+    "passed": 49,
+    "failed": 0,
+    "ignored_http_driven_tests": 2,
+    "format": "cargo fmt --check passed",
+    "lint": "cargo clippy --locked --all-targets -- -D warnings passed",
+    "tests": "cargo test --locked passed",
+    "evidence": [
+      "rust-tests.txt",
+      "clippy.txt"
+    ]
+  }
+}

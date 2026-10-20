@@ -1,0 +1,34 @@
+[plan]
+name = "acquisition-engine"
+source_mtime_max = "2026-10-19T19:53:46.348830Z"
+sop_set_hash = ""
+
+[tasks."tasks/engine.benchmark"]
+summary = "Reproduce controlled high-throughput acquisition comparisons"
+prompt = """
+Orient:
+Read existing benchmark protocols and preserve original release binary.
+Edit:
+Add shaped loopback COG/Zarr workload suite and independent tuned comparator.
+Verify:
+Repeat benchmark matrix, verify native values and record failures and raw results.
+"""
+commit_message = ""
+timeout_s = 0
+test_cmd = "prototype-output/zarr-env/bin/python bench/acquisition_engine.py --help"
+files = ["bench/acquisition_engine.py", "docs/acquisition-benchmark-protocol.md"]
+
+[tasks."tasks/engine.engine"]
+summary = "Implement global resource scheduling and bounded native stream"
+prompt = """
+Orient:
+Read the user acquisition brief, existing readers, and decision reports.
+Edit:
+Preserve native readers and planner; implement bounded concurrency and streaming, cancellation, deterministic output.
+Verify:
+cargo test --locked; cargo clippy --locked --all-targets -- -D warnings
+"""
+commit_message = ""
+timeout_s = 0
+test_cmd = "cargo test --locked"
+files = ["README.md", "src/scheduler.rs", "src/stream.rs", "src/execute.rs", "src/acquisition.rs", "src/storage.rs", "src/stac_workflow.rs", "src/zarr_acquire.rs", "src/lib.rs", "src/cli/mod.rs", "src/main.rs", "examples/chunk_stream.rs", "tests/streaming.rs", "bench/acquisition_multi_store.py", "docs/acquisition-engine/streaming.md", "docs/acquisition-engine/report.md"]

@@ -1,0 +1,234 @@
+{
+  "scope": "Exploratory candidate-v1 measurements; excluded from final performance gate. One thread owns an entire COG asset, causing plan-order head-of-line stall after first chunk of later assets. This triggered final per-window scheduling. Five fresh-process repetitions per cell; synthetic COG only.",
+  "baseline_commit": "94c901493f8f6ec972728b1417e6557192095b1a",
+  "baseline_sha256": "403c10b24aebf14eb4c507e9532e59f96800586b047eb578815e71d746bf2b52",
+  "candidate_v1_sha256": "4841a27bda36514196296832181a7a3655179f7bb4dd13583156e4cbfa24d7dc",
+  "latency_ms": 8,
+  "bandwidth_mbps": 100,
+  "summary": [
+    {
+      "workload": "few-large",
+      "reader": "baseline",
+      "n": 5,
+      "wall_seconds": 3.7135816663503647,
+      "http_attempts": 92,
+      "body_bytes": 25034752,
+      "stages": {
+        "planning_seconds": 0.155213292,
+        "source_open_seconds": 0.093653083,
+        "read_decode_seconds": 3.2298117119999983,
+        "sink_seconds": 0.08604053599999992
+      }
+    },
+    {
+      "workload": "few-large",
+      "reader": "current-workers-1",
+      "n": 5,
+      "wall_seconds": 3.758385125081986,
+      "http_attempts": 92,
+      "body_bytes": 25034752,
+      "stages": {
+        "planning_seconds": 0.155526,
+        "source_open_seconds": 0.095350374,
+        "read_decode_seconds": 3.219473621,
+        "sink_seconds": 0.13701274200000002
+      }
+    },
+    {
+      "workload": "few-large",
+      "reader": "current-workers-4",
+      "n": 5,
+      "wall_seconds": 3.7088577086105943,
+      "http_attempts": 81,
+      "body_bytes": 25919488,
+      "stages": {
+        "planning_seconds": 0.157131958,
+        "source_open_seconds": 0.120635168,
+        "read_decode_seconds": 3.366664797,
+        "sink_seconds": 0.13744329000000002
+      }
+    },
+    {
+      "workload": "few-large",
+      "reader": "gdal-workers-8",
+      "n": 5,
+      "wall_seconds": 2.2218014169484377,
+      "http_attempts": 80,
+      "body_bytes": 24903680,
+      "stages": {
+        "planning_seconds": null,
+        "source_open_seconds": null,
+        "read_decode_seconds": null,
+        "sink_seconds": null
+      }
+    },
+    {
+      "workload": "many-small",
+      "reader": "baseline",
+      "n": 5,
+      "wall_seconds": 1.4793113749474287,
+      "http_attempts": 96,
+      "body_bytes": 3407872,
+      "stages": {
+        "planning_seconds": 0.555753791,
+        "source_open_seconds": 0.368688749,
+        "read_decode_seconds": 0.392352082,
+        "sink_seconds": 0.010029333999999997
+      }
+    },
+    {
+      "workload": "many-small",
+      "reader": "current-workers-1",
+      "n": 5,
+      "wall_seconds": 1.4976544580422342,
+      "http_attempts": 96,
+      "body_bytes": 3407872,
+      "stages": {
+        "planning_seconds": 0.558191584,
+        "source_open_seconds": 0.36407721,
+        "read_decode_seconds": 0.38117858399999993,
+        "sink_seconds": 0.012417625
+      }
+    },
+    {
+      "workload": "many-small",
+      "reader": "current-workers-4",
+      "n": 5,
+      "wall_seconds": 0.9824830424040556,
+      "http_attempts": 96,
+      "body_bytes": 3407872,
+      "stages": {
+        "planning_seconds": 0.550258791,
+        "source_open_seconds": 0.416823043,
+        "read_decode_seconds": 0.760393459,
+        "sink_seconds": 0.006001127
+      }
+    },
+    {
+      "workload": "many-small",
+      "reader": "gdal-workers-8",
+      "n": 5,
+      "wall_seconds": 0.4238273329101503,
+      "http_attempts": 48,
+      "body_bytes": 2883584,
+      "stages": {
+        "planning_seconds": null,
+        "source_open_seconds": null,
+        "read_decode_seconds": null,
+        "sink_seconds": null
+      }
+    },
+    {
+      "workload": "overlap-a",
+      "reader": "baseline",
+      "n": 5,
+      "wall_seconds": 0.8459857502020895,
+      "http_attempts": 48,
+      "body_bytes": 1703936,
+      "stages": {
+        "planning_seconds": 0.295955292,
+        "source_open_seconds": 0.19485166599999998,
+        "read_decode_seconds": 0.206369249,
+        "sink_seconds": 0.008563751
+      }
+    },
+    {
+      "workload": "overlap-a",
+      "reader": "current-workers-1",
+      "n": 5,
+      "wall_seconds": 0.8432961655780673,
+      "http_attempts": 48,
+      "body_bytes": 1703936,
+      "stages": {
+        "planning_seconds": 0.299398833,
+        "source_open_seconds": 0.19372124999999998,
+        "read_decode_seconds": 0.20071929099999997,
+        "sink_seconds": 0.008906290999999998
+      }
+    },
+    {
+      "workload": "overlap-a",
+      "reader": "current-workers-4",
+      "n": 5,
+      "wall_seconds": 0.6055707079358399,
+      "http_attempts": 48,
+      "body_bytes": 1703936,
+      "stages": {
+        "planning_seconds": 0.296284084,
+        "source_open_seconds": 0.22328074900000003,
+        "read_decode_seconds": 0.404541751,
+        "sink_seconds": 0.007868249
+      }
+    },
+    {
+      "workload": "overlap-a",
+      "reader": "gdal-workers-8",
+      "n": 5,
+      "wall_seconds": 0.2971928329207003,
+      "http_attempts": 24,
+      "body_bytes": 1441792,
+      "stages": {
+        "planning_seconds": null,
+        "source_open_seconds": null,
+        "read_decode_seconds": null,
+        "sink_seconds": null
+      }
+    },
+    {
+      "workload": "overlap-b",
+      "reader": "baseline",
+      "n": 5,
+      "wall_seconds": 0.8311984590254724,
+      "http_attempts": 48,
+      "body_bytes": 1703936,
+      "stages": {
+        "planning_seconds": 0.294974708,
+        "source_open_seconds": 0.189521208,
+        "read_decode_seconds": 0.20104387599999998,
+        "sink_seconds": 0.007507832000000002
+      }
+    },
+    {
+      "workload": "overlap-b",
+      "reader": "current-workers-1",
+      "n": 5,
+      "wall_seconds": 0.8273192080669105,
+      "http_attempts": 48,
+      "body_bytes": 1703936,
+      "stages": {
+        "planning_seconds": 0.298177334,
+        "source_open_seconds": 0.19059020699999998,
+        "read_decode_seconds": 0.198498293,
+        "sink_seconds": 0.004029709
+      }
+    },
+    {
+      "workload": "overlap-b",
+      "reader": "current-workers-4",
+      "n": 5,
+      "wall_seconds": 0.6011119172908366,
+      "http_attempts": 48,
+      "body_bytes": 1703936,
+      "stages": {
+        "planning_seconds": 0.292493125,
+        "source_open_seconds": 0.22170658399999998,
+        "read_decode_seconds": 0.4145765,
+        "sink_seconds": 0.005438791
+      }
+    },
+    {
+      "workload": "overlap-b",
+      "reader": "gdal-workers-8",
+      "n": 5,
+      "wall_seconds": 0.29331808304414153,
+      "http_attempts": 24,
+      "body_bytes": 1441792,
+      "stages": {
+        "planning_seconds": null,
+        "source_open_seconds": null,
+        "read_decode_seconds": null,
+        "sink_seconds": null
+      }
+    }
+  ]
+}
