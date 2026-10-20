@@ -436,6 +436,10 @@ def run(cmd, out, env=None, ndjson=False):
         exit_code=p.returncode,
         wall_seconds=wall,
         peak_rss_bytes=usage.ru_maxrss * (1 if sys.platform == "darwin" else 1024),
+        user_cpu_seconds=usage.ru_utime,
+        system_cpu_seconds=usage.ru_stime,
+        cpu_seconds=usage.ru_utime + usage.ru_stime,
+        cpu_percent=100 * (usage.ru_utime + usage.ru_stime) / wall,
         result=result,
         error=err[-2000:],
     )

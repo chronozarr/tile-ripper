@@ -4,9 +4,12 @@ use crate::{
     model::*,
     plan, Result,
 };
+#[cfg(feature = "gdal")]
 use gdal::{raster::Buffer, DriverManager};
 use serde::{Deserialize, Serialize};
-use std::{fs, path::Path, time::Instant};
+use std::time::Instant;
+#[cfg(feature = "gdal")]
+use std::{fs, path::Path};
 
 /// One owned native-grid buffer. Sink callbacks run synchronously: retaining chunks
 /// is the caller's responsibility and outside the executor's buffer bound.
@@ -115,6 +118,9 @@ pub fn execute(
     if !matches!(r.source, Source::Assets { .. })
         || matches!(r.sink, Sink::Directory { .. })
         || crate::storage::has_remote_zarr(r)
+        || matches!(&r.source, Source::Assets {assets} if assets.iter().any(|a| a.format == Format::Cog && cog::remote(&a.locator)))
+        || (cog::native_selected()
+            && matches!(&r.source, Source::Assets {assets} if assets.iter().any(|a| a.format == Format::Cog)))
     {
         return crate::acquisition::prepare(r, cache)?.execute(sink);
     }
@@ -145,129 +151,59 @@ pub(crate) fn execute_on(
 ) -> Result<ExecutionReport> {
     crate::scheduler::execute(r, p, planning_seconds, sources, &Default::default(), sink)
 }
-/// A worker-local COG reader. GDAL datasets and geometries never cross worker
-/// threads; conditional headers are scoped around each open and read operation.
-pub(crate) struct SelectedCogReader {
-    asset: Asset,
-    dataset: gdal::Dataset,
-    layout: Layout,
-    band_index: usize,
-    mask_geometry: Option<gdal::vector::Geometry>,
+#[cfg(feature = "gdal")]
+#[path = "cog_gdal_reader.rs"]
+mod gdal_reader;
+/// Internal backend boundary. Public chunks and final validation stay shared.
+#[allow(dead_code)]
+pub(crate) enum SelectedCogReader {
+    #[cfg(not(any(feature = "gdal", feature = "native-cog")))]
+    Unavailable,
+    #[cfg(feature = "gdal")]
+    Gdal(gdal_reader::GdalCogReader),
+    #[cfg(feature = "native-cog")]
+    Native(crate::native_cog::SelectedReader),
 }
-
 impl SelectedCogReader {
+    #[allow(unused_variables)]
     pub(crate) fn new(asset: &Asset, selected: &Selected) -> Result<Self> {
-        let layout = selected.layout.as_ref().ok_or("missing layout")?.clone();
-        let Variable::Band { index } = &layout.variable else {
-            return fail("COG band missing");
-        };
-        let index = *index;
-        let mask_geometry = selected
-            .mask_geometry
-            .as_ref()
-            .map(|v| gdal::vector::Geometry::from_geojson(&v.to_string()))
-            .transpose()?;
-        let dataset = {
-            let _headers = cog::ConditionalHeaders::for_asset(asset)?;
-            let ds = cog::open(asset)?;
-            if ds.raster_size() != (layout.width, layout.height)
-                || ds.geo_transform()? != layout.transform
-            {
-                return fail("asset grid changed since planning");
-            }
-            ds.rasterband(index)?;
-            ds
-        };
-        Ok(Self {
-            asset: asset.clone(),
-            dataset,
-            layout,
-            band_index: index,
-            mask_geometry,
-        })
+        match crate::cog::backend()? {
+            #[cfg(feature = "gdal")]
+            crate::cog::Backend::Gdal => Ok(Self::Gdal(gdal_reader::GdalCogReader::new(
+                asset, selected,
+            )?)),
+            #[cfg(feature = "native-cog")]
+            crate::cog::Backend::Native => Ok(Self::Native(
+                crate::native_cog::SelectedReader::new(asset, selected)?,
+            )),
+        }
     }
-
     pub(crate) fn execute_node(
         &mut self,
         node: &Node,
         report: &mut ExecutionReport,
         sink: &mut impl FnMut(Chunk) -> Result<()>,
     ) -> Result<()> {
-        if node.asset_id != self.asset.id {
-            return Ok(());
-        }
-        let Operation::Read {
-            read:
-                Read::LibraryWindow {
-                    window,
-                    band: band_index,
-                    ..
-                },
-        } = &node.operation
-        else {
-            return Ok(());
-        };
-        if *band_index != self.band_index {
-            return Ok(());
-        }
-        let _headers = cog::ConditionalHeaders::for_asset(&self.asset)?;
-        let band = self.dataset.rasterband(self.band_index)?;
-        let t = Instant::now();
-        let mut pixels = band
-            .read_as::<u16>(
-                (window.x as isize, window.y as isize),
-                (window.width, window.height),
-                (window.width, window.height),
-                None,
-            )
-            .map_err(|_| "GDAL window read failed (locator omitted)")?;
-        report.read_decode_seconds += t.elapsed().as_secs_f64();
-        let t = Instant::now();
-        if let Some(g) = &self.mask_geometry {
-            let mask = crate::spatial::mask(g, &self.layout, window)?;
-            let nodata = self.layout.nodata.ok_or("AOI mask requires nodata")? as u16;
-            for (value, valid) in pixels.data_mut().iter_mut().zip(mask.data()) {
-                if *valid == 0 {
-                    *value = nodata;
-                }
+        match self {
+            #[cfg(not(any(feature = "gdal", feature = "native-cog")))]
+            Self::Unavailable => {
+                let _ = (node, report, sink);
+                fail("COG backend unavailable")
             }
+            #[cfg(feature = "gdal")]
+            Self::Gdal(r) => r.execute_node(node, report, sink),
+            #[cfg(feature = "native-cog")]
+            Self::Native(r) => r.execute_node(node, report, sink),
         }
-        report.masking_seconds += t.elapsed().as_secs_f64();
-        report.decoded_bytes += pixels.data().len() * 2;
-        report.non_nodata_pixels += pixels
-            .data()
-            .iter()
-            .filter(|v| self.layout.nodata.is_none_or(|n| f64::from(**v) != n))
-            .count();
-        let mut transform = self.layout.transform;
-        transform[0] += window.x as f64 * transform[1];
-        transform[3] += window.y as f64 * transform[5];
-        let chunk = Chunk {
-            node_id: node.id,
-            asset_id: self.asset.id.clone(),
-            datetime: self.asset.datetime.clone(),
-            variable: self.layout.variable.clone(),
-            indices: vec![],
-            window: window.clone(),
-            transform,
-            crs: self.layout.crs.clone(),
-            nodata: self.layout.nodata,
-            scale: self.layout.scale,
-            offset: self.layout.offset,
-            pixels: pixels.into_shape_and_vec().1.into(),
-            coordinates: None,
-        };
-        let t = Instant::now();
-        sink(chunk)?;
-        report.sink_seconds += t.elapsed().as_secs_f64();
-        report.chunks += 1;
-        Ok(())
     }
 }
 pub fn fetch(r: &Request, cache: &mut LayoutCache) -> Result<ExecutionReport> {
     if !matches!(r.source, Source::Assets { .. })
         || matches!(r.sink, Sink::Directory { .. })
         || crate::storage::has_remote_zarr(r)
+        || matches!(&r.source, Source::Assets {assets} if assets.iter().any(|a| a.format == Format::Cog && cog::remote(&a.locator)))
+        || (cog::native_selected()
+            && matches!(&r.source, Source::Assets {assets} if assets.iter().any(|a| a.format == Format::Cog)))
     {
         return Ok(serde_json::from_value(
             crate::acquisition::fetch(r, cache)?["observed"].clone(),
@@ -310,65 +246,74 @@ pub(crate) fn fetch_on(
     let Sink::GeoTiffDirectory { path } = &r.sink else {
         return fail("fetch requires a native directory sink");
     };
-    let root = Path::new(path);
-    if preview
-        .selected
-        .iter()
-        .any(|s| !s.capabilities.materialization)
+    #[cfg(not(feature = "gdal"))]
     {
-        return fail("planning-only format cannot be materialized");
+        let _ = (path, r, preview, planning_seconds, sources);
+        fail("GeoTIFF output requires the gdal feature; native streaming and Zarr output do not")
     }
-    if preview.selected.iter().any(|s| s.dimensions.is_some()) {
-        return fail("Zarr extraction requires native Zarr directory output");
-    }
-    fs::create_dir(root)?;
-    let result = execute_plan(r, preview, planning_seconds, |mut chunk| {
-        let file = root.join(format!("chunk-{}.tif", chunk.node_id));
-        let mut ds = DriverManager::get_driver_by_name("GTiff")?.create_with_band_type::<u16, _>(
-            &file,
-            chunk.window.width,
-            chunk.window.height,
-            1,
-        )?;
-        ds.set_geo_transform(&chunk.transform)?;
-        ds.set_spatial_ref(&gdal::spatial_ref::SpatialRef::from_definition(&chunk.crs)?)?;
-        let mut b = ds.rasterband(1)?;
-        b.set_no_data_value(chunk.nodata)?;
-        if let Some(s) = chunk.scale {
-            b.set_scale(s)?;
+    #[cfg(feature = "gdal")]
+    {
+        let root = Path::new(path);
+        if preview
+            .selected
+            .iter()
+            .any(|s| !s.capabilities.materialization)
+        {
+            return fail("planning-only format cannot be materialized");
         }
-        if let Some(o) = chunk.offset {
-            b.set_offset(o)?;
+        if preview.selected.iter().any(|s| s.dimensions.is_some()) {
+            return fail("Zarr extraction requires native Zarr directory output");
         }
-        b.write(
-            (0, 0),
-            (chunk.window.width, chunk.window.height),
-            &mut Buffer::new(
-                (chunk.window.width, chunk.window.height),
-                std::mem::take(&mut chunk.pixels).into_u16()?,
-            ),
-        )?;
-        ds.flush_cache()?;
-        Ok(())
-    });
-    match result {
-        Ok(report) => {
-            // Per-chunk metadata maps outputs back to observation/band, not an implicit mosaic.
-            let manifest = serde_json::json!({"plan":preview,"observed":report});
-            if fs::write(
-                root.join("manifest.json"),
-                serde_json::to_vec_pretty(&manifest)?,
-            )
-            .is_err()
-            {
-                let _ = fs::remove_dir_all(root);
-                return fail("could not write output manifest");
+        fs::create_dir(root)?;
+        let result = execute_plan(r, preview, planning_seconds, |mut chunk| {
+            let file = root.join(format!("chunk-{}.tif", chunk.node_id));
+            let mut ds = DriverManager::get_driver_by_name("GTiff")?
+                .create_with_band_type::<u16, _>(
+                    &file,
+                    chunk.window.width,
+                    chunk.window.height,
+                    1,
+                )?;
+            ds.set_geo_transform(&chunk.transform)?;
+            ds.set_spatial_ref(&gdal::spatial_ref::SpatialRef::from_definition(&chunk.crs)?)?;
+            let mut b = ds.rasterband(1)?;
+            b.set_no_data_value(chunk.nodata)?;
+            if let Some(s) = chunk.scale {
+                b.set_scale(s)?;
             }
-            Ok(report)
-        }
-        Err(e) => {
-            let _ = fs::remove_dir_all(root);
-            Err(e)
+            if let Some(o) = chunk.offset {
+                b.set_offset(o)?;
+            }
+            b.write(
+                (0, 0),
+                (chunk.window.width, chunk.window.height),
+                &mut Buffer::new(
+                    (chunk.window.width, chunk.window.height),
+                    std::mem::take(&mut chunk.pixels).into_u16()?,
+                ),
+            )?;
+            ds.flush_cache()?;
+            Ok(())
+        });
+        match result {
+            Ok(report) => {
+                // Per-chunk metadata maps outputs back to observation/band, not an implicit mosaic.
+                let manifest = serde_json::json!({"plan":preview,"observed":report});
+                if fs::write(
+                    root.join("manifest.json"),
+                    serde_json::to_vec_pretty(&manifest)?,
+                )
+                .is_err()
+                {
+                    let _ = fs::remove_dir_all(root);
+                    return fail("could not write output manifest");
+                }
+                Ok(report)
+            }
+            Err(e) => {
+                let _ = fs::remove_dir_all(root);
+                Err(e)
+            }
         }
     }
 }

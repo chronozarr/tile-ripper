@@ -180,12 +180,23 @@ fn tasks(r: &Request, p: &Plan, sources: &crate::storage::Sources) -> Result<Vec
                 }
             }
             if !nodes.is_empty() {
+                #[allow(unused_mut)]
+                let mut reader_bytes = 0;
+                #[cfg(feature = "native-cog")]
+                if crate::cog::backend()? == crate::cog::Backend::Native {
+                    let (retained, working) = crate::native_cog::reservation(l, &selected.window)?;
+                    reader_bytes = retained;
+                    bytes = bytes
+                        .checked_mul(2)
+                        .and_then(|n| n.checked_add(working))
+                        .ok_or("native COG buffer reservation overflow")?;
+                }
                 out.push(Task {
                     selected: si,
                     nodes,
                     host: host(a)?,
                     bytes,
-                    reader_bytes: 0,
+                    reader_bytes,
                 });
             }
         }

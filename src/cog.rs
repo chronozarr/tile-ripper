@@ -1,5 +1,4 @@
 use crate::{fail, model::*, Result};
-use gdal::{Dataset, Metadata};
 use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, fs, path::Path};
 const MAX_LAYOUT_TILES: usize = 65_536;
@@ -29,7 +28,7 @@ impl LayoutCache {
         }
         let mut saved: serde_json::Map<String, serde_json::Value> =
             serde_json::from_slice(&fs::read(path)?)?;
-        saved.retain(|_, e| e["adapter_version"] == 2);
+        saved.retain(|_, e| e["adapter_version"] == 2 || e["adapter_version"] == 3);
         let entries: HashMap<String, Entry> = serde_json::from_value(saved.into())?;
         let mut total = 0usize;
         for e in entries.values() {
@@ -76,7 +75,10 @@ impl LayoutCache {
         };
         if let (Some(identity), Some(key)) = (&identity, &key) {
             if let Some(entry) = self.entries.get(key) {
-                if entry.adapter_version == 2 && entry.identity == *identity && entry.band == band {
+                if entry.adapter_version == adapter_version()?
+                    && entry.identity == *identity
+                    && entry.band == band
+                {
                     return Ok((entry.layout.clone(), true));
                 }
             }
@@ -96,7 +98,7 @@ impl LayoutCache {
             self.entries.insert(
                 key,
                 Entry {
-                    adapter_version: 2,
+                    adapter_version: adapter_version()?,
                     identity,
                     band,
                     layout: layout.clone(),
@@ -108,87 +110,6 @@ impl LayoutCache {
 }
 pub fn remote(locator: &str) -> bool {
     locator.starts_with("https://") || locator.starts_with("http://")
-}
-pub fn open(asset: &Asset) -> Result<Dataset> {
-    let _quiet = crate::diagnostics::QuietNative::enter();
-    let locator = if remote(&asset.locator) {
-        format!("/vsicurl/{}", asset.locator)
-    } else {
-        asset.locator.clone()
-    };
-    Dataset::open(Path::new(&locator))
-        .map_err(|_| "GDAL could not open asset (locator omitted)".into())
-}
-pub fn inspect(asset: &Asset, band: usize) -> Result<Layout> {
-    let _quiet = crate::diagnostics::QuietNative::enter();
-    let _headers = ConditionalHeaders::for_asset(asset)?;
-    let ds = open(asset)?;
-    if ds.driver().short_name() != "GTiff" {
-        return fail("COG adapter requires GeoTIFF");
-    }
-    let b = ds.rasterband(band).map_err(|_| "invalid band")?;
-    if b.band_type().name() != "UInt16" {
-        return fail("prototype COG execution supports UInt16 only");
-    }
-    if !b.mask_flags()?.is_all_valid() && !b.mask_flags()?.is_nodata() {
-        return fail(
-            "explicit mask/alpha requires a validity-carrying adapter; unsupported in this slice",
-        );
-    }
-    let transform = ds.geo_transform()?;
-    if !transform.iter().all(|x| x.is_finite())
-        || transform[2] != 0.
-        || transform[4] != 0.
-        || transform[1] <= 0.
-        || transform[5] >= 0.
-    {
-        return fail("prototype requires a north-up grid with positive x and negative y spacing");
-    }
-    let srs = ds.spatial_ref()?;
-    let crs = srs.authority().unwrap_or(ds.projection());
-    if crs.is_empty() {
-        return fail("missing CRS");
-    }
-    let (width, height) = ds.raster_size();
-    let (bx, by) = b.block_size();
-    if bx == 0
-        || by == 0
-        || width
-            .div_ceil(bx)
-            .checked_mul(height.div_ceil(by))
-            .ok_or("layout tile count overflow")?
-            > MAX_LAYOUT_TILES
-    {
-        return fail("layout exceeds prototype metadata budget of 65536 tiles");
-    }
-    let mut tiles = Vec::new();
-    for y in 0..height.div_ceil(by) {
-        for x in 0..width.div_ceil(bx) {
-            let value = |prefix: &str| {
-                b.metadata_item(&format!("{prefix}_{x}_{y}"), "TIFF")
-                    .and_then(|s| s.parse().ok())
-            };
-            tiles.push(Tile {
-                x,
-                y,
-                offset: value("BLOCK_OFFSET"),
-                bytes: value("BLOCK_SIZE"),
-            });
-        }
-    }
-    Ok(Layout {
-        width,
-        height,
-        transform,
-        crs,
-        variable: crate::Variable::Band { index: band },
-        block: [bx, by],
-        dtype: b.band_type().name(),
-        nodata: b.no_data_value(),
-        scale: b.scale(),
-        offset: b.offset(),
-        tiles,
-    })
 }
 pub use crate::spatial::window;
 pub fn tiles(layout: &Layout, w: &Window) -> Vec<Tile> {
@@ -205,86 +126,78 @@ pub fn tiles(layout: &Layout, w: &Window) -> Vec<Tile> {
         .collect()
 }
 
-/// A scoped per-thread conditional, restored before the next asset/caller.
-pub(crate) struct ConditionalHeaders {
-    previous: String,
-}
-impl ConditionalHeaders {
-    pub(crate) fn for_asset(asset: &Asset) -> Result<Self> {
-        let previous = gdal::config::get_thread_local_config_option("GDAL_HTTP_HEADERS", "")?;
-        if let Some(etag) = &asset.etag {
-            if etag.starts_with("W/") || etag.is_empty() || etag.bytes().any(|b| b < 32 || b == 127)
-            {
-                return fail("a strong, single-line ETag is required");
-            }
-            // A trailing CRLF selects GDAL's raw-header parser; its CSV parser
-            // strips ETag quotes. The mutation test checks the exact header.
-            let value = if previous.is_empty() {
-                format!("If-Match: {etag}\r\n")
-            } else {
-                format!("{previous}\r\nIf-Match: {etag}\r\n")
-            };
-            gdal::config::set_thread_local_config_option("GDAL_HTTP_HEADERS", &value)?;
-        }
-        Ok(Self { previous })
-    }
-}
-impl Drop for ConditionalHeaders {
-    fn drop(&mut self) {
-        if self.previous.is_empty() {
-            let _ = gdal::config::clear_thread_local_config_option("GDAL_HTTP_HEADERS");
-        } else {
-            let _ =
-                gdal::config::set_thread_local_config_option("GDAL_HTTP_HEADERS", &self.previous);
-        }
-    }
-}
+#[cfg(feature = "gdal")]
+#[path = "cog_gdal.rs"]
+mod gdal_impl;
+#[cfg(feature = "gdal")]
+pub use gdal_impl::open;
+#[cfg(feature = "gdal")]
+pub(crate) use gdal_impl::{
+    apply_thread_configuration, clear_remote_cache, thread_configuration, ConditionalHeaders,
+};
 
-// GDAL exposes this stable C API, but gdal 0.19 has no high-level wrapper.
-unsafe extern "C" {
-    fn VSICurlPartialClearCache(prefix: *const std::os::raw::c_char);
+#[derive(Clone, Copy, PartialEq, Eq)]
+pub(crate) enum Backend {
+    #[cfg(feature = "gdal")]
+    Gdal,
+    #[cfg(feature = "native-cog")]
+    Native,
 }
-/// Before binding a new ETag, discard GDAL's URL-only header/range cache.
-/// Called before this workflow has any open datasets for that URL.
-pub(crate) fn clear_remote_cache(asset: &Asset) -> Result<()> {
-    if remote(&asset.locator) {
-        let prefix = std::ffi::CString::new(format!("/vsicurl/{}", asset.locator))?;
-        // SAFETY: a live NUL-terminated C string, and no handles opened by this
-        // acquisition exist yet. GDAL owns the cache and retains no pointer.
-        unsafe {
-            VSICurlPartialClearCache(prefix.as_ptr());
-        }
+pub(crate) fn backend() -> Result<Backend> {
+    let default = if cfg!(feature = "gdal") {
+        "gdal"
+    } else {
+        "native"
+    };
+    match std::env::var("TILE_RIPPER_COG_BACKEND")
+        .as_deref()
+        .unwrap_or(default)
+    {
+        #[cfg(feature = "gdal")]
+        "gdal" => Ok(Backend::Gdal),
+        #[cfg(feature = "native-cog")]
+        "native" => Ok(Backend::Native),
+        _ => fail("COG backend unavailable; enable gdal or native-cog and select gdal/native"),
     }
-    Ok(())
 }
-
-/// Snapshot caller-local overrides before starting native worker threads.
-/// Environment and process-global options remain GDAL's fallback.
+#[allow(unused_variables)]
+pub fn inspect(asset: &Asset, band: usize) -> Result<Layout> {
+    match backend()? {
+        #[cfg(feature = "gdal")]
+        Backend::Gdal => gdal_impl::inspect(asset, band),
+        #[cfg(feature = "native-cog")]
+        Backend::Native => crate::native_cog::inspect(asset, band),
+    }
+}
+#[cfg(not(feature = "gdal"))]
 pub(crate) fn thread_configuration() -> Result<Vec<(&'static str, String)>> {
-    [
-        "GDAL_HTTP_HEADERS",
-        "GDAL_DISABLE_READDIR_ON_OPEN",
-        "GDAL_INGESTED_BYTES_AT_OPEN",
-        "GDAL_NUM_THREADS",
-        "GDAL_CACHEMAX",
-        "GDAL_HTTP_MAX_RETRY",
-        "GDAL_HTTP_RETRY_DELAY",
-        "GDAL_HTTP_TIMEOUT",
-        "GDAL_HTTP_MULTIRANGE",
-        "CPL_VSIL_CURL_CHUNK_SIZE",
-        "CPL_VSIL_CURL_CACHE_SIZE",
-        "CPL_DEBUG",
-        "CPL_CURL_VERBOSE",
-    ]
-    .iter()
-    .map(|key| Ok((*key, gdal::config::get_thread_local_config_option(key, "")?)))
-    .collect()
+    Ok(vec![])
 }
-pub(crate) fn apply_thread_configuration(configuration: &[(&str, String)]) -> Result<()> {
-    for (key, value) in configuration {
-        if !value.is_empty() {
-            gdal::config::set_thread_local_config_option(key, value)?;
-        }
-    }
+#[cfg(not(feature = "gdal"))]
+pub(crate) fn apply_thread_configuration(_: &[(&str, String)]) -> Result<()> {
     Ok(())
+}
+#[cfg(not(feature = "gdal"))]
+pub(crate) fn clear_remote_cache(_: &Asset) -> Result<()> {
+    Ok(())
+}
+
+fn adapter_version() -> Result<u32> {
+    match backend()? {
+        #[cfg(feature = "gdal")]
+        Backend::Gdal => Ok(2),
+        #[cfg(feature = "native-cog")]
+        Backend::Native => Ok(3),
+    }
+}
+
+pub(crate) fn native_selected() -> bool {
+    #[cfg(feature = "native-cog")]
+    {
+        backend().is_ok_and(|b| b == Backend::Native)
+    }
+    #[cfg(not(feature = "native-cog"))]
+    {
+        false
+    }
 }

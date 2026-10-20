@@ -10,6 +10,19 @@ TILE_RIPPER_WORKERS=2 GDAL_CACHEMAX=32 target/release/tile-ripper-native-stats r
 prototype-output/zarr-env/bin/python bench/consumer_validation.py
 ```
 
+Build a GDAL-free consumer with the same public contract:
+
+```sh
+cargo build --release --locked --manifest-path consumers/native-stats/Cargo.toml \
+  --no-default-features --features native-cog --target-dir target/native-consumer
+target/native-consumer/release/tile-ripper-native-stats request.json
+```
+
+This requires direct COG assets and bounds in their exact native CRS. Zarr paths
+remain available. The [native COG decision report](../../docs/native-cog/report.md)
+lists supported profiles, bounded-cache behavior and retained system dependencies.
+Use a separate target directory when comparing installed executables.
+
 Supply the ordinary Tile-Ripper request schema, with `sink.kind = callback`.
 Several assets can be requested together. A chunk's valid-pixel count and native
 sum are useful for observation coverage and stored-value quality control;

@@ -1,17 +1,17 @@
 //! Supported public Sentinel-2 discovery → prepared native plan → per-asset outputs.
-use crate::{
-    cog::LayoutCache, fail, spatial, Asset, Budget, ExecutionReport, Format, Grid, Plan, Request,
-    Result, Sink, Source, Spatial, Time, Variable,
-};
+use crate::{cog::LayoutCache, fail, ExecutionReport, Plan, Request, Result, Source, Spatial};
+#[cfg(feature = "gdal")]
+use crate::{spatial, Asset, Budget, Format, Grid, Sink, Time, Variable};
+#[cfg(feature = "gdal")]
 use gdal::{raster::RasterCreationOptions, Dataset, DriverManager};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use std::{
     collections::HashSet,
-    fs,
-    path::Path,
     time::{Duration, Instant},
 };
+#[cfg(feature = "gdal")]
+use std::{fs, path::Path};
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
@@ -201,6 +201,7 @@ impl Prepared {
         Ok(report)
     }
     /// One tiled native GeoTIFF per source asset; chunk writes stay bounded.
+    #[cfg(feature = "gdal")]
     pub fn fetch(&self) -> Result<Value> {
         let root = Path::new(&self.discovered.request.output);
         if root.exists() {
@@ -306,6 +307,7 @@ pub fn safe_reference(href: &str) -> String {
         clean.into()
     }
 }
+#[cfg(feature = "gdal")]
 fn configure(l: &Limits) -> Result<()> {
     for (k, v) in [
         ("GDAL_DISABLE_READDIR_ON_OPEN", "EMPTY_DIR".into()),
@@ -322,6 +324,7 @@ fn configure(l: &Limits) -> Result<()> {
     }
     Ok(())
 }
+#[cfg(feature = "gdal")]
 fn band_key(request: &str) -> &str {
     match request {
         "B01" => "coastal",
@@ -339,6 +342,7 @@ fn band_key(request: &str) -> &str {
         other => other,
     }
 }
+#[cfg(feature = "gdal")]
 pub fn discover(r: &StacRequest) -> Result<Discovered> {
     if r.collection != "sentinel-2-c1-l2a" {
         return fail("Earth Search adapter currently supports collection sentinel-2-c1-l2a only");
@@ -663,4 +667,19 @@ fn remote_identities(core: &Request, limits: &Limits) -> Result<Vec<(usize, Obje
     });
     crate::diagnostics::profile_stage("cog_identity_batch", started.elapsed().as_secs_f64());
     result
+}
+
+#[cfg(not(feature = "gdal"))]
+fn configure(_: &Limits) -> Result<()> {
+    Ok(())
+}
+#[cfg(not(feature = "gdal"))]
+pub fn discover(_: &StacRequest) -> Result<Discovered> {
+    fail("STAC AOI discovery/geometry requires the gdal feature; direct assets support GDAL-free native bounds")
+}
+#[cfg(not(feature = "gdal"))]
+impl Prepared {
+    pub fn fetch(&self) -> Result<Value> {
+        fail("GeoTIFF output requires the gdal feature")
+    }
 }

@@ -33,8 +33,18 @@ fn cog_capabilities() -> Capabilities {
     Capabilities {
         selection: vec!["native_bounds".into(), "integer_band".into()],
         reads: vec!["library_window".into()],
-        decoding: "GDAL GTiff".into(),
-        compression: "delegated to installed GDAL; UInt16 parity required".into(),
+        decoding: if crate::cog::native_selected() {
+            "tiff-reader 0.9 storage-domain UInt16"
+        } else {
+            "GDAL GTiff"
+        }
+        .into(),
+        compression: if crate::cog::native_selected() {
+            "uncompressed/LZW/Deflate; predictor 1/2; bounded decode"
+        } else {
+            "delegated to installed GDAL; UInt16 parity required"
+        }
+        .into(),
         materialization: true,
     }
 }
@@ -80,7 +90,7 @@ fn plan_cog_asset(
             .selected_compressed_payload_bytes
             .zip(payload)
             .and_then(|(a, b)| a.checked_add(b));
-        p.selected.push(Selected { timestamps: asset.datetime.iter().cloned().collect(), dimensions: None, mask_geometry: mask.as_ref().map(|g| g.json().and_then(|s| serde_json::from_str(&s).map_err(|_| gdal::errors::GdalError::BadArgument("invalid geometry JSON".into())))).transpose()?, asset_id: asset.id.clone(), datetime: asset.datetime.clone(), reason: "direct asset; requested band and bounds intersect native grid; time predicate passed".into(), capabilities: cog_capabilities(), layout: Some(layout.clone()), window: window.clone() });
+        p.selected.push(Selected { timestamps: asset.datetime.iter().cloned().collect(), dimensions: None, mask_geometry: mask.as_ref().map(|g| -> Result<serde_json::Value> { Ok(serde_json::from_str(&g.json()?)?) }).transpose()?, asset_id: asset.id.clone(), datetime: asset.datetime.clone(), reason: "direct asset; requested band and bounds intersect native grid; time predicate passed".into(), capabilities: cog_capabilities(), layout: Some(layout.clone()), window: window.clone() });
         let inspect = push(p, request, &asset.id, vec![], Operation::Inspect { cached })?;
         for y in (window.y..window.y + window.height).step_by(request.budget.chunk_edge) {
             for x in (window.x..window.x + window.width).step_by(request.budget.chunk_edge) {
@@ -116,7 +126,12 @@ fn plan_cog_asset(
                     &asset.id,
                     vec![read],
                     Operation::Decode {
-                        reader: "GDAL RasterIO (fused retrieval and decode)".into(),
+                        reader: if crate::cog::native_selected() {
+                            "tiff-reader native window"
+                        } else {
+                            "GDAL RasterIO (fused retrieval and decode)"
+                        }
+                        .into(),
                     },
                 )?;
                 push(

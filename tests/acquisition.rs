@@ -1,3 +1,4 @@
+#![cfg(feature = "gdal")]
 use std::{
     fs,
     path::PathBuf,

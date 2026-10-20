@@ -227,7 +227,7 @@ fn inspect_on(r: &Request, s: Arc<crate::storage::Objects>) -> Result<Dataset> {
         }
         grid["crs"].as_str().ok_or("missing CRS")?.to_owned()
     };
-    gdal::spatial_ref::SpatialRef::from_definition(&crs)?;
+    crate::spatial::validate_crs(&crs)?;
     let mut coordinates = Vec::new();
     for (axis, dtype) in [
         (axes[0].as_str(), "<f8"),

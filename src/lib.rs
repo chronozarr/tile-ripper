@@ -31,3 +31,6 @@ pub use pixels::Pixels;
 
 mod scheduler;
 pub mod stream;
+
+#[cfg(feature = "native-cog")]
+mod native_cog;

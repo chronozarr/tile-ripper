@@ -1,3 +1,4 @@
+#![cfg(feature = "gdal")]
 use serde_json::json;
 use tile_ripper::{
     spatial,

@@ -26,10 +26,21 @@ def acquire(request, workers, output=None):
     local = threading.local()
     assets = request["source"]["assets"]
     bbox = request["spatial"]["bbox"]
+    # Local decode isolation uses the same size/mtime identity policy as Rust.
+    local_pins = {}
+    for asset in assets:
+        if not asset["locator"].startswith(("http://", "https://")):
+            stat = Path(asset["locator"]).stat()
+            local_pins[asset["locator"]] = (stat.st_size, stat.st_mtime_ns)
     if output is not None:
         output.mkdir(parents=True, exist_ok=False)
 
     def validate(asset):
+        if asset["locator"] in local_pins:
+            stat = Path(asset["locator"]).stat()
+            if (stat.st_size, stat.st_mtime_ns) != local_pins[asset["locator"]]:
+                raise ValueError("GDAL local source identity changed")
+            return stat.st_size
         if not hasattr(local, "session"):
             local.session = requests.Session()
         with head_slots:
@@ -164,7 +175,11 @@ def acquire(request, workers, output=None):
             planning_worker_seconds=sum(batch[2] for batch in batches),
             read_worker_seconds=sum(batch[3] for batch in batches),
             write_seconds=sum(batch[4] for batch in batches),
-            source_validation="pinned strong ETag/size; conditional GDAL reads; initial, pre-read and final version checks",
+            source_validation=(
+                "local size/mtime; initial, pre-read and final identity checks"
+                if local_pins
+                else "pinned strong ETag/size; conditional GDAL reads; initial, pre-read and final version checks"
+            ),
         )
         if output is None:
             result["first_chunk_seconds"] = first[0] if first else None

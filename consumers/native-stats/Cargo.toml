@@ -4,6 +4,11 @@ version = "0.1.0"
 edition = "2021"
 publish = false
 
+[features]
+default = ["gdal"]
+gdal = ["tile-ripper/gdal"]
+native-cog = ["tile-ripper/native-cog"]
+
 [dependencies]
-tile-ripper = { path = "../.." }
+tile-ripper = { path = "../..", default-features = false }
 serde_json = "=1.0.145"

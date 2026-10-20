@@ -7,7 +7,8 @@ Retrieve native scientific raster subsets with one Rust library and one
 reads before downloading data. Outputs include a completion/provenance manifest.
 **Private-alpha candidate (unreleased; licensing approval pending):** support is limited to the profiles below. This is not a general
 Zarr reader, reprojection engine, mosaic or temporal compositor. No Python is
-required to acquire data; GDAL is required even for Zarr-only use today.
+required to acquire data. The default build uses GDAL; opt-in builds support
+[GDAL-free native COG streaming and Zarr acquisition](docs/native-cog/report.md).
 
 ## Build and try a real dataset
 
@@ -18,6 +19,22 @@ brew install gdal pkg-config
 cargo build --release --locked --bin tile-ripper
 ./target/release/tile-ripper --help
 ```
+
+For native-CRS COG streaming without GDAL:
+
+```sh
+cargo build --release --locked --no-default-features --features native-cog
+cargo build --release --locked --manifest-path consumers/native-stats/Cargo.toml \
+  --no-default-features --features native-cog --target-dir target/native-consumer
+./target/native-consumer/release/tile-ripper-native-stats request.json
+```
+
+Use explicit COG assets, a callback sink and bounds in the exact source CRS. The
+native reader preserves UInt16 samples, nodata, calibration and provenance for
+[the admitted TIFF profiles](docs/native-cog/report.md). STAC AOI transformations,
+polygon masks and GeoTIFF output still require the `gdal` feature. Zarr-only
+builds can omit both features. C/C++ codec build tools remain required; see
+[installation](docs/installation.md). The reader default is unchanged.
 
 Run from a checkout of this branch. [Installation and platform status](docs/installation.md)
 cover native dependencies, local installation and release preparation.

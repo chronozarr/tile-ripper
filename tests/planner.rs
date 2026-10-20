@@ -1,3 +1,4 @@
+#![cfg(feature = "gdal")]
 use gdal::{
     raster::{Buffer, RasterCreationOptions},
     DriverManager,

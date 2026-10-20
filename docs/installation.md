@@ -5,7 +5,7 @@ and two real acquisitions use [the self-contained scientist trial](alpha/human-t
 [ALPHA.md](../ALPHA.md) is the short entrypoint; licensing remains pending.
 
 Tile-Ripper is private-alpha candidate source software, not a published package or standalone
-binary release. Build from the repository checkout with Cargo.lock. The current
+binary release. Build from the repository checkout with Cargo.lock. The default-build
 verified environment is macOS arm64, Rust 1.92.0, GDAL 3.12.4. This is a tested
 combination, not a claimed minimum Rust version or cross-platform certification.
 
@@ -45,8 +45,8 @@ GDAL has further native dependencies and data files. Copying the executable to
 a machine without that runtime is **not** a supported installation method.
 A recipient with an appropriate GDAL runtime would not need Rust development
 headers to run a prebuilt binary, but a portable bundle has not been constructed
-or tested. Even Zarr-only commands currently link GDAL because the unified crate
-depends on it. Static linking is not a small packaging switch: GDAL drivers,
+or tested. In the default build, Zarr-only commands also link GDAL. The optional
+GDAL-free builds below remove that requirement. Static linking is not a small packaging switch: GDAL drivers,
 PROJ data, dependency licensing and platform testing require deliberate work.
 
 The smallest maintainable initial distribution is a tagged source checkout with
@@ -54,6 +54,44 @@ The smallest maintainable initial distribution is a tagged source checkout with
 `publish=false` until metadata/licensing and dependency review are completed.
 Do not adopt a multi-platform binary-release generator before runtime packaging
 has been tested. No registry, GitHub release, upload or deployment occurred here.
+
+## Optional GDAL-free build
+
+The native COG prototype is opt-in. Use Rust 1.92 (tested), a C/C++ compiler,
+CMake and pkg-config. On Debian the tested prerequisites were `build-essential`,
+`cmake`, `pkg-config` and CA certificates, with **no** GDAL, PROJ or libtiff package.
+The first Rust slim-container attempt without C++ failed on vendored Snappy;
+installing the compiler toolchain resolved that requirement. This is not a
+Rust-only build: existing Zarr Blosc/Snappy and TLS dependencies compile native
+code. Their codecs are bundled; they do not require system libtiff or GDAL.
+
+```sh
+cargo build --locked --release --no-default-features --features native-cog
+# Optional isolated local installation, preserving any existing installation:
+cargo install --path . --locked --no-default-features --features native-cog \
+  --root /absolute/path/to/new-native-install
+# Zarr-only, with no COG reader:
+cargo build --locked --release --no-default-features
+```
+
+Use direct asset native-CRS bounds and the public callback/stream API for COGs.
+Zarr acquisition and native Zarr output retain their existing profiles. The CLI's
+GeoTIFF output, STAC geometry discovery, coordinate transformation and polygon
+masking require GDAL and fail explicitly when it is disabled. There is no new
+projection engine or GDAL-free longitude/latitude-to-UTM claim.
+
+For a comparison build, `cargo build --features native-cog` includes both readers.
+Set `TILE_RIPPER_COG_BACKEND=native` or `gdal` before preparation and keep it fixed
+for the process. That dual-reader executable still links GDAL. An executable built
+with `--no-default-features --features native-cog` selects native automatically
+and contains no GDAL link. Do not infer linkage from the selected environment
+variable; inspect the actual executable (`otool -L` on macOS, `ldd` on Linux).
+
+macOS ARM64 and a clean Linux ARM64 container were exercised. Linux still needs
+libstdc++, libgcc_s, libm and libc; macOS needs its OS frameworks/C++ runtime.
+Windows, Intel macOS, Linux x86_64, musl and WASM are unverified. The
+[decision report](native-cog/report.md) records actual sizes, startup, build costs,
+linkage and the science/fault/performance gates. No binary distribution is published.
 
 ## Proposed release checklist (manual, no publishing automation)
 

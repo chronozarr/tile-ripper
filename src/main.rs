@@ -31,7 +31,9 @@ fn run() -> Result<()> {
         env::set_var("TILE_RIPPER_PER_HOST", n.to_string());
     }
     // Quiet native driver diagnostics; they can include signed locators.
+    #[cfg(feature = "gdal")]
     gdal::config::set_error_handler(|_, _, _| {});
+    #[cfg(feature = "gdal")]
     for (key, value) in [
         ("GDAL_DISABLE_READDIR_ON_OPEN", "EMPTY_DIR"),
         ("GDAL_INGESTED_BYTES_AT_OPEN", "32768"),
