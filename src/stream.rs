@@ -20,6 +20,9 @@ impl Default for StreamOptions {
         Self { capacity: 1 }
     }
 }
+/// Ordered provisional chunks; only successful [`ChunkStream::finish`] authorizes
+/// committing consumer results. EOF alone is not a completion receipt.
+#[must_use = "consume the provisional chunks and call finish to validate completion"]
 pub struct ChunkStream {
     receiver: Option<mpsc::Receiver<Chunk>>,
     worker: Option<std::thread::JoinHandle<Result<ExecutionReport>>>,
@@ -65,6 +68,9 @@ impl ChunkStream {
     /// Drain unread chunks and validate final source versions. Never reports
     /// completion merely because the data channel closed.
     pub fn finish(mut self) -> Result<ExecutionReport> {
+        if self.cancelled.load(Ordering::Acquire) {
+            return Err("acquisition cancelled".into());
+        }
         for chunk in self.by_ref() {
             chunk?;
         }

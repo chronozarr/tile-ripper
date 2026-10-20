@@ -181,6 +181,7 @@ impl Prepared {
             } => {
                 sources.phase("pre_execution_validation");
                 versions.validate()?;
+                stac_workflow::validate_identities(request, &Default::default())?;
                 sources.validate()?;
                 sources.phase("execution");
                 let mut report = crate::scheduler::execute(
@@ -194,7 +195,11 @@ impl Prepared {
                 .map_err(|e| safe_error(request, "execution", e))?;
                 sources.phase("post_execution_validation");
                 versions.validate()?;
+                stac_workflow::validate_identities(request, &Default::default())?;
                 sources.validate()?;
+                if cancelled.load(std::sync::atomic::Ordering::Acquire) {
+                    return Err("acquisition cancelled".into());
+                }
                 report.transport = sources.stats();
                 Ok(report)
             }
@@ -216,6 +221,7 @@ impl Prepared {
             } => {
                 sources.phase("pre_execution_validation");
                 versions.validate()?;
+                stac_workflow::validate_identities(request, &Default::default())?;
                 sources.validate()?;
                 sources.phase("execution");
                 let root = destination(&request.sink)?;
@@ -233,7 +239,11 @@ impl Prepared {
                     .map_err(|e| safe_error(request, "fetch", e))?;
                 // A successful native writer owns this new directory; cleanup is safe.
                 sources.phase("post_execution_validation");
-                if let Err(e) = versions.validate().and_then(|_| sources.validate()) {
+                if let Err(e) = versions
+                    .validate()
+                    .and_then(|_| stac_workflow::validate_identities(request, &Default::default()))
+                    .and_then(|_| sources.validate())
+                {
                     let _ = fs::remove_dir_all(root);
                     return Err(e);
                 }

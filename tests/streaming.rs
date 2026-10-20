@@ -430,3 +430,54 @@ fn slow_consumer_keeps_scheduler_reservations_bounded() {
             <= report.scheduler["buffer_bytes"].as_u64().unwrap()
     );
 }
+
+#[test]
+fn mutation_after_delivery_invalidates_all_provisional_results() {
+    let f = zarr_fixture();
+    let mut stream = acquisition::prepare(&f.request, &mut LayoutCache::default())
+        .unwrap()
+        .into_stream(tile_ripper::stream::StreamOptions { capacity: 0 })
+        .unwrap();
+    let first = stream.next().unwrap().unwrap();
+    assert!(!first.pixels.is_empty());
+    // Backpressure keeps execution in progress after the first delivered plane.
+    fs::write(
+        f.root.join("source.zarr/.zattrs"),
+        b"changed after delivery",
+    )
+    .unwrap();
+    let mut saw_error = false;
+    for item in stream.by_ref() {
+        saw_error |= item.is_err();
+    }
+    assert!(saw_error);
+    assert!(stream.next().is_none());
+    assert!(stream.finish().is_err());
+}
+
+#[test]
+fn observed_error_cannot_be_lost_before_finish() {
+    let f = zarr_fixture();
+    let mut stream = acquisition::prepare(&f.request, &mut LayoutCache::default())
+        .unwrap()
+        .into_stream(Default::default())
+        .unwrap();
+    stream.cancel();
+    assert!(stream.next().unwrap().is_err());
+    assert!(stream.next().is_none());
+    assert!(stream.finish().is_err());
+}
+
+#[test]
+fn cancel_after_all_delivered_chunks_still_invalidates_finish() {
+    let f = cog_fixture();
+    let mut stream = acquisition::prepare(&f.request, &mut LayoutCache::default())
+        .unwrap()
+        .into_stream(Default::default())
+        .unwrap();
+    for item in stream.by_ref() {
+        item.unwrap();
+    }
+    stream.cancel();
+    assert!(stream.finish().is_err());
+}

@@ -185,14 +185,20 @@ impl Prepared {
         sink: impl FnMut(crate::Chunk) -> Result<()>,
     ) -> Result<ExecutionReport> {
         configure(&self.discovered.request.limits)?;
-        crate::scheduler::execute(
+        validate_identities(&self.discovered.core, &self.discovered.request.limits)?;
+        let report = crate::scheduler::execute(
             &self.discovered.core,
             &self.plan,
             self.planning_seconds,
             &crate::storage::Sources::default(),
             cancelled,
             sink,
-        )
+        )?;
+        validate_identities(&self.discovered.core, &self.discovered.request.limits)?;
+        if cancelled.load(std::sync::atomic::Ordering::Acquire) {
+            return fail("acquisition cancelled");
+        }
+        Ok(report)
     }
     /// One tiled native GeoTIFF per source asset; chunk writes stay bounded.
     pub fn fetch(&self) -> Result<Value> {
@@ -556,16 +562,43 @@ pub fn prepare(request: &StacRequest, cache: &mut LayoutCache) -> Result<Prepare
     discover(request)?.prepare(cache)
 }
 
+/// Recheck pinned COG versions without changing pins or touching GDAL caches.
+/// A successful read is still provisional until this final HEAD pass succeeds.
+pub(crate) fn validate_identities(core: &Request, limits: &Limits) -> Result<()> {
+    remote_identities(core, limits).map(|_| ())
+}
+
 pub(crate) fn resolve_identities(
     core: &mut Request,
     sources: &mut [SourceReference],
     limits: &Limits,
 ) -> Result<()> {
+    let identities = remote_identities(core, limits)?;
     let Source::Assets { assets } = &mut core.source else {
         return fail("missing runtime asset bindings");
     };
-    if assets.is_empty() {
-        return Ok(());
+    for (i, identity) in identities {
+        let asset = &mut assets[i];
+        crate::cog::clear_remote_cache(asset)?;
+        asset.etag = Some(identity.etag.clone());
+        if let Some(source) = sources.get_mut(i) {
+            source.object_identity = Some(identity);
+        }
+    }
+    Ok(())
+}
+
+fn remote_identities(core: &Request, limits: &Limits) -> Result<Vec<(usize, ObjectIdentity)>> {
+    let Source::Assets { assets } = &core.source else {
+        return fail("missing runtime asset bindings");
+    };
+    let remote: Vec<_> = assets
+        .iter()
+        .enumerate()
+        .filter(|(_, a)| a.format == crate::Format::Cog && crate::cog::remote(&a.locator))
+        .collect();
+    if remote.is_empty() {
+        return Ok(Vec::new());
     }
     let runtime = tokio::runtime::Builder::new_current_thread()
         .enable_all()
@@ -574,7 +607,8 @@ pub(crate) fn resolve_identities(
         .timeout(Duration::from_secs(limits.timeout_seconds))
         .user_agent("tile-ripper/0.1")
         .build()?;
-    for (i, asset) in assets.iter_mut().enumerate() {
+    let mut identities = Vec::with_capacity(remote.len());
+    for (i, asset) in remote {
         let mut attempt = 0;
         let response = loop {
             attempt += 1;
@@ -598,7 +632,7 @@ pub(crate) fn resolve_identities(
             .headers()
             .get("etag")
             .and_then(|v| v.to_str().ok())
-            .filter(|v| !v.starts_with("W/"))
+            .filter(|v| !v.is_empty() && !v.starts_with("W/"))
             .ok_or("supported source must expose a strong ETag for conditional extraction")?
             .to_owned();
         if asset
@@ -614,11 +648,7 @@ pub(crate) fn resolve_identities(
             .and_then(|v| v.to_str().ok())
             .and_then(|v| v.parse().ok())
             .ok_or("source HEAD missing content-length")?;
-        crate::cog::clear_remote_cache(asset)?;
-        asset.etag = Some(etag.clone());
-        if let Some(source) = sources.get_mut(i) {
-            source.object_identity = Some(ObjectIdentity { etag, bytes });
-        }
+        identities.push((i, ObjectIdentity { etag, bytes }));
     }
-    Ok(())
+    Ok(identities)
 }
