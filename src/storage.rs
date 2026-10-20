@@ -6,7 +6,11 @@ use serde::Serialize;
 use std::{
     collections::BTreeMap,
     io::Read,
-    sync::{Arc, Mutex},
+    sync::{
+        atomic::{AtomicUsize, Ordering},
+        Arc, Mutex,
+    },
+    thread,
     time::{Duration, Instant},
 };
 use zarrs::{
@@ -21,17 +25,9 @@ pub(crate) fn has_remote_zarr(r: &Request) -> bool {
 pub(crate) struct Sources(BTreeMap<String, Arc<Objects>>);
 impl Sources {
     pub fn new(r: &Request) -> Result<Self> {
-        if let Source::Assets { assets } = &r.source {
-            if assets
-                .iter()
-                .filter(|a| a.format == Format::ZarrV2 && cog::remote(&a.locator))
-                .count()
-                > 1
-            {
-                return fail("one HTTP Zarr store per request is supported in this milestone");
-            }
-        }
         let mut sources = Self::default();
+        let mut shared_client: Option<Arc<Client>> = None;
+        let metadata_budget = Arc::new(MetadataBudget::new(r.budget.buffer_bytes / 2));
         if let Source::Assets { assets } = &r.source {
             for a in assets
                 .iter()
@@ -40,14 +36,30 @@ impl Sources {
                 if a.etag.is_some() {
                     return fail("HTTP groups use per-object versions, not one asset ETag");
                 }
+                let client = match &shared_client {
+                    Some(client) => client.clone(),
+                    None => {
+                        let client = Arc::new(Http::build_client()?);
+                        shared_client = Some(client.clone());
+                        client
+                    }
+                };
                 sources.0.insert(
                     a.id.clone(),
                     crate::zarr_acquire::metadata_view(
-                        Arc::new(Objects::Http(Http::new(&a.locator, &r.budget)?)),
+                        Arc::new(Objects::Http(Http::new(
+                            &a.locator,
+                            &r.budget,
+                            client.clone(),
+                            metadata_budget.clone(),
+                        )?)),
                         &r.budget,
                     )?,
                 );
             }
+        }
+        if metadata_budget.used() > metadata_budget.cap {
+            return fail("aggregate HTTP metadata/coordinate cache exceeds half buffer_bytes");
         }
         Ok(sources)
     }
@@ -113,6 +125,32 @@ impl Sources {
             .collect::<BTreeMap<_, _>>())
     }
 }
+pub(crate) struct MetadataBudget {
+    cap: usize,
+    used: AtomicUsize,
+}
+impl MetadataBudget {
+    pub(crate) fn new(cap: usize) -> Self {
+        Self {
+            cap,
+            used: AtomicUsize::new(0),
+        }
+    }
+    fn reserve(&self, bytes: usize) -> bool {
+        self.used
+            .fetch_update(Ordering::AcqRel, Ordering::Acquire, |used| {
+                used.checked_add(bytes).filter(|next| *next <= self.cap)
+            })
+            .is_ok()
+    }
+    fn release(&self, bytes: usize) {
+        let previous = self.used.fetch_sub(bytes, Ordering::AcqRel);
+        debug_assert!(previous >= bytes);
+    }
+    fn used(&self) -> usize {
+        self.used.load(Ordering::Acquire)
+    }
+}
 pub(crate) enum Objects {
     Local(FilesystemStore),
     Http(Http),
@@ -137,11 +175,20 @@ impl Objects {
             Self::Local(_) => None,
         }
     }
+    pub(crate) fn reserve_overlay_cache(&self, bytes: usize) -> Result<()> {
+        if let Some(http) = self.http() {
+            if !http.metadata_budget.reserve(bytes) {
+                return fail("aggregate HTTP metadata/coordinate cache exceeds half buffer_bytes");
+            }
+        }
+        Ok(())
+    }
     pub fn discard_cached(&self, key: &str) {
         if let Some(h) = self.http() {
             let mut state = h.state.lock().unwrap();
             if let Some(Some(bytes)) = state.cached.remove(key) {
                 state.cached_bytes -= bytes.len();
+                h.metadata_budget.release(bytes.len());
             }
         }
     }
@@ -185,6 +232,29 @@ impl Objects {
                 } else {
                     origin.size(key.as_str())
                 }
+            }
+        }
+    }
+    pub fn sizes(&self, keys: &[String]) -> Result<Vec<Option<u64>>> {
+        match self {
+            Self::Local(_) => keys.iter().map(|key| self.size(key)).collect(),
+            Self::Http(http) => http.sizes(keys),
+            Self::Overlay { origin, entries } => {
+                let mut unresolved = Vec::new();
+                let mut positions = Vec::new();
+                let mut result = vec![None; keys.len()];
+                for (i, key) in keys.iter().enumerate() {
+                    if let Some(bytes) = entries.get(key) {
+                        result[i] = Some(bytes.len() as u64);
+                    } else {
+                        unresolved.push(key.clone());
+                        positions.push(i);
+                    }
+                }
+                for (i, size) in positions.into_iter().zip(origin.sizes(&unresolved)?) {
+                    result[i] = size;
+                }
+                Ok(result)
             }
         }
     }
@@ -282,11 +352,11 @@ struct State {
 }
 pub(crate) struct Http {
     base: Url,
-    client: Client,
+    client: Arc<Client>,
     cap: usize,
     nodes: usize,
     state: Mutex<State>,
-    network: Mutex<()>,
+    metadata_budget: Arc<MetadataBudget>,
 }
 #[derive(Clone, Copy)]
 enum Access {
@@ -295,7 +365,22 @@ enum Access {
     DataHead,
 }
 impl Http {
-    fn new(url: &str, b: &Budget) -> Result<Self> {
+    fn build_client() -> Result<Client> {
+        Client::builder()
+            .timeout(Duration::from_secs(30))
+            .connect_timeout(Duration::from_secs(10))
+            .pool_max_idle_per_host(64)
+            .redirect(reqwest::redirect::Policy::none())
+            .user_agent("tile-ripper/0.1 bounded-acquisition")
+            .build()
+            .map_err(|_| "cannot initialize HTTP client".into())
+    }
+    fn new(
+        url: &str,
+        b: &Budget,
+        client: Arc<Client>,
+        metadata_budget: Arc<MetadataBudget>,
+    ) -> Result<Self> {
         let mut base = Url::parse(url).map_err(|_| "invalid HTTP source URL")?;
         if !["http", "https"].contains(&base.scheme())
             || !base.username().is_empty()
@@ -310,21 +395,14 @@ impl Http {
         }
         Ok(Self {
             base,
-            client: Client::builder()
-                .timeout(Duration::from_secs(30))
-                .connect_timeout(Duration::from_secs(10))
-                .pool_max_idle_per_host(1)
-                .redirect(reqwest::redirect::Policy::none())
-                .user_agent("tile-ripper/0.1 bounded-acquisition")
-                .build()
-                .map_err(|_| "cannot initialize HTTP client")?,
+            client,
             cap: b.buffer_bytes / 2,
             nodes: b.max_nodes,
             state: Mutex::new(State {
                 phase: "planning",
                 ..State::default()
             }),
-            network: Mutex::new(()),
+            metadata_budget,
         })
     }
     fn get(&self, key: &s::StoreKey) -> Result<s::MaybeBytes> {
@@ -344,6 +422,9 @@ impl Http {
         let mut state = self.state.lock().unwrap();
         if !state.sealed {
             let size = bytes.as_ref().map_or(0, Vec::len);
+            if let Some(existing) = state.cached.get(key.as_str()) {
+                return Ok(existing.clone().map(Into::into));
+            }
             if state
                 .cached_bytes
                 .checked_add(size)
@@ -351,6 +432,9 @@ impl Http {
                 || state.cached.len() >= self.nodes
             {
                 return fail("HTTP metadata/coordinate cache exceeds buffer or max_nodes budget");
+            }
+            if !self.metadata_budget.reserve(size) {
+                return fail("aggregate HTTP metadata/coordinate cache exceeds half buffer_bytes");
             }
             state.cached_bytes += size;
             state.cached.insert(key.to_string(), bytes.clone());
@@ -371,15 +455,21 @@ impl Http {
             .filter(|(_, v)| v.as_ref().is_none_or(|v| v.metadata))
             .map(|(k, _)| k.clone())
             .collect();
-        for key in keys {
-            self.request(&s::StoreKey::new(key)?, Access::MetadataHead)?;
-        }
+        parallel_map(&keys, |key| {
+            self.request(&s::StoreKey::new(key)?, Access::MetadataHead)
+                .map(|_| ())
+        })?;
         Ok(())
+    }
+    fn sizes(&self, keys: &[String]) -> Result<Vec<Option<u64>>> {
+        parallel_map(keys, |key| {
+            self.request(&s::StoreKey::new(key)?, Access::DataHead)
+                .map(|result| result.map(|(version, _)| version.size))
+        })
     }
     fn request(&self, key: &s::StoreKey, access: Access) -> Result<Option<(Version, Vec<u8>)>> {
         let head = !matches!(access, Access::Get);
         let data_head = matches!(access, Access::DataHead);
-        let _network = self.network.lock().map_err(|_| "HTTP lock poisoned")?;
         let key_string = key.as_str();
         let url = self
             .base
@@ -533,6 +623,13 @@ impl Http {
             match result {
                 Ok(version) => {
                     let mut state = self.state.lock().unwrap();
+                    if state
+                        .versions
+                        .get(key_string)
+                        .is_some_and(|current| current != &version)
+                    {
+                        return fail("HTTP source version conflict; prepare again");
+                    }
                     if !state.versions.contains_key(key_string)
                         && state.versions.len() >= self.nodes
                     {
@@ -561,6 +658,88 @@ impl Http {
         }
         fail("HTTP retries exhausted")
     }
+}
+
+fn worker_count() -> Result<usize> {
+    fn configured(name: &str, default: usize) -> Result<usize> {
+        let value = match std::env::var(name) {
+            Ok(value) => value
+                .parse::<usize>()
+                .map_err(|_| format!("{name} must be an integer from 1 to 64"))?,
+            Err(std::env::VarError::NotPresent) => default,
+            Err(std::env::VarError::NotUnicode(_)) => {
+                return fail(&format!("{name} must be an integer from 1 to 64"));
+            }
+        };
+        if !(1..=64).contains(&value) {
+            return fail(&format!("{name} must be from 1 to 64"));
+        }
+        Ok(value)
+    }
+
+    let cpus = thread::available_parallelism().map_or(1, usize::from);
+    Ok(configured("TILE_RIPPER_WORKERS", cpus.min(4))?.min(configured("TILE_RIPPER_PER_HOST", 4)?))
+}
+
+/// Execute each distinct key once with bounded scoped workers and restore the
+/// caller's order, including duplicate positions in the requested result.
+fn parallel_map<T, F>(keys: &[String], f: F) -> Result<Vec<T>>
+where
+    T: Clone + Send,
+    F: Fn(&str) -> Result<T> + Sync,
+{
+    let mut unique = Vec::<String>::new();
+    let mut positions = Vec::with_capacity(keys.len());
+    let mut indices = std::collections::HashMap::<String, usize>::new();
+    for key in keys {
+        let index = *indices.entry(key.clone()).or_insert_with(|| {
+            unique.push(key.clone());
+            unique.len() - 1
+        });
+        positions.push(index);
+    }
+    if unique.is_empty() {
+        return Ok(Vec::new());
+    }
+    let workers = worker_count()?.min(unique.len());
+    let next = AtomicUsize::new(0);
+    let values = Mutex::new(
+        std::iter::repeat_with(|| None)
+            .take(unique.len())
+            .collect::<Vec<Option<Result<T>>>>(),
+    );
+    let panicked = thread::scope(|scope| {
+        let mut handles = Vec::with_capacity(workers);
+        for _ in 0..workers {
+            let next = &next;
+            let values = &values;
+            let unique = &unique;
+            let f = &f;
+            handles.push(scope.spawn(move || loop {
+                let i = next.fetch_add(1, Ordering::Relaxed);
+                if i >= unique.len() {
+                    break;
+                }
+                let result = f(&unique[i]);
+                values.lock().unwrap()[i] = Some(result);
+            }));
+        }
+        handles.into_iter().any(|handle| handle.join().is_err())
+    });
+    if panicked {
+        return fail("bounded HTTP worker panicked");
+    }
+    let distinct = values
+        .into_inner()
+        .map_err(|_| "bounded HTTP result lock poisoned")?
+        .into_iter()
+        .map(|value| value.ok_or("bounded HTTP worker omitted a key")?)
+        .collect::<Result<Vec<_>>>()?;
+    let mut ordered = Vec::with_capacity(positions.len());
+    for index in positions {
+        ordered.push(distinct[index].clone());
+    }
+    Ok(ordered)
 }
 
 fn retry_delay(value: &str) -> Result<Duration> {
@@ -593,5 +772,30 @@ mod tests {
         );
         assert!(super::retry_delay("60").is_err());
         assert!(super::retry_delay("not-a-date").is_err());
+    }
+
+    #[test]
+    fn bounded_parallel_map_deduplicates_and_restores_order() {
+        let calls = std::sync::atomic::AtomicUsize::new(0);
+        let keys = vec!["b".to_owned(), "a".to_owned(), "b".to_owned()];
+        let values = super::parallel_map(&keys, |key| {
+            calls.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+            Ok(key.to_owned())
+        })
+        .unwrap();
+        assert_eq!(values, ["b", "a", "b"]);
+        assert_eq!(calls.load(std::sync::atomic::Ordering::Relaxed), 2);
+    }
+
+    #[test]
+    fn metadata_budget_is_shared_bounded_and_releasable() {
+        let shared = std::sync::Arc::new(super::MetadataBudget::new(10));
+        let first_store = shared.clone();
+        let second_store = shared.clone();
+        assert!(first_store.reserve(6));
+        assert!(!second_store.reserve(5));
+        first_store.release(6);
+        assert!(second_store.reserve(10));
+        assert_eq!(shared.used(), 10);
     }
 }

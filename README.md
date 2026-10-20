@@ -51,6 +51,15 @@ print(subset)
 print(subset["2m_temperature"].values)  # native Kelvin; NaNs remain invalid
 ```
 
+## Incremental Rust consumers
+
+The development branch adds bounded native chunk streaming and shared acquisition
+scheduling. [API, CLI demonstrations and resource limits](docs/acquisition-engine/streaming.md)
+include cancellation, completion checks and manual concurrency overrides.
+[Controlled benchmark protocol](docs/acquisition-benchmark-protocol.md) describes
+the performance gate. [Measured results and the interoperability recommendation](docs/acquisition-engine/report.md)
+retain wins, ties and losses; no public-provider speed advantage is promised.
+
 ## Supported sources and limits
 
 | Source | Supported selection and output |

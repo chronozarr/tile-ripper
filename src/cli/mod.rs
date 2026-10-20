@@ -2,7 +2,7 @@
 use serde_json::{json, Value};
 use std::{collections::BTreeMap, fs};
 use tile_ripper::Result;
-const HELP: &str = "tile-ripper plan|fetch [request.json] [options]
+const HELP: &str = "tile-ripper plan|fetch|stream [request.json] [options]
   --source URL_OR_PATH --format zarr_v2|stac
   --collection NAME                 required for STAC
   --bbox WEST,SOUTH,EAST,NORTH       EPSG:4326; or --aoi polygon.geojson
@@ -10,10 +10,12 @@ const HELP: &str = "tile-ripper plan|fetch [request.json] [options]
   --variables NAME[,NAME]           native array names or STAC bands
   --output NEW_DIRECTORY            required for direct fetch
   --buffer-mib N                    payload budget (default 32; not RSS)
+  --workers N --per-host N           concurrent reader operations (1..64)
   --human | --json                  JSON default, stable for scripts
   --dry-run                        fetch behaves as plan; metadata may download
   --cache FILE --discover-only      discover-only requires plan
 JSON requests retain the full advanced schema. Do not mix selection flags and JSON.
+stream emits NDJSON descriptors and completion; Rust streaming yields native values.
 Supported profiles and installation: README.md. No reprojection or compositing.";
 pub struct Options {
     pub command: String,
@@ -22,6 +24,8 @@ pub struct Options {
     pub human: bool,
     pub cache_path: Option<String>,
     pub output: Option<String>,
+    pub workers: Option<usize>,
+    pub per_host: Option<usize>,
 }
 pub fn parse(args: &[String]) -> Result<Option<Options>> {
     if args.is_empty() || args.iter().any(|s| s == "--help" || s == "-h") {
@@ -29,8 +33,8 @@ pub fn parse(args: &[String]) -> Result<Option<Options>> {
         return Ok(None);
     }
     let mut command = args[0].clone();
-    if !matches!(command.as_str(), "plan" | "fetch") {
-        return Err("expected plan or fetch; use --help".into());
+    if !matches!(command.as_str(), "plan" | "fetch" | "stream") {
+        return Err("expected plan, fetch or stream; use --help".into());
     }
     let mut flags = BTreeMap::new();
     let mut file = None;
@@ -45,7 +49,8 @@ pub fn parse(args: &[String]) -> Result<Option<Options>> {
             "--dry-run" => dry = true,
             "--discover-only" => discover_only = true,
             key @ ("--source" | "--format" | "--collection" | "--bbox" | "--aoi" | "--start"
-            | "--end" | "--variables" | "--buffer-mib" | "--output" | "--cache") => {
+            | "--end" | "--variables" | "--buffer-mib" | "--output" | "--cache"
+            | "--workers" | "--per-host") => {
                 i += 1;
                 let value = args
                     .get(i)
@@ -67,6 +72,20 @@ pub fn parse(args: &[String]) -> Result<Option<Options>> {
     if discover_only && command != "plan" {
         return Err("--discover-only requires plan".into());
     }
+    let mut resource = |key: &str| -> Result<Option<usize>> {
+        flags
+            .remove(key)
+            .map(|value| {
+                value
+                    .parse::<usize>()
+                    .ok()
+                    .filter(|n| (1..=64).contains(n))
+                    .ok_or_else(|| format!("{key} requires an integer from 1 to 64").into())
+            })
+            .transpose()
+    };
+    let workers = resource("--workers")?;
+    let per_host = resource("--per-host")?;
     let output = flags.remove("--output");
     let cache_path = flags.remove("--cache");
     let input = if let Some(file) = file {
@@ -186,6 +205,8 @@ pub fn parse(args: &[String]) -> Result<Option<Options>> {
         human,
         cache_path,
         output,
+        workers,
+        per_host,
     }))
 }
 
@@ -237,6 +258,17 @@ mod tests {
         assert!(parse(&arguments(&[])).is_err());
         assert!(parse(&arguments(&["--output", "test", "--buffer-mib", "0"])).is_err());
         assert!(parse(&arguments(&["--output", "test", "--variables", "other"])).is_err());
+    }
+    #[test]
+    fn streaming_and_resource_overrides_use_the_shared_request() {
+        let mut args = arguments(&["--workers", "8", "--per-host", "2"]);
+        args[0] = "stream".into();
+        let options = parse(&args).unwrap().unwrap();
+        assert_eq!(options.command, "stream");
+        assert_eq!(options.workers, Some(8));
+        assert_eq!(options.per_host, Some(2));
+        assert!(parse(&arguments(&["--dry-run", "--workers", "0"])).is_err());
+        assert!(parse(&arguments(&["--dry-run", "--per-host", "65"])).is_err());
     }
     #[test]
     fn catalog_flags_and_observed_transport_are_format_independent() {

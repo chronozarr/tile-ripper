@@ -156,7 +156,20 @@ impl Prepared {
         }
         s
     }
+    pub fn into_stream(
+        self,
+        options: crate::stream::StreamOptions,
+    ) -> Result<crate::stream::ChunkStream> {
+        crate::stream::ChunkStream::start(self, options)
+    }
     pub fn execute(&self, sink: impl FnMut(Chunk) -> Result<()>) -> Result<ExecutionReport> {
+        self.execute_cancellable(&Default::default(), sink)
+    }
+    pub(crate) fn execute_cancellable(
+        &self,
+        cancelled: &std::sync::atomic::AtomicBool,
+        sink: impl FnMut(Chunk) -> Result<()>,
+    ) -> Result<ExecutionReport> {
         let _quiet = crate::diagnostics::QuietNative::enter();
         match &self.runtime {
             Runtime::Direct {
@@ -170,16 +183,22 @@ impl Prepared {
                 versions.validate()?;
                 sources.validate()?;
                 sources.phase("execution");
-                let mut report =
-                    crate::execute::execute_on(request, plan, *planning_seconds, sources, sink)
-                        .map_err(|e| safe_error(request, "execution", e))?;
+                let mut report = crate::scheduler::execute(
+                    request,
+                    plan,
+                    *planning_seconds,
+                    sources,
+                    cancelled,
+                    sink,
+                )
+                .map_err(|e| safe_error(request, "execution", e))?;
                 sources.phase("post_execution_validation");
                 versions.validate()?;
                 sources.validate()?;
                 report.transport = sources.stats();
                 Ok(report)
             }
-            Runtime::Catalog(p) => p.execute(sink),
+            Runtime::Catalog(p) => p.execute_cancellable(cancelled, sink),
         }
     }
     /// Native format writers are retained. Only the provenance envelope is unified.

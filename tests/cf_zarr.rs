@@ -141,3 +141,86 @@ fn conventional_float_callback_and_native_output_preserve_source_coordinates() {
     assert_eq!(v[7], 122.);
     fs::remove_dir_all(root).unwrap();
 }
+
+#[test]
+fn imerg_sized_native_chunk_still_fits_the_existing_sixteen_mib_profile() {
+    use std::io::Write;
+    let root = std::env::temp_dir().join(format!("tile-large-native-{}", std::process::id()));
+    let _ = fs::remove_dir_all(&root);
+    fs::create_dir_all(&root).unwrap();
+    fs::write(root.join(".zgroup"), r#"{"zarr_format":2}"#).unwrap();
+    fs::write(root.join(".zattrs"), "{}").unwrap();
+    for (name, count) in [("latitude", 900), ("longitude", 1800)] {
+        array(
+            &root,
+            name,
+            &[count],
+            &[count],
+            "<f8",
+            &[name],
+            Some(
+                (0..count)
+                    .flat_map(|i| (i as f64 * 0.01).to_le_bytes())
+                    .collect(),
+            ),
+        );
+    }
+    array(
+        &root,
+        "time",
+        &[1],
+        &[1],
+        "<i8",
+        &["time"],
+        Some(0i64.to_le_bytes().to_vec()),
+    );
+    fs::write(root.join("time/.zattrs"),r#"{"_ARRAY_DIMENSIONS":["time"],"units":"hours since 1959-01-01","calendar":"proleptic_gregorian"}"#).unwrap();
+    array(
+        &root,
+        "temperature",
+        &[1, 900, 1800],
+        &[1, 900, 1800],
+        "<f4",
+        &["time", "latitude", "longitude"],
+        None,
+    );
+    let path = root.join("temperature/.zarray");
+    let mut meta: serde_json::Value = serde_json::from_slice(&fs::read(&path).unwrap()).unwrap();
+    meta["compressor"] = serde_json::json!({"id":"gzip","level":1});
+    fs::write(path, serde_json::to_vec(&meta).unwrap()).unwrap();
+    let mut encoded = flate2::write::GzEncoder::new(Vec::new(), flate2::Compression::fast());
+    encoded
+        .write_all(&5f32.to_le_bytes().repeat(900 * 1800))
+        .unwrap();
+    fs::write(root.join("temperature/0.0.0"), encoded.finish().unwrap()).unwrap();
+    let mut request: Request =
+        serde_json::from_str(include_str!("../examples/weatherbench2.json")).unwrap();
+    let Source::Assets { assets } = &mut request.source else {
+        unreachable!()
+    };
+    assets[0].locator = root.to_string_lossy().into_owned();
+    request.variables = vec![tile_ripper::Variable::Dataset {
+        path: "temperature".into(),
+    }];
+    request.time = None;
+    request.spatial = tile_ripper::Spatial::Bounds {
+        crs: "EPSG:4326".into(),
+        bbox: [-0.005, -0.005, 0.015, 0.015],
+    };
+    request.budget.buffer_bytes = 16 * 1024 * 1024;
+    request.budget.chunk_edge = 32;
+    let prepared = acquisition::prepare(&request, &mut LayoutCache::default()).unwrap();
+    let mut stream = prepared.into_stream(Default::default()).unwrap();
+    let mut values = 0;
+    for chunk in stream.by_ref() {
+        let chunk = chunk.unwrap();
+        assert!(chunk.pixels.as_f32().unwrap().iter().all(|v| *v == 5.));
+        values += chunk.pixels.len();
+    }
+    let report = stream.finish().unwrap();
+    assert_eq!(values, 4);
+    assert_eq!(report.native_materialized_bytes, Some(6_480_000));
+    assert_eq!(report.source_data_requests, Some(1));
+    assert!(report.scheduler["reserved_bytes_peak"].as_u64().unwrap() <= 16 * 1024 * 1024);
+    fs::remove_dir_all(root).unwrap();
+}

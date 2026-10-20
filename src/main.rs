@@ -21,7 +21,15 @@ fn run() -> Result<()> {
         human,
         cache_path,
         output,
+        workers,
+        per_host,
     } = options;
+    if let Some(n) = workers {
+        env::set_var("TILE_RIPPER_WORKERS", n.to_string());
+    }
+    if let Some(n) = per_host {
+        env::set_var("TILE_RIPPER_PER_HOST", n.to_string());
+    }
     // Quiet native driver diagnostics; they can include signed locators.
     gdal::config::set_error_handler(|_, _, _| {});
     for (key, value) in [
@@ -88,13 +96,35 @@ fn run() -> Result<()> {
                 }
                 prepared.explain()
             }
+            "stream" => {
+                use std::io::Write;
+                let started = std::time::Instant::now();
+                let mut stream = prepared.into_stream(Default::default())?;
+                let stdout = std::io::stdout();
+                let mut out = stdout.lock();
+                for chunk in stream.by_ref() {
+                    let c = chunk?;
+                    writeln!(
+                        out,
+                        "{}",
+                        serde_json::json!({"type":"chunk","asset_id":c.asset_id,"node_id":c.node_id,"variable":c.variable,"datetime":c.datetime,"indices":c.indices,"window":c.window,"crs":c.crs,"transform":c.transform,"nodata":c.nodata,"scale":c.scale,"offset":c.offset,"dtype":if c.pixels.as_f32().is_some(){"float32"}else{"uint16"},"bytes":c.pixels.byte_len(),"valid_pixels":c.validity().filter(|v|*v).count(),"seconds":started.elapsed().as_secs_f64()})
+                    )?;
+                }
+                let report = stream.finish()?;
+                writeln!(
+                    out,
+                    "{}",
+                    serde_json::json!({"type":"complete","observed":report})
+                )?;
+                return Ok(());
+            }
             "fetch" => {
                 if human {
                     eprintln!("Fetching native pixels; validating source identities…");
                 }
                 prepared.fetch()?
             }
-            _ => return Err("expected plan or fetch".into()),
+            _ => return Err("expected plan, fetch or stream".into()),
         }
     };
     if let Some(path) = cache_path {

@@ -28,3 +28,6 @@ mod zarr_decode;
 
 mod pixels;
 pub use pixels::Pixels;
+
+mod scheduler;
+pub mod stream;

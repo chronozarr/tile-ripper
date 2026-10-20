@@ -1,7 +1,7 @@
 //! Supported public Sentinel-2 discovery → prepared native plan → per-asset outputs.
 use crate::{
-    cog::LayoutCache, execute::execute_plan, fail, spatial, Asset, Budget, ExecutionReport, Format,
-    Grid, Plan, Request, Result, Sink, Source, Spatial, Time, Variable,
+    cog::LayoutCache, fail, spatial, Asset, Budget, ExecutionReport, Format, Grid, Plan, Request,
+    Result, Sink, Source, Spatial, Time, Variable,
 };
 use gdal::{raster::RasterCreationOptions, Dataset, DriverManager};
 use serde::{Deserialize, Serialize};
@@ -177,11 +177,20 @@ impl Prepared {
         json!({"discovery":self.discovery(),"sources":self.sources(),"planning_seconds":self.planning_seconds,"plan":self.plan,"decisions":decisions()})
     }
     pub fn execute(&self, sink: impl FnMut(crate::Chunk) -> Result<()>) -> Result<ExecutionReport> {
+        self.execute_cancellable(&Default::default(), sink)
+    }
+    pub(crate) fn execute_cancellable(
+        &self,
+        cancelled: &std::sync::atomic::AtomicBool,
+        sink: impl FnMut(crate::Chunk) -> Result<()>,
+    ) -> Result<ExecutionReport> {
         configure(&self.discovered.request.limits)?;
-        execute_plan(
+        crate::scheduler::execute(
             &self.discovered.core,
             &self.plan,
             self.planning_seconds,
+            &crate::storage::Sources::default(),
+            cancelled,
             sink,
         )
     }

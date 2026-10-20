@@ -40,6 +40,7 @@ pub(crate) fn metadata_view(
     }
     let entries = view;
     source.discard_cached(".zmetadata");
+    source.reserve_overlay_cache(total)?;
     Ok(Arc::new(crate::storage::Objects::Overlay {
         origin: source,
         entries,
@@ -503,15 +504,18 @@ pub(crate) fn plan_asset_on(
                     if keys.len() > r.budget.max_nodes {
                         return fail("source chunk enumeration exceeds max_nodes");
                     }
-                    let bytes = source.size(&key)?.unwrap_or(0);
-                    if bytes > r.budget.buffer_bytes as u64 / 2 {
-                        return fail("encoded source chunk exceeds half buffer_bytes");
-                    }
-                    payload = payload
-                        .checked_add(bytes)
-                        .ok_or("payload estimate overflow")?;
                 }
             }
+        }
+        let chunk_keys = keys.keys().cloned().collect::<Vec<_>>();
+        let sizes = source.sizes(&chunk_keys)?;
+        for bytes in sizes.into_iter().flatten() {
+            if bytes > r.budget.buffer_bytes as u64 / 2 {
+                return fail("encoded source chunk exceeds half buffer_bytes");
+            }
+            payload = payload
+                .checked_add(bytes)
+                .ok_or("payload estimate overflow")?;
         }
         p.estimates.selected_compressed_payload_bytes = p
             .estimates
@@ -618,73 +622,124 @@ pub(crate) fn plan_asset_on(
     p.limitations.push("Zarr v2: custom UInt16 grid or conventional Float32 geographic axes; time first; native bounds; validated bounded codecs; selected source chunks retrieved once; native fill. No calibration, mosaicking or reprojection. Buffer budget is not a process RSS ceiling. Geographic output dimensions normalize to time/latitude/longitude with source axis order recorded in plan.".into());
     Ok(())
 }
-pub(crate) fn execute_selected(
-    r: &Request,
-    p: &Plan,
-    a: &Asset,
-    sources: &crate::storage::Sources,
-    selected: &Selected,
-    report: &mut crate::ExecutionReport,
-    sink: &mut impl FnMut(crate::Chunk) -> Result<()>,
-) -> Result<()> {
-    let t = Instant::now();
-    let s = sources.get(a)?;
-    let d = inspect_on(r, s.clone())?;
-    let layout = selected.layout.as_ref().ok_or("missing layout")?;
-    let Variable::Dataset { path } = &layout.variable else {
-        return fail("missing dataset variable");
-    };
-    let path = name(path)?;
-    let timed = Arc::new(crate::zarr_io::Timed::new(s));
-    let trace = Arc::new(std::sync::Mutex::new(ReadTrace::default()));
-    let logged = Arc::new(
-        zarrs::storage::storage_adapter::usage_log::UsageLogStorageAdapter::new(
-            timed.clone(),
-            trace.clone(),
-            String::new,
-        ),
-    );
-    let array = crate::zarr_decode::array(
-        logged,
-        path,
-        json(sources.get(a)?.as_ref(), &format!("{path}/.zarray"))?,
-        json(sources.get(a)?.as_ref(), &format!("{path}/.zattrs"))?,
-        &r.budget,
-    )?;
-    *trace.lock().map_err(|_| "trace lock poisoned")? = ReadTrace::default();
-    report.source_open_seconds += t.elapsed().as_secs_f64();
-    timed.reset();
-    let dims = selected
-        .dimensions
-        .as_ref()
-        .ok_or("missing native dimensions")?;
-    let cs = &dims.chunk_shape;
-    let yi = dims
-        .names
-        .iter()
-        .position(|v| v == &d.axes[1])
-        .ok_or("missing latitude/y dimension")?;
-    let xi = 3 - yi;
-    let w = &selected.window;
-    for node in &p.nodes {
+type LoggedObjects = zarrs::storage::storage_adapter::usage_log::UsageLogStorageAdapter<
+    crate::zarr_io::Timed<crate::storage::Objects>,
+>;
+
+/// Prepared reader for one selected Zarr array. Its storage handles and usage
+/// trace stay on the worker that owns it; each planned source chunk is decoded
+/// at most once as the scheduler calls `execute_node`.
+pub(crate) struct SelectedReader {
+    asset_id: String,
+    key_prefix: String,
+    array: Array<crate::zarr_decode::Checked<LoggedObjects>>,
+    timed: Arc<crate::zarr_io::Timed<crate::storage::Objects>>,
+    trace: Arc<std::sync::Mutex<ReadTrace>>,
+    dataset: Dataset,
+    layout: Layout,
+    window: Window,
+    dimensions: DimensionSelection,
+    y_index: usize,
+    x_index: usize,
+}
+
+impl SelectedReader {
+    pub(crate) fn new(
+        r: &Request,
+        a: &Asset,
+        sources: &crate::storage::Sources,
+        selected: &Selected,
+    ) -> Result<Self> {
+        let s = sources.get(a)?;
+        let d = inspect_on(r, s.clone())?;
+        let layout = selected.layout.as_ref().ok_or("missing layout")?;
+        let Variable::Dataset { path } = &layout.variable else {
+            return fail("missing dataset variable");
+        };
+        let path = name(path)?;
+        let timed = Arc::new(crate::zarr_io::Timed::new(s));
+        let trace = Arc::new(std::sync::Mutex::new(ReadTrace::default()));
+        let logged = Arc::new(
+            zarrs::storage::storage_adapter::usage_log::UsageLogStorageAdapter::new(
+                timed.clone(),
+                trace.clone(),
+                String::new,
+            ),
+        );
+        let array = crate::zarr_decode::array(
+            logged,
+            path,
+            json(sources.get(a)?.as_ref(), &format!("{path}/.zarray"))?,
+            json(sources.get(a)?.as_ref(), &format!("{path}/.zattrs"))?,
+            &r.budget,
+        )?;
+        *trace.lock().map_err(|_| "trace lock poisoned")? = ReadTrace::default();
+        timed.reset();
+        let dims = selected
+            .dimensions
+            .as_ref()
+            .ok_or("missing native dimensions")?
+            .clone();
+        let yi = dims
+            .names
+            .iter()
+            .position(|v| v == &d.axes[1])
+            .ok_or("missing latitude/y dimension")?;
+        let xi = 3 - yi;
+        Ok(Self {
+            asset_id: a.id.clone(),
+            key_prefix: format!("{path}/"),
+            array,
+            timed,
+            trace,
+            dataset: d,
+            layout: layout.clone(),
+            window: selected.window.clone(),
+            dimensions: dims,
+            y_index: yi,
+            x_index: xi,
+        })
+    }
+
+    pub(crate) fn execute_node(
+        &mut self,
+        r: &Request,
+        node: &Node,
+        report: &mut crate::ExecutionReport,
+        sink: &mut impl FnMut(crate::Chunk) -> Result<()>,
+    ) -> Result<()> {
         let Operation::Read {
             read: Read::ChunkObject { key, indices },
         } = &node.operation
         else {
-            continue;
+            return Ok(());
         };
-        if node.asset_id != a.id || !key.starts_with(&format!("{path}/")) {
-            continue;
+        if node.asset_id != self.asset_id || !key.starts_with(&self.key_prefix) {
+            return Ok(());
         }
+        let d = &self.dataset;
+        let dims = &self.dimensions;
+        let layout = &self.layout;
+        let cs = &dims.chunk_shape;
+        let yi = self.y_index;
+        let xi = self.x_index;
+        let w = &self.window;
         let t = Instant::now();
         let idx = indices.iter().map(|v| *v as u64).collect::<Vec<_>>();
         let native = if d.conventional {
-            crate::Pixels::Float32(array.retrieve_chunk_elements_opt::<f32>(&idx, &serial())?)
+            crate::Pixels::Float32(
+                self.array
+                    .retrieve_chunk_elements_opt::<f32>(&idx, &serial())?,
+            )
         } else {
-            crate::Pixels::UInt16(array.retrieve_chunk_elements_opt::<u16>(&idx, &serial())?)
+            crate::Pixels::UInt16(
+                self.array
+                    .retrieve_chunk_elements_opt::<u16>(&idx, &serial())?,
+            )
         };
         report.read_decode_seconds += t.elapsed().as_secs_f64();
-        if trace
+        if self
+            .trace
             .lock()
             .map_err(|_| "trace lock poisoned")?
             .keys
@@ -747,7 +802,7 @@ pub(crate) fn execute_selected(
                     };
                     let chunk = crate::Chunk {
                         node_id: node.id,
-                        asset_id: a.id.clone(),
+                        asset_id: self.asset_id.clone(),
                         datetime: Some(
                             chrono::DateTime::from_timestamp(d.times[ti], 0)
                                 .ok_or("invalid time")?
@@ -775,22 +830,28 @@ pub(crate) fn execute_selected(
                 }
             }
         }
+        Ok(())
     }
-    report.source_retrieval_seconds =
-        Some(report.source_retrieval_seconds.unwrap_or(0.) + timed.read_seconds());
-    let trace = trace.lock().map_err(|_| "trace lock poisoned")?;
-    report.source_data_requests = Some(report.source_data_requests.unwrap_or(0) + trace.requests);
-    report.source_data_bytes = Some(report.source_data_bytes.unwrap_or(0) + trace.bytes);
-    for (key, (requests, bytes)) in &trace.keys {
-        report.source_reads.push(crate::execute::SourceRead {
-            asset_id: a.id.clone(),
-            key: key.clone(),
-            requests: *requests,
-            bytes: *bytes,
-        });
+
+    pub(crate) fn finish(&self, report: &mut crate::ExecutionReport) -> Result<()> {
+        report.source_retrieval_seconds =
+            Some(report.source_retrieval_seconds.unwrap_or(0.) + self.timed.read_seconds());
+        let trace = self.trace.lock().map_err(|_| "trace lock poisoned")?;
+        report.source_data_requests =
+            Some(report.source_data_requests.unwrap_or(0) + trace.requests);
+        report.source_data_bytes = Some(report.source_data_bytes.unwrap_or(0) + trace.bytes);
+        for (key, (requests, bytes)) in &trace.keys {
+            report.source_reads.push(crate::execute::SourceRead {
+                asset_id: self.asset_id.clone(),
+                key: key.clone(),
+                requests: *requests,
+                bytes: *bytes,
+            });
+        }
+        Ok(())
     }
-    Ok(())
 }
+
 #[derive(Default)]
 struct ReadTrace {
     pending: Vec<u8>,
