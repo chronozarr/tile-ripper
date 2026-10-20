@@ -8,7 +8,7 @@ description = "Inspectable native acquisition for narrow STAC/COG and scientific
 [features]
 default = ["gdal"]
 gdal = ["dep:gdal"]
-native-cog = ["dep:tiff-reader", "dep:geotiff-core", "dep:roxmltree"]
+native-cog = ["dep:tiff-reader", "dep:geotiff-core", "dep:roxmltree", "dep:geo", "dep:proj4rs"]
 
 [dependencies]
 gdal = { version = "=0.19.0", optional = true }
@@ -26,3 +26,5 @@ flate2 = "=1.1.10"
 tiff-reader = { version = "=0.9.0", default-features = false, optional = true }
 geotiff-core = { version = "=0.9.0", optional = true }
 roxmltree = { version = "=0.21.1", optional = true }
+geo = { version = "=0.33.1", default-features = false, optional = true }
+proj4rs = { version = "=0.2.1", default-features = false, optional = true }

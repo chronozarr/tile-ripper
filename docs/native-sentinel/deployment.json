@@ -1,0 +1,64 @@
+{
+  "passed": true,
+  "linux": {
+    "passed": true,
+    "platform": "Linux-6.12.76-linuxkit-aarch64-with-glibc2.41",
+    "architecture": "aarch64",
+    "gdal_proj_libtiff_absent": true,
+    "clean_source_install": true,
+    "real_stac_discovery_and_masked_native_consumption": true,
+    "independent_gdal_expected_chunks_verified": 8,
+    "source_versions_verified": true,
+    "peak_rss_bytes": 21413888,
+    "plan_and_acquisition_seconds": 7.593546752999998,
+    "dynamic_libraries": "\tlinux-vdso.so.1 (0x0000ffffbc49f000)\n\tlibstdc++.so.6 => /lib/aarch64-linux-gnu/libstdc++.so.6 (0x0000ffffbb5f0000)\n\tlibgcc_s.so.1 => /lib/aarch64-linux-gnu/libgcc_s.so.1 (0x0000ffffbb5b0000)\n\tlibm.so.6 => /lib/aarch64-linux-gnu/libm.so.6 (0x0000ffffbb500000)\n\tlibc.so.6 => /lib/aarch64-linux-gnu/libc.so.6 (0x0000ffffbb340000)\n\t/lib/ld-linux-aarch64.so.1 (0x0000ffffbc450000)\n",
+    "binaries": {
+      "linux-tile-ripper": {
+        "bytes": 17526696,
+        "sha256": "c8146c25bcd7617820c10d6a7bd79dabb8b370ca564b931da241b9f85ffec611"
+      },
+      "linux-tile-ripper-native-stats": {
+        "bytes": 16921120,
+        "sha256": "26e120679b2150d915fc3127f5c3e9657fdee96f5ed5adbe0ccbdc2a813a79fe"
+      }
+    }
+  },
+  "macos": {
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "dynamic_libraries": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/target/native-sentinel/release/tile-ripper-native-stats:\n\t/System/Library/Frameworks/Security.framework/Versions/A/Security (compatibility version 1.0.0, current version 61901.60.40)\n\t/System/Library/Frameworks/SystemConfiguration.framework/Versions/A/SystemConfiguration (compatibility version 1.0.0, current version 1385.60.3)\n\t/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation (compatibility version 150.0.0, current version 4201.0.0)\n\t/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2000.67.0)\n\t/usr/lib/libiconv.2.dylib (compatibility version 7.0.0, current version 7.0.0)\n\t/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1356.0.0)\n",
+    "binaries": {
+      "tile-ripper": {
+        "bytes": 15284416,
+        "sha256": "bc096ccb714d0d6bc3d0bdc57504bc951948c74f1d6f1d5dbb7c3afdc54b0efb"
+      },
+      "tile-ripper-native-stats": {
+        "bytes": 14702976,
+        "sha256": "ea0f0b9ddb1d6e985011a0acf33e95d71dd8009cba1371fd5b10ef253e7322d4"
+      }
+    }
+  },
+  "linux_images": [
+    "[\"rust@sha256:bf3368a992915f128293ac76917ab6e561e4dda883273c8f5c9f6f8ea37a378e\"] sha256:2524356c645558866050e7327090261ea03756cc300047329c28f3298ca27c46",
+    "[\"python@sha256:70729b46c69b4f1e97c4822c1af3df53a1476cf5ddc6c087c0c10bc3a5678c2f\"] sha256:3874bc630edcb02f7cecf971aa3dcdec11497788d553b35e9e3b3ac0187da15e"
+  ],
+  "clean_linux_source_install": {
+    "elapsed": "0:54.26",
+    "peak_rss_bytes": 1620033536,
+    "log_sha256": "06f64414c737f0fa77e58edbfd87b2f43758ef915b8030f657876fe8232f0bdb"
+  },
+  "clean_linux_consumer_build": {
+    "elapsed": "0:53.41",
+    "peak_rss_bytes": 1617121280,
+    "log_sha256": "6a9bccf0e43322906b53e2864fff9c6c35a4aa826aff2fa61f33b5170a524eb4"
+  },
+  "native_tree_sha256": "fb3c475b4d023f754a334b295e8b213fd08927fdbf85072b41f05582b91b8456",
+  "linux_ldd": "\tlinux-vdso.so.1 (0x0000ffff8e4d8000)\n\tlibstdc++.so.6 => /lib/aarch64-linux-gnu/libstdc++.so.6 (0x0000ffff8d5c0000)\n\tlibgcc_s.so.1 => /lib/aarch64-linux-gnu/libgcc_s.so.1 (0x0000ffff8d580000)\n\tlibm.so.6 => /lib/aarch64-linux-gnu/libm.so.6 (0x0000ffff8d4d0000)\n\tlibc.so.6 => /lib/aarch64-linux-gnu/libc.so.6 (0x0000ffff8d310000)\n\t/lib/ld-linux-aarch64.so.1 (0x0000ffff8e490000)\n\tlinux-vdso.so.1 (0x0000ffffaad06000)\n\tlibstdc++.so.6 => /lib/aarch64-linux-gnu/libstdc++.so.6 (0x0000ffffa9e60000)\n\tlibgcc_s.so.1 => /lib/aarch64-linux-gnu/libgcc_s.so.1 (0x0000ffffa9e20000)\n\tlibm.so.6 => /lib/aarch64-linux-gnu/libm.so.6 (0x0000ffffa9d70000)\n\tlibc.so.6 => /lib/aarch64-linux-gnu/libc.so.6 (0x0000ffffa9bb0000)\n\t/lib/ld-linux-aarch64.so.1 (0x0000ffffaacc0000)\n",
+  "runtime_gdal_proj_libtiff_absent": true,
+  "build_tools": "Rust 1.92, C/C++ compiler, CMake, pkg-config; native Zarr/TLS dependencies still compile C/C++",
+  "first_attempt": {
+    "passed": false,
+    "reason": "Host-mounted clean target failed compiling zerocopy-derive: quote rlib unavailable. Container-local empty targets succeeded.",
+    "raw_log": "prototype-output/native-sentinel/linux-install-failed-host-target.log"
+  },
+  "platform_limit": "macOS ARM64 and Linux ARM64/glibc tested; Windows, x86_64, Intel macOS, musl and WASM unverified"
+}

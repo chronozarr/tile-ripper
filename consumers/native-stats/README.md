@@ -18,9 +18,13 @@ cargo build --release --locked --manifest-path consumers/native-stats/Cargo.toml
 target/native-consumer/release/tile-ripper-native-stats request.json
 ```
 
-This requires direct COG assets and bounds in their exact native CRS. Zarr paths
-remain available. The [native COG decision report](../../docs/native-cog/report.md)
-lists supported profiles, bounded-cache behavior and retained system dependencies.
+This accepts the [ordinary Sentinel polygon/date/band request](../../docs/native-sentinel/request.json)
+as well as direct COG assets and exact native bounds. Run that file to discover,
+pin, acquire and mask two real Sentinel bands. The
+[GDAL-free workflow](../../docs/native-sentinel/workflow.md) defines the narrow
+WGS84/UTM and geometry contract. Zarr paths remain available. The
+[native COG decision report](../../docs/native-cog/report.md)
+lists the TIFF profiles, bounded-cache behavior and retained system dependencies.
 Use a separate target directory when comparing installed executables.
 
 Supply the ordinary Tile-Ripper request schema, with `sink.kind = callback`.

@@ -8,8 +8,13 @@ files are review material, not an active grant. No human trial has completed.
 Use the supplied source folder at the maintainer's fixed revision. Start with the
 [self-contained newcomer trial](docs/alpha/human-trial.md): platform prerequisites,
 exact source install/uninstall, two small acquisitions, output inspection and
-feedback are all there. Acquisition requires Rust and system GDAL, not Python.
+feedback are all there. That default GeoTIFF trial requires Rust and system GDAL, not Python.
 Optional xarray output inspection uses a separate Python environment.
+
+The opt-in [native Sentinel trial](docs/native-sentinel/trial.md) instead acquires
+WGS84 polygon/date/band requests and consumes masked native arrays **without
+GDAL, PROJ or libtiff**. It has its own validated, narrower geography contract;
+it does not change this candidate's default reader or licensing status.
 
 | Capability | Alpha contract |
 | --- | --- |

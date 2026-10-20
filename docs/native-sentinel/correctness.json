@@ -1,0 +1,1399 @@
+{
+  "schema_version": 1,
+  "scope": "independent GDAL reference; narrow native Sentinel geometry",
+  "reference": {
+    "rasterio": "1.4.4",
+    "gdal": "3.10.3",
+    "proj": "9.7.1",
+    "shapely": "2.1.2",
+    "densification_degrees": 0.001,
+    "transformed_geometry_tolerance_m": 0.001,
+    "rasterization": "GDAL default pixel-center on full source grid, then crop; all_touched=false",
+    "native_samples": "UInt16 stored values; no calibration or raster reprojection"
+  },
+  "binary_sha256": "cd2ef68c913931216a5be97efff109d16e4f176ba9c6469582d2f52165f20651",
+  "sources": [
+    {
+      "name": "large-row.tif",
+      "sha256": "6b030d427639268fd5c2246b52a3bfe1520c9c2c842648e442ac93dfa8ff037d"
+    },
+    {
+      "name": "missing-mask-nodata.tif",
+      "sha256": "f5302b878c9b5220f00ec082aa213f936094007038900c4cb4de167c546aa19d"
+    },
+    {
+      "name": "non-utm-source-transform.tif",
+      "sha256": "e6c462531b66baa88ef08a82d1e709a760bd621a7e15c005ec863588a8eb0a68"
+    },
+    {
+      "name": "north17.tif",
+      "sha256": "84e65dab30dd82c068d06430be83a20d7a1667ed189ae9e474ce22e345eaa661"
+    },
+    {
+      "name": "north31.tif",
+      "sha256": "80f6d0604bbe67fbdad0e030dcd1e9c9a886aa9148afa955aab5cb754b199bd0"
+    },
+    {
+      "name": "ordinary60m.tif",
+      "sha256": "7d9282423781572102fe09830a10a9b546b873ec2da82b9a7454a3379e66c077"
+    },
+    {
+      "name": "south56.tif",
+      "sha256": "4dca2665e27e5603ec070fa732b3f9359ed909720274b2e3b5389cf863e34b7b"
+    },
+    {
+      "name": "strip-profile.tif",
+      "sha256": "e2daa03ab738aa959ce8b177447220143b96b8aa6d817b225a65ed2024da2ae3"
+    },
+    {
+      "name": "uint8-profile.tif",
+      "sha256": "84e02735eaa5c3957db17883ad8b67212a8057865ef4544097aa72db4161c2db"
+    },
+    {
+      "name": "zone-adjacent.tif",
+      "sha256": "fead2f4f034ef389552c38bb579b2b275f7c2f6bdc0b3583223da4d857d1a2b1"
+    }
+  ],
+  "accepted": 95,
+  "failed": 0,
+  "success_cases": 70,
+  "rejection_cases": 19,
+  "chunk_invariance_checks": 6,
+  "samples_compared_bit_for_bit": 755798,
+  "results": [
+    {
+      "name": "north17-rectangle",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.663477,
+      "chunks": 15,
+      "samples": 6900,
+      "valid_pixels": 6710,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 9.525101631879807e-07,
+      "oracle_sha256": "8629e9db2a37a2042ddee6541984d1c3cd10464bd1b690076caa5bd5e78de8c2",
+      "native_sha256": "8629e9db2a37a2042ddee6541984d1c3cd10464bd1b690076caa5bd5e78de8c2",
+      "passed": true
+    },
+    {
+      "name": "north17-concavity",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.010576,
+      "chunks": 16,
+      "samples": 7406,
+      "valid_pixels": 6039,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 9.313225746154785e-07,
+      "oracle_sha256": "da39eb6b10c5fb48201de5153c7e99e50d905dec18e03af9ac346d89be681785",
+      "native_sha256": "da39eb6b10c5fb48201de5153c7e99e50d905dec18e03af9ac346d89be681785",
+      "passed": true
+    },
+    {
+      "name": "north17-hole",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.00994,
+      "chunks": 24,
+      "samples": 10680,
+      "valid_pixels": 7966,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 9.522773325443268e-07,
+      "oracle_sha256": "14155c05669b65c0d9fa0d4b67443eabbc2a9f242d76ab44da43205f9a98dfe6",
+      "native_sha256": "14155c05669b65c0d9fa0d4b67443eabbc2a9f242d76ab44da43205f9a98dfe6",
+      "passed": true
+    },
+    {
+      "name": "north17-partial",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.009305,
+      "chunks": 27,
+      "samples": 11845,
+      "valid_pixels": 9931,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 2.797295608186562e-06,
+      "oracle_sha256": "ffcc7502aca5e30b6a48aa10d28dbb0b4920c3e1b233ff065f69e3fb88c565eb",
+      "native_sha256": "ffcc7502aca5e30b6a48aa10d28dbb0b4920c3e1b233ff065f69e3fb88c565eb",
+      "passed": true
+    },
+    {
+      "name": "north17-outside",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.00718,
+      "chunks": 0,
+      "samples": 0,
+      "valid_pixels": 0,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 0.0,
+      "oracle_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "native_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "passed": true
+    },
+    {
+      "name": "north17-tiny-no-centers",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.00758,
+      "chunks": 0,
+      "samples": 0,
+      "valid_pixels": 0,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 0.0,
+      "oracle_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "native_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "passed": true
+    },
+    {
+      "name": "north17-clip-splits-polygon",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.006991,
+      "chunks": 12,
+      "samples": 4408,
+      "valid_pixels": 2996,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 1.5597189834057879e-06,
+      "oracle_sha256": "13aa071f2fc60d8003321adce89a3153573cacb65ea508ab9428e5a3f200dd1f",
+      "native_sha256": "13aa071f2fc60d8003321adce89a3153573cacb65ea508ab9428e5a3f200dd1f",
+      "passed": true
+    },
+    {
+      "name": "north17-reversed-rings",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.009355,
+      "chunks": 24,
+      "samples": 10680,
+      "valid_pixels": 7966,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 9.522773325443268e-07,
+      "oracle_sha256": "14155c05669b65c0d9fa0d4b67443eabbc2a9f242d76ab44da43205f9a98dfe6",
+      "native_sha256": "14155c05669b65c0d9fa0d4b67443eabbc2a9f242d76ab44da43205f9a98dfe6",
+      "passed": true
+    },
+    {
+      "name": "north17-geographic-bounds",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.007897,
+      "chunks": 20,
+      "samples": 7344,
+      "valid_pixels": 6866,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 9.745810163714393e-07,
+      "oracle_sha256": "84cb808bdc0a29471192d13023676bb3a15106fd35e627d78d7dc30894e78f5d",
+      "native_sha256": "84cb808bdc0a29471192d13023676bb3a15106fd35e627d78d7dc30894e78f5d",
+      "passed": true
+    },
+    {
+      "name": "north31-rectangle",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.006849,
+      "chunks": 15,
+      "samples": 6900,
+      "valid_pixels": 6710,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 9.277136996388435e-07,
+      "oracle_sha256": "5cd5b2c7bcee15ae1ec0259332e472e8e194ef7f74461684277d3f1fdf699499",
+      "native_sha256": "5cd5b2c7bcee15ae1ec0259332e472e8e194ef7f74461684277d3f1fdf699499",
+      "passed": true
+    },
+    {
+      "name": "north31-concavity",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.007564,
+      "chunks": 16,
+      "samples": 7406,
+      "valid_pixels": 6039,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 8.707866092109157e-07,
+      "oracle_sha256": "bd1b49c2c30362dd53c6e340c41706a27915e80889f43f1dbd5eb322de69bb9c",
+      "native_sha256": "bd1b49c2c30362dd53c6e340c41706a27915e80889f43f1dbd5eb322de69bb9c",
+      "passed": true
+    },
+    {
+      "name": "north31-hole",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.007514,
+      "chunks": 24,
+      "samples": 10680,
+      "valid_pixels": 7966,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 9.150244295597076e-07,
+      "oracle_sha256": "c48faeecd45bdc0ce550a8e2ce770366186a6ba258a9192702ac382cfdfa4d00",
+      "native_sha256": "c48faeecd45bdc0ce550a8e2ce770366186a6ba258a9192702ac382cfdfa4d00",
+      "passed": true
+    },
+    {
+      "name": "north31-partial",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.007452,
+      "chunks": 27,
+      "samples": 11845,
+      "valid_pixels": 9931,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 3.8006504340785113e-06,
+      "oracle_sha256": "7670b2526a9c48b59fc4b037a0447c5bf0dd2fb865c05ae5ab80b260575d67a0",
+      "native_sha256": "7670b2526a9c48b59fc4b037a0447c5bf0dd2fb865c05ae5ab80b260575d67a0",
+      "passed": true
+    },
+    {
+      "name": "north31-outside",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.006364,
+      "chunks": 0,
+      "samples": 0,
+      "valid_pixels": 0,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 0.0,
+      "oracle_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "native_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "passed": true
+    },
+    {
+      "name": "north31-tiny-no-centers",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.005598,
+      "chunks": 0,
+      "samples": 0,
+      "valid_pixels": 0,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 0.0,
+      "oracle_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "native_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "passed": true
+    },
+    {
+      "name": "north31-clip-splits-polygon",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.006716,
+      "chunks": 12,
+      "samples": 4408,
+      "valid_pixels": 2996,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 1.465674066045962e-06,
+      "oracle_sha256": "422e06920e3a3b4db410fb51afeb4bd494c978de7ae5a795fc3a7f249c1d6b57",
+      "native_sha256": "422e06920e3a3b4db410fb51afeb4bd494c978de7ae5a795fc3a7f249c1d6b57",
+      "passed": true
+    },
+    {
+      "name": "north31-reversed-rings",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.007251,
+      "chunks": 24,
+      "samples": 10680,
+      "valid_pixels": 7966,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 9.150244295597076e-07,
+      "oracle_sha256": "c48faeecd45bdc0ce550a8e2ce770366186a6ba258a9192702ac382cfdfa4d00",
+      "native_sha256": "c48faeecd45bdc0ce550a8e2ce770366186a6ba258a9192702ac382cfdfa4d00",
+      "passed": true
+    },
+    {
+      "name": "north31-geographic-bounds",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.016563,
+      "chunks": 15,
+      "samples": 6900,
+      "valid_pixels": 6710,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 9.522195803256051e-07,
+      "oracle_sha256": "5cd5b2c7bcee15ae1ec0259332e472e8e194ef7f74461684277d3f1fdf699499",
+      "native_sha256": "5cd5b2c7bcee15ae1ec0259332e472e8e194ef7f74461684277d3f1fdf699499",
+      "passed": true
+    },
+    {
+      "name": "south56-rectangle",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.007535,
+      "chunks": 15,
+      "samples": 6900,
+      "valid_pixels": 6710,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 9.406358021626129e-07,
+      "oracle_sha256": "03be7af4da5207b0e30709be8a21a281a1bad465ce17f6ba6afbebcbbf21e872",
+      "native_sha256": "03be7af4da5207b0e30709be8a21a281a1bad465ce17f6ba6afbebcbbf21e872",
+      "passed": true
+    },
+    {
+      "name": "south56-concavity",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.086163,
+      "chunks": 16,
+      "samples": 7406,
+      "valid_pixels": 6039,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 9.298091754317284e-07,
+      "oracle_sha256": "ade9731f667e92a043a039a14cf5381358135fc47238ed8847eeac890103671f",
+      "native_sha256": "ade9731f667e92a043a039a14cf5381358135fc47238ed8847eeac890103671f",
+      "passed": true
+    },
+    {
+      "name": "south56-hole",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.023163,
+      "chunks": 24,
+      "samples": 10680,
+      "valid_pixels": 7966,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 9.508803504639798e-07,
+      "oracle_sha256": "2164f5a6a6cfe6263aab8e54fa47c4039838f59ca976d09d08482bb403b745e8",
+      "native_sha256": "2164f5a6a6cfe6263aab8e54fa47c4039838f59ca976d09d08482bb403b745e8",
+      "passed": true
+    },
+    {
+      "name": "south56-partial",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.042998,
+      "chunks": 27,
+      "samples": 11845,
+      "valid_pixels": 9931,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 2.364373566115503e-06,
+      "oracle_sha256": "8c2d31d9defbed26f7888e1d1ef2acb9643d1cf9effa071e9b83ce6b03ad3415",
+      "native_sha256": "8c2d31d9defbed26f7888e1d1ef2acb9643d1cf9effa071e9b83ce6b03ad3415",
+      "passed": true
+    },
+    {
+      "name": "south56-outside",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.008505,
+      "chunks": 0,
+      "samples": 0,
+      "valid_pixels": 0,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 0.0,
+      "oracle_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "native_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "passed": true
+    },
+    {
+      "name": "south56-tiny-no-centers",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.013417,
+      "chunks": 0,
+      "samples": 0,
+      "valid_pixels": 0,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 0.0,
+      "oracle_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "native_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "passed": true
+    },
+    {
+      "name": "south56-clip-splits-polygon",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.008153,
+      "chunks": 12,
+      "samples": 4408,
+      "valid_pixels": 2996,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 9.538489393889904e-07,
+      "oracle_sha256": "26de7fb95606fa8b49de974fcfde43b8982d85ccb2f3c5dfe32a5bc795d17310",
+      "native_sha256": "26de7fb95606fa8b49de974fcfde43b8982d85ccb2f3c5dfe32a5bc795d17310",
+      "passed": true
+    },
+    {
+      "name": "south56-reversed-rings",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.008413,
+      "chunks": 24,
+      "samples": 10680,
+      "valid_pixels": 7966,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 9.508803504639798e-07,
+      "oracle_sha256": "2164f5a6a6cfe6263aab8e54fa47c4039838f59ca976d09d08482bb403b745e8",
+      "native_sha256": "2164f5a6a6cfe6263aab8e54fa47c4039838f59ca976d09d08482bb403b745e8",
+      "passed": true
+    },
+    {
+      "name": "south56-geographic-bounds",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.007883,
+      "chunks": 20,
+      "samples": 7622,
+      "valid_pixels": 6989,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 9.640676782076316e-07,
+      "oracle_sha256": "8d4b70e9e5bb644fde70c3c48fe66a4a5081a1b2eb30c0359f9f0ec0ad5119c2",
+      "native_sha256": "8d4b70e9e5bb644fde70c3c48fe66a4a5081a1b2eb30c0359f9f0ec0ad5119c2",
+      "passed": true
+    },
+    {
+      "name": "zone-adjacent-rectangle",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.00803,
+      "chunks": 15,
+      "samples": 6900,
+      "valid_pixels": 6710,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 9.369105141314877e-07,
+      "oracle_sha256": "96916bcd9c6e645047e73d387a3fb12437803861d0e3716b6b89a6bdb49f8c9a",
+      "native_sha256": "96916bcd9c6e645047e73d387a3fb12437803861d0e3716b6b89a6bdb49f8c9a",
+      "passed": true
+    },
+    {
+      "name": "zone-adjacent-concavity",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.008199,
+      "chunks": 16,
+      "samples": 7406,
+      "valid_pixels": 6039,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 9.360956028103828e-07,
+      "oracle_sha256": "48098d6e099c1b266e09b918d6dbbda313ae92a9e2d824bf394441749efda2dd",
+      "native_sha256": "48098d6e099c1b266e09b918d6dbbda313ae92a9e2d824bf394441749efda2dd",
+      "passed": true
+    },
+    {
+      "name": "zone-adjacent-hole",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.008436,
+      "chunks": 24,
+      "samples": 10680,
+      "valid_pixels": 7966,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 9.416253305971622e-07,
+      "oracle_sha256": "37234ac8c47bc50a265fcc029a9f9cd724d2ae238be6e9b7d636de3877d22091",
+      "native_sha256": "37234ac8c47bc50a265fcc029a9f9cd724d2ae238be6e9b7d636de3877d22091",
+      "passed": true
+    },
+    {
+      "name": "zone-adjacent-partial",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.008927,
+      "chunks": 27,
+      "samples": 11845,
+      "valid_pixels": 9931,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 3.1810992757659587e-06,
+      "oracle_sha256": "c3086762c67818532774363e9ada5cd6e3c903e1667a28557343306bf3b00e3d",
+      "native_sha256": "c3086762c67818532774363e9ada5cd6e3c903e1667a28557343306bf3b00e3d",
+      "passed": true
+    },
+    {
+      "name": "zone-adjacent-outside",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.006982,
+      "chunks": 0,
+      "samples": 0,
+      "valid_pixels": 0,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 0.0,
+      "oracle_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "native_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "passed": true
+    },
+    {
+      "name": "zone-adjacent-tiny-no-centers",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.007745,
+      "chunks": 0,
+      "samples": 0,
+      "valid_pixels": 0,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 0.0,
+      "oracle_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "native_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "passed": true
+    },
+    {
+      "name": "zone-adjacent-clip-splits-polygon",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.007331,
+      "chunks": 12,
+      "samples": 4408,
+      "valid_pixels": 2996,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 2.7769387436763174e-06,
+      "oracle_sha256": "2da20f19bd710797cd554a4d75b25d66ee88b25fcac2cfe26b09c5d1f8db4195",
+      "native_sha256": "2da20f19bd710797cd554a4d75b25d66ee88b25fcac2cfe26b09c5d1f8db4195",
+      "passed": true
+    },
+    {
+      "name": "zone-adjacent-reversed-rings",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.008247,
+      "chunks": 24,
+      "samples": 10680,
+      "valid_pixels": 7966,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 9.416253305971622e-07,
+      "oracle_sha256": "37234ac8c47bc50a265fcc029a9f9cd724d2ae238be6e9b7d636de3877d22091",
+      "native_sha256": "37234ac8c47bc50a265fcc029a9f9cd724d2ae238be6e9b7d636de3877d22091",
+      "passed": true
+    },
+    {
+      "name": "zone-adjacent-geographic-bounds",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.009058,
+      "chunks": 20,
+      "samples": 7904,
+      "valid_pixels": 7169,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 1.020530900756805e-06,
+      "oracle_sha256": "56208780ef9767b3eada6d9cd06c7683485412d8cc3ab802d680b65be1596989",
+      "native_sha256": "56208780ef9767b3eada6d9cd06c7683485412d8cc3ab802d680b65be1596989",
+      "passed": true
+    },
+    {
+      "name": "centers-rectangle",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.007759,
+      "chunks": 20,
+      "samples": 4828,
+      "valid_pixels": 4636,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 0.0,
+      "oracle_sha256": "51789d85ff7cfc671853145dc0213928a6a1f014614955a608536fde1d025f65",
+      "native_sha256": "51789d85ff7cfc671853145dc0213928a6a1f014614955a608536fde1d025f65",
+      "passed": true
+    },
+    {
+      "name": "centers-rectangle-reversed",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.00761,
+      "chunks": 20,
+      "samples": 4828,
+      "valid_pixels": 4636,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 0.0,
+      "oracle_sha256": "51789d85ff7cfc671853145dc0213928a6a1f014614955a608536fde1d025f65",
+      "native_sha256": "51789d85ff7cfc671853145dc0213928a6a1f014614955a608536fde1d025f65",
+      "passed": true
+    },
+    {
+      "name": "centers-triangle",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.007878,
+      "chunks": 15,
+      "samples": 3103,
+      "valid_pixels": 2381,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 0.0,
+      "oracle_sha256": "feceb5ea14bd907be34c0eeac5433e7ae05827bf5bc13573395fa5075a16d88c",
+      "native_sha256": "feceb5ea14bd907be34c0eeac5433e7ae05827bf5bc13573395fa5075a16d88c",
+      "passed": true
+    },
+    {
+      "name": "centers-triangle-reversed",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.008739,
+      "chunks": 15,
+      "samples": 3103,
+      "valid_pixels": 2381,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 0.0,
+      "oracle_sha256": "feceb5ea14bd907be34c0eeac5433e7ae05827bf5bc13573395fa5075a16d88c",
+      "native_sha256": "feceb5ea14bd907be34c0eeac5433e7ae05827bf5bc13573395fa5075a16d88c",
+      "passed": true
+    },
+    {
+      "name": "centers-hole",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.008752,
+      "chunks": 35,
+      "samples": 7632,
+      "valid_pixels": 6072,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 0.0,
+      "oracle_sha256": "fdd6fa79d93ad9619090fb5709805e55ac7db98b04df6ad7846abacddcd50f45",
+      "native_sha256": "fdd6fa79d93ad9619090fb5709805e55ac7db98b04df6ad7846abacddcd50f45",
+      "passed": true
+    },
+    {
+      "name": "centers-hole-reversed",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.008177,
+      "chunks": 35,
+      "samples": 7632,
+      "valid_pixels": 6072,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 0.0,
+      "oracle_sha256": "fdd6fa79d93ad9619090fb5709805e55ac7db98b04df6ad7846abacddcd50f45",
+      "native_sha256": "fdd6fa79d93ad9619090fb5709805e55ac7db98b04df6ad7846abacddcd50f45",
+      "passed": true
+    },
+    {
+      "name": "outer-pixel-edges",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.007969,
+      "chunks": 48,
+      "samples": 12288,
+      "valid_pixels": 12121,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 0.0,
+      "oracle_sha256": "96f7fabd4f42546faf529b53bf50768db43d9782428652fb2ebd148df9a8360d",
+      "native_sha256": "96f7fabd4f42546faf529b53bf50768db43d9782428652fb2ebd148df9a8360d",
+      "passed": true
+    },
+    {
+      "name": "outer-pixel-edges-reversed",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.007807,
+      "chunks": 48,
+      "samples": 12288,
+      "valid_pixels": 12121,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 0.0,
+      "oracle_sha256": "96f7fabd4f42546faf529b53bf50768db43d9782428652fb2ebd148df9a8360d",
+      "native_sha256": "96f7fabd4f42546faf529b53bf50768db43d9782428652fb2ebd148df9a8360d",
+      "passed": true
+    },
+    {
+      "name": "edge-touch-outside",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.006452,
+      "chunks": 0,
+      "samples": 0,
+      "valid_pixels": 0,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 0.0,
+      "oracle_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "native_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "passed": true
+    },
+    {
+      "name": "edge-touch-outside-reversed",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.006377,
+      "chunks": 0,
+      "samples": 0,
+      "valid_pixels": 0,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 0.0,
+      "oracle_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "native_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "passed": true
+    },
+    {
+      "name": "slanted-concavity",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.006987,
+      "chunks": 26,
+      "samples": 6334,
+      "valid_pixels": 4427,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 0.0,
+      "oracle_sha256": "69550428c11f9fd5fa493faac741a3bc67f421ad1d0916740e1b30171534ad2b",
+      "native_sha256": "69550428c11f9fd5fa493faac741a3bc67f421ad1d0916740e1b30171534ad2b",
+      "passed": true
+    },
+    {
+      "name": "slanted-concavity-reversed",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.007469,
+      "chunks": 26,
+      "samples": 6334,
+      "valid_pixels": 4427,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 0.0,
+      "oracle_sha256": "69550428c11f9fd5fa493faac741a3bc67f421ad1d0916740e1b30171534ad2b",
+      "native_sha256": "69550428c11f9fd5fa493faac741a3bc67f421ad1d0916740e1b30171534ad2b",
+      "passed": true
+    },
+    {
+      "name": "native-bounds-full",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.007707,
+      "chunks": 30,
+      "samples": 12288,
+      "valid_pixels": 12121,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 0.0,
+      "oracle_sha256": "af6d666faf15c5d96c9760e4367307dc206c9305682b899323f98de262143a13",
+      "native_sha256": "af6d666faf15c5d96c9760e4367307dc206c9305682b899323f98de262143a13",
+      "passed": true
+    },
+    {
+      "name": "asset-date-band-request-order",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.008624,
+      "chunks": 48,
+      "samples": 21360,
+      "valid_pixels": 15932,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 9.522773325443268e-07,
+      "oracle_sha256": "3fc03f3ad4f0287183e9dd1e05398e34b0d1e6cc5c96808bf8c6f903fe0875d6",
+      "native_sha256": "3fc03f3ad4f0287183e9dd1e05398e34b0d1e6cc5c96808bf8c6f903fe0875d6",
+      "passed": true
+    },
+    {
+      "name": "explicit-instant-filter",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.007956,
+      "chunks": 24,
+      "samples": 10680,
+      "valid_pixels": 7966,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 9.522773325443268e-07,
+      "oracle_sha256": "14155c05669b65c0d9fa0d4b67443eabbc2a9f242d76ab44da43205f9a98dfe6",
+      "native_sha256": "14155c05669b65c0d9fa0d4b67443eabbc2a9f242d76ab44da43205f9a98dfe6",
+      "passed": true
+    },
+    {
+      "name": "date-empty-selection",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.006176,
+      "chunks": 0,
+      "samples": 0,
+      "valid_pixels": 0,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 0.0,
+      "oracle_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "native_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "passed": true
+    },
+    {
+      "name": "source-global-ordinary60m-rectangle-chunk17",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.013814,
+      "chunks": 100,
+      "samples": 28560,
+      "valid_pixels": 28030,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 0.0,
+      "oracle_sha256": "4024ae6467bcacd44c0d81d05033297ce32a0cbf034f5b9530fcd8bf464aa00c",
+      "native_sha256": "4024ae6467bcacd44c0d81d05033297ce32a0cbf034f5b9530fcd8bf464aa00c",
+      "reconstructed_source_sha256": {
+        "B04": "5022eb83d4cbbb23f9e36576de152f0f91b7fbcae0b9d82c094a195ffdae366a"
+      },
+      "passed": true
+    },
+    {
+      "name": "source-global-ordinary60m-rectangle-chunk32",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.013067,
+      "chunks": 36,
+      "samples": 28728,
+      "valid_pixels": 28030,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 0.0,
+      "oracle_sha256": "3d4776237781124abd778f32c9ca4cbad3b3b52bf4287e7ff5bcb97129325390",
+      "native_sha256": "3d4776237781124abd778f32c9ca4cbad3b3b52bf4287e7ff5bcb97129325390",
+      "reconstructed_source_sha256": {
+        "B04": "5022eb83d4cbbb23f9e36576de152f0f91b7fbcae0b9d82c094a195ffdae366a"
+      },
+      "passed": true
+    },
+    {
+      "name": "source-global-ordinary60m-rectangle-chunk64",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.012164,
+      "chunks": 9,
+      "samples": 28728,
+      "valid_pixels": 28030,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 0.0,
+      "oracle_sha256": "32a7a7bb1d940bab864c26dc8bfad1aa1ba6b5a6b87f6bb73100d0eae993105d",
+      "native_sha256": "32a7a7bb1d940bab864c26dc8bfad1aa1ba6b5a6b87f6bb73100d0eae993105d",
+      "reconstructed_source_sha256": {
+        "B04": "5022eb83d4cbbb23f9e36576de152f0f91b7fbcae0b9d82c094a195ffdae366a"
+      },
+      "passed": true
+    },
+    {
+      "name": "source-global-ordinary60m-triangle-chunk17",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.012864,
+      "chunks": 55,
+      "samples": 15895,
+      "valid_pixels": 14344,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 0.0,
+      "oracle_sha256": "6c6e4430e77e197428f4badbc3ce7112ba524dc78150b04ad037ceac6b8695b5",
+      "native_sha256": "6c6e4430e77e197428f4badbc3ce7112ba524dc78150b04ad037ceac6b8695b5",
+      "reconstructed_source_sha256": {
+        "B04": "1e7c5c9b89d18b5da337242ffcd01bfe525b9b575cb55ec0b408fbbaf87449ec"
+      },
+      "passed": true
+    },
+    {
+      "name": "source-global-ordinary60m-triangle-chunk32",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.011837,
+      "chunks": 21,
+      "samples": 17241,
+      "valid_pixels": 14344,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 0.0,
+      "oracle_sha256": "14605fe813cca83cb80a897f0990fa272f3b40357ba2f84d4e9be86a9dd7d932",
+      "native_sha256": "14605fe813cca83cb80a897f0990fa272f3b40357ba2f84d4e9be86a9dd7d932",
+      "reconstructed_source_sha256": {
+        "B04": "1e7c5c9b89d18b5da337242ffcd01bfe525b9b575cb55ec0b408fbbaf87449ec"
+      },
+      "passed": true
+    },
+    {
+      "name": "source-global-ordinary60m-triangle-chunk64",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.01147,
+      "chunks": 6,
+      "samples": 19641,
+      "valid_pixels": 14344,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 0.0,
+      "oracle_sha256": "897d64f22cb6b14d73c813f716d81ed34dcead710de1a0cc395482523033dae4",
+      "native_sha256": "897d64f22cb6b14d73c813f716d81ed34dcead710de1a0cc395482523033dae4",
+      "reconstructed_source_sha256": {
+        "B04": "1e7c5c9b89d18b5da337242ffcd01bfe525b9b575cb55ec0b408fbbaf87449ec"
+      },
+      "passed": true
+    },
+    {
+      "name": "source-global-ordinary60m-hole-chunk17",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.013019,
+      "chunks": 70,
+      "samples": 19890,
+      "valid_pixels": 17170,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 0.0,
+      "oracle_sha256": "3726781f3334adecf723fe03bd96b445180970a78fe064d8861cbca5637b384c",
+      "native_sha256": "3726781f3334adecf723fe03bd96b445180970a78fe064d8861cbca5637b384c",
+      "reconstructed_source_sha256": {
+        "B04": "a0a1e88e3dcac5b70d126b51a501e5787abca517e4200d7aa7ab269c875605c5"
+      },
+      "passed": true
+    },
+    {
+      "name": "source-global-ordinary60m-hole-chunk32",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.01184,
+      "chunks": 27,
+      "samples": 19512,
+      "valid_pixels": 17170,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 0.0,
+      "oracle_sha256": "e7f337e3e090f57cc544cd0bded6ff81e942c5f0fd8fce3a2a8717b7c449806a",
+      "native_sha256": "e7f337e3e090f57cc544cd0bded6ff81e942c5f0fd8fce3a2a8717b7c449806a",
+      "reconstructed_source_sha256": {
+        "B04": "a0a1e88e3dcac5b70d126b51a501e5787abca517e4200d7aa7ab269c875605c5"
+      },
+      "passed": true
+    },
+    {
+      "name": "source-global-ordinary60m-hole-chunk64",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.011799,
+      "chunks": 8,
+      "samples": 24632,
+      "valid_pixels": 17170,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 0.0,
+      "oracle_sha256": "7be4f6334fbcce88870f4a72e53f7b249eaa2ca787e954966139ccbb7bf5451a",
+      "native_sha256": "7be4f6334fbcce88870f4a72e53f7b249eaa2ca787e954966139ccbb7bf5451a",
+      "reconstructed_source_sha256": {
+        "B04": "a0a1e88e3dcac5b70d126b51a501e5787abca517e4200d7aa7ab269c875605c5"
+      },
+      "passed": true
+    },
+    {
+      "name": "source-global-large-row-rectangle-chunk17",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.011114,
+      "chunks": 100,
+      "samples": 28560,
+      "valid_pixels": 28030,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 0.0,
+      "oracle_sha256": "5dca67ab25e9ede45ad6f005ec5042be9bcafe15d4f6f4b5b6448367a4edfda7",
+      "native_sha256": "5dca67ab25e9ede45ad6f005ec5042be9bcafe15d4f6f4b5b6448367a4edfda7",
+      "reconstructed_source_sha256": {
+        "B04": "22b6e5db135e1cc6334f58f7a526c1fa79cdd86f092ccc1a44b4aa86e7fb1e45"
+      },
+      "passed": true
+    },
+    {
+      "name": "source-global-large-row-rectangle-chunk32",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.010011,
+      "chunks": 36,
+      "samples": 28728,
+      "valid_pixels": 28030,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 0.0,
+      "oracle_sha256": "a12691bf6564d0d99f486bcf275c52473863376f1774cfcef99c3751f0f928ff",
+      "native_sha256": "a12691bf6564d0d99f486bcf275c52473863376f1774cfcef99c3751f0f928ff",
+      "reconstructed_source_sha256": {
+        "B04": "22b6e5db135e1cc6334f58f7a526c1fa79cdd86f092ccc1a44b4aa86e7fb1e45"
+      },
+      "passed": true
+    },
+    {
+      "name": "source-global-large-row-rectangle-chunk64",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.009375,
+      "chunks": 9,
+      "samples": 28728,
+      "valid_pixels": 28030,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 0.0,
+      "oracle_sha256": "8dad360fc934b42dae53d4eca1177393f9e345007715e0ed2c76b9c3306cf87f",
+      "native_sha256": "8dad360fc934b42dae53d4eca1177393f9e345007715e0ed2c76b9c3306cf87f",
+      "reconstructed_source_sha256": {
+        "B04": "22b6e5db135e1cc6334f58f7a526c1fa79cdd86f092ccc1a44b4aa86e7fb1e45"
+      },
+      "passed": true
+    },
+    {
+      "name": "source-global-large-row-triangle-chunk17",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.010472,
+      "chunks": 55,
+      "samples": 15895,
+      "valid_pixels": 14351,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 0.0,
+      "oracle_sha256": "872620acdf8bad0570c54bdcc68a73925125dd3aa141ddabfa614f8564fc76b8",
+      "native_sha256": "872620acdf8bad0570c54bdcc68a73925125dd3aa141ddabfa614f8564fc76b8",
+      "reconstructed_source_sha256": {
+        "B04": "997914c5537ca9760ff5c4fab93d7d707f7a78c4ca02d504a99d288afb853ee9"
+      },
+      "passed": true
+    },
+    {
+      "name": "source-global-large-row-triangle-chunk32",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.009537,
+      "chunks": 21,
+      "samples": 17241,
+      "valid_pixels": 14351,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 0.0,
+      "oracle_sha256": "f10fea4ffe04e20e6671e7254f59a57f477cf64304bebf8ae016f15e6c144558",
+      "native_sha256": "f10fea4ffe04e20e6671e7254f59a57f477cf64304bebf8ae016f15e6c144558",
+      "reconstructed_source_sha256": {
+        "B04": "997914c5537ca9760ff5c4fab93d7d707f7a78c4ca02d504a99d288afb853ee9"
+      },
+      "passed": true
+    },
+    {
+      "name": "source-global-large-row-triangle-chunk64",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.008975,
+      "chunks": 6,
+      "samples": 19641,
+      "valid_pixels": 14351,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 0.0,
+      "oracle_sha256": "f2d7850c5b345394c9a9286acae0ca5133a1377bebe167683f696dcbd46e0c5a",
+      "native_sha256": "f2d7850c5b345394c9a9286acae0ca5133a1377bebe167683f696dcbd46e0c5a",
+      "reconstructed_source_sha256": {
+        "B04": "997914c5537ca9760ff5c4fab93d7d707f7a78c4ca02d504a99d288afb853ee9"
+      },
+      "passed": true
+    },
+    {
+      "name": "source-global-large-row-hole-chunk17",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.010611,
+      "chunks": 70,
+      "samples": 19890,
+      "valid_pixels": 17170,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 0.0,
+      "oracle_sha256": "d1e8d1c7cf27a15a1447f445652844b2a2a0d290cb7bdfa76adea4a3acce1eab",
+      "native_sha256": "d1e8d1c7cf27a15a1447f445652844b2a2a0d290cb7bdfa76adea4a3acce1eab",
+      "reconstructed_source_sha256": {
+        "B04": "ecbb8de697e3a4ddf74adb9a0d642277fc77e72e44b26dd3c0271b942d88fad6"
+      },
+      "passed": true
+    },
+    {
+      "name": "source-global-large-row-hole-chunk32",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.009789,
+      "chunks": 27,
+      "samples": 19512,
+      "valid_pixels": 17170,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 0.0,
+      "oracle_sha256": "6956a05513e6a1eaa7fb0cb4968c98a41c526570cdf2e51be30a6b35dbeee3e0",
+      "native_sha256": "6956a05513e6a1eaa7fb0cb4968c98a41c526570cdf2e51be30a6b35dbeee3e0",
+      "reconstructed_source_sha256": {
+        "B04": "ecbb8de697e3a4ddf74adb9a0d642277fc77e72e44b26dd3c0271b942d88fad6"
+      },
+      "passed": true
+    },
+    {
+      "name": "source-global-large-row-hole-chunk64",
+      "expected": "complete",
+      "exit_code": 0,
+      "seconds": 0.008981,
+      "chunks": 8,
+      "samples": 24632,
+      "valid_pixels": 17170,
+      "exact_stored_values": true,
+      "exact_metadata": true,
+      "maximum_geometry_error_m": 0.0,
+      "oracle_sha256": "d9c3c37f52aeb93136639681be15cdb4163716d076bdec4527b5f9ee631a3fc1",
+      "native_sha256": "d9c3c37f52aeb93136639681be15cdb4163716d076bdec4527b5f9ee631a3fc1",
+      "reconstructed_source_sha256": {
+        "B04": "ecbb8de697e3a4ddf74adb9a0d642277fc77e72e44b26dd3c0271b942d88fad6"
+      },
+      "passed": true
+    },
+    {
+      "name": "antimeridian",
+      "expected": "explicit_rejection",
+      "exit_code": 1,
+      "seconds": 0.006798,
+      "rejection": "native Sentinel oracle aborted: prepare: invalid or wrapped bounds",
+      "passed": true
+    },
+    {
+      "name": "antimeridian-polygon",
+      "expected": "explicit_rejection",
+      "exit_code": 1,
+      "seconds": 0.007227,
+      "rejection": "native Sentinel oracle aborted: prepare: native geographic geometry supports extents up to 5 degrees and rejects antimeridian/wrapped AOIs",
+      "passed": true
+    },
+    {
+      "name": "oversize-geographic-span",
+      "expected": "explicit_rejection",
+      "exit_code": 1,
+      "seconds": 0.006508,
+      "rejection": "native Sentinel oracle aborted: prepare: native geographic geometry supports extents up to 5 degrees and rejects antimeridian/wrapped AOIs",
+      "passed": true
+    },
+    {
+      "name": "unsupported-input-crs",
+      "expected": "explicit_rejection",
+      "exit_code": 1,
+      "seconds": 0.006495,
+      "rejection": "native Sentinel oracle aborted: prepare: native polygon geometry supports only EPSG:4326 longitude/latitude and WGS84 UTM EPSG:32601..32660 / 32701..32760",
+      "passed": true
+    },
+    {
+      "name": "unsupported-input-wkt",
+      "expected": "explicit_rejection",
+      "exit_code": 1,
+      "seconds": 0.006143,
+      "rejection": "native Sentinel oracle aborted: prepare: native polygon geometry supports only EPSG:4326 longitude/latitude and WGS84 UTM EPSG:32601..32660 / 32701..32760",
+      "passed": true
+    },
+    {
+      "name": "wrong-hemisphere",
+      "expected": "explicit_rejection",
+      "exit_code": 1,
+      "seconds": 0.00638,
+      "rejection": "native Sentinel oracle aborted: prepare: AOI is outside the supported target UTM zone vicinity or hemisphere",
+      "passed": true
+    },
+    {
+      "name": "too-distant-utm-zone",
+      "expected": "explicit_rejection",
+      "exit_code": 1,
+      "seconds": 0.005444,
+      "rejection": "native Sentinel oracle aborted: prepare: AOI is outside the supported target UTM zone vicinity or hemisphere",
+      "passed": true
+    },
+    {
+      "name": "polar-latitude",
+      "expected": "explicit_rejection",
+      "exit_code": 1,
+      "seconds": 0.005462,
+      "rejection": "native Sentinel oracle aborted: prepare: native geographic geometry requires longitude [-180,180] and latitude [-80,80]",
+      "passed": true
+    },
+    {
+      "name": "bowtie-polygon",
+      "expected": "explicit_rejection",
+      "exit_code": 1,
+      "seconds": 0.005438,
+      "rejection": "native Sentinel oracle aborted: prepare: polygon is empty or invalid (simple rings with valid non-overlapping holes are required)",
+      "passed": true
+    },
+    {
+      "name": "unclosed-ring",
+      "expected": "explicit_rejection",
+      "exit_code": 1,
+      "seconds": 0.006175,
+      "rejection": "native Sentinel oracle aborted: prepare: polygon rings must be closed and have at least four positions",
+      "passed": true
+    },
+    {
+      "name": "degenerate-ring",
+      "expected": "explicit_rejection",
+      "exit_code": 1,
+      "seconds": 0.005694,
+      "rejection": "native Sentinel oracle aborted: prepare: polygon is empty or invalid (simple rings with valid non-overlapping holes are required)",
+      "passed": true
+    },
+    {
+      "name": "hole-outside-shell",
+      "expected": "explicit_rejection",
+      "exit_code": 1,
+      "seconds": 0.006214,
+      "rejection": "native Sentinel oracle aborted: prepare: polygon is empty or invalid (simple rings with valid non-overlapping holes are required)",
+      "passed": true
+    },
+    {
+      "name": "three-dimensional-position",
+      "expected": "explicit_rejection",
+      "exit_code": 1,
+      "seconds": 0.005919,
+      "rejection": "native Sentinel oracle aborted: prepare: polygon must contain finite 2D positions",
+      "passed": true
+    },
+    {
+      "name": "empty-polygon",
+      "expected": "explicit_rejection",
+      "exit_code": 1,
+      "seconds": 0.005254,
+      "rejection": "native Sentinel oracle aborted: prepare: polygon has no rings",
+      "passed": true
+    },
+    {
+      "name": "uint8-profile",
+      "expected": "explicit_rejection",
+      "exit_code": 1,
+      "seconds": 0.006517,
+      "rejection": "native Sentinel oracle aborted: prepare: native COG requires tiled single-band MinIsBlack UInt16, top-left orientation, no alpha",
+      "passed": true
+    },
+    {
+      "name": "strip-profile",
+      "expected": "explicit_rejection",
+      "exit_code": 1,
+      "seconds": 0.006433,
+      "rejection": "native Sentinel oracle aborted: prepare: native COG requires tiled single-band MinIsBlack UInt16, top-left orientation, no alpha",
+      "passed": true
+    },
+    {
+      "name": "missing-mask-nodata",
+      "expected": "explicit_rejection",
+      "exit_code": 1,
+      "seconds": 0.007847,
+      "rejection": "native Sentinel oracle aborted: prepare: AOI masking requires representable UInt16 source nodata in this release",
+      "passed": true
+    },
+    {
+      "name": "non-utm-source-transform",
+      "expected": "explicit_rejection",
+      "exit_code": 1,
+      "seconds": 0.006168,
+      "rejection": "native Sentinel oracle aborted: prepare: native transformation supports only WGS84 longitude/latitude to Sentinel WGS84 UTM grids",
+      "passed": true
+    },
+    {
+      "name": "unsupported-band-index",
+      "expected": "explicit_rejection",
+      "exit_code": 1,
+      "seconds": 0.007111,
+      "rejection": "native Sentinel oracle aborted: prepare: native COG supports one UInt16 band (index 1)",
+      "passed": true
+    },
+    {
+      "name": "source-global-large-row-hole-chunk-size-invariance",
+      "expected": "chunk_size_invariance",
+      "passed": true,
+      "chunk_edges": [
+        17,
+        32,
+        64
+      ],
+      "reconstructed_source_sha256": {
+        "B04": "ecbb8de697e3a4ddf74adb9a0d642277fc77e72e44b26dd3c0271b942d88fad6"
+      }
+    },
+    {
+      "name": "source-global-large-row-rectangle-chunk-size-invariance",
+      "expected": "chunk_size_invariance",
+      "passed": true,
+      "chunk_edges": [
+        17,
+        32,
+        64
+      ],
+      "reconstructed_source_sha256": {
+        "B04": "22b6e5db135e1cc6334f58f7a526c1fa79cdd86f092ccc1a44b4aa86e7fb1e45"
+      }
+    },
+    {
+      "name": "source-global-large-row-triangle-chunk-size-invariance",
+      "expected": "chunk_size_invariance",
+      "passed": true,
+      "chunk_edges": [
+        17,
+        32,
+        64
+      ],
+      "reconstructed_source_sha256": {
+        "B04": "997914c5537ca9760ff5c4fab93d7d707f7a78c4ca02d504a99d288afb853ee9"
+      }
+    },
+    {
+      "name": "source-global-ordinary60m-hole-chunk-size-invariance",
+      "expected": "chunk_size_invariance",
+      "passed": true,
+      "chunk_edges": [
+        17,
+        32,
+        64
+      ],
+      "reconstructed_source_sha256": {
+        "B04": "a0a1e88e3dcac5b70d126b51a501e5787abca517e4200d7aa7ab269c875605c5"
+      }
+    },
+    {
+      "name": "source-global-ordinary60m-rectangle-chunk-size-invariance",
+      "expected": "chunk_size_invariance",
+      "passed": true,
+      "chunk_edges": [
+        17,
+        32,
+        64
+      ],
+      "reconstructed_source_sha256": {
+        "B04": "5022eb83d4cbbb23f9e36576de152f0f91b7fbcae0b9d82c094a195ffdae366a"
+      }
+    },
+    {
+      "name": "source-global-ordinary60m-triangle-chunk-size-invariance",
+      "expected": "chunk_size_invariance",
+      "passed": true,
+      "chunk_edges": [
+        17,
+        32,
+        64
+      ],
+      "reconstructed_source_sha256": {
+        "B04": "1e7c5c9b89d18b5da337242ffcd01bfe525b9b575cb55ec0b408fbbaf87449ec"
+      }
+    }
+  ]
+}

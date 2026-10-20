@@ -1,7 +1,8 @@
 //! Supported public Sentinel-2 discovery → prepared native plan → per-asset outputs.
-use crate::{cog::LayoutCache, fail, ExecutionReport, Plan, Request, Result, Source, Spatial};
-#[cfg(feature = "gdal")]
-use crate::{spatial, Asset, Budget, Format, Grid, Sink, Time, Variable};
+use crate::{
+    cog::LayoutCache, fail, spatial, Asset, Budget, ExecutionReport, Format, Grid, Plan, Request,
+    Result, Sink, Source, Spatial, Time, Variable,
+};
 #[cfg(feature = "gdal")]
 use gdal::{raster::RasterCreationOptions, Dataset, DriverManager};
 use serde::{Deserialize, Serialize};
@@ -97,6 +98,7 @@ pub struct Discovered {
     request: StacRequest,
     sources: Vec<SourceReference>,
     core: Request,
+    geographic_bounds: [f64; 4],
     pub report: DiscoveryReport,
 }
 /// A diagnostic plan and its original runtime bindings. No deserialization/replay.
@@ -174,7 +176,12 @@ impl Prepared {
         &self.discovered.report
     }
     pub fn explain(&self) -> Value {
-        json!({"discovery":self.discovery(),"sources":self.sources(),"planning_seconds":self.planning_seconds,"plan":self.plan,"decisions":decisions()})
+        json!({"discovery":self.discovery(),"sources":self.sources(),"query":self.query(),"planning_seconds":self.planning_seconds,"plan":self.plan,"decisions":decisions()})
+    }
+    /// Geographic query coordinates are longitude, latitude in WGS84 degrees.
+    pub fn query(&self) -> Value {
+        json!({"aoi":self.discovered.core.spatial,"bounds_wgs84":self.discovered.geographic_bounds,
+            "coordinate_order":"longitude, latitude","edge_interpolation":"straight in query CRS; geographic edges densified to <=0.001 degree before UTM mapping"})
     }
     pub fn execute(&self, sink: impl FnMut(crate::Chunk) -> Result<()>) -> Result<ExecutionReport> {
         self.execute_cancellable(&Default::default(), sink)
@@ -296,7 +303,7 @@ impl Prepared {
     }
 }
 fn decisions() -> Vec<&'static str> {
-    vec!["raw UInt16 samples; no calibration, cloud filtering or compositing","native grids per asset; no raster reprojection or cross-grid assembly","AOI edges densified before geometry-only CRS transformation; GDAL pixel-center rasterization, ALL_TOUCHED=false","source nodata preserved; outside AOI set to source nodata","source references omit URL query/fragment/credentials; asset key and item ID retain provenance","GDAL read and decode are fused; transfer/decode are not independently timed by RasterIO","discovery is complete within the explicit cap; jobs exceeding limits fail rather than truncate"]
+    vec!["raw UInt16 samples; no calibration, cloud filtering or compositing","native grids per asset; no raster reprojection or cross-grid assembly","AOI edges densified before geometry-only CRS transformation; GDAL-compatible pixel-center rasterization, ALL_TOUCHED=false","source nodata preserved; outside AOI set to source nodata","source references omit URL query/fragment/credentials; asset key and item ID retain provenance","reader-specific measured read/decode and source retrieval counters appear in the completion report","discovery is complete within the explicit cap; jobs exceeding limits fail rather than truncate"]
 }
 pub fn safe_reference(href: &str) -> String {
     let clean = href.split(['?', '#']).next().unwrap_or("");
@@ -324,7 +331,6 @@ fn configure(l: &Limits) -> Result<()> {
     }
     Ok(())
 }
-#[cfg(feature = "gdal")]
 fn band_key(request: &str) -> &str {
     match request {
         "B01" => "coastal",
@@ -342,7 +348,6 @@ fn band_key(request: &str) -> &str {
         other => other,
     }
 }
-#[cfg(feature = "gdal")]
 pub fn discover(r: &StacRequest) -> Result<Discovered> {
     if r.collection != "sentinel-2-c1-l2a" {
         return fail("Earth Search adapter currently supports collection sentinel-2-c1-l2a only");
@@ -375,6 +380,23 @@ pub fn discover(r: &StacRequest) -> Result<Discovered> {
     }
     let mut unique = HashSet::new();
     for band in &r.bands {
+        if !matches!(
+            band_key(band),
+            "coastal"
+                | "blue"
+                | "green"
+                | "red"
+                | "rededge1"
+                | "rededge2"
+                | "rededge3"
+                | "nir"
+                | "nir08"
+                | "nir09"
+                | "swir16"
+                | "swir22"
+        ) {
+            return fail("unsupported Sentinel-2 reflectance band; use B01..B09, B8A, B11, B12 or Earth Search common names");
+        }
         if !unique.insert(band_key(band)) {
             return fail("duplicate band selector");
         }
@@ -461,13 +483,10 @@ pub fn discover(r: &StacRequest) -> Result<Discovered> {
                 .as_ref()
                 .ok_or("STAC item has no footprint geometry")?,
         )?;
-        let geometry = gdal::vector::Geometry::from_geojson(&footprint.to_string())?;
-        if !geometry.is_valid() {
-            return fail("invalid item footprint geometry");
-        }
+        let geometry = spatial::from_geojson(&footprint, "EPSG:4326")?;
         let intersection = wgs
             .intersection(&geometry)
-            .ok_or("item geometry intersection failed (GEOS required)")?;
+            .ok_or("item geometry intersection failed")?;
         if intersection.is_empty() || intersection.area() <= 0. {
             continue;
         }
@@ -559,6 +578,7 @@ pub fn discover(r: &StacRequest) -> Result<Discovered> {
         request: r.clone(),
         sources,
         core,
+        geographic_bounds: b,
         report,
     })
 }
@@ -672,10 +692,6 @@ fn remote_identities(core: &Request, limits: &Limits) -> Result<Vec<(usize, Obje
 #[cfg(not(feature = "gdal"))]
 fn configure(_: &Limits) -> Result<()> {
     Ok(())
-}
-#[cfg(not(feature = "gdal"))]
-pub fn discover(_: &StacRequest) -> Result<Discovered> {
-    fail("STAC AOI discovery/geometry requires the gdal feature; direct assets support GDAL-free native bounds")
 }
 #[cfg(not(feature = "gdal"))]
 impl Prepared {

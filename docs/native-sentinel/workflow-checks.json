@@ -1,0 +1,84 @@
+{
+  "passed": true,
+  "binary_sha256": "ea0f0b9ddb1d6e985011a0acf33e95d71dd8009cba1371fd5b10ef253e7322d4",
+  "checks": [
+    {
+      "name": "success-False-False",
+      "passed": true,
+      "samples_checked": 3355,
+      "valid_pixels": 1801,
+      "chunks": 4,
+      "peak_rss_bytes": 15253504,
+      "seconds": 0.2544154580682516
+    },
+    {
+      "name": "success-True-False",
+      "passed": true,
+      "samples_checked": 60128,
+      "valid_pixels": 53650,
+      "chunks": 20,
+      "peak_rss_bytes": 15925248,
+      "seconds": 0.0269814170897007
+    },
+    {
+      "name": "success-True-True",
+      "passed": true,
+      "samples_checked": 60128,
+      "valid_pixels": 53650,
+      "chunks": 20,
+      "peak_rss_bytes": 16072704,
+      "seconds": 0.026450542267411947
+    },
+    {
+      "name": "cancel-after-delivery",
+      "passed": true,
+      "exit_code": 1,
+      "terminal": {
+        "type": "aborted",
+        "error": "consumer cancelled"
+      }
+    },
+    {
+      "name": "late-source-mutation",
+      "passed": true,
+      "exit_code": 1,
+      "terminal": {
+        "type": "aborted",
+        "error": "native COG invalid range response or source version conflict"
+      }
+    },
+    {
+      "name": "consumer-failure",
+      "passed": true,
+      "exit_code": 1,
+      "terminal": {
+        "type": "aborted",
+        "error": "delivered chunk exceeds consumer payload budget"
+      }
+    },
+    {
+      "name": "empty-date-selection",
+      "passed": true
+    },
+    {
+      "name": "unsupported-band",
+      "passed": true
+    }
+  ],
+  "http": {
+    "stac_requests": 31,
+    "stac_bytes": 31780,
+    "heads": 102,
+    "range_gets": 76,
+    "whole_gets": 0,
+    "raster_bytes": 1086655,
+    "response_seconds": 0.005241957493126392,
+    "conditional_gets": 78,
+    "rejected_conditionals": 2,
+    "injected_failures": 0
+  },
+  "notes": [
+    "Generated loopback STAC/COGs; independent GDAL masks and per-chunk checksums.",
+    "Exact sample-array equality is separately gated by native_sentinel_checks.py."
+  ]
+}

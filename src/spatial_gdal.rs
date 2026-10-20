@@ -1,9 +1,9 @@
 //! Geometry-only CRS mapping and GDAL pixel-center masks; raster samples never warp.
 use crate::{fail, Layout, Result, Spatial, Window};
+pub use gdal::vector::Geometry;
 use gdal::{
     raster::{rasterize, Buffer},
     spatial_ref::{AxisMappingStrategy, SpatialRef},
-    vector::Geometry,
     DriverManager,
 };
 use serde_json::{json, Value};
@@ -12,6 +12,15 @@ pub fn srs(definition: &str) -> Result<SpatialRef> {
     let mut srs = SpatialRef::from_definition(definition)?;
     srs.set_axis_mapping_strategy(AxisMappingStrategy::TraditionalGisOrder);
     Ok(srs)
+}
+/// Parse runtime masks and catalog footprints using explicit GIS axis order.
+pub fn from_geojson(value: &Value, crs: &str) -> Result<Geometry> {
+    let mut geometry = Geometry::from_geojson(&value.to_string())?;
+    geometry.set_spatial_ref(srs(crs)?);
+    if !geometry.is_valid() {
+        return fail("invalid polygon geometry");
+    }
+    Ok(geometry)
 }
 pub fn geometry(spatial: &Spatial) -> Result<Geometry> {
     let (crs, coordinates) = match spatial {

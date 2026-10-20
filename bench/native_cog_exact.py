@@ -2,6 +2,7 @@
 
 import hashlib
 import json
+import os
 from pathlib import Path
 import subprocess
 
@@ -18,7 +19,7 @@ def main():
     mirror = m.Mirror(m.WORK / "mirror", sources)
     digest = mirror.verify_pages()
     rows = []
-    binary = m.ROOT / "target/release/examples/native_cog_oracle"
+    binary = Path(os.environ.get("TILE_RIPPER_ORACLE_BINARY", m.ROOT / "target/release/examples/native_cog_oracle"))
     for name, (x, y, width, height) in trace.WINDOWS.items():
         assets = sources if name == "many-small" else sources[:6]
         req = dict(

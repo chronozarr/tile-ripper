@@ -1,0 +1,434 @@
+{
+  "passed": true,
+  "real_public_stac": true,
+  "independent_discovery_checked": true,
+  "request": {
+    "source": {
+      "kind": "stac",
+      "endpoint": "https://earth-search.aws.element84.com/v1",
+      "collection": "sentinel-2-c1-l2a",
+      "limits": {
+        "max_items": 4,
+        "page_size": 2,
+        "max_assets": 8,
+        "max_output_pixels": 100000
+      }
+    },
+    "spatial": {
+      "kind": "polygon",
+      "crs": "EPSG:4326",
+      "coordinates": [
+        [
+          [
+            -79.06,
+            35.91
+          ],
+          [
+            -79.05,
+            35.91
+          ],
+          [
+            -79.052,
+            35.92
+          ],
+          [
+            -79.06,
+            35.91
+          ]
+        ]
+      ]
+    },
+    "time": {
+      "kind": "interval",
+      "start": "2025-07-28T00:00:00Z",
+      "end": "2025-07-28T23:59:59Z"
+    },
+    "variables": [
+      {
+        "kind": "named",
+        "name": "B04"
+      },
+      {
+        "kind": "named",
+        "name": "B08"
+      }
+    ],
+    "grid": {
+      "kind": "native"
+    },
+    "sink": {
+      "kind": "callback"
+    },
+    "budget": {
+      "buffer_bytes": 16777216,
+      "max_nodes": 10000,
+      "chunk_edge": 64
+    }
+  },
+  "query": {
+    "aoi": {
+      "kind": "polygon",
+      "crs": "EPSG:4326",
+      "coordinates": [
+        [
+          [
+            -79.06,
+            35.91
+          ],
+          [
+            -79.05,
+            35.91
+          ],
+          [
+            -79.052,
+            35.92
+          ],
+          [
+            -79.06,
+            35.91
+          ]
+        ]
+      ]
+    },
+    "bounds_wgs84": [
+      -79.06,
+      35.91,
+      -79.05,
+      35.92
+    ],
+    "coordinate_order": "longitude, latitude",
+    "edge_interpolation": "straight in query CRS; geographic edges densified to <=0.001 degree before UTM mapping"
+  },
+  "selected_sources": [
+    {
+      "item_id": "S2A_T17SPV_20250728T161108_L2A",
+      "asset_key": "red",
+      "requested_band": "B04",
+      "datetime": "2025-07-28T16:13:44.543+00:00",
+      "href": "https://e84-earth-search-sentinel-data.s3.us-west-2.amazonaws.com/sentinel-2-c1-l2a/17/S/PV/2025/7/S2A_T17SPV_20250728T161108_L2A/B04.tif",
+      "object_identity": {
+        "etag": "\"6811baab6ee642823620f54ad37a60df-26\"",
+        "bytes": 215748615
+      }
+    },
+    {
+      "item_id": "S2A_T17SPV_20250728T161108_L2A",
+      "asset_key": "nir",
+      "requested_band": "B08",
+      "datetime": "2025-07-28T16:13:44.543+00:00",
+      "href": "https://e84-earth-search-sentinel-data.s3.us-west-2.amazonaws.com/sentinel-2-c1-l2a/17/S/PV/2025/7/S2A_T17SPV_20250728T161108_L2A/B08.tif",
+      "object_identity": {
+        "etag": "\"3a21f4dd78c13859d08318a897c6f520-30\"",
+        "bytes": 250910867
+      }
+    }
+  ],
+  "independent_chunk_references": [
+    {
+      "asset_id": "asset-0000",
+      "datetime": "2025-07-28T16:13:44.543+00:00",
+      "variable": {
+        "kind": "band",
+        "index": 1
+      },
+      "window": {
+        "x": 7505,
+        "y": 2319,
+        "width": 64,
+        "height": 64
+      },
+      "transform": [
+        675050.0,
+        10.0,
+        0.0,
+        3976830.0,
+        0.0,
+        -10.0
+      ],
+      "crs": "EPSG:32617",
+      "dtype": "uint16",
+      "nodata": 0.0,
+      "scale": 0.0001,
+      "offset": -0.1,
+      "valid_pixels": 881,
+      "native_sum": 1995484.0,
+      "adler32_le": 1229771178
+    },
+    {
+      "asset_id": "asset-0000",
+      "datetime": "2025-07-28T16:13:44.543+00:00",
+      "variable": {
+        "kind": "band",
+        "index": 1
+      },
+      "window": {
+        "x": 7569,
+        "y": 2319,
+        "width": 27,
+        "height": 64
+      },
+      "transform": [
+        675690.0,
+        10.0,
+        0.0,
+        3976830.0,
+        0.0,
+        -10.0
+      ],
+      "crs": "EPSG:32617",
+      "dtype": "uint16",
+      "nodata": 0.0,
+      "scale": 0.0001,
+      "offset": -0.1,
+      "valid_pixels": 763,
+      "native_sum": 1491648.0,
+      "adler32_le": 2750260738
+    },
+    {
+      "asset_id": "asset-0000",
+      "datetime": "2025-07-28T16:13:44.543+00:00",
+      "variable": {
+        "kind": "band",
+        "index": 1
+      },
+      "window": {
+        "x": 7505,
+        "y": 2383,
+        "width": 64,
+        "height": 49
+      },
+      "transform": [
+        675050.0,
+        10.0,
+        0.0,
+        3976190.0,
+        0.0,
+        -10.0
+      ],
+      "crs": "EPSG:32617",
+      "dtype": "uint16",
+      "nodata": 0.0,
+      "scale": 0.0001,
+      "offset": -0.1,
+      "valid_pixels": 2296,
+      "native_sum": 5775239.0,
+      "adler32_le": 3614170713
+    },
+    {
+      "asset_id": "asset-0000",
+      "datetime": "2025-07-28T16:13:44.543+00:00",
+      "variable": {
+        "kind": "band",
+        "index": 1
+      },
+      "window": {
+        "x": 7569,
+        "y": 2383,
+        "width": 27,
+        "height": 49
+      },
+      "transform": [
+        675690.0,
+        10.0,
+        0.0,
+        3976190.0,
+        0.0,
+        -10.0
+      ],
+      "crs": "EPSG:32617",
+      "dtype": "uint16",
+      "nodata": 0.0,
+      "scale": 0.0001,
+      "offset": -0.1,
+      "valid_pixels": 1064,
+      "native_sum": 2161199.0,
+      "adler32_le": 869344068
+    },
+    {
+      "asset_id": "asset-0001",
+      "datetime": "2025-07-28T16:13:44.543+00:00",
+      "variable": {
+        "kind": "band",
+        "index": 1
+      },
+      "window": {
+        "x": 7505,
+        "y": 2319,
+        "width": 64,
+        "height": 64
+      },
+      "transform": [
+        675050.0,
+        10.0,
+        0.0,
+        3976830.0,
+        0.0,
+        -10.0
+      ],
+      "crs": "EPSG:32617",
+      "dtype": "uint16",
+      "nodata": 0.0,
+      "scale": 0.0001,
+      "offset": -0.1,
+      "valid_pixels": 881,
+      "native_sum": 3487011.0,
+      "adler32_le": 3714640816
+    },
+    {
+      "asset_id": "asset-0001",
+      "datetime": "2025-07-28T16:13:44.543+00:00",
+      "variable": {
+        "kind": "band",
+        "index": 1
+      },
+      "window": {
+        "x": 7569,
+        "y": 2319,
+        "width": 27,
+        "height": 64
+      },
+      "transform": [
+        675690.0,
+        10.0,
+        0.0,
+        3976830.0,
+        0.0,
+        -10.0
+      ],
+      "crs": "EPSG:32617",
+      "dtype": "uint16",
+      "nodata": 0.0,
+      "scale": 0.0001,
+      "offset": -0.1,
+      "valid_pixels": 763,
+      "native_sum": 2928526.0,
+      "adler32_le": 3156125394
+    },
+    {
+      "asset_id": "asset-0001",
+      "datetime": "2025-07-28T16:13:44.543+00:00",
+      "variable": {
+        "kind": "band",
+        "index": 1
+      },
+      "window": {
+        "x": 7505,
+        "y": 2383,
+        "width": 64,
+        "height": 49
+      },
+      "transform": [
+        675050.0,
+        10.0,
+        0.0,
+        3976190.0,
+        0.0,
+        -10.0
+      ],
+      "crs": "EPSG:32617",
+      "dtype": "uint16",
+      "nodata": 0.0,
+      "scale": 0.0001,
+      "offset": -0.1,
+      "valid_pixels": 2296,
+      "native_sum": 8565551.0,
+      "adler32_le": 1471804585
+    },
+    {
+      "asset_id": "asset-0001",
+      "datetime": "2025-07-28T16:13:44.543+00:00",
+      "variable": {
+        "kind": "band",
+        "index": 1
+      },
+      "window": {
+        "x": 7569,
+        "y": 2383,
+        "width": 27,
+        "height": 49
+      },
+      "transform": [
+        675690.0,
+        10.0,
+        0.0,
+        3976190.0,
+        0.0,
+        -10.0
+      ],
+      "crs": "EPSG:32617",
+      "dtype": "uint16",
+      "nodata": 0.0,
+      "scale": 0.0001,
+      "offset": -0.1,
+      "valid_pixels": 1064,
+      "native_sum": 4128620.0,
+      "adler32_le": 3369752177
+    }
+  ],
+  "samples_compared_bit_for_bit": 20566,
+  "exact_values_sha256": "4f24efc5a5ca87e6830b7c31686bf238ffd6e23e6db32380bf535176b894f8a6",
+  "native_consumer_sha256": "ea0f0b9ddb1d6e985011a0acf33e95d71dd8009cba1371fd5b10ef253e7322d4",
+  "peak_rss_bytes": 30834688,
+  "wall_seconds": 26.76548729231581,
+  "completion": {
+    "type": "complete",
+    "chunks": 8,
+    "valid_pixels": 10008,
+    "native_sum": 30533278.0,
+    "first_chunk_seconds": 26.266716541,
+    "prepare_seconds": 2.059015875,
+    "seconds": 26.749196958,
+    "observed": {
+      "source_reads": [],
+      "scheduler": {
+        "workers": 2,
+        "per_host": 4,
+        "buffer_bytes": 16777216,
+        "reserved_bytes_peak": 15891424,
+        "reader_state_reserved_bytes": 4194304,
+        "active_workers_peak": 2,
+        "completed_tasks": 8,
+        "admitted_jobs": 2,
+        "cog_reader_scope": "selection",
+        "seconds": 23.694672041,
+        "order": "plan",
+        "memory_scope": "conservative reader working reservations; excludes process/runtime, GDAL cache, prepared metadata and caller retention"
+      },
+      "transport": null,
+      "decoded_source_chunks": 0,
+      "filled_source_chunks": 0,
+      "first_output_seconds": 23.690924125,
+      "assembly_seconds": 0.0,
+      "source_retrieval_seconds": 23.978219167,
+      "allocation_seconds": null,
+      "copying_seconds": null,
+      "output_setup_seconds": 0.0,
+      "output_finalize_seconds": 0.0,
+      "output_io": null,
+      "native_materialized_bytes": null,
+      "source_data_requests": 2,
+      "source_data_bytes": 3035058,
+      "chunks": 8,
+      "decoded_bytes": 41132,
+      "non_nodata_pixels": 10008,
+      "planning_seconds": 1.731074,
+      "source_open_seconds": 0.931984083,
+      "read_decode_seconds": 24.001016417,
+      "sink_seconds": 4.954299999999999e-05,
+      "masking_seconds": 5.3167999999999996e-05,
+      "remote_requests": null,
+      "remote_bytes": null
+    }
+  },
+  "oracle": {
+    "rasterio": "1.4.4",
+    "gdal": "3.10.3",
+    "proj": "9.7.1",
+    "rasterization": "GDAL full-source pixel-center mask then crop; all_touched=false"
+  },
+  "notes": [
+    "Acquisition includes live discovery, version pinning, native COG reads, masks and final HEAD validation.",
+    "Independent discovery and GDAL reference/byte comparison excluded from consumer timing.",
+    "Raw samples remain ignored local artifacts; no source imagery committed."
+  ]
+}

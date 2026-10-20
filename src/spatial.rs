@@ -5,6 +5,11 @@ use crate::{fail, Layout, Result, Spatial, Window};
 mod gdal_impl;
 #[cfg(feature = "gdal")]
 pub use gdal_impl::*;
+#[cfg(all(feature = "native-cog", any(not(feature = "gdal"), test)))]
+#[path = "spatial_native.rs"]
+mod native_impl;
+#[cfg(all(not(feature = "gdal"), feature = "native-cog"))]
+pub use native_impl::*;
 pub fn window_transform(l: &Layout, w: &Window) -> [f64; 6] {
     let mut t = l.transform;
     t[0] += w.x as f64 * t[1];
@@ -94,7 +99,7 @@ pub(crate) fn coordinate_window(
     }))
 }
 
-#[cfg(not(feature = "gdal"))]
+#[cfg(all(not(feature = "gdal"), not(feature = "native-cog")))]
 mod native {
     use super::*;
     pub struct Geometry;
@@ -108,6 +113,9 @@ mod native {
         pub fn json(&self) -> Result<String> {
             fail("polygon geometry requires the gdal feature")
         }
+        pub fn intersection(&self, _: &Self) -> Option<Self> {
+            None
+        }
     }
     pub struct Mask;
     impl Mask {
@@ -117,6 +125,12 @@ mod native {
     }
     pub fn geometry(_: &Spatial) -> Result<Geometry> {
         fail("polygon AOIs require the gdal feature")
+    }
+    pub fn from_geojson(_: &serde_json::Value, _: &str) -> Result<Geometry> {
+        fail("polygon geometry requires native-cog or gdal")
+    }
+    pub fn transform(_: &Spatial, _: &str) -> Result<Geometry> {
+        fail("AOI transformations require native-cog or gdal")
     }
     pub fn bounds(_: &Geometry) -> [f64; 4] {
         unreachable!()
@@ -131,7 +145,7 @@ mod native {
         }
     }
 }
-#[cfg(not(feature = "gdal"))]
+#[cfg(all(not(feature = "gdal"), not(feature = "native-cog")))]
 pub use native::*;
 
 pub(crate) fn validate_crs(crs: &str) -> Result<()> {

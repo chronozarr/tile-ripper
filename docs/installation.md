@@ -74,11 +74,12 @@ cargo install --path . --locked --no-default-features --features native-cog \
 cargo build --locked --release --no-default-features
 ```
 
-Use direct asset native-CRS bounds and the public callback/stream API for COGs.
-Zarr acquisition and native Zarr output retain their existing profiles. The CLI's
-GeoTIFF output, STAC geometry discovery, coordinate transformation and polygon
-masking require GDAL and fail explicitly when it is disabled. There is no new
-projection engine or GDAL-free longitude/latitude-to-UTM claim.
+Use the [GDAL-free Sentinel workflow](native-sentinel/workflow.md) for WGS84
+polygon/date/band STAC requests and masked native chunks, or direct assets with
+bounds in their exact source CRS. The native path maps WGS84 longitude/latitude
+only to supported nearby Sentinel WGS84 UTM grids; it does not reproject raster
+values. Zarr acquisition and native Zarr output retain their existing profiles.
+GeoTIFF output requires GDAL and fails explicitly when it is disabled.
 
 For a comparison build, `cargo build --features native-cog` includes both readers.
 Set `TILE_RIPPER_COG_BACKEND=native` or `gdal` before preparation and keep it fixed

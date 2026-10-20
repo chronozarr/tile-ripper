@@ -8,7 +8,7 @@ reads before downloading data. Outputs include a completion/provenance manifest.
 **Private-alpha candidate (unreleased; licensing approval pending):** support is limited to the profiles below. This is not a general
 Zarr reader, reprojection engine, mosaic or temporal compositor. No Python is
 required to acquire data. The default build uses GDAL; opt-in builds support
-[GDAL-free native COG streaming and Zarr acquisition](docs/native-cog/report.md).
+[GDAL-free Sentinel-2 polygon acquisition and Zarr acquisition](docs/native-sentinel/workflow.md).
 
 ## Build and try a real dataset
 
@@ -20,21 +20,22 @@ cargo build --release --locked --bin tile-ripper
 ./target/release/tile-ripper --help
 ```
 
-For native-CRS COG streaming without GDAL:
+For Sentinel-2 polygon/date/band acquisition without GDAL:
 
 ```sh
 cargo build --release --locked --no-default-features --features native-cog
 cargo build --release --locked --manifest-path consumers/native-stats/Cargo.toml \
   --no-default-features --features native-cog --target-dir target/native-consumer
-./target/native-consumer/release/tile-ripper-native-stats request.json
+TILE_RIPPER_WORKERS=2 ./target/native-consumer/release/tile-ripper-native-stats docs/native-sentinel/request.json
 ```
 
-Use explicit COG assets, a callback sink and bounds in the exact source CRS. The
-native reader preserves UInt16 samples, nodata, calibration and provenance for
-[the admitted TIFF profiles](docs/native-cog/report.md). STAC AOI transformations,
-polygon masks and GeoTIFF output still require the `gdal` feature. Zarr-only
-builds can omit both features. C/C++ codec build tools remain required; see
-[installation](docs/installation.md). The reader default is unchanged.
+The [complete workflow](docs/native-sentinel/workflow.md) accepts ordinary WGS84
+polygons, discovers Earth Search Sentinel-2 bands, maps the AOI to supported UTM
+grids and streams masked UInt16 chunks with pinned provenance. Direct COG assets
+and native bounds remain supported for [the admitted TIFF profiles](docs/native-cog/report.md).
+GeoTIFF writing requires the optional `gdal` feature. Zarr-only builds can omit
+both features. C/C++ codec build tools remain required; see
+[installation](docs/installation.md). GDAL remains the default build and reader.
 
 Run from a checkout of this branch. [Installation and platform status](docs/installation.md)
 cover native dependencies, local installation and release preparation.
@@ -86,7 +87,7 @@ version-pinned native acquisitions with a tuned GDAL reader.
 
 | Source | Supported selection and output |
 | --- | --- |
-| Earth Search Sentinel-2 C1 L2A | STAC dates, geographic bounds/Polygon, named native UInt16 bands; separate georeferenced GeoTIFFs per observation/asset |
+| Earth Search Sentinel-2 C1 L2A | STAC dates, geographic bounds/Polygon, named native UInt16 bands; GDAL-free masked native stream, optional GDAL GeoTIFF output |
 | WeatherBench2 ERA5 64×32 product above | Anonymous HTTP Zarr v2, Float32/NaN, `(time,longitude,latitude)`; native Zarr subset |
 | NASA POWER IMERG daily spatial | Anonymous HTTP Zarr v2, Float32/NaN, `(time,lat,lon)`, verified daily time and storage filter; native Zarr subset |
 | Local custom-grid Zarr / direct GeoTIFF | Narrow UInt16 profiles; [advanced lifecycle](docs/unified-workflow.md) and [local Zarr](docs/zarr-workflow.md) |

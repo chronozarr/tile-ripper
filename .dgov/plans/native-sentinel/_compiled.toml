@@ -1,0 +1,69 @@
+[plan]
+name = "native-sentinel"
+source_mtime_max = "2026-10-20T03:41:02.248837Z"
+sop_set_hash = ""
+
+[tasks."tasks/work.oracle"]
+summary = "Independently compute GDAL reference values, transforms and boundary masks"
+prompt = """
+Orient:
+Read existing native COG independent oracle and planner chunk selection.
+Edit:
+Build adversarial geometry corpus and exact sample comparison using independent GDAL outputs.
+Verify:
+prototype-output/zarr-env/bin/python bench/native_sentinel_checks.py
+"""
+commit_message = ""
+depends_on = ["tasks/work.workflow"]
+timeout_s = 0
+test_cmd = "prototype-output/zarr-env/bin/python bench/native_sentinel_checks.py"
+files.create = ["bench/native_sentinel_checks.py", "examples/native_sentinel_oracle.rs", "docs/native-sentinel/correctness.json"]
+
+[tasks."tasks/work.requests"]
+summary = "Explain native request overhead and gate any range optimization on traces"
+prompt = """
+Orient:
+Read frozen native COG physical byte/request traces.
+Edit:
+Profile metadata versus tile requests, adjacency, connection reuse, decoding and scheduling. Coalesce only with demonstrated benefit and preserved bounds/version accounting.
+Verify:
+prototype-output/zarr-env/bin/python bench/native_request_profile.py
+"""
+commit_message = ""
+timeout_s = 0
+test_cmd = "prototype-output/zarr-env/bin/python bench/native_request_profile.py"
+files.touch = ["src/cog_range.rs"]
+files.create = ["bench/native_request_profile.py", "docs/native-sentinel/request-profile.json", "docs/native-sentinel/request-profile.md"]
+
+[tasks."tasks/work.spatial"]
+summary = "Pure Rust WGS84 to Sentinel UTM selection and pixel-center masks"
+prompt = """
+Orient:
+Read spatial.rs, spatial_gdal.rs and planner.rs.
+Edit:
+Implement bounded validated WGS84/UTM polygon operations using established Rust crates; preserve GDAL compatibility/default.
+Verify:
+cargo test --locked --no-default-features --features native-cog
+"""
+commit_message = ""
+timeout_s = 0
+test_cmd = "cargo test --locked --no-default-features --features native-cog"
+files.create = ["src/spatial_native.rs"]
+files.edit = ["src/spatial.rs", "Cargo.toml", "Cargo.lock", "consumers/native-stats/Cargo.lock"]
+
+[tasks."tasks/work.workflow"]
+summary = "Decouple STAC discovery and incremental consumer from GDAL"
+prompt = """
+Orient:
+Read STAC, acquisition and stream completion paths.
+Edit:
+Reuse STAC selection and planner without GDAL; wire native masks; document standalone stream consumer and completion.
+Verify:
+cargo clippy --locked --no-default-features --features native-cog --all-targets -- -D warnings
+"""
+commit_message = ""
+depends_on = ["tasks/work.spatial"]
+timeout_s = 0
+test_cmd = "cargo clippy --locked --no-default-features --features native-cog --all-targets -- -D warnings"
+files.create = ["docs/native-sentinel/workflow.md", "docs/native-sentinel/protocol.md", "bench/native_sentinel_live.py", "bench/native_sentinel_linux.sh", "bench/native_sentinel_runtime.py"]
+files.edit = ["src/stac_workflow.rs", "src/acquisition.rs", "src/spatial_gdal.rs", "src/native_cog.rs", "consumers/native-stats/src/main.rs", "consumers/native-stats/README.md", "README.md"]

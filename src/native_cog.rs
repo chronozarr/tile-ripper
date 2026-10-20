@@ -285,8 +285,7 @@ pub(crate) struct SelectedReader {
     tiff: TiffFile,
     source: Arc<RangeSource>,
     layout: Layout,
-    #[cfg(feature = "gdal")]
-    mask: Option<gdal::vector::Geometry>,
+    mask: Option<crate::spatial::Geometry>,
 }
 impl SelectedReader {
     pub(crate) fn new(asset: &Asset, s: &Selected) -> Result<Self> {
@@ -296,23 +295,17 @@ impl SelectedReader {
         if serde_json::to_value(&layout)? != serde_json::to_value(expected)? {
             return fail("native COG metadata changed since planning");
         }
-        #[cfg(feature = "gdal")]
         let mask = s
             .mask_geometry
             .as_ref()
-            .map(|g| gdal::vector::Geometry::from_geojson(&g.to_string()))
+            .map(|g| crate::spatial::from_geojson(g, &layout.crs))
             .transpose()?;
-        #[cfg(not(feature = "gdal"))]
-        if s.mask_geometry.is_some() {
-            return fail("polygon masks require gdal");
-        }
         source.begin_data();
         Ok(Self {
             asset: asset.clone(),
             tiff,
             source,
             layout,
-            #[cfg(feature = "gdal")]
             mask,
         })
     }
@@ -338,7 +331,6 @@ impl SelectedReader {
         let values =
             self.tiff
                 .read_window::<u16>(0, window.y, window.x, window.height, window.width)?;
-        #[allow(unused_mut)]
         let (mut values, _) = values.into_raw_vec_and_offset();
         let elapsed = t.elapsed().as_secs_f64();
         let after = self.source.counters.lock().unwrap().clone();
@@ -349,7 +341,6 @@ impl SelectedReader {
             Some(report.source_data_requests.unwrap_or(0) + after.requests - before.requests);
         report.source_data_bytes =
             Some(report.source_data_bytes.unwrap_or(0) + after.bytes - before.bytes);
-        #[cfg(feature = "gdal")]
         if let Some(g) = &self.mask {
             let t = Instant::now();
             let m = crate::spatial::mask(g, &self.layout, window)?;
