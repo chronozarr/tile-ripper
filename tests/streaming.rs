@@ -225,6 +225,34 @@ fn stream_preserves_deterministic_order_and_native_provenance() {
 }
 
 #[test]
+fn cog_selection_reuses_reader_with_one_window_budget_and_cancels_between_windows() {
+    let mut f = cog_fixture();
+    f.request.budget.buffer_bytes = 8; // exactly one 2x2 UInt16 output
+    let prepared = acquisition::prepare(&f.request, &mut LayoutCache::default()).unwrap();
+    let mut ids = Vec::new();
+    let report = prepared
+        .execute(|c| {
+            ids.push(c.node_id);
+            Ok(())
+        })
+        .unwrap();
+    assert!(ids.windows(2).all(|w| w[0] < w[1]));
+    assert_eq!(report.scheduler["admitted_jobs"], 2);
+    assert_eq!(report.scheduler["completed_tasks"], report.chunks);
+    assert!(report.scheduler["reserved_bytes_peak"].as_u64().unwrap() <= 8);
+    let mut delivered = 0;
+    assert!(prepared
+        .execute(|_| {
+            delivered += 1;
+            Err("cancel after one window".into())
+        })
+        .is_err());
+    assert_eq!(delivered, 1);
+    let rerun = prepared.execute(|_| Ok(())).unwrap();
+    assert_eq!(rerun.chunks, report.chunks);
+}
+
+#[test]
 fn zarr_stream_delivers_each_selected_source_chunk_once_with_axes_and_values() {
     let f = zarr_fixture();
     let prepared = acquisition::prepare(&f.request, &mut LayoutCache::default()).unwrap();

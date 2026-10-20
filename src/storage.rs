@@ -678,7 +678,7 @@ pub(crate) fn worker_count() -> Result<usize> {
     }
 
     let cpus = thread::available_parallelism().map_or(1, usize::from);
-    Ok(configured("TILE_RIPPER_WORKERS", cpus.min(4))?.min(configured("TILE_RIPPER_PER_HOST", 4)?))
+    Ok(configured("TILE_RIPPER_WORKERS", cpus.min(2))?.min(configured("TILE_RIPPER_PER_HOST", 4)?))
 }
 
 /// Execute each distinct key once with bounded scoped workers and restore the

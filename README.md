@@ -195,3 +195,9 @@ See [architecture](docs/0003-unified-lifecycle.md),
 [historical study](study/README.md). Detailed milestone reports in `docs/` retain
 historical scope and results; use this README and the current gate for current support.
 No ChronoZarr dependency, plugin system, Python binding or paid service is required.
+
+The current COG efficiency decision gate uses a two-worker default, source-local
+GDAL reader reuse and bounded parallel layout inspection. The
+[COG efficiency report](docs/cog-efficiency/report.md) records measured traffic,
+matched GDAL comparisons and the tested 192-MiB resource profile. Working-buffer
+reservations are not a process RSS ceiling. This branch remains unreleased.

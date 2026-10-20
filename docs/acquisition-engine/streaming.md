@@ -49,31 +49,42 @@ chunk and any chunks the consumer retains are outside that queue. A caller that
 collects the iterator owns the resulting memory. Callback `Prepared::execute`
 avoids this additional channel and remains available for borrowing consumers.
 
-All callback and file paths use the shared scheduler. It admits COG library windows and Zarr source chunks as individual operations.
-Each worker retains its own current native reader, reusing a GDAL dataset or
-Zarr array context across adjacent operations from the same selection. Operations use the existing GDAL/zarrs
-readers and the same plan. COG reads remain delegated to GDAL; concurrency limits
-are reader-operation limits, not a promise about GDAL's internal HTTP requests.
-Per-window operations overlap within one ordered queue; a long earlier selection
-can occupy all slots and delay later assets. A bounded rendezvous/acknowledgement path
-presents chunks to the sink in deterministic plan order. This retains existing
-file adapters and prevents asynchronous arrival from overwriting or reordering
-observations. Deterministic delivery can wait behind a slow earlier operation;
-later operations can proceed only within the admitted worker/buffer window.
+All callback and file paths use the shared scheduler. Each COG selection is
+admitted once and its existing windows run in plan order on one worker-local
+GDAL dataset. Intersecting output windows reuse that dataset's source blocks;
+only one native output buffer is live per selection. Independent assets can
+run concurrently. Zarr source chunks remain individual admitted operations.
+A bounded rendezvous/acknowledgement path delivers chunks in deterministic plan
+order. Later selections can prepare a chunk while waiting for earlier output;
+slow consumers apply backpressure. A single COG selection uses one data worker.
 
-Defaults use up to four CPUs/workers and four operations per origin. Set CLI
+Defaults use up to **two** CPUs/workers and four operations per origin. Set CLI
 `--workers` / `--per-host`, or library-process environment variables
-`TILE_RIPPER_WORKERS` / `TILE_RIPPER_PER_HOST` (each 1–64). `budget.buffer_bytes`
-limits the sum of active working reservations plus worker-lifetime Zarr decoded
-coordinate/dimension-array reservations. Worker count is reduced if retaining those readers
-would leave insufficient space for one admitted task. Reservations account for native,
-encoded and plane buffers for Zarr, and output values for COG. GDAL's own block
-cache, prepared metadata, runtime allocations, decoder internals, object/plan
-bookkeeping and caller-retained chunks are separate; this is not an RSS sandbox.
-A task that cannot fit fails explicitly, rather than exceeding that admission
-budget. The report records reserved-byte and active-worker peaks. Metadata HEAD
-batches use the same concurrency defaults/overrides and source identity checks.
-They run during preparation/validation, separately from data tasks.
+`TILE_RIPPER_WORKERS` / `TILE_RIPPER_PER_HOST` (each 1–64). These settings also
+bound remote COG layout inspection and metadata HEAD batches. Layouts are
+inspected in bounded batches across independent asset URLs, with caller-local
+GDAL options copied to their threads; plans are assembled in input order.
+Repeated URLs within a batch retain serial inspection. Remote cache invalidation
+occurs before binding/inspection; execution retains those same-version headers
+and still validates sources before reading and after completion.
+
+`budget.buffer_bytes` limits active working reservations plus worker-lifetime
+Zarr decoded coordinate/dimension-array reservations. For a COG selection it
+reserves the largest output window, never an entire acquisition. Worker count
+is reduced when retained reader state would leave insufficient space for one
+task. GDAL caches, decoder scratch, prepared metadata/plans, runtime allocations
+and caller-retained chunks are additional. This is **not an RSS limit**.
+`completed_tasks` counts the original read nodes; `admitted_jobs` additionally
+shows selection-level COG admissions. Cancellation is checked between windows.
+
+For the tested resource-constrained profile, use two workers, a **32-MiB GDAL
+block-cache setting**, a **16-MiB working budget**, queue capacity zero and a
+consumer that retains at most one delivered chunk. The measured native-consumer
+RSS gate is 192 MiB. Explicit worker, request-buffer, queue and GDAL cache
+settings remain available; the CLI respects explicit environment overrides.
+Embedded callers must configure GDAL's process cache before its first use;
+Tile-Ripper does not reset an already-initialized host cache. See the
+[measured gate and its limits](../cog-efficiency/report.md).
 
 HTTP Zarr stores share a pooled client and an atomically enforced aggregate
 metadata/coordinate cache capped at half the request buffer.

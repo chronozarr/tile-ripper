@@ -15,7 +15,7 @@ use std::{
 
 struct Task {
     selected: usize,
-    node: usize,
+    nodes: Vec<usize>,
     host: String,
     bytes: usize,
     reader_bytes: usize,
@@ -145,13 +145,18 @@ fn tasks(r: &Request, p: &Plan, sources: &crate::storage::Sources) -> Result<Vec
                     .ok_or("working set overflow")?;
                 out.push(Task {
                     selected: si,
-                    node: ni,
+                    nodes: vec![ni],
                     host: host(a)?,
                     bytes,
                     reader_bytes: coordinates.checked_mul(3).ok_or("reader state overflow")?,
                 });
             }
         } else {
+            // A selection owns one GDAL handle. Its windows share decoded source
+            // blocks even when several output chunks intersect the same tile.
+            // Only one output buffer is live per admitted selection.
+            let mut nodes = Vec::new();
+            let mut bytes = 0;
             for (ni, node) in p
                 .nodes
                 .iter()
@@ -165,19 +170,23 @@ fn tasks(r: &Request, p: &Plan, sources: &crate::storage::Sources) -> Result<Vec
                     if l.variable != (Variable::Band { index: *band }) {
                         continue;
                     }
-                    let bytes = window
+                    let window_bytes = window
                         .width
                         .checked_mul(window.height)
                         .and_then(|n| n.checked_mul(2))
                         .ok_or("window byte overflow")?;
-                    out.push(Task {
-                        selected: si,
-                        node: ni,
-                        host: host(a)?,
-                        bytes,
-                        reader_bytes: 0,
-                    });
+                    bytes = bytes.max(window_bytes);
+                    nodes.push(ni);
                 }
+            }
+            if !nodes.is_empty() {
+                out.push(Task {
+                    selected: si,
+                    nodes,
+                    host: host(a)?,
+                    bytes,
+                    reader_bytes: 0,
+                });
             }
         }
     }
@@ -199,7 +208,7 @@ pub(crate) fn execute(
     let tasks = tasks(r, p, sources)?;
     let mut workers = positive_env(
         "TILE_RIPPER_WORKERS",
-        std::thread::available_parallelism().map_or(1, |n| n.get().min(4)),
+        std::thread::available_parallelism().map_or(1, |n| n.get().min(2)),
     )?
     .min(tasks.len().max(1));
     // Reader contexts retain decoded coordinates/dimension indices across tasks.
@@ -225,13 +234,8 @@ pub(crate) fn execute(
     let Source::Assets { assets } = &r.source else {
         unreachable!()
     };
-    // Invalidate URL-only COG caches once, before any worker opens a handle.
-    for a in assets
-        .iter()
-        .filter(|a| a.format == Format::Cog && a.etag.is_some())
-    {
-        crate::cog::clear_remote_cache(a)?;
-    }
+    // Preparation invalidates URL caches before binding the source ETag.
+    // Pre/post version checks protect reuse of that same prepared snapshot.
     let admission = Admission {
         state: Mutex::new(State {
             used: retained,
@@ -244,21 +248,7 @@ pub(crate) fn execute(
     let channels: Vec<_> = tasks.iter().map(|_| mpsc::sync_channel(0)).collect();
     let (senders, receivers): (Vec<_>, Vec<_>) = channels.into_iter().unzip();
     // Copy the caller's thread-local GDAL configuration into each worker.
-    let configuration: Vec<_> = [
-        "GDAL_HTTP_HEADERS",
-        "GDAL_DISABLE_READDIR_ON_OPEN",
-        "GDAL_INGESTED_BYTES_AT_OPEN",
-        "GDAL_NUM_THREADS",
-        "GDAL_CACHEMAX",
-        "GDAL_HTTP_MAX_RETRY",
-        "GDAL_HTTP_RETRY_DELAY",
-        "GDAL_HTTP_TIMEOUT",
-        "CPL_DEBUG",
-        "CPL_CURL_VERBOSE",
-    ]
-    .iter()
-    .map(|k| Ok((*k, gdal::config::get_thread_local_config_option(k, "")?)))
-    .collect::<Result<_>>()?;
+    let configuration = crate::cog::thread_configuration()?;
     let mut result = empty_report(planning);
     let outcome = std::thread::scope(|scope| -> Result<()> {
         let mut handles = Vec::new();
@@ -267,11 +257,7 @@ pub(crate) fn execute(
                 (&tasks, &senders, &admission, &abort, &configuration);
             handles.push(scope.spawn(move || -> Result<ExecutionReport> {
                 let _quiet = crate::diagnostics::QuietNative::enter();
-                for (key, value) in configuration {
-                    if !value.is_empty() {
-                        gdal::config::set_thread_local_config_option(key, value)?;
-                    }
-                }
+                crate::cog::apply_thread_configuration(configuration)?;
                 let mut report = empty_report(0.);
                 let mut reader: Option<(usize, Reader)> = None;
                 loop {
@@ -345,12 +331,19 @@ pub(crate) fn execute(
                                 reader = Some((task.selected, physical));
                                 report.source_open_seconds += open.elapsed().as_secs_f64();
                             }
-                            reader.as_mut().unwrap().1.execute_node(
-                                r,
-                                &p.nodes[task.node],
-                                &mut report,
-                                &mut deliver,
-                            )?;
+                            for node in &task.nodes {
+                                if abort.load(Ordering::Acquire)
+                                    || cancelled.load(Ordering::Acquire)
+                                {
+                                    return Err("acquisition cancelled".into());
+                                }
+                                reader.as_mut().unwrap().1.execute_node(
+                                    r,
+                                    &p.nodes[*node],
+                                    &mut report,
+                                    &mut deliver,
+                                )?;
+                            }
                             Ok(())
                         }))
                         .unwrap_or_else(|_| {
@@ -436,7 +429,7 @@ pub(crate) fn execute(
     result
         .source_reads
         .sort_by(|a, b| (&a.asset_id, &a.key).cmp(&(&b.asset_id, &b.key)));
-    result.scheduler = serde_json::json!({"workers":workers,"per_host":per_host,"buffer_bytes":r.budget.buffer_bytes,"reserved_bytes_peak":state.peak,"reader_state_reserved_bytes":retained,"active_workers_peak":state.active_peak,"completed_tasks":tasks.len(),"seconds":started.elapsed().as_secs_f64(),"order":"plan","memory_scope":"conservative reader working reservations; excludes process/runtime, GDAL cache, prepared metadata and caller retention"});
+    result.scheduler = serde_json::json!({"workers":workers,"per_host":per_host,"buffer_bytes":r.budget.buffer_bytes,"reserved_bytes_peak":state.peak,"reader_state_reserved_bytes":retained,"active_workers_peak":state.active_peak,"completed_tasks":tasks.iter().map(|t|t.nodes.len()).sum::<usize>(),"admitted_jobs":tasks.len(),"cog_reader_scope":"selection","seconds":started.elapsed().as_secs_f64(),"order":"plan","memory_scope":"conservative reader working reservations; excludes process/runtime, GDAL cache, prepared metadata and caller retention"});
     Ok(result)
 }
 fn add(a: &mut Option<f64>, b: Option<f64>) {

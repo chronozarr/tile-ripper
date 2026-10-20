@@ -1,0 +1,91 @@
+{
+  "baseline_revision": "6a817e23030776ce73ce628690521311ce8b02c1",
+  "rust": {
+    "passed": 53,
+    "failed": 0,
+    "ignored_http_driven": 2,
+    "fmt": true,
+    "clippy_all_targets_warnings_denied": true
+  },
+  "source_sha256": "e98c9e7d742aba1fe4d4ba9897784d95b38a8cddbcdeda9e967d73b5dff6d6ee",
+  "binaries": {
+    "target/release/tile-ripper": "c25e77cb8f4e24135147715257880a2ffde98c0413320daefbe34d8fbe157964",
+    "target/release/tile-ripper-native-stats": "06407f2ded4ece14b2d6b63be0bada0071bdd6db0c69a2b961448a03876715fd"
+  },
+  "consumer": {
+    "results": [
+      {
+        "case": "two-remote-cogs",
+        "passed": true,
+        "chunks": 2,
+        "peak_rss_bytes": 54493184
+      },
+      {
+        "case": "cancel-after-delivery",
+        "passed": true
+      },
+      {
+        "case": "already-read-cog-mutated-after-delivery",
+        "passed": true,
+        "provisional_chunks": 2
+      },
+      {
+        "case": "catalog-consumer-and-post-delivery-mutation",
+        "passed": true,
+        "peak_rss_bytes": 57933824
+      },
+      {
+        "case": "two-remote-uint16-zarr",
+        "passed": true,
+        "chunks": 128,
+        "peak_rss_bytes": 45842432
+      },
+      {
+        "case": "zarr-mutated-after-delivery",
+        "passed": true
+      },
+      {
+        "case": "remote-float32-nan-reversed-swapped-axes",
+        "passed": true,
+        "chunks": 8,
+        "peak_rss_bytes": 41517056
+      }
+    ],
+    "consumer_sha256": "06407f2ded4ece14b2d6b63be0bada0071bdd6db0c69a2b961448a03876715fd",
+    "rust_source_sha256": "e98c9e7d742aba1fe4d4ba9897784d95b38a8cddbcdeda9e967d73b5dff6d6ee",
+    "source_binding": "current source tree",
+    "rss_limit_bytes": 201326592,
+    "memory_scope": "consumer process RSS including runtime/GDAL; payload limit 2 MiB, queue 0, working budget per request"
+  },
+  "gdal_snapshot_checks": [
+    {
+      "case": "conditional-native-statistics",
+      "passed": true
+    },
+    {
+      "case": "late-mutation-no-completion",
+      "passed": true
+    },
+    {
+      "case": "late-mutation-file-cleanup",
+      "passed": true
+    }
+  ],
+  "matched_runs": 96,
+  "matched_failures": 0,
+  "gdal_tuning_pilots": 64,
+  "native_rss_gate_bytes": 201326592,
+  "native_rss_max_bytes": 141361152,
+  "repeated_selected_native_payload_bytes": 0,
+  "source_version_provenance_and_completion_checks": true,
+  "layout_isolated_runs": 12,
+  "memory_instrumented_runs": 32,
+  "inherited_default_rss_failures_retained": 3,
+  "scope": "local frozen real-source gate; no absolute RSS guarantee or general performance win",
+  "artifacts": {
+    "docs/cog-efficiency/summary.json": "ece2969d94792cbb58960668a5afe2eac77c613e0d779c3c53b56b2b0ef7f8b0",
+    "docs/cog-efficiency/final-trace-accounting.json": "da00b30807a7b2a1c7c19c534cb2852cefda6e971b653c1f8f88cd2dc1ab390a",
+    "bench/cog_efficiency_summary.py": "4bacba82379ac7ce70fc782cc15ed672602658259d5ba234be3082fa15adfd86",
+    "bench/cog_io_trace.py": "ba49831b0593db91f35739f9d3a1e92a7ceb4fdbecc95551706408e431b0ca72"
+  }
+}

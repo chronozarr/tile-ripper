@@ -1,0 +1,550 @@
+{
+  "scope": "one final-build diagnostic run per workload; timings excluded from performance ranking",
+  "mirror_index_sha256": "364121a9ef46437772834fae8a0d84797063320087bc1acbfdf154afb5e70122",
+  "binaries": {
+    "target/release/tile-ripper": "c3db3b84dac5bbe373d92de35556c80a2f2f336f26339c4d4eea3f040fb8299b",
+    "target/release/tile-ripper-native-stats": "ab6e776660db396e310aa285c2f6402892cf005f33925b4eca23e7f406eb0f3e"
+  },
+  "rows": [
+    {
+      "exit_code": 0,
+      "wall_seconds": 0.471258332952857,
+      "peak_rss_bytes": 107741184,
+      "error": "",
+      "stages": [
+        {
+          "stage": "cog_identity_batch",
+          "seconds": 0.01136175
+        },
+        {
+          "stage": "cog_layout_inspection",
+          "seconds": 0.029191625
+        },
+        {
+          "stage": "cog_layout_inspection",
+          "seconds": 0.022495667
+        },
+        {
+          "stage": "cog_layout_inspection",
+          "seconds": 0.023499041
+        },
+        {
+          "stage": "cog_layout_inspection",
+          "seconds": 0.021670583
+        },
+        {
+          "stage": "cog_layout_inspection",
+          "seconds": 0.019701833
+        },
+        {
+          "stage": "cog_layout_inspection",
+          "seconds": 0.021464125
+        },
+        {
+          "stage": "cog_layout_inspection",
+          "seconds": 0.020808917
+        },
+        {
+          "stage": "cog_layout_inspection",
+          "seconds": 0.019114958
+        },
+        {
+          "stage": "native_planning_with_layout",
+          "seconds": 0.180331459
+        },
+        {
+          "stage": "cog_identity_batch",
+          "seconds": 0.00541675
+        },
+        {
+          "stage": "cog_identity_batch",
+          "seconds": 0.006135083
+        }
+      ],
+      "cog_identity_validation_seconds": 0.022913583,
+      "layout_inspection_seconds": 0.17794674900000002,
+      "planning_compute_seconds": 0.0023847099999999843,
+      "mode": "rust-stream",
+      "workers": 2,
+      "http": {
+        "head": 64,
+        "get": 38,
+        "range_get": 38,
+        "body_bytes": 26558464,
+        "conditional": 54,
+        "errors": 0,
+        "head_active": 0,
+        "head_peak": 2
+      },
+      "first_chunk_seconds": 0.216363708,
+      "prepare_seconds": 0.193736708,
+      "metadata_worker_seconds": null,
+      "observed": {
+        "source_reads": [],
+        "scheduler": {
+          "workers": 2,
+          "per_host": 4,
+          "buffer_bytes": 16777216,
+          "reserved_bytes_peak": 36864,
+          "reader_state_reserved_bytes": 0,
+          "active_workers_peak": 2,
+          "completed_tasks": 16,
+          "admitted_jobs": 16,
+          "cog_reader_scope": "selection",
+          "seconds": 0.11656625,
+          "order": "plan",
+          "memory_scope": "conservative reader working reservations; excludes process/runtime, GDAL cache, prepared metadata and caller retention"
+        },
+        "transport": {},
+        "decoded_source_chunks": 0,
+        "filled_source_chunks": 0,
+        "first_output_seconds": 0.0161035,
+        "assembly_seconds": 0.0,
+        "source_retrieval_seconds": null,
+        "allocation_seconds": null,
+        "copying_seconds": null,
+        "output_setup_seconds": 0.0,
+        "output_finalize_seconds": 0.0,
+        "output_io": null,
+        "native_materialized_bytes": null,
+        "source_data_requests": null,
+        "source_data_bytes": null,
+        "chunks": 16,
+        "decoded_bytes": 294912,
+        "non_nodata_pixels": 147456,
+        "planning_seconds": 0.192546833,
+        "source_open_seconds": 0.009963749000000001,
+        "read_decode_seconds": 0.20955654,
+        "sink_seconds": 0.0011851230000000002,
+        "masking_seconds": 3.959e-06,
+        "remote_requests": null,
+        "remote_bytes": null
+      },
+      "correctness": {
+        "chunks": 16,
+        "valid_pixels": 147456,
+        "native_sum": 322927978.0,
+        "values": 147456,
+        "observations": 16
+      },
+      "materialization_seconds": 0.0,
+      "oracle_seconds_excluded": 0.2323239166289568,
+      "scientific_correctness_passed": true,
+      "rss_gate_passed": true,
+      "head_gate_passed": true,
+      "passed": true,
+      "workload": "many-small",
+      "rep": 0,
+      "accounting": {
+        "body_bytes": 26558464,
+        "duplicate_response_bytes": 196608,
+        "unselected_payload_bytes": 898622,
+        "exact_metadata_bytes": 88496,
+        "padding_or_other_bytes": 4402,
+        "header_response_bytes": 720896,
+        "selected_payload_bytes": 25566944,
+        "imagery_response_bytes": 25837568,
+        "get_requests": 38,
+        "unique_response_bytes": 26361856,
+        "selected_blocks": 16,
+        "selected_compressed_bytes": 25566944,
+        "requested_blocks": 64,
+        "blocks_with_repeated_payload": 6,
+        "duplicate_selected_payload_bytes": 0,
+        "duplicate_unselected_payload_bytes": 171344,
+        "selected_payload_unique_bytes": 25566944,
+        "head_requests": 64
+      }
+    },
+    {
+      "exit_code": 0,
+      "wall_seconds": 0.6836375831626356,
+      "peak_rss_bytes": 131219456,
+      "error": "",
+      "stages": [
+        {
+          "stage": "cog_identity_batch",
+          "seconds": 0.006151292
+        },
+        {
+          "stage": "cog_layout_inspection",
+          "seconds": 0.024050708
+        },
+        {
+          "stage": "cog_layout_inspection",
+          "seconds": 0.014470125
+        },
+        {
+          "stage": "cog_layout_inspection",
+          "seconds": 0.01510275
+        },
+        {
+          "stage": "native_planning_with_layout",
+          "seconds": 0.0543395
+        },
+        {
+          "stage": "cog_identity_batch",
+          "seconds": 0.001892458
+        },
+        {
+          "stage": "cog_identity_batch",
+          "seconds": 0.003266625
+        }
+      ],
+      "cog_identity_validation_seconds": 0.011310375000000001,
+      "layout_inspection_seconds": 0.053623583,
+      "planning_compute_seconds": 0.0007159169999999965,
+      "mode": "rust-stream",
+      "workers": 2,
+      "http": {
+        "head": 24,
+        "get": 33,
+        "range_get": 33,
+        "body_bytes": 56918016,
+        "conditional": 39,
+        "errors": 0,
+        "head_active": 0,
+        "head_peak": 2
+      },
+      "first_chunk_seconds": 0.07958175,
+      "prepare_seconds": 0.062179208,
+      "metadata_worker_seconds": null,
+      "observed": {
+        "source_reads": [],
+        "scheduler": {
+          "workers": 2,
+          "per_host": 4,
+          "buffer_bytes": 16777216,
+          "reserved_bytes_peak": 262144,
+          "reader_state_reserved_bytes": 0,
+          "active_workers_peak": 2,
+          "completed_tasks": 384,
+          "admitted_jobs": 6,
+          "cog_reader_scope": "selection",
+          "seconds": 0.453877,
+          "order": "plan",
+          "memory_scope": "conservative reader working reservations; excludes process/runtime, GDAL cache, prepared metadata and caller retention"
+        },
+        "transport": {},
+        "decoded_source_chunks": 0,
+        "filled_source_chunks": 0,
+        "first_output_seconds": 0.014348417,
+        "assembly_seconds": 0.0,
+        "source_retrieval_seconds": null,
+        "allocation_seconds": null,
+        "copying_seconds": null,
+        "output_setup_seconds": 0.0,
+        "output_finalize_seconds": 0.0,
+        "output_io": null,
+        "native_materialized_bytes": null,
+        "source_data_requests": null,
+        "source_data_bytes": null,
+        "chunks": 384,
+        "decoded_bytes": 50331648,
+        "non_nodata_pixels": 25165823,
+        "planning_seconds": 0.061018958,
+        "source_open_seconds": 0.003580042,
+        "read_decode_seconds": 0.3078043239999999,
+        "sink_seconds": 0.1556695320000001,
+        "masking_seconds": 1.3583999999999997e-05,
+        "remote_requests": null,
+        "remote_bytes": null
+      },
+      "correctness": {
+        "chunks": 384,
+        "valid_pixels": 25165823,
+        "native_sum": 53448838854.0,
+        "values": 25165824,
+        "observations": 6
+      },
+      "materialization_seconds": 0.0,
+      "oracle_seconds_excluded": 6.82616254221648,
+      "scientific_correctness_passed": true,
+      "rss_gate_passed": true,
+      "head_gate_passed": true,
+      "passed": true,
+      "workload": "several-large",
+      "rep": 0,
+      "accounting": {
+        "body_bytes": 56918016,
+        "duplicate_response_bytes": 98304,
+        "unselected_payload_bytes": 19231389,
+        "exact_metadata_bytes": 36212,
+        "padding_or_other_bytes": 2004,
+        "header_response_bytes": 294912,
+        "selected_payload_bytes": 37648411,
+        "imagery_response_bytes": 56623104,
+        "get_requests": 33,
+        "unique_response_bytes": 56819712,
+        "selected_blocks": 24,
+        "selected_compressed_bytes": 37648411,
+        "requested_blocks": 57,
+        "blocks_with_repeated_payload": 3,
+        "duplicate_selected_payload_bytes": 0,
+        "duplicate_unselected_payload_bytes": 85670,
+        "selected_payload_unique_bytes": 37648411,
+        "head_requests": 24
+      }
+    },
+    {
+      "exit_code": 0,
+      "wall_seconds": 0.49684904096648097,
+      "peak_rss_bytes": 127795200,
+      "error": "",
+      "stages": [
+        {
+          "stage": "cog_identity_batch",
+          "seconds": 0.009582125
+        },
+        {
+          "stage": "cog_layout_inspection",
+          "seconds": 0.0269505
+        },
+        {
+          "stage": "cog_layout_inspection",
+          "seconds": 0.015806
+        },
+        {
+          "stage": "cog_layout_inspection",
+          "seconds": 0.014383833
+        },
+        {
+          "stage": "native_planning_with_layout",
+          "seconds": 0.057754958
+        },
+        {
+          "stage": "cog_identity_batch",
+          "seconds": 0.002073291
+        },
+        {
+          "stage": "cog_identity_batch",
+          "seconds": 0.002529292
+        }
+      ],
+      "cog_identity_validation_seconds": 0.014184708,
+      "layout_inspection_seconds": 0.057140333,
+      "planning_compute_seconds": 0.0006146250000000006,
+      "mode": "rust-stream",
+      "workers": 2,
+      "http": {
+        "head": 24,
+        "get": 33,
+        "range_get": 33,
+        "body_bytes": 56918016,
+        "conditional": 39,
+        "errors": 0,
+        "head_active": 0,
+        "head_peak": 2
+      },
+      "first_chunk_seconds": 0.088710792,
+      "prepare_seconds": 0.068265208,
+      "metadata_worker_seconds": null,
+      "observed": {
+        "source_reads": [],
+        "scheduler": {
+          "workers": 2,
+          "per_host": 4,
+          "buffer_bytes": 16777216,
+          "reserved_bytes_peak": 262144,
+          "reader_state_reserved_bytes": 0,
+          "active_workers_peak": 2,
+          "completed_tasks": 54,
+          "admitted_jobs": 6,
+          "cog_reader_scope": "selection",
+          "seconds": 0.27962775,
+          "order": "plan",
+          "memory_scope": "conservative reader working reservations; excludes process/runtime, GDAL cache, prepared metadata and caller retention"
+        },
+        "transport": {},
+        "decoded_source_chunks": 0,
+        "filled_source_chunks": 0,
+        "first_output_seconds": 0.017675334,
+        "assembly_seconds": 0.0,
+        "source_retrieval_seconds": null,
+        "allocation_seconds": null,
+        "copying_seconds": null,
+        "output_setup_seconds": 0.0,
+        "output_finalize_seconds": 0.0,
+        "output_io": null,
+        "native_materialized_bytes": null,
+        "source_data_requests": null,
+        "source_data_bytes": null,
+        "chunks": 54,
+        "decoded_bytes": 7077888,
+        "non_nodata_pixels": 3538944,
+        "planning_seconds": 0.067890167,
+        "source_open_seconds": 0.006515332,
+        "read_decode_seconds": 0.33081103899999986,
+        "sink_seconds": 0.012499959000000003,
+        "masking_seconds": 5.626000000000002e-06,
+        "remote_requests": null,
+        "remote_bytes": null
+      },
+      "correctness": {
+        "chunks": 54,
+        "valid_pixels": 3538944,
+        "native_sum": 7440761236.0,
+        "values": 3538944,
+        "observations": 6
+      },
+      "materialization_seconds": 0.0,
+      "oracle_seconds_excluded": 1.7241960829123855,
+      "scientific_correctness_passed": true,
+      "rss_gate_passed": true,
+      "head_gate_passed": true,
+      "passed": true,
+      "workload": "overlap-a",
+      "rep": 0,
+      "accounting": {
+        "body_bytes": 56918016,
+        "duplicate_response_bytes": 98304,
+        "unselected_payload_bytes": 19231389,
+        "exact_metadata_bytes": 36212,
+        "padding_or_other_bytes": 2004,
+        "header_response_bytes": 294912,
+        "selected_payload_bytes": 37648411,
+        "imagery_response_bytes": 56623104,
+        "get_requests": 33,
+        "unique_response_bytes": 56819712,
+        "selected_blocks": 24,
+        "selected_compressed_bytes": 37648411,
+        "requested_blocks": 57,
+        "blocks_with_repeated_payload": 3,
+        "duplicate_selected_payload_bytes": 0,
+        "duplicate_unselected_payload_bytes": 85670,
+        "selected_payload_unique_bytes": 37648411,
+        "head_requests": 24
+      }
+    },
+    {
+      "exit_code": 0,
+      "wall_seconds": 0.3401195830665529,
+      "peak_rss_bytes": 134791168,
+      "error": "",
+      "stages": [
+        {
+          "stage": "cog_identity_batch",
+          "seconds": 0.005474875
+        },
+        {
+          "stage": "cog_layout_inspection",
+          "seconds": 0.02008275
+        },
+        {
+          "stage": "cog_layout_inspection",
+          "seconds": 0.013108958
+        },
+        {
+          "stage": "cog_layout_inspection",
+          "seconds": 0.012824875
+        },
+        {
+          "stage": "native_planning_with_layout",
+          "seconds": 0.046547958
+        },
+        {
+          "stage": "cog_identity_batch",
+          "seconds": 0.001558583
+        },
+        {
+          "stage": "cog_identity_batch",
+          "seconds": 0.001820375
+        }
+      ],
+      "cog_identity_validation_seconds": 0.008853832999999998,
+      "layout_inspection_seconds": 0.046016583,
+      "planning_compute_seconds": 0.0005313750000000006,
+      "mode": "rust-stream",
+      "workers": 2,
+      "http": {
+        "head": 24,
+        "get": 20,
+        "range_get": 20,
+        "body_bytes": 38109184,
+        "conditional": 26,
+        "errors": 0,
+        "head_active": 0,
+        "head_peak": 2
+      },
+      "first_chunk_seconds": 0.102846167,
+      "prepare_seconds": 0.05278825,
+      "metadata_worker_seconds": null,
+      "observed": {
+        "source_reads": [],
+        "scheduler": {
+          "workers": 2,
+          "per_host": 4,
+          "buffer_bytes": 16777216,
+          "reserved_bytes_peak": 262144,
+          "reader_state_reserved_bytes": 0,
+          "active_workers_peak": 2,
+          "completed_tasks": 54,
+          "admitted_jobs": 6,
+          "cog_reader_scope": "selection",
+          "seconds": 0.143206167,
+          "order": "plan",
+          "memory_scope": "conservative reader working reservations; excludes process/runtime, GDAL cache, prepared metadata and caller retention"
+        },
+        "transport": {},
+        "decoded_source_chunks": 0,
+        "filled_source_chunks": 0,
+        "first_output_seconds": 0.048049542,
+        "assembly_seconds": 0.0,
+        "source_retrieval_seconds": null,
+        "allocation_seconds": null,
+        "copying_seconds": null,
+        "output_setup_seconds": 0.0,
+        "output_finalize_seconds": 0.0,
+        "output_io": null,
+        "native_materialized_bytes": null,
+        "source_data_requests": null,
+        "source_data_bytes": null,
+        "chunks": 54,
+        "decoded_bytes": 7077888,
+        "non_nodata_pixels": 3538944,
+        "planning_seconds": 0.0524275,
+        "source_open_seconds": 0.004456374,
+        "read_decode_seconds": 0.24788208500000003,
+        "sink_seconds": 0.018844458,
+        "masking_seconds": 8.76e-07,
+        "remote_requests": null,
+        "remote_bytes": null
+      },
+      "correctness": {
+        "chunks": 54,
+        "valid_pixels": 3538944,
+        "native_sum": 7372630985.0,
+        "values": 3538944,
+        "observations": 6
+      },
+      "materialization_seconds": 0.0,
+      "oracle_seconds_excluded": 1.2558209579437971,
+      "scientific_correctness_passed": true,
+      "rss_gate_passed": true,
+      "head_gate_passed": true,
+      "passed": true,
+      "workload": "overlap-b",
+      "rep": 0,
+      "accounting": {
+        "body_bytes": 38109184,
+        "duplicate_response_bytes": 65536,
+        "unselected_payload_bytes": 426791,
+        "exact_metadata_bytes": 32190,
+        "padding_or_other_bytes": 1792,
+        "header_response_bytes": 262144,
+        "selected_payload_bytes": 37648411,
+        "imagery_response_bytes": 37847040,
+        "get_requests": 20,
+        "unique_response_bytes": 38043648,
+        "selected_blocks": 24,
+        "selected_compressed_bytes": 37648411,
+        "requested_blocks": 54,
+        "blocks_with_repeated_payload": 2,
+        "duplicate_selected_payload_bytes": 0,
+        "duplicate_unselected_payload_bytes": 57112,
+        "selected_payload_unique_bytes": 37648411,
+        "head_requests": 24
+      }
+    }
+  ]
+}

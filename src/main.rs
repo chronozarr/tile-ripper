@@ -42,7 +42,10 @@ fn run() -> Result<()> {
         ("CPL_CURL_VERBOSE", "NO"),
         ("CPL_DEBUG", "OFF"),
     ] {
-        gdal::config::set_config_option(key, value)?;
+        // Explicit process settings take precedence over the CLI defaults.
+        if env::var_os(key).is_none() {
+            gdal::config::set_config_option(key, value)?;
+        }
     }
     let mut cache = if let Some(path) = cache_path.as_deref().filter(|p| Path::new(p).exists()) {
         LayoutCache::load(Path::new(path))?

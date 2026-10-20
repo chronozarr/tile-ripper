@@ -257,3 +257,34 @@ pub(crate) fn clear_remote_cache(asset: &Asset) -> Result<()> {
     }
     Ok(())
 }
+
+/// Snapshot caller-local overrides before starting native worker threads.
+/// Environment and process-global options remain GDAL's fallback.
+pub(crate) fn thread_configuration() -> Result<Vec<(&'static str, String)>> {
+    [
+        "GDAL_HTTP_HEADERS",
+        "GDAL_DISABLE_READDIR_ON_OPEN",
+        "GDAL_INGESTED_BYTES_AT_OPEN",
+        "GDAL_NUM_THREADS",
+        "GDAL_CACHEMAX",
+        "GDAL_HTTP_MAX_RETRY",
+        "GDAL_HTTP_RETRY_DELAY",
+        "GDAL_HTTP_TIMEOUT",
+        "GDAL_HTTP_MULTIRANGE",
+        "CPL_VSIL_CURL_CHUNK_SIZE",
+        "CPL_VSIL_CURL_CACHE_SIZE",
+        "CPL_DEBUG",
+        "CPL_CURL_VERBOSE",
+    ]
+    .iter()
+    .map(|key| Ok((*key, gdal::config::get_thread_local_config_option(key, "")?)))
+    .collect()
+}
+pub(crate) fn apply_thread_configuration(configuration: &[(&str, String)]) -> Result<()> {
+    for (key, value) in configuration {
+        if !value.is_empty() {
+            gdal::config::set_thread_local_config_option(key, value)?;
+        }
+    }
+    Ok(())
+}

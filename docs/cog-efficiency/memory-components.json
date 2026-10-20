@@ -1,0 +1,1101 @@
+{
+  "scope": "Fresh independent Rust consumer processes, frozen native Sentinel-2 COG sources, no upstream access. Diagnostic observer timings are excluded from performance rankings.",
+  "rss_gate_bytes": 201326592,
+  "profile": {
+    "workers": 2,
+    "gdal_cache_mib": 32,
+    "buffer_bytes": 16777216,
+    "queue_capacity": 0,
+    "max_delivered_chunk_bytes": 2097152,
+    "consumer_retains_pixel_arrays": false,
+    "gdal_num_threads": 1
+  },
+  "baseline_revision": "6a817e2",
+  "reports": {
+    "baseline-memory-ablations-v2": {
+      "binary": "prototype-output/cog-efficiency/baseline-binaries/tile-ripper-native-stats",
+      "binary_sha256": "30ccb253256a90d09437fea41afecb0fd8703595cb8519fa0941c02768497060",
+      "mirror_index_sha256": "364121a9ef46437772834fae8a0d84797063320087bc1acbfdf154afb5e70122",
+      "platform": "macOS-26.6.2-arm64-arm-64bit",
+      "observer": "10-ms macOS task_info, malloc_zone_statistics, GDAL public cache counters",
+      "rows": [
+        {
+          "workload": "overlap-a",
+          "workers": 2,
+          "gdal_cache_mib": 1,
+          "rep": 0,
+          "peak_rss_bytes": 121487360,
+          "rss_gate_passed": true,
+          "scientific_correctness_passed": true,
+          "peak_sample": {
+            "seconds": 0.311492,
+            "rss_bytes": 121487360,
+            "physical_footprint_bytes": 84722360,
+            "malloc_live_bytes": 43806704,
+            "malloc_reserved_bytes": 92094464,
+            "gdal_cache_used_bytes": 4194592,
+            "gdal_cache_max_bytes": 1048576,
+            "task_info_ok": 1
+          },
+          "peak_sample_rss_minus_live_malloc_bytes": 77680656,
+          "gdal_block_cache_peak_bytes": 4194592,
+          "malloc_live_peak_bytes": 43852832,
+          "before_first_observed_cached_block_rss_peak_bytes": 59031552,
+          "working_reservation_peak_bytes": 262144,
+          "source_body_bytes": 57114624,
+          "requests": 72,
+          "prepare_seconds": 0.03234675,
+          "first_chunk_seconds": 0.049730458,
+          "diagnostic_wall_seconds": 0.8464560001157224
+        },
+        {
+          "workload": "overlap-a",
+          "workers": 4,
+          "gdal_cache_mib": 1,
+          "rep": 0,
+          "peak_rss_bytes": 137461760,
+          "rss_gate_passed": true,
+          "scientific_correctness_passed": true,
+          "peak_sample": {
+            "seconds": 0.280744,
+            "rss_bytes": 137461760,
+            "physical_footprint_bytes": 100696760,
+            "malloc_live_bytes": 49724176,
+            "malloc_reserved_bytes": 103792640,
+            "gdal_cache_used_bytes": 6291888,
+            "gdal_cache_max_bytes": 1048576,
+            "task_info_ok": 1
+          },
+          "peak_sample_rss_minus_live_malloc_bytes": 87737584,
+          "gdal_block_cache_peak_bytes": 8389184,
+          "malloc_live_peak_bytes": 51982224,
+          "before_first_observed_cached_block_rss_peak_bytes": 61128704,
+          "working_reservation_peak_bytes": 524288,
+          "source_body_bytes": 57180160,
+          "requests": 80,
+          "prepare_seconds": 0.030057667,
+          "first_chunk_seconds": 0.050624792,
+          "diagnostic_wall_seconds": 0.4588217078708112
+        },
+        {
+          "workload": "overlap-a",
+          "workers": 2,
+          "gdal_cache_mib": 32,
+          "rep": 0,
+          "peak_rss_bytes": 142606336,
+          "rss_gate_passed": true,
+          "scientific_correctness_passed": true,
+          "peak_sample": {
+            "seconds": 0.31192,
+            "rss_bytes": 142606336,
+            "physical_footprint_bytes": 105824928,
+            "malloc_live_bytes": 51489376,
+            "malloc_reserved_bytes": 108150784,
+            "gdal_cache_used_bytes": 16778368,
+            "gdal_cache_max_bytes": 33554432,
+            "task_info_ok": 1
+          },
+          "peak_sample_rss_minus_live_malloc_bytes": 91116960,
+          "gdal_block_cache_peak_bytes": 16778368,
+          "malloc_live_peak_bytes": 51489376,
+          "before_first_observed_cached_block_rss_peak_bytes": 52543488,
+          "working_reservation_peak_bytes": 262144,
+          "source_body_bytes": 57114624,
+          "requests": 71,
+          "prepare_seconds": 0.029945291,
+          "first_chunk_seconds": 0.046216041,
+          "diagnostic_wall_seconds": 0.4605583338998258
+        },
+        {
+          "workload": "overlap-a",
+          "workers": 4,
+          "gdal_cache_mib": 32,
+          "rep": 0,
+          "peak_rss_bytes": 162381824,
+          "rss_gate_passed": true,
+          "scientific_correctness_passed": true,
+          "peak_sample": {
+            "seconds": 0.274685,
+            "rss_bytes": 162381824,
+            "physical_footprint_bytes": 125633232,
+            "malloc_live_bytes": 54393872,
+            "malloc_reserved_bytes": 137347072,
+            "gdal_cache_used_bytes": 12583776,
+            "gdal_cache_max_bytes": 33554432,
+            "task_info_ok": 1
+          },
+          "peak_sample_rss_minus_live_malloc_bytes": 107987952,
+          "gdal_block_cache_peak_bytes": 25167552,
+          "malloc_live_peak_bytes": 63241712,
+          "before_first_observed_cached_block_rss_peak_bytes": 59473920,
+          "working_reservation_peak_bytes": 524288,
+          "source_body_bytes": 57180160,
+          "requests": 80,
+          "prepare_seconds": 0.0323775,
+          "first_chunk_seconds": 0.054399792,
+          "diagnostic_wall_seconds": 0.4496207917109132
+        },
+        {
+          "workload": "overlap-a",
+          "workers": 2,
+          "gdal_cache_mib": 64,
+          "rep": 0,
+          "peak_rss_bytes": 142819328,
+          "rss_gate_passed": true,
+          "scientific_correctness_passed": true,
+          "peak_sample": {
+            "seconds": 0.361734,
+            "rss_bytes": 142802944,
+            "physical_footprint_bytes": 106021536,
+            "malloc_live_bytes": 47294672,
+            "malloc_reserved_bytes": 116539392,
+            "gdal_cache_used_bytes": 12583776,
+            "gdal_cache_max_bytes": 67108864,
+            "task_info_ok": 1
+          },
+          "peak_sample_rss_minus_live_malloc_bytes": 95508272,
+          "gdal_block_cache_peak_bytes": 16778368,
+          "malloc_live_peak_bytes": 51459488,
+          "before_first_observed_cached_block_rss_peak_bytes": 56786944,
+          "working_reservation_peak_bytes": 262144,
+          "source_body_bytes": 57114624,
+          "requests": 71,
+          "prepare_seconds": 0.075317417,
+          "first_chunk_seconds": 0.098197542,
+          "diagnostic_wall_seconds": 0.5425636251457036
+        },
+        {
+          "workload": "overlap-a",
+          "workers": 4,
+          "gdal_cache_mib": 64,
+          "rep": 0,
+          "peak_rss_bytes": 168230912,
+          "rss_gate_passed": true,
+          "scientific_correctness_passed": true,
+          "peak_sample": {
+            "seconds": 0.322632,
+            "rss_bytes": 168132608,
+            "physical_footprint_bytes": 131334840,
+            "malloc_live_bytes": 29428992,
+            "malloc_reserved_bytes": 134217728,
+            "gdal_cache_used_bytes": 0,
+            "gdal_cache_max_bytes": 67108864,
+            "task_info_ok": 1
+          },
+          "peak_sample_rss_minus_live_malloc_bytes": 138703616,
+          "gdal_block_cache_peak_bytes": 25167552,
+          "malloc_live_peak_bytes": 65355136,
+          "before_first_observed_cached_block_rss_peak_bytes": 74039296,
+          "working_reservation_peak_bytes": 524288,
+          "source_body_bytes": 57180160,
+          "requests": 80,
+          "prepare_seconds": 0.045855333,
+          "first_chunk_seconds": 0.07024575,
+          "diagnostic_wall_seconds": 0.5173192922957242
+        },
+        {
+          "workload": "several-large",
+          "workers": 2,
+          "gdal_cache_mib": 1,
+          "rep": 0,
+          "peak_rss_bytes": 140312576,
+          "rss_gate_passed": true,
+          "scientific_correctness_passed": true,
+          "peak_sample": {
+            "seconds": 0.97823,
+            "rss_bytes": 140312576,
+            "physical_footprint_bytes": 103514760,
+            "malloc_live_bytes": 42048176,
+            "malloc_reserved_bytes": 104857600,
+            "gdal_cache_used_bytes": 4194592,
+            "gdal_cache_max_bytes": 1048576,
+            "task_info_ok": 1
+          },
+          "peak_sample_rss_minus_live_malloc_bytes": 98264400,
+          "gdal_block_cache_peak_bytes": 4194592,
+          "malloc_live_peak_bytes": 49233040,
+          "before_first_observed_cached_block_rss_peak_bytes": 63913984,
+          "working_reservation_peak_bytes": 262144,
+          "source_body_bytes": 75988992,
+          "requests": 82,
+          "prepare_seconds": 0.032273875,
+          "first_chunk_seconds": 0.048195292,
+          "diagnostic_wall_seconds": 1.1507247500121593
+        },
+        {
+          "workload": "several-large",
+          "workers": 4,
+          "gdal_cache_mib": 1,
+          "rep": 0,
+          "peak_rss_bytes": 164069376,
+          "rss_gate_passed": true,
+          "scientific_correctness_passed": true,
+          "peak_sample": {
+            "seconds": 0.824931,
+            "rss_bytes": 164069376,
+            "physical_footprint_bytes": 127304376,
+            "malloc_live_bytes": 50129712,
+            "malloc_reserved_bytes": 134217728,
+            "gdal_cache_used_bytes": 8389184,
+            "gdal_cache_max_bytes": 1048576,
+            "task_info_ok": 1
+          },
+          "peak_sample_rss_minus_live_malloc_bytes": 113939664,
+          "gdal_block_cache_peak_bytes": 8389184,
+          "malloc_live_peak_bytes": 59146160,
+          "before_first_observed_cached_block_rss_peak_bytes": 65814528,
+          "working_reservation_peak_bytes": 524288,
+          "source_body_bytes": 75988992,
+          "requests": 81,
+          "prepare_seconds": 0.032197541,
+          "first_chunk_seconds": 0.04913875,
+          "diagnostic_wall_seconds": 1.0212274580262601
+        },
+        {
+          "workload": "several-large",
+          "workers": 2,
+          "gdal_cache_mib": 32,
+          "rep": 0,
+          "peak_rss_bytes": 133382144,
+          "rss_gate_passed": true,
+          "scientific_correctness_passed": true,
+          "peak_sample": {
+            "seconds": 0.498142,
+            "rss_bytes": 133382144,
+            "physical_footprint_bytes": 96584328,
+            "malloc_live_bytes": 53014464,
+            "malloc_reserved_bytes": 104857600,
+            "gdal_cache_used_bytes": 16778368,
+            "gdal_cache_max_bytes": 33554432,
+            "task_info_ok": 1
+          },
+          "peak_sample_rss_minus_live_malloc_bytes": 80367680,
+          "gdal_block_cache_peak_bytes": 16778368,
+          "malloc_live_peak_bytes": 54677152,
+          "before_first_observed_cached_block_rss_peak_bytes": 52625408,
+          "working_reservation_peak_bytes": 262144,
+          "source_body_bytes": 75988992,
+          "requests": 83,
+          "prepare_seconds": 0.032212834,
+          "first_chunk_seconds": 0.047714125,
+          "diagnostic_wall_seconds": 0.6587057076394558
+        },
+        {
+          "workload": "several-large",
+          "workers": 4,
+          "gdal_cache_mib": 32,
+          "rep": 0,
+          "peak_rss_bytes": 174850048,
+          "rss_gate_passed": true,
+          "scientific_correctness_passed": true,
+          "peak_sample": {
+            "seconds": 0.51013,
+            "rss_bytes": 174850048,
+            "physical_footprint_bytes": 138085048,
+            "malloc_live_bytes": 68209120,
+            "malloc_reserved_bytes": 130023424,
+            "gdal_cache_used_bytes": 31459440,
+            "gdal_cache_max_bytes": 33554432,
+            "task_info_ok": 1
+          },
+          "peak_sample_rss_minus_live_malloc_bytes": 106640928,
+          "gdal_block_cache_peak_bytes": 31459440,
+          "malloc_live_peak_bytes": 73213376,
+          "before_first_observed_cached_block_rss_peak_bytes": 65126400,
+          "working_reservation_peak_bytes": 524288,
+          "source_body_bytes": 75988992,
+          "requests": 86,
+          "prepare_seconds": 0.030637166,
+          "first_chunk_seconds": 0.047556333,
+          "diagnostic_wall_seconds": 0.6757838339544833
+        },
+        {
+          "workload": "several-large",
+          "workers": 2,
+          "gdal_cache_mib": 64,
+          "rep": 0,
+          "peak_rss_bytes": 154042368,
+          "rss_gate_passed": true,
+          "scientific_correctness_passed": true,
+          "peak_sample": {
+            "seconds": 1.460684,
+            "rss_bytes": 154042368,
+            "physical_footprint_bytes": 117260960,
+            "malloc_live_bytes": 52972512,
+            "malloc_reserved_bytes": 125829120,
+            "gdal_cache_used_bytes": 16778368,
+            "gdal_cache_max_bytes": 67108864,
+            "task_info_ok": 1
+          },
+          "peak_sample_rss_minus_live_malloc_bytes": 101069856,
+          "gdal_block_cache_peak_bytes": 16778368,
+          "malloc_live_peak_bytes": 53388976,
+          "before_first_observed_cached_block_rss_peak_bytes": 62357504,
+          "working_reservation_peak_bytes": 262144,
+          "source_body_bytes": 74350592,
+          "requests": 81,
+          "prepare_seconds": 0.0850455,
+          "first_chunk_seconds": 0.113551958,
+          "diagnostic_wall_seconds": 1.8764304593205452
+        },
+        {
+          "workload": "several-large",
+          "workers": 4,
+          "gdal_cache_mib": 64,
+          "rep": 0,
+          "peak_rss_bytes": 187449344,
+          "rss_gate_passed": true,
+          "scientific_correctness_passed": true,
+          "peak_sample": {
+            "seconds": 0.490402,
+            "rss_bytes": 187449344,
+            "physical_footprint_bytes": 150684344,
+            "malloc_live_bytes": 68820480,
+            "malloc_reserved_bytes": 150994944,
+            "gdal_cache_used_bytes": 33556736,
+            "gdal_cache_max_bytes": 67108864,
+            "task_info_ok": 1
+          },
+          "peak_sample_rss_minus_live_malloc_bytes": 118628864,
+          "gdal_block_cache_peak_bytes": 33556736,
+          "malloc_live_peak_bytes": 75300992,
+          "before_first_observed_cached_block_rss_peak_bytes": 64077824,
+          "working_reservation_peak_bytes": 524288,
+          "source_body_bytes": 75988992,
+          "requests": 83,
+          "prepare_seconds": 0.03202275,
+          "first_chunk_seconds": 0.048740333,
+          "diagnostic_wall_seconds": 0.6557865422219038
+        },
+        {
+          "workload": "overlap-a",
+          "workers": 2,
+          "gdal_cache_mib": 1,
+          "rep": 1,
+          "peak_rss_bytes": 129269760,
+          "rss_gate_passed": true,
+          "scientific_correctness_passed": true,
+          "peak_sample": {
+            "seconds": 1.760909,
+            "rss_bytes": 129269760,
+            "physical_footprint_bytes": 92488352,
+            "malloc_live_bytes": 44901376,
+            "malloc_reserved_bytes": 88965120,
+            "gdal_cache_used_bytes": 4194592,
+            "gdal_cache_max_bytes": 1048576,
+            "task_info_ok": 1
+          },
+          "peak_sample_rss_minus_live_malloc_bytes": 84368384,
+          "gdal_block_cache_peak_bytes": 4194592,
+          "malloc_live_peak_bytes": 46504832,
+          "before_first_observed_cached_block_rss_peak_bytes": 59817984,
+          "working_reservation_peak_bytes": 262144,
+          "source_body_bytes": 45989888,
+          "requests": 67,
+          "prepare_seconds": 0.881661375,
+          "first_chunk_seconds": 1.324360167,
+          "diagnostic_wall_seconds": 2.0325300423428416
+        },
+        {
+          "workload": "overlap-a",
+          "workers": 4,
+          "gdal_cache_mib": 1,
+          "rep": 1,
+          "peak_rss_bytes": 149946368,
+          "rss_gate_passed": true,
+          "scientific_correctness_passed": true,
+          "peak_sample": {
+            "seconds": 0.303199,
+            "rss_bytes": 149946368,
+            "physical_footprint_bytes": 113181368,
+            "malloc_live_bytes": 51853840,
+            "malloc_reserved_bytes": 104693760,
+            "gdal_cache_used_bytes": 8389184,
+            "gdal_cache_max_bytes": 1048576,
+            "task_info_ok": 1
+          },
+          "peak_sample_rss_minus_live_malloc_bytes": 98092528,
+          "gdal_block_cache_peak_bytes": 8389184,
+          "malloc_live_peak_bytes": 52036832,
+          "before_first_observed_cached_block_rss_peak_bytes": 56393728,
+          "working_reservation_peak_bytes": 524288,
+          "source_body_bytes": 57180160,
+          "requests": 80,
+          "prepare_seconds": 0.034411417,
+          "first_chunk_seconds": 0.056302667,
+          "diagnostic_wall_seconds": 0.4900645832531154
+        },
+        {
+          "workload": "overlap-a",
+          "workers": 2,
+          "gdal_cache_mib": 32,
+          "rep": 1,
+          "peak_rss_bytes": 147324928,
+          "rss_gate_passed": true,
+          "scientific_correctness_passed": true,
+          "peak_sample": {
+            "seconds": 0.268042,
+            "rss_bytes": 147193856,
+            "physical_footprint_bytes": 110412448,
+            "malloc_live_bytes": 47294672,
+            "malloc_reserved_bytes": 108150784,
+            "gdal_cache_used_bytes": 12583776,
+            "gdal_cache_max_bytes": 33554432,
+            "task_info_ok": 1
+          },
+          "peak_sample_rss_minus_live_malloc_bytes": 99899184,
+          "gdal_block_cache_peak_bytes": 16778368,
+          "malloc_live_peak_bytes": 51459488,
+          "before_first_observed_cached_block_rss_peak_bytes": 52854784,
+          "working_reservation_peak_bytes": 262144,
+          "source_body_bytes": 57114624,
+          "requests": 68,
+          "prepare_seconds": 0.028675417,
+          "first_chunk_seconds": 0.042316542,
+          "diagnostic_wall_seconds": 0.43388850009068847
+        },
+        {
+          "workload": "overlap-a",
+          "workers": 4,
+          "gdal_cache_mib": 32,
+          "rep": 1,
+          "peak_rss_bytes": 168624128,
+          "rss_gate_passed": true,
+          "scientific_correctness_passed": true,
+          "peak_sample": {
+            "seconds": 0.289509,
+            "rss_bytes": 168624128,
+            "physical_footprint_bytes": 131875536,
+            "malloc_live_bytes": 56507136,
+            "malloc_reserved_bytes": 141541376,
+            "gdal_cache_used_bytes": 14681072,
+            "gdal_cache_max_bytes": 33554432,
+            "task_info_ok": 1
+          },
+          "peak_sample_rss_minus_live_malloc_bytes": 112116992,
+          "gdal_block_cache_peak_bytes": 25167552,
+          "malloc_live_peak_bytes": 63211472,
+          "before_first_observed_cached_block_rss_peak_bytes": 59408384,
+          "working_reservation_peak_bytes": 524288,
+          "source_body_bytes": 57180160,
+          "requests": 80,
+          "prepare_seconds": 0.034350208,
+          "first_chunk_seconds": 0.054781125,
+          "diagnostic_wall_seconds": 0.4552990421652794
+        },
+        {
+          "workload": "overlap-a",
+          "workers": 2,
+          "gdal_cache_mib": 64,
+          "rep": 1,
+          "peak_rss_bytes": 139542528,
+          "rss_gate_passed": true,
+          "scientific_correctness_passed": true,
+          "peak_sample": {
+            "seconds": 0.294963,
+            "rss_bytes": 139542528,
+            "physical_footprint_bytes": 102761120,
+            "malloc_live_bytes": 46679376,
+            "malloc_reserved_bytes": 117440512,
+            "gdal_cache_used_bytes": 16778368,
+            "gdal_cache_max_bytes": 67108864,
+            "task_info_ok": 1
+          },
+          "peak_sample_rss_minus_live_malloc_bytes": 92863152,
+          "gdal_block_cache_peak_bytes": 16778368,
+          "malloc_live_peak_bytes": 51443104,
+          "before_first_observed_cached_block_rss_peak_bytes": 53297152,
+          "working_reservation_peak_bytes": 262144,
+          "source_body_bytes": 57114624,
+          "requests": 67,
+          "prepare_seconds": 0.037846958,
+          "first_chunk_seconds": 0.050666125,
+          "diagnostic_wall_seconds": 0.5554927079938352
+        },
+        {
+          "workload": "overlap-a",
+          "workers": 4,
+          "gdal_cache_mib": 64,
+          "rep": 1,
+          "peak_rss_bytes": 160104448,
+          "rss_gate_passed": true,
+          "scientific_correctness_passed": true,
+          "peak_sample": {
+            "seconds": 0.270318,
+            "rss_bytes": 160104448,
+            "physical_footprint_bytes": 123355856,
+            "malloc_live_bytes": 56491008,
+            "malloc_reserved_bytes": 128958464,
+            "gdal_cache_used_bytes": 14681072,
+            "gdal_cache_max_bytes": 67108864,
+            "task_info_ok": 1
+          },
+          "peak_sample_rss_minus_live_malloc_bytes": 103613440,
+          "gdal_block_cache_peak_bytes": 25167552,
+          "malloc_live_peak_bytes": 63241616,
+          "before_first_observed_cached_block_rss_peak_bytes": 58228736,
+          "working_reservation_peak_bytes": 524288,
+          "source_body_bytes": 57180160,
+          "requests": 79,
+          "prepare_seconds": 0.031640125,
+          "first_chunk_seconds": 0.052794333,
+          "diagnostic_wall_seconds": 0.4470695829950273
+        },
+        {
+          "workload": "several-large",
+          "workers": 2,
+          "gdal_cache_mib": 1,
+          "rep": 1,
+          "peak_rss_bytes": 153092096,
+          "rss_gate_passed": true,
+          "scientific_correctness_passed": true,
+          "peak_sample": {
+            "seconds": 1.377428,
+            "rss_bytes": 153092096,
+            "physical_footprint_bytes": 116343504,
+            "malloc_live_bytes": 38316416,
+            "malloc_reserved_bytes": 130023424,
+            "gdal_cache_used_bytes": 2097296,
+            "gdal_cache_max_bytes": 1048576,
+            "task_info_ok": 1
+          },
+          "peak_sample_rss_minus_live_malloc_bytes": 114775680,
+          "gdal_block_cache_peak_bytes": 4194592,
+          "malloc_live_peak_bytes": 43813984,
+          "before_first_observed_cached_block_rss_peak_bytes": 62160896,
+          "working_reservation_peak_bytes": 262144,
+          "source_body_bytes": 74350592,
+          "requests": 83,
+          "prepare_seconds": 0.070718666,
+          "first_chunk_seconds": 0.094775041,
+          "diagnostic_wall_seconds": 1.6222941670566797
+        },
+        {
+          "workload": "several-large",
+          "workers": 4,
+          "gdal_cache_mib": 1,
+          "rep": 1,
+          "peak_rss_bytes": 167198720,
+          "rss_gate_passed": true,
+          "scientific_correctness_passed": true,
+          "peak_sample": {
+            "seconds": 1.199732,
+            "rss_bytes": 167198720,
+            "physical_footprint_bytes": 130433720,
+            "malloc_live_bytes": 48392960,
+            "malloc_reserved_bytes": 138412032,
+            "gdal_cache_used_bytes": 8389184,
+            "gdal_cache_max_bytes": 1048576,
+            "task_info_ok": 1
+          },
+          "peak_sample_rss_minus_live_malloc_bytes": 118805760,
+          "gdal_block_cache_peak_bytes": 8389184,
+          "malloc_live_peak_bytes": 54969248,
+          "before_first_observed_cached_block_rss_peak_bytes": 52527104,
+          "working_reservation_peak_bytes": 524288,
+          "source_body_bytes": 73007104,
+          "requests": 81,
+          "prepare_seconds": 0.031776167,
+          "first_chunk_seconds": 0.049217292,
+          "diagnostic_wall_seconds": 1.3645580420270562
+        },
+        {
+          "workload": "several-large",
+          "workers": 2,
+          "gdal_cache_mib": 32,
+          "rep": 1,
+          "peak_rss_bytes": 154271744,
+          "rss_gate_passed": true,
+          "scientific_correctness_passed": true,
+          "peak_sample": {
+            "seconds": 0.567938,
+            "rss_bytes": 154271744,
+            "physical_footprint_bytes": 117490336,
+            "malloc_live_bytes": 54683584,
+            "malloc_reserved_bytes": 125829120,
+            "gdal_cache_used_bytes": 16778368,
+            "gdal_cache_max_bytes": 33554432,
+            "task_info_ok": 1
+          },
+          "peak_sample_rss_minus_live_malloc_bytes": 99588160,
+          "gdal_block_cache_peak_bytes": 16778368,
+          "malloc_live_peak_bytes": 54726176,
+          "before_first_observed_cached_block_rss_peak_bytes": 67665920,
+          "working_reservation_peak_bytes": 262144,
+          "source_body_bytes": 75988992,
+          "requests": 80,
+          "prepare_seconds": 0.064291958,
+          "first_chunk_seconds": 0.091769375,
+          "diagnostic_wall_seconds": 0.9062093342654407
+        },
+        {
+          "workload": "several-large",
+          "workers": 4,
+          "gdal_cache_mib": 32,
+          "rep": 1,
+          "peak_rss_bytes": 172556288,
+          "rss_gate_passed": true,
+          "scientific_correctness_passed": true,
+          "peak_sample": {
+            "seconds": 0.473876,
+            "rss_bytes": 172556288,
+            "physical_footprint_bytes": 135791288,
+            "malloc_live_bytes": 73203792,
+            "malloc_reserved_bytes": 142606336,
+            "gdal_cache_used_bytes": 31459440,
+            "gdal_cache_max_bytes": 33554432,
+            "task_info_ok": 1
+          },
+          "peak_sample_rss_minus_live_malloc_bytes": 99352496,
+          "gdal_block_cache_peak_bytes": 31459440,
+          "malloc_live_peak_bytes": 76417936,
+          "before_first_observed_cached_block_rss_peak_bytes": 64045056,
+          "working_reservation_peak_bytes": 524288,
+          "source_body_bytes": 75988992,
+          "requests": 86,
+          "prepare_seconds": 0.032223,
+          "first_chunk_seconds": 0.049129,
+          "diagnostic_wall_seconds": 0.6424985830672085
+        },
+        {
+          "workload": "several-large",
+          "workers": 2,
+          "gdal_cache_mib": 64,
+          "rep": 1,
+          "peak_rss_bytes": 155533312,
+          "rss_gate_passed": true,
+          "scientific_correctness_passed": true,
+          "peak_sample": {
+            "seconds": 0.495147,
+            "rss_bytes": 155533312,
+            "physical_footprint_bytes": 118751904,
+            "malloc_live_bytes": 51477872,
+            "malloc_reserved_bytes": 121634816,
+            "gdal_cache_used_bytes": 16778368,
+            "gdal_cache_max_bytes": 67108864,
+            "task_info_ok": 1
+          },
+          "peak_sample_rss_minus_live_malloc_bytes": 104055440,
+          "gdal_block_cache_peak_bytes": 16778368,
+          "malloc_live_peak_bytes": 55908432,
+          "before_first_observed_cached_block_rss_peak_bytes": 72744960,
+          "working_reservation_peak_bytes": 262144,
+          "source_body_bytes": 75988992,
+          "requests": 82,
+          "prepare_seconds": 0.032293959,
+          "first_chunk_seconds": 0.04851475,
+          "diagnostic_wall_seconds": 0.6582543752156198
+        },
+        {
+          "workload": "several-large",
+          "workers": 4,
+          "gdal_cache_mib": 64,
+          "rep": 1,
+          "peak_rss_bytes": 171114496,
+          "rss_gate_passed": true,
+          "scientific_correctness_passed": true,
+          "peak_sample": {
+            "seconds": 0.482064,
+            "rss_bytes": 171114496,
+            "physical_footprint_bytes": 134349496,
+            "malloc_live_bytes": 68800944,
+            "malloc_reserved_bytes": 142606336,
+            "gdal_cache_used_bytes": 33556736,
+            "gdal_cache_max_bytes": 67108864,
+            "task_info_ok": 1
+          },
+          "peak_sample_rss_minus_live_malloc_bytes": 102313552,
+          "gdal_block_cache_peak_bytes": 33556736,
+          "malloc_live_peak_bytes": 75895552,
+          "before_first_observed_cached_block_rss_peak_bytes": 63668224,
+          "working_reservation_peak_bytes": 524288,
+          "source_body_bytes": 75988992,
+          "requests": 85,
+          "prepare_seconds": 0.031981208,
+          "first_chunk_seconds": 0.048499292,
+          "diagnostic_wall_seconds": 0.6321014589630067
+        }
+      ],
+      "rss_range_bytes": [
+        121487360,
+        187449344
+      ],
+      "failed_rss": 0
+    },
+    "candidate-memory-ablations": {
+      "binary": "target/release/tile-ripper-native-stats",
+      "binary_sha256": "dbba53555cb0ad72f5c7d0b71ef7b793329cfcf1f15779ffa5498b80ae9d2a9f",
+      "mirror_index_sha256": "364121a9ef46437772834fae8a0d84797063320087bc1acbfdf154afb5e70122",
+      "platform": "macOS-26.6.2-arm64-arm-64bit",
+      "observer": "10-ms macOS task_info, malloc_zone_statistics, GDAL public cache counters",
+      "rows": [
+        {
+          "workload": "overlap-a",
+          "workers": 2,
+          "gdal_cache_mib": 32,
+          "rep": 0,
+          "peak_rss_bytes": 127680512,
+          "rss_gate_passed": true,
+          "scientific_correctness_passed": true,
+          "peak_sample": {
+            "seconds": 0.730474,
+            "rss_bytes": 127680512,
+            "physical_footprint_bytes": 90587784,
+            "malloc_live_bytes": 38719280,
+            "malloc_reserved_bytes": 104857600,
+            "gdal_cache_used_bytes": 8389184,
+            "gdal_cache_max_bytes": 33554432,
+            "task_info_ok": 1
+          },
+          "peak_sample_rss_minus_live_malloc_bytes": 88961232,
+          "gdal_block_cache_peak_bytes": 10486480,
+          "malloc_live_peak_bytes": 42190432,
+          "before_first_observed_cached_block_rss_peak_bytes": 59703296,
+          "working_reservation_peak_bytes": 262144,
+          "source_body_bytes": 56918016,
+          "requests": 57,
+          "prepare_seconds": 0.147698958,
+          "first_chunk_seconds": 0.169763458,
+          "diagnostic_wall_seconds": 1.8092737086117268
+        },
+        {
+          "workload": "overlap-a",
+          "workers": 4,
+          "gdal_cache_mib": 32,
+          "rep": 0,
+          "peak_rss_bytes": 135266304,
+          "rss_gate_passed": true,
+          "scientific_correctness_passed": true,
+          "peak_sample": {
+            "seconds": 0.430863,
+            "rss_bytes": 135266304,
+            "physical_footprint_bytes": 98206392,
+            "malloc_live_bytes": 43236240,
+            "malloc_reserved_bytes": 113246208,
+            "gdal_cache_used_bytes": 12583776,
+            "gdal_cache_max_bytes": 33554432,
+            "task_info_ok": 1
+          },
+          "peak_sample_rss_minus_live_malloc_bytes": 92030064,
+          "gdal_block_cache_peak_bytes": 14681072,
+          "malloc_live_peak_bytes": 45545152,
+          "before_first_observed_cached_block_rss_peak_bytes": 62668800,
+          "working_reservation_peak_bytes": 524288,
+          "source_body_bytes": 50675712,
+          "requests": 55,
+          "prepare_seconds": 0.058752542,
+          "first_chunk_seconds": 0.083313625,
+          "diagnostic_wall_seconds": 0.6507034171372652
+        },
+        {
+          "workload": "several-large",
+          "workers": 2,
+          "gdal_cache_mib": 32,
+          "rep": 0,
+          "peak_rss_bytes": 134103040,
+          "rss_gate_passed": true,
+          "scientific_correctness_passed": true,
+          "peak_sample": {
+            "seconds": 2.744837,
+            "rss_bytes": 134103040,
+            "physical_footprint_bytes": 97043128,
+            "malloc_live_bytes": 43304592,
+            "malloc_reserved_bytes": 104857600,
+            "gdal_cache_used_bytes": 8389184,
+            "gdal_cache_max_bytes": 33554432,
+            "task_info_ok": 1
+          },
+          "peak_sample_rss_minus_live_malloc_bytes": 90798448,
+          "gdal_block_cache_peak_bytes": 10486480,
+          "malloc_live_peak_bytes": 45478576,
+          "before_first_observed_cached_block_rss_peak_bytes": 64307200,
+          "working_reservation_peak_bytes": 262144,
+          "source_body_bytes": 56918016,
+          "requests": 57,
+          "prepare_seconds": 0.410156792,
+          "first_chunk_seconds": 0.725798834,
+          "diagnostic_wall_seconds": 2.9544975832104683
+        },
+        {
+          "workload": "several-large",
+          "workers": 4,
+          "gdal_cache_mib": 32,
+          "rep": 0,
+          "peak_rss_bytes": 134283264,
+          "rss_gate_passed": true,
+          "scientific_correctness_passed": true,
+          "peak_sample": {
+            "seconds": 0.334729,
+            "rss_bytes": 134283264,
+            "physical_footprint_bytes": 97206944,
+            "malloc_live_bytes": 47821552,
+            "malloc_reserved_bytes": 100663296,
+            "gdal_cache_used_bytes": 12583776,
+            "gdal_cache_max_bytes": 33554432,
+            "task_info_ok": 1
+          },
+          "peak_sample_rss_minus_live_malloc_bytes": 86461712,
+          "gdal_block_cache_peak_bytes": 14681072,
+          "malloc_live_peak_bytes": 50286384,
+          "before_first_observed_cached_block_rss_peak_bytes": 68534272,
+          "working_reservation_peak_bytes": 524288,
+          "source_body_bytes": 50675712,
+          "requests": 55,
+          "prepare_seconds": 0.058807291,
+          "first_chunk_seconds": 0.082813041,
+          "diagnostic_wall_seconds": 0.6270001251250505
+        },
+        {
+          "workload": "overlap-a",
+          "workers": 2,
+          "gdal_cache_mib": 32,
+          "rep": 1,
+          "peak_rss_bytes": 126205952,
+          "rss_gate_passed": true,
+          "scientific_correctness_passed": true,
+          "peak_sample": {
+            "seconds": 0.312768,
+            "rss_bytes": 126205952,
+            "physical_footprint_bytes": 89113224,
+            "malloc_live_bytes": 38719280,
+            "malloc_reserved_bytes": 92274688,
+            "gdal_cache_used_bytes": 8389184,
+            "gdal_cache_max_bytes": 33554432,
+            "task_info_ok": 1
+          },
+          "peak_sample_rss_minus_live_malloc_bytes": 87486672,
+          "gdal_block_cache_peak_bytes": 10486480,
+          "malloc_live_peak_bytes": 40841552,
+          "before_first_observed_cached_block_rss_peak_bytes": 62832640,
+          "working_reservation_peak_bytes": 262144,
+          "source_body_bytes": 56918016,
+          "requests": 57,
+          "prepare_seconds": 0.05699475,
+          "first_chunk_seconds": 0.073920125,
+          "diagnostic_wall_seconds": 0.4625654579140246
+        },
+        {
+          "workload": "overlap-a",
+          "workers": 4,
+          "gdal_cache_mib": 32,
+          "rep": 1,
+          "peak_rss_bytes": 129531904,
+          "rss_gate_passed": true,
+          "scientific_correctness_passed": true,
+          "peak_sample": {
+            "seconds": 0.236157,
+            "rss_bytes": 129531904,
+            "physical_footprint_bytes": 92455584,
+            "malloc_live_bytes": 43236240,
+            "malloc_reserved_bytes": 96468992,
+            "gdal_cache_used_bytes": 12583776,
+            "gdal_cache_max_bytes": 33554432,
+            "task_info_ok": 1
+          },
+          "peak_sample_rss_minus_live_malloc_bytes": 86295664,
+          "gdal_block_cache_peak_bytes": 14681072,
+          "malloc_live_peak_bytes": 45701072,
+          "before_first_observed_cached_block_rss_peak_bytes": 64897024,
+          "working_reservation_peak_bytes": 524288,
+          "source_body_bytes": 50675712,
+          "requests": 55,
+          "prepare_seconds": 0.055675792,
+          "first_chunk_seconds": 0.077514709,
+          "diagnostic_wall_seconds": 0.46168383257463574
+        },
+        {
+          "workload": "several-large",
+          "workers": 2,
+          "gdal_cache_mib": 32,
+          "rep": 1,
+          "peak_rss_bytes": 132120576,
+          "rss_gate_passed": true,
+          "scientific_correctness_passed": true,
+          "peak_sample": {
+            "seconds": 0.468915,
+            "rss_bytes": 132120576,
+            "physical_footprint_bytes": 95044256,
+            "malloc_live_bytes": 41770992,
+            "malloc_reserved_bytes": 100663296,
+            "gdal_cache_used_bytes": 8389184,
+            "gdal_cache_max_bytes": 33554432,
+            "task_info_ok": 1
+          },
+          "peak_sample_rss_minus_live_malloc_bytes": 90349584,
+          "gdal_block_cache_peak_bytes": 10486480,
+          "malloc_live_peak_bytes": 45571984,
+          "before_first_observed_cached_block_rss_peak_bytes": 64258048,
+          "working_reservation_peak_bytes": 262144,
+          "source_body_bytes": 56918016,
+          "requests": 57,
+          "prepare_seconds": 0.061006791,
+          "first_chunk_seconds": 0.079806333,
+          "diagnostic_wall_seconds": 0.6267742910422385
+        },
+        {
+          "workload": "several-large",
+          "workers": 4,
+          "gdal_cache_mib": 32,
+          "rep": 1,
+          "peak_rss_bytes": 138510336,
+          "rss_gate_passed": true,
+          "scientific_correctness_passed": true,
+          "peak_sample": {
+            "seconds": 0.332421,
+            "rss_bytes": 138510336,
+            "physical_footprint_bytes": 101434016,
+            "malloc_live_bytes": 46298736,
+            "malloc_reserved_bytes": 109051904,
+            "gdal_cache_used_bytes": 12583776,
+            "gdal_cache_max_bytes": 33554432,
+            "task_info_ok": 1
+          },
+          "peak_sample_rss_minus_live_malloc_bytes": 92211600,
+          "gdal_block_cache_peak_bytes": 14681072,
+          "malloc_live_peak_bytes": 51023648,
+          "before_first_observed_cached_block_rss_peak_bytes": 69222400,
+          "working_reservation_peak_bytes": 524288,
+          "source_body_bytes": 50675712,
+          "requests": 55,
+          "prepare_seconds": 0.055487792,
+          "first_chunk_seconds": 0.078902709,
+          "diagnostic_wall_seconds": 0.6498525836504996
+        }
+      ],
+      "rss_range_bytes": [
+        126205952,
+        138510336
+      ],
+      "failed_rss": 0
+    }
+  },
+  "allocation_snapshots": [
+    {
+      "workers": 2,
+      "allocation_snapshot_only": true,
+      "peak_rss_not_a_gate": 137101312,
+      "live_allocation_stack_excerpts": {
+        "curl_regions": [
+          [
+            39,
+            "+ ! :   | + 471 (9.20M) cpl::VSICurlFilesystemHandlerBase::AddRegion(char const*, unsigned long long, unsigned long, char const*)  (in libgdal.38.3.12.4.dylib)"
+          ],
+          [
+            17777,
+            "+ ! : | +     471 (22.1K) cpl::VSICurlFilesystemHandlerBase::AddRegion(char const*, unsigned long long, unsigned long, char const*)  (in libgdal.38.3.12.4.dylib)"
+          ],
+          [
+            17808,
+            "+ ! : | +       471 (22.1K) cpl::VSICurlFilesystemHandlerBase::AddRegion(char const*, unsigned long long, unsigned long, char const*)  (in libgdal.38.3.12.4.dylib)"
+          ]
+        ],
+        "decoded_blocks": [
+          [
+            90899,
+            "+   ! 5 (11.8M) GDALRasterBlock::Internalize()  (in libgdal.38.3.12.4.dylib)"
+          ]
+        ],
+        "zlib_state": [
+          [
+            85026,
+            "+ ! 2 (16.0K) inflateInit2_  (in libz.1.dylib)"
+          ]
+        ],
+        "output_buffers": [
+          [
+            77128,
+            "+ 3 (432K) gdal::raster::rasterband::RasterBand::read_as::h69d4794f4bf8c683  (in tile-ripper-native-stats)"
+          ]
+        ],
+        "planner": [
+          [
+            84860,
+            "+ 228 (42.5K) _$LT$tile_ripper..planner..CogPlanner$u20$as$u20$tile_ripper..planner..FormatPlanner$GT$::plan_asset::h417a5b645205cfbf  (in tile-ripper-native-stats)"
+          ]
+        ]
+      },
+      "raw": {
+        "prototype-output/cog-efficiency/baseline-memory-allocation-snapshots/overlap-a-w2-cache32-0/malloc_history.txt": "c8062d41764aaf7da94504c67f4ea9ae866a59455651439e6720e77a60a10179",
+        "prototype-output/cog-efficiency/baseline-memory-allocation-snapshots/overlap-a-w2-cache32-0/vmmap.txt": "3a4bc6d112585dfa53e589b66f8e522117e82bc92c43d1c04f1c7442f0c5501d",
+        "prototype-output/cog-efficiency/baseline-memory-allocation-snapshots/overlap-a-w2-cache32-0/heap.txt": "d9b68eaceb2925e10bfd7a7c2510f002f01a0423c980d1959a5437ce059edbd7"
+      }
+    },
+    {
+      "workers": 4,
+      "allocation_snapshot_only": true,
+      "peak_rss_not_a_gate": 166576128,
+      "live_allocation_stack_excerpts": {
+        "curl_regions": [
+          [
+            39,
+            "+ ! :   | + 571 (11.2M) cpl::VSICurlFilesystemHandlerBase::AddRegion(char const*, unsigned long long, unsigned long, char const*)  (in libgdal.38.3.12.4.dylib)"
+          ],
+          [
+            17777,
+            "+ ! : | +     571 (26.8K) cpl::VSICurlFilesystemHandlerBase::AddRegion(char const*, unsigned long long, unsigned long, char const*)  (in libgdal.38.3.12.4.dylib)"
+          ],
+          [
+            17808,
+            "+ ! : | +       571 (26.8K) cpl::VSICurlFilesystemHandlerBase::AddRegion(char const*, unsigned long long, unsigned long, char const*)  (in libgdal.38.3.12.4.dylib)"
+          ]
+        ],
+        "decoded_blocks": [
+          [
+            90908,
+            "+   ! 8 (16.9M) GDALRasterBlock::Internalize()  (in libgdal.38.3.12.4.dylib)"
+          ]
+        ],
+        "zlib_state": [
+          [
+            84872,
+            "+ ! 4 (32.0K) inflateInit2_  (in libz.1.dylib)"
+          ]
+        ],
+        "output_buffers": [
+          [
+            76902,
+            "+ 5 (720K) gdal::raster::rasterband::RasterBand::read_as::h69d4794f4bf8c683  (in tile-ripper-native-stats)"
+          ]
+        ],
+        "planner": [
+          [
+            84860,
+            "+ 228 (42.5K) _$LT$tile_ripper..planner..CogPlanner$u20$as$u20$tile_ripper..planner..FormatPlanner$GT$::plan_asset::h417a5b645205cfbf  (in tile-ripper-native-stats)"
+          ]
+        ]
+      },
+      "raw": {
+        "prototype-output/cog-efficiency/baseline-memory-allocation-snapshots/overlap-a-w4-cache32-0/malloc_history.txt": "f122f4e73731e539dd48aecc0b0a1376bd8a6e32d7b3c8488515112d3e94c21e",
+        "prototype-output/cog-efficiency/baseline-memory-allocation-snapshots/overlap-a-w4-cache32-0/vmmap.txt": "28d8e7c3c326b2fa91a58ee3132477c1a1e18568954736f7f202e3bcc3287783",
+        "prototype-output/cog-efficiency/baseline-memory-allocation-snapshots/overlap-a-w4-cache32-0/heap.txt": "6f6a62af7055abebddda42f2ae248f798b2fe78b6652795771bdc0f8dabad8ec"
+      }
+    }
+  ],
+  "inherited_fixed_worker_followup": {
+    "runs": 24,
+    "passed": 24,
+    "peak_rss_bytes": 161660928,
+    "links": [
+      "unshaped loopback",
+      "8 ms / 100 Mbit/s"
+    ]
+  },
+  "inherited_default4_failures": {
+    "count": 3,
+    "exact_peak_rss_and_wall_unavailable": true,
+    "reason": "Original assertion-only resource gate discarded exact metrics; original failure outcomes and scientific revalidation are preserved in docs/production-streaming."
+  },
+  "excluded_partial_diagnostic": {
+    "path": "prototype-output/cog-efficiency/baseline-memory-ablations",
+    "reason": "First probe was inherited by an auxiliary oracle-import subprocess; log was overwritten. No measurements from it are accepted."
+  },
+  "limits": [
+    "10-ms sampling may miss transients; wait4 remains RSS gate metric.",
+    "GDALGetCacheMax64 initialization occurs in observer; these explicit-assets trials supply cache configuration by process environment before launch.",
+    "malloc live bytes and GDAL cache bytes overlap and must not be added.",
+    "RSS minus live malloc is an unassigned residual, not a measured decoder/runtime component.",
+    "Full allocation-stack snapshots perturb process memory and cannot be used for RSS gates or timing comparisons.",
+    "Vmmaps shared-region resident totals do not equal wait4 RSS; do not sum them into process RSS.",
+    "No allocator-enforced absolute RSS bound is claimed."
+  ]
+}

@@ -594,6 +594,8 @@ def measure(mode, req, folder, server, refs, workers=4):
         ) + obs.get("output_finalize_seconds", 0)
         shutil.rmtree(out)
     row["oracle_seconds_excluded"] = time.perf_counter() - t
+    if mode.startswith("rust"):
+        row["workers"] = row["observed"]["scheduler"]["workers"]
     row.pop("result")
     row["scientific_correctness_passed"] = True
     row["rss_gate_passed"] = (
