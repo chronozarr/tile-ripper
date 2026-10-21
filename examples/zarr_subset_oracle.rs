@@ -30,6 +30,13 @@ fn main() -> Result<()> {
         let mut stream = prepared
             .clone()
             .into_stream(tile_ripper::stream::StreamOptions { capacity: 0 })?;
+        if mode == "cancel-inflight" {
+            // The local test controller waits until a merged payload GET starts.
+            control()?;
+            stream.cancel();
+            stream.finish()?;
+            return Err("cancelled stream incorrectly returned completion".into());
+        }
         let mut chunks = Vec::new();
         let mut first = None;
         let mut valid = 0u64;

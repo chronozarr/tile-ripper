@@ -747,7 +747,7 @@ impl SelectedReader {
         let w = &self.window;
         let t = Instant::now();
         let idx = indices.iter().map(|v| *v as u64).collect::<Vec<_>>();
-        let (native, present) = match &self.input {
+        let (native, present) = match &mut self.input {
             Input::V2 { array, .. } => {
                 let pixels = if layout.dtype == "<f4" {
                     crate::Pixels::Float32(array.retrieve_chunk_opt::<Vec<f32>>(&idx, &serial())?)
@@ -766,7 +766,7 @@ impl SelectedReader {
             Input::V3(reader) => {
                 let (pixels, present, bytes, seconds) = reader.read(indices)?;
                 self.retrieval_seconds += seconds;
-                if present {
+                if let Some(bytes) = bytes {
                     let mut trace = self.trace.lock().map_err(|_| "trace lock poisoned")?;
                     trace.requests += 1;
                     trace.bytes += bytes as u64;
@@ -862,7 +862,29 @@ impl SelectedReader {
         Ok(())
     }
 
+    pub(crate) fn begin_batch(&mut self, batch: Option<Arc<crate::zarr_v3::Batch>>) {
+        if let Input::V3(reader) = &mut self.input {
+            reader.begin_batch(batch);
+        }
+    }
+    pub(crate) fn end_batch(&mut self) {
+        if let Input::V3(reader) = &mut self.input {
+            reader.end_batch();
+        }
+    }
     pub(crate) fn finish(&self, report: &mut crate::ExecutionReport) -> Result<()> {
+        if let Input::V3(reader) = &self.input {
+            if report.scheduler.is_null() {
+                report.scheduler = serde_json::json!({});
+            }
+            if !report.scheduler["zarr_v3_ranges"].is_array() {
+                report.scheduler["zarr_v3_ranges"] = serde_json::json!([]);
+            }
+            report.scheduler["zarr_v3_ranges"]
+                .as_array_mut()
+                .unwrap()
+                .push(reader.metrics());
+        }
         report.source_retrieval_seconds = Some(
             report.source_retrieval_seconds.unwrap_or(0.)
                 + match &self.input {

@@ -8,8 +8,22 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-WORK = ROOT / "prototype-output/zarr-v3-input/regressions"
-DOCS = ROOT / "docs/zarr-v3-input/regressions"
+WORK = Path(
+    os.environ.get(
+        "TILE_RIPPER_V3_REGRESSION_WORK",
+        ROOT / "prototype-output/zarr-v3-input/regressions",
+    )
+)
+DOCS = Path(
+    os.environ.get(
+        "TILE_RIPPER_V3_REGRESSION_DOCS", ROOT / "docs/zarr-v3-input/regressions"
+    )
+)
+BIN_DIR = Path(
+    os.environ.get(
+        "TILE_RIPPER_V3_REGRESSION_BIN_DIR", ROOT / "target/scientific-output/release"
+    )
+)
 
 
 def matrix():
@@ -100,7 +114,7 @@ def inherited(action):
         import zarr_workflow
         import remote_zarr
 
-        remote_zarr.CURRENT = ROOT / "target/scientific-output/release/tile-ripper"
+        remote_zarr.CURRENT = BIN_DIR / "tile-ripper"
         remote_zarr.EXAMPLE = remote_zarr.CURRENT.parent / "examples/remote_zarr"
         remote_zarr.WORK = WORK / "remote"
         zarr_workflow.WORK = WORK / "v2-fixture"
@@ -117,6 +131,7 @@ def inherited(action):
 
         gate.WORK = WORK / action
         gate.DOCS = DOCS
+        gate.BIN = BIN_DIR / "tile-ripper"
         gate.WORK.mkdir(parents=True, exist_ok=True)
         if action == "checks":
             gate.checks([("default", 256)])

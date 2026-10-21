@@ -98,7 +98,7 @@ impl Context {
     }
     pub(crate) fn describe(&self, id: &str) -> Value {
         let arrays = self.arrays.lock().unwrap();
-        json!(arrays.iter().filter(|((asset,_),_)|asset==id).map(|((_,path),b)| (path.clone(),json!({"shape":b.info.shape,"logical_chunk_shape":b.info.inner,"physical_chunk_shape":b.info.outer,"codecs":b.info.metadata["codecs"],"physical_objects":b.ranges.values().map(|(key,_)|key).collect::<BTreeSet<_>>().len(),"selected_logical_chunks":b.ranges.len(),"access":if b.info.sharded {"selective_encoded_subchunks"}else{"whole_ordinary_chunks"},"cf_missing_value":b.nodata.map(|n|if n.is_nan(){json!("NaN")}else{json!(n)})}))).collect::<BTreeMap<_,_>>())
+        json!(arrays.iter().filter(|((asset,_),_)|asset==id).map(|((_,path),b)| (path.clone(),json!({"shape":b.info.shape,"logical_chunk_shape":b.info.inner,"physical_chunk_shape":b.info.outer,"codecs":b.info.metadata["codecs"],"physical_objects":b.ranges.values().map(|(key,_)|key).collect::<BTreeSet<_>>().len(),"selected_logical_chunks":b.ranges.len(),"physical_read_plan":if b.info.sharded {b.physical_plan()}else{Value::Null},"access":if b.info.sharded {"selective_encoded_subchunks"}else{"whole_ordinary_chunks"},"cf_missing_value":b.nodata.map(|n|if n.is_nan(){json!("NaN")}else{json!(n)})}))).collect::<BTreeMap<_,_>>())
     }
 }
 
@@ -429,36 +429,93 @@ impl Binding {
             .1
             .map_or(0, |(_, n)| n as usize))
     }
-    fn payload(&self, indices: &[usize]) -> Result<Option<Vec<u8>>> {
+    fn span(&self, indices: &[usize]) -> Result<Option<(&str, u64, u64)>> {
         let (key, range) = self
             .ranges
             .get(indices)
             .ok_or("unplanned v3 logical chunk")?;
-        if range.is_none() {
+        // Skip the library helper for MAX/MAX missing entries (upstream overflow).
+        let Some((offset, length)) = *range else {
             return Ok(None);
-        }
+        };
         match &self.array {
             SourceArray::Ordinary(array) => {
-                let idx = indices.iter().map(|v| *v as u64).collect::<Vec<_>>();
-                let chunk_key = array.chunk_key(&idx);
-                let length = range.unwrap().1;
-                let bytes = self
-                    .source
-                    .ranges(&chunk_key, &[ByteRange::FromStart(0, Some(length))])?
-                    .ok_or("ordinary chunk disappeared")?
-                    .into_iter()
-                    .next()
-                    .ok_or("empty ordinary chunk")?;
-                if bytes.len() as u64 != length {
-                    return fail("truncated ordinary v3 chunk");
+                if array
+                    .chunk_key(&indices.iter().map(|v| *v as u64).collect::<Vec<_>>())
+                    .as_str()
+                    != key
+                {
+                    return fail("ordinary chunk key mismatch");
                 }
-                Ok(Some(bytes.to_vec()))
             }
-            SourceArray::Sharded { array, caches } => Ok(array.retrieve_encoded_subchunk(
-                &caches[key],
-                &indices.iter().map(|i| *i as u64).collect::<Vec<_>>(),
-            )?),
+            SourceArray::Sharded { array, caches } => {
+                let range = array.subchunk_byte_range(
+                    &caches[key],
+                    &indices.iter().map(|v| *v as u64).collect::<Vec<_>>(),
+                )?;
+                if range != Some(ByteRange::FromStart(offset, Some(length))) {
+                    return fail("library shard range differs from validated index");
+                }
+            }
         }
+        Ok(Some((key, offset, length)))
+    }
+    pub(crate) fn batch(
+        &self,
+        logical: &[Vec<usize>],
+        config: &crate::zarr_ranges::Config,
+        cap: usize,
+    ) -> Result<Batch> {
+        let mut shards: BTreeMap<String, Vec<_>> = BTreeMap::new();
+        for idx in logical {
+            let (key, range) = self.ranges.get(idx).ok_or("unplanned coalescing member")?;
+            if let Some((offset, len)) = range {
+                shards
+                    .entry(key.clone())
+                    .or_default()
+                    .push((*offset, *len, idx.clone()));
+            }
+        }
+        let fetches = shards
+            .into_iter()
+            .flat_map(|(key, spans)| {
+                config
+                    .groups(&spans, cap as u64)
+                    .into_iter()
+                    .filter(|g| g.members.len() > 1)
+                    .map(move |range| Fetch {
+                        key: key.clone(),
+                        range,
+                    })
+            })
+            .collect();
+        Ok(Batch { fetches })
+    }
+    pub(crate) fn coalescible(&self) -> bool {
+        self.info.sharded && self.source.remote()
+    }
+    fn physical_plan(&self) -> Value {
+        let mut shards: BTreeMap<String, Vec<_>> = BTreeMap::new();
+        let mut missing: BTreeMap<String, Vec<_>> = BTreeMap::new();
+        for (idx, (key, range)) in &self.ranges {
+            let spans = shards.entry(key.clone()).or_default();
+            if let Some((start, len)) = range {
+                spans.push((*start, *len, idx.clone()));
+            } else {
+                missing.entry(key.clone()).or_default().push(idx);
+            }
+        }
+        json!(shards.into_iter().map(|(key,mut spans)| {
+            spans.sort_by_key(|s|s.0);
+            let mut last=0; let mut first=true;
+            let physical: Vec<_> = spans.iter().map(|(start,len,idx)| {
+                let gap=if first {0} else {start.saturating_sub(last)};
+                first=false; last=start+len;
+                json!({"logical":idx,"offset":start,"length":len,"gap_before":gap})
+            }).collect();
+            let candidates = crate::zarr_ranges::Config::from_env(crate::storage::worker_count().unwrap_or(2)).ok().map(|c|c.groups(&spans,c.max_span));
+            json!({"key":key,"identity":self.source.identity(&key),"physical_order":physical,"missing_logical_chunks":missing.get(&key),"unique_selected_bytes":spans.iter().map(|s|s.1).sum::<u64>(),"repeated_selected_bytes":0,"candidate_body_bytes":candidates.as_ref().map(|g|g.iter().map(|r|r.len() as u64).sum::<u64>()),"candidate_requests":candidates.as_ref().map(Vec::len),"candidate_ranges_before_execution_window_and_memory_limits":candidates})
+        }).collect::<Vec<_>>())
     }
 }
 
@@ -491,10 +548,44 @@ impl ReadableStorageTraits for OneChunk {
         false
     }
 }
+#[derive(Debug, serde::Serialize)]
+pub(crate) struct Fetch {
+    pub key: String,
+    pub range: crate::zarr_ranges::Group,
+}
+#[derive(Debug, serde::Serialize)]
+pub(crate) struct Batch {
+    pub fetches: Vec<Fetch>,
+}
+impl Batch {
+    pub fn bytes(&self) -> usize {
+        self.fetches.iter().map(|f| f.range.len() + 1).sum()
+    }
+    pub fn metadata_bytes(&self) -> usize {
+        self.fetches
+            .iter()
+            .map(|f| 256 + f.key.len() + f.range.members.len() * 96)
+            .sum()
+    }
+}
+#[derive(Default, serde::Serialize)]
+struct Metrics {
+    logical_payloads: u64,
+    selected_bytes: u64,
+    payload_requests: u64,
+    fetched_bytes: u64,
+    merged_requests: u64,
+    merged_cache_hits: u64,
+    prepared_index_hits: u64,
+    retained_buffer_peak: usize,
+}
 pub(crate) struct Reader {
     binding: Arc<Binding>,
     input: Arc<OneChunk>,
     decoded: Array<crate::zarr_decode::Checked<OneChunk>>,
+    batch: Option<Arc<Batch>>,
+    buffers: Vec<Option<s::Bytes>>,
+    metrics: Metrics,
 }
 impl Reader {
     pub(crate) fn new(binding: Arc<Binding>, budget: &Budget) -> Result<Self> {
@@ -509,15 +600,101 @@ impl Reader {
             binding,
             input,
             decoded,
+            batch: None,
+            buffers: Vec::new(),
+            metrics: Metrics::default(),
         })
     }
-    pub(crate) fn read(&self, indices: &[usize]) -> Result<(crate::Pixels, bool, usize, f64)> {
+    pub(crate) fn begin_batch(&mut self, batch: Option<Arc<Batch>>) {
+        self.end_batch();
+        self.buffers = vec![None; batch.as_ref().map_or(0, |b| b.fetches.len())];
+        self.batch = batch;
+    }
+    pub(crate) fn end_batch(&mut self) {
+        self.buffers.clear();
+        self.batch = None;
+        self.input.0.lock().unwrap().take();
+    }
+    pub(crate) fn metrics(&self) -> Value {
+        json!(self.metrics)
+    }
+    pub(crate) fn read(
+        &mut self,
+        indices: &[usize],
+    ) -> Result<(crate::Pixels, bool, Option<usize>, f64)> {
         let started = std::time::Instant::now();
-        let payload = self.binding.payload(indices)?;
+        let mut transfer = None;
+        let payload = if let Some((key, start, len)) = self.binding.span(indices)? {
+            self.metrics.logical_payloads += 1;
+            self.metrics.selected_bytes += len;
+            if self.binding.info.sharded {
+                self.metrics.prepared_index_hits += 1;
+            }
+            let merged = self.batch.as_ref().and_then(|b| {
+                b.fetches
+                    .iter()
+                    .enumerate()
+                    .find(|(_, f)| f.key == key && f.range.members.iter().any(|i| i == indices))
+            });
+            let bytes = if let Some((i, fetch)) = merged {
+                if self.buffers[i].is_none() {
+                    let body = self
+                        .binding
+                        .source
+                        .ranges(
+                            &s::StoreKey::new(key)?,
+                            &[ByteRange::FromStart(
+                                fetch.range.start,
+                                Some(fetch.range.len() as u64),
+                            )],
+                        )?
+                        .ok_or("shard disappeared")?
+                        .remove(0);
+                    if body.len() != fetch.range.len() {
+                        return fail("truncated merged v3 body");
+                    }
+                    transfer = Some(body.len());
+                    self.buffers[i] = Some(body);
+                    self.metrics.merged_requests += 1;
+                    self.metrics.retained_buffer_peak = self
+                        .metrics
+                        .retained_buffer_peak
+                        .max(self.buffers.iter().flatten().map(|b| b.len()).sum());
+                } else {
+                    self.metrics.merged_cache_hits += 1;
+                }
+                let relative = (start - fetch.range.start) as usize;
+                self.buffers[i]
+                    .as_ref()
+                    .unwrap()
+                    .slice(relative..relative + len as usize)
+            } else {
+                let body = self
+                    .binding
+                    .source
+                    .ranges(
+                        &s::StoreKey::new(key)?,
+                        &[ByteRange::FromStart(start, Some(len))],
+                    )?
+                    .ok_or("v3 chunk disappeared")?
+                    .remove(0);
+                if body.len() as u64 != len {
+                    return fail("truncated v3 body");
+                }
+                transfer = Some(body.len());
+                body
+            };
+            Some(bytes)
+        } else {
+            None
+        };
+        if let Some(n) = transfer {
+            self.metrics.payload_requests += 1;
+            self.metrics.fetched_bytes += n as u64;
+        }
         let retrieval_seconds = started.elapsed().as_secs_f64();
         let present = payload.is_some();
-        let size = payload.as_ref().map_or(0, Vec::len);
-        *self.input.0.lock().unwrap() = payload.map(Into::into);
+        *self.input.0.lock().unwrap() = payload;
         let zeros = vec![0; indices.len()];
         let result = if self.binding.info.dtype == "<f4" {
             self.decoded
@@ -529,7 +706,7 @@ impl Reader {
                 .map(crate::Pixels::UInt16)
         };
         self.input.0.lock().unwrap().take();
-        Ok((result?, present, size, retrieval_seconds))
+        Ok((result?, present, transfer, retrieval_seconds))
     }
 }
 

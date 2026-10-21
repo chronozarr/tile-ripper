@@ -247,6 +247,14 @@ impl Objects {
             Self::Overlay { origin, .. } => origin.ranges(key, ranges),
         }
     }
+    pub(crate) fn remote(&self) -> bool {
+        self.http().is_some()
+    }
+    pub(crate) fn identity(&self, key: &str) -> serde_json::Value {
+        self.http().map_or_else(|| serde_json::json!({"kind":"local_pinned_stat"}), |h| {
+            serde_json::json!({"url":h.base.join(key).ok().map(|u|u.to_string()),"version":h.state.lock().unwrap().versions.get(key)})
+        })
+    }
     pub(crate) fn local_path(&self, key: &s::StoreKey) -> Option<std::path::PathBuf> {
         match self {
             Self::Local(store) => Some(store.key_to_fspath(key)),
@@ -677,10 +685,31 @@ impl Http {
                 {
                     return fail("HTTP object exceeds half buffer_bytes");
                 }
+                // Reject framing/version conflicts before allocating a response body.
+                if let Some((start, end)) = range {
+                    let expected = known
+                        .as_ref()
+                        .and_then(|v| v.as_ref())
+                        .expect("admitted range");
+                    let framing = format!("bytes {start}-{}/{}", end - 1, expected.size);
+                    if response
+                        .headers()
+                        .get(header::CONTENT_RANGE)
+                        .and_then(|v| v.to_str().ok())
+                        != Some(framing.as_str())
+                        || length != Some(end - start)
+                    {
+                        return fail("invalid HTTP range framing");
+                    }
+                    if etag != expected.etag {
+                        return fail("HTTP source version conflict; prepare again");
+                    }
+                    body.reserve_exact((end - start) as usize + 1);
+                }
                 if !head {
                     response
                         .by_ref()
-                        .take(self.cap as u64 + 1)
+                        .take(range.map_or(self.cap as u64, |(s, e)| e - s) + 1)
                         .read_to_end(&mut body)
                         .map_err(|_| "retryable interrupted HTTP body")?;
                     if body.len() > self.cap {

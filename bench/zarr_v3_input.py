@@ -364,6 +364,10 @@ class Handler(BaseHTTPRequestHandler):
             if span is None
             else data[slice(*span)]
         )
+        if action == "corrupt" and body:
+            damaged = bytearray(body)
+            damaged[: min(32, len(body))] = bytes(min(32, len(body)))
+            body = bytes(damaged)
         time.sleep(s.latency)
         self.send_response(status)
         if etag:

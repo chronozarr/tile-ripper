@@ -19,6 +19,7 @@ struct Task {
     host: String,
     bytes: usize,
     reader_bytes: usize,
+    batch: Option<std::sync::Arc<crate::zarr_v3::Batch>>,
     #[cfg(feature = "native-cog")]
     native: crate::native_cog::Strategy,
 }
@@ -161,6 +162,7 @@ fn tasks(r: &Request, p: &Plan, sources: &crate::storage::Sources) -> Result<Vec
                     } else {
                         coordinates.checked_mul(3).ok_or("reader state overflow")?
                     },
+                    batch: None,
                     #[cfg(feature = "native-cog")]
                     native: Default::default(),
                 });
@@ -221,6 +223,7 @@ fn tasks(r: &Request, p: &Plan, sources: &crate::storage::Sources) -> Result<Vec
                     host: host(a)?,
                     bytes,
                     reader_bytes,
+                    batch: None,
                     #[cfg(feature = "native-cog")]
                     native,
                 });
@@ -230,7 +233,135 @@ fn tasks(r: &Request, p: &Plan, sources: &crate::storage::Sources) -> Result<Vec
     if out.iter().any(|t| t.bytes > r.budget.buffer_bytes) {
         return Err("one read operation exceeds the scheduler working buffer; increase buffer_bytes or reduce chunk size".into());
     }
-    Ok(out)
+    if sources.v3.bytes() == 0 {
+        return Ok(out);
+    }
+    coalesce_tasks(r, p, sources, out)
+}
+
+fn coalesce_tasks(
+    r: &Request,
+    p: &Plan,
+    sources: &crate::storage::Sources,
+    tasks: Vec<Task>,
+) -> Result<Vec<Task>> {
+    let workers = crate::storage::worker_count()?
+        .min(positive_env("TILE_RIPPER_PER_HOST", 4)?)
+        .min(tasks.len().max(1));
+    let config = crate::zarr_ranges::Config::from_env(workers)?;
+    if config.policy == crate::zarr_ranges::Policy::Individual {
+        return Ok(tasks);
+    }
+    #[allow(unused_mut)]
+    let mut prepared = sources.v3_prepared_bytes();
+    #[cfg(feature = "native-cog")]
+    {
+        prepared = prepared.saturating_add(sources.native.bytes());
+    }
+    // Upper bound for the immutable batch descriptions, held for execution.
+    // If even this small planning overhead is unaffordable, retain the old tasks.
+    let metadata = tasks.len().saturating_mul(512).saturating_add(
+        p.nodes
+            .iter()
+            .filter_map(|n| match &n.operation {
+                Operation::Read {
+                    read: Read::ChunkObject { key, .. },
+                } => Some(key.len()),
+                _ => None,
+            })
+            .sum::<usize>(),
+    );
+    let available = r.budget.buffer_bytes.saturating_sub(prepared);
+    if metadata > available / 4 {
+        return Ok(tasks);
+    }
+    let quota = (available - metadata) / workers;
+    let Source::Assets { assets } = &r.source else {
+        unreachable!()
+    };
+    let mut result = Vec::new();
+    let mut input = tasks.into_iter().peekable();
+    while let Some(first) = input.next() {
+        let sel = &p.selected[first.selected];
+        let asset = assets
+            .iter()
+            .find(|a| a.id == sel.asset_id)
+            .ok_or("asset binding missing")?;
+        let Variable::Dataset { path } = &sel.layout.as_ref().ok_or("layout missing")?.variable
+        else {
+            result.push(first);
+            continue;
+        };
+        if asset.format != Format::ZarrV3 {
+            result.push(first);
+            continue;
+        }
+        let binding = sources.v3.binding(&asset.id, path)?;
+        if !binding.coalescible() {
+            result.push(first);
+            continue;
+        }
+        let mut window = vec![first];
+        while window.len() < 32
+            && input
+                .peek()
+                .is_some_and(|t| t.selected == window[0].selected)
+        {
+            window.push(input.next().unwrap());
+        }
+        // Split until both retained bodies and decode/output work fit a fair
+        // share. Small budgets therefore retain concurrency or individual reads.
+        let mut pending = std::collections::VecDeque::from([window]);
+        while let Some(mut window) = pending.pop_front() {
+            let working = window.iter().map(|t| t.bytes).max().unwrap();
+            let logical = window
+                .iter()
+                .flat_map(|t| &t.nodes)
+                .map(|i| match &p.nodes[*i].operation {
+                    Operation::Read {
+                        read: Read::ChunkObject { indices, .. },
+                    } => indices.clone(),
+                    _ => unreachable!(),
+                })
+                .collect::<Vec<_>>();
+            let cap = quota.saturating_sub(working) / 2;
+            let batch = binding.batch(&logical, &config, cap)?;
+            let bytes = working.saturating_add(batch.bytes().saturating_mul(2));
+            // A batch executes its remaining requests serially. Require the
+            // cost policy to beat the original parallel request waves even
+            // when this is the only ready window. Avoid serializing a sparse
+            // window merely because two of its members happen to be close.
+            let present = logical.iter().try_fold(0usize, |n, i| -> Result<_> {
+                Ok(n + usize::from(binding.encoded_bytes(i)? > 0))
+            })?;
+            let requests = present
+                - batch
+                    .fetches
+                    .iter()
+                    .map(|f| f.range.members.len() - 1)
+                    .sum::<usize>();
+            let loses_parallelism = config.policy == crate::zarr_ranges::Policy::Cost
+                && requests > present.div_ceil(workers);
+            if (bytes > quota || loses_parallelism) && window.len() > 1 {
+                let tail = window.split_off(window.len() / 2);
+                pending.push_front(tail);
+                pending.push_front(window);
+                continue;
+            }
+            if batch.fetches.is_empty() || bytes > quota {
+                result.extend(window);
+                continue;
+            }
+            let mut task = window.remove(0);
+            for t in window {
+                task.nodes.extend(t.nodes);
+            }
+            task.bytes = bytes;
+            task.batch = Some(std::sync::Arc::new(batch));
+            result.push(task);
+        }
+    }
+    Ok(result)
 }
 
 pub(crate) fn execute(
@@ -251,6 +382,15 @@ pub(crate) fn execute(
     }
     prepared_bytes = prepared_bytes
         .checked_add(sources.v3_prepared_bytes())
+        .and_then(|n| {
+            n.checked_add(
+                tasks
+                    .iter()
+                    .filter_map(|t| t.batch.as_ref())
+                    .map(|b| b.metadata_bytes())
+                    .sum::<usize>(),
+            )
+        })
         .ok_or("prepared reservation overflow")?;
     let mut workers = positive_env(
         "TILE_RIPPER_WORKERS",
@@ -385,6 +525,9 @@ pub(crate) fn execute(
                                 reader = Some((task.selected, physical));
                                 report.source_open_seconds += open.elapsed().as_secs_f64();
                             }
+                            if let Reader::Zarr(r) = &mut reader.as_mut().unwrap().1 {
+                                r.begin_batch(task.batch.clone());
+                            }
                             for node in &task.nodes {
                                 if abort.load(Ordering::Acquire)
                                     || cancelled.load(Ordering::Acquire)
@@ -403,6 +546,11 @@ pub(crate) fn execute(
                         .unwrap_or_else(|_| {
                             Err("reader worker panicked during acquisition".into())
                         });
+                    // Runs on success, errors, cancellation and caught panics.
+                    // No slice or body may outlive its task reservation.
+                    if let Some((_, Reader::Zarr(r))) = &mut reader {
+                        r.end_batch();
+                    }
                     let failed = work.is_err();
                     // COG selections are single tasks, so their block caches
                     // have no cross-task lifetime. Drop before releasing the
@@ -492,8 +640,15 @@ pub(crate) fn execute(
     result
         .source_reads
         .sort_by(|a, b| (&a.asset_id, &a.key).cmp(&(&b.asset_id, &b.key)));
+    let range_metrics = result.scheduler.get("zarr_v3_ranges").cloned();
     let native_buffers = result.scheduler.get("native_buffers").cloned();
     result.scheduler = serde_json::json!({"workers":workers,"per_host":per_host,"buffer_bytes":r.budget.buffer_bytes,"reserved_bytes_peak":state.peak,"reader_state_reserved_bytes":retained,"prepared_native_metadata_bytes":prepared_bytes,"prepared_v3_metadata_index_bytes":sources.v3_prepared_bytes(),"active_workers_peak":state.active_peak,"completed_tasks":tasks.iter().map(|t|t.nodes.len()).sum::<usize>(),"admitted_jobs":tasks.len(),"cog_reader_scope":"selection","seconds":started.elapsed().as_secs_f64(),"order":"plan","memory_scope":"conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention"});
+    if sources.v3.bytes() > 0 {
+        result.scheduler["zarr_v3_coalescing"] = serde_json::json!({"config":crate::zarr_ranges::Config::from_env(workers.min(per_host))?,"window_logical_chunks":32,"plan_metadata_bytes":tasks.iter().filter_map(|t|t.batch.as_ref()).map(|b|b.metadata_bytes()).sum::<usize>(),"batches":tasks.iter().filter_map(|t|t.batch.as_ref().map(|b|serde_json::json!({"selected":t.selected,"nodes":t.nodes,"reservation":t.bytes,"fetches":b.fetches}))).collect::<Vec<_>>()});
+    }
+    if let Some(metrics) = range_metrics {
+        result.scheduler["zarr_v3_ranges"] = metrics;
+    }
     if let Some(buffers) = native_buffers {
         result.scheduler["native_buffers"] = buffers;
     }
@@ -521,6 +676,18 @@ fn add_u(a: &mut Option<u64>, b: Option<u64>) {
     }
 }
 fn merge(a: &mut ExecutionReport, b: ExecutionReport) {
+    if let Some(metrics) = b.scheduler.get("zarr_v3_ranges").and_then(|v| v.as_array()) {
+        if a.scheduler.is_null() {
+            a.scheduler = serde_json::json!({});
+        }
+        if !a.scheduler["zarr_v3_ranges"].is_array() {
+            a.scheduler["zarr_v3_ranges"] = serde_json::json!([]);
+        }
+        a.scheduler["zarr_v3_ranges"]
+            .as_array_mut()
+            .unwrap()
+            .extend(metrics.iter().cloned());
+    }
     if let Some(buffers) = b.scheduler.get("native_buffers").and_then(|v| v.as_array()) {
         if a.scheduler.is_null() {
             a.scheduler = serde_json::json!({});
