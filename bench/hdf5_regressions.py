@@ -9,8 +9,17 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-WORK = ROOT / "prototype-output/native-hdf5/regressions-final"
-DOCS = ROOT / "docs/native-hdf5/inherited"
+WORK = Path(
+    os.environ.get(
+        "TILE_RIPPER_HDF5_REGRESSION_WORK",
+        ROOT / "prototype-output/native-hdf5/regressions-final",
+    )
+).resolve()
+DOCS = Path(
+    os.environ.get(
+        "TILE_RIPPER_HDF5_REGRESSION_DOCS", ROOT / "docs/native-hdf5/inherited"
+    )
+).resolve()
 WORK.mkdir(parents=True, exist_ok=True)
 DOCS.mkdir(parents=True, exist_ok=True)
 os.environ["TILE_RIPPER_VALIDATION_DOCS"] = str(DOCS)

@@ -2,13 +2,15 @@
 //! filter/numeric decoding belongs to hdf5-reader; no whole-file read fallback.
 use crate::{fail, model::*, storage::ObjectFile, Pixels, Result};
 use hdf5_reader::{
-    btree_v1::{collect_btree_v1_leaves_storage, BTreeV1Key},
+    btree_v1::{
+        collect_btree_v1_leaves_storage, collect_btree_v1_leaves_storage_selective, BTreeV1Key,
+    },
     messages::{layout::DataLayout, HdfMessage},
     Dataset, Datatype, Hdf5File, OpenOptions, SliceInfo, SliceInfoElem, Storage, StorageBuffer,
 };
 use serde_json::{json, Value};
 use std::{
-    collections::BTreeMap,
+    collections::{BTreeMap, BTreeSet},
     sync::{Arc, Mutex},
 };
 
@@ -16,6 +18,7 @@ struct Metadata {
     file: ObjectFile,
     cap: usize,
     max_reads: usize,
+    page: usize,
     state: Mutex<MetadataState>,
 }
 #[derive(Default)]
@@ -23,6 +26,7 @@ struct MetadataState {
     ranges: BTreeMap<u64, Vec<u8>>,
     bytes: usize,
     sealed: bool,
+    index_nodes: BTreeSet<u64>,
 }
 impl Metadata {
     fn cached(&self, start: u64, len: usize) -> Option<Vec<u8>> {
@@ -39,7 +43,26 @@ impl Metadata {
     }
     fn bytes(&self) -> usize {
         let state = self.state.lock().unwrap();
-        state.bytes + state.ranges.len() * 96
+        state.bytes + state.ranges.len() * 96 + state.index_nodes.len() * 64
+    }
+    fn note_index_node(&self, start: u64, bytes: &[u8]) -> hdf5_reader::error::Result<()> {
+        if bytes.len() >= 8 && &bytes[..5] == b"TREE\x01" {
+            let mut state = self.state.lock().unwrap();
+            if !state.index_nodes.contains(&start) {
+                if state.index_nodes.len() >= self.max_reads
+                    || state
+                        .bytes
+                        .checked_add(state.ranges.len() * 96 + (state.index_nodes.len() + 1) * 64)
+                        .is_none_or(|n| n > self.cap)
+                {
+                    return Err(hdf5_reader::error::Error::InvalidData(
+                        "HDF5 index node bookkeeping exceeds budget".into(),
+                    ));
+                }
+                state.index_nodes.insert(start);
+            }
+        }
+        Ok(())
     }
 }
 impl Storage for Metadata {
@@ -52,6 +75,7 @@ impl Storage for Metadata {
             return Err(error("HDF5 metadata range exceeds explicit bounds"));
         }
         if let Some(bytes) = self.cached(start, len) {
+            self.note_index_node(start, &bytes)?;
             return Ok(StorageBuffer::from_vec(bytes));
         }
         let mut state = self.state.lock().unwrap();
@@ -60,20 +84,44 @@ impl Storage for Metadata {
                 "HDF5 decoder attempted an unplanned metadata/payload range",
             ));
         }
-        let reservation = len
+        let fetch_start = if self.page > 0 {
+            start / self.page as u64 * self.page as u64
+        } else {
+            start
+        };
+        let fetch_end = if self.page > 0 {
+            (start + len as u64)
+                .div_ceil(self.page as u64)
+                .saturating_mul(self.page as u64)
+                .min(self.len())
+        } else {
+            start + len as u64
+        };
+        let fetch_len =
+            usize::try_from(fetch_end - fetch_start).map_err(|_| error("metadata overflow"))?;
+        let reservation = fetch_len
             .checked_add(96)
             .and_then(|n| n.checked_add(state.bytes))
             .ok_or_else(|| error("metadata overflow"))?;
-        if reservation > self.cap || state.ranges.len() >= self.max_reads {
+        if reservation
+            .checked_add(state.index_nodes.len() * 64 + 64)
+            .is_none_or(|n| n > self.cap)
+            || state.ranges.len() >= self.max_reads
+        {
             return Err(error("HDF5 metadata cache exceeds buffer/max_nodes budget"));
         }
         let bytes = self
             .file
-            .read(start, len)
+            .read(fetch_start, fetch_len)
             .map_err(|e| error(&e.to_string()))?;
         state.bytes = reservation;
-        state.ranges.insert(start, bytes.clone());
-        Ok(StorageBuffer::from_vec(bytes))
+        let offset =
+            usize::try_from(start - fetch_start).map_err(|_| error("metadata overflow"))?;
+        let selected = bytes[offset..offset + len].to_vec();
+        state.ranges.insert(fetch_start, bytes);
+        drop(state);
+        self.note_index_node(start, &selected)?;
+        Ok(StorageBuffer::from_vec(selected))
     }
 }
 struct View {
@@ -241,15 +289,27 @@ fn entries(file: &Hdf5File, dataset: &Dataset, first: &[u64], last: &[u64]) -> R
     if *address == u64::MAX {
         return Ok(Vec::new());
     }
-    let leaves = collect_btree_v1_leaves_storage(
-        file.storage(),
-        *address,
-        sb.offset_size,
-        sb.length_size,
-        Some(2),
-        dims,
-        Some((first, last)),
-    )?;
+    let leaves = if index_policy()? == "full" {
+        collect_btree_v1_leaves_storage(
+            file.storage(),
+            *address,
+            sb.offset_size,
+            sb.length_size,
+            Some(2),
+            dims,
+            Some((first, last)),
+        )?
+    } else {
+        collect_btree_v1_leaves_storage_selective(
+            file.storage(),
+            *address,
+            sb.offset_size,
+            sb.length_size,
+            dims,
+            first,
+            last,
+        )?
+    };
     leaves
         .into_iter()
         .map(|(key, address)| {
@@ -280,6 +340,24 @@ fn entries(file: &Hdf5File, dataset: &Dataset, first: &[u64], last: &[u64]) -> R
         })
         .collect()
 }
+fn index_policy() -> Result<String> {
+    let policy = std::env::var("TILE_RIPPER_HDF5_INDEX_POLICY").unwrap_or_else(|_| "full".into());
+    if !matches!(policy.as_str(), "full" | "selective") {
+        return fail("invalid HDF5 index policy");
+    }
+    Ok(policy)
+}
+fn metadata_page() -> Result<usize> {
+    match std::env::var("TILE_RIPPER_HDF5_METADATA_POLICY")
+        .as_deref()
+        .unwrap_or("exact")
+    {
+        "exact" => Ok(0),
+        "page4k" => Ok(4096),
+        "page16k" => Ok(16384),
+        _ => fail("invalid HDF5 metadata policy"),
+    }
+}
 fn selection(start: &[usize; 2], count: &[usize; 2], step: &[usize; 2]) -> Result<SliceInfo> {
     let selections = (0..2)
         .map(|i| {
@@ -302,13 +380,13 @@ fn decode(dataset: &Dataset, selected: &SliceInfo) -> Result<Pixels> {
     Ok(match dtype(dataset)? {
         "<u2" => Pixels::UInt16(
             dataset
-                .read_slice::<u16>(selected)?
+                .read_slice_selective_v1::<u16>(selected)?
                 .into_raw_vec_and_offset()
                 .0,
         ),
         _ => Pixels::Float32(
             dataset
-                .read_slice::<f32>(selected)?
+                .read_slice_selective_v1::<f32>(selected)?
                 .into_raw_vec_and_offset()
                 .0,
         ),
@@ -466,7 +544,7 @@ impl Context {
         let m = files.get(id)?;
         let bindings = self.bindings.lock().unwrap();
         Some(
-            json!({"identity":m.file.identity(),"file_bytes":m.file.size,"metadata_cache_bytes":m.bytes(),"datasets":bindings.iter().filter(|((a,_),_)|a==id).map(|(_,b)|b.description.clone()).collect::<Vec<_>>()}),
+            json!({"identity":m.file.identity(),"file_bytes":m.file.size,"metadata_cache_bytes":m.bytes(),"index_nodes_visited":m.state.lock().unwrap().index_nodes.len(),"metadata_page_bytes":m.page,"datasets":bindings.iter().filter(|((a,_),_)|a==id).map(|(_,b)|b.description.clone()).collect::<Vec<_>>()}),
         )
     }
     pub fn add_stats(&self, value: &mut Value) {
@@ -500,6 +578,7 @@ impl Context {
                     file: ObjectFile::open(asset, &r.budget)?,
                     cap: r.budget.buffer_bytes / 32,
                     max_reads: r.budget.max_nodes,
+                    page: metadata_page()?,
                     state: Mutex::default(),
                 });
                 files.insert(asset.id.clone(), m.clone());
@@ -781,7 +860,7 @@ impl Context {
                     .and_then(|n| n.checked_add(32768))
                     .ok_or("HDF5 working reservation overflow")?;
             }
-            let description = json!({"path":path,"shape":shape,"source_dtype":format!("{:?}",ds.dtype()),"stored_dtype":dt,"chunk_shape":chunk,"superblock_version":sb.version,"chunk_index":"v1 B-tree bounded full index scan; selective payload ranges","storage_fill":storage_fill.map(|v|if v.is_finite(){json!(v)}else{json!(v.to_string())}),"missingness":"CF scalar markers and NaNs; storage initialization alone is valid","attributes":attributes,"axes":coordinate_attrs,"axis_semantics":"stored coordinate values as exact Float64; apply axis scale/offset explicitly","grid_mapping":mapping,"time":time,"range_policy":policy,"physical_groups":groups,"chunks":jobs.iter().map(|j|json!({"node":j.node,"start":j.start,"count":j.count,"step":step,"byte_offset":j.entry.as_ref().map(|e|e.address),"encoded_bytes":j.entry.as_ref().map_or(0,|e|e.size)})).collect::<Vec<_>>()});
+            let description = json!({"path":path,"shape":shape,"source_dtype":format!("{:?}",ds.dtype()),"stored_dtype":dt,"chunk_shape":chunk,"superblock_version":sb.version,"chunk_index":"v1 B-tree","index_policy":index_policy()?,"index_validation_scope":"visited nodes and visible pointers; full policy traverses all nodes","storage_fill":storage_fill.map(|v|if v.is_finite(){json!(v)}else{json!(v.to_string())}),"missingness":"CF scalar markers and NaNs; storage initialization alone is valid","attributes":attributes,"axes":coordinate_attrs,"axis_semantics":"stored coordinate values as exact Float64; apply axis scale/offset explicitly","grid_mapping":mapping,"time":time,"range_policy":policy,"physical_groups":groups,"chunks":jobs.iter().map(|j|json!({"node":j.node,"start":j.start,"count":j.count,"step":step,"byte_offset":j.entry.as_ref().map(|e|e.address),"encoded_bytes":j.entry.as_ref().map_or(0,|e|e.size)})).collect::<Vec<_>>()});
             p.selected.push(Selected {
                 timestamps: vec![],
                 dimensions: None,
@@ -977,6 +1056,7 @@ mod tests {
             file: ObjectFile::open(&asset, &budget)?,
             cap: 2 * 1024 * 1024,
             max_reads: 4096,
+            page: metadata_page()?,
             state: Mutex::default(),
         });
         let file = open(metadata.clone())?;

@@ -1,0 +1,50 @@
+{
+  "source": {
+    "kind": "assets",
+    "assets": [
+      {
+        "id": "science",
+        "locator": "https://noaa-goes19.s3.amazonaws.com/ABI-L2-ACHTF/2025/100/12/OR_ABI-L2-ACHTF-M6_G19_s20251001200211_e20251001209519_c20251001212520.nc",
+        "format": "hdf5",
+        "datetime": null
+      }
+    ]
+  },
+  "spatial": {
+    "kind": "array_slice",
+    "start": [
+      2500,
+      2500
+    ],
+    "count": [
+      64,
+      64
+    ],
+    "step": [
+      1,
+      1
+    ],
+    "axes": [
+      "/y",
+      "/x"
+    ]
+  },
+  "time": null,
+  "variables": [
+    {
+      "kind": "dataset",
+      "path": "/TEMP"
+    }
+  ],
+  "grid": {
+    "kind": "native"
+  },
+  "sink": {
+    "kind": "callback"
+  },
+  "budget": {
+    "buffer_bytes": 33554432,
+    "max_nodes": 4096,
+    "chunk_edge": 32
+  }
+}

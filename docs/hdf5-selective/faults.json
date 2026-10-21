@@ -1,0 +1,5174 @@
+{
+  "cases": [
+    {
+      "name": "no-etag",
+      "expected_success": false,
+      "binary_sha256": "6d867948e36c2b3dbbbe532e67af9f88d6ce45e6971cc91eb60c663583588c7c",
+      "returncode": 1,
+      "elapsed_seconds": 0.02123787486925721,
+      "peak_rss_bytes": 11681792,
+      "sampled_peak_rss_bytes": 1277952,
+      "child_cpu_seconds": 0.008659,
+      "error": "Error: \"prepare: HTTP source requires strong ETags\"\n        0.01 real         0.00 user         0.00 sys\n            11681792  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                 961  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   1  messages sent\n                   1  messages received\n                   0  signals received\n                   0  voluntary context switches\n                  49  involuntary context switches\n            44503701  instructions retired\n            23515126  cycles elapsed\n             3047808  peak memory footprint\n",
+      "http": {
+        "gets": 0,
+        "heads": 1,
+        "response_bytes": 0,
+        "payload_gets": 0,
+        "all_ranges_conditional": true,
+        "repeated_exact_ranges": 0,
+        "events": [
+          {
+            "method": "HEAD",
+            "start": null,
+            "end": null,
+            "bytes": 0,
+            "status": 200,
+            "payload": false,
+            "conditional": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "weak-etag",
+      "expected_success": false,
+      "binary_sha256": "6d867948e36c2b3dbbbe532e67af9f88d6ce45e6971cc91eb60c663583588c7c",
+      "returncode": 1,
+      "elapsed_seconds": 0.025769459083676338,
+      "peak_rss_bytes": 11714560,
+      "sampled_peak_rss_bytes": 1277952,
+      "child_cpu_seconds": 0.01073,
+      "error": "Error: \"prepare: HTTP source requires strong ETags\"\n        0.01 real         0.00 user         0.00 sys\n            11714560  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                 963  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   1  messages sent\n                   1  messages received\n                   0  signals received\n                   0  voluntary context switches\n                  61  involuntary context switches\n            44367680  instructions retired\n            24601802  cycles elapsed\n             3080600  peak memory footprint\n",
+      "http": {
+        "gets": 0,
+        "heads": 1,
+        "response_bytes": 0,
+        "payload_gets": 0,
+        "all_ranges_conditional": true,
+        "repeated_exact_ranges": 0,
+        "events": [
+          {
+            "method": "HEAD",
+            "start": null,
+            "end": null,
+            "bytes": 0,
+            "status": 200,
+            "payload": false,
+            "conditional": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "no-range",
+      "expected_success": false,
+      "binary_sha256": "6d867948e36c2b3dbbbe532e67af9f88d6ce45e6971cc91eb60c663583588c7c",
+      "returncode": 1,
+      "elapsed_seconds": 0.043434124905616045,
+      "peak_rss_bytes": 14155776,
+      "sampled_peak_rss_bytes": 1277952,
+      "child_cpu_seconds": 0.019147,
+      "error": "Error: \"execution: HTTP object request rejected (unsupported status or redirect)\"\n        0.02 real         0.00 user         0.00 sys\n            14155776  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                1124  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                  41  messages sent\n                  41  messages received\n                   0  signals received\n                   0  voluntary context switches\n                 277  involuntary context switches\n            71347151  instructions retired\n            44160692  cycles elapsed\n             4538752  peak memory footprint\n",
+      "http": {
+        "gets": 37,
+        "heads": 4,
+        "response_bytes": 6720,
+        "payload_gets": 2,
+        "all_ranges_conditional": true,
+        "repeated_exact_ranges": 0,
+        "events": [
+          {
+            "method": "HEAD",
+            "start": null,
+            "end": null,
+            "bytes": 0,
+            "status": 200,
+            "payload": false,
+            "conditional": false
+          },
+          {
+            "method": "HEAD",
+            "start": null,
+            "end": null,
+            "bytes": 0,
+            "status": 200,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 0,
+            "end": 8,
+            "bytes": 8,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 0,
+            "end": 256,
+            "bytes": 256,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 680,
+            "end": 712,
+            "bytes": 32,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1504,
+            "end": 1528,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1504,
+            "end": 1552,
+            "bytes": 48,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 720,
+            "end": 800,
+            "bytes": 80,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 800,
+            "end": 804,
+            "bytes": 4,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 800,
+            "end": 816,
+            "bytes": 16,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 800,
+            "end": 840,
+            "bytes": 40,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1384,
+            "end": 1416,
+            "bytes": 32,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 840,
+            "end": 864,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 840,
+            "end": 888,
+            "bytes": 48,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 2104,
+            "end": 2128,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 2104,
+            "end": 2232,
+            "bytes": 128,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1440,
+            "end": 1504,
+            "bytes": 64,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1432,
+            "end": 1504,
+            "bytes": 72,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1424,
+            "end": 1504,
+            "bytes": 80,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4960,
+            "end": 4964,
+            "bytes": 4,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4960,
+            "end": 4976,
+            "bytes": 16,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4960,
+            "end": 5664,
+            "bytes": 704,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1832,
+            "end": 1836,
+            "bytes": 4,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1832,
+            "end": 1848,
+            "bytes": 16,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1832,
+            "end": 2104,
+            "bytes": 272,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4488,
+            "end": 4608,
+            "bytes": 120,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 5664,
+            "end": 5888,
+            "bytes": 224,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 2432,
+            "end": 2936,
+            "bytes": 504,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4608,
+            "end": 4612,
+            "bytes": 4,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4608,
+            "end": 4624,
+            "bytes": 16,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4608,
+            "end": 4960,
+            "bytes": 352,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 5888,
+            "end": 6112,
+            "bytes": 224,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 6536,
+            "end": 7296,
+            "bytes": 760,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 13712,
+            "end": 13736,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 13712,
+            "end": 13848,
+            "bytes": 136,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 194249,
+            "end": 194273,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 194249,
+            "end": 196585,
+            "bytes": 2336,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "HEAD",
+            "start": null,
+            "end": null,
+            "bytes": 0,
+            "status": 200,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "HEAD",
+            "start": null,
+            "end": null,
+            "bytes": 0,
+            "status": 200,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 16328,
+            "end": 19257,
+            "bytes": 0,
+            "status": 200,
+            "payload": true,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 19257,
+            "end": 22186,
+            "bytes": 0,
+            "status": 200,
+            "payload": true,
+            "conditional": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "bad-range",
+      "expected_success": false,
+      "binary_sha256": "6d867948e36c2b3dbbbe532e67af9f88d6ce45e6971cc91eb60c663583588c7c",
+      "returncode": 1,
+      "elapsed_seconds": 0.0351804168894887,
+      "peak_rss_bytes": 14172160,
+      "sampled_peak_rss_bytes": 1277952,
+      "child_cpu_seconds": 0.016417,
+      "error": "Error: \"execution: invalid HTTP range framing\"\n        0.02 real         0.00 user         0.00 sys\n            14172160  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                1125  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                  41  messages sent\n                  42  messages received\n                   0  signals received\n                   0  voluntary context switches\n                 278  involuntary context switches\n            72735426  instructions retired\n            40635212  cycles elapsed\n             4555136  peak memory footprint\n",
+      "http": {
+        "gets": 37,
+        "heads": 4,
+        "response_bytes": 12578,
+        "payload_gets": 2,
+        "all_ranges_conditional": true,
+        "repeated_exact_ranges": 0,
+        "events": [
+          {
+            "method": "HEAD",
+            "start": null,
+            "end": null,
+            "bytes": 0,
+            "status": 200,
+            "payload": false,
+            "conditional": false
+          },
+          {
+            "method": "HEAD",
+            "start": null,
+            "end": null,
+            "bytes": 0,
+            "status": 200,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 0,
+            "end": 8,
+            "bytes": 8,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 0,
+            "end": 256,
+            "bytes": 256,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 680,
+            "end": 712,
+            "bytes": 32,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1504,
+            "end": 1528,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1504,
+            "end": 1552,
+            "bytes": 48,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 720,
+            "end": 800,
+            "bytes": 80,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 800,
+            "end": 804,
+            "bytes": 4,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 800,
+            "end": 816,
+            "bytes": 16,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 800,
+            "end": 840,
+            "bytes": 40,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1384,
+            "end": 1416,
+            "bytes": 32,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 840,
+            "end": 864,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 840,
+            "end": 888,
+            "bytes": 48,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 2104,
+            "end": 2128,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 2104,
+            "end": 2232,
+            "bytes": 128,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1440,
+            "end": 1504,
+            "bytes": 64,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1432,
+            "end": 1504,
+            "bytes": 72,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1424,
+            "end": 1504,
+            "bytes": 80,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4960,
+            "end": 4964,
+            "bytes": 4,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4960,
+            "end": 4976,
+            "bytes": 16,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4960,
+            "end": 5664,
+            "bytes": 704,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1832,
+            "end": 1836,
+            "bytes": 4,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1832,
+            "end": 1848,
+            "bytes": 16,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1832,
+            "end": 2104,
+            "bytes": 272,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4488,
+            "end": 4608,
+            "bytes": 120,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 5664,
+            "end": 5888,
+            "bytes": 224,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 2432,
+            "end": 2936,
+            "bytes": 504,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4608,
+            "end": 4612,
+            "bytes": 4,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4608,
+            "end": 4624,
+            "bytes": 16,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4608,
+            "end": 4960,
+            "bytes": 352,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 5888,
+            "end": 6112,
+            "bytes": 224,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 6536,
+            "end": 7296,
+            "bytes": 760,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 13712,
+            "end": 13736,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 13712,
+            "end": 13848,
+            "bytes": 136,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 194249,
+            "end": 194273,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 194249,
+            "end": 196585,
+            "bytes": 2336,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "HEAD",
+            "start": null,
+            "end": null,
+            "bytes": 0,
+            "status": 200,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "HEAD",
+            "start": null,
+            "end": null,
+            "bytes": 0,
+            "status": 200,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 16328,
+            "end": 19257,
+            "bytes": 2929,
+            "status": 206,
+            "payload": true,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 19257,
+            "end": 22186,
+            "bytes": 2929,
+            "status": 206,
+            "payload": true,
+            "conditional": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "encoded",
+      "expected_success": false,
+      "binary_sha256": "6d867948e36c2b3dbbbe532e67af9f88d6ce45e6971cc91eb60c663583588c7c",
+      "returncode": 1,
+      "elapsed_seconds": 0.03926037484779954,
+      "peak_rss_bytes": 14090240,
+      "sampled_peak_rss_bytes": 1277952,
+      "child_cpu_seconds": 0.018714,
+      "error": "Error: \"execution: encoded HTTP range responses are unsupported\"\n        0.02 real         0.00 user         0.00 sys\n            14090240  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                1121  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                  41  messages sent\n                  42  messages received\n                   0  signals received\n                   0  voluntary context switches\n                 269  involuntary context switches\n            71261815  instructions retired\n            42103571  cycles elapsed\n             4473216  peak memory footprint\n",
+      "http": {
+        "gets": 37,
+        "heads": 4,
+        "response_bytes": 12578,
+        "payload_gets": 2,
+        "all_ranges_conditional": true,
+        "repeated_exact_ranges": 0,
+        "events": [
+          {
+            "method": "HEAD",
+            "start": null,
+            "end": null,
+            "bytes": 0,
+            "status": 200,
+            "payload": false,
+            "conditional": false
+          },
+          {
+            "method": "HEAD",
+            "start": null,
+            "end": null,
+            "bytes": 0,
+            "status": 200,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 0,
+            "end": 8,
+            "bytes": 8,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 0,
+            "end": 256,
+            "bytes": 256,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 680,
+            "end": 712,
+            "bytes": 32,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1504,
+            "end": 1528,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1504,
+            "end": 1552,
+            "bytes": 48,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 720,
+            "end": 800,
+            "bytes": 80,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 800,
+            "end": 804,
+            "bytes": 4,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 800,
+            "end": 816,
+            "bytes": 16,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 800,
+            "end": 840,
+            "bytes": 40,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1384,
+            "end": 1416,
+            "bytes": 32,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 840,
+            "end": 864,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 840,
+            "end": 888,
+            "bytes": 48,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 2104,
+            "end": 2128,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 2104,
+            "end": 2232,
+            "bytes": 128,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1440,
+            "end": 1504,
+            "bytes": 64,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1432,
+            "end": 1504,
+            "bytes": 72,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1424,
+            "end": 1504,
+            "bytes": 80,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4960,
+            "end": 4964,
+            "bytes": 4,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4960,
+            "end": 4976,
+            "bytes": 16,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4960,
+            "end": 5664,
+            "bytes": 704,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1832,
+            "end": 1836,
+            "bytes": 4,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1832,
+            "end": 1848,
+            "bytes": 16,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1832,
+            "end": 2104,
+            "bytes": 272,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4488,
+            "end": 4608,
+            "bytes": 120,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 5664,
+            "end": 5888,
+            "bytes": 224,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 2432,
+            "end": 2936,
+            "bytes": 504,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4608,
+            "end": 4612,
+            "bytes": 4,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4608,
+            "end": 4624,
+            "bytes": 16,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4608,
+            "end": 4960,
+            "bytes": 352,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 5888,
+            "end": 6112,
+            "bytes": 224,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 6536,
+            "end": 7296,
+            "bytes": 760,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 13712,
+            "end": 13736,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 13712,
+            "end": 13848,
+            "bytes": 136,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 194249,
+            "end": 194273,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 194249,
+            "end": 196585,
+            "bytes": 2336,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "HEAD",
+            "start": null,
+            "end": null,
+            "bytes": 0,
+            "status": 200,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "HEAD",
+            "start": null,
+            "end": null,
+            "bytes": 0,
+            "status": 200,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 16328,
+            "end": 19257,
+            "bytes": 2929,
+            "status": 206,
+            "payload": true,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 19257,
+            "end": 22186,
+            "bytes": 2929,
+            "status": 206,
+            "payload": true,
+            "conditional": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "changed-etag",
+      "expected_success": false,
+      "binary_sha256": "6d867948e36c2b3dbbbe532e67af9f88d6ce45e6971cc91eb60c663583588c7c",
+      "returncode": 1,
+      "elapsed_seconds": 0.037817166186869144,
+      "peak_rss_bytes": 14123008,
+      "sampled_peak_rss_bytes": 1277952,
+      "child_cpu_seconds": 0.01670900000000001,
+      "error": "Error: \"execution: HTTP source version conflict; prepare again\"\n        0.02 real         0.00 user         0.00 sys\n            14123008  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                1122  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                  41  messages sent\n                  43  messages received\n                   0  signals received\n                   0  voluntary context switches\n                 274  involuntary context switches\n            71276384  instructions retired\n            40541890  cycles elapsed\n             4505984  peak memory footprint\n",
+      "http": {
+        "gets": 37,
+        "heads": 4,
+        "response_bytes": 12578,
+        "payload_gets": 2,
+        "all_ranges_conditional": true,
+        "repeated_exact_ranges": 0,
+        "events": [
+          {
+            "method": "HEAD",
+            "start": null,
+            "end": null,
+            "bytes": 0,
+            "status": 200,
+            "payload": false,
+            "conditional": false
+          },
+          {
+            "method": "HEAD",
+            "start": null,
+            "end": null,
+            "bytes": 0,
+            "status": 200,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 0,
+            "end": 8,
+            "bytes": 8,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 0,
+            "end": 256,
+            "bytes": 256,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 680,
+            "end": 712,
+            "bytes": 32,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1504,
+            "end": 1528,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1504,
+            "end": 1552,
+            "bytes": 48,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 720,
+            "end": 800,
+            "bytes": 80,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 800,
+            "end": 804,
+            "bytes": 4,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 800,
+            "end": 816,
+            "bytes": 16,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 800,
+            "end": 840,
+            "bytes": 40,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1384,
+            "end": 1416,
+            "bytes": 32,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 840,
+            "end": 864,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 840,
+            "end": 888,
+            "bytes": 48,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 2104,
+            "end": 2128,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 2104,
+            "end": 2232,
+            "bytes": 128,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1440,
+            "end": 1504,
+            "bytes": 64,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1432,
+            "end": 1504,
+            "bytes": 72,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1424,
+            "end": 1504,
+            "bytes": 80,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4960,
+            "end": 4964,
+            "bytes": 4,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4960,
+            "end": 4976,
+            "bytes": 16,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4960,
+            "end": 5664,
+            "bytes": 704,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1832,
+            "end": 1836,
+            "bytes": 4,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1832,
+            "end": 1848,
+            "bytes": 16,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1832,
+            "end": 2104,
+            "bytes": 272,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4488,
+            "end": 4608,
+            "bytes": 120,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 5664,
+            "end": 5888,
+            "bytes": 224,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 2432,
+            "end": 2936,
+            "bytes": 504,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4608,
+            "end": 4612,
+            "bytes": 4,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4608,
+            "end": 4624,
+            "bytes": 16,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4608,
+            "end": 4960,
+            "bytes": 352,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 5888,
+            "end": 6112,
+            "bytes": 224,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 6536,
+            "end": 7296,
+            "bytes": 760,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 13712,
+            "end": 13736,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 13712,
+            "end": 13848,
+            "bytes": 136,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 194249,
+            "end": 194273,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 194249,
+            "end": 196585,
+            "bytes": 2336,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "HEAD",
+            "start": null,
+            "end": null,
+            "bytes": 0,
+            "status": 200,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "HEAD",
+            "start": null,
+            "end": null,
+            "bytes": 0,
+            "status": 200,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 16328,
+            "end": 19257,
+            "bytes": 2929,
+            "status": 206,
+            "payload": true,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 19257,
+            "end": 22186,
+            "bytes": 2929,
+            "status": 206,
+            "payload": true,
+            "conditional": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "retry",
+      "expected_success": true,
+      "binary_sha256": "6d867948e36c2b3dbbbe532e67af9f88d6ce45e6971cc91eb60c663583588c7c",
+      "returncode": 0,
+      "elapsed_seconds": 0.06014666706323624,
+      "peak_rss_bytes": 14958592,
+      "sampled_peak_rss_bytes": 1277952,
+      "child_cpu_seconds": 0.018723999999999998,
+      "error": null,
+      "http": {
+        "gets": 45,
+        "heads": 5,
+        "response_bytes": 30152,
+        "payload_gets": 10,
+        "all_ranges_conditional": true,
+        "repeated_exact_ranges": 0,
+        "events": [
+          {
+            "method": "HEAD",
+            "start": null,
+            "end": null,
+            "bytes": 0,
+            "status": 200,
+            "payload": false,
+            "conditional": false
+          },
+          {
+            "method": "HEAD",
+            "start": null,
+            "end": null,
+            "bytes": 0,
+            "status": 200,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 0,
+            "end": 8,
+            "bytes": 8,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 0,
+            "end": 256,
+            "bytes": 256,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 680,
+            "end": 712,
+            "bytes": 32,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1504,
+            "end": 1528,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1504,
+            "end": 1552,
+            "bytes": 48,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 720,
+            "end": 800,
+            "bytes": 80,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 800,
+            "end": 804,
+            "bytes": 4,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 800,
+            "end": 816,
+            "bytes": 16,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 800,
+            "end": 840,
+            "bytes": 40,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1384,
+            "end": 1416,
+            "bytes": 32,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 840,
+            "end": 864,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 840,
+            "end": 888,
+            "bytes": 48,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 2104,
+            "end": 2128,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 2104,
+            "end": 2232,
+            "bytes": 128,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1440,
+            "end": 1504,
+            "bytes": 64,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1432,
+            "end": 1504,
+            "bytes": 72,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1424,
+            "end": 1504,
+            "bytes": 80,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4960,
+            "end": 4964,
+            "bytes": 4,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4960,
+            "end": 4976,
+            "bytes": 16,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4960,
+            "end": 5664,
+            "bytes": 704,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1832,
+            "end": 1836,
+            "bytes": 4,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1832,
+            "end": 1848,
+            "bytes": 16,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1832,
+            "end": 2104,
+            "bytes": 272,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4488,
+            "end": 4608,
+            "bytes": 120,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 5664,
+            "end": 5888,
+            "bytes": 224,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 2432,
+            "end": 2936,
+            "bytes": 504,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4608,
+            "end": 4612,
+            "bytes": 4,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4608,
+            "end": 4624,
+            "bytes": 16,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4608,
+            "end": 4960,
+            "bytes": 352,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 5888,
+            "end": 6112,
+            "bytes": 224,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 6536,
+            "end": 7296,
+            "bytes": 760,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 13712,
+            "end": 13736,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 13712,
+            "end": 13848,
+            "bytes": 136,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 194249,
+            "end": 194273,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 194249,
+            "end": 196585,
+            "bytes": 2336,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "HEAD",
+            "start": null,
+            "end": null,
+            "bytes": 0,
+            "status": 200,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "HEAD",
+            "start": null,
+            "end": null,
+            "bytes": 0,
+            "status": 200,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 16328,
+            "end": 19257,
+            "bytes": 0,
+            "status": 503,
+            "payload": true,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 19257,
+            "end": 22186,
+            "bytes": 0,
+            "status": 503,
+            "payload": true,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 16328,
+            "end": 19257,
+            "bytes": 2929,
+            "status": 206,
+            "payload": true,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 19257,
+            "end": 22186,
+            "bytes": 2929,
+            "status": 206,
+            "payload": true,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 22186,
+            "end": 25115,
+            "bytes": 2929,
+            "status": 206,
+            "payload": true,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 40534,
+            "end": 43463,
+            "bytes": 2929,
+            "status": 206,
+            "payload": true,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 61815,
+            "end": 64744,
+            "bytes": 2929,
+            "status": 206,
+            "payload": true,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 43463,
+            "end": 46392,
+            "bytes": 2929,
+            "status": 206,
+            "payload": true,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 64744,
+            "end": 67673,
+            "bytes": 2929,
+            "status": 206,
+            "payload": true,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 67673,
+            "end": 70602,
+            "bytes": 2929,
+            "status": 206,
+            "payload": true,
+            "conditional": true
+          },
+          {
+            "method": "HEAD",
+            "start": null,
+            "end": null,
+            "bytes": 0,
+            "status": 200,
+            "payload": false,
+            "conditional": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "exhaust",
+      "expected_success": false,
+      "binary_sha256": "6d867948e36c2b3dbbbe532e67af9f88d6ce45e6971cc91eb60c663583588c7c",
+      "returncode": 1,
+      "elapsed_seconds": 0.11285579204559326,
+      "peak_rss_bytes": 14221312,
+      "sampled_peak_rss_bytes": 1277952,
+      "child_cpu_seconds": 0.017983,
+      "error": "Error: \"execution: HTTP retry budget exhausted after 3 attempts (last status 503)\"\n        0.10 real         0.00 user         0.00 sys\n            14221312  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                1128  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                  45  messages sent\n                  46  messages received\n                   0  signals received\n                   0  voluntary context switches\n                 309  involuntary context switches\n            72797665  instructions retired\n            41781939  cycles elapsed\n             4620672  peak memory footprint\n",
+      "http": {
+        "gets": 41,
+        "heads": 4,
+        "response_bytes": 6720,
+        "payload_gets": 6,
+        "all_ranges_conditional": true,
+        "repeated_exact_ranges": 0,
+        "events": [
+          {
+            "method": "HEAD",
+            "start": null,
+            "end": null,
+            "bytes": 0,
+            "status": 200,
+            "payload": false,
+            "conditional": false
+          },
+          {
+            "method": "HEAD",
+            "start": null,
+            "end": null,
+            "bytes": 0,
+            "status": 200,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 0,
+            "end": 8,
+            "bytes": 8,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 0,
+            "end": 256,
+            "bytes": 256,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 680,
+            "end": 712,
+            "bytes": 32,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1504,
+            "end": 1528,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1504,
+            "end": 1552,
+            "bytes": 48,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 720,
+            "end": 800,
+            "bytes": 80,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 800,
+            "end": 804,
+            "bytes": 4,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 800,
+            "end": 816,
+            "bytes": 16,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 800,
+            "end": 840,
+            "bytes": 40,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1384,
+            "end": 1416,
+            "bytes": 32,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 840,
+            "end": 864,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 840,
+            "end": 888,
+            "bytes": 48,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 2104,
+            "end": 2128,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 2104,
+            "end": 2232,
+            "bytes": 128,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1440,
+            "end": 1504,
+            "bytes": 64,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1432,
+            "end": 1504,
+            "bytes": 72,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1424,
+            "end": 1504,
+            "bytes": 80,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4960,
+            "end": 4964,
+            "bytes": 4,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4960,
+            "end": 4976,
+            "bytes": 16,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4960,
+            "end": 5664,
+            "bytes": 704,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1832,
+            "end": 1836,
+            "bytes": 4,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1832,
+            "end": 1848,
+            "bytes": 16,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1832,
+            "end": 2104,
+            "bytes": 272,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4488,
+            "end": 4608,
+            "bytes": 120,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 5664,
+            "end": 5888,
+            "bytes": 224,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 2432,
+            "end": 2936,
+            "bytes": 504,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4608,
+            "end": 4612,
+            "bytes": 4,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4608,
+            "end": 4624,
+            "bytes": 16,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4608,
+            "end": 4960,
+            "bytes": 352,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 5888,
+            "end": 6112,
+            "bytes": 224,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 6536,
+            "end": 7296,
+            "bytes": 760,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 13712,
+            "end": 13736,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 13712,
+            "end": 13848,
+            "bytes": 136,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 194249,
+            "end": 194273,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 194249,
+            "end": 196585,
+            "bytes": 2336,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "HEAD",
+            "start": null,
+            "end": null,
+            "bytes": 0,
+            "status": 200,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "HEAD",
+            "start": null,
+            "end": null,
+            "bytes": 0,
+            "status": 200,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 16328,
+            "end": 19257,
+            "bytes": 0,
+            "status": 503,
+            "payload": true,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 19257,
+            "end": 22186,
+            "bytes": 0,
+            "status": 503,
+            "payload": true,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 16328,
+            "end": 19257,
+            "bytes": 0,
+            "status": 503,
+            "payload": true,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 19257,
+            "end": 22186,
+            "bytes": 0,
+            "status": 503,
+            "payload": true,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 16328,
+            "end": 19257,
+            "bytes": 0,
+            "status": 503,
+            "payload": true,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 19257,
+            "end": 22186,
+            "bytes": 0,
+            "status": 503,
+            "payload": true,
+            "conditional": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "interrupt",
+      "expected_success": false,
+      "binary_sha256": "6d867948e36c2b3dbbbe532e67af9f88d6ce45e6971cc91eb60c663583588c7c",
+      "returncode": 1,
+      "elapsed_seconds": 0.11687545804306865,
+      "peak_rss_bytes": 14172160,
+      "sampled_peak_rss_bytes": 1277952,
+      "child_cpu_seconds": 0.01966800000000002,
+      "error": "Error: \"execution: HTTP retry budget exhausted after 3 attempts (last status 206)\"\n        0.10 real         0.00 user         0.00 sys\n            14172160  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                1125  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                  45  messages sent\n                  49  messages received\n                   0  signals received\n                   0  voluntary context switches\n                 316  involuntary context switches\n            75461733  instructions retired\n            45629956  cycles elapsed\n             4522368  peak memory footprint\n",
+      "http": {
+        "gets": 41,
+        "heads": 4,
+        "response_bytes": 15504,
+        "payload_gets": 6,
+        "all_ranges_conditional": true,
+        "repeated_exact_ranges": 4,
+        "events": [
+          {
+            "method": "HEAD",
+            "start": null,
+            "end": null,
+            "bytes": 0,
+            "status": 200,
+            "payload": false,
+            "conditional": false
+          },
+          {
+            "method": "HEAD",
+            "start": null,
+            "end": null,
+            "bytes": 0,
+            "status": 200,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 0,
+            "end": 8,
+            "bytes": 8,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 0,
+            "end": 256,
+            "bytes": 256,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 680,
+            "end": 712,
+            "bytes": 32,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1504,
+            "end": 1528,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1504,
+            "end": 1552,
+            "bytes": 48,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 720,
+            "end": 800,
+            "bytes": 80,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 800,
+            "end": 804,
+            "bytes": 4,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 800,
+            "end": 816,
+            "bytes": 16,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 800,
+            "end": 840,
+            "bytes": 40,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1384,
+            "end": 1416,
+            "bytes": 32,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 840,
+            "end": 864,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 840,
+            "end": 888,
+            "bytes": 48,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 2104,
+            "end": 2128,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 2104,
+            "end": 2232,
+            "bytes": 128,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1440,
+            "end": 1504,
+            "bytes": 64,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1432,
+            "end": 1504,
+            "bytes": 72,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1424,
+            "end": 1504,
+            "bytes": 80,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4960,
+            "end": 4964,
+            "bytes": 4,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4960,
+            "end": 4976,
+            "bytes": 16,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4960,
+            "end": 5664,
+            "bytes": 704,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1832,
+            "end": 1836,
+            "bytes": 4,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1832,
+            "end": 1848,
+            "bytes": 16,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1832,
+            "end": 2104,
+            "bytes": 272,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4488,
+            "end": 4608,
+            "bytes": 120,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 5664,
+            "end": 5888,
+            "bytes": 224,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 2432,
+            "end": 2936,
+            "bytes": 504,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4608,
+            "end": 4612,
+            "bytes": 4,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4608,
+            "end": 4624,
+            "bytes": 16,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4608,
+            "end": 4960,
+            "bytes": 352,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 5888,
+            "end": 6112,
+            "bytes": 224,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 6536,
+            "end": 7296,
+            "bytes": 760,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 13712,
+            "end": 13736,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 13712,
+            "end": 13848,
+            "bytes": 136,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 194249,
+            "end": 194273,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 194249,
+            "end": 196585,
+            "bytes": 2336,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "HEAD",
+            "start": null,
+            "end": null,
+            "bytes": 0,
+            "status": 200,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "HEAD",
+            "start": null,
+            "end": null,
+            "bytes": 0,
+            "status": 200,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 16328,
+            "end": 19257,
+            "bytes": 1464,
+            "status": 206,
+            "payload": true,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 19257,
+            "end": 22186,
+            "bytes": 1464,
+            "status": 206,
+            "payload": true,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 16328,
+            "end": 19257,
+            "bytes": 1464,
+            "status": 206,
+            "payload": true,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 19257,
+            "end": 22186,
+            "bytes": 1464,
+            "status": 206,
+            "payload": true,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 16328,
+            "end": 19257,
+            "bytes": 1464,
+            "status": 206,
+            "payload": true,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 19257,
+            "end": 22186,
+            "bytes": 1464,
+            "status": 206,
+            "payload": true,
+            "conditional": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "before",
+      "expected_success": false,
+      "binary_sha256": "6d867948e36c2b3dbbbe532e67af9f88d6ce45e6971cc91eb60c663583588c7c",
+      "returncode": 1,
+      "elapsed_seconds": 0.4997098329477012,
+      "peak_rss_bytes": 14614528,
+      "sampled_peak_rss_bytes": 1277952,
+      "child_cpu_seconds": 0.026448999999999986,
+      "error": "Error: \"HTTP source version conflict; prepare again\"\n        0.48 real         0.01 user         0.01 sys\n            14614528  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                1152  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                  40  messages sent\n                  43  messages received\n                   0  signals received\n                   0  voluntary context switches\n                 334  involuntary context switches\n            77935999  instructions retired\n            58746576  cycles elapsed\n             5063040  peak memory footprint\n",
+      "http": {
+        "gets": 35,
+        "heads": 4,
+        "response_bytes": 8016,
+        "payload_gets": 0,
+        "all_ranges_conditional": true,
+        "repeated_exact_ranges": 0,
+        "events": [
+          {
+            "method": "HEAD",
+            "start": null,
+            "end": null,
+            "bytes": 0,
+            "status": 200,
+            "payload": false,
+            "conditional": false
+          },
+          {
+            "method": "HEAD",
+            "start": null,
+            "end": null,
+            "bytes": 0,
+            "status": 200,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 0,
+            "end": 8,
+            "bytes": 8,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 0,
+            "end": 256,
+            "bytes": 256,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 680,
+            "end": 712,
+            "bytes": 32,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1504,
+            "end": 1528,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1504,
+            "end": 1552,
+            "bytes": 48,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 720,
+            "end": 800,
+            "bytes": 80,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 800,
+            "end": 804,
+            "bytes": 4,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 800,
+            "end": 816,
+            "bytes": 16,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 800,
+            "end": 840,
+            "bytes": 40,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1384,
+            "end": 1416,
+            "bytes": 32,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 840,
+            "end": 864,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 840,
+            "end": 888,
+            "bytes": 48,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 2104,
+            "end": 2128,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 2104,
+            "end": 2232,
+            "bytes": 128,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1440,
+            "end": 1504,
+            "bytes": 64,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1432,
+            "end": 1504,
+            "bytes": 72,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1424,
+            "end": 1504,
+            "bytes": 80,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4960,
+            "end": 4964,
+            "bytes": 4,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4960,
+            "end": 4976,
+            "bytes": 16,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4960,
+            "end": 5664,
+            "bytes": 704,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1832,
+            "end": 1836,
+            "bytes": 4,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1832,
+            "end": 1848,
+            "bytes": 16,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1832,
+            "end": 2104,
+            "bytes": 272,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4488,
+            "end": 4608,
+            "bytes": 120,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 5664,
+            "end": 5888,
+            "bytes": 224,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 2432,
+            "end": 3456,
+            "bytes": 1024,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4608,
+            "end": 4612,
+            "bytes": 4,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4608,
+            "end": 4624,
+            "bytes": 16,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4608,
+            "end": 4960,
+            "bytes": 352,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 5888,
+            "end": 6112,
+            "bytes": 224,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 6536,
+            "end": 8072,
+            "bytes": 1536,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 13712,
+            "end": 13736,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 13712,
+            "end": 13848,
+            "bytes": 136,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 194249,
+            "end": 194273,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 194249,
+            "end": 196585,
+            "bytes": 2336,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "HEAD",
+            "start": null,
+            "end": null,
+            "bytes": 0,
+            "status": 200,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "HEAD",
+            "start": null,
+            "end": null,
+            "bytes": 0,
+            "status": 412,
+            "payload": false,
+            "conditional": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "during",
+      "expected_success": false,
+      "binary_sha256": "6d867948e36c2b3dbbbe532e67af9f88d6ce45e6971cc91eb60c663583588c7c",
+      "returncode": 1,
+      "elapsed_seconds": 0.5392422499135137,
+      "peak_rss_bytes": 14860288,
+      "sampled_peak_rss_bytes": 1277952,
+      "child_cpu_seconds": 0.02711700000000003,
+      "error": "Error: \"execution: HTTP source version conflict; prepare again\"\n        0.52 real         0.01 user         0.01 sys\n            14860288  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                1171  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                  45  messages sent\n                  57  messages received\n                   0  signals received\n                   0  voluntary context switches\n                 378  involuntary context switches\n            84172137  instructions retired\n            62332352  cycles elapsed\n             5194160  peak memory footprint\n",
+      "http": {
+        "gets": 40,
+        "heads": 4,
+        "response_bytes": 16803,
+        "payload_gets": 5,
+        "all_ranges_conditional": true,
+        "repeated_exact_ranges": 0,
+        "events": [
+          {
+            "method": "HEAD",
+            "start": null,
+            "end": null,
+            "bytes": 0,
+            "status": 200,
+            "payload": false,
+            "conditional": false
+          },
+          {
+            "method": "HEAD",
+            "start": null,
+            "end": null,
+            "bytes": 0,
+            "status": 200,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 0,
+            "end": 8,
+            "bytes": 8,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 0,
+            "end": 256,
+            "bytes": 256,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 680,
+            "end": 712,
+            "bytes": 32,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1504,
+            "end": 1528,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1504,
+            "end": 1552,
+            "bytes": 48,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 720,
+            "end": 800,
+            "bytes": 80,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 800,
+            "end": 804,
+            "bytes": 4,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 800,
+            "end": 816,
+            "bytes": 16,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 800,
+            "end": 840,
+            "bytes": 40,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1384,
+            "end": 1416,
+            "bytes": 32,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 840,
+            "end": 864,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 840,
+            "end": 888,
+            "bytes": 48,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 2104,
+            "end": 2128,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 2104,
+            "end": 2232,
+            "bytes": 128,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1440,
+            "end": 1504,
+            "bytes": 64,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1432,
+            "end": 1504,
+            "bytes": 72,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1424,
+            "end": 1504,
+            "bytes": 80,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4960,
+            "end": 4964,
+            "bytes": 4,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4960,
+            "end": 4976,
+            "bytes": 16,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4960,
+            "end": 5664,
+            "bytes": 704,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1832,
+            "end": 1836,
+            "bytes": 4,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1832,
+            "end": 1848,
+            "bytes": 16,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1832,
+            "end": 2104,
+            "bytes": 272,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4488,
+            "end": 4608,
+            "bytes": 120,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 5664,
+            "end": 5888,
+            "bytes": 224,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 2432,
+            "end": 3456,
+            "bytes": 1024,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4608,
+            "end": 4612,
+            "bytes": 4,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4608,
+            "end": 4624,
+            "bytes": 16,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4608,
+            "end": 4960,
+            "bytes": 352,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 5888,
+            "end": 6112,
+            "bytes": 224,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 6536,
+            "end": 8072,
+            "bytes": 1536,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 13712,
+            "end": 13736,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 13712,
+            "end": 13848,
+            "bytes": 136,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 194249,
+            "end": 194273,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 194249,
+            "end": 196585,
+            "bytes": 2336,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "HEAD",
+            "start": null,
+            "end": null,
+            "bytes": 0,
+            "status": 200,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "HEAD",
+            "start": null,
+            "end": null,
+            "bytes": 0,
+            "status": 200,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 16328,
+            "end": 19257,
+            "bytes": 2929,
+            "status": 206,
+            "payload": true,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 19257,
+            "end": 22186,
+            "bytes": 2929,
+            "status": 206,
+            "payload": true,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 22186,
+            "end": 25115,
+            "bytes": 2929,
+            "status": 206,
+            "payload": true,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 25115,
+            "end": 28044,
+            "bytes": 0,
+            "status": 412,
+            "payload": true,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 28044,
+            "end": 30973,
+            "bytes": 0,
+            "status": 412,
+            "payload": true,
+            "conditional": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "cancel",
+      "expected_success": false,
+      "binary_sha256": "6d867948e36c2b3dbbbe532e67af9f88d6ce45e6971cc91eb60c663583588c7c",
+      "returncode": 1,
+      "elapsed_seconds": 0.5354552082717419,
+      "peak_rss_bytes": 14860288,
+      "sampled_peak_rss_bytes": 1277952,
+      "child_cpu_seconds": 0.02464799999999996,
+      "error": "Error: \"acquisition cancelled\"\n        0.51 real         0.01 user         0.00 sys\n            14860288  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                1167  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                  42  messages sent\n                  49  messages received\n                   0  signals received\n                   0  voluntary context switches\n                 353  involuntary context switches\n            80630220  instructions retired\n            57556399  cycles elapsed\n             5177776  peak memory footprint\n",
+      "http": {
+        "gets": 38,
+        "heads": 4,
+        "response_bytes": 16803,
+        "payload_gets": 3,
+        "all_ranges_conditional": true,
+        "repeated_exact_ranges": 0,
+        "events": [
+          {
+            "method": "HEAD",
+            "start": null,
+            "end": null,
+            "bytes": 0,
+            "status": 200,
+            "payload": false,
+            "conditional": false
+          },
+          {
+            "method": "HEAD",
+            "start": null,
+            "end": null,
+            "bytes": 0,
+            "status": 200,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 0,
+            "end": 8,
+            "bytes": 8,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 0,
+            "end": 256,
+            "bytes": 256,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 680,
+            "end": 712,
+            "bytes": 32,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1504,
+            "end": 1528,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1504,
+            "end": 1552,
+            "bytes": 48,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 720,
+            "end": 800,
+            "bytes": 80,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 800,
+            "end": 804,
+            "bytes": 4,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 800,
+            "end": 816,
+            "bytes": 16,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 800,
+            "end": 840,
+            "bytes": 40,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1384,
+            "end": 1416,
+            "bytes": 32,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 840,
+            "end": 864,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 840,
+            "end": 888,
+            "bytes": 48,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 2104,
+            "end": 2128,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 2104,
+            "end": 2232,
+            "bytes": 128,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1440,
+            "end": 1504,
+            "bytes": 64,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1432,
+            "end": 1504,
+            "bytes": 72,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1424,
+            "end": 1504,
+            "bytes": 80,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4960,
+            "end": 4964,
+            "bytes": 4,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4960,
+            "end": 4976,
+            "bytes": 16,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4960,
+            "end": 5664,
+            "bytes": 704,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1832,
+            "end": 1836,
+            "bytes": 4,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1832,
+            "end": 1848,
+            "bytes": 16,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1832,
+            "end": 2104,
+            "bytes": 272,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4488,
+            "end": 4608,
+            "bytes": 120,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 5664,
+            "end": 5888,
+            "bytes": 224,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 2432,
+            "end": 3456,
+            "bytes": 1024,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4608,
+            "end": 4612,
+            "bytes": 4,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4608,
+            "end": 4624,
+            "bytes": 16,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4608,
+            "end": 4960,
+            "bytes": 352,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 5888,
+            "end": 6112,
+            "bytes": 224,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 6536,
+            "end": 8072,
+            "bytes": 1536,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 13712,
+            "end": 13736,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 13712,
+            "end": 13848,
+            "bytes": 136,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 194249,
+            "end": 194273,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 194249,
+            "end": 196585,
+            "bytes": 2336,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "HEAD",
+            "start": null,
+            "end": null,
+            "bytes": 0,
+            "status": 200,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "HEAD",
+            "start": null,
+            "end": null,
+            "bytes": 0,
+            "status": 200,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 19257,
+            "end": 22186,
+            "bytes": 2929,
+            "status": 206,
+            "payload": true,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 16328,
+            "end": 19257,
+            "bytes": 2929,
+            "status": 206,
+            "payload": true,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 22186,
+            "end": 25115,
+            "bytes": 2929,
+            "status": 206,
+            "payload": true,
+            "conditional": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "cancel-inflight",
+      "expected_success": false,
+      "binary_sha256": "6d867948e36c2b3dbbbe532e67af9f88d6ce45e6971cc91eb60c663583588c7c",
+      "returncode": 1,
+      "elapsed_seconds": 0.5156263750977814,
+      "peak_rss_bytes": 14581760,
+      "sampled_peak_rss_bytes": 1277952,
+      "child_cpu_seconds": 0.026577000000000017,
+      "error": "Error: \"acquisition cancelled\"\n        0.50 real         0.01 user         0.01 sys\n            14581760  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                1156  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                  42  messages sent\n                  56  messages received\n                   0  signals received\n                   0  voluntary context switches\n                 383  involuntary context switches\n            83025082  instructions retired\n            60270111  cycles elapsed\n             4997528  peak memory footprint\n",
+      "http": {
+        "gets": 37,
+        "heads": 4,
+        "response_bytes": 13874,
+        "payload_gets": 2,
+        "all_ranges_conditional": true,
+        "repeated_exact_ranges": 0,
+        "events": [
+          {
+            "method": "HEAD",
+            "start": null,
+            "end": null,
+            "bytes": 0,
+            "status": 200,
+            "payload": false,
+            "conditional": false
+          },
+          {
+            "method": "HEAD",
+            "start": null,
+            "end": null,
+            "bytes": 0,
+            "status": 200,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 0,
+            "end": 8,
+            "bytes": 8,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 0,
+            "end": 256,
+            "bytes": 256,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 680,
+            "end": 712,
+            "bytes": 32,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1504,
+            "end": 1528,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1504,
+            "end": 1552,
+            "bytes": 48,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 720,
+            "end": 800,
+            "bytes": 80,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 800,
+            "end": 804,
+            "bytes": 4,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 800,
+            "end": 816,
+            "bytes": 16,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 800,
+            "end": 840,
+            "bytes": 40,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1384,
+            "end": 1416,
+            "bytes": 32,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 840,
+            "end": 864,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 840,
+            "end": 888,
+            "bytes": 48,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 2104,
+            "end": 2128,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 2104,
+            "end": 2232,
+            "bytes": 128,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1440,
+            "end": 1504,
+            "bytes": 64,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1432,
+            "end": 1504,
+            "bytes": 72,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1424,
+            "end": 1504,
+            "bytes": 80,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4960,
+            "end": 4964,
+            "bytes": 4,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4960,
+            "end": 4976,
+            "bytes": 16,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4960,
+            "end": 5664,
+            "bytes": 704,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1832,
+            "end": 1836,
+            "bytes": 4,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1832,
+            "end": 1848,
+            "bytes": 16,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 1832,
+            "end": 2104,
+            "bytes": 272,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4488,
+            "end": 4608,
+            "bytes": 120,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 5664,
+            "end": 5888,
+            "bytes": 224,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 2432,
+            "end": 3456,
+            "bytes": 1024,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4608,
+            "end": 4612,
+            "bytes": 4,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4608,
+            "end": 4624,
+            "bytes": 16,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 4608,
+            "end": 4960,
+            "bytes": 352,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 5888,
+            "end": 6112,
+            "bytes": 224,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 6536,
+            "end": 8072,
+            "bytes": 1536,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 13712,
+            "end": 13736,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 13712,
+            "end": 13848,
+            "bytes": 136,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 194249,
+            "end": 194273,
+            "bytes": 24,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 194249,
+            "end": 196585,
+            "bytes": 2336,
+            "status": 206,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "HEAD",
+            "start": null,
+            "end": null,
+            "bytes": 0,
+            "status": 200,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "HEAD",
+            "start": null,
+            "end": null,
+            "bytes": 0,
+            "status": 200,
+            "payload": false,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 16328,
+            "end": 19257,
+            "bytes": 2929,
+            "status": 206,
+            "payload": true,
+            "conditional": true
+          },
+          {
+            "method": "GET",
+            "start": 19257,
+            "end": 22186,
+            "bytes": 2929,
+            "status": 206,
+            "payload": true,
+            "conditional": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "modern-index",
+      "binary_sha256": "6d867948e36c2b3dbbbe532e67af9f88d6ce45e6971cc91eb60c663583588c7c",
+      "returncode": 1,
+      "elapsed_seconds": 0.01582529116421938,
+      "peak_rss_bytes": 9404416,
+      "sampled_peak_rss_bytes": 1277952,
+      "child_cpu_seconds": 0.0066619999999999735,
+      "error": "Error: \"prepare: native HDF5 data requires layout v1-v3 with v1 B-tree chunk index\"\n        0.00 real         0.00 user         0.00 sys\n             9404416  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                 810  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   0  messages sent\n                   0  messages received\n                   0  signals received\n                   0  voluntary context switches\n                   7  involuntary context switches\n            38380960  instructions retired\n            16548175  cycles elapsed\n             2539880  peak memory footprint\n"
+    },
+    {
+      "name": "unsupported-filter",
+      "binary_sha256": "6d867948e36c2b3dbbbe532e67af9f88d6ce45e6971cc91eb60c663583588c7c",
+      "returncode": 1,
+      "elapsed_seconds": 0.015032249968498945,
+      "peak_rss_bytes": 9453568,
+      "sampled_peak_rss_bytes": 1277952,
+      "child_cpu_seconds": 0.006880000000000053,
+      "error": "Error: \"prepare: unsupported HDF5 filter; admitted pipeline has at most three deflate/shuffle/Fletcher32 filters\"\n        0.00 real         0.00 user         0.00 sys\n             9453568  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                 813  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   0  messages sent\n                   0  messages received\n                   0  signals received\n                   0  voluntary context switches\n                   8  involuntary context switches\n            40221390  instructions retired\n            17503116  cycles elapsed\n             2539856  peak memory footprint\n"
+    },
+    {
+      "name": "contiguous",
+      "binary_sha256": "6d867948e36c2b3dbbbe532e67af9f88d6ce45e6971cc91eb60c663583588c7c",
+      "returncode": 1,
+      "elapsed_seconds": 0.015812375117093325,
+      "peak_rss_bytes": 8896512,
+      "sampled_peak_rss_bytes": 131072,
+      "child_cpu_seconds": 0.00657499999999997,
+      "error": "Error: \"prepare: native HDF5 requires chunked data\"\n        0.00 real         0.00 user         0.00 sys\n             8896512  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                 779  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   0  messages sent\n                   0  messages received\n                   0  signals received\n                   0  voluntary context switches\n                   6  involuntary context switches\n            37598795  instructions retired\n            15827818  cycles elapsed\n             2343272  peak memory footprint\n"
+    },
+    {
+      "name": "signed-data",
+      "binary_sha256": "6d867948e36c2b3dbbbe532e67af9f88d6ce45e6971cc91eb60c663583588c7c",
+      "returncode": 1,
+      "elapsed_seconds": 0.016291165724396706,
+      "peak_rss_bytes": 8929280,
+      "sampled_peak_rss_bytes": 1277952,
+      "child_cpu_seconds": 0.006759000000000015,
+      "error": "Error: \"prepare: native HDF5 supports only stored UInt16 or IEEE Float32 data\"\n        0.00 real         0.00 user         0.00 sys\n             8929280  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                 781  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   0  messages sent\n                   0  messages received\n                   0  signals received\n                   0  voluntary context switches\n                   6  involuntary context switches\n            37600102  instructions retired\n            16094229  cycles elapsed\n             2343272  peak memory footprint\n"
+    },
+    {
+      "name": "corrupt-Fletcher32",
+      "binary_sha256": "6d867948e36c2b3dbbbe532e67af9f88d6ce45e6971cc91eb60c663583588c7c",
+      "returncode": 1,
+      "elapsed_seconds": 0.015791541896760464,
+      "peak_rss_bytes": 10895360,
+      "sampled_peak_rss_bytes": 1277952,
+      "child_cpu_seconds": 0.007607000000000058,
+      "error": "Error: \"execution: checksum mismatch: expected 0x82bab326, got 0x83bab326\"\n        0.00 real         0.00 user         0.00 sys\n            10895360  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                 907  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   0  messages sent\n                   0  messages received\n                   0  signals received\n                   0  voluntary context switches\n                  14  involuntary context switches\n            48120868  instructions retired\n            19474011  cycles elapsed\n             3621224  peak memory footprint\n"
+    },
+    {
+      "name": "corrupt-deflate",
+      "binary_sha256": "6d867948e36c2b3dbbbe532e67af9f88d6ce45e6971cc91eb60c663583588c7c",
+      "returncode": 1,
+      "elapsed_seconds": 0.015783166978508234,
+      "peak_rss_bytes": 10878976,
+      "sampled_peak_rss_bytes": 1277952,
+      "child_cpu_seconds": 0.007548000000000027,
+      "error": "Error: \"execution: decompression error: DEFLATE decompression failed: deflate decompression error\"\n        0.00 real         0.00 user         0.00 sys\n            10878976  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                 906  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   0  messages sent\n                   0  messages received\n                   0  signals received\n                   0  voluntary context switches\n                  16  involuntary context switches\n            48122772  instructions retired\n            19804339  cycles elapsed\n             3654016  peak memory footprint\n"
+    },
+    {
+      "name": "chunk-offset-outside-file",
+      "binary_sha256": "6d867948e36c2b3dbbbe532e67af9f88d6ce45e6971cc91eb60c663583588c7c",
+      "returncode": 1,
+      "elapsed_seconds": 0.016183207742869854,
+      "peak_rss_bytes": 9469952,
+      "sampled_peak_rss_bytes": 1277952,
+      "child_cpu_seconds": 0.006683000000000022,
+      "error": "Error: \"prepare: offset 0x3798a is out of bounds\"\n        0.00 real         0.00 user         0.00 sys\n             9469952  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                 814  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   0  messages sent\n                   0  messages received\n                   0  signals received\n                   0  voluntary context switches\n                   6  involuntary context switches\n            40785858  instructions retired\n            16412727  cycles elapsed\n             2572648  peak memory footprint\n"
+    },
+    {
+      "name": "truncated-metadata",
+      "binary_sha256": "6d867948e36c2b3dbbbe532e67af9f88d6ce45e6971cc91eb60c663583588c7c",
+      "returncode": 1,
+      "elapsed_seconds": 0.009565374813973904,
+      "peak_rss_bytes": 8536064,
+      "sampled_peak_rss_bytes": 131072,
+      "child_cpu_seconds": 0.006212999999999996,
+      "error": "Error: \"prepare: unexpected end of data at offset 80 (need 16 bytes, have 0)\"\n        0.00 real         0.00 user         0.00 sys\n             8536064  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                 757  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   0  messages sent\n                   0  messages received\n                   0  signals received\n                   0  voluntary context switches\n                   6  involuntary context switches\n            34571543  instructions retired\n            14491035  cycles elapsed\n             2228560  peak memory footprint\n"
+    },
+    {
+      "name": "classic-netcdf-rejected",
+      "binary_sha256": "6d867948e36c2b3dbbbe532e67af9f88d6ce45e6971cc91eb60c663583588c7c",
+      "returncode": 1,
+      "elapsed_seconds": 0.00933420890942216,
+      "peak_rss_bytes": 8454144,
+      "sampled_peak_rss_bytes": 114688,
+      "child_cpu_seconds": 0.00606599999999996,
+      "error": "Error: \"prepare: invalid HDF5 magic bytes\"\n        0.00 real         0.00 user         0.00 sys\n             8454144  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                 752  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   0  messages sent\n                   0  messages received\n                   0  signals received\n                   0  voluntary context switches\n                   8  involuntary context switches\n            34501040  instructions retired\n            14138495  cycles elapsed\n             2244968  peak memory footprint\n"
+    },
+    {
+      "name": "/rank3",
+      "binary_sha256": "6d867948e36c2b3dbbbe532e67af9f88d6ce45e6971cc91eb60c663583588c7c",
+      "returncode": 1,
+      "elapsed_seconds": 0.01577362511307001,
+      "peak_rss_bytes": 8814592,
+      "sampled_peak_rss_bytes": 131072,
+      "child_cpu_seconds": 0.006575000000000025,
+      "error": "Error: \"prepare: native HDF5 data must have rank two\"\n        0.00 real         0.00 user         0.00 sys\n             8814592  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                 774  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   0  messages sent\n                   0  messages received\n                   0  signals received\n                   0  voluntary context switches\n                   7  involuntary context switches\n            35545224  instructions retired\n            15791922  cycles elapsed\n             2244944  peak memory footprint\n"
+    },
+    {
+      "name": "/external",
+      "binary_sha256": "6d867948e36c2b3dbbbe532e67af9f88d6ce45e6971cc91eb60c663583588c7c",
+      "returncode": 1,
+      "elapsed_seconds": 0.014988250099122524,
+      "peak_rss_bytes": 8716288,
+      "sampled_peak_rss_bytes": 131072,
+      "child_cpu_seconds": 0.006374999999999964,
+      "error": "Error: \"prepare: /external: dataset not found: external\"\n        0.00 real         0.00 user         0.00 sys\n             8716288  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                 768  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   0  messages sent\n                   0  messages received\n                   0  signals received\n                   0  voluntary context switches\n                   8  involuntary context switches\n            34926285  instructions retired\n            15677109  cycles elapsed\n             2277736  peak memory footprint\n"
+    },
+    {
+      "name": "/virtual",
+      "binary_sha256": "6d867948e36c2b3dbbbe532e67af9f88d6ce45e6971cc91eb60c663583588c7c",
+      "returncode": 1,
+      "elapsed_seconds": 0.014444833155721426,
+      "peak_rss_bytes": 8781824,
+      "sampled_peak_rss_bytes": 1277952,
+      "child_cpu_seconds": 0.0062379999999999936,
+      "error": "Error: \"prepare: /virtual: child 'virtual' at 0x35b32: unsupported layout class 3\"\n        0.00 real         0.00 user         0.00 sys\n             8781824  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                 772  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   0  messages sent\n                   0  messages received\n                   0  signals received\n                   0  voluntary context switches\n                   9  involuntary context switches\n            35459613  instructions retired\n            15367072  cycles elapsed\n             2294120  peak memory footprint\n"
+    },
+    {
+      "name": "small-budget",
+      "binary_sha256": "6d867948e36c2b3dbbbe532e67af9f88d6ce45e6971cc91eb60c663583588c7c",
+      "returncode": 1,
+      "elapsed_seconds": 0.00926804170012474,
+      "peak_rss_bytes": 8454144,
+      "sampled_peak_rss_bytes": 131072,
+      "child_cpu_seconds": 0.005683999999999967,
+      "error": "Error: \"prepare: invalid data: HDF5 metadata cache exceeds buffer/max_nodes budget\"\n        0.00 real         0.00 user         0.00 sys\n             8454144  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                 752  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   0  messages sent\n                   0  messages received\n                   0  signals received\n                   0  voluntary context switches\n                   5  involuntary context switches\n            34367960  instructions retired\n            13432831  cycles elapsed\n             2228560  peak memory footprint\n"
+    },
+    {
+      "name": "out-of-bounds",
+      "binary_sha256": "6d867948e36c2b3dbbbe532e67af9f88d6ce45e6971cc91eb60c663583588c7c",
+      "returncode": 1,
+      "elapsed_seconds": 0.014731667004525661,
+      "peak_rss_bytes": 8912896,
+      "sampled_peak_rss_bytes": 1277952,
+      "child_cpu_seconds": 0.006418000000000007,
+      "error": "Error: \"prepare: HDF5 selection outside source shape\"\n        0.00 real         0.00 user         0.00 sys\n             8912896  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                 780  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   0  messages sent\n                   0  messages received\n                   0  signals received\n                   0  voluntary context switches\n                   9  involuntary context switches\n            37613031  instructions retired\n            16427001  cycles elapsed\n             2326888  peak memory footprint\n"
+    },
+    {
+      "name": "zero-stride",
+      "binary_sha256": "6d867948e36c2b3dbbbe532e67af9f88d6ce45e6971cc91eb60c663583588c7c",
+      "returncode": 1,
+      "elapsed_seconds": 0.009590459056198597,
+      "peak_rss_bytes": 7749632,
+      "sampled_peak_rss_bytes": 131072,
+      "child_cpu_seconds": 0.005781000000000036,
+      "error": "Error: \"prepare: array slices require positive counts/steps and absolute axis paths\"\n        0.00 real         0.00 user         0.00 sys\n             7749632  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                 709  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   0  messages sent\n                   0  messages received\n                   0  signals received\n                   0  voluntary context switches\n                   6  involuntary context switches\n            33860780  instructions retired\n            14147770  cycles elapsed\n             2228560  peak memory footprint\n"
+    },
+    {
+      "name": "huge-count",
+      "binary_sha256": "6d867948e36c2b3dbbbe532e67af9f88d6ce45e6971cc91eb60c663583588c7c",
+      "returncode": 1,
+      "elapsed_seconds": 0.00913799973204732,
+      "peak_rss_bytes": 8945664,
+      "sampled_peak_rss_bytes": 131072,
+      "child_cpu_seconds": 0.0062399999999999956,
+      "error": "Error: \"prepare: HDF5 selection outside source shape\"\n        0.00 real         0.00 user         0.00 sys\n             8945664  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                 782  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   0  messages sent\n                   0  messages received\n                   0  signals received\n                   0  voluntary context switches\n                   7  involuntary context switches\n            37505204  instructions retired\n            15337802  cycles elapsed\n             2359656  peak memory footprint\n"
+    },
+    {
+      "name": "max-nodes",
+      "binary_sha256": "6d867948e36c2b3dbbbe532e67af9f88d6ce45e6971cc91eb60c663583588c7c",
+      "returncode": 1,
+      "elapsed_seconds": 0.009238166734576225,
+      "peak_rss_bytes": 8716288,
+      "sampled_peak_rss_bytes": 131072,
+      "child_cpu_seconds": 0.0061289999999999956,
+      "error": "Error: \"prepare: /science/signal: child 'science' at 0x320: invalid data: HDF5 metadata cache exceeds buffer/max_nodes budget\"\n        0.00 real         0.00 user         0.00 sys\n             8716288  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                 768  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   0  messages sent\n                   0  messages received\n                   0  signals received\n                   0  voluntary context switches\n                   6  involuntary context switches\n            35237552  instructions retired\n            15023798  cycles elapsed\n             2261352  peak memory footprint\n"
+    },
+    {
+      "name": "file-output",
+      "binary_sha256": "6d867948e36c2b3dbbbe532e67af9f88d6ce45e6971cc91eb60c663583588c7c",
+      "returncode": 1,
+      "elapsed_seconds": 0.009715584106743336,
+      "peak_rss_bytes": 8159232,
+      "sampled_peak_rss_bytes": 131072,
+      "child_cpu_seconds": 0.006125000000000047,
+      "error": "Error: \"prepare: native HDF5 currently supports callback/stream output and explicit index selection without time filtering\"\n        0.00 real         0.00 user         0.00 sys\n             8159232  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                 734  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   0  messages sent\n                   0  messages received\n                   0  signals received\n                   0  voluntary context switches\n                   6  involuntary context switches\n            34178289  instructions retired\n            15086180  cycles elapsed\n             2228560  peak memory footprint\n"
+    },
+    {
+      "name": "time-filter",
+      "binary_sha256": "6d867948e36c2b3dbbbe532e67af9f88d6ce45e6971cc91eb60c663583588c7c",
+      "returncode": 1,
+      "elapsed_seconds": 0.0091349589638412,
+      "peak_rss_bytes": 8192000,
+      "sampled_peak_rss_bytes": 131072,
+      "child_cpu_seconds": 0.00606799999999999,
+      "error": "Error: \"prepare: native HDF5 currently supports callback/stream output and explicit index selection without time filtering\"\n        0.00 real         0.00 user         0.00 sys\n             8192000  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                 736  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   0  messages sent\n                   0  messages received\n                   0  signals received\n                   0  voluntary context switches\n                   7  involuntary context switches\n            34144191  instructions retired\n            14547114  cycles elapsed\n             2244968  peak memory footprint\n"
+    },
+    {
+      "name": "ambiguous-implicit-storage-fill",
+      "h5py_stored_initialization": 0,
+      "binary_sha256": "6d867948e36c2b3dbbbe532e67af9f88d6ce45e6971cc91eb60c663583588c7c",
+      "returncode": 1,
+      "elapsed_seconds": 0.01028895890340209,
+      "peak_rss_bytes": 8912896,
+      "sampled_peak_rss_bytes": 131072,
+      "child_cpu_seconds": 0.006178000000000017,
+      "error": "Error: \"prepare: CF _FillValue with implicit HDF5 initialization is outside the admitted profile\"\n        0.00 real         0.00 user         0.00 sys\n             8912896  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                 780  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   0  messages sent\n                   0  messages received\n                   0  signals received\n                   0  voluntary context switches\n                   7  involuntary context switches\n            36139978  instructions retired\n            14625180  cycles elapsed\n             2326864  peak memory footprint\n"
+    }
+  ],
+  "integrity_qualification": {
+    "same_etag_raw_corruption_undetected": true,
+    "transport_completed": true,
+    "independent_oracle_detected_mismatch": true,
+    "guarantee": "strong ETags pin identity; raw unchecksummed bytes are not authenticated",
+    "http": {
+      "gets": 43,
+      "heads": 5,
+      "response_bytes": 29960,
+      "payload_gets": 8,
+      "all_ranges_conditional": true,
+      "repeated_exact_ranges": 0,
+      "events": [
+        {
+          "method": "HEAD",
+          "start": null,
+          "end": null,
+          "bytes": 0,
+          "status": 200,
+          "payload": false,
+          "conditional": false
+        },
+        {
+          "method": "HEAD",
+          "start": null,
+          "end": null,
+          "bytes": 0,
+          "status": 200,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 0,
+          "end": 8,
+          "bytes": 8,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 0,
+          "end": 256,
+          "bytes": 256,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 680,
+          "end": 712,
+          "bytes": 32,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 1504,
+          "end": 1528,
+          "bytes": 24,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 1504,
+          "end": 1552,
+          "bytes": 48,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 720,
+          "end": 800,
+          "bytes": 80,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 800,
+          "end": 804,
+          "bytes": 4,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 800,
+          "end": 816,
+          "bytes": 16,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 800,
+          "end": 840,
+          "bytes": 40,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 1384,
+          "end": 1416,
+          "bytes": 32,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 840,
+          "end": 864,
+          "bytes": 24,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 840,
+          "end": 888,
+          "bytes": 48,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 2104,
+          "end": 2128,
+          "bytes": 24,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 2104,
+          "end": 2232,
+          "bytes": 128,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 1440,
+          "end": 1504,
+          "bytes": 64,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 1432,
+          "end": 1504,
+          "bytes": 72,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 1424,
+          "end": 1504,
+          "bytes": 80,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 4960,
+          "end": 4964,
+          "bytes": 4,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 4960,
+          "end": 4976,
+          "bytes": 16,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 4960,
+          "end": 5576,
+          "bytes": 616,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 1832,
+          "end": 1836,
+          "bytes": 4,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 1832,
+          "end": 1848,
+          "bytes": 16,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 1832,
+          "end": 2104,
+          "bytes": 272,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 4488,
+          "end": 4608,
+          "bytes": 120,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 5576,
+          "end": 5800,
+          "bytes": 224,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 2432,
+          "end": 2944,
+          "bytes": 512,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 4608,
+          "end": 4612,
+          "bytes": 4,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 4608,
+          "end": 4624,
+          "bytes": 16,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 4608,
+          "end": 4960,
+          "bytes": 352,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 5800,
+          "end": 6024,
+          "bytes": 224,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 6536,
+          "end": 7304,
+          "bytes": 768,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 13712,
+          "end": 13736,
+          "bytes": 24,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 13712,
+          "end": 13848,
+          "bytes": 136,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 208354,
+          "end": 208378,
+          "bytes": 24,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 208354,
+          "end": 210690,
+          "bytes": 2336,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "HEAD",
+          "start": null,
+          "end": null,
+          "bytes": 0,
+          "status": 200,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "HEAD",
+          "start": null,
+          "end": null,
+          "bytes": 0,
+          "status": 200,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 16328,
+          "end": 19242,
+          "bytes": 2914,
+          "status": 206,
+          "payload": true,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 19242,
+          "end": 22156,
+          "bytes": 2914,
+          "status": 206,
+          "payload": true,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 22156,
+          "end": 25070,
+          "bytes": 2914,
+          "status": 206,
+          "payload": true,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 42554,
+          "end": 45468,
+          "bytes": 2914,
+          "status": 206,
+          "payload": true,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 45468,
+          "end": 48382,
+          "bytes": 2914,
+          "status": 206,
+          "payload": true,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 65866,
+          "end": 68780,
+          "bytes": 2914,
+          "status": 206,
+          "payload": true,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 68780,
+          "end": 71694,
+          "bytes": 2914,
+          "status": 206,
+          "payload": true,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 71694,
+          "end": 74608,
+          "bytes": 2914,
+          "status": 206,
+          "payload": true,
+          "conditional": true
+        },
+        {
+          "method": "HEAD",
+          "start": null,
+          "end": null,
+          "bytes": 0,
+          "status": 200,
+          "payload": false,
+          "conditional": true
+        }
+      ]
+    }
+  }
+}

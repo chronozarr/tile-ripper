@@ -1,0 +1,688 @@
+--- a/hdf5-reader/src/btree_v1.rs
++++ b/hdf5-reader/src/btree_v1.rs
+@@ -232,6 +232,215 @@
+     Ok(results)
+ }
+ 
++/// Select raw-data v1 B-tree leaves without reading unrelated branches.
++///
++/// Bounds are inclusive **chunk indices**, one per dataset dimension. A box is
++/// a Cartesian product, not a single lexicographic interval. Keys include the
++/// trailing byte dimension; its selected origin is zero. Physical chunk file
++/// addresses do not participate in ordering. Missing records remain absent.
++///
++/// This checks every key and pointer in visited nodes, strict key ordering,
++/// child levels and parent/child boundary agreement. Like indexed lookup in
++/// libhdf5, it trusts unread subtrees to obey their advertised boundaries. It
++/// cannot certify corruption confined to an unread subtree. Use the existing
++/// full collector when whole-index structural traversal is required.
++pub fn collect_btree_v1_leaves_storage_selective(
++    storage: &dyn Storage,
++    root_address: u64,
++    offset_size: u8,
++    length_size: u8,
++    chunk_dims: &[u32],
++    first: &[u64],
++    last: &[u64],
++) -> Result<Vec<(BTreeV1Key, u64)>> {
++    let invalid = || Error::InvalidData("invalid selective v1 chunk bounds".into());
++    if chunk_dims.is_empty()
++        || chunk_dims.len() > 32
++        || first.len() != chunk_dims.len()
++        || last.len() != chunk_dims.len()
++        || !matches!(offset_size, 2 | 4 | 8)
++        || !matches!(length_size, 2 | 4 | 8)
++    {
++        return Err(invalid());
++    }
++    let mut low = Vec::with_capacity(first.len() + 1);
++    let mut high = Vec::with_capacity(first.len() + 1);
++    let mut steps = Vec::with_capacity(first.len() + 1);
++    for ((&a, &b), &d) in first.iter().zip(last).zip(chunk_dims) {
++        if d == 0 || a > b {
++            return Err(invalid());
++        }
++        low.push(a.checked_mul(u64::from(d)).ok_or_else(invalid)?);
++        high.push(b.checked_mul(u64::from(d)).ok_or_else(invalid)?);
++        steps.push(u64::from(d));
++    }
++    low.push(0);
++    high.push(0);
++    steps.push(1);
++    let context = BTreeV1CollectContextStorage {
++        storage,
++        offset_size,
++        length_size,
++        ndims: Some(chunk_dims.len() as u32),
++        chunk_dims,
++        chunk_bounds: Some((first, last)),
++    };
++    let mut results = Vec::new();
++    let mut visited = HashSet::new();
++    if !Cursor::is_undefined_offset(root_address, offset_size) {
++        collect_selected(
++            context,
++            root_address,
++            None,
++            &low,
++            &high,
++            &steps,
++            &mut visited,
++            &mut results,
++        )?;
++    }
++    Ok(results)
++}
++
++fn raw_offsets(key: &BTreeV1Key) -> Result<&[u64]> {
++    match key {
++        BTreeV1Key::RawData { offsets, .. } => Ok(offsets),
++        _ => Err(Error::InvalidData(
++            "selective v1 traversal requires a raw-data tree".into(),
++        )),
++    }
++}
++
++/// Smallest point of an aligned Cartesian grid that is >= a lexicographic key.
++/// Carry to the preceding dimension when a component exceeds its allowed max.
++fn grid_successor(lower: &[u64], low: &[u64], high: &[u64], step: &[u64]) -> Option<Vec<u64>> {
++    let mut point = low.to_vec();
++    for i in 0..low.len() {
++        let value = lower[i].max(low[i]).div_ceil(step[i]).checked_mul(step[i]);
++        if let Some(value) = value.filter(|v| *v <= high[i]) {
++            point[i] = value;
++            if value > lower[i] {
++                return Some(point);
++            }
++        } else {
++            for j in (0..i).rev() {
++                if let Some(next) = point[j].checked_add(step[j]).filter(|v| *v <= high[j]) {
++                    point[j] = next;
++                    point[j + 1..].copy_from_slice(&low[j + 1..]);
++                    return Some(point);
++                }
++            }
++            return None;
++        }
++    }
++    Some(point)
++}
++
++#[allow(clippy::too_many_arguments)]
++fn collect_selected(
++    context: BTreeV1CollectContextStorage<'_>,
++    address: u64,
++    parent: Option<(&[u64], &[u64], u8)>,
++    low: &[u64],
++    high: &[u64],
++    steps: &[u64],
++    visited: &mut HashSet<u64>,
++    results: &mut Vec<(BTreeV1Key, u64)>,
++) -> Result<()> {
++    if !visited.insert(address) {
++        return Err(Error::InvalidData(
++            "B-tree v1 traversal revisits node".into(),
++        ));
++    }
++    let node = read_node_storage(context, address)?;
++    if node.node_type != 1 || (node.level > 0 && node.children.is_empty()) {
++        return Err(Error::InvalidData("invalid raw-data v1 node".into()));
++    }
++    let keys = node
++        .keys
++        .iter()
++        .map(raw_offsets)
++        .collect::<Result<Vec<_>>>()?;
++    if keys.iter().any(|k| k.len() != low.len()) || keys.windows(2).any(|k| k[0] >= k[1]) {
++        return Err(Error::InvalidData(
++            "unordered or invalid v1 chunk keys".into(),
++        ));
++    }
++    if let Some((a, b, level)) = parent {
++        if node.level.checked_add(1) != Some(level) || keys[0] != a || *keys.last().unwrap() != b {
++            return Err(Error::InvalidData(
++                "v1 child level/boundaries disagree with parent".into(),
++            ));
++        }
++    }
++    // Validate visible pointers even when their intervals will be skipped.
++    let mut children = HashSet::new();
++    for (i, &child) in node.children.iter().enumerate() {
++        let key = keys[i];
++        if key.last() != Some(&0)
++            || key
++                .iter()
++                .zip(context.chunk_dims)
++                .any(|(o, d)| o % u64::from(*d) != 0)
++        {
++            return Err(Error::InvalidData("unaligned v1 chunk origin".into()));
++        }
++        if Cursor::is_undefined_offset(child, context.offset_size)
++            || !children.insert(child)
++            || (node.level > 0 && visited.contains(&child))
++        {
++            return Err(Error::InvalidData(
++                "invalid or repeated v1 child pointer".into(),
++            ));
++        }
++        let needed = if node.level == 0 {
++            match node.keys[i] {
++                BTreeV1Key::RawData { chunk_size, .. } if chunk_size > 0 => u64::from(chunk_size),
++                _ => return Err(Error::InvalidData("zero-sized allocated v1 chunk".into())),
++            }
++        } else {
++            8 + 2 * u64::from(context.offset_size)
++        };
++        if child
++            .checked_add(needed)
++            .map_or(true, |end| end > context.storage.len())
++        {
++            return Err(Error::OffsetOutOfBounds(child));
++        }
++    }
++    for i in 0..node.children.len() {
++        let intersects =
++            grid_successor(keys[i], low, high, steps).is_some_and(|p| p.as_slice() < keys[i + 1]);
++        if !intersects {
++            continue;
++        }
++        if node.level == 0 {
++            // A sparse index can bracket an absent chunk. Only return exact
++            // grid members, never the preceding record from the key interval.
++            if keys[i]
++                .iter()
++                .zip(low)
++                .zip(high)
++                .all(|((v, a), b)| v >= a && v <= b)
++            {
++                results.push((node.keys[i].clone(), node.children[i]));
++            }
++        } else {
++            collect_selected(
++                context,
++                node.children[i],
++                Some((keys[i], keys[i + 1], node.level)),
++                low,
++                high,
++                steps,
++                visited,
++                results,
++            )?;
++        }
++    }
++    Ok(())
++}
++
+ #[derive(Clone, Copy)]
+ struct BTreeV1CollectContext<'a> {
+     data: &'a [u8],
+@@ -342,47 +551,7 @@
+         )));
+     }
+ 
+-    let header_len = 4 + 1 + 1 + 2 + 2 * usize::from(context.offset_size);
+-    let header = context.storage.read_range(address, header_len)?;
+-    let mut header_cursor = Cursor::new(header.as_ref());
+-    let sig = header_cursor.read_bytes(4)?;
+-    if sig != BTREE_V1_SIGNATURE {
+-        return Err(Error::InvalidBTreeSignature);
+-    }
+-
+-    let node_type = header_cursor.read_u8()?;
+-    let _level = header_cursor.read_u8()?;
+-    let entries_used = header_cursor.read_u16_le()?;
+-    let key_size = match node_type {
+-        0 => usize::from(context.length_size),
+-        1 => {
+-            let ndims = context.ndims.ok_or_else(|| {
+-                Error::InvalidData("ndims required for raw data chunk B-tree keys".into())
+-            })?;
+-            // chunk_size (4) + filter_mask (4), then (ndims + 1) dimension
+-            // offsets at a fixed 8 bytes each — NOT size_of_offsets (HDF5 spec).
+-            8 + (usize::try_from(ndims).map_err(|_| {
+-                Error::InvalidData("B-tree v1 ndims exceeds platform usize capacity".into())
+-            })? + 1)
+-                * 8
+-        }
+-        _ => {
+-            return Err(Error::InvalidData(format!(
+-                "unknown v1 B-tree node type: {node_type}"
+-            )));
+-        }
+-    };
+-    let node_len = header_len
+-        + (usize::from(entries_used) + 1) * key_size
+-        + usize::from(entries_used) * usize::from(context.offset_size);
+-    let node_bytes = context.storage.read_range(address, node_len)?;
+-    let mut cursor = Cursor::new(node_bytes.as_ref());
+-    let node = BTreeV1Node::parse(
+-        &mut cursor,
+-        context.offset_size,
+-        context.length_size,
+-        context.ndims,
+-    )?;
++    let node = read_node_storage(context, address)?;
+ 
+     if node.level == 0 {
+         for (i, child_addr) in node.children.iter().enumerate() {
+@@ -413,6 +582,61 @@
+     }
+ 
+     Ok(())
++}
++
++fn read_node_storage(
++    context: BTreeV1CollectContextStorage<'_>,
++    address: u64,
++) -> Result<BTreeV1Node> {
++    let header_len = 4 + 1 + 1 + 2 + 2 * usize::from(context.offset_size);
++    let header = context.storage.read_range(address, header_len)?;
++    let mut header_cursor = Cursor::new(header.as_ref());
++    let sig = header_cursor.read_bytes(4)?;
++    if sig != BTREE_V1_SIGNATURE {
++        return Err(Error::InvalidBTreeSignature);
++    }
++
++    let node_type = header_cursor.read_u8()?;
++    let _level = header_cursor.read_u8()?;
++    let entries_used = header_cursor.read_u16_le()?;
++    let key_size = match node_type {
++        0 => usize::from(context.length_size),
++        1 => {
++            let ndims = context.ndims.ok_or_else(|| {
++                Error::InvalidData("ndims required for raw data chunk B-tree keys".into())
++            })?;
++            // chunk_size (4) + filter_mask (4), then (ndims + 1) dimension
++            // offsets at a fixed 8 bytes each — NOT size_of_offsets (HDF5 spec).
++            8 + (usize::try_from(ndims).map_err(|_| {
++                Error::InvalidData("B-tree v1 ndims exceeds platform usize capacity".into())
++            })? + 1)
++                * 8
++        }
++        _ => {
++            return Err(Error::InvalidData(format!(
++                "unknown v1 B-tree node type: {node_type}"
++            )));
++        }
++    };
++    let node_len = (usize::from(entries_used) + 1)
++        .checked_mul(key_size)
++        .and_then(|n| n.checked_add(usize::from(entries_used) * usize::from(context.offset_size)))
++        .and_then(|n| n.checked_add(header_len))
++        .ok_or_else(|| Error::InvalidData("B-tree v1 node length overflow".into()))?;
++    if address
++        .checked_add(node_len as u64)
++        .map_or(true, |end| end > context.storage.len())
++    {
++        return Err(Error::OffsetOutOfBounds(address));
++    }
++    let node_bytes = context.storage.read_range(address, node_len)?;
++    let mut cursor = Cursor::new(node_bytes.as_ref());
++    BTreeV1Node::parse(
++        &mut cursor,
++        context.offset_size,
++        context.length_size,
++        context.ndims,
++    )
+ }
+ 
+ #[cfg(test)]
+@@ -724,3 +948,186 @@
+         assert!(results.is_empty());
+     }
+ }
++
++#[cfg(test)]
++mod selective_tests {
++    use super::*;
++    use std::sync::Mutex;
++    struct Trace {
++        raw: Vec<u8>,
++        reads: Mutex<Vec<u64>>,
++    }
++    impl Storage for Trace {
++        fn len(&self) -> u64 {
++            self.raw.len() as u64
++        }
++        fn read_range(&self, a: u64, n: usize) -> Result<crate::StorageBuffer> {
++            self.reads.lock().unwrap().push(a);
++            crate::BytesStorage::new(self.raw.clone()).read_range(a, n)
++        }
++    }
++    // Independent encoder, 32-bit addresses but always 64-bit coordinates.
++    fn node(level: u8, keys: &[Vec<u64>], children: &[u64]) -> Vec<u8> {
++        let mut out = b"TREE\x01".to_vec();
++        out.push(level);
++        out.extend_from_slice(&(children.len() as u16).to_le_bytes());
++        out.extend_from_slice(&[255; 8]);
++        for (i, key) in keys.iter().enumerate() {
++            out.extend_from_slice(&(if i < children.len() { 8u32 } else { 0 }).to_le_bytes());
++            out.extend_from_slice(&0u32.to_le_bytes());
++            for v in key {
++                out.extend_from_slice(&v.to_le_bytes());
++            }
++            if i < children.len() {
++                out.extend_from_slice(&(children[i] as u32).to_le_bytes());
++            }
++        }
++        out
++    }
++    fn fixture() -> Trace {
++        let mut raw = vec![0u8; 8192];
++        let keys = [
++            vec![0, 0, 0],
++            vec![0, 12, 0],
++            vec![8, 0, 0],
++            vec![8, 12, 0],
++            vec![16, 6, 2],
++        ];
++        let root = node(
++            2,
++            &[keys[0].clone(), keys[2].clone(), keys[4].clone()],
++            &[512, 1024],
++        );
++        let middle_a = node(1, &[keys[0].clone(), keys[2].clone()], &[1536]);
++        let middle_b = node(1, &[keys[2].clone(), keys[4].clone()], &[2048]);
++        let leaf_a = node(0, &keys[..3], &[7000, 6000]);
++        let leaf_b = node(0, &keys[2..], &[5000, 4000]);
++        for (a, n) in [
++            (0, root),
++            (512, middle_a),
++            (1024, middle_b),
++            (1536, leaf_a),
++            (2048, leaf_b),
++        ] {
++            raw[a..a + n.len()].copy_from_slice(&n);
++        }
++        Trace {
++            raw,
++            reads: Mutex::new(Vec::new()),
++        }
++    }
++    fn selected(s: &Trace, a: &[u64], b: &[u64]) -> Result<Vec<(BTreeV1Key, u64)>> {
++        collect_btree_v1_leaves_storage_selective(s, 0, 4, 4, &[4, 6], a, b)
++    }
++    #[test]
++    fn cartesian_successor_matches_exhaustive_lexicographic_search() {
++        for rank in 1..=3 {
++            let low = vec![2; rank];
++            let high = vec![6; rank];
++            let step = vec![2; rank];
++            let points: Vec<Vec<u64>> = (0usize..3usize.pow(rank as u32))
++                .map(|mut n| {
++                    let mut p = vec![0; rank];
++                    for d in (0..rank).rev() {
++                        p[d] = 2 + (n % 3) as u64 * 2;
++                        n /= 3;
++                    }
++                    p
++                })
++                .collect();
++            for mut n in 0usize..9usize.pow(rank as u32) {
++                let mut k = vec![0; rank];
++                for d in (0..rank).rev() {
++                    k[d] = (n % 9) as u64;
++                    n /= 9;
++                }
++                let expected = points
++                    .iter()
++                    .find(|p| p.as_slice() >= k.as_slice())
++                    .cloned();
++                assert_eq!(grid_successor(&k, &low, &high, &step), expected, "{k:?}");
++            }
++        }
++        assert_eq!(
++            grid_successor(&[u64::MAX], &[0], &[u64::MAX - 1], &[2]),
++            None
++        );
++    }
++    #[test]
++    fn cartesian_boxes_match_full_traversal_and_prune_noncontiguous_branches() {
++        let s = fixture();
++        for a in 0..=4 {
++            for b in a..=4 {
++                for c in 0..=3 {
++                    for d in c..=3 {
++                        let full = collect_btree_v1_leaves_storage(
++                            &s,
++                            0,
++                            4,
++                            4,
++                            Some(2),
++                            &[4, 6],
++                            Some((&[a, c], &[b, d])),
++                        )
++                        .unwrap();
++                        let got = selected(&s, &[a, c], &[b, d]).unwrap();
++                        assert_eq!(format!("{got:?}"), format!("{full:?}"));
++                    }
++                }
++            }
++        }
++        s.reads.lock().unwrap().clear();
++        let got = selected(&s, &[0, 0], &[0, 0]).unwrap();
++        assert_eq!(got.len(), 1);
++        assert_eq!(got[0].1, 7000); // Physical addresses run backwards.
++        assert!(!s.reads.lock().unwrap().contains(&1024));
++        assert!(!s.reads.lock().unwrap().contains(&2048));
++        assert!(selected(&s, &[1, 1], &[1, 1]).unwrap().is_empty()); // Hole, not predecessor.
++        assert_eq!(selected(&s, &[2, 2], &[2, 2]).unwrap()[0].1, 4000); // Last allocated key.
++    }
++    #[test]
++    fn rejects_visible_corruption_and_documents_unread_subtree_scope() {
++        for (a, v) in [(4, 0u8), (6, 255), (7, 255), (48, 255), (24, 9)] {
++            let mut s = fixture();
++            s.raw[a] = v;
++            assert!(selected(&s, &[0, 0], &[0, 0]).is_err(), "byte {a}");
++        }
++        let mut s = fixture();
++        s.raw[1536 + 5] = 1; // Wrong leaf level.
++        assert!(selected(&s, &[0, 0], &[0, 0]).is_err());
++        let mut s = fixture();
++        s.raw[1536 + 24] = 4; // Child's lower boundary differs.
++        assert!(selected(&s, &[0, 0], &[0, 0]).is_err());
++        let mut s = fixture();
++        s.raw[2048] = b'X'; // Unrelated leaf is deliberately unread.
++        assert!(selected(&s, &[0, 0], &[0, 0]).is_ok());
++        assert!(selected(&s, &[2, 0], &[2, 0]).is_err());
++        assert!(collect_btree_v1_leaves_storage(&s, 0, 4, 4, Some(2), &[4, 6], None).is_err());
++        let mut s = fixture();
++        s.raw.truncate(1600);
++        assert!(selected(&s, &[0, 0], &[0, 0]).is_err());
++    }
++    #[test]
++    fn invalid_bounds_and_undefined_roots_are_explicit() {
++        let s = fixture();
++        for (dims, a, b) in [
++            (vec![0], vec![0], vec![0]),
++            (vec![4, 6], vec![0], vec![1]),
++            (vec![4], vec![2], vec![1]),
++            (vec![4], vec![u64::MAX], vec![u64::MAX]),
++        ] {
++            assert!(collect_btree_v1_leaves_storage_selective(&s, 0, 4, 4, &dims, &a, &b).is_err());
++        }
++        assert!(collect_btree_v1_leaves_storage_selective(
++            &s,
++            u32::MAX as u64,
++            4,
++            4,
++            &[4, 6],
++            &[0, 0],
++            &[0, 0]
++        )
++        .unwrap()
++        .is_empty());
++    }
++}
+--- a/hdf5-reader/src/dataset.rs
++++ b/hdf5-reader/src/dataset.rs
+@@ -654,9 +654,16 @@
+     Ok(result_strides)
+ }
+ 
++#[derive(Clone, Copy)]
++enum V1IndexTraversal {
++    Full,
++    SelectedBranches,
++}
++
+ /// A dataset within an HDF5 file.
+ #[derive(Clone)]
+ pub struct Dataset {
++    v1_index_traversal: V1IndexTraversal,
+     pub(crate) context: Arc<FileContext>,
+     pub(crate) name: String,
+     pub(crate) data_address: u64,
+@@ -754,6 +761,7 @@
+ impl Dataset {
+     pub(crate) fn from_template(context: Arc<FileContext>, template: Arc<DatasetTemplate>) -> Self {
+         Dataset {
++            v1_index_traversal: V1IndexTraversal::Full,
+             chunk_cache: context.chunk_cache.clone(),
+             filter_registry: context.filter_registry.clone(),
+             context,
+@@ -845,6 +853,7 @@
+         };
+ 
+         Ok(Dataset {
++            v1_index_traversal: V1IndexTraversal::Full,
+             context: context.context.clone(),
+             name,
+             data_address: address,
+@@ -1246,6 +1255,21 @@
+             ),
+             _ => self.read_slice::<T>(selection),
+         }
++    }
++
++    /// Read a slice using selection-aware legacy v1 chunk-index traversal.
++    ///
++    /// Only visited index nodes are validated. Corruption confined to skipped
++    /// subtrees is not detected; `read_slice` retains full traversal by default.
++    /// Other index families keep their existing behavior. Entry caches are
++    /// isolated so a selected lookup cannot bypass a later full traversal.
++    pub fn read_slice_selective_v1<T: H5Type>(&self, selection: &SliceInfo) -> Result<ArrayD<T>> {
++        let mut selected = self.clone();
++        selected.v1_index_traversal = V1IndexTraversal::SelectedBranches;
++        selected.chunk_entry_cache =
++            Arc::new(Mutex::new(LruCache::new(NonZeroUsize::new(32).unwrap())));
++        selected.full_chunk_entries = Arc::new(OnceLock::new());
++        selected.read_slice(selection)
+     }
+ 
+     /// Read a hyperslab of the dataset.
+@@ -2166,15 +2190,29 @@
+         chunk_dims: &[u32],
+         chunk_bounds: Option<(&[u64], &[u64])>,
+     ) -> Result<Vec<chunk_index::ChunkEntry>> {
+-        let leaves = crate::btree_v1::collect_btree_v1_leaves_storage(
+-            self.context.storage.as_ref(),
+-            btree_address,
+-            self.offset_size(),
+-            self.length_size(),
+-            Some(ndim as u32),
+-            chunk_dims,
+-            chunk_bounds,
+-        )?;
++        let leaves = if let (V1IndexTraversal::SelectedBranches, Some((first, last))) =
++            (self.v1_index_traversal, chunk_bounds)
++        {
++            crate::btree_v1::collect_btree_v1_leaves_storage_selective(
++                self.context.storage.as_ref(),
++                btree_address,
++                self.offset_size(),
++                self.length_size(),
++                chunk_dims,
++                first,
++                last,
++            )?
++        } else {
++            crate::btree_v1::collect_btree_v1_leaves_storage(
++                self.context.storage.as_ref(),
++                btree_address,
++                self.offset_size(),
++                self.length_size(),
++                Some(ndim as u32),
++                chunk_dims,
++                chunk_bounds,
++            )?
++        };
+ 
+         let mut entries = Vec::with_capacity(leaves.len());
+         for (key, chunk_addr) in &leaves {
+@@ -4171,6 +4209,7 @@
+     fn fixed_u16_dataset(layout: DataLayout, storage_bytes: Vec<u8>) -> Dataset {
+         let context = test_context(storage_bytes);
+         Dataset {
++            v1_index_traversal: V1IndexTraversal::Full,
+             context: context.clone(),
+             name: "short".to_string(),
+             data_address: 0,
+@@ -4199,6 +4238,59 @@
+         }
+     }
+ 
++    #[test]
++    fn selective_v1_slice_is_explicit_and_does_not_seed_full_entry_caches() {
++        fn node(level: u8, keys: &[(u64, u64)], children: &[u64]) -> Vec<u8> {
++            let mut out = b"TREE\x01".to_vec();
++            out.push(level);
++            out.extend_from_slice(&(children.len() as u16).to_le_bytes());
++            out.extend_from_slice(&[255; 16]);
++            for (i, (offset, byte)) in keys.iter().enumerate() {
++                out.extend_from_slice(&2u32.to_le_bytes());
++                out.extend_from_slice(&0u32.to_le_bytes());
++                out.extend_from_slice(&offset.to_le_bytes());
++                out.extend_from_slice(&byte.to_le_bytes());
++                if i < children.len() {
++                    out.extend_from_slice(&children[i].to_le_bytes());
++                }
++            }
++            out
++        }
++        let mut bytes = vec![0u8; 2048];
++        for (a, n) in [
++            (0, node(1, &[(0, 0), (2, 0), (3, 2)], &[256, 512])),
++            (256, node(0, &[(0, 0), (1, 0), (2, 0)], &[1024, 1026])),
++        ] {
++            bytes[a..a + n.len()].copy_from_slice(&n);
++        }
++        bytes[1024..1026].copy_from_slice(&11u16.to_le_bytes());
++        let ds = fixed_u16_dataset(
++            DataLayout::Chunked {
++                address: 0,
++                dims: vec![1],
++                element_size: 2,
++                chunk_indexing: None,
++            },
++            bytes,
++        );
++        let selection = SliceInfo {
++            selections: vec![SliceInfoElem::Slice {
++                start: 0,
++                end: 1,
++                step: 1,
++            }],
++        };
++        assert!(ds.read_slice::<u16>(&selection).is_err()); // Bad unrelated leaf.
++        assert_eq!(
++            ds.read_slice_selective_v1::<u16>(&selection)
++                .unwrap()
++                .as_slice()
++                .unwrap(),
++            &[11]
++        );
++        assert!(ds.read_slice::<u16>(&selection).is_err()); // No selected cache leakage.
++    }
++
+     fn vlen_string_dataset(
+         layout: DataLayout,
+         storage_bytes: Vec<u8>,
+@@ -4207,6 +4299,7 @@
+     ) -> Dataset {
+         let context = test_context_with_offset_size(storage_bytes, offset_size);
+         Dataset {
++            v1_index_traversal: V1IndexTraversal::Full,
+             context: context.clone(),
+             name: "vlen".to_string(),
+             data_address: 0,

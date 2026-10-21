@@ -1,0 +1,27 @@
+[plan]
+name = "hdf5-selective"
+source_mtime_max = "2026-10-21T19:58:22.399726Z"
+sop_set_hash = ""
+
+[tasks."tasks/work.work"]
+summary = "Audit, extend, validate and benchmark selective v1 traversal"
+prompt = """
+Orient:
+- Read docs/hdf5-selective/brief.md and exact hdf5-reader 0.9.3 source.
+Edit:
+1. Preserve full traversal and add a small reusable selective API within the upstream crate.
+2. Prove lexicographic Cartesian selection semantics and document skipped-subtree validation scope.
+3. Validate a substantially larger public scientific object through bounded conditional mirrors.
+4. Compare full, selective, batching and mature readers across selections and latencies.
+5. Repeat 64 science, 33 fault and inherited COG/Zarr checks, adding ordering and corruption cases.
+6. Prepare an unpublished upstream patch and product coverage assessment. Commit locally only.
+Verify:
+- cargo test --locked --no-default-features --features native-hdf5
+- Run the documented selective harness and inherited feature/regression matrix.
+"""
+commit_message = "Traverse selected HDF5 v1 index branches with large-file validation"
+timeout_s = 0
+test_cmd = "cargo test --locked --no-default-features --features native-hdf5"
+files.create = ["vendor/hdf5-reader/", "bench/hdf5_selective.py", "bench/hdf5_selective_reference.py", "bench/hdf5_selective_mirror.py", "bench/hdf5_selective_summary.py", "docs/hdf5-selective/"]
+files.edit = ["Cargo.toml", "Cargo.lock", "src/hdf5.rs", "README.md", "bench/hdf5_regressions.py"]
+files.read = ["docs/hdf5-selective/brief.md"]

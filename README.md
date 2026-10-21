@@ -99,9 +99,14 @@ version-pinned native acquisitions with a tuned GDAL reader.
 | Earth Search Sentinel-2 C1 L2A | STAC dates, geographic bounds/Polygon, named native UInt16 bands; GDAL-free per-observation Zarr v2 or masked native stream, optional GDAL GeoTIFF output |
 | WeatherBench2 ERA5 64×32 product above | Anonymous HTTP Zarr v2, Float32/NaN, `(time,longitude,latitude)`; native Zarr subset |
 | NASA POWER IMERG daily spatial | Anonymous HTTP Zarr v2, Float32/NaN, `(time,lat,lon)`, verified daily time and storage filter; native Zarr subset |
-| Archived GOES-19 RRQPE NetCDF-4 sample | Opt-in `native-hdf5`; exact UInt16/Float32 rank-two array slices, stored one-dimensional axes, conditional compressed-chunk ranges and provisional streaming; [profile and decision gate](docs/native-hdf5/report.md) |
+| Archived GOES-19 RRQPE and cloud-top-temperature NetCDF-4 samples | Opt-in `native-hdf5`; exact UInt16/Float32 rank-two array slices, stored one-dimensional axes, conditional compressed-chunk ranges and provisional streaming; [profile and decision gate](docs/native-hdf5/report.md) |
 | Public GFS v3 archive | Native Float32 subset, ordinary/sharded codecs and conditional selective ranges; [exact v3 profile](docs/zarr-v3-input/workflow.md) |
 | Local custom-grid Zarr / direct GeoTIFF | Narrow UInt16 profiles; [advanced lifecycle](docs/unified-workflow.md) and [local Zarr](docs/zarr-workflow.md) |
+
+HDF5 v1 index pruning is an explicit experiment: set
+`TILE_RIPPER_HDF5_INDEX_POLICY=selective`. Full traversal remains the default
+because pruning cannot validate unread subtrees. Bounded metadata pages are
+available independently; see the [large-file traversal results](docs/hdf5-selective/report.md).
 
 Public requests: [Sentinel-2](examples/unified-stac.json),
 [ERA5](examples/weatherbench2.json), [IMERG](examples/imerg.json).
