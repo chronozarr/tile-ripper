@@ -1,0 +1,158 @@
+[
+  {
+    "label": "default",
+    "action": "test",
+    "command": [
+      "cargo",
+      "test",
+      "--locked"
+    ],
+    "returncode": 0,
+    "passed": 75,
+    "ignored": 2
+  },
+  {
+    "label": "default",
+    "action": "clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "--locked",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "returncode": 0,
+    "passed": 0,
+    "ignored": 0
+  },
+  {
+    "label": "zarr",
+    "action": "test",
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--no-default-features"
+    ],
+    "returncode": 0,
+    "passed": 38,
+    "ignored": 1
+  },
+  {
+    "label": "zarr",
+    "action": "clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "--locked",
+      "--no-default-features",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "returncode": 0,
+    "passed": 0,
+    "ignored": 0
+  },
+  {
+    "label": "native-cog",
+    "action": "test",
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--no-default-features",
+      "--features",
+      "native-cog"
+    ],
+    "returncode": 0,
+    "passed": 53,
+    "ignored": 3
+  },
+  {
+    "label": "native-cog",
+    "action": "clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "--locked",
+      "--no-default-features",
+      "--features",
+      "native-cog",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "returncode": 0,
+    "passed": 0,
+    "ignored": 0
+  },
+  {
+    "label": "native-hdf5",
+    "action": "test",
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--no-default-features",
+      "--features",
+      "native-hdf5"
+    ],
+    "returncode": 0,
+    "passed": 41,
+    "ignored": 2
+  },
+  {
+    "label": "native-hdf5",
+    "action": "clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "--locked",
+      "--no-default-features",
+      "--features",
+      "native-hdf5",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "returncode": 0,
+    "passed": 0,
+    "ignored": 0
+  },
+  {
+    "label": "all",
+    "action": "test",
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--all-features"
+    ],
+    "returncode": 0,
+    "passed": 96,
+    "ignored": 5
+  },
+  {
+    "label": "all",
+    "action": "clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "--locked",
+      "--all-features",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "returncode": 0,
+    "passed": 0,
+    "ignored": 0
+  }
+]

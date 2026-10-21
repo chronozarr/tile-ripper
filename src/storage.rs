@@ -19,7 +19,7 @@ use zarrs::{
 };
 
 pub(crate) fn requires_zarr_bindings(r: &Request) -> bool {
-    matches!(&r.source,Source::Assets{assets} if assets.iter().any(|a|a.format == Format::ZarrV3 || (a.format == Format::ZarrV2 && cog::remote(&a.locator))))
+    matches!(&r.source,Source::Assets{assets} if assets.iter().any(|a|a.format == Format::Hdf5 || a.format == Format::ZarrV3 || (a.format == Format::ZarrV2 && cog::remote(&a.locator))))
 }
 #[derive(Default)]
 pub(crate) struct Sources {
@@ -27,6 +27,8 @@ pub(crate) struct Sources {
     #[cfg(feature = "native-cog")]
     pub(crate) native: crate::native_cog::Snapshots,
     pub(crate) v3: crate::zarr_v3::Context,
+    #[cfg(feature = "native-hdf5")]
+    pub(crate) hdf5: crate::hdf5::Context,
 }
 
 impl Sources {
@@ -101,6 +103,8 @@ impl Sources {
         Ok(Arc::new(Objects::Local(FilesystemStore::new(&a.locator)?)))
     }
     pub fn seal(&self) -> Result<()> {
+        #[cfg(feature = "native-hdf5")]
+        self.hdf5.validate()?;
         self.v3.validate()?;
         self.phase("prepare_validation");
         for s in self.objects.values() {
@@ -111,6 +115,8 @@ impl Sources {
         Ok(())
     }
     pub fn validate(&self) -> Result<()> {
+        #[cfg(feature = "native-hdf5")]
+        self.hdf5.validate()?;
         self.v3.validate()?;
         for s in self.objects.values() {
             if let Some(h) = s.http() {
@@ -120,6 +126,8 @@ impl Sources {
         Ok(())
     }
     pub fn phase(&self, phase: &'static str) {
+        #[cfg(feature = "native-hdf5")]
+        self.hdf5.phase(phase);
         for source in self.objects.values() {
             if let Some(http) = source.http() {
                 let mut state = http.state.lock().unwrap();
@@ -129,6 +137,10 @@ impl Sources {
         }
     }
     pub fn describe(&self, id: &str) -> serde_json::Value {
+        #[cfg(feature = "native-hdf5")]
+        if let Some(value) = self.hdf5.describe(id) {
+            return value;
+        }
         self.objects.get(id).map_or(serde_json::Value::Null, |s| {
             s.http().map_or(serde_json::Value::Null, |h| {
                 serde_json::json!(h.state.lock().unwrap().versions)
@@ -149,7 +161,8 @@ impl Sources {
                 .sum::<usize>()
     }
     pub fn stats(&self) -> serde_json::Value {
-        serde_json::json!(self
+        #[allow(unused_mut)]
+        let mut value = serde_json::json!(self
             .objects
             .iter()
             .filter_map(|(id, source)| {
@@ -162,7 +175,10 @@ impl Sources {
                 stats["object_identities"] = serde_json::json!(state.versions.len());
                 Some((id.clone(), stats))
             })
-            .collect::<BTreeMap<_, _>>())
+            .collect::<BTreeMap<_, _>>());
+        #[cfg(feature = "native-hdf5")]
+        self.hdf5.add_stats(&mut value);
+        value
     }
 }
 pub(crate) struct MetadataBudget {
@@ -953,6 +969,113 @@ fn retry_delay(value: &str) -> Result<Duration> {
     }
     Ok(Duration::from_secs(seconds))
 }
+/// One file over the same pinned, conditional exact-range transport as v3.
+#[cfg(feature = "native-hdf5")]
+pub(crate) struct ObjectFile {
+    objects: Objects,
+    key: s::StoreKey,
+    pub size: u64,
+}
+#[cfg(feature = "native-hdf5")]
+impl ObjectFile {
+    pub fn open(asset: &Asset, budget: &Budget) -> Result<Self> {
+        let (objects, key) = if cog::remote(&asset.locator) {
+            let mut url = Url::parse(&asset.locator)?;
+            let filename = url
+                .path_segments()
+                .and_then(|mut s| s.next_back())
+                .ok_or("missing file name")?
+                .to_owned();
+            if filename.is_empty() || url.query().is_some() || url.fragment().is_some() {
+                return fail("HDF5 requires a public file URL without query or fragment");
+            }
+            let key = s::StoreKey::new(&filename)?;
+            url.path_segments_mut()
+                .map_err(|_| "invalid file URL")?
+                .pop();
+            let mut http = Http::new(
+                url.as_str(),
+                budget,
+                Arc::new(Http::build_client()?),
+                Arc::new(MetadataBudget::new(budget.buffer_bytes / 2)),
+            )?;
+            http.validate_data = true;
+            http.sizes(&[key.to_string()])?
+                .first()
+                .and_then(|s| *s)
+                .ok_or("HDF5 object missing")?;
+            if let Some(etag) = &asset.etag {
+                if http
+                    .state
+                    .lock()
+                    .unwrap()
+                    .versions
+                    .get(key.as_str())
+                    .and_then(|v| v.as_ref())
+                    .is_none_or(|v| &v.etag != etag)
+                {
+                    return fail("HDF5 requested ETag differs from source");
+                }
+            }
+            http.seal()?;
+            (Objects::Http(http), key)
+        } else {
+            if asset.etag.is_some() {
+                return fail("local HDF5 cannot use HTTP ETag");
+            }
+            let path = std::path::Path::new(&asset.locator);
+            let key = s::StoreKey::new(
+                path.file_name()
+                    .and_then(|n| n.to_str())
+                    .ok_or("invalid file name")?,
+            )?;
+            (
+                Objects::Local(FilesystemStore::new(
+                    path.parent().unwrap_or_else(|| std::path::Path::new(".")),
+                )?),
+                key,
+            )
+        };
+        let size = objects.size_key(&key)?.ok_or("HDF5 file missing")?;
+        Ok(Self { objects, key, size })
+    }
+    pub fn read(&self, start: u64, len: usize) -> Result<Vec<u8>> {
+        if len == 0 {
+            return Ok(Vec::new());
+        }
+        let range = s::byte_range::ByteRange::FromStart(start, Some(u64::try_from(len)?));
+        let bytes = self
+            .objects
+            .ranges(&self.key, &[range])?
+            .ok_or("HDF5 range absent")?
+            .pop()
+            .ok_or("HDF5 range absent")?;
+        if bytes.len() != len {
+            return fail("short HDF5 range");
+        }
+        Ok(bytes.to_vec())
+    }
+    pub fn validate(&self) -> Result<()> {
+        if let Some(h) = self.objects.http() {
+            h.validate()?;
+        }
+        Ok(())
+    }
+    pub fn phase(&self, phase: &'static str) {
+        if let Some(h) = self.objects.http() {
+            h.state.lock().unwrap().phase = phase;
+        }
+    }
+    pub fn identity(&self) -> serde_json::Value {
+        self.objects.identity(self.key.as_str())
+    }
+    pub fn stats(&self) -> serde_json::Value {
+        self.objects.http().map_or(serde_json::Value::Null, |h| {
+            serde_json::json!(h.state.lock().unwrap().stats)
+        })
+    }
+}
+
 #[cfg(test)]
 mod tests {
     #[test]

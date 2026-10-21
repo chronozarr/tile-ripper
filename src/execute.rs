@@ -28,6 +28,9 @@ pub struct Chunk {
     pub offset: Option<f64>,
     pub pixels: crate::Pixels,
     /// Actual rectilinear native centers, when an affine is only approximate.
+    /// HDF5 array slices carry stored axis values here, with axis paths and
+    /// packing/projection attributes in prepared provenance. Their transform is
+    /// an index-space placeholder and their CRS label is not a geospatial CRS.
     pub coordinates: Option<(Vec<f64>, Vec<f64>)>,
 }
 impl Chunk {

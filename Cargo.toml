@@ -10,9 +10,11 @@ description = "Inspectable native acquisition for narrow STAC/COG and scientific
 default = ["gdal"]
 gdal = ["dep:gdal"]
 native-cog = ["dep:tiff-reader", "dep:geotiff-core", "dep:roxmltree", "dep:geo", "dep:proj4rs"]
+native-hdf5 = ["dep:hdf5-reader"]
 experimental-output = ["zarrs/sharding", "zarrs/zstd"]
 
 [dependencies]
+hdf5-reader = { version = "=0.9.3", default-features = false, optional = true }
 gdal = { version = "=0.19.0", optional = true }
 serde = { version = "=1.0.228", features = ["derive"] }
 serde_json = "=1.0.145"

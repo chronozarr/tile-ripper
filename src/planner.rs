@@ -206,6 +206,27 @@ pub(crate) fn validate_common(r: &Request) -> Result<()> {
         return fail("quality, mosaicking and compositing operations are not implemented");
     }
     match &r.spatial {
+        Spatial::ArraySlice {
+            start,
+            count,
+            step,
+            axes,
+        } => {
+            if count.contains(&0) || step.contains(&0) || axes.iter().any(|p| !p.starts_with('/')) {
+                return fail("array slices require positive counts/steps and absolute axis paths");
+            }
+            for i in 0..2 {
+                count[i]
+                    .checked_sub(1)
+                    .and_then(|n| n.checked_mul(step[i]))
+                    .and_then(|n| n.checked_add(start[i]))
+                    .ok_or("array slice overflow")?;
+            }
+            if !matches!(&r.source, Source::Assets { assets } if assets.iter().all(|a|a.format == Format::Hdf5))
+            {
+                return fail("array slices require exclusively HDF5 assets");
+            }
+        }
         Spatial::Bounds { bbox, .. } => {
             if !bbox.iter().all(|x| x.is_finite()) || bbox[0] >= bbox[2] || bbox[1] >= bbox[3] {
                 return fail("invalid or wrapped bounds");
@@ -398,6 +419,12 @@ pub(crate) fn plan_on(
                         }
                         CogPlanner { cache }.plan_asset(asset, request, &mut p)?;
                     }
+                }
+                Format::Hdf5 => {
+                    #[cfg(feature = "native-hdf5")]
+                    sources.hdf5.plan(asset, request, &mut p)?;
+                    #[cfg(not(feature = "native-hdf5"))]
+                    return fail("build with native-hdf5 to acquire HDF5");
                 }
                 Format::ZarrV3 => sources
                     .v3

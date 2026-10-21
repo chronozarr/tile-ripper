@@ -48,6 +48,7 @@ pub enum Format {
     Cog,
     ZarrV2,
     ZarrV3,
+    Hdf5,
 }
 impl Format {
     pub(crate) fn is_zarr(self) -> bool {
@@ -58,6 +59,14 @@ impl Format {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub enum Spatial {
+    /// Rank-two stored array selection in dimension order [row, column].
+    /// Axis paths are explicit; no affine geolocation or CF inference is implied.
+    ArraySlice {
+        start: [usize; 2],
+        count: [usize; 2],
+        step: [usize; 2],
+        axes: [String; 2],
+    },
     Bounds {
         crs: String,
         bbox: [f64; 4],

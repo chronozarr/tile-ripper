@@ -1,0 +1,1497 @@
+{
+  "url": "https://noaa-goes19.s3.amazonaws.com/ABI-L2-RRQPEF/2025/100/12/OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc",
+  "source_bytes": 1268526,
+  "requested_slice": {
+    "kind": "array_slice",
+    "start": [
+      2400,
+      2400
+    ],
+    "count": [
+      384,
+      384
+    ],
+    "step": [
+      1,
+      1
+    ],
+    "axes": [
+      "/y",
+      "/x"
+    ]
+  },
+  "delivered_value_bytes": 294912,
+  "native_response_bytes": 137683,
+  "native_requests": 83,
+  "native_fraction": 0.1085377832224172,
+  "checks": {
+    "all_stored_value_bits_equal": true,
+    "all_interpreted_metadata_equal": true,
+    "all_coordinates_equal": true,
+    "all_validity_bits_equal": true,
+    "netcdf4_equal": true,
+    "values": 147456,
+    "chunks": 9,
+    "output_bytes": 294912,
+    "scheduler": {
+      "workers": 2,
+      "per_host": 2,
+      "buffer_bytes": 33554432,
+      "reserved_bytes_peak": 2631808,
+      "reader_state_reserved_bytes": 0,
+      "prepared_native_metadata_bytes": 252124,
+      "prepared_v3_metadata_index_bytes": 0,
+      "active_workers_peak": 2,
+      "completed_tasks": 9,
+      "admitted_jobs": 3,
+      "cog_reader_scope": "selection",
+      "seconds": 0.180160417,
+      "order": "plan",
+      "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+      "prepared_hdf5_bytes": 252124
+    },
+    "report_payload_gets": 3,
+    "report_payload_bytes": 100867
+  },
+  "source_metadata": {
+    "dtype": "uint16",
+    "chunks": [
+      226,
+      226
+    ],
+    "allocated_chunks": 524,
+    "filters": [
+      "(2, 1, (2,), b'shuffle')",
+      "(1, 1, (4,), b'deflate')"
+    ],
+    "hdf5_versions": [
+      2,
+      0,
+      0,
+      0
+    ]
+  },
+  "analysis": {
+    "valid_pixels": 147456,
+    "missing_pixels": 0,
+    "rain_pixels": 15863,
+    "mean_rain_rate_mm_per_hour": 2.9975115196116633,
+    "max_rain_rate_mm_per_hour": 100.00009070616215,
+    "analyzed_from_native_chunks": true,
+    "whole_file_required_for_analysis": false
+  },
+  "source": {
+    "asset_id": "science",
+    "format": "hdf5",
+    "reference": "https://noaa-goes19.s3.amazonaws.com/ABI-L2-RRQPEF/2025/100/12/OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc",
+    "datetime": "2025-04-10T12:05:06.527315Z",
+    "object_version": null,
+    "local_identity": [],
+    "object_identities": {
+      "identity": {
+        "url": "https://noaa-goes19.s3.amazonaws.com/ABI-L2-RRQPEF/2025/100/12/OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc",
+        "version": {
+          "etag": "\"343acd4029c38ee0adb8bd41394359a4\"",
+          "size": 1268526,
+          "metadata": false
+        }
+      },
+      "file_bytes": 1268526,
+      "metadata_cache_bytes": 48624,
+      "datasets": [
+        {
+          "path": "/RRQPE",
+          "shape": [
+            5424,
+            5424
+          ],
+          "source_dtype": "FixedPoint { size: 2, signed: false, byte_order: LittleEndian }",
+          "stored_dtype": "<u2",
+          "chunk_shape": [
+            226,
+            226
+          ],
+          "superblock_version": 2,
+          "chunk_index": "v1 B-tree bounded full index scan; selective payload ranges",
+          "storage_fill": 65535.0,
+          "missingness": "CF scalar markers and NaNs; storage initialization alone is valid",
+          "attributes": {
+            "_FillValue": {
+              "dtype": "FixedPoint { size: 2, signed: false, byte_order: LittleEndian }",
+              "shape": [
+                1
+              ],
+              "stored_bytes_base64": "//8=",
+              "value": 65535.0
+            },
+            "DIMENSION_LIST": {
+              "dtype": "VarLen { base: Reference { ref_type: Object, size: 8 }, kind: Sequence, encoding: Ascii, padding: NullTerminate }",
+              "shape": [
+                2
+              ],
+              "stored_bytes_base64": "AQAAAOcFAAAAAAAADwAAAAEAAADnBQAAAAAAABAAAAA=",
+              "uninterpreted": true
+            },
+            "_Netcdf4Dimid": {
+              "dtype": "FixedPoint { size: 4, signed: true, byte_order: LittleEndian }",
+              "shape": [],
+              "stored_bytes_base64": "AAAAAA==",
+              "value": 0.0
+            },
+            "long_name": {
+              "dtype": "String { size: Fixed(59), encoding: Ascii, padding: NullTerminate }",
+              "shape": [],
+              "stored_bytes_base64": "QUJJIEwyKyBSYWluZmFsbCBSYXRlIC0gUXVhbnRpdGF0aXZlIFByZWNpcGl0YXRpb24gRXN0aW1hdGU=",
+              "value": "ABI L2+ Rainfall Rate - Quantitative Precipitation Estimate"
+            },
+            "standard_name": {
+              "dtype": "String { size: Fixed(13), encoding: Ascii, padding: NullTerminate }",
+              "shape": [],
+              "stored_bytes_base64": "cmFpbmZhbGxfcmF0ZQ==",
+              "value": "rainfall_rate"
+            },
+            "valid_range": {
+              "dtype": "FixedPoint { size: 2, signed: false, byte_order: LittleEndian }",
+              "shape": [
+                2
+              ],
+              "stored_bytes_base64": "AAD6/w==",
+              "uninterpreted": true
+            },
+            "scale_factor": {
+              "dtype": "FloatingPoint { size: 4, byte_order: LittleEndian }",
+              "shape": [
+                1
+              ],
+              "stored_bytes_base64": "vATIOg==",
+              "value": 0.0015260200016200542
+            },
+            "add_offset": {
+              "dtype": "FloatingPoint { size: 4, byte_order: LittleEndian }",
+              "shape": [
+                1
+              ],
+              "stored_bytes_base64": "AAAAAA==",
+              "value": 0.0
+            },
+            "units": {
+              "dtype": "String { size: Fixed(6), encoding: Ascii, padding: NullTerminate }",
+              "shape": [],
+              "stored_bytes_base64": "bW0gaC0x",
+              "value": "mm h-1"
+            },
+            "resolution": {
+              "dtype": "String { size: Fixed(31), encoding: Ascii, padding: NullTerminate }",
+              "shape": [],
+              "stored_bytes_base64": "eTogMC4wMDAwNTYgcmFkIHg6IDAuMDAwMDU2IHJhZA==",
+              "value": "y: 0.000056 rad x: 0.000056 rad"
+            },
+            "coordinates": {
+              "dtype": "String { size: Fixed(94), encoding: Ascii, padding: NullTerminate }",
+              "shape": [],
+              "stored_bytes_base64": "bGF0aXR1ZGUgcmV0cmlldmFsX2xvY2FsX3plbml0aF9hbmdsZSBxdWFudGl0YXRpdmVfbG9jYWxfemVuaXRoX2FuZ2xlIHNvbGFyX3plbml0aF9hbmdsZSB0IHkgeA==",
+              "value": "latitude retrieval_local_zenith_angle quantitative_local_zenith_angle solar_zenith_angle t y x"
+            },
+            "grid_mapping": {
+              "dtype": "String { size: Fixed(22), encoding: Ascii, padding: NullTerminate }",
+              "shape": [],
+              "stored_bytes_base64": "Z29lc19pbWFnZXJfcHJvamVjdGlvbg==",
+              "value": "goes_imager_projection"
+            },
+            "cell_methods": {
+              "dtype": "String { size: Fixed(265), encoding: Ascii, padding: NullTerminate }",
+              "shape": [],
+              "stored_bytes_base64": "bGF0aXR1ZGU6IHBvaW50IChnb29kIHF1YWxpdHkgcGl4ZWwgcHJvZHVjZWQpIHJldHJpZXZhbF9sb2NhbF96ZW5pdGhfYW5nbGU6IHBvaW50IChnb29kIG9yIGRlZ3JhZGVkIHF1YWxpdHkgcGl4ZWwgcHJvZHVjZWQpIHF1YW50aXRhdGl2ZV9sb2NhbF96ZW5pdGhfYW5nbGU6IHN1bSAoZ29vZCBxdWFsaXR5IHBpeGVsIHByb2R1Y2VkKSBzb2xhcl96ZW5pdGhfYW5nbGU6IHN1bSAoZ29vZCBxdWFsaXR5IHBpeGVsIHByb2R1Y2VkKSB0OiBwb2ludCBhcmVhOiBwb2ludA==",
+              "value": "latitude: point (good quality pixel produced) retrieval_local_zenith_angle: point (good or degraded quality pixel produced) quantitative_local_zenith_angle: sum (good quality pixel produced) solar_zenith_angle: sum (good quality pixel produced) t: point area: point"
+            },
+            "ancillary_variables": {
+              "dtype": "String { size: Fixed(3), encoding: Ascii, padding: NullTerminate }",
+              "shape": [],
+              "stored_bytes_base64": "RFFG",
+              "value": "DQF"
+            }
+          },
+          "axes": [
+            {
+              "path": "/y",
+              "dtype": "FixedPoint { size: 2, signed: true, byte_order: LittleEndian }",
+              "attributes": {
+                "CLASS": {
+                  "dtype": "String { size: Fixed(16), encoding: Ascii, padding: NullTerminate }",
+                  "shape": [],
+                  "stored_bytes_base64": "RElNRU5TSU9OX1NDQUxFAA==",
+                  "value": "DIMENSION_SCALE"
+                },
+                "NAME": {
+                  "dtype": "String { size: Fixed(2), encoding: Ascii, padding: NullTerminate }",
+                  "shape": [],
+                  "stored_bytes_base64": "eQA=",
+                  "value": "y"
+                },
+                "_Netcdf4Dimid": {
+                  "dtype": "FixedPoint { size: 4, signed: true, byte_order: LittleEndian }",
+                  "shape": [],
+                  "stored_bytes_base64": "AAAAAA==",
+                  "value": 0.0
+                },
+                "REFERENCE_LIST": {
+                  "dtype": "Compound { size: 16, fields: [CompoundField { name: \"dataset\", byte_offset: 0, datatype: Reference { ref_type: Object, size: 8 } }, CompoundField { name: \"dimension\", byte_offset: 8, datatype: FixedPoint { size: 4, signed: true, byte_order: LittleEndian } }] }",
+                  "shape": [
+                    2
+                  ],
+                  "stored_bytes_base64": "RQMAAAAAAAAAAAAAAAAAAGEEAAAAAAAAAAAAAAAAAAA=",
+                  "uninterpreted": true
+                },
+                "scale_factor": {
+                  "dtype": "FloatingPoint { size: 4, byte_order: LittleEndian }",
+                  "shape": [
+                    1
+                  ],
+                  "stored_bytes_base64": "i+FquA==",
+                  "value": -5.6000000768108293e-05
+                },
+                "add_offset": {
+                  "dtype": "FloatingPoint { size: 4, byte_order: LittleEndian }",
+                  "shape": [
+                    1
+                  ],
+                  "stored_bytes_base64": "/nwbPg==",
+                  "value": 0.15184399485588074
+                },
+                "units": {
+                  "dtype": "String { size: Fixed(3), encoding: Ascii, padding: NullTerminate }",
+                  "shape": [],
+                  "stored_bytes_base64": "cmFk",
+                  "value": "rad"
+                },
+                "axis": {
+                  "dtype": "String { size: Fixed(1), encoding: Ascii, padding: NullTerminate }",
+                  "shape": [],
+                  "stored_bytes_base64": "WQ==",
+                  "value": "Y"
+                },
+                "long_name": {
+                  "dtype": "String { size: Fixed(39), encoding: Ascii, padding: NullTerminate }",
+                  "shape": [],
+                  "stored_bytes_base64": "R09FUyBmaXhlZCBncmlkIHByb2plY3Rpb24geS1jb29yZGluYXRl",
+                  "value": "GOES fixed grid projection y-coordinate"
+                },
+                "standard_name": {
+                  "dtype": "String { size: Fixed(23), encoding: Ascii, padding: NullTerminate }",
+                  "shape": [],
+                  "stored_bytes_base64": "cHJvamVjdGlvbl95X2Nvb3JkaW5hdGU=",
+                  "value": "projection_y_coordinate"
+                }
+              }
+            },
+            {
+              "path": "/x",
+              "dtype": "FixedPoint { size: 2, signed: true, byte_order: LittleEndian }",
+              "attributes": {
+                "CLASS": {
+                  "dtype": "String { size: Fixed(16), encoding: Ascii, padding: NullTerminate }",
+                  "shape": [],
+                  "stored_bytes_base64": "RElNRU5TSU9OX1NDQUxFAA==",
+                  "value": "DIMENSION_SCALE"
+                },
+                "NAME": {
+                  "dtype": "String { size: Fixed(2), encoding: Ascii, padding: NullTerminate }",
+                  "shape": [],
+                  "stored_bytes_base64": "eAA=",
+                  "value": "x"
+                },
+                "_Netcdf4Dimid": {
+                  "dtype": "FixedPoint { size: 4, signed: true, byte_order: LittleEndian }",
+                  "shape": [],
+                  "stored_bytes_base64": "AQAAAA==",
+                  "value": 1.0
+                },
+                "REFERENCE_LIST": {
+                  "dtype": "Compound { size: 16, fields: [CompoundField { name: \"dataset\", byte_offset: 0, datatype: Reference { ref_type: Object, size: 8 } }, CompoundField { name: \"dimension\", byte_offset: 8, datatype: FixedPoint { size: 4, signed: true, byte_order: LittleEndian } }] }",
+                  "shape": [
+                    2
+                  ],
+                  "stored_bytes_base64": "RQMAAAAAAAABAAAAAAAAAGEEAAAAAAAAAQAAAAAAAAA=",
+                  "uninterpreted": true
+                },
+                "scale_factor": {
+                  "dtype": "FloatingPoint { size: 4, byte_order: LittleEndian }",
+                  "shape": [
+                    1
+                  ],
+                  "stored_bytes_base64": "i+FqOA==",
+                  "value": 5.6000000768108293e-05
+                },
+                "add_offset": {
+                  "dtype": "FloatingPoint { size: 4, byte_order: LittleEndian }",
+                  "shape": [
+                    1
+                  ],
+                  "stored_bytes_base64": "/nwbvg==",
+                  "value": -0.15184399485588074
+                },
+                "units": {
+                  "dtype": "String { size: Fixed(3), encoding: Ascii, padding: NullTerminate }",
+                  "shape": [],
+                  "stored_bytes_base64": "cmFk",
+                  "value": "rad"
+                },
+                "axis": {
+                  "dtype": "String { size: Fixed(1), encoding: Ascii, padding: NullTerminate }",
+                  "shape": [],
+                  "stored_bytes_base64": "WA==",
+                  "value": "X"
+                },
+                "long_name": {
+                  "dtype": "String { size: Fixed(39), encoding: Ascii, padding: NullTerminate }",
+                  "shape": [],
+                  "stored_bytes_base64": "R09FUyBmaXhlZCBncmlkIHByb2plY3Rpb24geC1jb29yZGluYXRl",
+                  "value": "GOES fixed grid projection x-coordinate"
+                },
+                "standard_name": {
+                  "dtype": "String { size: Fixed(23), encoding: Ascii, padding: NullTerminate }",
+                  "shape": [],
+                  "stored_bytes_base64": "cHJvamVjdGlvbl94X2Nvb3JkaW5hdGU=",
+                  "value": "projection_x_coordinate"
+                }
+              }
+            }
+          ],
+          "axis_semantics": "stored coordinate values as exact Float64; apply axis scale/offset explicitly",
+          "grid_mapping": {
+            "path": "/goes_imager_projection",
+            "attributes": {
+              "long_name": {
+                "dtype": "String { size: Fixed(32), encoding: Ascii, padding: NullTerminate }",
+                "shape": [],
+                "stored_bytes_base64": "R09FUy1SIEFCSSBmaXhlZCBncmlkIHByb2plY3Rpb24=",
+                "value": "GOES-R ABI fixed grid projection"
+              },
+              "grid_mapping_name": {
+                "dtype": "String { size: Fixed(13), encoding: Ascii, padding: NullTerminate }",
+                "shape": [],
+                "stored_bytes_base64": "Z2Vvc3RhdGlvbmFyeQ==",
+                "value": "geostationary"
+              },
+              "perspective_point_height": {
+                "dtype": "FloatingPoint { size: 8, byte_order: LittleEndian }",
+                "shape": [
+                  1
+                ],
+                "stored_bytes_base64": "AAAAOGkQgUE=",
+                "value": 35786023.0
+              },
+              "semi_major_axis": {
+                "dtype": "FloatingPoint { size: 8, byte_order: LittleEndian }",
+                "shape": [
+                  1
+                ],
+                "stored_bytes_base64": "AAAAQKZUWEE=",
+                "value": 6378137.0
+              },
+              "semi_minor_axis": {
+                "dtype": "FloatingPoint { size: 8, byte_order: LittleEndian }",
+                "shape": [
+                  1
+                ],
+                "stored_bytes_base64": "qd4aFMQ/WEE=",
+                "value": 6356752.31414
+              },
+              "inverse_flattening": {
+                "dtype": "FloatingPoint { size: 8, byte_order: LittleEndian }",
+                "shape": [
+                  1
+                ],
+                "stored_bytes_base64": "77TrlB2kckA=",
+                "value": 298.2572221
+              },
+              "latitude_of_projection_origin": {
+                "dtype": "FloatingPoint { size: 8, byte_order: LittleEndian }",
+                "shape": [
+                  1
+                ],
+                "stored_bytes_base64": "AAAAAAAAAAA=",
+                "value": 0.0
+              },
+              "longitude_of_projection_origin": {
+                "dtype": "FloatingPoint { size: 8, byte_order: LittleEndian }",
+                "shape": [
+                  1
+                ],
+                "stored_bytes_base64": "AAAAAADAUsA=",
+                "value": -75.0
+              },
+              "sweep_angle_axis": {
+                "dtype": "String { size: Fixed(1), encoding: Ascii, padding: NullTerminate }",
+                "shape": [],
+                "stored_bytes_base64": "eA==",
+                "value": "x"
+              }
+            }
+          },
+          "time": {
+            "path": "/t",
+            "stored_value": 797558706.527315,
+            "attributes": {
+              "long_name": {
+                "dtype": "String { size: Fixed(69), encoding: Ascii, padding: NullTerminate }",
+                "shape": [],
+                "stored_bytes_base64": "SjIwMDAgZXBvY2ggbWlkLXBvaW50IGJldHdlZW4gdGhlIHN0YXJ0IGFuZCBlbmQgaW1hZ2Ugc2NhbiBpbiBzZWNvbmRz",
+                "value": "J2000 epoch mid-point between the start and end image scan in seconds"
+              },
+              "standard_name": {
+                "dtype": "String { size: Fixed(4), encoding: Ascii, padding: NullTerminate }",
+                "shape": [],
+                "stored_bytes_base64": "dGltZQ==",
+                "value": "time"
+              },
+              "units": {
+                "dtype": "String { size: Fixed(33), encoding: Ascii, padding: NullTerminate }",
+                "shape": [],
+                "stored_bytes_base64": "c2Vjb25kcyBzaW5jZSAyMDAwLTAxLTAxIDEyOjAwOjAw",
+                "value": "seconds since 2000-01-01 12:00:00"
+              },
+              "axis": {
+                "dtype": "String { size: Fixed(1), encoding: Ascii, padding: NullTerminate }",
+                "shape": [],
+                "stored_bytes_base64": "VA==",
+                "value": "T"
+              },
+              "bounds": {
+                "dtype": "String { size: Fixed(11), encoding: Ascii, padding: NullTerminate }",
+                "shape": [],
+                "stored_bytes_base64": "dGltZV9ib3VuZHM=",
+                "value": "time_bounds"
+              }
+            }
+          },
+          "range_policy": "adjacent",
+          "physical_groups": [
+            {
+              "nodes": [
+                1,
+                3,
+                5
+              ],
+              "start": 358288,
+              "len": 51466,
+              "selected": 51466,
+              "reservation": 1211166
+            },
+            {
+              "nodes": [
+                7,
+                9,
+                11
+              ],
+              "start": 468996,
+              "len": 37250,
+              "selected": 37250,
+              "reservation": 1168518
+            },
+            {
+              "nodes": [
+                13,
+                15,
+                17
+              ],
+              "start": 648096,
+              "len": 12151,
+              "selected": 12151,
+              "reservation": 1093221
+            }
+          ],
+          "chunks": [
+            {
+              "node": 1,
+              "start": [
+                2400,
+                2400
+              ],
+              "count": [
+                86,
+                86
+              ],
+              "step": [
+                1,
+                1
+              ],
+              "byte_offset": 358288,
+              "encoded_bytes": 8082
+            },
+            {
+              "node": 3,
+              "start": [
+                2400,
+                2486
+              ],
+              "count": [
+                86,
+                226
+              ],
+              "step": [
+                1,
+                1
+              ],
+              "byte_offset": 366370,
+              "encoded_bytes": 25746
+            },
+            {
+              "node": 5,
+              "start": [
+                2400,
+                2712
+              ],
+              "count": [
+                86,
+                72
+              ],
+              "step": [
+                1,
+                1
+              ],
+              "byte_offset": 392116,
+              "encoded_bytes": 17638
+            },
+            {
+              "node": 7,
+              "start": [
+                2486,
+                2400
+              ],
+              "count": [
+                226,
+                86
+              ],
+              "step": [
+                1,
+                1
+              ],
+              "byte_offset": 468996,
+              "encoded_bytes": 33095
+            },
+            {
+              "node": 9,
+              "start": [
+                2486,
+                2486
+              ],
+              "count": [
+                226,
+                226
+              ],
+              "step": [
+                1,
+                1
+              ],
+              "byte_offset": 502091,
+              "encoded_bytes": 4034
+            },
+            {
+              "node": 11,
+              "start": [
+                2486,
+                2712
+              ],
+              "count": [
+                226,
+                72
+              ],
+              "step": [
+                1,
+                1
+              ],
+              "byte_offset": 506125,
+              "encoded_bytes": 121
+            },
+            {
+              "node": 13,
+              "start": [
+                2712,
+                2400
+              ],
+              "count": [
+                72,
+                86
+              ],
+              "step": [
+                1,
+                1
+              ],
+              "byte_offset": 648096,
+              "encoded_bytes": 3596
+            },
+            {
+              "node": 15,
+              "start": [
+                2712,
+                2486
+              ],
+              "count": [
+                72,
+                226
+              ],
+              "step": [
+                1,
+                1
+              ],
+              "byte_offset": 651692,
+              "encoded_bytes": 3620
+            },
+            {
+              "node": 17,
+              "start": [
+                2712,
+                2712
+              ],
+              "count": [
+                72,
+                72
+              ],
+              "step": [
+                1,
+                1
+              ],
+              "byte_offset": 655312,
+              "encoded_bytes": 4935
+            }
+          ]
+        }
+      ]
+    },
+    "zarr_v3": {},
+    "version_validation": "conditional ETag"
+  },
+  "native": {
+    "binary_sha256": "c87536a7ad5e98c14dc4111dccad362beec6f7e870caca7ce5b9f06e7721af39",
+    "returncode": 0,
+    "elapsed_seconds": 4.861565833445638,
+    "peak_rss_bytes": 20611072,
+    "sampled_peak_rss_bytes": 1277952,
+    "child_cpu_seconds": 0.077275,
+    "error": null
+  },
+  "timings": {
+    "prepare_seconds": 4.583883916,
+    "completion_seconds": 4.835716291,
+    "first_scientific_values_seconds": 4.738874375
+  },
+  "transport": {
+    "phases": {
+      "execution": {
+        "GET OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc": {
+          "seconds": 0.296157459,
+          "attempts": 3,
+          "bytes": 100867,
+          "retries": 0,
+          "statuses": {
+            "206": 3
+          }
+        }
+      },
+      "hdf5_chunk_index_discovery": {
+        "GET OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc": {
+          "seconds": 1.340426249,
+          "attempts": 22,
+          "bytes": 22240,
+          "retries": 0,
+          "statuses": {
+            "206": 22
+          }
+        }
+      },
+      "metadata_index_discovery": {
+        "GET OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc": {
+          "seconds": 2.9995680819999992,
+          "attempts": 53,
+          "bytes": 14576,
+          "retries": 0,
+          "statuses": {
+            "206": 53
+          }
+        },
+        "HEAD OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc": {
+          "seconds": 0.039829375,
+          "attempts": 1,
+          "bytes": 0,
+          "retries": 0,
+          "statuses": {
+            "200": 1
+          }
+        }
+      },
+      "planning": {
+        "HEAD OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc": {
+          "seconds": 0.183991625,
+          "attempts": 2,
+          "bytes": 0,
+          "retries": 0,
+          "statuses": {
+            "200": 2
+          }
+        }
+      },
+      "post_execution_validation": {
+        "HEAD OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc": {
+          "seconds": 0.030497792,
+          "attempts": 1,
+          "bytes": 0,
+          "retries": 0,
+          "statuses": {
+            "200": 1
+          }
+        }
+      },
+      "pre_execution_validation": {
+        "HEAD OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc": {
+          "seconds": 0.039230625,
+          "attempts": 1,
+          "bytes": 0,
+          "retries": 0,
+          "statuses": {
+            "200": 1
+          }
+        }
+      }
+    },
+    "requests": 83,
+    "bytes": 137683,
+    "retries": 0,
+    "seconds": 4.929523707,
+    "objects": {
+      "GET OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc": {
+        "seconds": 4.636251496999999,
+        "attempts": 78,
+        "bytes": 137683,
+        "retries": 0,
+        "statuses": {
+          "206": 78
+        }
+      },
+      "HEAD OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc": {
+        "seconds": 0.29355920700000004,
+        "attempts": 5,
+        "bytes": 0,
+        "retries": 0,
+        "statuses": {
+          "200": 5
+        }
+      }
+    },
+    "ranges": {
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 0:256": {
+        "seconds": 0.056852208,
+        "attempts": 1,
+        "bytes": 256,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 0:8": {
+        "seconds": 0.060366458,
+        "attempts": 1,
+        "bytes": 8,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 1055547:1055571": {
+        "seconds": 0.070501208,
+        "attempts": 1,
+        "bytes": 24,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 1055547:1057883": {
+        "seconds": 0.055472208,
+        "attempts": 1,
+        "bytes": 2336,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 1094109:1094113": {
+        "seconds": 0.05286875,
+        "attempts": 1,
+        "bytes": 4,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 1094109:1094115": {
+        "seconds": 0.049896084,
+        "attempts": 1,
+        "bytes": 6,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 1094109:1094133": {
+        "seconds": 0.052679583,
+        "attempts": 1,
+        "bytes": 24,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 1094109:1094694": {
+        "seconds": 0.049298209,
+        "attempts": 1,
+        "bytes": 585,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 1094694:1094732": {
+        "seconds": 0.045187375,
+        "attempts": 1,
+        "bytes": 38,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 1095078:1095116": {
+        "seconds": 0.053568458,
+        "attempts": 1,
+        "bytes": 38,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 1096144:1096148": {
+        "seconds": 0.068453083,
+        "attempts": 1,
+        "bytes": 4,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 1096144:1096150": {
+        "seconds": 0.070499458,
+        "attempts": 1,
+        "bytes": 6,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 1096144:1096168": {
+        "seconds": 0.068721208,
+        "attempts": 1,
+        "bytes": 24,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 1096144:1096428": {
+        "seconds": 0.064292709,
+        "attempts": 1,
+        "bytes": 284,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 1096488:1096685": {
+        "seconds": 0.055407917,
+        "attempts": 1,
+        "bytes": 197,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 115085:115109": {
+        "seconds": 0.061143834,
+        "attempts": 1,
+        "bytes": 24,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 115085:117421": {
+        "seconds": 0.053276417,
+        "attempts": 1,
+        "bytes": 2336,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 1159538:1159562": {
+        "seconds": 0.071421084,
+        "attempts": 1,
+        "bytes": 24,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 1159538:1160034": {
+        "seconds": 0.060656666,
+        "attempts": 1,
+        "bytes": 496,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 117701:117725": {
+        "seconds": 0.047581875,
+        "attempts": 1,
+        "bytes": 24,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 117701:120037": {
+        "seconds": 0.047380875,
+        "attempts": 1,
+        "bytes": 2336,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 1200951:1200989": {
+        "seconds": 0.065783958,
+        "attempts": 1,
+        "bytes": 38,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 1201018:1201274": {
+        "seconds": 0.06097,
+        "attempts": 1,
+        "bytes": 256,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 1201796:1202308": {
+        "seconds": 0.056211541,
+        "attempts": 1,
+        "bytes": 512,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 1202308:1203332": {
+        "seconds": 0.052133417,
+        "attempts": 1,
+        "bytes": 1024,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 1203332:1203588": {
+        "seconds": 0.047502666,
+        "attempts": 1,
+        "bytes": 256,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 1209156:1209924": {
+        "seconds": 0.049847958,
+        "attempts": 1,
+        "bytes": 768,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 1215204:1215716": {
+        "seconds": 0.071439042,
+        "attempts": 1,
+        "bytes": 512,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 1215716:1216740": {
+        "seconds": 0.086709,
+        "attempts": 1,
+        "bytes": 1024,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 1216740:1217252": {
+        "seconds": 0.044842292,
+        "attempts": 1,
+        "bytes": 512,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 1222564:1223332": {
+        "seconds": 0.061920291,
+        "attempts": 1,
+        "bytes": 768,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 1228872:1229384": {
+        "seconds": 0.056996708,
+        "attempts": 1,
+        "bytes": 512,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 1230798:1230802": {
+        "seconds": 0.049439333,
+        "attempts": 1,
+        "bytes": 4,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 1230815:1230823": {
+        "seconds": 0.053861083,
+        "attempts": 1,
+        "bytes": 8,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 1230855:1231111": {
+        "seconds": 0.054477542,
+        "attempts": 1,
+        "bytes": 256,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 1231595:1232107": {
+        "seconds": 0.055861667,
+        "attempts": 1,
+        "bytes": 512,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 1232472:1233496": {
+        "seconds": 0.059216584,
+        "attempts": 1,
+        "bytes": 1024,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 1237754:1238010": {
+        "seconds": 0.051497,
+        "attempts": 1,
+        "bytes": 256,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 1238494:1239006": {
+        "seconds": 0.053339,
+        "attempts": 1,
+        "bytes": 512,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 1246392:1247416": {
+        "seconds": 0.065550334,
+        "attempts": 1,
+        "bytes": 1024,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 1247416:1247420": {
+        "seconds": 0.055107,
+        "attempts": 1,
+        "bytes": 4,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 1247434:1247442": {
+        "seconds": 0.052068291,
+        "attempts": 1,
+        "bytes": 8,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 1247442:1247450": {
+        "seconds": 0.045608292,
+        "attempts": 1,
+        "bytes": 8,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 1247470:1248494": {
+        "seconds": 0.054713625,
+        "attempts": 1,
+        "bytes": 1024,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 1267104:1267616": {
+        "seconds": 0.046733791,
+        "attempts": 1,
+        "bytes": 512,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 1267616:1268128": {
+        "seconds": 0.0539995,
+        "attempts": 1,
+        "bytes": 512,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 209909:209933": {
+        "seconds": 0.056127667,
+        "attempts": 1,
+        "bytes": 24,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 209909:212245": {
+        "seconds": 0.048599667,
+        "attempts": 1,
+        "bytes": 2336,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 255:259": {
+        "seconds": 0.047188,
+        "attempts": 1,
+        "bytes": 4,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 255:261": {
+        "seconds": 0.070103375,
+        "attempts": 1,
+        "bytes": 6,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 255:279": {
+        "seconds": 0.063031666,
+        "attempts": 1,
+        "bytes": 24,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 255:539": {
+        "seconds": 0.054575083,
+        "attempts": 1,
+        "bytes": 284,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 258258:258282": {
+        "seconds": 0.048308667,
+        "attempts": 1,
+        "bytes": 24,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 258258:260594": {
+        "seconds": 0.070849,
+        "attempts": 1,
+        "bytes": 2336,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 358288:409754": {
+        "seconds": 0.1137935,
+        "attempts": 1,
+        "bytes": 51466,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 444500:444524": {
+        "seconds": 0.060300833,
+        "attempts": 1,
+        "bytes": 24,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 444500:446836": {
+        "seconds": 0.065481875,
+        "attempts": 1,
+        "bytes": 2336,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 468996:506246": {
+        "seconds": 0.119270417,
+        "attempts": 1,
+        "bytes": 37250,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 539:543": {
+        "seconds": 0.050926416,
+        "attempts": 1,
+        "bytes": 4,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 539:545": {
+        "seconds": 0.051804208,
+        "attempts": 1,
+        "bytes": 6,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 539:563": {
+        "seconds": 0.066745708,
+        "attempts": 1,
+        "bytes": 24,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 539:823": {
+        "seconds": 0.049327125,
+        "attempts": 1,
+        "bytes": 284,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 5607:5863": {
+        "seconds": 0.054397,
+        "attempts": 1,
+        "bytes": 256,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 5890:5898": {
+        "seconds": 0.054514084,
+        "attempts": 1,
+        "bytes": 8,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 6032:6070": {
+        "seconds": 0.05042875,
+        "attempts": 1,
+        "bytes": 38,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 6167:6191": {
+        "seconds": 0.055441583,
+        "attempts": 1,
+        "bytes": 24,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 6167:6623": {
+        "seconds": 0.064945417,
+        "attempts": 1,
+        "bytes": 456,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 648096:660247": {
+        "seconds": 0.063076334,
+        "attempts": 1,
+        "bytes": 12151,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 751600:751624": {
+        "seconds": 0.066866875,
+        "attempts": 1,
+        "bytes": 24,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 751600:753936": {
+        "seconds": 0.046230416,
+        "attempts": 1,
+        "bytes": 2336,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 837:1121": {
+        "seconds": 0.058811084,
+        "attempts": 1,
+        "bytes": 284,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 837:841": {
+        "seconds": 0.062665417,
+        "attempts": 1,
+        "bytes": 4,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 837:843": {
+        "seconds": 0.054539,
+        "attempts": 1,
+        "bytes": 6,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 837:861": {
+        "seconds": 0.056437375,
+        "attempts": 1,
+        "bytes": 24,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 850450:850474": {
+        "seconds": 0.059775209,
+        "attempts": 1,
+        "bytes": 24,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 850450:852786": {
+        "seconds": 0.100534417,
+        "attempts": 1,
+        "bytes": 2336,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 934314:934338": {
+        "seconds": 0.058117875,
+        "attempts": 1,
+        "bytes": 24,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      },
+      "OR_ABI-L2-RRQPEF-M6_G19_s20251001200211_e20251001209519_c20251001210009.nc 934314:936650": {
+        "seconds": 0.071379958,
+        "attempts": 1,
+        "bytes": 2336,
+        "retries": 0,
+        "statuses": {
+          "206": 1
+        }
+      }
+    },
+    "cached_metadata_bytes": 48624
+  },
+  "reference_control": {
+    "whole_object_download": true,
+    "frozen_control_explicitly_supplied": true,
+    "network_bytes_this_run": 0,
+    "bytes": 1268526,
+    "purpose": "independent h5py and netCDF4 comparison, never used by native acquisition",
+    "etag": "\"343acd4029c38ee0adb8bd41394359a4\"",
+    "md5": "343acd4029c38ee0adb8bd41394359a4",
+    "etag_equals_md5": true
+  }
+}

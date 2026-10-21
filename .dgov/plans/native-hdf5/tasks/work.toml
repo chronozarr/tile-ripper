@@ -1,0 +1,19 @@
+[tasks.work]
+summary = "Prototype then integrate bounded native HDF5 acquisition"
+role = "worker"
+commit_message = "Add restricted native remote HDF5 acquisition with independent validation"
+files = { edit = ["Cargo.toml", "Cargo.lock", "src/lib.rs", "src/model.rs", "src/storage.rs", "src/planner.rs", "src/acquisition.rs", "src/scheduler.rs", "src/execute.rs", "src/spatial_gdal.rs", "src/spatial_native.rs", "README.md"], create = ["src/hdf5.rs", "examples/hdf5_subset_oracle.rs", "bench/hdf5_input.py", "bench/hdf5_product_probe.py", "bench/hdf5_reference.py", "bench/hdf5_verify.py", "bench/hdf5_resources.py", "bench/hdf5_regressions.py", "bench/hdf5_summary.py", "bench/hdf5_golden.py", "tests/hdf5.rs", "docs/native-hdf5/report.md", "docs/native-hdf5/workflow.md", "docs/native-hdf5/performance.md", "tests/data/hdf5/README.md", "tests/data/hdf5/v1-be.h5", "tests/data/hdf5/unsupported-fixed.h5", "tests/data/hdf5/storage-fill-valid.h5", "tests/data/hdf5/distinct-cf-fill.h5"] }
+prompt = """
+Orient:
+- Read the supplied Native NetCDF-4/HDF5 milestone and current transport/stream contracts.
+Edit:
+1. Inspect maintained native Rust readers and actual public product metadata.
+2. Prove selective physical chunk discovery/decode in a standalone experiment before integrating.
+3. Preserve native values, coordinate/group identity, bounded admission, pinned ranges, cancellation and finish validation.
+4. Retain independent h5py/netCDF4 scientific, fault, resource and matched performance evidence and a real-product demonstration.
+5. Commit validated work locally. No merge, tag, publish, deploy, ChronoZarr change, persistent cache or whole-object fallback.
+Verify:
+- CARGO_INCREMENTAL=0 cargo test --no-default-features --features native-hdf5
+- Run the hdf5 harness and existing COG/Zarr/streaming/durable-output regressions with the required feature matrix.
+"""
+test_cmd = "CARGO_INCREMENTAL=0 cargo test --no-default-features --features native-hdf5"

@@ -43,11 +43,17 @@ enum Event {
 }
 
 enum Reader {
+    #[cfg(feature = "native-hdf5")]
+    Hdf5(Box<crate::hdf5::SelectedReader>),
     Cog(Box<crate::execute::SelectedCogReader>),
     Zarr(Box<crate::zarr_acquire::SelectedReader>),
 }
 impl Reader {
     fn finish(&self, report: &mut ExecutionReport) -> Result<()> {
+        #[cfg(feature = "native-hdf5")]
+        if let Self::Hdf5(reader) = self {
+            reader.finish(report);
+        }
         if let Self::Zarr(reader) = self {
             reader.finish(report)?;
         } else if let Self::Cog(reader) = self {
@@ -63,6 +69,17 @@ impl Reader {
         sink: &mut impl FnMut(Chunk) -> Result<()>,
     ) -> Result<()> {
         match self {
+            #[cfg(feature = "native-hdf5")]
+            Self::Hdf5(reader) => {
+                let Source::Assets { assets } = &r.source else {
+                    return Err("missing assets".into());
+                };
+                let asset = assets
+                    .iter()
+                    .find(|a| a.id == node.asset_id)
+                    .ok_or("missing HDF5 asset")?;
+                reader.execute_node(asset, node, report, sink)
+            }
             Self::Cog(reader) => reader.execute_node(node, report, sink),
             Self::Zarr(reader) => reader.execute_node(r, node, report, sink),
         }
@@ -104,6 +121,30 @@ fn tasks(r: &Request, p: &Plan, sources: &crate::storage::Sources) -> Result<Vec
             .find(|a| a.id == selected.asset_id)
             .ok_or("asset binding missing")?;
         let l = selected.layout.as_ref().ok_or("missing layout")?;
+        if a.format == Format::Hdf5 {
+            #[cfg(feature = "native-hdf5")]
+            {
+                let Variable::Dataset { path } = &l.variable else {
+                    return Err("missing HDF5 path".into());
+                };
+                let binding = sources.hdf5.binding(&a.id, path)?;
+                for group in &binding.groups {
+                    out.push(Task {
+                        selected: si,
+                        nodes: group.nodes.clone(),
+                        host: host(a)?,
+                        bytes: group.reservation,
+                        reader_bytes: 0,
+                        batch: None,
+                        #[cfg(feature = "native-cog")]
+                        native: Default::default(),
+                    });
+                }
+                continue;
+            }
+            #[cfg(not(feature = "native-hdf5"))]
+            return Err("build with native-hdf5".into());
+        }
         if a.format.is_zarr() {
             let Variable::Dataset { path } = &l.variable else {
                 return Err("missing variable".into());
@@ -380,6 +421,12 @@ pub(crate) fn execute(
     if crate::cog::native_selected() {
         prepared_bytes = sources.native.bytes();
     }
+    #[cfg(feature = "native-hdf5")]
+    {
+        prepared_bytes = prepared_bytes
+            .checked_add(sources.hdf5.bytes())
+            .ok_or("HDF5 reservation overflow")?;
+    }
     prepared_bytes = prepared_bytes
         .checked_add(sources.v3_prepared_bytes())
         .and_then(|n| {
@@ -507,6 +554,21 @@ pub(crate) fn execute(
                                 }
                                 let open = Instant::now();
                                 let physical = match asset.format {
+                                    Format::Hdf5 => {
+                                        #[cfg(feature = "native-hdf5")]
+                                        {
+                                            Reader::Hdf5(Box::new(
+                                                crate::hdf5::SelectedReader::new(
+                                                    asset,
+                                                    sel,
+                                                    &sources.hdf5,
+                                                    &task.nodes,
+                                                )?,
+                                            ))
+                                        }
+                                        #[cfg(not(feature = "native-hdf5"))]
+                                        return Err("build with native-hdf5".into());
+                                    }
                                     Format::Cog => Reader::Cog(Box::new(
                                         crate::execute::SelectedCogReader::new(
                                             asset,
@@ -556,7 +618,13 @@ pub(crate) fn execute(
                     // have no cross-task lifetime. Drop before releasing the
                     // task's cache+working reservation. Zarr coordinates remain
                     // retained across that selection's individual chunk tasks.
-                    if matches!(reader, Some((_, Reader::Cog(_)))) {
+                    #[allow(unused_mut)]
+                    let mut release = matches!(reader, Some((_, Reader::Cog(_))));
+                    #[cfg(feature = "native-hdf5")]
+                    {
+                        release |= matches!(reader, Some((_, Reader::Hdf5(_))));
+                    }
+                    if release {
                         if let Some((_, previous)) = reader.take() {
                             previous.finish(&mut report)?;
                         }
@@ -643,6 +711,10 @@ pub(crate) fn execute(
     let range_metrics = result.scheduler.get("zarr_v3_ranges").cloned();
     let native_buffers = result.scheduler.get("native_buffers").cloned();
     result.scheduler = serde_json::json!({"workers":workers,"per_host":per_host,"buffer_bytes":r.budget.buffer_bytes,"reserved_bytes_peak":state.peak,"reader_state_reserved_bytes":retained,"prepared_native_metadata_bytes":prepared_bytes,"prepared_v3_metadata_index_bytes":sources.v3_prepared_bytes(),"active_workers_peak":state.active_peak,"completed_tasks":tasks.iter().map(|t|t.nodes.len()).sum::<usize>(),"admitted_jobs":tasks.len(),"cog_reader_scope":"selection","seconds":started.elapsed().as_secs_f64(),"order":"plan","memory_scope":"conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention"});
+    #[cfg(feature = "native-hdf5")]
+    {
+        result.scheduler["prepared_hdf5_bytes"] = serde_json::json!(sources.hdf5.bytes());
+    }
     if sources.v3.bytes() > 0 {
         result.scheduler["zarr_v3_coalescing"] = serde_json::json!({"config":crate::zarr_ranges::Config::from_env(workers.min(per_host))?,"window_logical_chunks":32,"plan_metadata_bytes":tasks.iter().filter_map(|t|t.batch.as_ref()).map(|b|b.metadata_bytes()).sum::<usize>(),"batches":tasks.iter().filter_map(|t|t.batch.as_ref().map(|b|serde_json::json!({"selected":t.selected,"nodes":t.nodes,"reservation":t.bytes,"fetches":b.fetches}))).collect::<Vec<_>>()});
     }

@@ -39,3 +39,6 @@ mod native_cog;
 
 mod zarr_ranges;
 mod zarr_v3;
+
+#[cfg(feature = "native-hdf5")]
+mod hdf5;

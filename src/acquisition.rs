@@ -507,7 +507,7 @@ fn prepare_inner(request: &Request, cache: &mut LayoutCache) -> Result<Prepared>
         let width = u64::try_from(selected.window.width).ok()?;
         let height = u64::try_from(selected.window.height).ok()?;
         let times = if selected.dimensions.is_some() {
-            selected.timestamps.len()
+            selected.timestamps.len().max(1)
         } else {
             1
         };
@@ -770,7 +770,7 @@ impl Versions {
                 continue;
             }
             let root = Path::new(&a.locator);
-            if a.format == Format::Cog {
+            if matches!(a.format, Format::Cog | Format::Hdf5) {
                 v.add(root.into())?;
                 continue;
             }

@@ -152,6 +152,7 @@ pub fn from_geojson(value: &Value, crs: &str) -> Result<Geometry> {
 }
 pub fn geometry(spatial: &Spatial) -> Result<Geometry> {
     let (crs, coordinates) = match spatial {
+        Spatial::ArraySlice { .. } => return fail("array slices have no polygon geometry"),
         Spatial::Bounds {
             crs,
             bbox: [x0, y0, x1, y1],
