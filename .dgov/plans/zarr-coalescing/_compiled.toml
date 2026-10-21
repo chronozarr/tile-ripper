@@ -1,0 +1,17 @@
+[plan]
+name = "zarr-coalescing"
+source_mtime_max = "2026-10-21T02:45:58.144354Z"
+sop_set_hash = ""
+
+[tasks."tasks/work.work"]
+summary = "Implement, validate and benchmark bounded shard range coalescing"
+prompt = """
+Orient: Read the cost-aware range coalescing brief and preserved fe6fcd1 reports.
+Edit: Implement pure bounded physical-range planning and task-scoped buffers. Keep zarrs index/codec interpretation, ordered delivery, strict source validation and all output defaults. Compare individual, adjacent, Python fixed thresholds and cost policies on frozen and wide layouts. Commit validated changes locally; no merge or publication.
+Verify: Run CARGO_INCREMENTAL=0 cargo test --no-default-features, cargo clippy feature matrix, independent scientific/failure/memory/benchmark scripts and one restrained public GFS regression.
+"""
+commit_message = "Coalesce bounded remote Zarr v3 shard ranges"
+timeout_s = 0
+test_cmd = "CARGO_INCREMENTAL=0 cargo test --no-default-features"
+files.create = ["src/zarr_ranges.rs", "bench/zarr_coalescing.py", "docs/zarr-coalescing/report.md"]
+files.edit = ["src/zarr_v3.rs", "src/zarr_acquire.rs", "src/storage.rs", "src/scheduler.rs", "src/lib.rs", "src/acquisition.rs"]
