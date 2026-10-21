@@ -1,0 +1,208 @@
+{
+  "implementation_commit": "daa79e30804c13a4d1cde72527b50e5a983ddb34",
+  "baseline_commit": "fe6fcd1",
+  "baseline_preservation_commit": "582bb54",
+  "recorded_utc": "2026-10-21T03:59:28.744083+00:00",
+  "rustc": "rustc 1.92.0 (ded5c06cf 2025-12-08)",
+  "cargo": "cargo 1.92.0 (344c4567c 2025-10-21)",
+  "zarrs": "0.23.14",
+  "msrv_manifest": "1.91 (unchanged; this run uses 1.92)",
+  "rust_source_manifest_hash": "7c39602b303f0623e9f07f825092c8bb4b4bc4d930e4820e652a99c6741de395",
+  "source_files": {
+    "Cargo.lock": "b0c7a6112b211dad97f938ac3b2b2c22d16ba29286b86815d71364f269c6472b",
+    "Cargo.toml": "0e68d613e4630583de561b24f25e9654ffdcbb15fe90d8f0bc7648b6cec1049c",
+    "bench/zarr-v3-repro/src/bin/matrix.rs": "13dfed34e38d52e71b434e12728a50209048b30e82eb995162701a47b95d02d4",
+    "bench/zarr-v3-repro/src/main.rs": "5dac28044b06e7776688829c7bea392ce16d5c033e0fae4c2d6fcb1adb45910d",
+    "consumers/native-stats/Cargo.toml": "1d7d4bbea4881a91d6662788e96f9faa1e5f9c932f741867b92fb3ea1349a9fc",
+    "consumers/native-stats/src/main.rs": "aaf98f05c5fb6b0192bb4bbb03147fcec547f7ad8e159b17f8aaf4557ea3c26b",
+    "examples/acquire.rs": "f3f41a888567a6e849482211146b922f0f354a21246504d05f9e3d5a11901ac2",
+    "examples/chunk_stream.rs": "f05eb223b21675790f053002bb00fac811b65df618798a87bf0c8416ee6d84e6",
+    "examples/durable_output_candidate.rs": "3000afbd8746b7b9fc394590f51b7c89927810e1d4566c3dc74002dcfe78370a",
+    "examples/layout_oracle.rs": "414e79842164d53d1469d23a304feeae1402f0d00a95ad90585875be947d7387",
+    "examples/native_cog_oracle.rs": "cc3338d11a609c299e597f761a222b12e3937dea2f140fba48d17291c90f02a8",
+    "examples/native_sentinel_oracle.rs": "8a3cc656fe50575e9bedaffabe4875287bfb6ea5295b5b4f69c9bfbc60f41a9b",
+    "examples/remote_zarr.rs": "a8e4ed9ac4022635dbd1256fb8040a9799746388369ebe6401d9e6f8365c4061",
+    "examples/scientific_subset.rs": "c7f18a65458e99e802e49935126801e2f7226033cb017dce3712953c5b0ad903",
+    "examples/stac_acquire.rs": "04a3a73a29691609cb2ec1bd1cbdf299a157f70233f58f50762ec799f91745e6",
+    "examples/zarr_acquire.rs": "8b8cf25ccc6bf9de6f73499ca1ab4b27b68300583e28269f1995d32ad6f5a8fa",
+    "examples/zarr_subset_oracle.rs": "ae89b7841ced919b84b9d596d53d7f1c3b12247c768e6e6856b9882ebfd6d224",
+    "src/acquisition.rs": "83fb322f6d01298547b150be0fa68a01f9a23def1a98831bc940ceb98d229624",
+    "src/cli/mod.rs": "a102580f5749bf2dca4293d3ec3f9140dff9aaa89d5b930caea2b0ff9f0bae27",
+    "src/cog.rs": "47f1003427aa69dd838e23e748d7880bb00c025d45a1c53284a108a90f6e13a6",
+    "src/cog_gdal.rs": "a8238ee35126059ac8413681cc9478153f33fce963d30a73ca4ae1f06f2a55e4",
+    "src/cog_gdal_reader.rs": "cfe62e5925059cada6df6926d568f8ed2ea60b5ce6307d454dfc9591617559cc",
+    "src/cog_range.rs": "d9c46c90379065336e22033f571a201eab6a7a0d8cfe1c740d60459370e8c094",
+    "src/diagnostics.rs": "2c225babd4c7cc7ecb7a381636277e154c2dd8574fb0a55c17750c77b391658b",
+    "src/diagnostics_gdal.rs": "991cd459830bd2154862eaedb7cdfc53c18a310d3c9fe476bc7195b33f719efe",
+    "src/execute.rs": "2fc468cb1e87400b7affc7347faa92531516143fd1e119e39c3ea09ee9d73d99",
+    "src/lib.rs": "8b2d3e18aa31a185bde36728b4bece182bfa0cf5d9d46106a610439fbe6ac5f7",
+    "src/main.rs": "47baf8634891e3376c622be0bead5f9f2c4ef499277d9d4658c25f62989cd7cd",
+    "src/model.rs": "a0515b71dcedcdb1b0a2a840c3fba64f721f259be4986baab1e7cbcbac14f8d7",
+    "src/native_cog.rs": "2c564b6ad48e8d3d76c7b9e482639a8c3ad0b7acde3a474542a4704798fa21b8",
+    "src/pixels.rs": "2d65e96fdff5e79d0d34d22ee459f94e4b37ff6c5ef821056283943465787a65",
+    "src/planner.rs": "9298dee2ed6d014921e53c4d91e92a0e78f2f4fe91916939c59da19444412ca3",
+    "src/scheduler.rs": "05b1c125ad0d9987dde67bb30dbec56089522ce0e05e16122038afce1dbe4a9f",
+    "src/scientific_output.rs": "51f23f3b93da515fc84bdf26c02912c8eb693de986c3ef495687cdfc3e2a5ce6",
+    "src/spatial.rs": "81cdbf75401933ff02511dc900587067e6a3002bfafddf8ff0b472e0e1404184",
+    "src/spatial_gdal.rs": "e39be8da1bd164e421cc1e61349aea0b56c0aedd9d5c19ecb4118a4020704228",
+    "src/spatial_native.rs": "efd4fa4c771a383c01b1c8e6c1d8e3a1fefcdc030596232d9555df6d3301f1a4",
+    "src/stac_workflow.rs": "51a6236b813b05ee032bbab6dc56ea548ca3dbb4fdfff3e93aa846433a12eed9",
+    "src/storage.rs": "7ca1c64d5f14e470ac70060badada3f71934a206351497fdb6b47f70141059a4",
+    "src/stream.rs": "0a10f91d53dd9778e5f46a7580ebb8a9e77948384fc651fecea227636e174972",
+    "src/zarr.rs": "cd1af3e766e9697a157a61b41919b0c97d7a8e22c469c9872eba2d67101715ae",
+    "src/zarr_acquire.rs": "6dc7fdca06ec6867eebd93b3d25c4c0e949fa867acc0d9f0ffe429cbe668659c",
+    "src/zarr_decode.rs": "4bbbb6587147c81910c1c37d3166450be4f2a7c067351164a978a95b662772c5",
+    "src/zarr_io.rs": "b2c2ffd76b9c00a20795ab12d654857d524897206a666e3c684a5afe1288a835",
+    "src/zarr_ranges.rs": "3175b0fe7fb6043d0fa0ddd420199600c7fcad1b016d0ecea1df4da7461a173c",
+    "src/zarr_v3.rs": "edf49345742f51961f67523da4765fa2a772b718eefdd8e266a145eca27af164",
+    "tests/acquisition.rs": "f2847785f521a6a5a8dad35d769215d458797929688912d5bb6ad0eb83ed0585",
+    "tests/cf_zarr.rs": "af3416e55b42862dd78d1d375fb47422f590455e3148913148536617128f067e",
+    "tests/cli.rs": "163fd7af7d87cbbe7dee6977db685285138adb4afa87ae04e508b05509e1a1fa",
+    "tests/native_cog.rs": "a7b9e2968bcbd4b3ce7b335182ef5be64c50c0d0285dd13f4444471d4b9fb5db",
+    "tests/native_http_snapshot.rs": "43b6a401239a5095d478c6d1034c34754373c753468b6e0eee75824a011923a7",
+    "tests/planner.rs": "2d32fc2473c08255919ef489907c6e49fd4b96ee52c7dff015ecb3d5dd42ed61",
+    "tests/remote_zarr.rs": "9042f34b86eec635fde1c958a793e75dd7810c541ba514f3b4c770d08af53fa9",
+    "tests/stac_workflow.rs": "b3df29248953a7133601e51cf364260d5b596ce88352d1064ea05c273cde6e61",
+    "tests/streaming.rs": "c0b573a7e5530e4d5d768bb5f7073c683c57d9265140dccb2b1a85f5e1bef494",
+    "tests/zarr_v3.rs": "e081a402cf8fa6006c354a1d7effdda03721dc6818a35982c4d742f2d6a7aa2b",
+    "tests/zarr_workflow.rs": "7886f6b8dcf7d267a127fd71ac3af1eeed7eed62aeead7230fc3b0ae1c987f7a",
+    "vendor/zarrs_filesystem/src/direct_io.rs": "2275ecdb0e32ba8d0ebdd128dcc18e1590b314eff076dfc6cdf2377695648abc",
+    "vendor/zarrs_filesystem/src/lib.rs": "cae7ce4736e04a2a1b79c43b191c64c1854fb543d0ad3e019820ca2c849c08d3",
+    "vendor/zarrs_filesystem/tests/filesystem.rs": "6039e3b2640afdbd5530584963df5f746a81b6601862f1f4e4fa8a3b51c8a37d"
+  },
+  "binary_sha256": {
+    "target/zarr-v3-input/release/tile-ripper": "94231a2d602ce9ced187e54283b63a0e90feb9aa9fc53a1f22cbefd88b75a10e",
+    "target/zarr-v3-input/release/examples/zarr_subset_oracle": "fc9680a850fa08bfe902beb5a1ee7c1219f2cf7bb339afd802dc094c5fde5c42",
+    "target/zarr-v3-input/release/examples/chunk_stream": "40d31c4800bbf7331214c1227baa23156f8493a4a38ba830cdc1e3086c9e59a9",
+    "target/zarr-v3-input/release/tile-ripper-native-stats": "237d066bd79dda7030c23055a3829b6d0ae3a84bac3eef3f7733d02ba000a44f"
+  },
+  "baseline_reports_fixtures_binaries_hashes_verified": true,
+  "build": "CARGO_INCREMENTAL=0 cargo build --release --locked --no-default-features --features native-cog --examples --bin tile-ripper --target-dir target/zarr-v3-input",
+  "benchmark_cells": 108,
+  "policy_cells": 180,
+  "hint_cells": 24,
+  "paired_sparse_cells": 108,
+  "benchmark_exact_science_cells": 6,
+  "additional_science_failure_resource_cases": 24,
+  "physical_coverage_exact_science_and_order": true,
+  "raw_unchanged_etag_integrity_limit": "observed in baseline and candidate; not a claimed corruption-rejection pass",
+  "feature_matrix": "rust.json; final all-feature tests/clippy and non-v3 setting isolation rechecked after scope guard",
+  "final_all_feature_counts": [
+    [
+      "33",
+      "0",
+      "0"
+    ],
+    [
+      "4",
+      "0",
+      "0"
+    ],
+    [
+      "14",
+      "0",
+      "0"
+    ],
+    [
+      "2",
+      "0",
+      "0"
+    ],
+    [
+      "6",
+      "0",
+      "0"
+    ],
+    [
+      "0",
+      "0",
+      "1"
+    ],
+    [
+      "0",
+      "0",
+      "1"
+    ],
+    [
+      "8",
+      "0",
+      "0"
+    ],
+    [
+      "1",
+      "0",
+      "1"
+    ],
+    [
+      "3",
+      "0",
+      "1"
+    ],
+    [
+      "12",
+      "0",
+      "0"
+    ],
+    [
+      "5",
+      "0",
+      "0"
+    ],
+    [
+      "4",
+      "0",
+      "0"
+    ],
+    [
+      "0",
+      "0",
+      "0"
+    ]
+  ],
+  "native_external_consumer_source_hash": "7c99cd9124b6c5e08538d6f5039ab21517c1cf8ba87878e68c1c09b2025ea8c9",
+  "public_scope": "Two restrained selective regression passes, no public tuning. Last receipt precedes only ordinary diagnostic / non-v3 configuration guards; sharded read plan and transport unchanged. Frozen selected identities checked.",
+  "preserved_exploratory_runs": [
+    "benchmark-before-diagnostic-fix.json",
+    "benchmark-before-format-isolation.json",
+    "policy-pilot-initial.json"
+  ],
+  "excluded_interrupted_comparison": {
+    "receipt": "benchmark-interrupted.json",
+    "reason": "Harness incorrectly required If-Match for absent chunk GET 404s; present objects retain conditional checks. Raw native/Python results, HTTP trace and traceback retained in prototype-output/zarr-coalescing/benchmark-interrupted*."
+  },
+  "ordinary_sharded_frozen_fixtures": 1604,
+  "wide_fixture_hashes": {
+    "prototype-output/zarr-coalescing/wide/layout-complete": "2437bba91d9f153565cbf85cf26c04075e5f8cbe423f0d16785c0893f6d54dd7",
+    "prototype-output/zarr-coalescing/wide/mask/c/0/0/0": "b7fefe2a7b734caac11df74b3bb65728a627dd41216b1dcffda31f4149d2449a",
+    "prototype-output/zarr-coalescing/wide/mask/c/1/0/0": "2143ed797c130524888f3e68ef93fac7c48c3028f914d6b5e1ae33b5d205726d",
+    "prototype-output/zarr-coalescing/wide/mask/c/2/0/0": "044e47e209ac1f723dfa6efbbc31b40206732cdc5d1d683d17141866322a492d",
+    "prototype-output/zarr-coalescing/wide/mask/c/3/0/0": "e518a4dda7070e1cd543881d0d871df1d28ada3fac337b3a7d33c4429be90b15",
+    "prototype-output/zarr-coalescing/wide/mask/zarr.json": "c6695828efd2ad740d3c7544db0086485189b4e27301798aa9d1ed431d0294d8",
+    "prototype-output/zarr-coalescing/wide/signal/c/0/0/0": "6646f97a6263aba0577eb423b5c4d29269406c6d7ab76d812efcd323c7b9c8cd",
+    "prototype-output/zarr-coalescing/wide/signal/c/1/0/0": "6618b729412049c5cfc1c4cb5b7e4f62ac05efdf13c837bdd9a820f57dd97dec",
+    "prototype-output/zarr-coalescing/wide/signal/c/2/0/0": "2a947ed3ef35ce479b07f7ec543138b96127c2368afa60e402022be6808380ec",
+    "prototype-output/zarr-coalescing/wide/signal/c/3/0/0": "7733306944fd30710eb293f385e131569e9316b888f71f7092c6260229ed69ba",
+    "prototype-output/zarr-coalescing/wide/signal/zarr.json": "afeac07d51875039920c30016b92a4c9c6331d13aa6271ddf57748a921aeea47",
+    "prototype-output/zarr-coalescing/wide/spatial_ref/zarr.json": "0300b883ff3cfe35af7f78fd3457853d329f944095ba5acbfea344949db9c371",
+    "prototype-output/zarr-coalescing/wide/temperature/c/0/0/0": "e6879767ad20f3e229dabe37773ad32cba43ab19460fa51a4fa50eaed4151b56",
+    "prototype-output/zarr-coalescing/wide/temperature/c/1/0/0": "d6e157f38ac91931e127ad7f4ae4c5a951644d1506e2625f6e2d4cd05125f487",
+    "prototype-output/zarr-coalescing/wide/temperature/c/2/0/0": "0ae87dc6f3eb9bbfb1e36e7c2ee0cf1f90431c956d02e0dfc02d6ead4c019c1f",
+    "prototype-output/zarr-coalescing/wide/temperature/c/3/0/0": "a505f6669b14e469649de9993893914b4b1ce9929a6f8dcd8f71a0bd8057806c",
+    "prototype-output/zarr-coalescing/wide/temperature/zarr.json": "70fa97def23d5d3f1a5eb9f7fb00c1b20b7d4c836efa97740bf407c46b2d9c79",
+    "prototype-output/zarr-coalescing/wide/time/c/0": "bd0d3dbe293967bc1e7a3a54c1effaf03b25b71fcc764b5ea940873789208677",
+    "prototype-output/zarr-coalescing/wide/time/zarr.json": "81c03028524e383a695b04e6bbcbc7b0c2de9237eb0ca959fba27a9526f52f8c",
+    "prototype-output/zarr-coalescing/wide/x/c/0": "26843fb84a51d7caa3a45f587e90002d2353fe7e0e6ff0ae737d8c9a7cf7b75e",
+    "prototype-output/zarr-coalescing/wide/x/zarr.json": "723f35b2737f6daf05d50dd2e7927415bc57166d3c871c0e24d3508cad8257af",
+    "prototype-output/zarr-coalescing/wide/y/c/0": "100cdace3d5a45a744bc044c342a4b0b731fb2ae63757ad4be0cd3a4f5edf65c",
+    "prototype-output/zarr-coalescing/wide/y/zarr.json": "349b22fa7113104247913b82f418c4a9517606a004c92045b5efba5a6a3e095d",
+    "prototype-output/zarr-coalescing/wide/zarr.json": "777c460db5fad563b1c6b225b12c57f76dadb0e3ccd6b492d56b1b1b3ea7df2c"
+  },
+  "publication_protocol_changed": false,
+  "default_output": "uncompressed Zarr v2",
+  "experimental_v3_output_default": false,
+  "new_encoder_or_index_parser": false,
+  "new_rust_dependencies": false,
+  "HDF5_NetCDF_implemented": false,
+  "merge_push_tag_release_publish_deploy": false,
+  "timing_isolation": "Each final comparison/policy/hints/focused sparse run executed with no build or validation job in parallel. Explanatory doc/receipt reads and normal OS background load remain; per-cell samples/ranges retained."
+}

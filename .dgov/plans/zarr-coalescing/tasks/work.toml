@@ -2,7 +2,7 @@
 summary = "Implement, validate and benchmark bounded shard range coalescing"
 role = "worker"
 commit_message = "Coalesce bounded remote Zarr v3 shard ranges"
-files = { edit = ["src/zarr_v3.rs", "src/zarr_acquire.rs", "src/storage.rs", "src/scheduler.rs", "src/lib.rs", "bench/zarr_v3_input.py", "bench/zarr_v3_regressions.py", "examples/zarr_subset_oracle.rs"], create = ["src/zarr_ranges.rs", "bench/zarr_coalescing.py", "docs/zarr-coalescing/report.md"] }
+files = { edit = ["src/zarr_v3.rs", "src/zarr_acquire.rs", "src/storage.rs", "src/scheduler.rs", "src/lib.rs", "bench/zarr_v3_input.py", "bench/zarr_v3_regressions.py", "examples/zarr_subset_oracle.rs"], create = ["src/zarr_ranges.rs", "bench/zarr_coalescing.py", "bench/zarr_coalescing_sparse.py", "bench/zarr_coalescing_coverage.py", "docs/zarr-coalescing/report.md"] }
 prompt = """
 Orient:
 - Read the cost-aware range coalescing brief and preserved fe6fcd1 reports.

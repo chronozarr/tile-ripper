@@ -1,6 +1,6 @@
 [plan]
 name = "zarr-coalescing"
-source_mtime_max = "2026-10-21T03:33:42.058406Z"
+source_mtime_max = "2026-10-21T04:04:42.088196Z"
 sop_set_hash = ""
 
 [tasks."tasks/work.work"]
@@ -16,5 +16,5 @@ Verify:
 commit_message = "Coalesce bounded remote Zarr v3 shard ranges"
 timeout_s = 0
 test_cmd = "CARGO_INCREMENTAL=0 cargo test --no-default-features"
-files.create = ["src/zarr_ranges.rs", "bench/zarr_coalescing.py", "docs/zarr-coalescing/report.md"]
+files.create = ["src/zarr_ranges.rs", "bench/zarr_coalescing.py", "bench/zarr_coalescing_sparse.py", "bench/zarr_coalescing_coverage.py", "docs/zarr-coalescing/report.md"]
 files.edit = ["src/zarr_v3.rs", "src/zarr_acquire.rs", "src/storage.rs", "src/scheduler.rs", "src/lib.rs", "bench/zarr_v3_input.py", "bench/zarr_v3_regressions.py", "examples/zarr_subset_oracle.rs"]
