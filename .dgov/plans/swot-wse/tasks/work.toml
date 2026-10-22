@@ -1,0 +1,23 @@
+[tasks.work]
+summary = "Extend coordinate admission and qualify a real SWOT Raster selection"
+role = "worker"
+commit_message = "Acquire bounded SWOT Raster WSE with chunked coordinates"
+files = { read = ["docs/swot-wse/brief.md", "docs/swot-wse/workflow.md", "vendor/hdf5-reader/"], edit = ["src/hdf5.rs", "src/storage.rs", "tests/hdf5.rs", "bench/hdf5_golden.py", "bench/hdf5_selective_mirror.py", "README.md"], create = ["bench/swot_wse.py", "bench/swot_wse_reference.py", "bench/swot_wse_axes.py", "bench/swot_wse_regressions.py", "bench/swot_wse_summary.py", "docs/swot-wse/", "tests/data/hdf5/chunked-coordinates.h5"] }
+prompt = """
+Orient:
+- Read docs/swot-wse/brief.md, existing admission code and exact product evidence.
+Edit:
+1. Reuse hdf5-reader for bounded selected rank-one coordinate chunk reads.
+2. Preserve WSE bits, coordinates, source attributes, projection and identities.
+3. Investigate official authenticated ranges without weakening native validation.
+4. Validate captured real-source extents and independent h5py/netCDF4 controls.
+5. Exercise coordinate faults, source mutation, memory and inherited regressions.
+6. Measure full/selective, exact/batched reads and mature controls on loopback.
+7. Report the live-native access blocker, science limits and next milestone.
+8. Commit verified changes locally; no upstream publication or ChronoZarr changes.
+Verify:
+- cargo test --locked --no-default-features --features native-hdf5
+- cargo clippy --locked --no-default-features --features native-hdf5 --all-targets -- -D warnings
+- Run docs/swot-wse/workflow.md's scientific, fault, resource and inherited gates.
+"""
+test_cmd = "cargo test --locked --no-default-features --features native-hdf5"

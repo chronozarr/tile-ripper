@@ -117,3 +117,69 @@ fn storage_initialization_keeps_valid_values_without_cf_missing_marker() -> Resu
     }
     Ok(())
 }
+
+#[cfg(feature = "native-hdf5")]
+#[test]
+fn chunked_coordinate_strides_descending_order_and_partial_edges() -> Result<()> {
+    let r = request(&fixture("chunked-coordinates"));
+    let prepared = acquisition::prepare(&r, &mut LayoutCache::default())?;
+    let explanation = prepared.explain();
+    let binding = &explanation["sources"][0]["object_identities"]["datasets"][0];
+    assert_eq!(binding["root_attributes"]["cycle_number"]["value"], 11.);
+    for axis in binding["axes"].as_array().unwrap() {
+        assert_eq!(axis["attributes"]["units"]["value"], "m");
+        assert_eq!(axis["storage"]["chunks"].as_array().unwrap().len(), 3);
+        assert!(
+            axis["storage"]["prepare_reserved_bytes_peak"]
+                .as_u64()
+                .unwrap()
+                <= r.budget.buffer_bytes as u64
+        );
+    }
+    let mut stream = prepared.into_stream(StreamOptions { capacity: 0 })?;
+    let mut seen = std::collections::BTreeSet::new();
+    for c in stream.by_ref() {
+        let c = c?;
+        let (x, y) = c.coordinates.as_ref().unwrap();
+        for (row, cy) in y.iter().enumerate() {
+            for (col, cx) in x.iter().enumerate() {
+                let sy = ((5000. - cy) / 10.) as usize;
+                let sx = ((cx - 1000.) / 5.) as usize;
+                assert!([1, 4, 7].contains(&sy));
+                assert!([2, 6, 10].contains(&sx));
+                assert_eq!(
+                    c.pixels.as_u16().unwrap()[row * x.len() + col],
+                    (sy * 11 + sx) as u16
+                );
+                assert!(seen.insert((sy, sx)));
+            }
+        }
+    }
+    stream.finish()?;
+    assert_eq!(seen.len(), 9);
+    Ok(())
+}
+
+#[cfg(feature = "native-hdf5")]
+#[test]
+fn local_coordinate_and_data_mutation_cannot_return_success() -> Result<()> {
+    use std::io::{Seek, SeekFrom, Write};
+    for mode in ["coordinates-before", "data-during"] {
+        let path =
+            std::env::temp_dir().join(format!("tile-ripper-hdf5-{}-{mode}.h5", std::process::id()));
+        std::fs::copy(fixture("chunked-coordinates"), &path)?;
+        let r = request(path.to_str().unwrap());
+        let prepared = acquisition::prepare(&r, &mut LayoutCache::default())?;
+        let mut stream = prepared.into_stream(StreamOptions { capacity: 0 })?;
+        if mode == "data-during" {
+            stream.next().unwrap()?;
+        }
+        let mut f = std::fs::OpenOptions::new().write(true).open(&path)?;
+        f.seek(SeekFrom::Start(4096))?;
+        f.write_all(&[0x19])?;
+        f.sync_all()?;
+        assert!(stream.finish().is_err());
+        std::fs::remove_file(path)?;
+    }
+    Ok(())
+}

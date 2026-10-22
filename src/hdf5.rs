@@ -142,7 +142,14 @@ impl Storage for View {
                 return Ok(StorageBuffer::from_vec(bytes.to_vec()));
             }
         }
-        self.metadata.read_range(start, len)
+        self.metadata
+            .cached(start, len)
+            .map(StorageBuffer::from_vec)
+            .ok_or_else(|| {
+                hdf5_reader::error::Error::InvalidData(
+                    "HDF5 decoder attempted an unplanned metadata/payload range".into(),
+                )
+            })
     }
 }
 fn open(storage: Arc<dyn Storage>) -> Result<Hdf5File> {
@@ -156,7 +163,6 @@ fn open(storage: Arc<dyn Storage>) -> Result<Hdf5File> {
     )?)
 }
 fn attrs(dataset: &Dataset, file: &Hdf5File) -> Result<Value> {
-    use base64::Engine;
     let header = file.get_or_parse_header(dataset.address())?;
     if header
         .messages
@@ -165,14 +171,14 @@ fn attrs(dataset: &Dataset, file: &Hdf5File) -> Result<Value> {
     {
         return fail("external data storage is outside the admitted HDF5 profile");
     }
-    let mut out = serde_json::Map::new();
     let explicit_storage_fill = header
         .messages
         .iter()
         .any(|m| matches!(m, HdfMessage::FillValue(fill) if fill.value.is_some()));
     // Dataset::attributes includes the library's bounded dense-attribute heap
     // traversal. Header messages alone omit real NetCDF-4 scientific attributes.
-    for attr in dataset.attributes() {
+    let attributes = dataset.attributes();
+    for attr in &attributes {
         if attr.name == "_FillValue" && !explicit_storage_fill {
             // The upstream reader substitutes this attribute for a default
             // HDF5 fill. Reject that ambiguous layout instead of changing its
@@ -181,6 +187,13 @@ fn attrs(dataset: &Dataset, file: &Hdf5File) -> Result<Value> {
                 "CF _FillValue with implicit HDF5 initialization is outside the admitted profile",
             );
         }
+    }
+    stored_attrs(attributes)
+}
+fn stored_attrs(attributes: Vec<hdf5_reader::Attribute>) -> Result<Value> {
+    use base64::Engine;
+    let mut out = serde_json::Map::new();
+    for attr in attributes {
         let mut value = json!({"dtype":format!("{:?}",attr.datatype),"shape":attr.shape,
             "stored_bytes_base64":base64::engine::general_purpose::STANDARD.encode(&attr.raw_data)});
         match &attr.datatype {
@@ -250,7 +263,7 @@ fn dtype(dataset: &Dataset) -> Result<&'static str> {
 }
 #[derive(Clone, Debug)]
 struct Entry {
-    offsets: [usize; 2],
+    offsets: Vec<usize>,
     address: u64,
     size: usize,
 }
@@ -279,7 +292,8 @@ fn entries(file: &Hdf5File, dataset: &Dataset, first: &[u64], last: &[u64]) -> R
     else {
         return fail("native HDF5 data requires layout v1-v3 with v1 B-tree chunk index");
     };
-    if dims.len() != 2
+    if ![1, 2].contains(&dims.len())
+        || dims.len() != dataset.ndim()
         || dataset.chunks().as_deref() != Some(dims.as_slice())
         || usize::try_from(*element_size)? != hdf5_reader::dtype_element_size(dataset.dtype())?
     {
@@ -295,7 +309,7 @@ fn entries(file: &Hdf5File, dataset: &Dataset, first: &[u64], last: &[u64]) -> R
             *address,
             sb.offset_size,
             sb.length_size,
-            Some(2),
+            Some(dims.len() as u32),
             dims,
             Some((first, last)),
         )?
@@ -333,7 +347,10 @@ fn entries(file: &Hdf5File, dataset: &Dataset, first: &[u64], last: &[u64]) -> R
                 return fail("invalid HDF5 compressed chunk extent");
             }
             Ok(Entry {
-                offsets: [usize::try_from(offsets[0])?, usize::try_from(offsets[1])?],
+                offsets: offsets[..dims.len()]
+                    .iter()
+                    .map(|v| usize::try_from(*v))
+                    .collect::<std::result::Result<_, _>>()?,
                 address,
                 size,
             })
@@ -438,7 +455,7 @@ fn coordinate(ds: &Dataset, start: usize, count: usize, step: usize) -> Result<V
     };
     macro_rules! read {
         ($ty:ty) => {
-            ds.read_slice::<$ty>(&selected)?
+            ds.read_slice_selective_v1::<$ty>(&selected)?
                 .iter()
                 .map(|v| *v as f64)
                 .collect()
@@ -500,6 +517,109 @@ fn chunk_indices(
             .max(i + 1);
     }
     Ok(out)
+}
+// Payloads never enter the metadata cache. hdf5-reader owns index/filter parsing;
+// a closed View permits only one admitted chunk and already discovered metadata.
+fn chunked_coordinate(
+    metadata: &Arc<Metadata>,
+    file: &Hdf5File,
+    path: &str,
+    axis: &Dataset,
+    selected: [usize; 3],
+    budget: &Budget,
+    coordinate_bytes: usize,
+) -> Result<(Vec<f64>, Value)> {
+    let [start, count, step] = selected;
+    let chunks = axis.chunks().ok_or("missing coordinate chunk shape")?;
+    if chunks.len() != 1 || chunks[0] == 0 {
+        return fail("HDF5 chunked coordinates require a nonzero rank-one chunk shape");
+    }
+    let block = usize::try_from(chunks[0])?;
+    let native = block
+        .checked_mul(hdf5_reader::dtype_element_size(axis.dtype())?)
+        .ok_or("HDF5 coordinate chunk size overflow")?;
+    if native > budget.buffer_bytes / 8 {
+        return fail("one decoded HDF5 coordinate chunk exceeds working memory budget");
+    }
+    let indices = chunk_indices(start, count, step, block, budget.max_nodes)?;
+    if indices.len() > budget.buffer_bytes / 4096 {
+        return fail("HDF5 coordinate chunk-plan bookkeeping exceeds working budget");
+    }
+    let mut values = Vec::with_capacity(count);
+    let mut receipts = Vec::new();
+    let mut peak = 0;
+    for index in indices {
+        metadata.file.phase("hdf5_coordinate_index_discovery");
+        let bounds = [index as u64];
+        let found = entries(file, axis, &bounds, &bounds)?;
+        let offset = index
+            .checked_mul(block)
+            .ok_or("coordinate chunk overflow")?;
+        if found.len() != 1 || found[0].offsets != [offset] {
+            return fail("absent or invalid selected HDF5 coordinate chunk");
+        }
+        let entry = &found[0];
+        let reservation = native
+            .checked_mul(8)
+            .and_then(|n| n.checked_add(entry.size.checked_mul(3)?))
+            .and_then(|n| n.checked_add(metadata.bytes().checked_mul(4)?))
+            .and_then(|n| n.checked_add(coordinate_bytes))
+            .and_then(|n| n.checked_add(receipts.len().checked_mul(2048)?))
+            .and_then(|n| n.checked_add(32768))
+            .ok_or("HDF5 coordinate working reservation overflow")?;
+        if reservation > budget.buffer_bytes {
+            return fail("HDF5 coordinate decoding exceeds working memory budget");
+        }
+        peak = peak.max(reservation);
+        let first = offset.saturating_sub(start).div_ceil(step);
+        let end = offset
+            .checked_add(block)
+            .ok_or("coordinate chunk overflow")?
+            .min(usize::try_from(axis.shape()[0])?)
+            .saturating_sub(start)
+            .div_ceil(step)
+            .min(count);
+        let at = start + first * step;
+        metadata.file.phase("hdf5_coordinate_chunks");
+        let payload = metadata.file.read(entry.address, entry.size)?;
+        let view = open(Arc::new(View {
+            metadata: metadata.clone(),
+            start: entry.address,
+            payload,
+        }))?;
+        let decoded = coordinate(&view.dataset(path)?, at, end - first, step)?;
+        values.extend(decoded);
+        receipts.push(json!({"start":at,"count":end-first,"step":step,
+            "chunk_offset":offset,"byte_offset":entry.address,"encoded_bytes":entry.size}));
+    }
+    metadata.file.phase("metadata_index_discovery");
+    if values.len() != count {
+        return fail("HDF5 coordinate chunk coverage does not match selection");
+    }
+    Ok((
+        values,
+        json!({"layout":"chunked","chunk_shape":chunks,
+        "chunk_index":"v1 B-tree","index_policy":index_policy()?,
+        "decoded_chunk_bytes":native,"prepare_reserved_bytes_peak":peak,"chunks":receipts}),
+    ))
+}
+
+fn validate_coordinate_markers(axis: &Dataset, values: &[f64]) -> Result<()> {
+    for name in ["_FillValue", "missing_value"] {
+        let marker = match axis.attribute(name) {
+            Ok(attr) => attr,
+            Err(hdf5_reader::error::Error::AttributeNotFound(_)) => continue,
+            Err(error) => return Err(error.into()),
+        };
+        if marker.num_elements()? != 1 {
+            return fail("HDF5 coordinate missing markers must be numeric scalars");
+        }
+        let missing = marker.read_as_f64()?;
+        if values.contains(&missing) {
+            return fail("selected HDF5 coordinates contain a missing-value marker");
+        }
+    }
+    Ok(())
 }
 impl Context {
     pub fn binding(&self, asset: &str, path: &str) -> Result<Arc<Binding>> {
@@ -592,6 +712,7 @@ impl Context {
         {
             return fail("HDF5 requires closed ordinary single-file storage without a userblock or trailing bytes");
         }
+        let root_attributes = stored_attrs(file.root_group()?.attributes()?)?;
         for variable in &r.variables {
             let Variable::Dataset { path } = variable else {
                 return fail("HDF5 requires absolute dataset paths");
@@ -641,17 +762,37 @@ impl Context {
             }
             let mut coordinate_attrs = Vec::new();
             let mut coordinates = [Vec::new(), Vec::new()];
+            let coordinate_working_bytes = coordinate_bytes
+                .checked_add(self.bytes())
+                .ok_or("HDF5 coordinate preparation reservation overflow")?;
             for i in 0..2 {
                 let axis = file.dataset(&axes[i])?;
                 let axis_header = file.get_or_parse_header(axis.address())?;
-                if !axis_header.messages.iter().any(|m|matches!(m,HdfMessage::DataLayout(l) if matches!(l.layout,DataLayout::Contiguous {..} | DataLayout::Compact {..}))) {
-                    return fail("HDF5 coordinates require contiguous or compact rank-one storage");
-                }
                 if axis.shape() != [shape[i] as u64] {
                     return fail("explicit HDF5 coordinate shape does not match dataset dimension");
                 }
-                coordinates[i] = coordinate(&axis, start[i], count[i], step[i])?;
-                coordinate_attrs.push(json!({"path":axes[i],"dtype":format!("{:?}",axis.dtype()),"attributes":attrs(&axis,&file)?}));
+                let attributes = attrs(&axis, &file)?;
+                let chunked = axis_header.messages.iter().any(|m| {
+                    matches!(m,HdfMessage::DataLayout(l) if matches!(l.layout,DataLayout::Chunked {..}))
+                });
+                let storage = if chunked {
+                    let (values, storage) = chunked_coordinate(
+                        &metadata,
+                        &file,
+                        &axes[i],
+                        &axis,
+                        [start[i], count[i], step[i]],
+                        &r.budget,
+                        coordinate_working_bytes,
+                    )?;
+                    coordinates[i] = values;
+                    storage
+                } else {
+                    coordinates[i] = coordinate(&axis, start[i], count[i], step[i])?;
+                    json!({"layout":"contiguous_or_compact"})
+                };
+                validate_coordinate_markers(&axis, &coordinates[i])?;
+                coordinate_attrs.push(json!({"path":axes[i],"dtype":format!("{:?}",axis.dtype()),"attributes":attributes,"storage":storage}));
             }
             let mapping = attributes["grid_mapping"]["value"]
                 .as_str()
@@ -860,7 +1001,7 @@ impl Context {
                     .and_then(|n| n.checked_add(32768))
                     .ok_or("HDF5 working reservation overflow")?;
             }
-            let description = json!({"path":path,"shape":shape,"source_dtype":format!("{:?}",ds.dtype()),"stored_dtype":dt,"chunk_shape":chunk,"superblock_version":sb.version,"chunk_index":"v1 B-tree","index_policy":index_policy()?,"index_validation_scope":"visited nodes and visible pointers; full policy traverses all nodes","storage_fill":storage_fill.map(|v|if v.is_finite(){json!(v)}else{json!(v.to_string())}),"missingness":"CF scalar markers and NaNs; storage initialization alone is valid","attributes":attributes,"axes":coordinate_attrs,"axis_semantics":"stored coordinate values as exact Float64; apply axis scale/offset explicitly","grid_mapping":mapping,"time":time,"range_policy":policy,"physical_groups":groups,"chunks":jobs.iter().map(|j|json!({"node":j.node,"start":j.start,"count":j.count,"step":step,"byte_offset":j.entry.as_ref().map(|e|e.address),"encoded_bytes":j.entry.as_ref().map_or(0,|e|e.size)})).collect::<Vec<_>>()});
+            let description = json!({"path":path,"shape":shape,"source_dtype":format!("{:?}",ds.dtype()),"stored_dtype":dt,"chunk_shape":chunk,"superblock_version":sb.version,"chunk_index":"v1 B-tree","index_policy":index_policy()?,"index_validation_scope":"visited nodes and visible pointers; full policy traverses all nodes","storage_fill":storage_fill.map(|v|if v.is_finite(){json!(v)}else{json!(v.to_string())}),"missingness":"CF scalar markers and NaNs; storage initialization alone is valid","attributes":attributes,"root_attributes":root_attributes,"axes":coordinate_attrs,"axis_semantics":"stored coordinate values as exact Float64; apply axis scale/offset explicitly","grid_mapping":mapping,"time":time,"range_policy":policy,"physical_groups":groups,"chunks":jobs.iter().map(|j|json!({"node":j.node,"start":j.start,"count":j.count,"step":step,"byte_offset":j.entry.as_ref().map(|e|e.address),"encoded_bytes":j.entry.as_ref().map_or(0,|e|e.size)})).collect::<Vec<_>>()});
             p.selected.push(Selected {
                 timestamps: vec![],
                 dimensions: None,

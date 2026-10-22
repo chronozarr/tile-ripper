@@ -1,0 +1,193 @@
+[
+  {
+    "name": "default-test",
+    "command": [
+      "cargo",
+      "test",
+      "--locked"
+    ],
+    "returncode": 0,
+    "log_sha256": "756135cdbe35543509fc4594517635c3055bbe3d0ba36409849f2af41067a96f",
+    "passed": 75,
+    "ignored": 2
+  },
+  {
+    "name": "default-clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "--locked",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "returncode": 0,
+    "log_sha256": "2294feb3ca31f65a45721db798204258b08114a9e14ef7659d98d8cb57b7bec4",
+    "passed": 0,
+    "ignored": 0
+  },
+  {
+    "name": "none-test",
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--no-default-features"
+    ],
+    "returncode": 0,
+    "log_sha256": "cbbdef0f5f9fa0f986314bc1932d9c2f01f9cde232cb948d3c911489cd9aa380",
+    "passed": 38,
+    "ignored": 1
+  },
+  {
+    "name": "none-clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "--locked",
+      "--no-default-features",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "returncode": 0,
+    "log_sha256": "44eb4b52064c7dde52479c45e74552e1e305ddd0d1ef3b914e6452190dfd6332",
+    "passed": 0,
+    "ignored": 0
+  },
+  {
+    "name": "cog-test",
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--no-default-features",
+      "--features",
+      "native-cog"
+    ],
+    "returncode": 0,
+    "log_sha256": "7315eae4be037809469aa5b7190b0865a39e93ec9f22a890c79b786c2ed2aae2",
+    "passed": 53,
+    "ignored": 3
+  },
+  {
+    "name": "cog-clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "--locked",
+      "--no-default-features",
+      "--features",
+      "native-cog",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "returncode": 0,
+    "log_sha256": "f3cf82f47c6ed242dc0d2399f94bfa51dc53fce18e2dd59a8c97d8f17f5f6806",
+    "passed": 0,
+    "ignored": 0
+  },
+  {
+    "name": "hdf5-reader-test",
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "vendor/hdf5-reader/Cargo.toml",
+      "--no-default-features",
+      "--lib"
+    ],
+    "returncode": 0,
+    "log_sha256": "b8dbbe9be544ebd1159b1015da909dcd8274e472e2865f5dfddfcbac466bfce6",
+    "passed": 269,
+    "ignored": 0
+  },
+  {
+    "name": "hdf5-reader-clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "--locked",
+      "--manifest-path",
+      "vendor/hdf5-reader/Cargo.toml",
+      "--no-default-features",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "returncode": 0,
+    "log_sha256": "59639588a6f1826f129cbcd121edc07279dab94786f5fa5bde6b3439b2e845cc",
+    "passed": 0,
+    "ignored": 0
+  },
+  {
+    "name": "hdf5-test",
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--no-default-features",
+      "--features",
+      "native-hdf5"
+    ],
+    "returncode": 0,
+    "log_sha256": "2f018dc4f7a158b234fd3f126f772d759f3aaed20c08a799cc3c7571217b9a07",
+    "passed": 43,
+    "ignored": 2
+  },
+  {
+    "name": "hdf5-clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "--locked",
+      "--no-default-features",
+      "--features",
+      "native-hdf5",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "returncode": 0,
+    "log_sha256": "8a2933ae25e59188be988ea6218274cb341f13d8bc4b533f57b12ececd4be8b3",
+    "passed": 0,
+    "ignored": 0
+  },
+  {
+    "name": "all-test",
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--all-features"
+    ],
+    "returncode": 0,
+    "log_sha256": "3a0dac2183150b8993bbca046072e313c2927d87069589358a0d8e18dfa90813",
+    "passed": 98,
+    "ignored": 5
+  },
+  {
+    "name": "all-clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "--locked",
+      "--all-features",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "returncode": 0,
+    "log_sha256": "732186322402325172940531d8d6d7cfac85dc902585b2bef6715ad6839dacfd",
+    "passed": 0,
+    "ignored": 0
+  }
+]

@@ -109,12 +109,12 @@ class OfficialRanges(io.RawIOBase):
 
 
 class Mirror:
-    def __init__(self, directory, url=None, cap=16 * 1024 * 1024):
+    def __init__(self, directory, url=None, cap=16 * 1024 * 1024, session=None):
         self.directory = Path(directory)
         self.directory.mkdir(parents=True, exist_ok=True)
         self.path = self.directory / "source.nc"
         self.manifest = self.directory / "manifest.json"
-        self.session = requests.Session()
+        self.session = session if session is not None else requests.Session()
         self.lock = threading.Lock()
         self.capture = url is not None
         if self.manifest.exists():
@@ -177,6 +177,7 @@ class Mirror:
                         "Accept-Encoding": "identity",
                     },
                     timeout=30,
+                    stream=True,
                 )
                 assert r.status_code == 206, r.status_code
                 assert r.headers["ETag"] == self.info["etag"]
@@ -184,10 +185,13 @@ class Mirror:
                     r.headers["Content-Range"]
                     == f"bytes {a}-{b - 1}/{self.info['size']}"
                 )
-                assert len(r.content) == b - a
+                assert r.headers.get("Content-Encoding", "identity") == "identity"
+                content = r.raw.read(b - a + 1)
+                assert len(content) == b - a
+                r.close()
                 with self.path.open("r+b") as f:
                     f.seek(a)
-                    f.write(r.content)
+                    f.write(content)
                 self.info["provider_gets"] += 1
                 self.info["provider_bytes"] += b - a
                 merged = []

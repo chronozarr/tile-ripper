@@ -100,6 +100,7 @@ version-pinned native acquisitions with a tuned GDAL reader.
 | WeatherBench2 ERA5 64×32 product above | Anonymous HTTP Zarr v2, Float32/NaN, `(time,longitude,latitude)`; native Zarr subset |
 | NASA POWER IMERG daily spatial | Anonymous HTTP Zarr v2, Float32/NaN, `(time,lat,lon)`, verified daily time and storage filter; native Zarr subset |
 | Archived GOES-19 RRQPE and cloud-top-temperature NetCDF-4 samples | Opt-in `native-hdf5`; exact UInt16/Float32 rank-two array slices, stored one-dimensional axes, conditional compressed-chunk ranges and provisional streaming; [profile and decision gate](docs/native-hdf5/report.md) |
+| Inspected SWOT Raster Version C 100 m UTM19T scene | Native Float32 `/wse` with matching compressed Float64 `/x`,`/y`; exact index slices qualified against h5py/NetCDF-C on an identity-pinned bounded mirror. Live native archive authentication/redirects remain unsupported; [product, access and science gate](docs/swot-wse/report.md) |
 | Public GFS v3 archive | Native Float32 subset, ordinary/sharded codecs and conditional selective ranges; [exact v3 profile](docs/zarr-v3-input/workflow.md) |
 | Local custom-grid Zarr / direct GeoTIFF | Narrow UInt16 profiles; [advanced lifecycle](docs/unified-workflow.md) and [local Zarr](docs/zarr-workflow.md) |
 

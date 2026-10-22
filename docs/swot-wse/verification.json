@@ -1,0 +1,334 @@
+{
+  "base_commit": "92a6f6b2b61c21a81253b6214d92eb4c1c64b42b",
+  "branch": "codex/acquisition-planner",
+  "binary_sha256": "6b10ddd2cc524d1365dfa92da3a3ddd6d6f1d8069cda64fe00d46d8fbdf826b9",
+  "checks": {
+    "product_scientific_cells": 18,
+    "independent_netcdf4_selections": 3,
+    "axis_scientific_cells": 146,
+    "axis_fault_cells": 36,
+    "axis_resource_cells": 5,
+    "benchmark_cells": 171,
+    "rust_checks": 12,
+    "rust_configurations": 6,
+    "inherited_netcdf_coordinate_cases": 123,
+    "real_goes_regression_cells": 6
+  },
+  "rust": [
+    {
+      "name": "default-test",
+      "command": [
+        "cargo",
+        "test",
+        "--locked"
+      ],
+      "returncode": 0,
+      "log_sha256": "756135cdbe35543509fc4594517635c3055bbe3d0ba36409849f2af41067a96f",
+      "passed": 75,
+      "ignored": 2
+    },
+    {
+      "name": "default-clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "returncode": 0,
+      "log_sha256": "2294feb3ca31f65a45721db798204258b08114a9e14ef7659d98d8cb57b7bec4",
+      "passed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "none-test",
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--no-default-features"
+      ],
+      "returncode": 0,
+      "log_sha256": "cbbdef0f5f9fa0f986314bc1932d9c2f01f9cde232cb948d3c911489cd9aa380",
+      "passed": 38,
+      "ignored": 1
+    },
+    {
+      "name": "none-clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--no-default-features",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "returncode": 0,
+      "log_sha256": "44eb4b52064c7dde52479c45e74552e1e305ddd0d1ef3b914e6452190dfd6332",
+      "passed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "cog-test",
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--no-default-features",
+        "--features",
+        "native-cog"
+      ],
+      "returncode": 0,
+      "log_sha256": "7315eae4be037809469aa5b7190b0865a39e93ec9f22a890c79b786c2ed2aae2",
+      "passed": 53,
+      "ignored": 3
+    },
+    {
+      "name": "cog-clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--no-default-features",
+        "--features",
+        "native-cog",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "returncode": 0,
+      "log_sha256": "f3cf82f47c6ed242dc0d2399f94bfa51dc53fce18e2dd59a8c97d8f17f5f6806",
+      "passed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "hdf5-reader-test",
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "vendor/hdf5-reader/Cargo.toml",
+        "--no-default-features",
+        "--lib"
+      ],
+      "returncode": 0,
+      "log_sha256": "b8dbbe9be544ebd1159b1015da909dcd8274e472e2865f5dfddfcbac466bfce6",
+      "passed": 269,
+      "ignored": 0
+    },
+    {
+      "name": "hdf5-reader-clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--manifest-path",
+        "vendor/hdf5-reader/Cargo.toml",
+        "--no-default-features",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "returncode": 0,
+      "log_sha256": "59639588a6f1826f129cbcd121edc07279dab94786f5fa5bde6b3439b2e845cc",
+      "passed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "hdf5-test",
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--no-default-features",
+        "--features",
+        "native-hdf5"
+      ],
+      "returncode": 0,
+      "log_sha256": "2f018dc4f7a158b234fd3f126f772d759f3aaed20c08a799cc3c7571217b9a07",
+      "passed": 43,
+      "ignored": 2
+    },
+    {
+      "name": "hdf5-clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--no-default-features",
+        "--features",
+        "native-hdf5",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "returncode": 0,
+      "log_sha256": "8a2933ae25e59188be988ea6218274cb341f13d8bc4b533f57b12ececd4be8b3",
+      "passed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "all-test",
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--all-features"
+      ],
+      "returncode": 0,
+      "log_sha256": "3a0dac2183150b8993bbca046072e313c2927d87069589358a0d8e18dfa90813",
+      "passed": 98,
+      "ignored": 5
+    },
+    {
+      "name": "all-clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--all-features",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "returncode": 0,
+      "log_sha256": "732186322402325172940531d8d6d7cfac85dc902585b2bef6715ad6839dacfd",
+      "passed": 0,
+      "ignored": 0
+    }
+  ],
+  "inherited": [
+    {
+      "path": "inherited/formats/candidates.json",
+      "sha256": "afaeba5fc064dcea18b1b1ac3848acc739f10e38f161c50aaebcaa13c948a878",
+      "records": 4,
+      "passed": true
+    },
+    {
+      "path": "inherited/formats/cf-zarr-checks.json",
+      "sha256": "47b32486a2240edf4aeefe5b0e46624086ea2477edc816a85d771afa8aba4903",
+      "records": 2,
+      "passed": null
+    },
+    {
+      "path": "inherited/formats/cog-stream.json",
+      "sha256": "d148accfbb5c9db8bfb56635b0cd490448d062124612b34d6ba5c947d8c6ba59",
+      "records": 3,
+      "passed": null
+    },
+    {
+      "path": "inherited/formats/faults.json",
+      "sha256": "9dae1347a6642c5fe0195f760c6bfb59361950f31e891ff7556db065da7fb7e6",
+      "records": 4,
+      "passed": true
+    },
+    {
+      "path": "inherited/formats/inherited/validation.json",
+      "sha256": "cc9cb83797a6c4274a11993ed454ff8a058bde84c7fa47c99c505114a6a43ba0",
+      "records": 4,
+      "passed": true
+    },
+    {
+      "path": "inherited/formats/remote-zarr-checks.json",
+      "sha256": "c66fc59946816f7e337a11217218595daf848b250d7a1fb351bcee726ec18ade",
+      "records": 28,
+      "passed": null
+    },
+    {
+      "path": "inherited/formats/v3/correctness.json",
+      "sha256": "ea63dc7e34af83cef645e8ae34d332e1dd3b9a45b7505de4be3e406c696b3204",
+      "records": 40,
+      "passed": null
+    },
+    {
+      "path": "inherited/formats/v3/faults.json",
+      "sha256": "df2f12ce232acb6b342c7c1316c001cdae7e93ea4b54913087438ee8590912c4",
+      "records": 27,
+      "passed": null
+    },
+    {
+      "path": "inherited/hdf5/faults.json",
+      "sha256": "c0baec706545bb366008f5eae66e20cff912831c3088225fd06ffa5b344a8d67",
+      "records": 2,
+      "passed": null
+    },
+    {
+      "path": "inherited/hdf5/resources.json",
+      "sha256": "098341d467a5eaa79b607ff7539898cc86f1495ca7e36789868ba4bac3aa4f7b",
+      "records": 9,
+      "passed": null
+    },
+    {
+      "path": "inherited/hdf5/science.json",
+      "sha256": "329aaabe43afa621398a9320fc71740bb38a314ac8b37ed59f7d74c74024fdbf",
+      "records": 2,
+      "passed": null
+    },
+    {
+      "path": "inherited/hdf5-selective/extended.json",
+      "sha256": "3775c74c03746522514db52319e8ed19c15a863dded71c48f661634e28e695a8",
+      "records": 3,
+      "passed": null
+    },
+    {
+      "path": "inherited/hdf5-selective/extra.json",
+      "sha256": "3395c881b91f030edea94fb2f4af5f9c29b4665a24dcb59e0f835c625469dffe",
+      "records": 2,
+      "passed": null
+    },
+    {
+      "path": "inherited/hdf5-selective/faults.json",
+      "sha256": "2ab17d25d93db1c49a2d820dfbf497fc897eda17a9598eb3d27a8b3c2a0be3bf",
+      "records": 2,
+      "passed": null
+    },
+    {
+      "path": "inherited/hdf5-selective/goes-regression.json",
+      "sha256": "c0477d37caf08a7aa169d7d5b3d1250d2738b929499970a83f89a74a47fbc5f3",
+      "records": 3,
+      "passed": null
+    },
+    {
+      "path": "inherited/hdf5-selective/netcdf-coordinates.json",
+      "sha256": "202de3aea24fa61d148bd6e66ef42d4aa49733b00f46431f5965c183f714b2b9",
+      "records": 3,
+      "passed": null
+    },
+    {
+      "path": "inherited/hdf5-selective/science.json",
+      "sha256": "d6bb6a3a8037475e450be5d247e4ed945bfbed9bb486df755f804210704c3094",
+      "records": 2,
+      "passed": null
+    },
+    {
+      "path": "inherited/rust.json",
+      "sha256": "bc572cdab897d805002aff3af92c19dbdc5620ed8af0f96ee9c11a31ec86bcd5",
+      "records": 12,
+      "passed": null
+    }
+  ],
+  "native_linked_libraries": [
+    "\t/System/Library/Frameworks/Security.framework/Versions/A/Security (compatibility version 1.0.0, current version 61901.60.40)",
+    "\t/System/Library/Frameworks/SystemConfiguration.framework/Versions/A/SystemConfiguration (compatibility version 1.0.0, current version 1385.60.3)",
+    "\t/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation (compatibility version 150.0.0, current version 4201.0.0)",
+    "\t/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2000.67.0)",
+    "\t/usr/lib/libiconv.2.dylib (compatibility version 7.0.0, current version 7.0.0)",
+    "\t/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1356.0.0)"
+  ],
+  "source_sha256": {
+    "src/hdf5.rs": "ca1a94a8564e3caf8ad5ab38304dafaad6f67ac5e608c4c2eb8d82adda4486fe",
+    "src/storage.rs": "ca71d5fa1584fd3887e51d6533bee52ded51d41659c5571a58e94c89263fbe94",
+    "tests/hdf5.rs": "eca2ae52df90a06a9d6bee8bdcc12d574c094c77054668b2cde8d6e8117db72d"
+  },
+  "native_live_remote_qualified": false
+}

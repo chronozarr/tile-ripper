@@ -975,6 +975,27 @@ pub(crate) struct ObjectFile {
     objects: Objects,
     key: s::StoreKey,
     pub size: u64,
+    local_version: Option<(std::path::PathBuf, serde_json::Value)>,
+}
+#[cfg(feature = "native-hdf5")]
+fn local_file_version(path: &std::path::Path) -> Result<serde_json::Value> {
+    let metadata = std::fs::metadata(path)?;
+    if !metadata.is_file() {
+        return fail("HDF5 local source must be an ordinary file");
+    }
+    let mut version = serde_json::json!({"size":metadata.len(),
+        "modified":metadata.modified()?.duration_since(std::time::UNIX_EPOCH)?.as_nanos().to_string()});
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::MetadataExt;
+        version["unix"] = serde_json::json!([
+            metadata.dev(),
+            metadata.ino(),
+            metadata.ctime() as u64,
+            metadata.ctime_nsec() as u64
+        ]);
+    }
+    Ok(version)
 }
 #[cfg(feature = "native-hdf5")]
 impl ObjectFile {
@@ -1037,12 +1058,28 @@ impl ObjectFile {
             )
         };
         let size = objects.size_key(&key)?.ok_or("HDF5 file missing")?;
-        Ok(Self { objects, key, size })
+        let local_version = objects
+            .local_path(&key)
+            .map(|path| {
+                let version = local_file_version(&path)?;
+                if version["size"].as_u64() != Some(size) {
+                    return fail("local HDF5 source changed while opening");
+                }
+                Ok((path, version))
+            })
+            .transpose()?;
+        Ok(Self {
+            objects,
+            key,
+            size,
+            local_version,
+        })
     }
     pub fn read(&self, start: u64, len: usize) -> Result<Vec<u8>> {
         if len == 0 {
             return Ok(Vec::new());
         }
+        self.validate_local()?;
         let range = s::byte_range::ByteRange::FromStart(start, Some(u64::try_from(len)?));
         let bytes = self
             .objects
@@ -1053,9 +1090,19 @@ impl ObjectFile {
         if bytes.len() != len {
             return fail("short HDF5 range");
         }
+        self.validate_local()?;
         Ok(bytes.to_vec())
     }
+    fn validate_local(&self) -> Result<()> {
+        if let Some((path, version)) = &self.local_version {
+            if &local_file_version(path)? != version {
+                return fail("local HDF5 source changed after preparation");
+            }
+        }
+        Ok(())
+    }
     pub fn validate(&self) -> Result<()> {
+        self.validate_local()?;
         if let Some(h) = self.objects.http() {
             h.validate()?;
         }
@@ -1067,6 +1114,9 @@ impl ObjectFile {
         }
     }
     pub fn identity(&self) -> serde_json::Value {
+        if let Some((path, version)) = &self.local_version {
+            return serde_json::json!({"kind":"local_pinned_stat","path":path,"version":version});
+        }
         self.objects.identity(self.key.as_str())
     }
     pub fn stats(&self) -> serde_json::Value {

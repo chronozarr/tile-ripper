@@ -42,6 +42,30 @@ def main():
             ds[0, 0] = 3
             if cf is not None:
                 ds.attrs["_FillValue"] = np.uint16(cf)
+    with h5py.File(output / "chunked-coordinates.h5", "w", libver="earliest") as f:
+        f.attrs["cycle_number"] = np.uint32(11)
+        f.attrs["time_coverage_start"] = np.bytes_("2024-02-16T02:51:54Z")
+        g = f.create_group("science")
+        for name, n, block in [("y", 8, 3), ("x", 11, 4)]:
+            values = (
+                5000 - np.arange(n) * 10 if name == "y" else 1000 + np.arange(n) * 5
+            )
+            axis = g.create_dataset(
+                name,
+                data=values.astype(">f8"),
+                chunks=(block,),
+                compression="gzip",
+                shuffle=True,
+                fletcher32=True,
+            )
+            axis.make_scale(name)
+            axis.attrs["units"] = np.bytes_("m")
+        g.create_dataset(
+            "signal",
+            data=np.arange(88, dtype="u2").reshape(8, 11),
+            chunks=(3, 4),
+            compression="gzip",
+        )
 
 
 if __name__ == "__main__":
