@@ -1,5 +1,5 @@
 //! One acquisition lifecycle. Inspection documents cannot be deserialized/replayed.
-#[cfg(feature = "native-hdf5")]
+#[cfg(any(feature = "native-hdf5", feature = "authenticated-http"))]
 use crate::fail;
 use crate::{cog::LayoutCache, model::*, stac_workflow, Chunk, ExecutionReport, Result};
 use serde_json::{json, Value};
@@ -202,7 +202,7 @@ impl Prepared {
                 sources.phase("pre_execution_validation");
                 versions.validate()?;
                 stac_workflow::validate_identities(request, &Default::default())?;
-                sources.validate()?;
+                sources.validate_cancellable(Some(cancelled))?;
                 sources.phase("execution");
                 let mut report = crate::scheduler::execute(
                     request,
@@ -216,7 +216,7 @@ impl Prepared {
                 sources.phase("post_execution_validation");
                 versions.validate()?;
                 stac_workflow::validate_identities(request, &Default::default())?;
-                sources.validate()?;
+                sources.validate_cancellable(Some(cancelled))?;
                 if cancelled.load(std::sync::atomic::Ordering::Acquire) {
                     return Err("acquisition cancelled".into());
                 }
@@ -249,7 +249,7 @@ impl Prepared {
         sources.phase("pre_execution_validation");
         versions.validate()?;
         stac_workflow::validate_identities(request, &Default::default())?;
-        sources.validate()?;
+        sources.validate_cancellable(Some(cancelled))?;
         let mut report = sources
             .hdf5
             .execute_aligned(&assets[0], request, *planning_seconds, cancelled, sink)
@@ -257,7 +257,7 @@ impl Prepared {
         sources.phase("post_execution_validation");
         versions.validate()?;
         stac_workflow::validate_identities(request, &Default::default())?;
-        sources.validate()?;
+        sources.validate_cancellable(Some(cancelled))?;
         if cancelled.load(std::sync::atomic::Ordering::Acquire) {
             return fail("acquisition cancelled");
         }
@@ -415,7 +415,7 @@ pub fn fetch(request: &Request, cache: &mut LayoutCache) -> Result<Value> {
 }
 pub fn prepare(request: &Request, cache: &mut LayoutCache) -> Result<Prepared> {
     let _quiet = crate::diagnostics::QuietNative::enter();
-    prepare_inner(request, cache).map_err(|e| safe_error(request, "prepare", e))
+    prepare_inner(request, cache, Default::default()).map_err(|e| safe_error(request, "prepare", e))
 }
 /// Prepare only when Tile-Ripper was compiled without its `gdal` feature.
 /// Keep backend environment selection fixed until this prepared request and its
@@ -429,7 +429,30 @@ pub fn prepare_gdal_free(request: &Request, cache: &mut LayoutCache) -> Result<P
     }
     prepare(request, cache)
 }
-fn prepare_inner(request: &Request, cache: &mut LayoutCache) -> Result<Prepared> {
+/// Prepare one native HDF5 object with a caller-owned authenticated session.
+#[cfg(feature = "authenticated-http")]
+pub fn prepare_authenticated(
+    request: &Request,
+    cache: &mut LayoutCache,
+    transport: std::sync::Arc<crate::authenticated_http::AuthenticatedHttp>,
+) -> Result<Prepared> {
+    if !matches!(&request.source, Source::Assets {assets} if assets.len()==1 && assets[0].format == Format::Hdf5 && transport.accepts(&assets[0].locator))
+    {
+        return fail("authenticated preparation requires its exact configured native HDF5 object");
+    }
+    let _quiet = crate::diagnostics::QuietNative::enter();
+    prepare_inner(
+        request,
+        cache,
+        crate::http_transport::Transport::Authenticated(transport),
+    )
+    .map_err(|e| safe_error(request, "prepare", e))
+}
+fn prepare_inner(
+    request: &Request,
+    cache: &mut LayoutCache,
+    transport: crate::http_transport::Transport,
+) -> Result<Prepared> {
     crate::planner::validate_common(request)?;
     let runtime = match &request.source {
         Source::Stac { .. } | Source::Catalog { .. } => {
@@ -465,7 +488,7 @@ fn prepare_inner(request: &Request, cache: &mut LayoutCache) -> Result<Prepared>
             {
                 stac_workflow::resolve_identities(&mut request, &mut [], &Default::default())?;
             }
-            let sources = crate::storage::Sources::new(&request)?;
+            let sources = crate::storage::Sources::with_transport(&request, transport)?;
             let plan = crate::planner::plan_on(&request, cache, &sources)?;
             sources.seal()?;
             versions.validate()?;

@@ -10,6 +10,40 @@ fn main() -> tile_ripper::Result<()> {
         serde_json::from_slice(&fs::read(args.get(2).ok_or("policy required")?)?)?;
     let mode = args.get(3).map(String::as_str).unwrap_or("stream");
     let started = Instant::now();
+    #[cfg(feature = "authenticated-http")]
+    let authenticated = if let Some(netrc) = std::env::var_os("TILE_RIPPER_AUTH_NETRC") {
+        use tile_ripper::authenticated_http::{AuthenticatedHttp, Config};
+        let tile_ripper::Source::Assets { assets } = &r.source else {
+            return Err("direct source required".into());
+        };
+        let session = if let Some(policy_file) = std::env::var_os("TILE_RIPPER_AUTH_POLICY") {
+            let mut config: Config = serde_json::from_slice(&fs::read(policy_file)?)?;
+            if let Some(cert) = std::env::var_os("TILE_RIPPER_AUTH_CA") {
+                config
+                    .additional_roots
+                    .push(reqwest::Certificate::from_pem(&fs::read(cert)?)?);
+            }
+            AuthenticatedHttp::new(config, netrc)?
+        } else {
+            AuthenticatedHttp::earthdata(&assets.first().ok_or("missing source")?.locator, netrc)?
+        };
+        Some(std::sync::Arc::new(session))
+    } else {
+        None
+    };
+    #[cfg(feature = "authenticated-http")]
+    let prepared = if let Some(transport) = authenticated {
+        swot::prepare_authenticated(&r, policy, &mut LayoutCache::default(), transport.clone())
+            .inspect_err(|_| {
+                eprintln!(
+                    "{}",
+                    serde_json::json!({"authenticated_http":transport.statistics()})
+                );
+            })?
+    } else {
+        swot::prepare(&r, policy, &mut LayoutCache::default())?
+    };
+    #[cfg(not(feature = "authenticated-http"))]
     let prepared = swot::prepare(&r, policy, &mut LayoutCache::default())?;
     let inspection = prepared.explain();
     let prepare_seconds = started.elapsed().as_secs_f64();

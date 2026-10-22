@@ -1,0 +1,149 @@
+[
+  {
+    "configuration": "default",
+    "command": [
+      "cargo",
+      "test",
+      "--locked"
+    ],
+    "passed": 75,
+    "failed": 0,
+    "ignored": 2,
+    "log_sha256": "e742d3aa191fa6954f88faf47fe09d55913041e8574c0a093a2a1e211bc8f1c0"
+  },
+  {
+    "configuration": "none",
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--no-default-features"
+    ],
+    "passed": 38,
+    "failed": 0,
+    "ignored": 1,
+    "log_sha256": "535586b51779d18ef0e726f0bbc085c66beec56bad63fa273b6a339f90fee63f"
+  },
+  {
+    "configuration": "hdf5",
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--no-default-features",
+      "--features",
+      "native-hdf5"
+    ],
+    "passed": 49,
+    "failed": 0,
+    "ignored": 2,
+    "log_sha256": "4de0d5f2560e4baa8f517513ae4410a2b410ac45521e34b1fe0521212a9559db"
+  },
+  {
+    "configuration": "cog",
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--no-default-features",
+      "--features",
+      "native-cog"
+    ],
+    "passed": 53,
+    "failed": 0,
+    "ignored": 3,
+    "log_sha256": "f073321a67d3a95e8859065590f9f71d9efa0bb2e5e4cb04957ed92b68096212"
+  },
+  {
+    "configuration": "all",
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--all-features"
+    ],
+    "passed": 105,
+    "failed": 0,
+    "ignored": 6,
+    "log_sha256": "01deb5056e405036b7a2da159174fc93d96bf2bce645a57ab172652b6f3b4320"
+  },
+  {
+    "configuration": "hdf5-auth",
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--no-default-features",
+      "--features",
+      "native-hdf5,authenticated-http"
+    ],
+    "passed": 50,
+    "failed": 0,
+    "ignored": 3,
+    "log_sha256": "09529ec20d1a9fa9bd0aba1aa4709ac266dba907778fc233af1e90d0571a99d9"
+  },
+  {
+    "configuration": "clippy-all",
+    "command": [
+      "cargo",
+      "clippy",
+      "--locked",
+      "--all-features",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "passed": true,
+    "log_sha256": "7a47ef15e6bea97f3253a3fa55e19fa3a6738e2aa3573e49edeec337e53eaba7"
+  },
+  {
+    "configuration": "clippy-none",
+    "command": [
+      "cargo",
+      "clippy",
+      "--locked",
+      "--no-default-features",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "passed": true,
+    "log_sha256": "331069d011a258b414bbe1a7cc87a9b8436eaa6b878c75d83e53402ba3913f5f"
+  },
+  {
+    "configuration": "clippy-cog-auth",
+    "command": [
+      "cargo",
+      "clippy",
+      "--locked",
+      "--no-default-features",
+      "--features",
+      "native-cog,authenticated-http",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "passed": true,
+    "log_sha256": "8765da819d62e0e8051d0ffb3a5bba8835f4f6cd74a153719eb70a75fc070dad"
+  },
+  {
+    "configuration": "clippy-hdf5-auth",
+    "command": [
+      "cargo",
+      "clippy",
+      "--locked",
+      "--no-default-features",
+      "--features",
+      "native-hdf5,authenticated-http",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "passed": true,
+    "log_sha256": "40416c56ed087dc7b881f213cb1b60fe9784ff390becffbec3705d2e96637cf3"
+  }
+]

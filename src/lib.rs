@@ -21,6 +21,9 @@ pub mod acquisition;
 
 mod diagnostics;
 
+#[cfg(feature = "authenticated-http")]
+pub mod authenticated_http;
+mod http_transport;
 mod storage;
 mod zarr_io;
 

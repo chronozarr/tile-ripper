@@ -1,0 +1,70 @@
+{
+  "canonical_product": {
+    "url": "https://archive.swot.podaac.earthdata.nasa.gov/podaac-swot-ops-cumulus-protected/SWOT_L2_HR_Raster_D/SWOT_L2_HR_Raster_100m_UTM19T_N_x_x_x_011_035_115F_20240216T025153_20240216T025214_PGD0_01.nc",
+    "etag": "\"3b93eefb90f0167506435fdca199aa69-1\"",
+    "size": 89242093
+  },
+  "logical_identity": "canonical provider locator plus approved method-specific routes for the same S3 bucket/key, strong opaque ETag and exact object length",
+  "head_resource_path": "/head-2c0fc4c958b8bc10f4fa177bae3b4543/podaac-swot-ops-cumulus-protected.s3.us-west-2.amazonaws.com/SWOT_L2_HR_Raster_D/SWOT_L2_HR_Raster_100m_UTM19T_N_x_x_x_011_035_115F_20240216T025153_20240216T025214_PGD0_01.nc",
+  "get_resource_path": "/s3-2c0fc4c958b8bc10f4fa177bae3b4543/podaac-swot-ops-cumulus-protected.s3.us-west-2.amazonaws.com/SWOT_L2_HR_Raster_D/SWOT_L2_HR_Raster_100m_UTM19T_N_x_x_x_011_035_115F_20240216T025153_20240216T025214_PGD0_01.nc",
+  "authentication_origin": "https://urs.earthdata.nasa.gov",
+  "resource_origin": "https://d176wrl3f7yqfo.cloudfront.net",
+  "head_chain": [
+    {
+      "origin": "archive.swot.podaac.earthdata.nasa.gov",
+      "status": 303
+    },
+    {
+      "origin": "d176wrl3f7yqfo.cloudfront.net",
+      "status": 200
+    }
+  ],
+  "first_get_chain": [
+    {
+      "origin": "archive.swot.podaac.earthdata.nasa.gov",
+      "status": 302
+    },
+    {
+      "origin": "urs.earthdata.nasa.gov",
+      "status": 302
+    },
+    {
+      "origin": "archive.swot.podaac.earthdata.nasa.gov",
+      "endpoint": "/login",
+      "status": 301
+    },
+    {
+      "origin": "archive.swot.podaac.earthdata.nasa.gov",
+      "status": 303
+    },
+    {
+      "origin": "d176wrl3f7yqfo.cloudfront.net",
+      "status": 206
+    }
+  ],
+  "fresh_probe_get_bytes": 8,
+  "fresh_probe_hdf5_magic_verified": true,
+  "head_signature_sample_lifetime_seconds": 3600,
+  "get_signature_lifetime": "advertised by its own Expires field; bounded reuse derives from that GET route only",
+  "prior_independent_evidence": "../swot-quality/access.json",
+  "incorrect_if_match_status": 412,
+  "prior_head_route_get_status": 403,
+  "prior_get_route_head_status": 403,
+  "authorization": "private caller-owned netrc; explicit login origin only; never forwarded from another host",
+  "cookies": "separate memory-only jars per exact origin, including port; none to signed resource",
+  "redirects": "verified HTTPS, exact directed edges and destination paths; no Referer or environment proxy; at most 8 hops",
+  "route_reuse": "GET only; min(60 seconds, advertised expiry minus 30 seconds); unknown expiry means fresh canonical resolution",
+  "refresh": "one canonical re-resolution on 401/403 per logical attempt; login rejection and 412 fail immediately",
+  "retries": "three logical attempts for existing transient statuses and transport/body failures; Retry-After at most two seconds; 30-second wire timeout and 10-second connect timeout",
+  "cancellation": "20 ms polling while awaiting authenticated headers or body; stream cancellation joins its producer",
+  "source_mutation": "strong ETag, exact size and method route checks; terminal authenticated failure invalidates the binding even after a server restores its earlier version",
+  "diagnostics": "static error categories, method/status/origin counters only; signed URLs, authorization and cookie values never emitted",
+  "scope": "one explicitly configured native HDF5 object; anonymous default and other format adapters unchanged",
+  "earlier_failed_attempt": {
+    "stage": "initial HEAD preparation",
+    "logical_retry_attempts": 3,
+    "elapsed_seconds": 72.34127387497574,
+    "result": "transport failure before scientific reads",
+    "wire_hop_counts": "unavailable in that diagnostic build; excluded from accepted-run totals"
+  }
+}

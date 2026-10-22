@@ -1,0 +1,923 @@
+{
+  "cases": [
+    {
+      "name": "no-etag",
+      "expected_success": false,
+      "binary_sha256": "c90344fa7642f2856b6fa942a66d60bdc947bed16eccaf648561e03a99c86033",
+      "returncode": 1,
+      "elapsed_seconds": 0.022255375050008297,
+      "peak_rss_bytes": 11812864,
+      "sampled_peak_rss_bytes": 1277952,
+      "child_cpu_seconds": 0.010421000000000125,
+      "error": "Error: \"prepare: HTTP source requires strong ETags\"\n        0.01 real         0.00 user         0.00 sys\n            11812864  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                 971  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   1  messages sent\n                   1  messages received\n                   0  signals received\n                   0  voluntary context switches\n                  49  involuntary context switches\n            44508478  instructions retired\n            26133864  cycles elapsed\n             3096960  peak memory footprint\n",
+      "http": {
+        "gets": 0,
+        "heads": 1,
+        "response_bytes": 0,
+        "payload_gets": 0,
+        "all_ranges_conditional": true,
+        "repeated_exact_ranges": 0
+      }
+    },
+    {
+      "name": "weak-etag",
+      "expected_success": false,
+      "binary_sha256": "c90344fa7642f2856b6fa942a66d60bdc947bed16eccaf648561e03a99c86033",
+      "returncode": 1,
+      "elapsed_seconds": 0.022756957914680243,
+      "peak_rss_bytes": 11829248,
+      "sampled_peak_rss_bytes": 1277952,
+      "child_cpu_seconds": 0.010306999999999844,
+      "error": "Error: \"prepare: HTTP source requires strong ETags\"\n        0.01 real         0.00 user         0.00 sys\n            11829248  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                 972  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   1  messages sent\n                   1  messages received\n                   0  signals received\n                   0  voluntary context switches\n                  68  involuntary context switches\n            44553588  instructions retired\n            26093604  cycles elapsed\n             3113344  peak memory footprint\n",
+      "http": {
+        "gets": 0,
+        "heads": 1,
+        "response_bytes": 0,
+        "payload_gets": 0,
+        "all_ranges_conditional": true,
+        "repeated_exact_ranges": 0
+      }
+    },
+    {
+      "name": "no-range",
+      "expected_success": false,
+      "binary_sha256": "c90344fa7642f2856b6fa942a66d60bdc947bed16eccaf648561e03a99c86033",
+      "returncode": 1,
+      "elapsed_seconds": 0.031817167066037655,
+      "peak_rss_bytes": 14221312,
+      "sampled_peak_rss_bytes": 1277952,
+      "child_cpu_seconds": 0.01635500000000001,
+      "error": "Error: \"execution: HTTP object request rejected (unsupported status or redirect)\"\n        0.02 real         0.00 user         0.00 sys\n            14221312  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                1130  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                  43  messages sent\n                  57  messages received\n                   0  signals received\n                   0  voluntary context switches\n                 319  involuntary context switches\n            74552104  instructions retired\n            44016930  cycles elapsed\n             4522392  peak memory footprint\n",
+      "http": {
+        "gets": 39,
+        "heads": 4,
+        "response_bytes": 7720,
+        "payload_gets": 2,
+        "all_ranges_conditional": true,
+        "repeated_exact_ranges": 0
+      }
+    },
+    {
+      "name": "bad-range",
+      "expected_success": false,
+      "binary_sha256": "c90344fa7642f2856b6fa942a66d60bdc947bed16eccaf648561e03a99c86033",
+      "returncode": 1,
+      "elapsed_seconds": 0.03389454213902354,
+      "peak_rss_bytes": 14270464,
+      "sampled_peak_rss_bytes": 1277952,
+      "child_cpu_seconds": 0.01751400000000003,
+      "error": "Error: \"execution: invalid HTTP range framing\"\n        0.02 real         0.00 user         0.00 sys\n            14270464  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                1131  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                  43  messages sent\n                  55  messages received\n                   0  signals received\n                   0  voluntary context switches\n                 322  involuntary context switches\n            73995317  instructions retired\n            43546164  cycles elapsed\n             4555136  peak memory footprint\n",
+      "http": {
+        "gets": 39,
+        "heads": 4,
+        "response_bytes": 13578,
+        "payload_gets": 2,
+        "all_ranges_conditional": true,
+        "repeated_exact_ranges": 0
+      }
+    },
+    {
+      "name": "encoded",
+      "expected_success": false,
+      "binary_sha256": "c90344fa7642f2856b6fa942a66d60bdc947bed16eccaf648561e03a99c86033",
+      "returncode": 1,
+      "elapsed_seconds": 0.039381292182952166,
+      "peak_rss_bytes": 14204928,
+      "sampled_peak_rss_bytes": 1277952,
+      "child_cpu_seconds": 0.016767999999999894,
+      "error": "Error: \"execution: encoded HTTP range responses are unsupported\"\n        0.02 real         0.00 user         0.00 sys\n            14204928  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                1129  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                  43  messages sent\n                  44  messages received\n                   0  signals received\n                   0  voluntary context switches\n                 255  involuntary context switches\n            71741204  instructions retired\n            38034958  cycles elapsed\n             4489600  peak memory footprint\n",
+      "http": {
+        "gets": 39,
+        "heads": 4,
+        "response_bytes": 13578,
+        "payload_gets": 2,
+        "all_ranges_conditional": true,
+        "repeated_exact_ranges": 0
+      }
+    },
+    {
+      "name": "changed-etag",
+      "expected_success": false,
+      "binary_sha256": "c90344fa7642f2856b6fa942a66d60bdc947bed16eccaf648561e03a99c86033",
+      "returncode": 1,
+      "elapsed_seconds": 0.03925308305770159,
+      "peak_rss_bytes": 14204928,
+      "sampled_peak_rss_bytes": 1277952,
+      "child_cpu_seconds": 0.018181000000000225,
+      "error": "Error: \"execution: HTTP source version conflict; prepare again\"\n        0.02 real         0.00 user         0.00 sys\n            14204928  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                1129  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                  43  messages sent\n                  49  messages received\n                   0  signals received\n                   0  voluntary context switches\n                 285  involuntary context switches\n            72750691  instructions retired\n            39797492  cycles elapsed\n             4489600  peak memory footprint\n",
+      "http": {
+        "gets": 39,
+        "heads": 4,
+        "response_bytes": 13578,
+        "payload_gets": 2,
+        "all_ranges_conditional": true,
+        "repeated_exact_ranges": 0
+      }
+    },
+    {
+      "name": "retry",
+      "expected_success": true,
+      "binary_sha256": "c90344fa7642f2856b6fa942a66d60bdc947bed16eccaf648561e03a99c86033",
+      "returncode": 0,
+      "elapsed_seconds": 0.0628545843064785,
+      "peak_rss_bytes": 15220736,
+      "sampled_peak_rss_bytes": 1277952,
+      "child_cpu_seconds": 0.019296999999999898,
+      "error": null,
+      "http": {
+        "gets": 47,
+        "heads": 5,
+        "response_bytes": 31152,
+        "payload_gets": 10,
+        "all_ranges_conditional": true,
+        "repeated_exact_ranges": 0
+      }
+    },
+    {
+      "name": "exhaust",
+      "expected_success": false,
+      "binary_sha256": "c90344fa7642f2856b6fa942a66d60bdc947bed16eccaf648561e03a99c86033",
+      "returncode": 1,
+      "elapsed_seconds": 0.1072906251065433,
+      "peak_rss_bytes": 14221312,
+      "sampled_peak_rss_bytes": 1277952,
+      "child_cpu_seconds": 0.016096999999999806,
+      "error": "Error: \"execution: HTTP retry budget exhausted after 3 attempts (last status 503; retryable HTTP status)\"\n        0.10 real         0.00 user         0.00 sys\n            14221312  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                1131  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                  47  messages sent\n                  48  messages received\n                   0  signals received\n                   0  voluntary context switches\n                 327  involuntary context switches\n            74959598  instructions retired\n            47275510  cycles elapsed\n             4505984  peak memory footprint\n",
+      "http": {
+        "gets": 43,
+        "heads": 4,
+        "response_bytes": 7720,
+        "payload_gets": 6,
+        "all_ranges_conditional": true,
+        "repeated_exact_ranges": 0
+      }
+    },
+    {
+      "name": "interrupt",
+      "expected_success": false,
+      "binary_sha256": "c90344fa7642f2856b6fa942a66d60bdc947bed16eccaf648561e03a99c86033",
+      "returncode": 1,
+      "elapsed_seconds": 0.11371820792555809,
+      "peak_rss_bytes": 14172160,
+      "sampled_peak_rss_bytes": 1277952,
+      "child_cpu_seconds": 0.017517000000000005,
+      "error": "Error: \"execution: HTTP retry budget exhausted after 3 attempts (last status 206; retryable interrupted HTTP body)\"\n        0.10 real         0.00 user         0.00 sys\n            14172160  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                1125  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                  47  messages sent\n                  50  messages received\n                   0  signals received\n                   0  voluntary context switches\n                 342  involuntary context switches\n            77055998  instructions retired\n            48978061  cycles elapsed\n             4456856  peak memory footprint\n",
+      "http": {
+        "gets": 43,
+        "heads": 4,
+        "response_bytes": 16504,
+        "payload_gets": 6,
+        "all_ranges_conditional": true,
+        "repeated_exact_ranges": 4
+      }
+    },
+    {
+      "name": "before",
+      "expected_success": false,
+      "binary_sha256": "c90344fa7642f2856b6fa942a66d60bdc947bed16eccaf648561e03a99c86033",
+      "returncode": 1,
+      "elapsed_seconds": 0.5538312923163176,
+      "peak_rss_bytes": 14630912,
+      "sampled_peak_rss_bytes": 1277952,
+      "child_cpu_seconds": 0.023203000000000085,
+      "error": "Error: \"HTTP source version conflict; prepare again\"\n        0.54 real         0.01 user         0.00 sys\n            14630912  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                1153  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                  42  messages sent\n                  43  messages received\n                   0  signals received\n                   0  voluntary context switches\n                 311  involuntary context switches\n            77149138  instructions retired\n            56929971  cycles elapsed\n             4964736  peak memory footprint\n",
+      "http": {
+        "gets": 37,
+        "heads": 4,
+        "response_bytes": 9016,
+        "payload_gets": 0,
+        "all_ranges_conditional": true,
+        "repeated_exact_ranges": 0
+      }
+    },
+    {
+      "name": "during",
+      "expected_success": false,
+      "binary_sha256": "c90344fa7642f2856b6fa942a66d60bdc947bed16eccaf648561e03a99c86033",
+      "returncode": 1,
+      "elapsed_seconds": 0.5781961251050234,
+      "peak_rss_bytes": 15040512,
+      "sampled_peak_rss_bytes": 1277952,
+      "child_cpu_seconds": 0.02814200000000011,
+      "error": "Error: \"execution: HTTP source version conflict; prepare again\"\n        0.56 real         0.01 user         0.01 sys\n            15040512  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                1182  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                  47  messages sent\n                  54  messages received\n                   0  signals received\n                   0  voluntary context switches\n                 442  involuntary context switches\n            84717242  instructions retired\n            64099775  cycles elapsed\n             5259672  peak memory footprint\n",
+      "http": {
+        "gets": 42,
+        "heads": 4,
+        "response_bytes": 17803,
+        "payload_gets": 5,
+        "all_ranges_conditional": true,
+        "repeated_exact_ranges": 0
+      }
+    },
+    {
+      "name": "cancel",
+      "expected_success": false,
+      "binary_sha256": "c90344fa7642f2856b6fa942a66d60bdc947bed16eccaf648561e03a99c86033",
+      "returncode": 1,
+      "elapsed_seconds": 0.5709625417366624,
+      "peak_rss_bytes": 14942208,
+      "sampled_peak_rss_bytes": 1277952,
+      "child_cpu_seconds": 0.02714900000000009,
+      "error": "Error: \"acquisition cancelled\"\n        0.55 real         0.01 user         0.01 sys\n            14942208  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                1172  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                  44  messages sent\n                  51  messages received\n                   0  signals received\n                   0  voluntary context switches\n                 380  involuntary context switches\n            81335359  instructions retired\n            61778875  cycles elapsed\n             5194160  peak memory footprint\n",
+      "http": {
+        "gets": 40,
+        "heads": 4,
+        "response_bytes": 17803,
+        "payload_gets": 3,
+        "all_ranges_conditional": true,
+        "repeated_exact_ranges": 0
+      }
+    },
+    {
+      "name": "cancel-inflight",
+      "expected_success": false,
+      "binary_sha256": "c90344fa7642f2856b6fa942a66d60bdc947bed16eccaf648561e03a99c86033",
+      "returncode": 1,
+      "elapsed_seconds": 0.5573796248063445,
+      "peak_rss_bytes": 14696448,
+      "sampled_peak_rss_bytes": 1277952,
+      "child_cpu_seconds": 0.027884999999999938,
+      "error": "Error: \"acquisition cancelled\"\n        0.54 real         0.01 user         0.01 sys\n            14696448  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                1161  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                  44  messages sent\n                  56  messages received\n                   0  signals received\n                   0  voluntary context switches\n                 389  involuntary context switches\n            81843338  instructions retired\n            60172566  cycles elapsed\n             5013912  peak memory footprint\n",
+      "http": {
+        "gets": 39,
+        "heads": 4,
+        "response_bytes": 14874,
+        "payload_gets": 2,
+        "all_ranges_conditional": true,
+        "repeated_exact_ranges": 0
+      }
+    },
+    {
+      "name": "modern-index",
+      "binary_sha256": "c90344fa7642f2856b6fa942a66d60bdc947bed16eccaf648561e03a99c86033",
+      "returncode": 1,
+      "elapsed_seconds": 0.017203415744006634,
+      "peak_rss_bytes": 9551872,
+      "sampled_peak_rss_bytes": 1277952,
+      "child_cpu_seconds": 0.009611000000000258,
+      "error": "Error: \"prepare: native HDF5 data requires layout v1-v3 with v1 B-tree chunk index\"\n        0.00 real         0.00 user         0.00 sys\n             9551872  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                 821  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   0  messages sent\n                   0  messages received\n                   0  signals received\n                   0  voluntary context switches\n                  13  involuntary context switches\n            39567314  instructions retired\n            15967301  cycles elapsed\n             2605416  peak memory footprint\n"
+    },
+    {
+      "name": "unsupported-filter",
+      "binary_sha256": "c90344fa7642f2856b6fa942a66d60bdc947bed16eccaf648561e03a99c86033",
+      "returncode": 1,
+      "elapsed_seconds": 0.016391666140407324,
+      "peak_rss_bytes": 9682944,
+      "sampled_peak_rss_bytes": 1277952,
+      "child_cpu_seconds": 0.009231000000000211,
+      "error": "Error: \"prepare: unsupported HDF5 filter; admitted pipeline has at most three deflate/shuffle/Fletcher32 filters\"\n        0.00 real         0.00 user         0.00 sys\n             9682944  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                 827  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   0  messages sent\n                   0  messages received\n                   0  signals received\n                   0  voluntary context switches\n                  28  involuntary context switches\n            42295704  instructions retired\n            20747120  cycles elapsed\n             2703720  peak memory footprint\n"
+    },
+    {
+      "name": "contiguous",
+      "binary_sha256": "c90344fa7642f2856b6fa942a66d60bdc947bed16eccaf648561e03a99c86033",
+      "returncode": 1,
+      "elapsed_seconds": 0.01680391700938344,
+      "peak_rss_bytes": 9093120,
+      "sampled_peak_rss_bytes": 1277952,
+      "child_cpu_seconds": 0.007583999999999813,
+      "error": "Error: \"prepare: native HDF5 requires chunked data\"\n        0.00 real         0.00 user         0.00 sys\n             9093120  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                 793  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   0  messages sent\n                   0  messages received\n                   0  signals received\n                   0  voluntary context switches\n                  10  involuntary context switches\n            38519076  instructions retired\n            18726681  cycles elapsed\n             2392400  peak memory footprint\n"
+    },
+    {
+      "name": "signed-data",
+      "binary_sha256": "c90344fa7642f2856b6fa942a66d60bdc947bed16eccaf648561e03a99c86033",
+      "returncode": 1,
+      "elapsed_seconds": 0.015825292095541954,
+      "peak_rss_bytes": 9109504,
+      "sampled_peak_rss_bytes": 1277952,
+      "child_cpu_seconds": 0.007869000000000126,
+      "error": "Error: \"prepare: native HDF5 supports only stored UInt8, UInt16, UInt32 or IEEE Float32 data\"\n        0.00 real         0.00 user         0.00 sys\n             9109504  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                 792  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   0  messages sent\n                   0  messages received\n                   0  signals received\n                   0  voluntary context switches\n                  16  involuntary context switches\n            38743806  instructions retired\n            18860311  cycles elapsed\n             2392424  peak memory footprint\n"
+    },
+    {
+      "name": "corrupt-Fletcher32",
+      "binary_sha256": "c90344fa7642f2856b6fa942a66d60bdc947bed16eccaf648561e03a99c86033",
+      "returncode": 1,
+      "elapsed_seconds": 0.015942749567329884,
+      "peak_rss_bytes": 10878976,
+      "sampled_peak_rss_bytes": 1277952,
+      "child_cpu_seconds": 0.009093000000000018,
+      "error": "Error: \"execution: checksum mismatch: expected 0x82bab326, got 0x83bab326\"\n        0.00 real         0.00 user         0.00 sys\n            10878976  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                 909  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   0  messages sent\n                   0  messages received\n                   0  signals received\n                   0  voluntary context switches\n                  18  involuntary context switches\n            50143431  instructions retired\n            24129859  cycles elapsed\n             3604840  peak memory footprint\n"
+    },
+    {
+      "name": "corrupt-deflate",
+      "binary_sha256": "c90344fa7642f2856b6fa942a66d60bdc947bed16eccaf648561e03a99c86033",
+      "returncode": 1,
+      "elapsed_seconds": 0.016916665714234114,
+      "peak_rss_bytes": 10928128,
+      "sampled_peak_rss_bytes": 1277952,
+      "child_cpu_seconds": 0.008915999999999924,
+      "error": "Error: \"execution: decompression error: DEFLATE decompression failed: deflate decompression error\"\n        0.00 real         0.00 user         0.00 sys\n            10928128  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                 918  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   0  messages sent\n                   0  messages received\n                   0  signals received\n                   0  voluntary context switches\n                  26  involuntary context switches\n            50415636  instructions retired\n            22908916  cycles elapsed\n             3686784  peak memory footprint\n"
+    },
+    {
+      "name": "chunk-offset-outside-file",
+      "binary_sha256": "c90344fa7642f2856b6fa942a66d60bdc947bed16eccaf648561e03a99c86033",
+      "returncode": 1,
+      "elapsed_seconds": 0.016367709264159203,
+      "peak_rss_bytes": 9666560,
+      "sampled_peak_rss_bytes": 1277952,
+      "child_cpu_seconds": 0.00819800000000015,
+      "error": "Error: \"prepare: invalid HDF5 compressed chunk extent\"\n        0.00 real         0.00 user         0.00 sys\n             9666560  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                 828  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   0  messages sent\n                   0  messages received\n                   0  signals received\n                   0  voluntary context switches\n                  12  involuntary context switches\n            43096401  instructions retired\n            21318675  cycles elapsed\n             2670952  peak memory footprint\n"
+    },
+    {
+      "name": "truncated-metadata",
+      "binary_sha256": "c90344fa7642f2856b6fa942a66d60bdc947bed16eccaf648561e03a99c86033",
+      "returncode": 1,
+      "elapsed_seconds": 0.015757457818835974,
+      "peak_rss_bytes": 8650752,
+      "sampled_peak_rss_bytes": 1277952,
+      "child_cpu_seconds": 0.007472000000000145,
+      "error": "Error: \"prepare: unexpected end of data at offset 80 (need 16 bytes, have 0)\"\n        0.00 real         0.00 user         0.00 sys\n             8650752  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                 766  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   0  messages sent\n                   0  messages received\n                   0  signals received\n                   0  voluntary context switches\n                  14  involuntary context switches\n            35157735  instructions retired\n            18545580  cycles elapsed\n             2261352  peak memory footprint\n"
+    },
+    {
+      "name": "classic-netcdf-rejected",
+      "binary_sha256": "c90344fa7642f2856b6fa942a66d60bdc947bed16eccaf648561e03a99c86033",
+      "returncode": 1,
+      "elapsed_seconds": 0.016140167135745287,
+      "peak_rss_bytes": 8617984,
+      "sampled_peak_rss_bytes": 1277952,
+      "child_cpu_seconds": 0.007591000000000125,
+      "error": "Error: \"prepare: invalid HDF5 magic bytes\"\n        0.00 real         0.00 user         0.00 sys\n             8617984  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                 762  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   0  messages sent\n                   0  messages received\n                   0  signals received\n                   0  voluntary context switches\n                  18  involuntary context switches\n            34790793  instructions retired\n            18258756  cycles elapsed\n             2294120  peak memory footprint\n"
+    },
+    {
+      "name": "/rank3",
+      "binary_sha256": "c90344fa7642f2856b6fa942a66d60bdc947bed16eccaf648561e03a99c86033",
+      "returncode": 1,
+      "elapsed_seconds": 0.017085709143429995,
+      "peak_rss_bytes": 9011200,
+      "sampled_peak_rss_bytes": 1277952,
+      "child_cpu_seconds": 0.007160999999999973,
+      "error": "Error: \"prepare: native HDF5 data must have rank two\"\n        0.00 real         0.00 user         0.00 sys\n             9011200  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                 788  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   0  messages sent\n                   0  messages received\n                   0  signals received\n                   0  voluntary context switches\n                  10  involuntary context switches\n            36092759  instructions retired\n            17470741  cycles elapsed\n             2326888  peak memory footprint\n"
+    },
+    {
+      "name": "/external",
+      "binary_sha256": "c90344fa7642f2856b6fa942a66d60bdc947bed16eccaf648561e03a99c86033",
+      "returncode": 1,
+      "elapsed_seconds": 0.016436333302408457,
+      "peak_rss_bytes": 8896512,
+      "sampled_peak_rss_bytes": 1277952,
+      "child_cpu_seconds": 0.006990000000000274,
+      "error": "Error: \"prepare: /external: dataset not found: external\"\n        0.00 real         0.00 user         0.00 sys\n             8896512  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                 779  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   0  messages sent\n                   0  messages received\n                   0  signals received\n                   0  voluntary context switches\n                  10  involuntary context switches\n            35389092  instructions retired\n            16842235  cycles elapsed\n             2310504  peak memory footprint\n"
+    },
+    {
+      "name": "/virtual",
+      "binary_sha256": "c90344fa7642f2856b6fa942a66d60bdc947bed16eccaf648561e03a99c86033",
+      "returncode": 1,
+      "elapsed_seconds": 0.015919374767690897,
+      "peak_rss_bytes": 8978432,
+      "sampled_peak_rss_bytes": 1277952,
+      "child_cpu_seconds": 0.007028999999999952,
+      "error": "Error: \"prepare: native HDF5 requires chunked data\"\n        0.00 real         0.00 user         0.00 sys\n             8978432  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                 784  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   0  messages sent\n                   0  messages received\n                   0  signals received\n                   0  voluntary context switches\n                   8  involuntary context switches\n            36056268  instructions retired\n            17263469  cycles elapsed\n             2310480  peak memory footprint\n"
+    },
+    {
+      "name": "small-budget",
+      "binary_sha256": "c90344fa7642f2856b6fa942a66d60bdc947bed16eccaf648561e03a99c86033",
+      "returncode": 1,
+      "elapsed_seconds": 0.016377000138163567,
+      "peak_rss_bytes": 8601600,
+      "sampled_peak_rss_bytes": 1277952,
+      "child_cpu_seconds": 0.0068230000000002455,
+      "error": "Error: \"prepare: invalid data: HDF5 metadata cache exceeds buffer/max_nodes budget\"\n        0.00 real         0.00 user         0.00 sys\n             8601600  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                 761  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   0  messages sent\n                   0  messages received\n                   0  signals received\n                   0  voluntary context switches\n                   7  involuntary context switches\n            34551409  instructions retired\n            16414591  cycles elapsed\n             2261352  peak memory footprint\n"
+    },
+    {
+      "name": "out-of-bounds",
+      "binary_sha256": "c90344fa7642f2856b6fa942a66d60bdc947bed16eccaf648561e03a99c86033",
+      "returncode": 1,
+      "elapsed_seconds": 0.01703391596674919,
+      "peak_rss_bytes": 9109504,
+      "sampled_peak_rss_bytes": 1277952,
+      "child_cpu_seconds": 0.007109999999999728,
+      "error": "Error: \"prepare: HDF5 selection outside source shape\"\n        0.00 real         0.00 user         0.00 sys\n             9109504  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                 794  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   0  messages sent\n                   0  messages received\n                   0  signals received\n                   0  voluntary context switches\n                  10  involuntary context switches\n            38709728  instructions retired\n            17539173  cycles elapsed\n             2376016  peak memory footprint\n"
+    },
+    {
+      "name": "zero-stride",
+      "binary_sha256": "c90344fa7642f2856b6fa942a66d60bdc947bed16eccaf648561e03a99c86033",
+      "returncode": 1,
+      "elapsed_seconds": 0.02119041606783867,
+      "peak_rss_bytes": 7716864,
+      "sampled_peak_rss_bytes": 131072,
+      "child_cpu_seconds": 0.0072389999999999954,
+      "error": "Error: \"prepare: array slices require positive counts/steps and absolute axis paths\"\n        0.00 real         0.00 user         0.00 sys\n             7716864  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                 709  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   0  messages sent\n                   0  messages received\n                   0  signals received\n                   0  voluntary context switches\n                   7  involuntary context switches\n            35617060  instructions retired\n            17690446  cycles elapsed\n             2244944  peak memory footprint\n"
+    },
+    {
+      "name": "huge-count",
+      "binary_sha256": "c90344fa7642f2856b6fa942a66d60bdc947bed16eccaf648561e03a99c86033",
+      "returncode": 1,
+      "elapsed_seconds": 0.02025575004518032,
+      "peak_rss_bytes": 9125888,
+      "sampled_peak_rss_bytes": 1277952,
+      "child_cpu_seconds": 0.007630999999999943,
+      "error": "Error: \"prepare: HDF5 selection outside source shape\"\n        0.00 real         0.00 user         0.00 sys\n             9125888  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                 793  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   0  messages sent\n                   0  messages received\n                   0  signals received\n                   0  voluntary context switches\n                  13  involuntary context switches\n            40477219  instructions retired\n            17991270  cycles elapsed\n             2392400  peak memory footprint\n"
+    },
+    {
+      "name": "max-nodes",
+      "binary_sha256": "c90344fa7642f2856b6fa942a66d60bdc947bed16eccaf648561e03a99c86033",
+      "returncode": 1,
+      "elapsed_seconds": 0.016421624924987555,
+      "peak_rss_bytes": 8929280,
+      "sampled_peak_rss_bytes": 1277952,
+      "child_cpu_seconds": 0.007604000000000166,
+      "error": "Error: \"prepare: /science/signal: child 'science' at 0x320: invalid data: HDF5 metadata cache exceeds buffer/max_nodes budget\"\n        0.00 real         0.00 user         0.00 sys\n             8929280  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                 781  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   0  messages sent\n                   0  messages received\n                   0  signals received\n                   0  voluntary context switches\n                  24  involuntary context switches\n            35999700  instructions retired\n            18250249  cycles elapsed\n             2343272  peak memory footprint\n"
+    },
+    {
+      "name": "file-output",
+      "binary_sha256": "c90344fa7642f2856b6fa942a66d60bdc947bed16eccaf648561e03a99c86033",
+      "returncode": 1,
+      "elapsed_seconds": 0.01567854080349207,
+      "peak_rss_bytes": 8142848,
+      "sampled_peak_rss_bytes": 1277952,
+      "child_cpu_seconds": 0.006969999999999921,
+      "error": "Error: \"prepare: native HDF5 currently supports callback/stream output and explicit index selection without time filtering\"\n        0.00 real         0.00 user         0.00 sys\n             8142848  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                 733  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   0  messages sent\n                   0  messages received\n                   0  signals received\n                   0  voluntary context switches\n                  10  involuntary context switches\n            34336565  instructions retired\n            16598152  cycles elapsed\n             2261352  peak memory footprint\n"
+    },
+    {
+      "name": "time-filter",
+      "binary_sha256": "c90344fa7642f2856b6fa942a66d60bdc947bed16eccaf648561e03a99c86033",
+      "returncode": 1,
+      "elapsed_seconds": 0.016293874941766262,
+      "peak_rss_bytes": 8159232,
+      "sampled_peak_rss_bytes": 1277952,
+      "child_cpu_seconds": 0.006909000000000054,
+      "error": "Error: \"prepare: native HDF5 currently supports callback/stream output and explicit index selection without time filtering\"\n        0.00 real         0.00 user         0.00 sys\n             8159232  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                 734  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   0  messages sent\n                   0  messages received\n                   0  signals received\n                   0  voluntary context switches\n                  13  involuntary context switches\n            34223561  instructions retired\n            16580461  cycles elapsed\n             2261352  peak memory footprint\n"
+    },
+    {
+      "name": "ambiguous-implicit-storage-fill",
+      "h5py_stored_initialization": 0,
+      "binary_sha256": "c90344fa7642f2856b6fa942a66d60bdc947bed16eccaf648561e03a99c86033",
+      "returncode": 1,
+      "elapsed_seconds": 0.01730095874518156,
+      "peak_rss_bytes": 9060352,
+      "sampled_peak_rss_bytes": 1277952,
+      "child_cpu_seconds": 0.008595000000000352,
+      "error": "Error: \"prepare: CF _FillValue with implicit HDF5 initialization is outside the admitted profile\"\n        0.00 real         0.00 user         0.00 sys\n             9060352  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n                 791  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   0  messages sent\n                   0  messages received\n                   0  signals received\n                   0  voluntary context switches\n                  13  involuntary context switches\n            37341861  instructions retired\n            20400092  cycles elapsed\n             2359656  peak memory footprint\n"
+    }
+  ],
+  "integrity_qualification": {
+    "same_etag_raw_corruption_undetected": true,
+    "transport_completed": true,
+    "independent_oracle_detected_mismatch": true,
+    "guarantee": "strong ETags pin identity; raw unchecksummed bytes are not authenticated",
+    "http": {
+      "gets": 45,
+      "heads": 5,
+      "response_bytes": 30960,
+      "payload_gets": 8,
+      "all_ranges_conditional": true,
+      "repeated_exact_ranges": 0,
+      "events": [
+        {
+          "method": "HEAD",
+          "start": null,
+          "end": null,
+          "bytes": 0,
+          "status": 200,
+          "payload": false,
+          "conditional": false
+        },
+        {
+          "method": "HEAD",
+          "start": null,
+          "end": null,
+          "bytes": 0,
+          "status": 200,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 0,
+          "end": 8,
+          "bytes": 8,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 0,
+          "end": 256,
+          "bytes": 256,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 680,
+          "end": 712,
+          "bytes": 32,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 1504,
+          "end": 1528,
+          "bytes": 24,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 1504,
+          "end": 1552,
+          "bytes": 48,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 720,
+          "end": 800,
+          "bytes": 80,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 800,
+          "end": 804,
+          "bytes": 4,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 800,
+          "end": 816,
+          "bytes": 16,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 800,
+          "end": 840,
+          "bytes": 40,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 1384,
+          "end": 1416,
+          "bytes": 32,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 840,
+          "end": 864,
+          "bytes": 24,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 840,
+          "end": 888,
+          "bytes": 48,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 2104,
+          "end": 2128,
+          "bytes": 24,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 2104,
+          "end": 2232,
+          "bytes": 128,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 1440,
+          "end": 1504,
+          "bytes": 64,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 1432,
+          "end": 1504,
+          "bytes": 72,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 1424,
+          "end": 1504,
+          "bytes": 80,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 4960,
+          "end": 4964,
+          "bytes": 4,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 4960,
+          "end": 4976,
+          "bytes": 16,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 4960,
+          "end": 5576,
+          "bytes": 616,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 1832,
+          "end": 1836,
+          "bytes": 4,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 1832,
+          "end": 1848,
+          "bytes": 16,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 1832,
+          "end": 2104,
+          "bytes": 272,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 4488,
+          "end": 4608,
+          "bytes": 120,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 5576,
+          "end": 5800,
+          "bytes": 224,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 2432,
+          "end": 2944,
+          "bytes": 512,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 4608,
+          "end": 4612,
+          "bytes": 4,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 4608,
+          "end": 4624,
+          "bytes": 16,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 4608,
+          "end": 4960,
+          "bytes": 352,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 5800,
+          "end": 6024,
+          "bytes": 224,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 6536,
+          "end": 7304,
+          "bytes": 768,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 13712,
+          "end": 13736,
+          "bytes": 24,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 13712,
+          "end": 13848,
+          "bytes": 136,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 208354,
+          "end": 208378,
+          "bytes": 24,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 208354,
+          "end": 210690,
+          "bytes": 2336,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 205738,
+          "end": 205762,
+          "bytes": 24,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 205738,
+          "end": 206714,
+          "bytes": 976,
+          "status": 206,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "HEAD",
+          "start": null,
+          "end": null,
+          "bytes": 0,
+          "status": 200,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "HEAD",
+          "start": null,
+          "end": null,
+          "bytes": 0,
+          "status": 200,
+          "payload": false,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 16328,
+          "end": 19242,
+          "bytes": 2914,
+          "status": 206,
+          "payload": true,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 19242,
+          "end": 22156,
+          "bytes": 2914,
+          "status": 206,
+          "payload": true,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 22156,
+          "end": 25070,
+          "bytes": 2914,
+          "status": 206,
+          "payload": true,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 42554,
+          "end": 45468,
+          "bytes": 2914,
+          "status": 206,
+          "payload": true,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 45468,
+          "end": 48382,
+          "bytes": 2914,
+          "status": 206,
+          "payload": true,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 65866,
+          "end": 68780,
+          "bytes": 2914,
+          "status": 206,
+          "payload": true,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 68780,
+          "end": 71694,
+          "bytes": 2914,
+          "status": 206,
+          "payload": true,
+          "conditional": true
+        },
+        {
+          "method": "GET",
+          "start": 71694,
+          "end": 74608,
+          "bytes": 2914,
+          "status": 206,
+          "payload": true,
+          "conditional": true
+        },
+        {
+          "method": "HEAD",
+          "start": null,
+          "end": null,
+          "bytes": 0,
+          "status": 200,
+          "payload": false,
+          "conditional": true
+        }
+      ]
+    }
+  },
+  "full_receipt": {
+    "path": "prototype-output/earthdata-auth/full-receipts/hdf5-regression-faults.json",
+    "sha256": "9009ca0a99760fbedb54d7cef0252c9863d6ecdb00a73eb6c6a9a0e9f5df479f",
+    "note": "Full repeated transport traces remain local; compact receipt retains validation outcomes, scientific hashes and accounting."
+  }
+}

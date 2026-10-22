@@ -100,8 +100,8 @@ version-pinned native acquisitions with a tuned GDAL reader.
 | WeatherBench2 ERA5 64×32 product above | Anonymous HTTP Zarr v2, Float32/NaN, `(time,longitude,latitude)`; native Zarr subset |
 | NASA POWER IMERG daily spatial | Anonymous HTTP Zarr v2, Float32/NaN, `(time,lat,lon)`, verified daily time and storage filter; native Zarr subset |
 | Archived GOES-19 RRQPE and cloud-top-temperature NetCDF-4 samples | Opt-in `native-hdf5`; exact UInt16/Float32 rank-two array slices, stored one-dimensional axes, conditional compressed-chunk ranges and provisional streaming; [profile and decision gate](docs/native-hdf5/report.md) |
-| Inspected SWOT Raster Version C 100 m UTM19T scene | Native Float32 `/wse` with matching compressed Float64 `/x`,`/y`; exact index slices qualified against h5py/NetCDF-C on an identity-pinned bounded mirror. Live native archive authentication/redirects remain unsupported; [product, access and science gate](docs/swot-wse/report.md) |
-| Inspected SWOT Raster Version D PGD0 100 m UTM19T scene | Aligned native WSE, UInt8 summary quality, UInt32 detailed flags/counts and Float32 uncertainty, separate explicit quality policies, exact stored coordinates and bounded streaming; qualified against h5py/NetCDF-C on a pinned mirror. Live authenticated native archive access remains a separate gate; [decision gate](docs/swot-quality/report.md) and [workflow](docs/swot-quality/workflow.md) |
+| Inspected SWOT Raster Version C 100 m UTM19T scene | Native Float32 `/wse` with matching compressed Float64 `/x`,`/y`; exact index slices qualified against h5py/NetCDF-C on an identity-pinned bounded mirror. The Version C live archive profile is not qualified; [product, access and science gate](docs/swot-wse/report.md) |
+| Inspected SWOT Raster Version D PGD0 100 m UTM19T scene | Aligned native WSE, UInt8 summary quality, UInt32 detailed flags/counts and Float32 uncertainty, separate explicit quality policies, exact stored coordinates and bounded streaming; qualified against h5py/NetCDF-C on a pinned mirror and directly from NASA through opt-in authenticated conditional ranges; [live gate](docs/earthdata-auth/report.md), [authentication workflow](docs/earthdata-auth/workflow.md) and [science](docs/swot-quality/report.md) |
 | Public GFS v3 archive | Native Float32 subset, ordinary/sharded codecs and conditional selective ranges; [exact v3 profile](docs/zarr-v3-input/workflow.md) |
 | Local custom-grid Zarr / direct GeoTIFF | Narrow UInt16 profiles; [advanced lifecycle](docs/unified-workflow.md) and [local Zarr](docs/zarr-workflow.md) |
 
@@ -267,6 +267,12 @@ Raw source masks and named required/excluded bitwise conditions are available
 without overwriting science values. Preparation checks the source definitions;
 there is no universal good-pixel policy. The real PGD0 file, physical layout,
 C-versus-D differences, independent science/fault/resource checks, benchmark
-and remaining authenticated-access gate are documented in the
-[Version D workflow](docs/swot-quality/workflow.md). Neither the mirror replay
-nor the reference Earthdata session establishes live native archive support.
+are documented in the [Version D workflow](docs/swot-quality/workflow.md).
+The separate [authenticated live gate](docs/earthdata-auth/report.md) qualifies
+this exact D product directly from NASA with all five layers. Build with
+`native-hdf5,authenticated-http`, construct a caller-owned
+`authenticated_http::AuthenticatedHttp::earthdata` session from the canonical
+URL and a private netrc file path, then pass it to
+`swot::prepare_authenticated`. [Usage and scope](docs/earthdata-auth/workflow.md).
+Ordinary `prepare` remains anonymous; credentials and signed URLs never enter
+request JSON or provenance.

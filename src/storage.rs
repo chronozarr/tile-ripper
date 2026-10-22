@@ -5,7 +5,6 @@ use reqwest::{blocking::Client, header, Method, Url};
 use serde::Serialize;
 use std::{
     collections::BTreeMap,
-    io::Read,
     sync::{
         atomic::{AtomicUsize, Ordering},
         Arc, Mutex,
@@ -33,7 +32,18 @@ pub(crate) struct Sources {
 
 impl Sources {
     pub fn new(r: &Request) -> Result<Self> {
+        Self::with_transport(r, Default::default())
+    }
+    pub(crate) fn with_transport(
+        r: &Request,
+        transport: crate::http_transport::Transport,
+    ) -> Result<Self> {
         let mut sources = Self::default();
+        #[cfg(feature = "native-hdf5")]
+        {
+            sources.hdf5.transport = transport.clone();
+        }
+        let _ = transport;
         #[cfg(feature = "native-cog")]
         {
             sources.native = crate::native_cog::Snapshots::new(r.budget.buffer_bytes);
@@ -115,8 +125,14 @@ impl Sources {
         Ok(())
     }
     pub fn validate(&self) -> Result<()> {
+        self.validate_cancellable(None)
+    }
+    pub fn validate_cancellable(
+        &self,
+        _cancelled: Option<&std::sync::atomic::AtomicBool>,
+    ) -> Result<()> {
         #[cfg(feature = "native-hdf5")]
-        self.hdf5.validate()?;
+        self.hdf5.validate_cancellable(_cancelled)?;
         self.v3.validate()?;
         for s in self.objects.values() {
             if let Some(h) = s.http() {
@@ -268,7 +284,7 @@ impl Objects {
     }
     pub(crate) fn identity(&self, key: &str) -> serde_json::Value {
         self.http().map_or_else(|| serde_json::json!({"kind":"local_pinned_stat"}), |h| {
-            serde_json::json!({"url":h.base.join(key).ok().map(|u|u.to_string()),"version":h.state.lock().unwrap().versions.get(key)})
+            serde_json::json!({"url":h.base.join(key).ok().map(|u|u.to_string()),"version":h.state.lock().unwrap().versions.get(key),"authenticated_scope":h.transport.identity()})
         })
     }
     pub(crate) fn local_path(&self, key: &s::StoreKey) -> Option<std::path::PathBuf> {
@@ -464,6 +480,7 @@ struct Stats {
 struct State {
     phase: &'static str,
     sealed: bool,
+    failed: bool,
     cached: BTreeMap<String, Option<Vec<u8>>>,
     cached_bytes: usize,
     versions: BTreeMap<String, Option<Version>>,
@@ -472,6 +489,7 @@ struct State {
 pub(crate) struct Http {
     base: Url,
     client: Arc<Client>,
+    transport: crate::http_transport::Transport,
     cap: usize,
     nodes: usize,
     state: Mutex<State>,
@@ -517,6 +535,7 @@ impl Http {
         Ok(Self {
             base,
             client,
+            transport: Default::default(),
             cap: b.buffer_bytes / 2,
             nodes: b.max_nodes,
             state: Mutex::new(State {
@@ -568,6 +587,12 @@ impl Http {
         self.validate()
     }
     fn validate(&self) -> Result<()> {
+        self.validate_cancellable(None)
+    }
+    fn validate_cancellable(
+        &self,
+        cancelled: Option<&std::sync::atomic::AtomicBool>,
+    ) -> Result<()> {
         let keys: Vec<_> = self
             .state
             .lock()
@@ -578,7 +603,7 @@ impl Http {
             .map(|(k, _)| k.clone())
             .collect();
         parallel_map(&keys, |key| {
-            self.request(&s::StoreKey::new(key)?, Access::MetadataHead)
+            self.request_cancellable(&s::StoreKey::new(key)?, Access::MetadataHead, cancelled)
                 .map(|_| ())
         })?;
         Ok(())
@@ -590,6 +615,17 @@ impl Http {
         })
     }
     fn request(&self, key: &s::StoreKey, access: Access) -> Result<Option<(Version, Vec<u8>)>> {
+        self.request_cancellable(key, access, None)
+    }
+    fn request_cancellable(
+        &self,
+        key: &s::StoreKey,
+        access: Access,
+        cancelled: Option<&std::sync::atomic::AtomicBool>,
+    ) -> Result<Option<(Version, Vec<u8>)>> {
+        if self.state.lock().unwrap().failed {
+            return fail("HTTP source binding invalidated by an earlier failure; prepare again");
+        }
         let head = matches!(access, Access::MetadataHead | Access::DataHead);
         let data_head = matches!(access, Access::DataHead);
         let range = match access {
@@ -629,24 +665,40 @@ impl Http {
         }
         for attempt in 0..3 {
             let started = Instant::now();
-            let mut req = self
-                .client
-                .request(if head { Method::HEAD } else { Method::GET }, url.clone());
+            if cancelled.is_some_and(|c| c.load(Ordering::Acquire)) {
+                return fail("acquisition cancelled");
+            }
+            let mut headers = header::HeaderMap::new();
+            headers.insert(
+                header::ACCEPT_ENCODING,
+                header::HeaderValue::from_static("identity"),
+            );
             if let Some((start, end)) = range {
-                req = req.header(header::RANGE, format!("bytes={start}-{}", end - 1));
+                headers.insert(header::RANGE, format!("bytes={start}-{}", end - 1).parse()?);
             }
             if let Some(expected) = &known {
-                req = match expected {
-                    Some(v) => req.header(header::IF_MATCH, &v.etag),
-                    None => req.header(header::IF_NONE_MATCH, "*"),
-                };
+                match expected {
+                    Some(v) => {
+                        headers.insert(header::IF_MATCH, v.etag.parse()?);
+                    }
+                    None => {
+                        headers
+                            .insert(header::IF_NONE_MATCH, header::HeaderValue::from_static("*"));
+                    }
+                }
             }
             let mut retry_after = None;
             let mut status = 0;
             let mut body = Vec::new();
             let result = (|| -> Result<Option<Version>> {
-                let mut response = req.send().map_err(|_| "retryable HTTP transport failure")?;
-                status = response.status().as_u16();
+                let mut response = self.transport.send(
+                    &self.client,
+                    if head { Method::HEAD } else { Method::GET },
+                    url.clone(),
+                    headers,
+                    cancelled,
+                )?;
+                status = response.status();
                 if [408, 429, 500, 502, 503, 504].contains(&status) {
                     retry_after = response
                         .headers()
@@ -670,7 +722,7 @@ impl Http {
                 if known == Some(None) {
                     return fail("previously missing HTTP object appeared; prepare again");
                 }
-                if range.is_some()
+                if (range.is_some() || self.transport.authenticated())
                     && response
                         .headers()
                         .get(header::CONTENT_ENCODING)
@@ -682,7 +734,7 @@ impl Http {
                     .headers()
                     .get(header::ETAG)
                     .and_then(|v| v.to_str().ok())
-                    .filter(|v| v.starts_with('"') && v.ends_with('"') && !v.starts_with("W/"))
+                    .filter(|v| strong_etag(v))
                     .ok_or("HTTP source requires strong ETags")?
                     .to_owned();
                 let length = response
@@ -723,11 +775,7 @@ impl Http {
                     body.reserve_exact((end - start) as usize + 1);
                 }
                 if !head {
-                    response
-                        .by_ref()
-                        .take(range.map_or(self.cap as u64, |(s, e)| e - s) + 1)
-                        .read_to_end(&mut body)
-                        .map_err(|_| "retryable interrupted HTTP body")?;
+                    response.read_body(range.map_or(self.cap as u64, |(s, e)| e - s), &mut body)?;
                     if body.len() > self.cap {
                         return fail("HTTP object exceeds half buffer_bytes");
                     }
@@ -838,6 +886,9 @@ impl Http {
                         .get(key_string)
                         .is_some_and(|current| current != &version)
                     {
+                        if self.transport.authenticated() {
+                            state.failed = true;
+                        }
                         return fail("HTTP source version conflict; prepare again");
                     }
                     if !state.versions.contains_key(key_string)
@@ -854,12 +905,25 @@ impl Http {
                     } else {
                         Duration::from_millis(25 * (1 << attempt))
                     };
-                    std::thread::sleep(wait);
+                    let until = Instant::now() + wait;
+                    while Instant::now() < until {
+                        if cancelled.is_some_and(|c| c.load(Ordering::Acquire)) {
+                            return fail("acquisition cancelled");
+                        }
+                        std::thread::sleep(
+                            until
+                                .saturating_duration_since(Instant::now())
+                                .min(Duration::from_millis(20)),
+                        );
+                    }
                 }
                 Err(e) => {
+                    if self.transport.authenticated() {
+                        self.state.lock().unwrap().failed = true;
+                    }
                     if e.to_string().starts_with("retryable") {
                         return fail(&format!(
-                            "HTTP retry budget exhausted after 3 attempts (last status {status})"
+                            "HTTP retry budget exhausted after 3 attempts (last status {status}; {e})"
                         ));
                     }
                     return Err(e);
@@ -999,7 +1063,11 @@ fn local_file_version(path: &std::path::Path) -> Result<serde_json::Value> {
 }
 #[cfg(feature = "native-hdf5")]
 impl ObjectFile {
-    pub fn open(asset: &Asset, budget: &Budget) -> Result<Self> {
+    pub fn open(
+        asset: &Asset,
+        budget: &Budget,
+        transport: crate::http_transport::Transport,
+    ) -> Result<Self> {
         let (objects, key) = if cog::remote(&asset.locator) {
             let mut url = Url::parse(&asset.locator)?;
             let filename = url
@@ -1020,6 +1088,7 @@ impl ObjectFile {
                 Arc::new(Http::build_client()?),
                 Arc::new(MetadataBudget::new(budget.buffer_bytes / 2)),
             )?;
+            http.transport = transport;
             http.validate_data = true;
             http.sizes(&[key.to_string()])?
                 .first()
@@ -1076,6 +1145,24 @@ impl ObjectFile {
         })
     }
     pub fn read(&self, start: u64, len: usize) -> Result<Vec<u8>> {
+        self.read_cancellable(start, len, None)
+    }
+    pub fn read_cancellable(
+        &self,
+        start: u64,
+        len: usize,
+        cancelled: Option<&std::sync::atomic::AtomicBool>,
+    ) -> Result<Vec<u8>> {
+        if let Some(h) = self.objects.http() {
+            if len == 0 {
+                return Ok(Vec::new());
+            }
+            let end = start.checked_add(len as u64).ok_or("HDF5 range overflow")?;
+            return Ok(h
+                .request_cancellable(&self.key, Access::Range { start, end }, cancelled)?
+                .ok_or("HDF5 range absent")?
+                .1);
+        }
         if len == 0 {
             return Ok(Vec::new());
         }
@@ -1101,10 +1188,13 @@ impl ObjectFile {
         }
         Ok(())
     }
-    pub fn validate(&self) -> Result<()> {
+    pub fn validate_cancellable(
+        &self,
+        cancelled: Option<&std::sync::atomic::AtomicBool>,
+    ) -> Result<()> {
         self.validate_local()?;
         if let Some(h) = self.objects.http() {
-            h.validate()?;
+            h.validate_cancellable(cancelled)?;
         }
         Ok(())
     }
@@ -1121,13 +1211,107 @@ impl ObjectFile {
     }
     pub fn stats(&self) -> serde_json::Value {
         self.objects.http().map_or(serde_json::Value::Null, |h| {
-            serde_json::json!(h.state.lock().unwrap().stats)
+            let mut stats = serde_json::json!(h.state.lock().unwrap().stats);
+            stats["authenticated_http"] = h.transport.stats();
+            stats
         })
     }
 }
 
+fn strong_etag(value: &str) -> bool {
+    value.len() >= 2
+        && value.starts_with('"')
+        && value.ends_with('"')
+        && !value[1..value.len() - 1]
+            .bytes()
+            .any(|b| b < 33 || b == 127 || b == b'"')
+}
+
 #[cfg(test)]
 mod tests {
+    #[cfg(all(feature = "native-hdf5", feature = "authenticated-http"))]
+    #[test]
+    #[ignore = "run by bench/earthdata_auth.py with its private HTTPS fixtures"]
+    fn authenticated_concurrent_routes_and_sticky_conflicts() {
+        use crate::authenticated_http::{AuthenticatedHttp, Config};
+        let mut config: Config = serde_json::from_slice(
+            &std::fs::read(std::env::var_os("TILE_RIPPER_AUTH_POLICY").unwrap()).unwrap(),
+        )
+        .unwrap();
+        config.additional_roots.push(
+            reqwest::Certificate::from_pem(
+                &std::fs::read(std::env::var_os("TILE_RIPPER_AUTH_CA").unwrap()).unwrap(),
+            )
+            .unwrap(),
+        );
+        let url = config.canonical_url.clone();
+        let transport = std::sync::Arc::new(
+            AuthenticatedHttp::new(config, std::env::var_os("TILE_RIPPER_AUTH_NETRC").unwrap())
+                .unwrap(),
+        );
+        let asset = crate::Asset {
+            id: "fixture".into(),
+            locator: url.clone(),
+            etag: None,
+            format: crate::Format::Hdf5,
+            datetime: None,
+        };
+        let file = super::ObjectFile::open(
+            &asset,
+            &crate::Budget {
+                buffer_bytes: 32 * 1024 * 1024,
+                max_nodes: 10000,
+                chunk_edge: 256,
+            },
+            crate::http_transport::Transport::Authenticated(transport.clone()),
+        )
+        .unwrap();
+        std::thread::scope(|scope| {
+            for _ in 0..8 {
+                scope.spawn(|| {
+                    assert_eq!(file.read(0, 8).unwrap(), b"\x89HDF\r\n\x1a\n");
+                });
+            }
+        });
+        let stats = transport.statistics();
+        assert!(stats["peak_in_flight"].as_u64().unwrap() <= 4);
+        assert_eq!(stats["refreshes"], 1);
+        let wire_before = (stats["wire_head"].clone(), stats["wire_get"].clone());
+        let unexpected =
+            reqwest::Url::parse("https://untrusted.invalid/secret?signature=HIDDEN").unwrap();
+        assert!(transport
+            .send(
+                reqwest::Method::HEAD,
+                unexpected,
+                reqwest::header::HeaderMap::new(),
+                None
+            )
+            .is_err());
+        assert!(transport
+            .send(
+                reqwest::Method::GET,
+                reqwest::Url::parse(&url).unwrap(),
+                reqwest::header::HeaderMap::new(),
+                None
+            )
+            .is_err());
+        let stats = transport.statistics();
+        assert_eq!(
+            wire_before,
+            (stats["wire_head"].clone(), stats["wire_get"].clone())
+        );
+        let control = std::env::var("TILE_RIPPER_TEST_CONTROL").unwrap();
+        let client = reqwest::blocking::Client::new();
+        client.get(format!("{control}/mutate")).send().unwrap();
+        assert!(file.read(0, 8).is_err());
+        client.get(format!("{control}/restore")).send().unwrap();
+        assert!(
+            file.validate_cancellable(None).is_err(),
+            "a restored server must not clear a detected source conflict"
+        );
+        assert!(file.read(0, 8).is_err());
+    }
+
     #[test]
     fn retry_after_respects_seconds_dates_and_bounded_waits() {
         assert_eq!(super::retry_delay("1").unwrap().as_secs(), 1);

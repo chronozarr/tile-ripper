@@ -230,6 +230,25 @@ pub struct Prepared {
 /// Requires one HDF5 asset and exactly the five documented variables. Input
 /// variable order is normalized to PATHS; source windows/strides stay unchanged.
 pub fn prepare(request: &Request, policy: Policy, cache: &mut LayoutCache) -> Result<Prepared> {
+    prepare_using(request, policy, |r| acquisition::prepare(r, cache))
+}
+/// Explicit authenticated counterpart; credentials and session never enter Request.
+#[cfg(feature = "authenticated-http")]
+pub fn prepare_authenticated(
+    request: &Request,
+    policy: Policy,
+    cache: &mut LayoutCache,
+    transport: Arc<crate::authenticated_http::AuthenticatedHttp>,
+) -> Result<Prepared> {
+    prepare_using(request, policy, |r| {
+        acquisition::prepare_authenticated(r, cache, transport)
+    })
+}
+fn prepare_using(
+    request: &Request,
+    policy: Policy,
+    prepare: impl FnOnce(&Request) -> Result<acquisition::Prepared>,
+) -> Result<Prepared> {
     if !matches!(&request.source,Source::Assets{assets} if assets.len()==1 && assets[0].format==Format::Hdf5)
         || request.variables.len() != 5
         || PATHS.iter().any(|p| {
@@ -249,7 +268,7 @@ pub fn prepare(request: &Request, policy: Policy, cache: &mut LayoutCache) -> Re
         .iter()
         .map(|p| Variable::Dataset { path: (*p).into() })
         .collect();
-    let base = acquisition::prepare(&r, cache)?;
+    let base = prepare(&r)?;
     policy.validate_definitions(&base.explain())?;
     Ok(Prepared { base, policy })
 }

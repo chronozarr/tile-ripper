@@ -454,6 +454,7 @@ struct CachedAxis {
 }
 #[derive(Default)]
 pub(crate) struct Context {
+    pub(crate) transport: crate::http_transport::Transport,
     files: Mutex<BTreeMap<String, Arc<Metadata>>>,
     bindings: Mutex<BTreeMap<(String, String), Arc<Binding>>>,
     axes: Mutex<BTreeMap<(String, String), CachedAxis>>,
@@ -683,6 +684,7 @@ impl Context {
             .map(|a| a.values.capacity() * 8 + a.description.to_string().len() * 4)
             .sum::<usize>()
             + files.values().map(|m| m.bytes() * 4).sum::<usize>()
+            + self.transport.reservation()
             + bindings
                 .values()
                 .map(|b| {
@@ -697,9 +699,15 @@ impl Context {
                 .sum::<usize>()
     }
     pub fn validate(&self) -> Result<()> {
+        self.validate_cancellable(None)
+    }
+    pub fn validate_cancellable(
+        &self,
+        cancelled: Option<&std::sync::atomic::AtomicBool>,
+    ) -> Result<()> {
         for m in self.files.lock().unwrap().values() {
             m.state.lock().unwrap().sealed = true;
-            m.file.validate()?;
+            m.file.validate_cancellable(cancelled)?;
         }
         Ok(())
     }
@@ -744,7 +752,7 @@ impl Context {
                 m.clone()
             } else {
                 let m = Arc::new(Metadata {
-                    file: ObjectFile::open(asset, &r.budget)?,
+                    file: ObjectFile::open(asset, &r.budget, self.transport.clone())?,
                     cap: r.budget.buffer_bytes / 32,
                     max_reads: r.budget.max_nodes,
                     page: metadata_page()?,
@@ -1137,6 +1145,7 @@ impl RangeCache {
         metadata: &Metadata,
         entry: Option<&Entry>,
         report: &mut crate::ExecutionReport,
+        cancelled: &std::sync::atomic::AtomicBool,
     ) -> Result<Arc<[u8]>> {
         let Some(entry) = entry else {
             return Ok(Arc::from([]));
@@ -1152,7 +1161,10 @@ impl RangeCache {
             self.hits += 1;
             return Ok(bytes);
         }
-        let bytes: Arc<[u8]> = metadata.file.read(entry.address, entry.size)?.into();
+        let bytes: Arc<[u8]> = metadata
+            .file
+            .read_cancellable(entry.address, entry.size, Some(cancelled))?
+            .into();
         report.source_data_requests = Some(report.source_data_requests.unwrap_or(0) + 1);
         report.source_data_bytes = Some(report.source_data_bytes.unwrap_or(0) + entry.size as u64);
         if bytes.len() <= self.cap {
@@ -1291,8 +1303,12 @@ impl Context {
                             }
                             b.metadata.file.phase(payload_phase(&b.path));
                             let clock = std::time::Instant::now();
-                            let payload =
-                                cache.read(&b.metadata, part.entry.as_ref(), &mut report)?;
+                            let payload = cache.read(
+                                &b.metadata,
+                                part.entry.as_ref(),
+                                &mut report,
+                                cancelled,
+                            )?;
                             let view = Arc::new(View {
                                 metadata: b.metadata.clone(),
                                 start: part.entry.as_ref().map_or(0, |e| e.address),
@@ -1516,7 +1532,7 @@ mod tests {
             chunk_edge: 256,
         };
         let metadata = Arc::new(Metadata {
-            file: ObjectFile::open(&asset, &budget)?,
+            file: ObjectFile::open(&asset, &budget, Default::default())?,
             cap: 2 * 1024 * 1024,
             max_reads: 4096,
             page: metadata_page()?,
@@ -1552,7 +1568,7 @@ mod tests {
             payload: payload.into(),
         }))?;
         let output = decode(&reader.dataset("/RRQPE")?, &selection(&at, &count, &step)?)?;
-        metadata.file.validate()?;
+        metadata.file.validate_cancellable(None)?;
         let receipt = json!({"shape":ds.shape(),"dtype":dtype(&ds)?,"chunks":chunks,"chunk_offset":e.offsets,"byte_range":[e.address,e.size],"attributes":attrs(&ds,&file)?,"metadata_cached_bytes":metadata.bytes(),"identity":metadata.file.identity(),"transport":metadata.file.stats(),"values":output.as_u16(),"coordinates":[x,y]});
         std::fs::write(
             "prototype-output/native-hdf5/rust-probe.json",
