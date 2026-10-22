@@ -62,6 +62,8 @@ fn run() -> Result<()> {
             return Err("native chunk shape mismatch".into());
         }
         let (dtype, digest) = match &c.pixels {
+            Pixels::UInt8(v) => ("uint8", adler(v.iter().copied())),
+            Pixels::UInt32(v) => ("uint32", adler(v.iter().flat_map(|v| v.to_le_bytes()))),
             Pixels::UInt16(v) => ("uint16", adler(v.iter().flat_map(|v| v.to_le_bytes()))),
             Pixels::Float32(v) => ("float32", adler(v.iter().flat_map(|v| v.to_le_bytes()))),
         };
@@ -70,6 +72,8 @@ fn run() -> Result<()> {
             if keep {
                 n += 1;
                 total += match &c.pixels {
+                    Pixels::UInt8(v) => f64::from(v[i]),
+                    Pixels::UInt32(v) => f64::from(v[i]),
                     Pixels::UInt16(v) => f64::from(v[i]),
                     Pixels::Float32(v) => f64::from(v[i]),
                 };

@@ -1,4 +1,6 @@
 //! One acquisition lifecycle. Inspection documents cannot be deserialized/replayed.
+#[cfg(feature = "native-hdf5")]
+use crate::fail;
 use crate::{cog::LayoutCache, model::*, stac_workflow, Chunk, ExecutionReport, Result};
 use serde_json::{json, Value};
 use std::{
@@ -223,6 +225,44 @@ impl Prepared {
             }
             Runtime::Catalog(p) => p.execute_cancellable(cancelled, sink),
         }
+    }
+    #[cfg(feature = "native-hdf5")]
+    pub(crate) fn execute_swot_cancellable(
+        &self,
+        cancelled: &std::sync::atomic::AtomicBool,
+        sink: impl FnMut([Chunk; 5]) -> Result<()>,
+    ) -> Result<ExecutionReport> {
+        let _quiet = crate::diagnostics::QuietNative::enter();
+        let Runtime::Direct {
+            request,
+            versions,
+            sources,
+            planning_seconds,
+            ..
+        } = self.runtime.as_ref()
+        else {
+            return fail("SWOT aligned execution requires direct HDF5 assets");
+        };
+        let Source::Assets { assets } = &request.source else {
+            return fail("missing SWOT source");
+        };
+        sources.phase("pre_execution_validation");
+        versions.validate()?;
+        stac_workflow::validate_identities(request, &Default::default())?;
+        sources.validate()?;
+        let mut report = sources
+            .hdf5
+            .execute_aligned(&assets[0], request, *planning_seconds, cancelled, sink)
+            .map_err(|e| safe_error(request, "execution", e))?;
+        sources.phase("post_execution_validation");
+        versions.validate()?;
+        stac_workflow::validate_identities(request, &Default::default())?;
+        sources.validate()?;
+        if cancelled.load(std::sync::atomic::Ordering::Acquire) {
+            return fail("acquisition cancelled");
+        }
+        report.transport = sources.stats();
+        Ok(report)
     }
     /// Native format writers are retained. Only the provenance envelope is unified.
     pub fn fetch(&self) -> Result<Value> {
@@ -511,7 +551,11 @@ fn prepare_inner(request: &Request, cache: &mut LayoutCache) -> Result<Prepared>
         } else {
             1
         };
-        let bytes = if layout.dtype == "<f4" { 4 } else { 2 };
+        let bytes = match layout.dtype.as_str() {
+            "|u1" => 1,
+            "<u4" | "<f4" => 4,
+            _ => 2,
+        };
         total.checked_add(
             width
                 .checked_mul(height)?
@@ -648,7 +692,7 @@ fn outputs(p: &Plan, mode: OutputStrategy) -> Value {
         let Some(l) = &s.layout else {
             continue;
         };
-        let mut record = json!({"asset_id":s.asset_id,"variable":l.variable,"timestamps":s.timestamps,"window":s.window,"native_grid":{"crs":l.crs,"transform":crate::spatial::window_transform(l,&s.window)},"dtype":if l.dtype=="<f4" {"float32"}else{"uint16"},"native_dtype":l.dtype,"nodata":l.nodata,"scale":l.scale,"offset":l.offset,"aoi_mask_applied":s.mask_geometry.is_some()});
+        let mut record = json!({"asset_id":s.asset_id,"variable":l.variable,"timestamps":s.timestamps,"window":s.window,"native_grid":{"crs":l.crs,"transform":crate::spatial::window_transform(l,&s.window)},"dtype":match l.dtype.as_str() { "|u1" => "uint8", "<u4" => "uint32", "<f4" => "float32", _ => "uint16" },"native_dtype":l.dtype,"nodata":l.nodata,"scale":l.scale,"offset":l.offset,"aoi_mask_applied":s.mask_geometry.is_some()});
         if zarr {
             record["file"] = json!(format!("{}.zarr", s.asset_id));
             record["validity"] = json!(if l.dtype == "<f4" {

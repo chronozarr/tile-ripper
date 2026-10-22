@@ -1,0 +1,25 @@
+[tasks.work]
+summary = "Implement and independently qualify bounded SWOT quality-aware streaming"
+role = "worker"
+commit_message = "Stream aligned SWOT WSE and native quality layers with explicit policies"
+files = { read = ["docs/swot-quality/workflow.md"], edit = ["src/pixels.rs", "src/hdf5.rs", "src/acquisition.rs", "src/lib.rs", "src/zarr_acquire.rs", "examples/hdf5_subset_oracle.rs", "examples/zarr_subset_oracle.rs", "examples/chunk_stream.rs", "consumers/native-stats/src/main.rs", "README.md", "bench/hdf5_input.py", "vendor/hdf5-reader/src/messages/datatype.rs", "vendor/hdf5-reader/TILE_RIPPER_PATCH.md"], create = ["src/swot.rs", "examples/swot_quality.rs", "tests/swot.rs", "tests/data/swot/", "bench/swot_quality.py", "bench/swot_quality_reference.py", "bench/swot_quality_report.py", "docs/swot-quality/"] }
+prompt = """
+Orient:
+- Continue clean codex/acquisition-planner at dbafecc; read referenced full quality-aware specification.
+- Research PO.DAAC Cookbook before policy design; inspect real Version C and D and PDD; target Version D per user steering.
+Edit:
+1. Preserve exact UInt8/UInt32 plus existing UInt16/Float32, fill and byte-order semantics.
+2. Share bounded coordinate discovery and align multi-variable selections using each own physical index.
+3. Stream bounded raw tiles and separate reproducible summary/bitwise validity masks.
+4. Independently validate every stored value, source mask, coordinates, quality and summary with h5py and NetCDF-C; use real Version D PGD0 object.
+5. Test mismatched chunk shapes, holes, strides, corruption, mutations, cancellation and budgets.
+6. Benchmark native/mature controls and WSE-only/multi-variable traffic, CPU, RSS and reservations.
+7. Investigate legitimate archive HEAD/GET routing separately; implement live-native access only if every security/identity invariant is demonstrated.
+8. Record C versus D evidence, remaining limits and final decision gate. Commit validated work locally.
+- Do not merge, publish, push, tag, deploy, modify ChronoZarr, submit upstream HDF5 work or download a complete product in native acquisition.
+Verify:
+- cargo test --locked --all-features
+- cargo clippy --locked --all-features --all-targets -- -D warnings
+- Run docs/swot-quality/workflow.md independent science/fault/resource/inherited gates.
+"""
+test_cmd = "cargo test --locked --all-features"

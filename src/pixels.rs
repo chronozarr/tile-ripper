@@ -2,7 +2,9 @@
 use crate::{fail, Result};
 #[derive(Debug)]
 pub enum Pixels {
+    UInt8(Vec<u8>),
     UInt16(Vec<u16>),
+    UInt32(Vec<u32>),
     Float32(Vec<f32>),
 }
 impl Default for Pixels {
@@ -18,7 +20,9 @@ impl From<Vec<u16>> for Pixels {
 impl Pixels {
     pub fn len(&self) -> usize {
         match self {
+            Self::UInt8(v) => v.len(),
             Self::UInt16(v) => v.len(),
+            Self::UInt32(v) => v.len(),
             Self::Float32(v) => v.len(),
         }
     }
@@ -28,9 +32,25 @@ impl Pixels {
     pub fn byte_len(&self) -> usize {
         self.len()
             * match self {
+                Self::UInt8(_) => 1,
                 Self::UInt16(_) => 2,
+                Self::UInt32(_) => 4,
                 Self::Float32(_) => 4,
             }
+    }
+    pub fn as_u8(&self) -> Option<&[u8]> {
+        if let Self::UInt8(v) = self {
+            Some(v)
+        } else {
+            None
+        }
+    }
+    pub fn as_u32(&self) -> Option<&[u32]> {
+        if let Self::UInt32(v) = self {
+            Some(v)
+        } else {
+            None
+        }
     }
     pub fn as_u16(&self) -> Option<&[u16]> {
         if let Self::UInt16(v) = self {
@@ -50,12 +70,14 @@ impl Pixels {
         if let Self::UInt16(v) = self {
             Ok(v)
         } else {
-            fail("UInt16 output adapter cannot accept Float32")
+            fail("UInt16 output adapter requires UInt16 stored values")
         }
     }
     pub(crate) fn value(&self, i: usize) -> f64 {
         match self {
+            Self::UInt8(v) => v[i] as f64,
             Self::UInt16(v) => v[i] as f64,
+            Self::UInt32(v) => v[i] as f64,
             Self::Float32(v) => v[i] as f64,
         }
     }
@@ -65,6 +87,12 @@ impl Pixels {
     }
     pub(crate) fn copy(&mut self, dst: usize, other: &Self, src: usize, len: usize) -> Result<()> {
         match (self, other) {
+            (Self::UInt8(a), Self::UInt8(b)) => {
+                a[dst..dst + len].copy_from_slice(&b[src..src + len])
+            }
+            (Self::UInt32(a), Self::UInt32(b)) => {
+                a[dst..dst + len].copy_from_slice(&b[src..src + len])
+            }
             (Self::UInt16(a), Self::UInt16(b)) => {
                 a[dst..dst + len].copy_from_slice(&b[src..src + len])
             }

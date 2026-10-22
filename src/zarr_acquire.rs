@@ -1351,6 +1351,7 @@ impl OutputBuffer {
             match &values {
                 crate::Pixels::UInt16(v) => ar.store_chunk_opt(&key, v, &serial())?,
                 crate::Pixels::Float32(v) => ar.store_chunk_opt(&key, v, &serial())?,
+                _ => return fail("Zarr output currently requires UInt16 or Float32"),
             };
             if self.first_output.is_none() {
                 self.first_output = Some(self.started.elapsed().as_secs_f64());

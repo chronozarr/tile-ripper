@@ -42,3 +42,6 @@ mod zarr_v3;
 
 #[cfg(feature = "native-hdf5")]
 mod hdf5;
+
+#[cfg(feature = "native-hdf5")]
+pub mod swot;

@@ -127,7 +127,7 @@ impl Storage for Metadata {
 struct View {
     metadata: Arc<Metadata>,
     start: u64,
-    payload: Vec<u8>,
+    payload: Arc<[u8]>,
 }
 impl Storage for View {
     fn len(&self) -> u64 {
@@ -212,6 +212,17 @@ fn stored_attrs(attributes: Vec<hdf5_reader::Attribute>) -> Result<Value> {
                     value["nonfinite"] = json!(number.to_string());
                 }
             }
+            Datatype::FixedPoint {
+                signed: false,
+                size: 1 | 2 | 4,
+                ..
+            } if ["flag_values", "flag_masks"].contains(&attr.name.as_str()) => {
+                value["value"] = match &attr.datatype {
+                    Datatype::FixedPoint { size: 1, .. } => json!(attr.read_1d::<u8>()?),
+                    Datatype::FixedPoint { size: 2, .. } => json!(attr.read_1d::<u16>()?),
+                    _ => json!(attr.read_1d::<u32>()?),
+                };
+            }
             _ => value["uninterpreted"] = json!(true),
         }
         out.insert(attr.name, value);
@@ -229,9 +240,14 @@ fn marker(dataset: &Dataset, name: &str, dtype: &str) -> Result<Option<f64>> {
         return fail("HDF5 missing markers must be numeric scalars");
     }
     let value = attribute.read_as_f64()?;
-    if dtype == "<u2" {
-        if !value.is_finite() || value.fract() != 0. || !(0. ..=65535.).contains(&value) {
-            return fail("HDF5 missing marker is not representable as UInt16");
+    if ["|u1", "<u2", "<u4"].contains(&dtype) {
+        let max = match dtype {
+            "|u1" => u8::MAX as f64,
+            "<u2" => u16::MAX as f64,
+            _ => u32::MAX as f64,
+        };
+        if !value.is_finite() || value.fract() != 0. || !(0. ..=max).contains(&value) {
+            return fail("HDF5 missing marker is not representable in the stored unsigned type");
         }
         Ok(Some(value))
     } else {
@@ -253,12 +269,22 @@ fn missing_dataset(error: &hdf5_reader::error::Error) -> bool {
 fn dtype(dataset: &Dataset) -> Result<&'static str> {
     match dataset.dtype() {
         Datatype::FixedPoint {
+            size: 1,
+            signed: false,
+            ..
+        } => Ok("|u1"),
+        Datatype::FixedPoint {
+            size: 4,
+            signed: false,
+            ..
+        } => Ok("<u4"),
+        Datatype::FixedPoint {
             size: 2,
             signed: false,
             ..
         } => Ok("<u2"),
         Datatype::FloatingPoint { size: 4, .. } => Ok("<f4"),
-        _ => fail("native HDF5 supports only stored UInt16 or IEEE Float32 data"),
+        _ => fail("native HDF5 supports only stored UInt8, UInt16, UInt32 or IEEE Float32 data"),
     }
 }
 #[derive(Clone, Debug)]
@@ -395,6 +421,18 @@ fn selection(start: &[usize; 2], count: &[usize; 2], step: &[usize; 2]) -> Resul
 }
 fn decode(dataset: &Dataset, selected: &SliceInfo) -> Result<Pixels> {
     Ok(match dtype(dataset)? {
+        "|u1" => Pixels::UInt8(
+            dataset
+                .read_slice_selective_v1::<u8>(selected)?
+                .into_raw_vec_and_offset()
+                .0,
+        ),
+        "<u4" => Pixels::UInt32(
+            dataset
+                .read_slice_selective_v1::<u32>(selected)?
+                .into_raw_vec_and_offset()
+                .0,
+        ),
         "<u2" => Pixels::UInt16(
             dataset
                 .read_slice_selective_v1::<u16>(selected)?
@@ -410,10 +448,15 @@ fn decode(dataset: &Dataset, selected: &SliceInfo) -> Result<Pixels> {
     })
 }
 
+struct CachedAxis {
+    values: Vec<f64>,
+    description: Value,
+}
 #[derive(Default)]
 pub(crate) struct Context {
     files: Mutex<BTreeMap<String, Arc<Metadata>>>,
     bindings: Mutex<BTreeMap<(String, String), Arc<Binding>>>,
+    axes: Mutex<BTreeMap<(String, String), CachedAxis>>,
 }
 #[derive(Clone, Debug)]
 struct Job {
@@ -585,7 +628,7 @@ fn chunked_coordinate(
         let view = open(Arc::new(View {
             metadata: metadata.clone(),
             start: entry.address,
-            payload,
+            payload: payload.into(),
         }))?;
         let decoded = coordinate(&view.dataset(path)?, at, end - first, step)?;
         values.extend(decoded);
@@ -633,7 +676,13 @@ impl Context {
     pub fn bytes(&self) -> usize {
         let files = self.files.lock().unwrap();
         let bindings = self.bindings.lock().unwrap();
-        files.values().map(|m| m.bytes() * 4).sum::<usize>()
+        self.axes
+            .lock()
+            .unwrap()
+            .values()
+            .map(|a| a.values.capacity() * 8 + a.description.to_string().len() * 4)
+            .sum::<usize>()
+            + files.values().map(|m| m.bytes() * 4).sum::<usize>()
             + bindings
                 .values()
                 .map(|b| {
@@ -771,6 +820,12 @@ impl Context {
                 if axis.shape() != [shape[i] as u64] {
                     return fail("explicit HDF5 coordinate shape does not match dataset dimension");
                 }
+                let key = (asset.id.clone(), axes[i].clone());
+                if let Some(axis) = self.axes.lock().unwrap().get(&key) {
+                    coordinates[i] = axis.values.clone();
+                    coordinate_attrs.push(axis.description.clone());
+                    continue;
+                }
                 let attributes = attrs(&axis, &file)?;
                 let chunked = axis_header.messages.iter().any(|m| {
                     matches!(m,HdfMessage::DataLayout(l) if matches!(l.layout,DataLayout::Chunked {..}))
@@ -792,7 +847,15 @@ impl Context {
                     json!({"layout":"contiguous_or_compact"})
                 };
                 validate_coordinate_markers(&axis, &coordinates[i])?;
-                coordinate_attrs.push(json!({"path":axes[i],"dtype":format!("{:?}",axis.dtype()),"attributes":attributes,"storage":storage}));
+                let description = json!({"path":axes[i],"dtype":format!("{:?}",axis.dtype()),"attributes":attributes,"storage":storage});
+                self.axes.lock().unwrap().insert(
+                    key,
+                    CachedAxis {
+                        values: coordinates[i].clone(),
+                        description: description.clone(),
+                    },
+                );
+                coordinate_attrs.push(description);
             }
             let mapping = attributes["grid_mapping"]["value"]
                 .as_str()
@@ -823,10 +886,11 @@ impl Context {
             };
             let number = |name: &str| attributes[name]["value"].as_f64();
             let storage_fill = if let Some(fill) = ds.fill_value().and_then(|f| f.value.as_ref()) {
-                Some(if dt == "<u2" {
-                    <u16 as hdf5_reader::H5Type>::from_bytes(fill, ds.dtype())? as f64
-                } else {
-                    <f32 as hdf5_reader::H5Type>::from_bytes(fill, ds.dtype())? as f64
+                Some(match dt {
+                    "|u1" => <u8 as hdf5_reader::H5Type>::from_bytes(fill, ds.dtype())? as f64,
+                    "<u2" => <u16 as hdf5_reader::H5Type>::from_bytes(fill, ds.dtype())? as f64,
+                    "<u4" => <u32 as hdf5_reader::H5Type>::from_bytes(fill, ds.dtype())? as f64,
+                    _ => <f32 as hdf5_reader::H5Type>::from_bytes(fill, ds.dtype())? as f64,
                 })
             } else {
                 None
@@ -945,7 +1009,7 @@ impl Context {
             metadata.file.phase("metadata_index_discovery");
             let native = chunk[0]
                 .checked_mul(chunk[1])
-                .and_then(|n| n.checked_mul(if dt == "<f4" { 4 } else { 2 }))
+                .and_then(|n| n.checked_mul(hdf5_reader::dtype_element_size(ds.dtype()).ok()?))
                 .ok_or("HDF5 decoded chunk overflow")?;
             if native > r.budget.buffer_bytes / 8 {
                 return fail("one decoded HDF5 chunk exceeds working memory budget");
@@ -1059,6 +1123,263 @@ impl Context {
     }
 }
 
+// An execution-local encoded range cache. It is charged at its fixed cap and
+// cannot outlive final identity validation or cross an asset/version boundary.
+struct RangeCache {
+    cap: usize,
+    bytes: usize,
+    entries: std::collections::VecDeque<(u64, Arc<[u8]>)>,
+    hits: usize,
+}
+impl RangeCache {
+    fn read(
+        &mut self,
+        metadata: &Metadata,
+        entry: Option<&Entry>,
+        report: &mut crate::ExecutionReport,
+    ) -> Result<Arc<[u8]>> {
+        let Some(entry) = entry else {
+            return Ok(Arc::from([]));
+        };
+        if let Some(index) = self
+            .entries
+            .iter()
+            .position(|(a, b)| *a == entry.address && b.len() == entry.size)
+        {
+            let item = self.entries.remove(index).unwrap();
+            let bytes = item.1.clone();
+            self.entries.push_back(item);
+            self.hits += 1;
+            return Ok(bytes);
+        }
+        let bytes: Arc<[u8]> = metadata.file.read(entry.address, entry.size)?.into();
+        report.source_data_requests = Some(report.source_data_requests.unwrap_or(0) + 1);
+        report.source_data_bytes = Some(report.source_data_bytes.unwrap_or(0) + entry.size as u64);
+        if bytes.len() <= self.cap {
+            while self.bytes + bytes.len() > self.cap {
+                let (_, old) = self.entries.pop_front().unwrap();
+                self.bytes -= old.len();
+            }
+            self.bytes += bytes.len();
+            self.entries.push_back((entry.address, bytes.clone()));
+        }
+        Ok(bytes)
+    }
+}
+fn payload_phase(path: &str) -> &'static str {
+    match path {
+        "/wse" => "hdf5_wse_payload",
+        "/wse_qual" => "hdf5_summary_quality_payload",
+        "/wse_qual_bitwise" => "hdf5_bitwise_quality_payload",
+        "/wse_uncert" => "hdf5_uncertainty_payload",
+        "/n_wse_pix" => "hdf5_pixel_count_payload",
+        _ => "hdf5_science_payload",
+    }
+}
+impl Context {
+    pub fn execute_aligned(
+        &self,
+        asset: &Asset,
+        request: &Request,
+        planning_seconds: f64,
+        cancelled: &std::sync::atomic::AtomicBool,
+        mut sink: impl FnMut([crate::Chunk; 5]) -> Result<()>,
+    ) -> Result<crate::ExecutionReport> {
+        use std::sync::atomic::Ordering;
+        let started = std::time::Instant::now();
+        let bindings = crate::swot::PATHS
+            .iter()
+            .map(|path| self.binding(&asset.id, path))
+            .collect::<Result<Vec<_>>>()?;
+        let wse = &bindings[0];
+        let cache_cap = request.budget.buffer_bytes / 8;
+        let mut work = 0;
+        for b in &bindings {
+            let native = b.layout.block[0]
+                .checked_mul(b.layout.block[1])
+                .and_then(|n| n.checked_mul(if b.layout.dtype == "|u1" { 1 } else { 4 }))
+                .ok_or("SWOT native chunk overflow")?;
+            let encoded = b
+                .jobs
+                .iter()
+                .filter_map(|j| j.entry.as_ref().map(|e| e.size))
+                .max()
+                .unwrap_or(0);
+            work = work.max(
+                native
+                    .checked_mul(8)
+                    .and_then(|n| n.checked_add(encoded.checked_mul(3)?))
+                    .ok_or("SWOT decoder reservation overflow")?,
+            );
+        }
+        let base = self
+            .bytes()
+            .checked_add(cache_cap)
+            .and_then(|n| n.checked_add(work))
+            .and_then(|n| n.checked_add(65536))
+            .ok_or("SWOT reservation overflow")?;
+        let available = request
+            .budget
+            .buffer_bytes
+            .checked_sub(base)
+            .ok_or("SWOT aligned decoder/cache exceeds working budget")?;
+        // 17 bytes of raw values + mask, five copies of coordinates and
+        // conservative assembly slack, including narrow one-row/column tiles.
+        let max_pixels = available / 128;
+        if max_pixels == 0 {
+            return fail("SWOT aligned output exceeds working budget");
+        }
+        let mut cache = RangeCache {
+            cap: cache_cap,
+            bytes: 0,
+            entries: Default::default(),
+            hits: 0,
+        };
+        let mut report = crate::execute::empty_report(planning_seconds);
+        let mut tiles = 0usize;
+        let mut peak = base;
+        for job in &wse.jobs {
+            let width = job.count[1].min(max_pixels);
+            let height = job.count[0].min(max_pixels / width);
+            for row in (0..job.count[0]).step_by(height) {
+                for col in (0..job.count[1]).step_by(width) {
+                    if cancelled.load(Ordering::Acquire) {
+                        return fail("acquisition cancelled");
+                    }
+                    tiles += 1;
+                    if tiles > request.budget.max_nodes {
+                        return fail("SWOT aligned tiles exceed max_nodes");
+                    }
+                    let count = [
+                        height.min(job.count[0] - row),
+                        width.min(job.count[1] - col),
+                    ];
+                    let first = [job.coordinate_start[0] + row, job.coordinate_start[1] + col];
+                    let last = [first[0] + count[0], first[1] + count[1]];
+                    let n = count[0] * count[1];
+                    peak = peak.max(base + 18 * n + 40 * (count[0] + count[1]));
+                    let source_start = [
+                        job.start[0] + row * wse.step[0],
+                        job.start[1] + col * wse.step[1],
+                    ];
+                    let mut layers = Vec::new();
+                    for b in &bindings {
+                        if cancelled.load(Ordering::Acquire) {
+                            return fail("acquisition cancelled");
+                        }
+                        let mut pixels = match b.layout.dtype.as_str() {
+                            "|u1" => Pixels::UInt8(vec![0; n]),
+                            "<u4" => Pixels::UInt32(vec![0; n]),
+                            "<f4" => Pixels::Float32(vec![0.; n]),
+                            _ => return fail("unqualified SWOT stored type"),
+                        };
+                        let mut covered = 0;
+                        for part in &b.jobs {
+                            let a = [
+                                first[0].max(part.coordinate_start[0]),
+                                first[1].max(part.coordinate_start[1]),
+                            ];
+                            let z = [
+                                last[0].min(part.coordinate_start[0] + part.count[0]),
+                                last[1].min(part.coordinate_start[1] + part.count[1]),
+                            ];
+                            if a[0] >= z[0] || a[1] >= z[1] {
+                                continue;
+                            }
+                            if cancelled.load(Ordering::Acquire) {
+                                return fail("acquisition cancelled");
+                            }
+                            b.metadata.file.phase(payload_phase(&b.path));
+                            let clock = std::time::Instant::now();
+                            let payload =
+                                cache.read(&b.metadata, part.entry.as_ref(), &mut report)?;
+                            let view = Arc::new(View {
+                                metadata: b.metadata.clone(),
+                                start: part.entry.as_ref().map_or(0, |e| e.address),
+                                payload,
+                            });
+                            let file = open(view)?;
+                            let at = [
+                                part.start[0] + (a[0] - part.coordinate_start[0]) * b.step[0],
+                                part.start[1] + (a[1] - part.coordinate_start[1]) * b.step[1],
+                            ];
+                            let size = [z[0] - a[0], z[1] - a[1]];
+                            let values =
+                                decode(&file.dataset(&b.path)?, &selection(&at, &size, &b.step)?)?;
+                            for y in 0..size[0] {
+                                pixels.copy(
+                                    (a[0] - first[0] + y) * count[1] + a[1] - first[1],
+                                    &values,
+                                    y * size[1],
+                                    size[1],
+                                )?;
+                            }
+                            covered += size[0] * size[1];
+                            report.read_decode_seconds += clock.elapsed().as_secs_f64();
+                            if part.entry.is_some() {
+                                report.decoded_source_chunks += 1;
+                            } else {
+                                report.filled_source_chunks += 1;
+                            }
+                        }
+                        if covered != n {
+                            return fail(
+                                "SWOT logical alignment has missing or duplicate coverage",
+                            );
+                        }
+                        report.chunks += 1;
+                        report.decoded_bytes += pixels.byte_len();
+                        report.non_nodata_pixels +=
+                            (0..n).filter(|i| pixels.valid(*i, b.layout.nodata)).count();
+                        layers.push(crate::Chunk {
+                            node_id: job.node,
+                            asset_id: asset.id.clone(),
+                            datetime: asset.datetime.clone(),
+                            variable: b.layout.variable.clone(),
+                            indices: vec![],
+                            window: Window {
+                                x: source_start[1],
+                                y: source_start[0],
+                                width: count[1],
+                                height: count[0],
+                            },
+                            transform: [
+                                source_start[1] as f64 - b.step[1] as f64 / 2.,
+                                b.step[1] as f64,
+                                0.,
+                                source_start[0] as f64 - b.step[0] as f64 / 2.,
+                                0.,
+                                b.step[0] as f64,
+                            ],
+                            crs: b.layout.crs.clone(),
+                            nodata: b.layout.nodata,
+                            scale: b.layout.scale,
+                            offset: b.layout.offset,
+                            pixels,
+                            coordinates: Some((
+                                b.coordinates[1][first[1]..last[1]].to_vec(),
+                                b.coordinates[0][first[0]..last[0]].to_vec(),
+                            )),
+                        });
+                    }
+                    report
+                        .first_output_seconds
+                        .get_or_insert(started.elapsed().as_secs_f64());
+                    let clock = std::time::Instant::now();
+                    sink(
+                        layers
+                            .try_into()
+                            .map_err(|_| "missing aligned SWOT layers")?,
+                    )?;
+                    report.sink_seconds += clock.elapsed().as_secs_f64();
+                }
+            }
+        }
+        report.scheduler = json!({"profile":"bounded aligned SWOT tiles","workers":1,"queue_capacity":0,"reserved_bytes_peak":peak,"budget_bytes":request.budget.buffer_bytes,"encoded_cache_cap_bytes":cache_cap,"encoded_cache_hits":cache.hits,"tiles":tiles,"max_tile_pixels":max_pixels,"redecoded_intersections":report.decoded_source_chunks});
+        Ok(report)
+    }
+}
+
 pub(crate) struct SelectedReader {
     binding: Arc<Binding>,
     view: Arc<View>,
@@ -1085,11 +1406,12 @@ impl SelectedReader {
             .iter()
             .find(|g| g.nodes == nodes)
             .ok_or("missing HDF5 physical group")?;
+        binding.metadata.file.phase(payload_phase(&binding.path));
         let payload = binding.metadata.file.read(group.start, group.len)?;
         let view = Arc::new(View {
             metadata: binding.metadata.clone(),
             start: group.start,
-            payload,
+            payload: payload.into(),
         });
         let file = open(view.clone())?;
         Ok(Self {
@@ -1227,7 +1549,7 @@ mod tests {
         let reader = open(Arc::new(View {
             metadata: metadata.clone(),
             start: e.address,
-            payload,
+            payload: payload.into(),
         }))?;
         let output = decode(&reader.dataset("/RRQPE")?, &selection(&at, &count, &step)?)?;
         metadata.file.validate()?;

@@ -411,8 +411,7 @@ def verify_attributes(actual, dataset):
         if "value" not in record:
             continue
         expected = np.asarray(dataset.attrs[name])
-        assert expected.size == 1, (dataset.name, name)
-        value = expected.item()
+        value = expected.item() if expected.size == 1 else expected.tolist()
         if isinstance(value, bytes):
             value = value.decode().rstrip("\0")
         assert record["value"] == value, (dataset.name, name, record["value"], value)

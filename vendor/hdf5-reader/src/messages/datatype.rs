@@ -105,8 +105,20 @@ fn parse_fixed_point(cursor: &mut Cursor<'_>, flags: u32, size: u32) -> Result<D
     let signed = (flags & 0x08) != 0;
 
     // Properties: bit offset (u16) + bit precision (u16)
-    let _bit_offset = cursor.read_u16_le()?;
-    let _bit_precision = cursor.read_u16_le()?;
+    let bit_offset = cursor.read_u16_le()?;
+    let bit_precision = cursor.read_u16_le()?;
+    // Datatype::FixedPoint retains size/sign/order only. Until precision and
+    // offset have a complete numeric contract, reject them rather than decoding
+    // shifted or partial-width integers as ordinary full-width stored values.
+    if size == 0
+        || size > u32::from(u8::MAX)
+        || bit_offset != 0
+        || u32::from(bit_precision) != size.saturating_mul(8)
+    {
+        return Err(Error::InvalidData(
+            "unsupported fixed-point size, bit offset or non-full-width precision".into(),
+        ));
+    }
 
     Ok(Datatype::FixedPoint {
         size: size as u8,
@@ -492,6 +504,28 @@ mod tests {
             }
         }
         assert!(matches!(dt, Datatype::FixedPoint { size: 4, .. }));
+    }
+
+    #[test]
+    fn reject_noncanonical_fixed_point_storage() {
+        for (size, offset, precision) in [
+            (1u32, 0u16, 4u16),
+            (4, 0, 24),
+            (4, 4, 28),
+            (2, 1, 16),
+            (257, 0, 2056),
+        ] {
+            let mut data = Vec::new();
+            data.extend_from_slice(&class_word(0, 1, 0).to_le_bytes());
+            data.extend_from_slice(&size.to_le_bytes());
+            data.extend_from_slice(&offset.to_le_bytes());
+            data.extend_from_slice(&precision.to_le_bytes());
+            let mut cursor = Cursor::new(&data);
+            let error = parse(&mut cursor, data.len()).unwrap_err();
+            assert!(error
+                .to_string()
+                .contains("bit offset or non-full-width precision"));
+        }
     }
 
     #[test]

@@ -101,6 +101,7 @@ version-pinned native acquisitions with a tuned GDAL reader.
 | NASA POWER IMERG daily spatial | Anonymous HTTP Zarr v2, Float32/NaN, `(time,lat,lon)`, verified daily time and storage filter; native Zarr subset |
 | Archived GOES-19 RRQPE and cloud-top-temperature NetCDF-4 samples | Opt-in `native-hdf5`; exact UInt16/Float32 rank-two array slices, stored one-dimensional axes, conditional compressed-chunk ranges and provisional streaming; [profile and decision gate](docs/native-hdf5/report.md) |
 | Inspected SWOT Raster Version C 100 m UTM19T scene | Native Float32 `/wse` with matching compressed Float64 `/x`,`/y`; exact index slices qualified against h5py/NetCDF-C on an identity-pinned bounded mirror. Live native archive authentication/redirects remain unsupported; [product, access and science gate](docs/swot-wse/report.md) |
+| Inspected SWOT Raster Version D PGD0 100 m UTM19T scene | Aligned native WSE, UInt8 summary quality, UInt32 detailed flags/counts and Float32 uncertainty, separate explicit quality policies, exact stored coordinates and bounded streaming; qualified against h5py/NetCDF-C on a pinned mirror. Live authenticated native archive access remains a separate gate; [decision gate](docs/swot-quality/report.md) and [workflow](docs/swot-quality/workflow.md) |
 | Public GFS v3 archive | Native Float32 subset, ordinary/sharded codecs and conditional selective ranges; [exact v3 profile](docs/zarr-v3-input/workflow.md) |
 | Local custom-grid Zarr / direct GeoTIFF | Narrow UInt16 profiles; [advanced lifecycle](docs/unified-workflow.md) and [local Zarr](docs/zarr-workflow.md) |
 
@@ -237,3 +238,35 @@ GDAL reader reuse and bounded parallel layout inspection. The
 [COG efficiency report](docs/cog-efficiency/report.md) records measured traffic,
 matched GDAL comparisons and the tested 192-MiB resource profile. Working-buffer
 reservations are not a process RSS ceiling. This branch remains unreleased.
+
+### Version D SWOT Raster quality-aware stream
+
+The opt-in `native-hdf5` adapter additionally retains stored `Pixels::UInt8` and
+`Pixels::UInt32`. Integer quality flags are never cast to Float32. Existing
+UInt16/Float32 accessors and consumers are preserved; exhaustive matches need
+handlers for the two additional variants. HDF5 remains callback/stream output.
+
+For the inspected Version D schema, select the five `swot::PATHS` datasets in
+one ordinary native request, then apply an explicit separate policy:
+
+```rust,ignore
+let prepared = tile_ripper::swot::prepare(
+    &request,
+    tile_ripper::swot::Policy::cookbook(), // good (0) or suspect (1)
+    &mut cache,
+)?;
+let mut stream = prepared.into_stream()?;
+for tile in stream.by_ref() {
+    let tile = tile?; // five aligned raw layers and separate derived validity
+    consume(tile)?;
+}
+let report = stream.finish()?; // final source validation authorizes completion
+```
+
+Raw source masks and named required/excluded bitwise conditions are available
+without overwriting science values. Preparation checks the source definitions;
+there is no universal good-pixel policy. The real PGD0 file, physical layout,
+C-versus-D differences, independent science/fault/resource checks, benchmark
+and remaining authenticated-access gate are documented in the
+[Version D workflow](docs/swot-quality/workflow.md). Neither the mirror replay
+nor the reference Earthdata session establishes live native archive support.

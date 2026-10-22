@@ -46,10 +46,28 @@ fn main() -> Result<()> {
             first.get_or_insert_with(|| started.elapsed().as_secs_f64());
             let mask = c.validity().map(u8::from).collect::<Vec<_>>();
             let bytes: Vec<_> = match &c.pixels {
+                Pixels::UInt8(v) => v.clone(),
+                Pixels::UInt32(v) => v.iter().flat_map(|v| v.to_le_bytes()).collect(),
                 Pixels::UInt16(v) => v.iter().flat_map(|v| v.to_le_bytes()).collect(),
                 Pixels::Float32(v) => v.iter().flat_map(|v| v.to_le_bytes()).collect(),
             };
             match &c.pixels {
+                Pixels::UInt8(v) => {
+                    for (v, m) in v.iter().zip(&mask) {
+                        if *m != 0 {
+                            sum += *v as f64;
+                            valid += 1;
+                        }
+                    }
+                }
+                Pixels::UInt32(v) => {
+                    for (v, m) in v.iter().zip(&mask) {
+                        if *m != 0 {
+                            sum += *v as f64;
+                            valid += 1;
+                        }
+                    }
+                }
                 Pixels::UInt16(v) => {
                     for (v, m) in v.iter().zip(&mask) {
                         if *m != 0 {
