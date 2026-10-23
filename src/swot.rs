@@ -222,11 +222,58 @@ pub struct Tile {
     pub layers: [Chunk; 5],
     pub validity: Vec<u8>,
 }
+/// Immutable, version-bound native grid/profile inspection. Clones share only
+/// retained source metadata and full axes; prepared requests own separate plans.
+/// This runtime binding is deliberately not serializable.
+#[derive(Clone)]
+pub struct GridInspection {
+    native: crate::hdf5::GridInspection,
+}
+impl GridInspection {
+    pub fn inspect(request: &Request) -> Result<Self> {
+        Ok(Self {
+            native: crate::hdf5::GridInspection::inspect(request, Default::default())
+                .map_err(|e| acquisition::safe_error(request, "grid inspection", e))?,
+        })
+    }
+    #[cfg(feature = "authenticated-http")]
+    pub fn inspect_authenticated(
+        request: &Request,
+        session: Arc<crate::authenticated_http::AuthenticatedHttp>,
+    ) -> Result<Self> {
+        if !matches!(&request.source,Source::Assets{assets} if assets.len()==1 && session.accepts(&assets[0].locator))
+        {
+            return fail("grid inspection requires its exact configured native HDF5 object");
+        }
+        session.require_fresh()?;
+        Ok(Self {
+            native: crate::hdf5::GridInspection::inspect(
+                request,
+                crate::http_transport::Transport::Authenticated(session),
+            )
+            .map_err(|e| acquisition::safe_error(request, "grid inspection", e))?,
+        })
+    }
+    pub fn describe(&self) -> Value {
+        let mut description = self.native.describe();
+        acquisition::sanitize(&mut description);
+        description
+    }
+    pub fn with_grid<T>(&self, f: impl FnOnce(&Value, &[f64], &[f64]) -> Result<T>) -> Result<T> {
+        self.native.with_grid(f)
+    }
+    pub fn prepare(&self, request: &Request, policy: Policy) -> Result<Prepared> {
+        prepare_using(request, policy, |r| {
+            acquisition::prepare_inspected(r, &self.native)
+        })
+    }
+}
 #[derive(Clone)]
 pub struct Prepared {
     base: acquisition::Prepared,
     policy: Policy,
     working_memory: Value,
+    admission_seconds: f64,
 }
 /// Requires one HDF5 asset and exactly the five documented variables. Input
 /// variable order is normalized to PATHS; source windows/strides stay unchanged.
@@ -286,12 +333,14 @@ pub(crate) fn prepare_using(
         .map(|p| Variable::Dataset { path: (*p).into() })
         .collect();
     let base = prepare(&r)?;
+    let started = std::time::Instant::now();
     policy.validate_definitions(&base.explain())?;
     let working_memory = base.swot_working_memory()?;
     Ok(Prepared {
         base,
         policy,
         working_memory,
+        admission_seconds: started.elapsed().as_secs_f64(),
     })
 }
 impl Prepared {
@@ -318,6 +367,7 @@ impl Prepared {
         value["quality_policy"] = self.policy.provenance();
         value["aligned_execution"] = json!({"ordering":"WSE source-chunk row/column order, then bounded logical subtiles; PATHS order within each tile","queue_capacity":0,"range_cache":"bounded, execution-local, one pinned source identity","output":"five raw arrays, independent source masks and separate derived validity; no file publication"});
         value["aligned_execution"]["working_memory"] = self.working_memory.clone();
+        value["aligned_execution"]["scientific_admission_seconds"] = json!(self.admission_seconds);
         value
     }
     pub fn into_stream(self) -> Result<Stream> {

@@ -234,22 +234,31 @@ impl Draft {
     ) -> Result<ReadyJob> {
         let started = Instant::now();
         let mut resolutions = Vec::new();
+        let mut observations = Vec::new();
         let mut empty = false;
         for (entry, aoi) in self.manifest.observations.iter_mut().zip(&self.geographic) {
+            let session = sessions(entry.asset()?)?;
             if let Some(aoi) = aoi {
-                let mut cache = crate::cog::LayoutCache::default();
-                let resolution = crate::swot_aoi::inspect_with(entry, aoi, |request| {
-                    let Source::Assets { assets } = &request.source else {
-                        unreachable!()
-                    };
-                    let session = sessions(&assets[0])?;
-                    session.require_fresh()?;
-                    crate::acquisition::prepare_authenticated(request, &mut cache, session)
-                })?;
-                empty |= !resolution["native_centers_intersect"]
+                let grid = swot::GridInspection::inspect_authenticated(&entry.request, session)?;
+                let resolution = crate::swot_aoi::inspect_grid(entry, aoi, &grid)?;
+                let intersects = resolution["native_centers_intersect"]
                     .as_bool()
                     .unwrap_or(false);
+                empty |= !intersects;
                 resolutions.push(json!({"observation_id":entry.id,"concept_id":entry.asset()?.id,"aoi_resolution":resolution}));
+                if intersects {
+                    let prepared = grid.prepare(&entry.request, entry.quality_policy.clone())?;
+                    observations.push(swot_job::Job::inspect_observation(entry, &prepared)?);
+                }
+            } else {
+                session.require_fresh()?;
+                let prepared = swot::prepare_authenticated(
+                    &entry.request,
+                    entry.quality_policy.clone(),
+                    &mut crate::cog::LayoutCache::default(),
+                    session,
+                )?;
+                observations.push(swot_job::Job::inspect_observation(entry, &prepared)?);
             }
         }
         if empty {
@@ -257,10 +266,11 @@ impl Draft {
                 manifest: None,
                 review: json!({"discovery_job_schema":1,"status":"not_ready_zero_native_centers",
                 "observations":resolutions,"inspection_seconds":started.elapsed().as_secs_f64(),
-                "manifest_written":false,"scope":"at least one explicitly selected candidate has zero included native centers; no candidate substituted or omitted; final selected five-variable scientific profile not inspected"}),
+                "manifest_written":false,"scope":"at least one explicitly selected candidate has zero included native centers; no candidate substituted or omitted; no executable job is emitted"}),
             });
         }
-        let plan = swot_job::Job::authenticated(&self.manifest, sessions, None)?.plan()?;
+        let plan =
+            swot_job::Job::plan_document(&self.manifest, observations, json!({"enabled":false}))?;
         let inspection_seconds = started.elapsed().as_secs_f64();
         let mut sources = vec![];
         for (entry, inspected) in self.manifest.observations.iter_mut().zip(

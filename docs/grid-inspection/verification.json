@@ -1,0 +1,194 @@
+{
+  "baseline": "afe41c2",
+  "branch": "codex/acquisition-planner",
+  "rust": {
+    "command": "cargo test --locked --all-features --all-targets -- --test-threads=1",
+    "passed": 150,
+    "failed": 0,
+    "ignored": 9,
+    "log_sha256": "ed13b1b99dacaf8da71d0a6a4e231d7b927f54a587d9a4db94de25342d5f3f3f",
+    "ignored_runtime_gates": "Opt-in/helper cases are listed explicitly. Authentication/new inspection and remote-Zarr fixture entrypoints are covered by the named harness receipts; ignored tests are not counted as aggregate passes.",
+    "ignored_tests": [
+      [
+        "checkpoint::tests::crash_child",
+        "subprocess helper for abrupt persistence exits"
+      ],
+      [
+        "checkpoint::tests::foreign_owned_private_directory_is_rejected",
+        "requires externally supplied directory owned by another uid"
+      ],
+      [
+        "hdf5::tests::standalone_physical_probe",
+        "explicit bounded real-product experiment; TILE_RIPPER_HDF5_PROBE supplies URL"
+      ],
+      [
+        "storage::tests::authenticated_concurrent_routes_and_sticky_conflicts",
+        "run by bench/earthdata_auth.py with its private HTTPS fixtures"
+      ],
+      [
+        "authenticated_changed_coordinates_etag_and_concurrent_preparations",
+        "run by bench/grid_inspection.py faults with its private HTTPS fixture"
+      ],
+      [
+        "convenience_execute_validates_local_source_after_delivery",
+        "requires TILE_RIPPER_NATIVE_REQUEST from the native COG fault harness"
+      ],
+      [
+        "prepared_metadata_is_private_version_bound_and_repeatable",
+        "requires TILE_RIPPER_NATIVE_HTTP_SNAPSHOT_REQUEST from the HTTP gate"
+      ],
+      [
+        "prepared_http_changes_and_cancellation",
+        "run by bench/remote_zarr.py against its controlled HTTP fixture"
+      ],
+      [
+        "prepared_versions_do_not_reuse_another_snapshot_cache",
+        "run by bench/stac_workflow.py with its bounded local HTTP fixture"
+      ]
+    ]
+  },
+  "clippy": {
+    "command": "cargo clippy --locked --all-features --all-targets -- -D warnings",
+    "passed": true,
+    "log_sha256": "0b1485fc986b65ff7e1ff8bc81cd29fbfd94d1fef3928e89d9b675d974afa8e2"
+  },
+  "formatting_and_python_lint": "cargo fmt check; Ruff check and format check; py_compile passed",
+  "feature_combinations": 16,
+  "geometry_cases": 108,
+  "geometry_compared_centers": 181548,
+  "linux": {
+    "architecture": "Linux ARM64 rust:1.92-slim",
+    "fresh_target": true,
+    "passed": 37,
+    "ignored": 1,
+    "log_sha256": "12cd1f0ef2d5b76dfbb666d2e566ad110c2d945c79396e89d2d53461b35565b4",
+    "system_gdal_hdf5_netcdf_proj_linkage": false
+  },
+  "regressions": {
+    "auth_cases": 38,
+    "checkpoint_cases": 32,
+    "job_faults": 19,
+    "hdf5_science": 64,
+    "hdf5_faults": 33,
+    "native_cog_profiles_faults": 61,
+    "zarr_v3_science": 40,
+    "zarr_v3_faults": 27,
+    "cog_cf_zarr_v2_durable_and_consumer_gates": "regressions/formats"
+  },
+  "live": {
+    "total_source_body_bytes": 1021443,
+    "total_wire_requests": 182,
+    "native_inspection_seconds": 44.566081209000004,
+    "generation_binary_sha256": "30ac24a3e037aa8b0bc83bf0ab213665bb8370339b5b3cd51460c2dd9cfabed7",
+    "reconstruction_binary_sha256": "b3e67b13dfc2f4fc6d110d010003e0ebe1e503bc4e23d0f9b6c621f996e74965",
+    "generation_outer_cpu_rss": "unavailable after receipt-summary failure; saved successful inspection reused without repeat archive requests"
+  },
+  "final_binaries": {
+    "target/release/tile-ripper": "5513f486b1ee9b20cf35027cc210a14604d8f011724fc1cc0e0fa25bd7a36a60",
+    "target/release/examples/grid_inspection_bench": "1f355f65b752ab958843302b22ecb00fd371b3e8a071e8b03c3ab5b31b8ac2ba",
+    "target/release/examples/swot_aoi_oracle": "ff4ce1e07679b2d4bbf6c7a40a5c04305cb1d00a9e055aa1c80e8cdfff3e9911"
+  },
+  "source_sha256": {
+    "Cargo.toml": "016c0fc58d973fa84706a8eac521ee09bc6947f1784c96f6826c9ccfe015240e",
+    "Cargo.lock": "97f86672b776d1ab262ea5f75597346d08fb069661a79fe08e3ae5036595f337",
+    "src/acquisition.rs": "88279bf3732ce61769c67cef1f1291a73342394d93b3ed2f3092efd050746112",
+    "src/hdf5.rs": "73de719bbd434c9e02066d42423328b67835f9c4321c7dad0c2ec17ccbb385cf",
+    "src/storage.rs": "324198c496bab3383092883432e58ba4582c15726b8db9fec4488a299d1a36fc",
+    "src/swot.rs": "ac107d66a5cf50570a5e38a0c7b8f0f2376332d23e5e95b217a7f2bde8cae1ee",
+    "src/swot_aoi.rs": "70f487e6da25ecc44c5e91ade1705ea399785d2fb1cbc7ead2a0b9ebbe8ed18f",
+    "src/swot_discovery/bridge.rs": "3671dfb80f5a70e49c287983b3edfe6e0cb9901c94b3d391e550b988210d0762",
+    "src/swot_job.rs": "e3537f8d42ade71df8137ee1d4484b3b202bb1339c6833f6977ca62d075f0589",
+    "src/authenticated_http.rs": "90a269d299c0c08e53c8f96e02dc04a8c744593b3aab30aa49bc90c402c2b5d2",
+    "src/checkpoint.rs": "e5b1abb2678c248d239a4ae1acb32ec934d0a85936f255005bf6eb8b8cd3c819",
+    "src/scientific_output/swot.rs": "70efe33a8b41c3c0d4b121e0d46999536dc454e9b411d45c799dd7e59a825fee",
+    "tests/grid_inspection.rs": "a1f978c052f0f5b8a6971d4a8ee6d7828c9166e4e16148d256c1c6786d7a8cb5",
+    "tests/data/swot/grid-inspection.h5": "9d0a541e7b0dce111d37a20def05ed046a9b95e5fade80d5abe63f8364889c94",
+    "examples/grid_inspection_bench.rs": "eef115ac73390febc848d48ba94cbc7680f1ab5c83c227f38319a3e815869542",
+    "bench/grid_inspection.py": "e1dd6b4d9e759a58cd29f523f84f227506ba1c1ec14cce22929eda10a08ee0bd",
+    "bench/grid_inspection_live.py": "4fb31bccccce981bfe947ed1fbc006fe40f124cb7be753e37fb00e115b38550f",
+    "bench/grid_inspection_linux.sh": "1983952437f19a00cc06b48bc4ddd315677208412d323416533b26575b0612c2",
+    "bench/make_grid_inspection_fixture.py": "5d8edf5ce6257f31201d4e1e5d62247f7611c66c00fe3d883eaec6cd406b1692",
+    "bench/grid_inspection_receipts.py": "87f2a003a68d08a48e0007ec71c436c2c2248144fcc446091eaa3458008c8831"
+  },
+  "unchanged_from_baseline": [
+    "Cargo.toml",
+    "Cargo.lock",
+    "src/authenticated_http.rs",
+    "src/checkpoint.rs",
+    "src/scientific_output/swot.rs",
+    "src/native_cog.rs",
+    "src/zarr_acquire.rs",
+    "src/zarr_v3.rs"
+  ],
+  "receipt_sha256": {
+    "receipt-index.json": "303c0a04dae0d39bbb41403b0c348b36bc8bdfa08557e0b7b3db9a772d283029",
+    "benchmarks.json": "e6331a0e8686deda2eccad6d03580423881a60849a8c90b87b8563d93ea67246",
+    "geometry-oracles.json": "b92a3bc3e68a4cf82bada33fd350b59f6358de3cd70d0afb873dd88c8bee2541",
+    "summary.json": "5ae232b684dc3b1148daa24f93b4518154c618b98e3bd179c12949298383a817",
+    "feature-matrix.json": "932c95197d94e23c20a98285954d3810f03b0c3db7334b503d7dfa57f537257d",
+    "resolved-controls.json": "ddb8854cdee0f6d128644ca612e0c5d4c6112266307a4d18b30c9a32827c3a34",
+    "inspection-faults.json": "127cb84f2a2a1d82c9d2c96c9496a5312133fe66fa50e9e3225c69eb46dc0431",
+    "live.json": "9f4c01b61ea635aafd9de281d0df616631862cf032b90b4d79304c80c4d00c7f",
+    "live-review.json": "dbb72849dc8e26b444ecf7fdabb3dcc9ead40b4476960bb763472ac05d267b6f",
+    "discrepancies.json": "d0ada3c0b84dc382745ca0d1d50e08f00093130cfa5599b37fcaca8960ba82be",
+    "live-job.json": "ac19cac4ec0064e3cfe1f1d08dbb456a65f4c9572e01eb2277ab613006486a1a",
+    "execution.json": "0f7adafb9901324c99ffb271109a0a16d3b0d8fbbe5df5bb6b1fcb5629d6a741",
+    "frozen-workflow.json": "f96a6f40d8b7380adc7fba144345c083d71493a419d6124ac1f69c8400d15f0a",
+    "regressions/checkpoint/fixtures.json": "a5b44f225415ba1458def3d739064b1e3605790b99285e28d4622df12f4f9c0a",
+    "regressions/formats/candidates.json": "00366fd622831f8889706dc931e3f8d03e3df0bb8a2516a68fdda7844e51ce9e",
+    "regressions/formats/cf-zarr-checks.json": "3e465857b12cca5a97c27666a6fd1a29783041c6accc0654b0779d2b77a37875",
+    "regressions/formats/cog-stream.json": "ed6c8f1a16f9bd517d3a633d1ff5914e69ca22fb7a53204a4e4eb46ae1e42ded",
+    "regressions/formats/remote-zarr-checks.json": "7f2bfb13a6cf1f21ae93f96630e480467bc31247fcf7a7a03e798a368d938010",
+    "regressions/formats/faults.json": "2974e4fa170131e0fef97996c289c11700583aa50645da4344036ee911a92342",
+    "regressions/formats/inherited/validation.json": "c980c7337ef0effb9aac197bb0428e47e4e899a8033c11c828b790699d005a76",
+    "regressions/hdf5/faults.json": "b3f94390ac4851e31849d3de171b72c335ec707baa8116e8b93050de254167a5",
+    "regressions/hdf5/science.json": "ab74cb99491b0d9aa7239c4e8d653550ed4c089903925f85cd752991d6350712",
+    "regressions/auth/fixtures.json": "bf26f4e4ea84c629bdbdc4671dc3d81ca431250c75c8119d3c1c0b422f051f1b",
+    "regressions/v3/v3/correctness.json": "2e9b856598b13ffdff5f2bba3d593d39e593ebd5bbaa46d34ae9795fe30763c3",
+    "regressions/v3/v3/faults.json": "fe42adfa02df12fa7f4da4765352f10c3a7892d815c64307249b1a146c8dd421",
+    "regressions/job/qualification.json": "a1a3e3573070d707f8de383fbae82ab3b8cf0ce2e1a03aa679bc999d06f3ab78",
+    "regressions/job/boundaries.json": "418ca231812e6b69e4a2b111d8d01c93a4535642ab186d8b1d8d49e13f3bb049",
+    "regressions/job/plan.json": "3a76835ac72ace084c3cd771326fe2d531dae470e04e304ebd554ae22f1c7175",
+    "regressions/job/measurements.json": "eb1689ae2ea3bd28c2a12476894e987eb333615d2ec3dff69866003d838937e0",
+    "regressions/job/capture-guard.json": "b946d8a000fc1c77f3662b661ea33079a94ca2566de6e9f599338f24f17f55bb",
+    "regressions/job/faults-restart.json": "f0eb225308a0a056d51b04569af8ddb498bfe2f789771baa6dd64528e31e3abb"
+  },
+  "verified_outputs": [
+    {
+      "path": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-job/inspection-live-checkpoint-reconstruction-mp5cxx6b/observations.zarr",
+      "manifest_sha256": "036f8e5392f4f90af3df5bfb17bb15cff5083f224875dc9c925b8ec9e88d96aa"
+    },
+    {
+      "path": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-job/baseline-separate-fetch-dcd3uo45/observations.zarr",
+      "manifest_sha256": "c77893cc2ea7a6e8b816cac13db6479be6abf5a49edec3d01f418300e43ab8b2"
+    },
+    {
+      "path": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-job/optimized-separate-fetch-d2xu6ms7/observations.zarr",
+      "manifest_sha256": "aba0b125ed73c96e2f6c847f862e64384b07d40b0279568cdf977818ad35acb3"
+    },
+    {
+      "path": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-job/checkpoint-rebuild-dp3itzst/observations.zarr",
+      "manifest_sha256": "281334ac4e1062689045ee74928448ce19be5558c5cb8da72b3839478349516f"
+    }
+  ],
+  "scope": {
+    "local_commit_requested": true,
+    "push": false,
+    "merge": false,
+    "tag": false,
+    "publish": false,
+    "deploy": false,
+    "chronozarr_modified": false,
+    "new_formats": false,
+    "new_persistent_cache": false,
+    "geometry_predicate_changed": false,
+    "gdal_default_changed": false
+  },
+  "verification_notes": [
+    "Initial parallel CMR fixture failures were retained and passed in serial reruns.",
+    "A concurrent native-only fixture build replaced the shared debug CLI during an all-feature test run; final suite rebuilt the proper binary and ran without concurrent Cargo fixture builds.",
+    "A live receipt-summary nesting error was repaired using the already generated native job; no additional source inspection occurred.",
+    "A scalar Zarr CRS array exposed an indexing mistake in the benchmark fingerprint helper; the completed final isolated benchmark uses scalar-safe indexing and verifies all output arrays."
+  ],
+  "evidence_compaction": "Repeated attributes and large diagnostic value lists compacted; full original JSON content hashes and local paths are recorded in receipt-index.json; production output is unchanged."
+}

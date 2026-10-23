@@ -3,8 +3,9 @@
 //! Membership is evaluated in the original longitude/latitude polygon by
 //! inverse-transforming actual stored centers. Forward densification is used
 //! for coverage diagnostics, never to prune centers or to round array indices.
-//! This adapter uses normal native preparation without changing the HDF5 reader.
-use crate::{acquisition, fail, swot_job::Observation, Result, Spatial, Variable};
+//! Geographic resolution uses immutable native inspection; scientific values
+//! remain in the existing HDF5 decoder and aligned execution path.
+use crate::{fail, swot_job::Observation, Result, Spatial};
 use geo::{
     Area, BooleanOps, BoundingRect, Coord, Intersects, LineString, Point, Polygon, Validation,
 };
@@ -79,7 +80,7 @@ fn coordinate_hash(values: &[f64]) -> String {
     }
     hex(ctx.finish().as_ref())
 }
-fn shape_bound(shape: [usize; 2]) -> Result<()> {
+pub(crate) fn shape_bound(shape: [usize; 2]) -> Result<()> {
     if shape.iter().any(|n| !(2..=MAX_AXIS).contains(n))
         || shape[0]
             .checked_mul(shape[1])
@@ -137,7 +138,7 @@ fn utm(crs: &str) -> Result<(u32, bool)> {
         _ => fail("only WGS84 UTM CRS is supported for SWOT AOIs"),
     }
 }
-fn source_crs(definition: &Value) -> Result<String> {
+pub(crate) fn source_crs(definition: &Value) -> Result<String> {
     let mapping = &definition["grid_mapping"];
     let a = &mapping["attributes"];
     let meridian = value(a, "longitude_of_central_meridian")
@@ -417,7 +418,7 @@ pub fn resolve_grid(
 ) -> Result<(Option<Resolved>, Value)> {
     let started = Instant::now();
     shape_bound([y.len(), x.len()])?;
-    let direction = [axis(y)?, axis(x)?];
+    let grid = grid_identity(crs, y, x, mapping)?;
     let evaluator = Evaluator::new(aoi, crs)?;
     let vertices = std::iter::once(evaluator.polygon.exterior())
         .chain(evaluator.polygon.interiors())
@@ -454,13 +455,7 @@ pub fn resolve_grid(
             }
         }
     }
-    let grid = GridIdentity {
-        crs: crs.into(),
-        shape: [y.len(), x.len()],
-        direction,
-        coordinate_sha256: [coordinate_hash(y), coordinate_hash(x)],
-        mapping_sha256: hash(&serde_json::to_vec(mapping)?),
-    };
+
     let resolved = if included == 0 {
         None
     } else {
@@ -586,84 +581,61 @@ impl Resolved {
     }
 }
 
-/// Inspect shape, then full stored coordinate axes using the normal bounded
-/// native preparation path. Both calls read metadata/coordinates/indexes only.
-/// Their versions must match; the final selected five-layer job is admitted by
-/// the ordinary job planner. Full-grid plans are never used to stream science.
-pub(crate) fn inspect_with(
+pub(crate) fn grid_identity(
+    crs: &str,
+    y: &[f64],
+    x: &[f64],
+    mapping: &Value,
+) -> Result<GridIdentity> {
+    shape_bound([y.len(), x.len()])?;
+    Ok(GridIdentity {
+        crs: crs.into(),
+        shape: [y.len(), x.len()],
+        direction: [axis(y)?, axis(x)?],
+        coordinate_sha256: [coordinate_hash(y), coordinate_hash(x)],
+        mapping_sha256: hash(&serde_json::to_vec(mapping)?),
+    })
+}
+/// Resolve from immutable, already validated full source axes. Geometry uses
+/// exactly the established full-center predicate, tolerance and fingerprints.
+pub(crate) fn inspect_grid(
     entry: &mut Observation,
     aoi: &Spatial,
-    mut prepare: impl FnMut(&crate::Request) -> Result<acquisition::Prepared>,
+    grid: &crate::swot::GridInspection,
 ) -> Result<Value> {
     polygon(aoi)?;
-    let started = Instant::now();
-    let mut request = entry.request.clone();
-    request.variables = vec![Variable::Dataset {
-        path: "/wse".into(),
-    }];
-    request.spatial = NativeWindow {
-        start: [0, 0],
-        count: [1, 1],
-        step: [1, 1],
+    if entry.geographic_selection.is_some() {
+        return fail("observation is already resolved; supply a fresh draft");
     }
-    .spatial();
-    let probe = prepare(&request)?;
-    let initial = probe.explain();
-    crate::swot_job::bounded(&initial, 256 * 1024, "AOI shape inspection")?;
-    let d = definition(&initial)?;
-    let crs = source_crs(d)?;
-    let shape: [usize; 2] = serde_json::from_value(d["shape"].clone())?;
-    shape_bound(shape)?;
-    let identity = initial["sources"][0]["object_identities"]["identity"].clone();
-    drop(probe);
-    if let Some(etag) = identity["version"]["etag"].as_str() {
-        let crate::Source::Assets { assets } = &mut request.source else {
-            unreachable!()
-        };
-        assets[0].etag = Some(etag.into());
-    }
-    request.spatial = NativeWindow {
-        start: [0, 0],
-        count: shape,
-        step: [1, 1],
-    }
-    .spatial();
-    let full = prepare(&request)?;
-    let inspection = full.explain();
-    crate::swot_job::bounded(&inspection, 1024 * 1024, "AOI full-axis inspection")?;
-    if inspection["sources"][0]["object_identities"]["identity"] != identity
-        || source_crs(definition(&inspection)?)? != crs
-    {
-        return fail("native source changed between geographic shape and coordinate inspection");
-    }
-    let inspection_seconds = started.elapsed().as_secs_f64();
-    let (resolved, mut report) = full.with_swot_coordinates(|y, x| {
-        resolve_grid(aoi, &crs, y, x, &definition(&inspection)?["grid_mapping"])
-    })?;
+    let inspected = grid.describe();
+    let (resolved, mut report) =
+        grid.with_grid(|d, y, x| resolve_grid(aoi, &source_crs(d)?, y, x, &d["grid_mapping"]))?;
     if let Some(resolved) = resolved {
         entry.request.spatial = resolved.window.spatial();
         entry.geographic_selection = Some(resolved);
     }
-    entry.request.source = request.source;
-    report["metadata_coordinate_inspection_seconds"] = json!(inspection_seconds);
-    report["inspected_source_identity"] = identity;
-    report["inspection_transport"] =
-        json!({"shape_probe":initial["transport"],"full_axes":inspection["transport"]});
-    report["inspection_method"]=json!("serial one-variable shape probe then bounded full-axis native plan; no science-payload execution; final selected five-variable job prepared separately");
+    if let Some(etag) = inspected["source_identity"]["version"]["etag"].as_str() {
+        let crate::Source::Assets { assets } = &mut entry.request.source else {
+            unreachable!()
+        };
+        assets[0].etag = Some(etag.into());
+    }
+    report["metadata_coordinate_inspection_seconds"] = inspected["inspection_seconds"].clone();
+    report["inspected_source_identity"] = inspected["source_identity"].clone();
+    report["inspection_transport"] = inspected["transport"].clone();
+    report["grid_inspection"] = inspected;
+    report["inspection_method"]=json!("one immutable version-bound source inspection; full stored axes and five scientific profiles/indexes; selected plan reuses the same inspection");
     Ok(report)
 }
-
-/// Resolve a local or anonymous bounded mirror observation. Authenticated
-/// discovery uses the same resolver with the caller's exact-object factory.
-/// A zero-center report returns None, never an executable fallback window.
+/// Resolve a local or anonymous bounded mirror observation. Zero native centers
+/// returns None; the immutable inspection can also construct scientific plans.
 pub fn inspect(mut entry: Observation, aoi: &Spatial) -> Result<(Option<Observation>, Value)> {
+    polygon(aoi)?;
     if entry.geographic_selection.is_some() {
         return fail("observation is already resolved; supply a fresh draft");
     }
-    let mut cache = crate::cog::LayoutCache::default();
-    let report = inspect_with(&mut entry, aoi, |request| {
-        acquisition::prepare(request, &mut cache)
-    })?;
+    let grid = crate::swot::GridInspection::inspect(&entry.request)?;
+    let report = inspect_grid(&mut entry, aoi, &grid)?;
     Ok((
         entry.geographic_selection.is_some().then_some(entry),
         report,

@@ -1,0 +1,20 @@
+[tasks.work]
+summary = "Implement reusable native grid inspection with scientific and authentication gates"
+role = "worker"
+commit_message = "Reuse version-bound native SWOT grid inspection for geographic planning"
+files = { read = ["docs/grid-inspection/brief.md", "src/checkpoint.rs", "src/authenticated_http.rs"], edit = ["README.md", "src/hdf5.rs", "src/acquisition.rs", "src/storage.rs", "src/swot.rs", "src/swot_aoi.rs", "src/swot_job.rs", "src/swot_discovery/bridge.rs"], create = ["bench/grid_inspection.py", "bench/grid_inspection_live.py", "bench/grid_inspection_receipts.py", "bench/grid_inspection_linux.sh", "bench/make_grid_inspection_fixture.py", "examples/grid_inspection_bench.rs", "tests/grid_inspection.rs", "tests/data/swot/grid-inspection.h5", "docs/grid-inspection/"] }
+prompt = """
+Orient:
+- Read docs/grid-inspection/brief.md. Baseline afe41c2, codex/acquisition-planner.
+Edit:
+1. Reuse one immutable source/version-bound native inspection across full-axis geographic resolution and selected physical planning; explicitly budget metadata and reject unavailable capabilities.
+2. Preserve center algorithm, auth isolation, checkpoints, fresh source checks, raw values/masks and atomic output.
+3. Benchmark original and optimized binaries with the same three authenticated frozen sources and fixed latency. Verify independent science and all relevant faults.
+4. Document measured limits and cross-format decisions. Commit locally only.
+Verify:
+- cargo test --locked --all-features --all-targets
+- cargo clippy --locked --all-features --all-targets -- -D warnings
+- cargo fmt --all -- --check
+- python bench/grid_inspection.py
+"""
+test_cmd = "cargo test --locked --no-default-features --features native-hdf5,authenticated-http"

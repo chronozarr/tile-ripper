@@ -31,6 +31,13 @@ pub(crate) struct Sources {
 }
 
 impl Sources {
+    #[cfg(feature = "native-hdf5")]
+    pub(crate) fn from_hdf5(hdf5: crate::hdf5::Context) -> Self {
+        Self {
+            hdf5,
+            ..Default::default()
+        }
+    }
     pub fn new(r: &Request) -> Result<Self> {
         Self::with_transport(r, Default::default())
     }

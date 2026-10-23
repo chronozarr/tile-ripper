@@ -11,7 +11,11 @@ use hdf5_reader::{
 use serde_json::{json, Value};
 use std::{
     collections::{BTreeMap, BTreeSet},
-    sync::{Arc, Mutex},
+    sync::{
+        atomic::{AtomicUsize, Ordering},
+        Arc, Mutex,
+    },
+    time::Instant,
 };
 
 struct Metadata {
@@ -27,19 +31,28 @@ struct MetadataState {
     bytes: usize,
     sealed: bool,
     index_nodes: BTreeSet<u64>,
+    hits: usize,
+    misses: usize,
+    coordinate_index_traversals: usize,
+    coordinate_decoder_opens: usize,
+    science_decoder_opens: usize,
 }
 impl Metadata {
     fn cached(&self, start: u64, len: usize) -> Option<Vec<u8>> {
-        let state = self.state.lock().unwrap();
+        let mut state = self.state.lock().unwrap();
         // Overlapping metadata reads can start before the nearest cached key.
-        state
+        let found = state
             .ranges
             .range(..=start)
             .rev()
             .find_map(|(offset, bytes)| {
                 let a = usize::try_from(start - offset).ok()?;
                 bytes.get(a..a.checked_add(len)?).map(|v| v.to_vec())
-            })
+            });
+        if found.is_some() {
+            state.hits += 1;
+        }
+        found
     }
     fn bytes(&self) -> usize {
         let state = self.state.lock().unwrap();
@@ -110,6 +123,7 @@ impl Storage for Metadata {
         {
             return Err(error("HDF5 metadata cache exceeds buffer/max_nodes budget"));
         }
+        state.misses += 1;
         let bytes = self
             .file
             .read(fetch_start, fetch_len)
@@ -448,16 +462,579 @@ fn decode(dataset: &Dataset, selected: &SliceInfo) -> Result<Pixels> {
     })
 }
 
+#[derive(Clone)]
 struct CachedAxis {
-    values: Vec<f64>,
+    values: Arc<[f64]>,
     description: Value,
 }
+
+fn read_time(file: &Hdf5File) -> Result<Option<Value>> {
+    // Time remains metadata. CF calendars and filtering are not inferred.
+    Ok(match file.dataset("/t") {
+        Ok(t) if t.ndim() == 0 && matches!(t.dtype(), Datatype::FloatingPoint { size: 8, .. }) => {
+            Some(
+                json!({"path":"/t","stored_value":t.read_array::<f64>()?.iter().next(),"attributes":attrs(&t,file)?}),
+            )
+        }
+        Ok(_) => return fail("optional root /t metadata currently requires a Float64 scalar"),
+        Err(error) if missing_dataset(&error) => None,
+        Err(error) => return Err(error.into()),
+    })
+}
+struct DatasetProfile {
+    dataset: Dataset,
+    shape: [usize; 2],
+    chunk: [usize; 2],
+    layout: Layout,
+    description: Value,
+}
+// One source identity, parser, interpretation policy and bounded retained ranges.
+// Mutable only during inspection. Sealing prohibits discovering new metadata.
+type ProfileKey = (String, [String; 2]);
+type AxisKey = (String, [usize; 3]);
+struct InspectedFile {
+    metadata: Arc<Metadata>,
+    parser: Hdf5File,
+    root_attributes: Value,
+    time: Option<Value>,
+    mappings: Mutex<BTreeMap<String, Value>>,
+    opening: Value,
+    index_policy: String,
+    profiles: Mutex<BTreeMap<ProfileKey, Arc<DatasetProfile>>>,
+    axes: Mutex<BTreeMap<AxisKey, CachedAxis>>,
+    indexes: Mutex<BTreeMap<String, Arc<Vec<Entry>>>>,
+    profile_hits: AtomicUsize,
+    index_hits: AtomicUsize,
+    axis_hits: AtomicUsize,
+    index_scans: AtomicUsize,
+    coordinate_reads: AtomicUsize,
+    profile_seconds: Mutex<f64>,
+    index_seconds: Mutex<f64>,
+    coordinate_seconds: Mutex<f64>,
+}
+impl InspectedFile {
+    fn new(
+        asset: &Asset,
+        r: &Request,
+        transport: crate::http_transport::Transport,
+    ) -> Result<Self> {
+        let started = Instant::now();
+        let object = ObjectFile::open(asset, &r.budget, transport)?;
+        let object_seconds = started.elapsed().as_secs_f64();
+        let metadata = Arc::new(Metadata {
+            file: object,
+            cap: r.budget.buffer_bytes / 32,
+            max_reads: r.budget.max_nodes,
+            page: metadata_page()?,
+            state: Mutex::default(),
+        });
+        metadata.file.phase("metadata_index_discovery");
+        let started = Instant::now();
+        let parser = open(metadata.clone())?;
+        let parser_seconds = started.elapsed().as_secs_f64();
+        let sb = parser.superblock();
+        if sb.base_address != 0 || sb.eof_address != metadata.file.size || sb.consistency_flags != 0
+        {
+            return fail("HDF5 requires closed ordinary single-file storage without a userblock or trailing bytes");
+        }
+        let started = Instant::now();
+        let root_attributes = stored_attrs(parser.root_group()?.attributes()?)?;
+        let time = read_time(&parser)?;
+        let opening = json!({"source_identity_and_transport_seconds":object_seconds,"superblock_parser_open_seconds":parser_seconds,"root_group_time_metadata_seconds":started.elapsed().as_secs_f64()});
+        Ok(Self {
+            metadata,
+            parser,
+            root_attributes,
+            time,
+            mappings: Mutex::default(),
+            opening,
+            index_policy: index_policy()?,
+            profiles: Mutex::default(),
+            axes: Mutex::default(),
+            indexes: Mutex::default(),
+            profile_hits: AtomicUsize::new(0),
+            index_hits: AtomicUsize::new(0),
+            axis_hits: AtomicUsize::new(0),
+            index_scans: AtomicUsize::new(0),
+            coordinate_reads: AtomicUsize::new(0),
+            profile_seconds: Mutex::new(0.),
+            index_seconds: Mutex::new(0.),
+            coordinate_seconds: Mutex::new(0.),
+        })
+    }
+    fn bytes(&self) -> usize {
+        self.metadata.bytes() * 4
+            + (self.root_attributes.to_string().len()
+                + self.time.as_ref().map_or(0, |v| v.to_string().len())
+                + self.opening.to_string().len())
+                * 4
+            + self
+                .mappings
+                .lock()
+                .unwrap()
+                .values()
+                .map(|v| v.to_string().len() * 4 + 256)
+                .sum::<usize>()
+            + self
+                .profiles
+                .lock()
+                .unwrap()
+                .values()
+                .map(|p| p.description.to_string().len() * 4 + 4096)
+                .sum::<usize>()
+            + self
+                .axes
+                .lock()
+                .unwrap()
+                .values()
+                .map(|a| a.values.len() * 8 + a.description.to_string().len() * 4 + 256)
+                .sum::<usize>()
+            + self
+                .indexes
+                .lock()
+                .unwrap()
+                .values()
+                .map(|e| e.capacity() * 128 + 256)
+                .sum::<usize>()
+    }
+    fn statistics(&self) -> Value {
+        let retained = self.bytes();
+        let profiles = self.profiles.lock().unwrap().len();
+        let state = self.metadata.state.lock().unwrap();
+        json!({"source_inspections":1,"metadata_parser_opens":1,"profile_discoveries":profiles,
+            "profile_cache_hits":self.profile_hits.load(Ordering::Relaxed),"full_index_scans":self.index_scans.load(Ordering::Relaxed),
+            "index_cache_hits":self.index_hits.load(Ordering::Relaxed),"coordinate_axis_reads":self.coordinate_reads.load(Ordering::Relaxed),
+            "coordinate_cache_hits":self.axis_hits.load(Ordering::Relaxed),"coordinate_index_traversals":state.coordinate_index_traversals,"coordinate_decoder_opens":state.coordinate_decoder_opens,"science_decoder_opens":state.science_decoder_opens,"metadata_range_hits":state.hits,"metadata_range_misses":state.misses,
+            "profile_seconds":*self.profile_seconds.lock().unwrap(),"index_seconds":*self.index_seconds.lock().unwrap(),
+            "coordinate_seconds":*self.coordinate_seconds.lock().unwrap(),"retention_reservation_bytes":retained,
+            "interpretation":"native-hdf5-stored-v1","index_policy":self.index_policy,"sealed":state.sealed,"opening":self.opening})
+    }
+    fn profile(&self, path: &str, axes: &[String; 2]) -> Result<Arc<DatasetProfile>> {
+        let key = (path.to_owned(), axes.clone());
+        let mut cache = self.profiles.lock().unwrap();
+        if let Some(p) = cache.get(&key) {
+            self.profile_hits.fetch_add(1, Ordering::Relaxed);
+            return Ok(p.clone());
+        }
+        if self.metadata.state.lock().unwrap().sealed {
+            return fail("immutable HDF5 inspection lacks requested dataset/axis profile; inspect a fresh source");
+        }
+        let started = Instant::now();
+
+        let ds = self.parser.dataset(path)?;
+        let file = &self.parser;
+        if ds.ndim() != 2 {
+            return fail("native HDF5 data must have rank two");
+        }
+        let dt = dtype(&ds)?;
+        let shape = [
+            usize::try_from(ds.shape()[0])?,
+            usize::try_from(ds.shape()[1])?,
+        ];
+        let cs = ds.chunks().ok_or("native HDF5 requires chunked data")?;
+        let chunk = [usize::try_from(cs[0])?, usize::try_from(cs[1])?];
+        if chunk.contains(&0) {
+            return fail("invalid HDF5 chunk shape");
+        }
+        let attributes = attrs(&ds, file)?;
+        for packing in ["scale_factor", "add_offset"] {
+            if attributes.get(packing).is_some() && attributes[packing]["value"].as_f64().is_none()
+            {
+                return fail("HDF5 packing attributes must be finite numeric scalars");
+            }
+        }
+        let mapping = attributes["grid_mapping"]["value"]
+            .as_str()
+            .map(|name| {
+                let parent = path.rsplit_once('/').map_or("", |v| v.0);
+                let mapping_path = format!("{parent}/{name}");
+                let mut mappings = self.mappings.lock().unwrap();
+                if let Some(mapping) = mappings.get(&mapping_path) {
+                    return Ok(mapping.clone());
+                }
+                let mapping = file.dataset(&mapping_path)?;
+                let description = json!({"path":mapping_path,"attributes":attrs(&mapping,file)?});
+                mappings.insert(mapping_path, description.clone());
+                Ok::<_, Box<dyn std::error::Error + Send + Sync>>(description)
+            })
+            .transpose()?;
+        let time = &self.time;
+        let number = |name: &str| attributes[name]["value"].as_f64();
+        let storage_fill = if let Some(fill) = ds.fill_value().and_then(|f| f.value.as_ref()) {
+            Some(match dt {
+                "|u1" => <u8 as hdf5_reader::H5Type>::from_bytes(fill, ds.dtype())? as f64,
+                "<u2" => <u16 as hdf5_reader::H5Type>::from_bytes(fill, ds.dtype())? as f64,
+                "<u4" => <u32 as hdf5_reader::H5Type>::from_bytes(fill, ds.dtype())? as f64,
+                _ => <f32 as hdf5_reader::H5Type>::from_bytes(fill, ds.dtype())? as f64,
+            })
+        } else {
+            None
+        };
+        let cf_fill = marker(&ds, "_FillValue", dt)?;
+        let missing = marker(&ds, "missing_value", dt)?;
+        if let (Some(a), Some(b)) = (cf_fill, missing) {
+            if a != b && !(a.is_nan() && b.is_nan()) {
+                return fail(
+                    "distinct missing_value and _FillValue require a richer validity contract",
+                );
+            }
+        }
+        // HDF5 fill initializes unallocated chunks. Scientific missingness
+        // follows CF markers and NaNs, independently of initialization.
+        let nodata = cf_fill.or(missing);
+        let layout = Layout {
+            width: shape[1],
+            height: shape[0],
+            transform: [0., 1., 0., 0., 0., 1.],
+            crs: format!("HDF5:stored_axes:{},{}", axes[1], axes[0]),
+            variable: Variable::Dataset { path: path.into() },
+            block: [chunk[1], chunk[0]],
+            dtype: dt.into(),
+            nodata,
+            scale: number("scale_factor"),
+            offset: number("add_offset"),
+            tiles: Vec::new(),
+        };
+
+        let description = json!({"path":path,"shape":shape,"source_dtype":format!("{:?}",ds.dtype()),"stored_dtype":dt,
+            "chunk_shape":chunk,"chunk_index":"v1 B-tree","index_policy":self.index_policy,
+            "index_validation_scope":"visited nodes and visible pointers; full policy traverses all nodes",
+            "storage_fill":storage_fill.map(|v|if v.is_finite(){json!(v)}else{json!(v.to_string())}),
+            "missingness":"CF scalar markers and NaNs; storage initialization alone is valid","attributes":attributes,
+            "root_attributes":self.root_attributes,"axis_semantics":"stored coordinate values as exact Float64; apply axis scale/offset explicitly",
+            "grid_mapping":mapping,"time":time});
+        let result = Arc::new(DatasetProfile {
+            dataset: ds,
+            shape,
+            chunk,
+            layout,
+            description,
+        });
+        cache.insert(key, result.clone());
+        *self.profile_seconds.lock().unwrap() += started.elapsed().as_secs_f64();
+        Ok(result)
+    }
+    fn entries(
+        &self,
+        path: &str,
+        ds: &Dataset,
+        first: &[u64],
+        last: &[u64],
+        budget: &Budget,
+    ) -> Result<Vec<Entry>> {
+        if self.index_policy != "full" {
+            return entries(&self.parser, ds, first, last);
+        }
+        let mut cache = self.indexes.lock().unwrap();
+        let all = if let Some(all) = cache.get(path) {
+            self.index_hits.fetch_add(1, Ordering::Relaxed);
+            all.clone()
+        } else {
+            if self.metadata.state.lock().unwrap().sealed {
+                return fail(
+                    "immutable HDF5 inspection lacks requested chunk index; inspect a fresh source",
+                );
+            }
+            let chunks = ds.chunks().ok_or("missing chunk shape")?;
+            let possible = ds
+                .shape()
+                .iter()
+                .zip(&chunks)
+                .try_fold(1usize, |n, (s, c)| {
+                    n.checked_mul((*s as usize).div_ceil(*c as usize))
+                })
+                .ok_or("HDF5 index bound overflow")?;
+            // Bound retained parsed entries before asking the library to collect them.
+            if possible > budget.max_nodes || possible > budget.buffer_bytes / 4096 {
+                return entries(&self.parser, ds, first, last);
+            }
+            let started = Instant::now();
+            let all = Arc::new(entries(
+                &self.parser,
+                ds,
+                &vec![0; ds.ndim()],
+                &vec![u64::MAX; ds.ndim()],
+            )?);
+            self.index_scans.fetch_add(1, Ordering::Relaxed);
+            *self.index_seconds.lock().unwrap() += started.elapsed().as_secs_f64();
+            cache.insert(path.into(), all.clone());
+            all
+        };
+        let chunks = ds.chunks().ok_or("missing chunk shape")?;
+        Ok(all
+            .iter()
+            .filter(|e| {
+                e.offsets
+                    .iter()
+                    .zip(&chunks)
+                    .enumerate()
+                    .all(|(i, (offset, chunk))| {
+                        let index = (*offset as u64) / (*chunk as u64);
+                        index >= first[i] && index <= last[i]
+                    })
+            })
+            .cloned()
+            .collect())
+    }
+    fn axis(
+        &self,
+        path: &str,
+        shape: usize,
+        selected: [usize; 3],
+        budget: &Budget,
+        working: usize,
+    ) -> Result<CachedAxis> {
+        let [start, count, step] = selected;
+        let mut cache = self.axes.lock().unwrap();
+        if let Some(axis) = cache.get(&(path.into(), selected)) {
+            self.axis_hits.fetch_add(1, Ordering::Relaxed);
+            return Ok(axis.clone());
+        }
+        if let Some(axis) = cache.get(&(path.into(), [0, shape, 1])) {
+            self.axis_hits.fetch_add(1, Ordering::Relaxed);
+            let values = (0..count)
+                .map(|i| {
+                    axis.values
+                        .get(start + i * step)
+                        .copied()
+                        .ok_or("coordinate selection outside inspected axis")
+                })
+                .collect::<std::result::Result<Vec<_>, _>>()?;
+            return Ok(CachedAxis {
+                values: values.into(),
+                description: axis.description.clone(),
+            });
+        }
+        if self.metadata.state.lock().unwrap().sealed {
+            return fail("immutable HDF5 inspection lacks requested coordinate coverage; inspect a fresh source");
+        }
+        let started = Instant::now();
+        let axis = self.parser.dataset(path)?;
+        if axis.shape() != [shape as u64] {
+            return fail("explicit HDF5 coordinate shape does not match dataset dimension");
+        }
+        let attributes = attrs(&axis, &self.parser)?;
+        let header = self.parser.get_or_parse_header(axis.address())?;
+        let chunked = header.messages.iter().any(
+            |m| matches!(m,HdfMessage::DataLayout(l) if matches!(l.layout,DataLayout::Chunked{..})),
+        );
+        let (values, storage) = if chunked {
+            chunked_coordinate(
+                &self.metadata,
+                &self.parser,
+                path,
+                &axis,
+                selected,
+                budget,
+                working,
+            )?
+        } else {
+            (
+                coordinate(&axis, start, count, step)?,
+                json!({"layout":"contiguous_or_compact"}),
+            )
+        };
+        validate_coordinate_markers(&axis, &values)?;
+        let result = CachedAxis {
+            values: values.into(),
+            description: json!({"path":path,"dtype":format!("{:?}",axis.dtype()),"attributes":attributes,"storage":storage}),
+        };
+        self.coordinate_reads.fetch_add(1, Ordering::Relaxed);
+        *self.coordinate_seconds.lock().unwrap() += started.elapsed().as_secs_f64();
+        cache.insert((path.into(), selected), result.clone());
+        Ok(result)
+    }
+}
+/// Nonserializable source/version binding. Its retained metadata and axes are
+/// immutable; every preparation creates separate logical bindings and validates
+/// the online source before using them. No global or locator-only cache exists.
+#[derive(Clone)]
+pub(crate) struct GridInspection {
+    asset: Asset,
+    budget: Budget,
+    transport: crate::http_transport::Transport,
+    file: Arc<InspectedFile>,
+    definition: Value,
+    grid: crate::swot_aoi::GridIdentity,
+    seconds: f64,
+}
+impl GridInspection {
+    pub(crate) fn inspect(
+        request: &Request,
+        transport: crate::http_transport::Transport,
+    ) -> Result<Self> {
+        crate::planner::validate(request)?;
+        let Source::Assets { assets } = &request.source else {
+            return fail("grid inspection requires one native HDF5 source");
+        };
+        if assets.len() != 1
+            || assets[0].format != Format::Hdf5
+            || !matches!(request.sink, Sink::Callback)
+            || !matches!(request.grid, Grid::Native)
+            || request.time.is_some()
+        {
+            return fail("grid inspection requires one native HDF5 source, native grid and callback sink without time filtering");
+        }
+        let Spatial::ArraySlice { axes, .. } = &request.spatial else {
+            return fail("grid inspection requires explicit coordinate paths");
+        };
+        if axes != &["/y".to_owned(), "/x".to_owned()] || index_policy()? != "full" {
+            return fail("reusable SWOT grid inspection requires /y,/x and full index validation");
+        }
+        let started = Instant::now();
+        let file = Arc::new(InspectedFile::new(&assets[0], request, transport.clone())?);
+        let wse = file.profile(crate::swot::PATHS[0], axes)?;
+        crate::swot_aoi::shape_bound(wse.shape)?;
+        let coordinate_bytes = wse
+            .shape
+            .iter()
+            .try_fold(0usize, |n, c| {
+                c.checked_mul(16).and_then(|v| n.checked_add(v))
+            })
+            .ok_or("full coordinate reservation overflow")?;
+        if coordinate_bytes > request.budget.buffer_bytes / 16 {
+            return fail("full inspected coordinate arrays exceed working budget");
+        }
+        let mut definition = wse.description.clone();
+        let mut descriptions = Vec::new();
+        for (i, path) in axes.iter().enumerate() {
+            let retained = file.bytes() + transport.reservation() + coordinate_bytes;
+            let a = file.axis(
+                path,
+                wse.shape[i],
+                [0, wse.shape[i], 1],
+                &request.budget,
+                retained,
+            )?;
+            descriptions.push(a.description);
+            if file.bytes() + transport.reservation() > request.budget.buffer_bytes / 2 {
+                return fail("retained native grid inspection exceeds half buffer_bytes");
+            }
+        }
+        definition["axes"] = json!(descriptions);
+        // Admission of CRS/axis metadata uses the existing strict SWOT contract.
+        let crs = crate::swot_aoi::source_crs(&definition)?;
+        let grid = {
+            let axes = file.axes.lock().unwrap();
+            crate::swot_aoi::grid_identity(
+                &crs,
+                &axes[&("/y".into(), [0, wse.shape[0], 1])].values,
+                &axes[&("/x".into(), [0, wse.shape[1], 1])].values,
+                &definition["grid_mapping"],
+            )?
+        };
+        for path in crate::swot::PATHS {
+            let profile = file.profile(path, axes)?;
+            let possible = profile
+                .shape
+                .iter()
+                .zip(profile.chunk)
+                .try_fold(1usize, |n, (s, c)| n.checked_mul(s.div_ceil(c)))
+                .ok_or("grid index bound overflow")?;
+            if possible > request.budget.max_nodes || possible > request.budget.buffer_bytes / 4096
+            {
+                return fail("retained full HDF5 index exceeds max_nodes/working budget");
+            }
+            file.entries(
+                path,
+                &profile.dataset,
+                &[0, 0],
+                &[u64::MAX; 2],
+                &request.budget,
+            )?;
+            if file.bytes() + transport.reservation() > request.budget.buffer_bytes / 2 {
+                return fail("retained native grid inspection exceeds half buffer_bytes");
+            }
+        }
+        file.metadata.state.lock().unwrap().sealed = true;
+        file.metadata.file.phase("grid_inspection_validation");
+        file.metadata.file.validate_cancellable(None)?;
+        Ok(Self {
+            asset: assets[0].clone(),
+            budget: request.budget.clone(),
+            transport,
+            file,
+            definition,
+            grid,
+            seconds: started.elapsed().as_secs_f64(),
+        })
+    }
+    pub(crate) fn with_grid<T>(
+        &self,
+        f: impl FnOnce(&Value, &[f64], &[f64]) -> Result<T>,
+    ) -> Result<T> {
+        let shape: [usize; 2] = serde_json::from_value(self.definition["shape"].clone())?;
+        let (y, x) = {
+            let axes = self.file.axes.lock().unwrap();
+            (
+                axes.get(&("/y".into(), [0, shape[0], 1]))
+                    .ok_or("missing inspected /y")?
+                    .values
+                    .clone(),
+                axes.get(&("/x".into(), [0, shape[1], 1]))
+                    .ok_or("missing inspected /x")?
+                    .values
+                    .clone(),
+            )
+        };
+        f(&self.definition, &y, &x)
+    }
+    pub(crate) fn describe(&self) -> Value {
+        let scientific=self.file.profiles.lock().unwrap().values().map(|p|json!({"path":p.description["path"],"shape":p.shape,"stored_dtype":p.layout.dtype,"chunk_shape":p.chunk,"chunk_index":p.description["chunk_index"]})).collect::<Vec<_>>();
+        json!({"inspection_schema":1,"interpretation":"native-hdf5-stored-v1","source_identity":self.file.metadata.file.identity(),
+            "object_size":self.file.metadata.file.size,"scientific_datasets":scientific,
+            "admission_status":{"grid":"validated","scientific_profile":"stored definitions and indexes inspected; policy admission required for each selection","execution":"requires newly validated bounded physical plan"},"grid_definition":self.definition,"grid":self.grid,"inspection_seconds":self.seconds,
+            "capabilities":{"coordinate_model":"explicit_one_dimensional_stored_centers","axis_order":["y","x"],
+            "geographic_selection":"qualified_wgs84_utm_swot_v1","scientific_variables":crate::swot::PATHS,
+            "execution":"rebuild_bounded_physical_plan_with_fresh_version_validation","other_crs":"unsupported","other_profiles":"unsupported"},
+            "retention":self.file.statistics(),"transport":self.file.metadata.file.stats()})
+    }
+    pub(crate) fn context(&self, r: &Request) -> Result<Context> {
+        crate::planner::validate(r)?;
+        let Source::Assets { assets } = &r.source else {
+            return fail("inspected source request mismatch");
+        };
+        if assets.len() != 1
+            || assets[0].id != self.asset.id
+            || assets[0].locator != self.asset.locator
+            || assets[0].format != Format::Hdf5
+            || assets[0].datetime != self.asset.datetime
+            || r.budget.buffer_bytes != self.budget.buffer_bytes
+            || r.budget.max_nodes != self.budget.max_nodes
+            || index_policy()? != self.file.index_policy
+            || metadata_page()? != self.file.metadata.page
+        {
+            return fail("inspection source, retention budget or interpretation policy mismatch; inspect a fresh source");
+        }
+        if let Some(etag) = &assets[0].etag {
+            if self.file.metadata.file.identity()["version"]["etag"].as_str() != Some(etag.as_str())
+            {
+                return fail("inspection source version conflicts with requested ETag");
+            }
+        }
+        if self.file.bytes() + self.transport.reservation() > r.budget.buffer_bytes / 2 {
+            return fail("retained inspection exceeds requested memory budget");
+        }
+        self.file.metadata.file.phase("inspection_reuse_validation");
+        self.file.metadata.file.validate_cancellable(None)?;
+        let context = Context {
+            transport: self.transport.clone(),
+            ..Default::default()
+        };
+        context
+            .files
+            .lock()
+            .unwrap()
+            .insert(self.asset.id.clone(), self.file.clone());
+        Ok(context)
+    }
+}
+
 #[derive(Default)]
 pub(crate) struct Context {
     pub(crate) transport: crate::http_transport::Transport,
-    files: Mutex<BTreeMap<String, Arc<Metadata>>>,
+    files: Mutex<BTreeMap<String, Arc<InspectedFile>>>,
     bindings: Mutex<BTreeMap<(String, String), Arc<Binding>>>,
-    axes: Mutex<BTreeMap<(String, String), CachedAxis>>,
 }
 #[derive(Clone, Debug)]
 struct Job {
@@ -595,6 +1172,7 @@ fn chunked_coordinate(
     for index in indices {
         metadata.file.phase("hdf5_coordinate_index_discovery");
         let bounds = [index as u64];
+        metadata.state.lock().unwrap().coordinate_index_traversals += 1;
         let found = entries(file, axis, &bounds, &bounds)?;
         let offset = index
             .checked_mul(block)
@@ -626,6 +1204,7 @@ fn chunked_coordinate(
         let at = start + first * step;
         metadata.file.phase("hdf5_coordinate_chunks");
         let payload = metadata.file.read(entry.address, entry.size)?;
+        metadata.state.lock().unwrap().coordinate_decoder_opens += 1;
         let view = open(Arc::new(View {
             metadata: metadata.clone(),
             start: entry.address,
@@ -666,6 +1245,15 @@ fn validate_coordinate_markers(axis: &Dataset, values: &[f64]) -> Result<()> {
     Ok(())
 }
 impl Context {
+    fn file(&self, asset: &Asset, r: &Request) -> Result<Arc<InspectedFile>> {
+        let mut files = self.files.lock().unwrap();
+        if let Some(m) = files.get(&asset.id) {
+            return Ok(m.clone());
+        }
+        let m = Arc::new(InspectedFile::new(asset, r, self.transport.clone())?);
+        files.insert(asset.id.clone(), m.clone());
+        Ok(m)
+    }
     pub(crate) fn with_coordinates<T>(
         &self,
         asset: &str,
@@ -685,13 +1273,7 @@ impl Context {
     pub fn bytes(&self) -> usize {
         let files = self.files.lock().unwrap();
         let bindings = self.bindings.lock().unwrap();
-        self.axes
-            .lock()
-            .unwrap()
-            .values()
-            .map(|a| a.values.capacity() * 8 + a.description.to_string().len() * 4)
-            .sum::<usize>()
-            + files.values().map(|m| m.bytes() * 4).sum::<usize>()
+        files.values().map(|m| m.bytes()).sum::<usize>()
             + self.transport.reservation()
             + bindings
                 .values()
@@ -714,28 +1296,32 @@ impl Context {
         cancelled: Option<&std::sync::atomic::AtomicBool>,
     ) -> Result<()> {
         for m in self.files.lock().unwrap().values() {
-            m.state.lock().unwrap().sealed = true;
-            m.file.validate_cancellable(cancelled)?;
+            m.metadata.state.lock().unwrap().sealed = true;
+            m.metadata.file.phase("hdf5_version_validation");
+            m.metadata.file.validate_cancellable(cancelled)?;
         }
         Ok(())
     }
     pub fn phase(&self, phase: &'static str) {
         for m in self.files.lock().unwrap().values() {
-            m.file.phase(phase);
+            m.metadata.file.phase(phase);
         }
     }
     pub fn describe(&self, id: &str) -> Option<Value> {
         let files = self.files.lock().unwrap();
-        let m = files.get(id)?;
+        let inspected = files.get(id)?;
+        let m = &inspected.metadata;
         let bindings = self.bindings.lock().unwrap();
+        let nodes = m.state.lock().unwrap().index_nodes.len();
         Some(
-            json!({"identity":m.file.identity(),"file_bytes":m.file.size,"metadata_cache_bytes":m.bytes(),"index_nodes_visited":m.state.lock().unwrap().index_nodes.len(),"metadata_page_bytes":m.page,"datasets":bindings.iter().filter(|((a,_),_)|a==id).map(|(_,b)|b.description.clone()).collect::<Vec<_>>()}),
+            json!({"identity":m.file.identity(),"file_bytes":m.file.size,"metadata_cache_bytes":m.bytes(),"index_nodes_visited":nodes,"metadata_page_bytes":m.page,"inspection_reuse":inspected.statistics(),"datasets":bindings.iter().filter(|((a,_),_)|a==id).map(|(_,b)|b.description.clone()).collect::<Vec<_>>()}),
         )
     }
     pub fn add_stats(&self, value: &mut Value) {
         for (id, m) in self.files.lock().unwrap().iter() {
-            value[id] = m.file.stats();
-            value[id]["cached_metadata_bytes"] = json!(m.bytes());
+            value[id] = m.metadata.file.stats();
+            value[id]["cached_metadata_bytes"] = json!(m.metadata.bytes());
+            value[id]["inspection_reuse"] = m.statistics();
         }
     }
     pub fn plan(&self, asset: &Asset, r: &Request, p: &mut Plan) -> Result<()> {
@@ -754,30 +1340,10 @@ impl Context {
         if r.variables.is_empty() {
             return fail("HDF5 requires dataset selectors");
         }
-        let metadata = {
-            let mut files = self.files.lock().unwrap();
-            if let Some(m) = files.get(&asset.id) {
-                m.clone()
-            } else {
-                let m = Arc::new(Metadata {
-                    file: ObjectFile::open(asset, &r.budget, self.transport.clone())?,
-                    cap: r.budget.buffer_bytes / 32,
-                    max_reads: r.budget.max_nodes,
-                    page: metadata_page()?,
-                    state: Mutex::default(),
-                });
-                files.insert(asset.id.clone(), m.clone());
-                m
-            }
-        };
+        let inspected = self.file(asset, r)?;
+        let metadata = &inspected.metadata;
         metadata.file.phase("metadata_index_discovery");
-        let file = open(metadata.clone())?;
-        let sb = file.superblock();
-        if sb.base_address != 0 || sb.eof_address != metadata.file.size || sb.consistency_flags != 0
-        {
-            return fail("HDF5 requires closed ordinary single-file storage without a userblock or trailing bytes");
-        }
-        let root_attributes = stored_attrs(file.root_group()?.attributes()?)?;
+        let sb = inspected.parser.superblock();
         for variable in &r.variables {
             let Variable::Dataset { path } = variable else {
                 return fail("HDF5 requires absolute dataset paths");
@@ -785,20 +1351,11 @@ impl Context {
             if !path.starts_with('/') || path.contains("..") {
                 return fail("HDF5 dataset path must be absolute and confined");
             }
-            let ds = file.dataset(path)?;
-            if ds.ndim() != 2 {
-                return fail("native HDF5 data must have rank two");
-            }
-            let dt = dtype(&ds)?;
-            let shape = [
-                usize::try_from(ds.shape()[0])?,
-                usize::try_from(ds.shape()[1])?,
-            ];
-            let cs = ds.chunks().ok_or("native HDF5 requires chunked data")?;
-            let chunk = [usize::try_from(cs[0])?, usize::try_from(cs[1])?];
-            if chunk.contains(&0) {
-                return fail("invalid HDF5 chunk shape");
-            }
+            let profile = inspected.profile(path, axes)?;
+            let ds = &profile.dataset;
+            let shape = profile.shape;
+            let chunk = profile.chunk;
+            let layout = profile.layout.clone();
             for i in 0..2 {
                 let end = (count[i] - 1)
                     .checked_mul(step[i])
@@ -817,125 +1374,22 @@ impl Context {
             if coordinate_bytes > r.budget.buffer_bytes / 16 {
                 return fail("HDF5 selected coordinate arrays exceed working budget");
             }
-            let attributes = attrs(&ds, &file)?;
-            for packing in ["scale_factor", "add_offset"] {
-                if attributes.get(packing).is_some()
-                    && attributes[packing]["value"].as_f64().is_none()
-                {
-                    return fail("HDF5 packing attributes must be finite numeric scalars");
-                }
-            }
-            let mut coordinate_attrs = Vec::new();
-            let mut coordinates = [Vec::new(), Vec::new()];
             let coordinate_working_bytes = coordinate_bytes
                 .checked_add(self.bytes())
                 .ok_or("HDF5 coordinate preparation reservation overflow")?;
+            let mut coordinate_attrs = Vec::new();
+            let mut coordinates = [Vec::new(), Vec::new()];
             for i in 0..2 {
-                let axis = file.dataset(&axes[i])?;
-                let axis_header = file.get_or_parse_header(axis.address())?;
-                if axis.shape() != [shape[i] as u64] {
-                    return fail("explicit HDF5 coordinate shape does not match dataset dimension");
-                }
-                let key = (asset.id.clone(), axes[i].clone());
-                if let Some(axis) = self.axes.lock().unwrap().get(&key) {
-                    coordinates[i] = axis.values.clone();
-                    coordinate_attrs.push(axis.description.clone());
-                    continue;
-                }
-                let attributes = attrs(&axis, &file)?;
-                let chunked = axis_header.messages.iter().any(|m| {
-                    matches!(m,HdfMessage::DataLayout(l) if matches!(l.layout,DataLayout::Chunked {..}))
-                });
-                let storage = if chunked {
-                    let (values, storage) = chunked_coordinate(
-                        &metadata,
-                        &file,
-                        &axes[i],
-                        &axis,
-                        [start[i], count[i], step[i]],
-                        &r.budget,
-                        coordinate_working_bytes,
-                    )?;
-                    coordinates[i] = values;
-                    storage
-                } else {
-                    coordinates[i] = coordinate(&axis, start[i], count[i], step[i])?;
-                    json!({"layout":"contiguous_or_compact"})
-                };
-                validate_coordinate_markers(&axis, &coordinates[i])?;
-                let description = json!({"path":axes[i],"dtype":format!("{:?}",axis.dtype()),"attributes":attributes,"storage":storage});
-                self.axes.lock().unwrap().insert(
-                    key,
-                    CachedAxis {
-                        values: coordinates[i].clone(),
-                        description: description.clone(),
-                    },
-                );
-                coordinate_attrs.push(description);
+                let axis = inspected.axis(
+                    &axes[i],
+                    shape[i],
+                    [start[i], count[i], step[i]],
+                    &r.budget,
+                    coordinate_working_bytes,
+                )?;
+                coordinates[i] = axis.values.to_vec();
+                coordinate_attrs.push(axis.description);
             }
-            let mapping = attributes["grid_mapping"]["value"]
-                .as_str()
-                .map(|name| {
-                    let parent = path.rsplit_once('/').map_or("", |v| v.0);
-                    let mapping_path = format!("{parent}/{name}");
-                    let mapping = file.dataset(&mapping_path)?;
-                    Ok::<_, Box<dyn std::error::Error + Send + Sync>>(
-                        json!({"path":mapping_path,"attributes":attrs(&mapping,&file)?}),
-                    )
-                })
-                .transpose()?;
-            // Time remains metadata. CF calendars and filtering are not inferred.
-            let time = match file.dataset("/t") {
-                Ok(t)
-                    if t.ndim() == 0
-                        && matches!(t.dtype(), Datatype::FloatingPoint { size: 8, .. }) =>
-                {
-                    Some(
-                        json!({"path":"/t","stored_value":t.read_array::<f64>()?.iter().next(),"attributes":attrs(&t,&file)?}),
-                    )
-                }
-                Ok(_) => {
-                    return fail("optional root /t metadata currently requires a Float64 scalar")
-                }
-                Err(error) if missing_dataset(&error) => None,
-                Err(error) => return Err(error.into()),
-            };
-            let number = |name: &str| attributes[name]["value"].as_f64();
-            let storage_fill = if let Some(fill) = ds.fill_value().and_then(|f| f.value.as_ref()) {
-                Some(match dt {
-                    "|u1" => <u8 as hdf5_reader::H5Type>::from_bytes(fill, ds.dtype())? as f64,
-                    "<u2" => <u16 as hdf5_reader::H5Type>::from_bytes(fill, ds.dtype())? as f64,
-                    "<u4" => <u32 as hdf5_reader::H5Type>::from_bytes(fill, ds.dtype())? as f64,
-                    _ => <f32 as hdf5_reader::H5Type>::from_bytes(fill, ds.dtype())? as f64,
-                })
-            } else {
-                None
-            };
-            let cf_fill = marker(&ds, "_FillValue", dt)?;
-            let missing = marker(&ds, "missing_value", dt)?;
-            if let (Some(a), Some(b)) = (cf_fill, missing) {
-                if a != b && !(a.is_nan() && b.is_nan()) {
-                    return fail(
-                        "distinct missing_value and _FillValue require a richer validity contract",
-                    );
-                }
-            }
-            // HDF5 fill initializes unallocated chunks. Scientific missingness
-            // follows CF markers and NaNs, independently of initialization.
-            let nodata = cf_fill.or(missing);
-            let layout = Layout {
-                width: shape[1],
-                height: shape[0],
-                transform: [0., 1., 0., 0., 0., 1.],
-                crs: format!("HDF5:stored_axes:{},{}", axes[1], axes[0]),
-                variable: variable.clone(),
-                block: [chunk[1], chunk[0]],
-                dtype: dt.into(),
-                nodata,
-                scale: number("scale_factor"),
-                offset: number("add_offset"),
-                tiles: Vec::new(),
-            };
             let rows = chunk_indices(start[0], count[0], step[0], chunk[0], r.budget.max_nodes)?;
             let cols = chunk_indices(start[1], count[1], step[1], chunk[1], r.budget.max_nodes)?;
             // Bound the pending jobs and their duplicated inspection/DAG records
@@ -984,7 +1438,7 @@ impl Context {
                         job_count[i] = end - first;
                     }
                     let bounds = [*row as u64, *col as u64];
-                    let mut found = entries(&file, &ds, &bounds, &bounds)?;
+                    let mut found = inspected.entries(path, ds, &bounds, &bounds, &r.budget)?;
                     if found.len() > 1 || found.first().is_some_and(|e| e.offsets != offsets) {
                         return fail("invalid or duplicate HDF5 chunk index entry");
                     }
@@ -1081,7 +1535,13 @@ impl Context {
                     .and_then(|n| n.checked_add(32768))
                     .ok_or("HDF5 working reservation overflow")?;
             }
-            let description = json!({"path":path,"shape":shape,"source_dtype":format!("{:?}",ds.dtype()),"stored_dtype":dt,"chunk_shape":chunk,"superblock_version":sb.version,"chunk_index":"v1 B-tree","index_policy":index_policy()?,"index_validation_scope":"visited nodes and visible pointers; full policy traverses all nodes","storage_fill":storage_fill.map(|v|if v.is_finite(){json!(v)}else{json!(v.to_string())}),"missingness":"CF scalar markers and NaNs; storage initialization alone is valid","attributes":attributes,"root_attributes":root_attributes,"axes":coordinate_attrs,"axis_semantics":"stored coordinate values as exact Float64; apply axis scale/offset explicitly","grid_mapping":mapping,"time":time,"range_policy":policy,"physical_groups":groups,"chunks":jobs.iter().map(|j|json!({"node":j.node,"start":j.start,"count":j.count,"step":step,"byte_offset":j.entry.as_ref().map(|e|e.address),"encoded_bytes":j.entry.as_ref().map_or(0,|e|e.size)})).collect::<Vec<_>>()});
+            let mut description = profile.description.clone();
+            description["superblock_version"] = json!(sb.version);
+            description["axes"] = json!(coordinate_attrs);
+            description["range_policy"] = json!(policy);
+            description["physical_groups"] = json!(groups);
+            description["chunks"] = json!(jobs.iter().map(|j|json!({"node":j.node,"start":j.start,"count":j.count,"step":step,"byte_offset":j.entry.as_ref().map(|e|e.address),"encoded_bytes":j.entry.as_ref().map_or(0,|e|e.size)})).collect::<Vec<_>>());
+
             p.selected.push(Selected {
                 timestamps: vec![],
                 dimensions: None,
@@ -1420,6 +1880,7 @@ impl Context {
                                 start: part.entry.as_ref().map_or(0, |e| e.address),
                                 payload,
                             });
+                            b.metadata.state.lock().unwrap().science_decoder_opens += 1;
                             let file = open(view)?;
                             let at = [
                                 part.start[0] + (a[0] - part.coordinate_start[0]) * b.step[0],
@@ -1535,6 +1996,7 @@ impl SelectedReader {
             start: group.start,
             payload: payload.into(),
         });
+        binding.metadata.state.lock().unwrap().science_decoder_opens += 1;
         let file = open(view.clone())?;
         Ok(Self {
             binding,
@@ -1668,6 +2130,7 @@ mod tests {
         metadata.state.lock().unwrap().sealed = true;
         metadata.file.phase("payload");
         let payload = metadata.file.read(e.address, e.size)?;
+        metadata.state.lock().unwrap().science_decoder_opens += 1;
         let reader = open(Arc::new(View {
             metadata: metadata.clone(),
             start: e.address,

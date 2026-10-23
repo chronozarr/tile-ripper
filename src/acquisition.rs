@@ -559,6 +559,28 @@ fn prepare_inner(
     cache: &mut LayoutCache,
     transport: crate::http_transport::Transport,
 ) -> Result<Prepared> {
+    prepare_on(request, cache, transport, None)
+}
+#[cfg(feature = "native-hdf5")]
+pub(crate) fn prepare_inspected(
+    request: &Request,
+    grid: &crate::hdf5::GridInspection,
+) -> Result<Prepared> {
+    let sources = crate::storage::Sources::from_hdf5(grid.context(request)?);
+    prepare_on(
+        request,
+        &mut LayoutCache::default(),
+        Default::default(),
+        Some(sources),
+    )
+    .map_err(|e| safe_error(request, "prepare", e))
+}
+fn prepare_on(
+    request: &Request,
+    cache: &mut LayoutCache,
+    transport: crate::http_transport::Transport,
+    prepared_sources: Option<crate::storage::Sources>,
+) -> Result<Prepared> {
     crate::planner::validate_common(request)?;
     let runtime = match &request.source {
         Source::Stac { .. } | Source::Catalog { .. } => {
@@ -594,7 +616,10 @@ fn prepare_inner(
             {
                 stac_workflow::resolve_identities(&mut request, &mut [], &Default::default())?;
             }
-            let sources = crate::storage::Sources::with_transport(&request, transport)?;
+            let sources = match prepared_sources {
+                Some(sources) => sources,
+                None => crate::storage::Sources::with_transport(&request, transport)?,
+            };
             let plan = crate::planner::plan_on(&request, cache, &sources)?;
             sources.seal()?;
             versions.validate()?;
@@ -865,7 +890,7 @@ fn outputs(p: &Plan, mode: OutputStrategy) -> Value {
     }
     json!(out)
 }
-fn sanitize(value: &mut Value) {
+pub(crate) fn sanitize(value: &mut Value) {
     match value {
         Value::String(s) if s.contains("://") => *s = stac_workflow::safe_reference(s),
         Value::Array(a) => {
@@ -881,7 +906,7 @@ fn sanitize(value: &mut Value) {
         _ => {}
     }
 }
-fn safe_error(
+pub(crate) fn safe_error(
     r: &Request,
     stage: &str,
     e: Box<dyn std::error::Error + Send + Sync>,

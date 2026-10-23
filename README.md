@@ -10,6 +10,9 @@ See the [geographic workflow and contract](docs/swot-aoi/workflow.md),
 [runnable AOI selection](examples/swot-aoi-selection.json) and
 [independent scientific gate](docs/swot-aoi/report.md). The original
 [native-index workflow](docs/swot-discovery/workflow.md) remains available.
+Geographic job generation now reuses one immutable source-grid inspection per
+granule. See the [inspection API and checkpoint boundaries](docs/grid-inspection/workflow.md)
+and [matched three-product measurements](docs/grid-inspection/report.md).
 
 Explicit one-to-four-observation SWOT Raster D PGD0 jobs now use normal
 `plan` / `fetch` commands to write one scientific Zarr v2 dataset. Each granule

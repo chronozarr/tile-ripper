@@ -405,6 +405,42 @@ impl<'a> Job<'a> {
         .validate_definitions(&inspection)?;
         Ok(inspection)
     }
+    pub(crate) fn inspect_observation(
+        entry: &Observation,
+        prepared: &swot::Prepared,
+    ) -> Result<Value> {
+        let inspection = Self::inspect(prepared)?;
+        if let Some(catalog) = &entry.catalog {
+            crate::swot_discovery::bridge::validate_source(catalog, entry.asset()?, &inspection)?;
+        }
+        let geographic = entry
+            .geographic_selection
+            .as_ref()
+            .map(|selection| {
+                prepared.with_coordinates(|y, x| selection.validate_selected(&inspection, y, x))
+            })
+            .transpose()?;
+        Ok(
+            json!({"id":entry.id,"output_group":format!("observations/{}",entry.id),"catalog":entry.catalog,"geographic_selection":entry.geographic_selection,"aoi_verification":geographic,"inspection":inspection}),
+        )
+    }
+    pub(crate) fn plan_document(
+        manifest: &Manifest,
+        observations: Vec<Value>,
+        checkpoint: Value,
+    ) -> Result<Value> {
+        manifest.validate()?;
+        Ok(
+            json!({"document_type":"swot_job_inspection","job_schema":1,"profile":manifest.profile,"saved_plan_execution_supported":false,
+            "ordering":"manifest order; repeated IDs and canonical sources rejected; equal timestamps do not imply equal observations",
+            "observations":observations,"admission":manifest.admission(),"checkpoint":checkpoint,
+            "output":{"format":"zarr_v2","encoding":"uncompressed raw stored values","chunk_edge":manifest.limits.output_chunk_edge,"max_objects":manifest.limits.max_output_objects,"aoi_mask":manifest.observations.iter().any(|e|e.geographic_selection.is_some())},
+            "completion":"all required observations must finish, then every source is revalidated in a serial sweep before manifest/synchronization/no-replace publication",
+            "known_costs":["full bounded legacy HDF5 index traversal remains default","each source uses its own authentication session; final sweep uses fresh sessions and online eight-byte GET proof","checkpoint replay reconstructs all values and rewrites all output","synchronization and no-replace publication are part of fetch"],
+            "unsupported":["implicit catalog discovery or unresolved geography within a job; use discover-job","empty index selections","reprojection/resampling/mosaicking","aligned time series","additional processing releases or products","partial output or completed-observation recovery"],
+            "source_snapshot":"per-object versions; not an atomic snapshot of a changing collection"}),
+        )
+    }
     pub fn plan(mut self) -> Result<Value> {
         let mut observations = Vec::new();
         for index in 0..self.manifest.observations.len() {
@@ -414,34 +450,12 @@ impl<'a> Job<'a> {
                     self.manifest.observations[index].id
                 )
             })?;
-            let inspection = Self::inspect(&prepared)?;
-            let entry = &self.manifest.observations[index];
-            if let Some(catalog) = &entry.catalog {
-                crate::swot_discovery::bridge::validate_source(
-                    catalog,
-                    entry.asset()?,
-                    &inspection,
-                )?;
-            }
-            let geographic = entry
-                .geographic_selection
-                .as_ref()
-                .map(|selection| {
-                    prepared.with_coordinates(|y, x| selection.validate_selected(&inspection, y, x))
-                })
-                .transpose()?;
-            observations.push(json!({"id":entry.id,"output_group":format!("observations/{}",entry.id),"catalog":entry.catalog,"geographic_selection":entry.geographic_selection,"aoi_verification":geographic,"inspection":inspection}));
+            observations.push(Self::inspect_observation(
+                &self.manifest.observations[index],
+                &prepared,
+            )?);
         }
-        Ok(
-            json!({"document_type":"swot_job_inspection","job_schema":1,"profile":self.manifest.profile,"saved_plan_execution_supported":false,
-            "ordering":"manifest order; repeated IDs and canonical sources rejected; equal timestamps do not imply equal observations",
-            "observations":observations,"admission":self.manifest.admission(),"checkpoint":self.checkpoint_description(),
-            "output":{"format":"zarr_v2","encoding":"uncompressed raw stored values","chunk_edge":self.manifest.limits.output_chunk_edge,"max_objects":self.manifest.limits.max_output_objects,"aoi_mask":self.manifest.observations.iter().any(|e|e.geographic_selection.is_some())},
-            "completion":"all required observations must finish, then every source is revalidated in a serial sweep before manifest/synchronization/no-replace publication",
-            "known_costs":["full bounded legacy HDF5 index traversal remains default","each source uses its own authentication session; final sweep uses fresh sessions and online eight-byte GET proof","checkpoint replay reconstructs all values and rewrites all output","synchronization and no-replace publication are part of fetch"],
-            "unsupported":["implicit catalog discovery or unresolved geography within a job; use discover-job","empty index selections","reprojection/resampling/mosaicking","aligned time series","additional processing releases or products","partial output or completed-observation recovery"],
-            "source_snapshot":"per-object versions; not an atomic snapshot of a changing collection"}),
-        )
+        Self::plan_document(self.manifest, observations, self.checkpoint_description())
     }
     fn revalidate(
         &mut self,
