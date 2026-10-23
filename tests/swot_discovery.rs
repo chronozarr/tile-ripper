@@ -535,11 +535,12 @@ fn explicit_bridge_preserves_identity_policy_window_and_admission() {
         observations: vec![Selection {
             concept_id: "G3927359490-POCLOUD".into(),
             observation_id: "original".into(),
-            window: NativeWindow {
+            window: Some(NativeWindow {
                 start: [600, 400],
                 count: [128, 64],
                 step: [1, 2],
-            },
+            }),
+            aoi: None,
             quality_policy: swot::Policy::cookbook(),
             expected_etag: Some("\"expected\"".into()),
         }],
@@ -555,7 +556,7 @@ fn explicit_bridge_preserves_identity_policy_window_and_admission() {
         },
     };
     let d = draft(std::slice::from_ref(&r), &selection).unwrap();
-    let e = &d.uninspected_manifest().observations[0];
+    let e = &d.uninspected_manifest().unwrap().observations[0];
     assert_eq!(e.asset().unwrap().id, selection.observations[0].concept_id);
     assert_eq!(e.asset().unwrap().etag.as_deref(), Some("\"expected\""));
     assert_eq!(
@@ -577,7 +578,18 @@ fn explicit_bridge_preserves_identity_policy_window_and_admission() {
     selection.limits.memory_bytes = 1024;
     assert!(draft(std::slice::from_ref(&r), &selection).is_err());
     selection.limits.memory_bytes = 128 * 1024 * 1024;
-    selection.observations[0].window.count[0] = 0;
+    selection.observations[0].aoi = Some(Spatial::Bounds {
+        crs: "EPSG:4326".into(),
+        bbox: [-71.9, 42.2, -71.8, 42.3],
+    });
+    assert!(draft(std::slice::from_ref(&r), &selection).is_err());
+    let window = selection.observations[0].window.take();
+    let geographic = draft(std::slice::from_ref(&r), &selection).unwrap();
+    assert!(geographic.uninspected_manifest().is_err());
+    selection.observations[0].aoi = None;
+    assert!(draft(std::slice::from_ref(&r), &selection).is_err());
+    selection.observations[0].window = window;
+    selection.observations[0].window.as_mut().unwrap().count[0] = 0;
     assert!(draft(&[r], &selection).is_err());
 }
 
@@ -604,4 +616,20 @@ fn oversized_selection_is_refused_before_credentials_or_source_inspection() {
         .unwrap()
         .contains("input bound (65536 bytes)"));
     std::fs::remove_file(path).unwrap();
+}
+
+#[cfg(feature = "native-hdf5")]
+#[test]
+fn explicit_wgs84_geojson_geometry_normalizes_without_accepting_other_types() {
+    use tile_ripper::swot_discovery::bridge::Selection;
+    let mut input = json!({"concept_id":"G3927359490-POCLOUD","observation_id":"area",
+        "quality_policy":{"kind":"raw"},"aoi":{"crs":"EPSG:4326","geometry":{"type":"Polygon",
+        "coordinates":[[[-71.,42.],[-70.9,42.],[-70.9,42.1],[-71.,42.1],[-71.,42.]]]}}});
+    let selected: Selection = serde_json::from_value(input.clone()).unwrap();
+    assert!(matches!(
+        selected.aoi,
+        Some(tile_ripper::Spatial::Polygon { .. })
+    ));
+    input["aoi"]["geometry"]["type"] = json!("MultiPolygon");
+    assert!(serde_json::from_value::<Selection>(input).is_err());
 }

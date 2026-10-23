@@ -533,7 +533,13 @@ def verify(row, job, sources=None):
                 )
             assert group.attrs["selection"] == entry["request"]["spatial"]
             assert group.attrs["quality_policy"]["policy"] == entry["quality_policy"]
-            assert "aoi_mask" not in group
+            assert ("aoi_mask" in group) == (
+                entry.get("geographic_selection") is not None
+            )
+            if entry.get("geographic_selection"):
+                assert (
+                    group.attrs["geographic_selection"] == entry["geographic_selection"]
+                )
             references.append(
                 {
                     **json.loads(process.stdout),
@@ -555,6 +561,7 @@ def verify(row, job, sources=None):
             quality.PATHS
             + [f"source_valid_{v}" for v in quality.PATHS]
             + ["quality_mask", "x", "y"]
+            + (["aoi_mask"] if entry.get("geographic_selection") else [])
         ):
             assert dataset[variable].values.tobytes() == group[variable][:].tobytes(), (
                 name,

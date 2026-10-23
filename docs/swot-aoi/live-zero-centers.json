@@ -1,0 +1,631 @@
+{
+  "returncode": 1,
+  "wall_seconds": 18.748444000000745,
+  "cpu_seconds": 0.54202,
+  "sampled_process_peak_rss_bytes": 20955136,
+  "stdout": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-aoi/live-zero-centers-r_by1db_/review.json",
+  "stderr": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-aoi/live-zero-centers-r_by1db_/review.stderr",
+  "aoi": {
+    "kind": "bounds",
+    "crs": "EPSG:4326",
+    "bbox": [
+      -176.86075099400793,
+      67.48674969103615,
+      -176.86074999400793,
+      67.48675069103615
+    ]
+  },
+  "review": {
+    "discovery_job_schema": 1,
+    "status": "not_ready_zero_native_centers",
+    "observations": [
+      {
+        "observation_id": "held_out_20240217",
+        "concept_id": "G3927559976-POCLOUD",
+        "aoi_resolution": {
+          "policy": "swot-wgs84-native-centers-v1",
+          "native_crs": "EPSG:32601",
+          "grid": {
+            "crs": "EPSG:32601",
+            "shape": [
+              1779,
+              1780
+            ],
+            "direction": [
+              "increasing",
+              "increasing"
+            ],
+            "coordinate_sha256": [
+              "779b040bc1389571b713d14d334e5726dd90da6e39a44506ffcdd5b490768965",
+              "7ebf677fb7e9e629ade86627f243c0a6c1e5fa1a6ae1de5fd8d90f5b95bd0f90"
+            ],
+            "mapping_sha256": "3952f6b9baa0b150364e1345dd795e2e512d5b4a5c9731e707cf136fe1668b7f"
+          },
+          "included_native_centers": 0,
+          "native_centers_intersect": false,
+          "native_grid_domain_intersects_aoi": true,
+          "window": null,
+          "geographic_aoi": {
+            "kind": "bounds",
+            "crs": "EPSG:4326",
+            "bbox": [
+              -176.86075099400793,
+              67.48674969103615,
+              -176.86074999400793,
+              67.48675069103615
+            ]
+          },
+          "coverage": {
+            "projected_aoi_bounds": [
+              505949.97851035383,
+              7485649.944210138,
+              505950.021489648,
+              7485650.055789866
+            ],
+            "projected_aoi_area_m2": 0.004763614684319248,
+            "native_grid_overlap_area_m2": 0.004761695861816406,
+            "fraction_of_projected_aoi_in_grid": 0.9995971919162231,
+            "area_semantics": "diagnostic projected polygon, adaptive <=0.001 degree segments / <=1 mm midpoint error; grid extent includes half pixels; not usable WSE area"
+          },
+          "membership": "inverse transform every source-global stored center into original WGS84 polygon; closed outer and hole boundaries; no all-touched; forward approximation never prunes centers",
+          "coordinate_tolerance_degrees": 1e-10,
+          "geometry_working_reservation_bytes": 4194304,
+          "resolution_seconds": 0.437615833,
+          "quality_accepted_wse": "unknown; coordinates are independent of science and quality",
+          "metadata_coordinate_inspection_seconds": 18.301283042,
+          "inspected_source_identity": {
+            "url": "https://archive.swot.podaac.earthdata.nasa.gov/podaac-swot-ops-cumulus-protected/SWOT_L2_HR_Raster_D/SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc",
+            "version": {
+              "etag": "\"8c583d1085e24a2c438260a206d38131-1\"",
+              "size": 6527265,
+              "metadata": false
+            },
+            "authenticated_scope": {
+              "canonical_url": "https://archive.swot.podaac.earthdata.nasa.gov/podaac-swot-ops-cumulus-protected/SWOT_L2_HR_Raster_D/SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc",
+              "resource_origin": "https://d176wrl3f7yqfo.cloudfront.net",
+              "head_resource_path": "/head-2c0fc4c958b8bc10f4fa177bae3b4543/podaac-swot-ops-cumulus-protected.s3.us-west-2.amazonaws.com/SWOT_L2_HR_Raster_D/SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc",
+              "get_resource_path": "/s3-2c0fc4c958b8bc10f4fa177bae3b4543/podaac-swot-ops-cumulus-protected.s3.us-west-2.amazonaws.com/SWOT_L2_HR_Raster_D/SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc",
+              "login_origin": "https://urs.earthdata.nasa.gov",
+              "credential_forwarding": "login origin only; none to archive or signed resource",
+              "cookies": "memory only; exact origin jars; none to signed resource",
+              "conditional_reads": "strong ETag, If-Match, exact Content-Range and Content-Length, identity encoding",
+              "signed_routes": "GET only, advertised expiry minus 30 seconds, at most 60 seconds; HEAD always canonical",
+              "redirect_hop_limit": 8,
+              "refresh_limit": 1,
+              "per_origin_concurrency_limit": 2,
+              "working_reservation_bytes": 1048576,
+              "redirects": [
+                {
+                  "from": "https://archive.swot.podaac.earthdata.nasa.gov",
+                  "to": "https://urs.earthdata.nasa.gov",
+                  "path": "/oauth/authorize"
+                },
+                {
+                  "from": "https://urs.earthdata.nasa.gov",
+                  "to": "https://archive.swot.podaac.earthdata.nasa.gov",
+                  "path": "/login"
+                },
+                {
+                  "from": "https://archive.swot.podaac.earthdata.nasa.gov",
+                  "to": "https://archive.swot.podaac.earthdata.nasa.gov",
+                  "path": "/podaac-swot-ops-cumulus-protected/SWOT_L2_HR_Raster_D/SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc"
+                },
+                {
+                  "from": "https://archive.swot.podaac.earthdata.nasa.gov",
+                  "to": "https://d176wrl3f7yqfo.cloudfront.net",
+                  "path": "/head-2c0fc4c958b8bc10f4fa177bae3b4543/podaac-swot-ops-cumulus-protected.s3.us-west-2.amazonaws.com/SWOT_L2_HR_Raster_D/SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc"
+                },
+                {
+                  "from": "https://archive.swot.podaac.earthdata.nasa.gov",
+                  "to": "https://d176wrl3f7yqfo.cloudfront.net",
+                  "path": "/s3-2c0fc4c958b8bc10f4fa177bae3b4543/podaac-swot-ops-cumulus-protected.s3.us-west-2.amazonaws.com/SWOT_L2_HR_Raster_D/SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc"
+                }
+              ]
+            }
+          },
+          "inspection_transport": {
+            "shape_probe": {
+              "G3927559976-POCLOUD": {
+                "phases": {
+                  "hdf5_chunk_index_discovery": {
+                    "GET SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc": {
+                      "seconds": 0.292548959,
+                      "attempts": 1,
+                      "bytes": 16384,
+                      "retries": 0,
+                      "statuses": {
+                        "206": 1
+                      }
+                    }
+                  },
+                  "hdf5_coordinate_chunks": {
+                    "GET SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc": {
+                      "seconds": 0.554244374,
+                      "attempts": 2,
+                      "bytes": 2133,
+                      "retries": 0,
+                      "statuses": {
+                        "206": 2
+                      }
+                    }
+                  },
+                  "metadata_index_discovery": {
+                    "GET SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc": {
+                      "seconds": 5.740075875999999,
+                      "attempts": 12,
+                      "bytes": 196608,
+                      "retries": 0,
+                      "statuses": {
+                        "206": 12
+                      }
+                    },
+                    "HEAD SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc": {
+                      "seconds": 0.922887542,
+                      "attempts": 1,
+                      "bytes": 0,
+                      "retries": 0,
+                      "statuses": {
+                        "200": 1
+                      }
+                    }
+                  },
+                  "planning": {
+                    "HEAD SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc": {
+                      "seconds": 2.032290375,
+                      "attempts": 2,
+                      "bytes": 0,
+                      "retries": 0,
+                      "statuses": {
+                        "200": 2
+                      }
+                    }
+                  }
+                },
+                "requests": 18,
+                "bytes": 215125,
+                "retries": 0,
+                "seconds": 9.541997042999999,
+                "objects": {
+                  "GET SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc": {
+                    "seconds": 6.586897667,
+                    "attempts": 15,
+                    "bytes": 215125,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 15
+                    }
+                  },
+                  "HEAD SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc": {
+                    "seconds": 2.955180376,
+                    "attempts": 3,
+                    "bytes": 0,
+                    "retries": 0,
+                    "statuses": {
+                      "200": 3
+                    }
+                  }
+                },
+                "ranges": {
+                  "SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc 0:16384": {
+                    "seconds": 2.3030322500000002,
+                    "attempts": 1,
+                    "bytes": 16384,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 1
+                    }
+                  },
+                  "SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc 1097728:1114112": {
+                    "seconds": 0.303902708,
+                    "attempts": 1,
+                    "bytes": 16384,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 1
+                    }
+                  },
+                  "SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc 1179648:1196032": {
+                    "seconds": 0.273736625,
+                    "attempts": 1,
+                    "bytes": 16384,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 1
+                    }
+                  },
+                  "SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc 16384:32768": {
+                    "seconds": 0.269725458,
+                    "attempts": 1,
+                    "bytes": 16384,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 1
+                    }
+                  },
+                  "SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc 196608:212992": {
+                    "seconds": 0.294578292,
+                    "attempts": 1,
+                    "bytes": 16384,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 1
+                    }
+                  },
+                  "SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc 2326528:2342912": {
+                    "seconds": 0.268723167,
+                    "attempts": 1,
+                    "bytes": 16384,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 1
+                    }
+                  },
+                  "SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc 28583:29243": {
+                    "seconds": 0.273760208,
+                    "attempts": 1,
+                    "bytes": 660,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 1
+                    }
+                  },
+                  "SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc 2965504:2981888": {
+                    "seconds": 0.555965291,
+                    "attempts": 1,
+                    "bytes": 16384,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 1
+                    }
+                  },
+                  "SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc 3440640:3457024": {
+                    "seconds": 0.291000917,
+                    "attempts": 1,
+                    "bytes": 16384,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 1
+                    }
+                  },
+                  "SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc 4177920:4194304": {
+                    "seconds": 0.283932875,
+                    "attempts": 1,
+                    "bytes": 16384,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 1
+                    }
+                  },
+                  "SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc 573440:589824": {
+                    "seconds": 0.295033291,
+                    "attempts": 1,
+                    "bytes": 16384,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 1
+                    }
+                  },
+                  "SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc 6209536:6225920": {
+                    "seconds": 0.298296208,
+                    "attempts": 1,
+                    "bytes": 16384,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 1
+                    }
+                  },
+                  "SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc 786432:802816": {
+                    "seconds": 0.292543834,
+                    "attempts": 1,
+                    "bytes": 16384,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 1
+                    }
+                  },
+                  "SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc 802816:819200": {
+                    "seconds": 0.302109667,
+                    "attempts": 1,
+                    "bytes": 16384,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 1
+                    }
+                  },
+                  "SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc 9108:10581": {
+                    "seconds": 0.280479333,
+                    "attempts": 1,
+                    "bytes": 1473,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 1
+                    }
+                  }
+                },
+                "authenticated_http": {
+                  "checkpoint_claims": 0,
+                  "peak_in_flight": 1,
+                  "wire_head": 6,
+                  "wire_get": 19,
+                  "redirects": 7,
+                  "login_requests": 1,
+                  "refreshes": 0,
+                  "route_cache_hits": 14,
+                  "response_body_bytes": 215499,
+                  "redirect_body_bytes": 374,
+                  "signing_auth_seconds": 5.257621666,
+                  "statuses": {
+                    "200": 3,
+                    "206": 15,
+                    "301": 1,
+                    "302": 2,
+                    "303": 4
+                  },
+                  "origins": {
+                    "https://archive.swot.podaac.earthdata.nasa.gov": 6,
+                    "https://d176wrl3f7yqfo.cloudfront.net": 18,
+                    "https://urs.earthdata.nasa.gov": 1
+                  }
+                },
+                "cached_metadata_bytes": 215680
+              }
+            },
+            "full_axes": {
+              "G3927559976-POCLOUD": {
+                "phases": {
+                  "hdf5_chunk_index_discovery": {
+                    "GET SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc": {
+                      "seconds": 0.2718095,
+                      "attempts": 1,
+                      "bytes": 16384,
+                      "retries": 0,
+                      "statuses": {
+                        "206": 1
+                      }
+                    }
+                  },
+                  "hdf5_coordinate_chunks": {
+                    "GET SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc": {
+                      "seconds": 0.546670626,
+                      "attempts": 2,
+                      "bytes": 2133,
+                      "retries": 0,
+                      "statuses": {
+                        "206": 2
+                      }
+                    }
+                  },
+                  "metadata_index_discovery": {
+                    "GET SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc": {
+                      "seconds": 5.269024583,
+                      "attempts": 12,
+                      "bytes": 196608,
+                      "retries": 0,
+                      "statuses": {
+                        "206": 12
+                      }
+                    },
+                    "HEAD SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc": {
+                      "seconds": 0.807960875,
+                      "attempts": 1,
+                      "bytes": 0,
+                      "retries": 0,
+                      "statuses": {
+                        "200": 1
+                      }
+                    }
+                  },
+                  "planning": {
+                    "HEAD SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc": {
+                      "seconds": 1.854436875,
+                      "attempts": 2,
+                      "bytes": 0,
+                      "retries": 0,
+                      "statuses": {
+                        "200": 2
+                      }
+                    }
+                  }
+                },
+                "requests": 18,
+                "bytes": 215125,
+                "retries": 0,
+                "seconds": 8.749888915999998,
+                "objects": {
+                  "GET SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc": {
+                    "seconds": 6.087510166,
+                    "attempts": 15,
+                    "bytes": 215125,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 15
+                    }
+                  },
+                  "HEAD SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc": {
+                    "seconds": 2.662398791,
+                    "attempts": 3,
+                    "bytes": 0,
+                    "retries": 0,
+                    "statuses": {
+                      "200": 3
+                    }
+                  }
+                },
+                "ranges": {
+                  "SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc 0:16384": {
+                    "seconds": 2.0540255,
+                    "attempts": 1,
+                    "bytes": 16384,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 1
+                    }
+                  },
+                  "SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc 1097728:1114112": {
+                    "seconds": 0.281600667,
+                    "attempts": 1,
+                    "bytes": 16384,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 1
+                    }
+                  },
+                  "SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc 1179648:1196032": {
+                    "seconds": 0.347020708,
+                    "attempts": 1,
+                    "bytes": 16384,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 1
+                    }
+                  },
+                  "SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc 16384:32768": {
+                    "seconds": 0.287501833,
+                    "attempts": 1,
+                    "bytes": 16384,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 1
+                    }
+                  },
+                  "SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc 196608:212992": {
+                    "seconds": 0.3004835,
+                    "attempts": 1,
+                    "bytes": 16384,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 1
+                    }
+                  },
+                  "SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc 2326528:2342912": {
+                    "seconds": 0.257165333,
+                    "attempts": 1,
+                    "bytes": 16384,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 1
+                    }
+                  },
+                  "SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc 28583:29243": {
+                    "seconds": 0.285739042,
+                    "attempts": 1,
+                    "bytes": 660,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 1
+                    }
+                  },
+                  "SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc 2965504:2981888": {
+                    "seconds": 0.273453625,
+                    "attempts": 1,
+                    "bytes": 16384,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 1
+                    }
+                  },
+                  "SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc 3440640:3457024": {
+                    "seconds": 0.269883792,
+                    "attempts": 1,
+                    "bytes": 16384,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 1
+                    }
+                  },
+                  "SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc 4177920:4194304": {
+                    "seconds": 0.27387925,
+                    "attempts": 1,
+                    "bytes": 16384,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 1
+                    }
+                  },
+                  "SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc 573440:589824": {
+                    "seconds": 0.331438417,
+                    "attempts": 1,
+                    "bytes": 16384,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 1
+                    }
+                  },
+                  "SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc 6209536:6225920": {
+                    "seconds": 0.293554375,
+                    "attempts": 1,
+                    "bytes": 16384,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 1
+                    }
+                  },
+                  "SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc 786432:802816": {
+                    "seconds": 0.271808375,
+                    "attempts": 1,
+                    "bytes": 16384,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 1
+                    }
+                  },
+                  "SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc 802816:819200": {
+                    "seconds": 0.299008667,
+                    "attempts": 1,
+                    "bytes": 16384,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 1
+                    }
+                  },
+                  "SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc 9108:10581": {
+                    "seconds": 0.260929584,
+                    "attempts": 1,
+                    "bytes": 1473,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 1
+                    }
+                  }
+                },
+                "authenticated_http": {
+                  "checkpoint_claims": 0,
+                  "peak_in_flight": 1,
+                  "wire_head": 6,
+                  "wire_get": 19,
+                  "redirects": 7,
+                  "login_requests": 1,
+                  "refreshes": 0,
+                  "route_cache_hits": 14,
+                  "response_body_bytes": 215499,
+                  "redirect_body_bytes": 374,
+                  "signing_auth_seconds": 4.716374334,
+                  "statuses": {
+                    "200": 3,
+                    "206": 15,
+                    "301": 1,
+                    "302": 2,
+                    "303": 4
+                  },
+                  "origins": {
+                    "https://archive.swot.podaac.earthdata.nasa.gov": 6,
+                    "https://d176wrl3f7yqfo.cloudfront.net": 18,
+                    "https://urs.earthdata.nasa.gov": 1
+                  }
+                },
+                "cached_metadata_bytes": 215680
+              }
+            }
+          },
+          "inspection_method": "serial one-variable shape probe then bounded full-axis native plan; no science-payload execution; final selected five-variable job prepared separately"
+        }
+      }
+    ],
+    "inspection_seconds": 18.73937425,
+    "manifest_written": false,
+    "scope": "at least one explicitly selected candidate has zero included native centers; no candidate substituted or omitted; final selected five-variable scientific profile not inspected"
+  },
+  "independent_source_global_centers": 0,
+  "manifest_written": false,
+  "all_passed": true
+}

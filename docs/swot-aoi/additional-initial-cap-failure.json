@@ -1,0 +1,1300 @@
+{
+  "original_cap_bytes": 4194304,
+  "captured_body_bytes": 3417620,
+  "failure": "bounded native mirror refused execution after source ranges exceeded declared capture cap; no output published",
+  "resolved_selection": {
+    "start": [
+      785,
+      793
+    ],
+    "count": [
+      12,
+      8
+    ],
+    "step": [
+      1,
+      1
+    ]
+  },
+  "source_chunks": [
+    {
+      "path": "/n_wse_pix",
+      "shape": [
+        789,
+        789
+      ],
+      "encoded_selected_bytes": 301063
+    },
+    {
+      "path": "/wse",
+      "shape": [
+        789,
+        789
+      ],
+      "encoded_selected_bytes": 1622501
+    },
+    {
+      "path": "/wse_qual",
+      "shape": [
+        1578,
+        1577
+      ],
+      "encoded_selected_bytes": 237338
+    },
+    {
+      "path": "/wse_qual_bitwise",
+      "shape": [
+        789,
+        789
+      ],
+      "encoded_selected_bytes": 365918
+    },
+    {
+      "path": "/wse_uncert",
+      "shape": [
+        789,
+        789
+      ],
+      "encoded_selected_bytes": 1621930
+    }
+  ],
+  "plan": {
+    "name": "additional-cap-diagnosis",
+    "command": [
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/target/release/tile-ripper",
+      "plan",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-job/additional-cap-diagnosis-kj5mypax/job.json",
+      "[runtime access/output flags omitted from compact receipt]"
+    ],
+    "returncode": 0,
+    "wall_seconds": 0.07616329200027394,
+    "cpu_seconds": 0.016452,
+    "sampled_process_peak_rss_bytes": 19103744,
+    "interruption_sent": false,
+    "receipt": {
+      "document_type": "swot_job_inspection",
+      "job_schema": 1,
+      "profile": "swot_raster_d_pgd0",
+      "saved_plan_execution_supported": false,
+      "ordering": "manifest order; repeated IDs and canonical sources rejected; equal timestamps do not imply equal observations",
+      "observations": [
+        {
+          "id": "additional_20240216",
+          "output_group": "observations/additional_20240216",
+          "catalog": null,
+          "geographic_selection": {
+            "policy": "swot-wgs84-native-centers-v1",
+            "aoi": {
+              "kind": "bounds",
+              "crs": "EPSG:4326",
+              "bbox": [
+                -71.85,
+                41.53,
+                -71.84,
+                41.54
+              ]
+            },
+            "grid": {
+              "crs": "EPSG:32619",
+              "shape": [
+                1578,
+                1577
+              ],
+              "direction": [
+                "increasing",
+                "increasing"
+              ],
+              "coordinate_sha256": [
+                "9d28b0558dcca3db3913e6f6a266c0922ab368f9c0c98e55792c13d6d073f67f",
+                "3df0120ee05f2cd632030a3a7fc082c599e2f471789acad709d8754095731b84"
+              ],
+              "mapping_sha256": "c00d4a4674173525bd71954e0682332085cd27d0fc5bf84630891d4ab9846124"
+            },
+            "window": {
+              "start": [
+                785,
+                793
+              ],
+              "count": [
+                12,
+                8
+              ],
+              "step": [
+                1,
+                1
+              ]
+            },
+            "included_centers": 91,
+            "selected_coordinate_sha256": [
+              "cda774fd4d87081978122a51fb7b5d8ec89eedc64a104263e1750867f01e7268",
+              "1f7470f58db08dedc5bc4b6625943eba2c0a3c2b0aeada29ff4c4d38d8588a03"
+            ],
+            "mask_sha256": "3411fd7895b2a5e4d1a63f13ee214fd7abf6328b1ae7677d90b34bf8151f216d"
+          },
+          "aoi_verification": {
+            "status": "verified_against_pinned_source",
+            "policy": "swot-wgs84-native-centers-v1",
+            "included_native_centers": 91,
+            "mask_sha256": "3411fd7895b2a5e4d1a63f13ee214fd7abf6328b1ae7677d90b34bf8151f216d",
+            "validation_seconds": 6.2709e-05,
+            "geometry_working_reservation_bytes": 4194304
+          },
+          "inspection": {
+            "schema_version": 3,
+            "document_type": "inspection_only",
+            "saved_plan_execution_supported": false,
+            "sources": [
+              {
+                "asset_id": "G3927661761-POCLOUD",
+                "format": "hdf5",
+                "reference": "http://127.0.0.1:50281/source.nc",
+                "datetime": "2024-02-16T02:51:38.377Z",
+                "object_version": "\"88a204b4f8bfb3fd8bc0bb3a18d9682e-1\"",
+                "local_identity": [],
+                "object_identities": {
+                  "identity": {
+                    "url": "http://127.0.0.1:50281/source.nc",
+                    "version": {
+                      "etag": "\"88a204b4f8bfb3fd8bc0bb3a18d9682e-1\"",
+                      "size": 69783734,
+                      "metadata": false
+                    },
+                    "authenticated_scope": null
+                  },
+                  "file_bytes": 69783734,
+                  "metadata_cache_bytes": 347968,
+                  "index_nodes_visited": 7,
+                  "metadata_page_bytes": 16384,
+                  "datasets": [
+                    {
+                      "path": "/n_wse_pix",
+                      "shape": [
+                        1578,
+                        1577
+                      ],
+                      "stored_dtype": "<u4",
+                      "chunk_shape": [
+                        789,
+                        789
+                      ],
+                      "attributes_and_schema_sha256": "ff21dfbb3ecdd947652d1762d0e370e509f64b72eca6ec705d9bc25bf6ecbe32",
+                      "units": "l",
+                      "grid_mapping_path": "/crs"
+                    },
+                    {
+                      "path": "/wse",
+                      "shape": [
+                        1578,
+                        1577
+                      ],
+                      "stored_dtype": "<f4",
+                      "chunk_shape": [
+                        789,
+                        789
+                      ],
+                      "attributes_and_schema_sha256": "9e48a7ba78759121c181402dd2dd204c3280e303b43bec5f27186a67ffb98cca",
+                      "units": "m",
+                      "grid_mapping_path": "/crs"
+                    },
+                    {
+                      "path": "/wse_qual",
+                      "shape": [
+                        1578,
+                        1577
+                      ],
+                      "stored_dtype": "|u1",
+                      "chunk_shape": [
+                        1578,
+                        1577
+                      ],
+                      "attributes_and_schema_sha256": "79e6fe145f66283af494af05b9198e3cf97839f39233b7b4c598166ea54e44eb",
+                      "units": null,
+                      "grid_mapping_path": "/crs"
+                    },
+                    {
+                      "path": "/wse_qual_bitwise",
+                      "shape": [
+                        1578,
+                        1577
+                      ],
+                      "stored_dtype": "<u4",
+                      "chunk_shape": [
+                        789,
+                        789
+                      ],
+                      "attributes_and_schema_sha256": "7502e0c73b1e3656891e24811b4c648f37edac71c88bd012126cdeddc3b2087a",
+                      "units": null,
+                      "grid_mapping_path": "/crs"
+                    },
+                    {
+                      "path": "/wse_uncert",
+                      "shape": [
+                        1578,
+                        1577
+                      ],
+                      "stored_dtype": "<f4",
+                      "chunk_shape": [
+                        789,
+                        789
+                      ],
+                      "attributes_and_schema_sha256": "0b4d95cbb8e4086f5ec0176df75b83c879e035519a38cb5b08e221d98c846e6c",
+                      "units": "m",
+                      "grid_mapping_path": "/crs"
+                    }
+                  ],
+                  "source_root_attributes": {
+                    "Conventions": "CF-1.7",
+                    "title": "Level 2 KaRIn High Rate Raster Data Product",
+                    "institution": "JPL",
+                    "source": "Ka-band radar interferometer",
+                    "history": "2025-12-22T22:42:45Z : Creation",
+                    "platform": "SWOT",
+                    "references": "V1.4.1",
+                    "reference_document": "D-56416_SWOT_Product_Description_L2_HR_Raster",
+                    "contact": "podaac@podaac.jpl.nasa.gov",
+                    "cycle_number": 11.0,
+                    "pass_number": 35.0,
+                    "scene_number": 114.0,
+                    "tile_numbers": "uninterpreted; see output",
+                    "tile_names": "035_227L, 035_228L, 035_229L, 035_227R, 035_228R, 035_229R",
+                    "tile_polarizations": "H, H, H, V, V, V",
+                    "coordinate_reference_system": "Universal Transverse Mercator",
+                    "resolution": 100.0,
+                    "short_name": "L2_HR_Raster",
+                    "descriptor_string": "100m_UTM19T_N_x_x_x",
+                    "crid": "PGD0",
+                    "product_version": "01",
+                    "pge_name": "PGE_L2_HR_RASTER",
+                    "pge_version": "5.4.0",
+                    "time_granule_start": "2024-02-16T02:51:38.377793Z",
+                    "time_granule_end": "2024-02-16T02:51:54.787743Z",
+                    "time_coverage_start": "2024-02-16T02:51:38.377793Z",
+                    "time_coverage_end": "2024-02-16T02:51:54.249643Z",
+                    "geospatial_lon_min": -72.77530076439994,
+                    "geospatial_lon_max": -70.92302744094494,
+                    "geospatial_lat_min": 40.835621278366325,
+                    "geospatial_lat_max": 42.22719163055778,
+                    "left_first_longitude": -72.77530076439994,
+                    "left_first_latitude": 41.10389870278549,
+                    "left_last_longitude": -72.42544746840993,
+                    "left_last_latitude": 42.22719163055778,
+                    "right_first_longitude": -71.29637813572468,
+                    "right_first_latitude": 40.835621278366325,
+                    "right_last_longitude": -70.92302744094494,
+                    "right_last_latitude": 41.952112658860564,
+                    "xref_l2_hr_pixc_files": "SWOT_L2_HR_PIXC_011_035_227L_20240216T025138_20240216T025144_PGD0_01.nc, SWOT_L2_HR_PIXC_011_035_228L_20240216T025143_20240216T025154_PGD0_01.nc, SWOT_L2_HR_PIXC_011_035_229L_20240216T025153_20240216T025204_PGD0_01.nc, SWOT_L2_HR_PIXC_011_035_227R_20240216T025138_20240216T025144_PGD0_01.nc, SWOT_L2_HR_PIXC_011_035_228R_20240216T025143_20240216T025154_PGD0_01.nc, SWOT_L2_HR_PIXC_011_035_229R_20240216T025153_20240216T025204_PGD0_01.nc",
+                    "xref_l2_hr_pixcvec_files": "SWOT_L2_HR_PIXCVec_011_035_227L_20240216T025138_20240216T025144_PGD0_01.nc, SWOT_L2_HR_PIXCVec_011_035_228L_20240216T025143_20240216T025154_PGD0_01.nc, SWOT_L2_HR_PIXCVec_011_035_229L_20240216T025153_20240216T025204_PGD0_01.nc, SWOT_L2_HR_PIXCVec_011_035_227R_20240216T025138_20240216T025144_PGD0_01.nc, SWOT_L2_HR_PIXCVec_011_035_228R_20240216T025143_20240216T025154_PGD0_01.nc, SWOT_L2_HR_PIXCVec_011_035_229R_20240216T025153_20240216T025204_PGD0_01.nc",
+                    "xref_param_l2_hr_raster_file": "SWOT_Param_L2_HR_Raster_20000101T000000_21000101T000000_20240818T100000_v401.rdf",
+                    "xref_reforbittrack_files": "SWOT_RefOrbitTrackTileBoundary_Nom_20000101T000000_21000101T000000_20200617T193054_v101.txt, SWOT_RefOrbitTrack125mPass1_Nom_20000101T000000_21000101T000000_20200617T193054_v101.txt, SWOT_RefOrbitTrack125mPass2_Nom_20000101T000000_21000101T000000_20200617T193054_v101.txt",
+                    "utm_zone_num": 19.0,
+                    "mgrs_latitude_band": "T",
+                    "x_min": 183000.0,
+                    "x_max": 340600.0,
+                    "y_min": 4523000.0,
+                    "y_max": 4680700.0,
+                    "_NCProperties": "version=2,netcdf=4.9.2,hdf5=1.14.0"
+                  },
+                  "source_grid_mapping": {
+                    "path": "/crs",
+                    "attributes": {
+                      "_FillValue": {
+                        "dtype": "String { size: Fixed(1), encoding: Ascii, padding: NullTerminate }",
+                        "shape": [],
+                        "stored_bytes_base64": "Kg==",
+                        "value": "*"
+                      },
+                      "long_name": {
+                        "dtype": "String { size: Fixed(14), encoding: Ascii, padding: NullTerminate }",
+                        "shape": [],
+                        "stored_bytes_base64": "Q1JTIERlZmluaXRpb24=",
+                        "value": "CRS Definition"
+                      },
+                      "grid_mapping_name": {
+                        "dtype": "String { size: Fixed(19), encoding: Ascii, padding: NullTerminate }",
+                        "shape": [],
+                        "stored_bytes_base64": "dHJhbnN2ZXJzZV9tZXJjYXRvcg==",
+                        "value": "transverse_mercator"
+                      },
+                      "projected_crs_name": {
+                        "dtype": "String { size: Fixed(21), encoding: Ascii, padding: NullTerminate }",
+                        "shape": [],
+                        "stored_bytes_base64": "V0dTIDg0IC8gVVRNIHpvbmUgMTlO",
+                        "value": "WGS 84 / UTM zone 19N"
+                      },
+                      "geographic_crs_name": {
+                        "dtype": "String { size: Fixed(6), encoding: Ascii, padding: NullTerminate }",
+                        "shape": [],
+                        "stored_bytes_base64": "V0dTIDg0",
+                        "value": "WGS 84"
+                      },
+                      "reference_ellipsoid_name": {
+                        "dtype": "String { size: Fixed(6), encoding: Ascii, padding: NullTerminate }",
+                        "shape": [],
+                        "stored_bytes_base64": "V0dTIDg0",
+                        "value": "WGS 84"
+                      },
+                      "horizontal_datum_name": {
+                        "dtype": "String { size: Fixed(8), encoding: Ascii, padding: NullTerminate }",
+                        "shape": [],
+                        "stored_bytes_base64": "V0dTXzE5ODQ=",
+                        "value": "WGS_1984"
+                      },
+                      "prime_meridian_name": {
+                        "dtype": "String { size: Fixed(9), encoding: Ascii, padding: NullTerminate }",
+                        "shape": [],
+                        "stored_bytes_base64": "R3JlZW53aWNo",
+                        "value": "Greenwich"
+                      },
+                      "false_easting": {
+                        "dtype": "FloatingPoint { size: 8, byte_order: LittleEndian }",
+                        "shape": [
+                          1
+                        ],
+                        "stored_bytes_base64": "AAAAAICEHkE=",
+                        "value": 500000.0
+                      },
+                      "false_northing": {
+                        "dtype": "FloatingPoint { size: 8, byte_order: LittleEndian }",
+                        "shape": [
+                          1
+                        ],
+                        "stored_bytes_base64": "AAAAAAAAAAA=",
+                        "value": 0.0
+                      },
+                      "longitude_of_central_meridian": {
+                        "dtype": "FloatingPoint { size: 8, byte_order: LittleEndian }",
+                        "shape": [
+                          1
+                        ],
+                        "stored_bytes_base64": "AAAAAABAUcA=",
+                        "value": -69.0
+                      },
+                      "longitude_of_prime_meridian": {
+                        "dtype": "FloatingPoint { size: 8, byte_order: LittleEndian }",
+                        "shape": [
+                          1
+                        ],
+                        "stored_bytes_base64": "AAAAAAAAAAA=",
+                        "value": 0.0
+                      },
+                      "latitude_of_projection_origin": {
+                        "dtype": "FloatingPoint { size: 8, byte_order: LittleEndian }",
+                        "shape": [
+                          1
+                        ],
+                        "stored_bytes_base64": "AAAAAAAAAAA=",
+                        "value": 0.0
+                      },
+                      "scale_factor_at_central_meridian": {
+                        "dtype": "FloatingPoint { size: 8, byte_order: LittleEndian }",
+                        "shape": [
+                          1
+                        ],
+                        "stored_bytes_base64": "eJyiI7n87z8=",
+                        "value": 0.9996
+                      },
+                      "semi_major_axis": {
+                        "dtype": "FloatingPoint { size: 8, byte_order: LittleEndian }",
+                        "shape": [
+                          1
+                        ],
+                        "stored_bytes_base64": "AAAAQKZUWEE=",
+                        "value": 6378137.0
+                      },
+                      "inverse_flattening": {
+                        "dtype": "FloatingPoint { size: 8, byte_order: LittleEndian }",
+                        "shape": [
+                          1
+                        ],
+                        "stored_bytes_base64": "iG10lh2kckA=",
+                        "value": 298.257223563
+                      },
+                      "crs_wkt": {
+                        "dtype": "String { size: Fixed(598), encoding: Ascii, padding: NullTerminate }",
+                        "shape": [],
+                        "stored_bytes_base64": "UFJPSkNTWyJXR1MgODQgLyBVVE0gem9uZSAxOU4iLEdFT0dDU1siV0dTIDg0IixEQVRVTVsiV0dTXzE5ODQiLFNQSEVST0lEWyJXR1MgODQiLDYzNzgxMzcsMjk4LjI1NzIyMzU2MyxBVVRIT1JJVFlbIkVQU0ciLCI3MDMwIl1dLEFVVEhPUklUWVsiRVBTRyIsIjYzMjYiXV0sUFJJTUVNWyJHcmVlbndpY2giLDAsQVVUSE9SSVRZWyJFUFNHIiwiODkwMSJdXSxVTklUWyJkZWdyZWUiLDAuMDE3NDUzMjkyNTE5OTQzMyxBVVRIT1JJVFlbIkVQU0ciLCI5MTIyIl1dLEFVVEhPUklUWVsiRVBTRyIsIjQzMjYiXV0sUFJPSkVDVElPTlsiVHJhbnN2ZXJzZV9NZXJjYXRvciJdLFBBUkFNRVRFUlsibGF0aXR1ZGVfb2Zfb3JpZ2luIiwwXSxQQVJBTUVURVJbImNlbnRyYWxfbWVyaWRpYW4iLC02OV0sUEFSQU1FVEVSWyJzY2FsZV9mYWN0b3IiLDAuOTk5Nl0sUEFSQU1FVEVSWyJmYWxzZV9lYXN0aW5nIiw1MDAwMDBdLFBBUkFNRVRFUlsiZmFsc2Vfbm9ydGhpbmciLDBdLFVOSVRbIm1ldHJlIiwxLEFVVEhPUklUWVsiRVBTRyIsIjkwMDEiXV0sQVhJU1siRWFzdGluZyIsRUFTVF0sQVhJU1siTm9ydGhpbmciLE5PUlRIXSxBVVRIT1JJVFlbIkVQU0ciLCIzMjYxOSJdXQ==",
+                        "value": "PROJCS[\"WGS 84 / UTM zone 19N\",GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4326\"]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",-69],PARAMETER[\"scale_factor\",0.9996],PARAMETER[\"false_easting\",500000],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH],AUTHORITY[\"EPSG\",\"32619\"]]"
+                      },
+                      "spatial_ref": {
+                        "dtype": "String { size: Fixed(598), encoding: Ascii, padding: NullTerminate }",
+                        "shape": [],
+                        "stored_bytes_base64": "UFJPSkNTWyJXR1MgODQgLyBVVE0gem9uZSAxOU4iLEdFT0dDU1siV0dTIDg0IixEQVRVTVsiV0dTXzE5ODQiLFNQSEVST0lEWyJXR1MgODQiLDYzNzgxMzcsMjk4LjI1NzIyMzU2MyxBVVRIT1JJVFlbIkVQU0ciLCI3MDMwIl1dLEFVVEhPUklUWVsiRVBTRyIsIjYzMjYiXV0sUFJJTUVNWyJHcmVlbndpY2giLDAsQVVUSE9SSVRZWyJFUFNHIiwiODkwMSJdXSxVTklUWyJkZWdyZWUiLDAuMDE3NDUzMjkyNTE5OTQzMyxBVVRIT1JJVFlbIkVQU0ciLCI5MTIyIl1dLEFVVEhPUklUWVsiRVBTRyIsIjQzMjYiXV0sUFJPSkVDVElPTlsiVHJhbnN2ZXJzZV9NZXJjYXRvciJdLFBBUkFNRVRFUlsibGF0aXR1ZGVfb2Zfb3JpZ2luIiwwXSxQQVJBTUVURVJbImNlbnRyYWxfbWVyaWRpYW4iLC02OV0sUEFSQU1FVEVSWyJzY2FsZV9mYWN0b3IiLDAuOTk5Nl0sUEFSQU1FVEVSWyJmYWxzZV9lYXN0aW5nIiw1MDAwMDBdLFBBUkFNRVRFUlsiZmFsc2Vfbm9ydGhpbmciLDBdLFVOSVRbIm1ldHJlIiwxLEFVVEhPUklUWVsiRVBTRyIsIjkwMDEiXV0sQVhJU1siRWFzdGluZyIsRUFTVF0sQVhJU1siTm9ydGhpbmciLE5PUlRIXSxBVVRIT1JJVFlbIkVQU0ciLCIzMjYxOSJdXQ==",
+                        "value": "PROJCS[\"WGS 84 / UTM zone 19N\",GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4326\"]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",-69],PARAMETER[\"scale_factor\",0.9996],PARAMETER[\"false_easting\",500000],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH],AUTHORITY[\"EPSG\",\"32619\"]]"
+                      },
+                      "coordinates": {
+                        "dtype": "String { size: Fixed(3), encoding: Ascii, padding: NullTerminate }",
+                        "shape": [],
+                        "stored_bytes_base64": "eCB5",
+                        "value": "x y"
+                      },
+                      "comment": {
+                        "dtype": "String { size: Fixed(37), encoding: Ascii, padding: NullTerminate }",
+                        "shape": [],
+                        "stored_bytes_base64": "VVRNIHpvbmUgY29vcmRpbmF0ZSByZWZlcmVuY2Ugc3lzdGVtLg==",
+                        "value": "UTM zone coordinate reference system."
+                      }
+                    }
+                  },
+                  "source_time": null
+                },
+                "zarr_v3": {},
+                "version_validation": "conditional ETag"
+              }
+            ],
+            "discovery": {
+              "seconds": 0.0,
+              "kind": "explicit_assets",
+              "selected_assets": 1
+            },
+            "planning_seconds": 0.017918125,
+            "expected_reads": {
+              "local_library_reads": 0,
+              "remote_library_reads": 9,
+              "note": "estimates of library calls; COG HTTP grouping depends on the selected reader; Zarr data keys are exact, metadata/coordinate reads excluded"
+            },
+            "transformations": [],
+            "unsupported_operations": [],
+            "observed_planning": {
+              "discovery_seconds": 0.0,
+              "metadata_and_plan_seconds": 0.017918125
+            },
+            "output_strategy": "callback",
+            "expected_outputs": [],
+            "metadata_cache": [
+              {
+                "asset_id": "G3927661761-POCLOUD",
+                "cached": false
+              },
+              {
+                "asset_id": "G3927661761-POCLOUD",
+                "cached": false
+              },
+              {
+                "asset_id": "G3927661761-POCLOUD",
+                "cached": false
+              },
+              {
+                "asset_id": "G3927661761-POCLOUD",
+                "cached": false
+              },
+              {
+                "asset_id": "G3927661761-POCLOUD",
+                "cached": false
+              }
+            ],
+            "transport": {
+              "G3927661761-POCLOUD": {
+                "phases": {
+                  "hdf5_coordinate_chunks": {
+                    "GET source.nc": {
+                      "seconds": 0.00045799999999999997,
+                      "attempts": 2,
+                      "bytes": 1726,
+                      "retries": 0,
+                      "statuses": {
+                        "206": 2
+                      }
+                    }
+                  },
+                  "metadata_index_discovery": {
+                    "GET source.nc": {
+                      "seconds": 0.005869623000000001,
+                      "attempts": 19,
+                      "bytes": 344064,
+                      "retries": 0,
+                      "statuses": {
+                        "206": 19
+                      }
+                    },
+                    "HEAD source.nc": {
+                      "seconds": 0.002000708,
+                      "attempts": 1,
+                      "bytes": 0,
+                      "retries": 0,
+                      "statuses": {
+                        "200": 1
+                      }
+                    }
+                  },
+                  "planning": {
+                    "HEAD source.nc": {
+                      "seconds": 0.001613958,
+                      "attempts": 2,
+                      "bytes": 0,
+                      "retries": 0,
+                      "statuses": {
+                        "200": 2
+                      }
+                    }
+                  }
+                },
+                "requests": 24,
+                "bytes": 345790,
+                "retries": 0,
+                "seconds": 0.009923330000000001,
+                "objects": {
+                  "GET source.nc": {
+                    "seconds": 0.006333539,
+                    "attempts": 21,
+                    "bytes": 345790,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 21
+                    }
+                  },
+                  "HEAD source.nc": {
+                    "seconds": 0.003615625,
+                    "attempts": 3,
+                    "bytes": 0,
+                    "retries": 0,
+                    "statuses": {
+                      "200": 3
+                    }
+                  }
+                },
+                "ranges": {
+                  "source.nc 0:16384": {
+                    "seconds": 0.000472167,
+                    "attempts": 1,
+                    "bytes": 16384,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 1
+                    }
+                  },
+                  "source.nc 0:32768": {
+                    "seconds": 0.00038925,
+                    "attempts": 1,
+                    "bytes": 32768,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 1
+                    }
+                  },
+                  "source.nc 10174:11276": {
+                    "seconds": 0.000225625,
+                    "attempts": 1,
+                    "bytes": 1102,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 1
+                    }
+                  },
+                  "source.nc 11276:11900": {
+                    "seconds": 0.000231625,
+                    "attempts": 1,
+                    "bytes": 624,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 1
+                    }
+                  },
+                  "source.nc 11337728:11354112": {
+                    "seconds": 0.000658791,
+                    "attempts": 1,
+                    "bytes": 16384,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 1
+                    }
+                  },
+                  "source.nc 11583488:11599872": {
+                    "seconds": 0.000292875,
+                    "attempts": 1,
+                    "bytes": 16384,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 1
+                    }
+                  },
+                  "source.nc 12320768:12337152": {
+                    "seconds": 0.000249833,
+                    "attempts": 1,
+                    "bytes": 16384,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 1
+                    }
+                  },
+                  "source.nc 14974976:14991360": {
+                    "seconds": 0.000286209,
+                    "attempts": 1,
+                    "bytes": 16384,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 1
+                    }
+                  },
+                  "source.nc 16384:32768": {
+                    "seconds": 0.000235375,
+                    "attempts": 1,
+                    "bytes": 16384,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 1
+                    }
+                  },
+                  "source.nc 24969216:24985600": {
+                    "seconds": 0.00036125,
+                    "attempts": 1,
+                    "bytes": 16384,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 1
+                    }
+                  },
+                  "source.nc 30752768:30769152": {
+                    "seconds": 0.000277667,
+                    "attempts": 1,
+                    "bytes": 16384,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 1
+                    }
+                  },
+                  "source.nc 311296:327680": {
+                    "seconds": 0.000342667,
+                    "attempts": 1,
+                    "bytes": 16384,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 1
+                    }
+                  },
+                  "source.nc 31506432:31522816": {
+                    "seconds": 0.000222125,
+                    "attempts": 1,
+                    "bytes": 16384,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 1
+                    }
+                  },
+                  "source.nc 36651008:36667392": {
+                    "seconds": 0.00019975,
+                    "attempts": 1,
+                    "bytes": 16384,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 1
+                    }
+                  },
+                  "source.nc 36651008:36683776": {
+                    "seconds": 0.000266125,
+                    "attempts": 1,
+                    "bytes": 32768,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 1
+                    }
+                  },
+                  "source.nc 42467328:42483712": {
+                    "seconds": 0.000219166,
+                    "attempts": 1,
+                    "bytes": 16384,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 1
+                    }
+                  },
+                  "source.nc 42483712:42500096": {
+                    "seconds": 0.00026325,
+                    "attempts": 1,
+                    "bytes": 16384,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 1
+                    }
+                  },
+                  "source.nc 45416448:45432832": {
+                    "seconds": 0.000218625,
+                    "attempts": 1,
+                    "bytes": 16384,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 1
+                    }
+                  },
+                  "source.nc 4620288:4636672": {
+                    "seconds": 0.000233458,
+                    "attempts": 1,
+                    "bytes": 16384,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 1
+                    }
+                  },
+                  "source.nc 66207744:66224128": {
+                    "seconds": 0.000241458,
+                    "attempts": 1,
+                    "bytes": 16384,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 1
+                    }
+                  },
+                  "source.nc 8716288:8732672": {
+                    "seconds": 0.000426708,
+                    "attempts": 1,
+                    "bytes": 16384,
+                    "retries": 0,
+                    "statuses": {
+                      "206": 1
+                    }
+                  }
+                },
+                "authenticated_http": null,
+                "cached_metadata_bytes": 347968
+              }
+            },
+            "logical_request": {
+              "spatial": {
+                "kind": "array_slice",
+                "start": [
+                  785,
+                  793
+                ],
+                "count": [
+                  12,
+                  8
+                ],
+                "step": [
+                  1,
+                  1
+                ],
+                "axes": [
+                  "/y",
+                  "/x"
+                ]
+              },
+              "time": null,
+              "variables": [
+                {
+                  "kind": "dataset",
+                  "path": "/wse"
+                },
+                {
+                  "kind": "dataset",
+                  "path": "/wse_qual"
+                },
+                {
+                  "kind": "dataset",
+                  "path": "/wse_qual_bitwise"
+                },
+                {
+                  "kind": "dataset",
+                  "path": "/wse_uncert"
+                },
+                {
+                  "kind": "dataset",
+                  "path": "/n_wse_pix"
+                }
+              ],
+              "grid": {
+                "kind": "native"
+              }
+            },
+            "output_budget": {
+              "buffer_bytes": 67108864,
+              "max_nodes": 4096,
+              "chunk_edge": 32
+            },
+            "output_estimates": {
+              "native_value_bytes": 1632,
+              "encoded_file_bytes": null,
+              "note": "estimate of native value payload only; coordinates, metadata, encoding, and filesystem overhead excluded; encoded output size unknown"
+            },
+            "quality_policy": {
+              "policy": {
+                "kind": "summary",
+                "accepted": [
+                  "good",
+                  "suspect"
+                ]
+              },
+              "cookbook_example": "https://podaac.github.io/tutorials/notebooks/datasets/SWOT_Raster_Notebook_local.html",
+              "source_flag_definitions": [
+                [
+                  2,
+                  "classification_qual_suspect"
+                ],
+                [
+                  4,
+                  "geolocation_qual_suspect"
+                ],
+                [
+                  32,
+                  "large_uncert_suspect"
+                ],
+                [
+                  128,
+                  "bright_land"
+                ],
+                [
+                  512,
+                  "specular_ringing_prior_water_suspect"
+                ],
+                [
+                  4096,
+                  "few_pixels"
+                ],
+                [
+                  8192,
+                  "far_range_suspect"
+                ],
+                [
+                  16384,
+                  "near_range_suspect"
+                ],
+                [
+                  262144,
+                  "classification_qual_degraded"
+                ],
+                [
+                  524288,
+                  "geolocation_qual_degraded"
+                ],
+                [
+                  1048576,
+                  "dark_water_degraded"
+                ],
+                [
+                  2097152,
+                  "low_coherence_water_degraded"
+                ],
+                [
+                  4194304,
+                  "specular_ringing_prior_land_degraded"
+                ],
+                [
+                  16777216,
+                  "value_bad"
+                ],
+                [
+                  67108864,
+                  "outside_data_window"
+                ],
+                [
+                  268435456,
+                  "no_pixels"
+                ],
+                [
+                  536870912,
+                  "outside_scene_bounds"
+                ],
+                [
+                  1073741824,
+                  "inner_swath"
+                ],
+                [
+                  2147483648,
+                  "missing_karin_data"
+                ]
+              ],
+              "semantics": "Raw uses source WSE nonmissingness only. Summary additionally requires finite WSE and an explicitly accepted source category. Bitwise additionally requires finite WSE, a nonmissing flag word, every required bit, no excluded bit and no unassigned source bits. Uncertainty/count missingness is independent. No magnitude, uncertainty, count or geographic threshold is inferred.",
+              "unknown_summary_codes": "exclude",
+              "unknown_bit_conditions": "fail preparation",
+              "unassigned_observed_bits": "exclude for bitwise policy",
+              "calibration": "stored values; no automatic scale/offset",
+              "qualification": "inspected Version D PGD0 only; other releases require separate qualification"
+            },
+            "aligned_execution": {
+              "ordering": "WSE source-chunk row/column order, then bounded logical subtiles; PATHS order within each tile",
+              "queue_capacity": 0,
+              "range_cache": "bounded, execution-local, one pinned source identity",
+              "output": "five raw arrays, independent source masks and separate derived validity; no file publication",
+              "working_memory": {
+                "scope": "working reservations for this prepared selection and metadata strategy; not a process RSS ceiling",
+                "budget_bytes": 67108864,
+                "prepared_total_bytes": 1999108,
+                "prepared_metadata_coordinates_plan_bytes": 1999108,
+                "authentication_checkpoint_reservation_bytes": 0,
+                "coordinate_prepare_reserved_bytes_peak": 1397610,
+                "metadata_preparation_sufficient_buffer_bytes": 11137024,
+                "physical_chunks": [
+                  {
+                    "variable": "/wse",
+                    "native_chunk_bytes": 2490084,
+                    "largest_selected_encoded_chunk_bytes": 816934,
+                    "decoder_reservation_bytes": 22371474
+                  },
+                  {
+                    "variable": "/wse_qual",
+                    "native_chunk_bytes": 2488506,
+                    "largest_selected_encoded_chunk_bytes": 237338,
+                    "decoder_reservation_bytes": 20620062
+                  },
+                  {
+                    "variable": "/wse_qual_bitwise",
+                    "native_chunk_bytes": 2490084,
+                    "largest_selected_encoded_chunk_bytes": 279253,
+                    "decoder_reservation_bytes": 20758431
+                  },
+                  {
+                    "variable": "/wse_uncert",
+                    "native_chunk_bytes": 2490084,
+                    "largest_selected_encoded_chunk_bytes": 847009,
+                    "decoder_reservation_bytes": 22461699
+                  },
+                  {
+                    "variable": "/n_wse_pix",
+                    "native_chunk_bytes": 2490084,
+                    "largest_selected_encoded_chunk_bytes": 158849,
+                    "decoder_reservation_bytes": 20397219
+                  }
+                ],
+                "limiting_decoder_variable": "/wse_uncert",
+                "decoder_scratch_bytes": 22461699,
+                "encoded_range_retention_bytes": 8388608,
+                "fixed_stream_overhead_bytes": 65536,
+                "base_reservation_bytes": 32914951,
+                "assembly_reservation_bytes_per_pixel": 128,
+                "largest_logical_tile_pixels": 64,
+                "estimated_sufficient_buffer_bytes": 28039469,
+                "admits_one_pixel": true
+              }
+            },
+            "plan_summary": {
+              "selected": [
+                {
+                  "timestamps": [],
+                  "asset_id": "G3927661761-POCLOUD",
+                  "datetime": "2024-02-16T02:51:38.377Z",
+                  "reason": "explicit native rank-two array slice; stored axes and values",
+                  "capabilities": {
+                    "selection": [
+                      "array_slice",
+                      "positive_strides",
+                      "explicit_coordinate_paths"
+                    ],
+                    "reads": [
+                      "bounded_v1_btree_index_scan",
+                      "conditional_compressed_chunk_ranges"
+                    ],
+                    "decoding": "hdf5-reader 0.9.3",
+                    "compression": "none/deflate/shuffle/Fletcher32",
+                    "materialization": true
+                  },
+                  "layout": {
+                    "width": 1577,
+                    "height": 1578,
+                    "transform": [
+                      0.0,
+                      1.0,
+                      0.0,
+                      0.0,
+                      0.0,
+                      1.0
+                    ],
+                    "crs": "HDF5:stored_axes:/x,/y",
+                    "variable": {
+                      "kind": "dataset",
+                      "path": "/wse"
+                    },
+                    "block": [
+                      789,
+                      789
+                    ],
+                    "dtype": "<f4",
+                    "nodata": 9.969209968386869e+36,
+                    "scale": null,
+                    "offset": null,
+                    "tiles": []
+                  },
+                  "window": {
+                    "x": 793,
+                    "y": 785,
+                    "width": 8,
+                    "height": 12
+                  }
+                },
+                {
+                  "timestamps": [],
+                  "asset_id": "G3927661761-POCLOUD",
+                  "datetime": "2024-02-16T02:51:38.377Z",
+                  "reason": "explicit native rank-two array slice; stored axes and values",
+                  "capabilities": {
+                    "selection": [
+                      "array_slice",
+                      "positive_strides",
+                      "explicit_coordinate_paths"
+                    ],
+                    "reads": [
+                      "bounded_v1_btree_index_scan",
+                      "conditional_compressed_chunk_ranges"
+                    ],
+                    "decoding": "hdf5-reader 0.9.3",
+                    "compression": "none/deflate/shuffle/Fletcher32",
+                    "materialization": true
+                  },
+                  "layout": {
+                    "width": 1577,
+                    "height": 1578,
+                    "transform": [
+                      0.0,
+                      1.0,
+                      0.0,
+                      0.0,
+                      0.0,
+                      1.0
+                    ],
+                    "crs": "HDF5:stored_axes:/x,/y",
+                    "variable": {
+                      "kind": "dataset",
+                      "path": "/wse_qual"
+                    },
+                    "block": [
+                      1577,
+                      1578
+                    ],
+                    "dtype": "|u1",
+                    "nodata": 255.0,
+                    "scale": null,
+                    "offset": null,
+                    "tiles": []
+                  },
+                  "window": {
+                    "x": 793,
+                    "y": 785,
+                    "width": 8,
+                    "height": 12
+                  }
+                },
+                {
+                  "timestamps": [],
+                  "asset_id": "G3927661761-POCLOUD",
+                  "datetime": "2024-02-16T02:51:38.377Z",
+                  "reason": "explicit native rank-two array slice; stored axes and values",
+                  "capabilities": {
+                    "selection": [
+                      "array_slice",
+                      "positive_strides",
+                      "explicit_coordinate_paths"
+                    ],
+                    "reads": [
+                      "bounded_v1_btree_index_scan",
+                      "conditional_compressed_chunk_ranges"
+                    ],
+                    "decoding": "hdf5-reader 0.9.3",
+                    "compression": "none/deflate/shuffle/Fletcher32",
+                    "materialization": true
+                  },
+                  "layout": {
+                    "width": 1577,
+                    "height": 1578,
+                    "transform": [
+                      0.0,
+                      1.0,
+                      0.0,
+                      0.0,
+                      0.0,
+                      1.0
+                    ],
+                    "crs": "HDF5:stored_axes:/x,/y",
+                    "variable": {
+                      "kind": "dataset",
+                      "path": "/wse_qual_bitwise"
+                    },
+                    "block": [
+                      789,
+                      789
+                    ],
+                    "dtype": "<u4",
+                    "nodata": 4294967295.0,
+                    "scale": null,
+                    "offset": null,
+                    "tiles": []
+                  },
+                  "window": {
+                    "x": 793,
+                    "y": 785,
+                    "width": 8,
+                    "height": 12
+                  }
+                },
+                {
+                  "timestamps": [],
+                  "asset_id": "G3927661761-POCLOUD",
+                  "datetime": "2024-02-16T02:51:38.377Z",
+                  "reason": "explicit native rank-two array slice; stored axes and values",
+                  "capabilities": {
+                    "selection": [
+                      "array_slice",
+                      "positive_strides",
+                      "explicit_coordinate_paths"
+                    ],
+                    "reads": [
+                      "bounded_v1_btree_index_scan",
+                      "conditional_compressed_chunk_ranges"
+                    ],
+                    "decoding": "hdf5-reader 0.9.3",
+                    "compression": "none/deflate/shuffle/Fletcher32",
+                    "materialization": true
+                  },
+                  "layout": {
+                    "width": 1577,
+                    "height": 1578,
+                    "transform": [
+                      0.0,
+                      1.0,
+                      0.0,
+                      0.0,
+                      0.0,
+                      1.0
+                    ],
+                    "crs": "HDF5:stored_axes:/x,/y",
+                    "variable": {
+                      "kind": "dataset",
+                      "path": "/wse_uncert"
+                    },
+                    "block": [
+                      789,
+                      789
+                    ],
+                    "dtype": "<f4",
+                    "nodata": 9.969209968386869e+36,
+                    "scale": null,
+                    "offset": null,
+                    "tiles": []
+                  },
+                  "window": {
+                    "x": 793,
+                    "y": 785,
+                    "width": 8,
+                    "height": 12
+                  }
+                },
+                {
+                  "timestamps": [],
+                  "asset_id": "G3927661761-POCLOUD",
+                  "datetime": "2024-02-16T02:51:38.377Z",
+                  "reason": "explicit native rank-two array slice; stored axes and values",
+                  "capabilities": {
+                    "selection": [
+                      "array_slice",
+                      "positive_strides",
+                      "explicit_coordinate_paths"
+                    ],
+                    "reads": [
+                      "bounded_v1_btree_index_scan",
+                      "conditional_compressed_chunk_ranges"
+                    ],
+                    "decoding": "hdf5-reader 0.9.3",
+                    "compression": "none/deflate/shuffle/Fletcher32",
+                    "materialization": true
+                  },
+                  "layout": {
+                    "width": 1577,
+                    "height": 1578,
+                    "transform": [
+                      0.0,
+                      1.0,
+                      0.0,
+                      0.0,
+                      0.0,
+                      1.0
+                    ],
+                    "crs": "HDF5:stored_axes:/x,/y",
+                    "variable": {
+                      "kind": "dataset",
+                      "path": "/n_wse_pix"
+                    },
+                    "block": [
+                      789,
+                      789
+                    ],
+                    "dtype": "<u4",
+                    "nodata": 4294967295.0,
+                    "scale": null,
+                    "offset": null,
+                    "tiles": []
+                  },
+                  "window": {
+                    "x": 793,
+                    "y": 785,
+                    "width": 8,
+                    "height": 12
+                  }
+                }
+              ],
+              "estimates": {
+                "selected_compressed_payload_bytes": 4148750,
+                "remote_requests": null,
+                "note": "Payload estimate excludes headers, masks, GDAL range rounding and repeated tile reads between output chunks; actual request counts require observation"
+              },
+              "nodes": 23,
+              "limitations": [
+                "No implicit reprojection or compositing",
+                "buffer_bytes bounds admitted native sample/chunk payloads, not process RSS or external codec/cache scratch",
+                "Diagnostic JSON is not executable; use prepared runtime bindings or prepare anew from the request",
+                "HDF5 callbacks only: explicit rank-two slices; actual stored axis centers accompany every chunk; transform is an array-index placeholder, not geolocation. Apply scientific and coordinate scale/offset explicitly. CF time remains metadata.",
+                "HDF5 callbacks only: explicit rank-two slices; actual stored axis centers accompany every chunk; transform is an array-index placeholder, not geolocation. Apply scientific and coordinate scale/offset explicitly. CF time remains metadata.",
+                "HDF5 callbacks only: explicit rank-two slices; actual stored axis centers accompany every chunk; transform is an array-index placeholder, not geolocation. Apply scientific and coordinate scale/offset explicitly. CF time remains metadata.",
+                "HDF5 callbacks only: explicit rank-two slices; actual stored axis centers accompany every chunk; transform is an array-index placeholder, not geolocation. Apply scientific and coordinate scale/offset explicitly. CF time remains metadata.",
+                "HDF5 callbacks only: explicit rank-two slices; actual stored axis centers accompany every chunk; transform is an array-index placeholder, not geolocation. Apply scientific and coordinate scale/offset explicitly. CF time remains metadata."
+              ]
+            }
+          }
+        }
+      ],
+      "admission": {
+        "execution": "serial synchronous delivery; no next decoder while writer retains a tile",
+        "active_sources": 1,
+        "active_authentication_sessions": 1,
+        "queued_tiles": 0,
+        "consumer_retained_tiles": 0,
+        "job_metadata_receipts_bytes": 33554432,
+        "writer_bytes": 593920,
+        "max_source_request_bytes": 67108864,
+        "aggregate_admitted_cap_bytes": 101257216,
+        "aggregate_limit_bytes": 134217728,
+        "source_scope": "source budget includes decoder, encoded-range retention, prepared metadata/coordinates, authentication and checkpoint index/write scratch",
+        "scope": "working reservations; excludes allocator, TLS/HTTP runtime, OS/filesystem cache and caller-owned inputs; process RSS measured separately"
+      },
+      "checkpoint": {
+        "enabled": false
+      },
+      "output": {
+        "format": "zarr_v2",
+        "encoding": "uncompressed raw stored values",
+        "chunk_edge": 128,
+        "max_objects": 10000,
+        "aoi_mask": true
+      },
+      "completion": "all required observations must finish, then every source is revalidated in a serial sweep before manifest/synchronization/no-replace publication",
+      "known_costs": [
+        "full bounded legacy HDF5 index traversal remains default",
+        "each source uses its own authentication session; final sweep uses fresh sessions and online eight-byte GET proof",
+        "checkpoint replay reconstructs all values and rewrites all output",
+        "synchronization and no-replace publication are part of fetch"
+      ],
+      "unsupported": [
+        "implicit catalog discovery or unresolved geography within a job; use discover-job",
+        "empty index selections",
+        "reprojection/resampling/mosaicking",
+        "aligned time series",
+        "additional processing releases or products",
+        "partial output or completed-observation recovery"
+      ],
+      "source_snapshot": "per-object versions; not an atomic snapshot of a changing collection"
+    },
+    "error": null,
+    "output": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-job/additional-cap-diagnosis-kj5mypax/observations.zarr",
+    "output_files": {
+      "files": 0,
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "range_entries": 0
+    },
+    "checkpoint_files": null,
+    "binary_sha256": "9975a58c3743870115f07881641eba71d4fe32d951efa66a52fc21971b0a2b2f",
+    "stdout_sha256": "4acfd620daefc1cd98f129c17e2d372b2e832bdd5039ad33726bd4f3d9d16ae2",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "publication_stages": [
+      {
+        "stage": "native_planning_with_layout",
+        "seconds": 0.014127583
+      }
+    ]
+  }
+}

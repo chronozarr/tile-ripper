@@ -1,0 +1,2198 @@
+{
+  "all_passed": true,
+  "raw_receipt": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-aoi/regression-receipts/swot-job-faults-restart.json",
+  "raw_receipt_sha256": "4c614ce10ae747c7bfa320ff2f17eb2072b0e4131e5d2706899382cb081b04fc",
+  "runs": [
+    {
+      "name": "later-source-fails",
+      "command": [
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/target/release/tile-ripper",
+        "fetch",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-job/later-source-fails-75_6xonf/job.json",
+        "[runtime access/output flags omitted from compact receipt]"
+      ],
+      "returncode": 1,
+      "wall_seconds": 0.14560183299909113,
+      "cpu_seconds": 0.07542000000000004,
+      "sampled_process_peak_rss_bytes": 33390592,
+      "interruption_sent": false,
+      "error": "tile-ripper: SWOT job failed at observation original_20240216: prepare: HTTP retry budget exhausted after 3 attempts (last status 503; retryable HTTP status)\n",
+      "output": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-job/later-source-fails-75_6xonf/observations.zarr",
+      "output_files": {
+        "files": 0,
+        "logical_bytes": 0,
+        "allocated_bytes": 0,
+        "range_entries": 0
+      },
+      "checkpoint_files": {
+        "files": 32,
+        "logical_bytes": 463837,
+        "allocated_bytes": 561152,
+        "range_entries": 27
+      },
+      "binary_sha256": "f621c7a6e20c8ecfb64f49a01873c61a8e13f4d008a1b9c1fce576f01b1bfbb5",
+      "stdout_sha256": "c80d7f6ba412ded5319fd3328fa4bebbc6387e23247cee25d235b8c88e11293a",
+      "stderr_sha256": "eea5d5a8e36e783c49ba9091796bf0f5e2b15e16f194ab6f3d77af09ae999359",
+      "completion_status": "failed",
+      "provisional_observations": 1
+    },
+    {
+      "name": "restart-retains-source-bytes",
+      "command": [
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/target/release/tile-ripper",
+        "fetch",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-job/restart-retains-source-bytes-zwu62g5c/job.json",
+        "[runtime access/output flags omitted from compact receipt]"
+      ],
+      "returncode": 0,
+      "wall_seconds": 0.2373674580012448,
+      "cpu_seconds": 0.12325199999999992,
+      "sampled_process_peak_rss_bytes": 39927808,
+      "interruption_sent": false,
+      "error": null,
+      "output": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-job/restart-retains-source-bytes-zwu62g5c/observations.zarr",
+      "output_files": {
+        "files": 93,
+        "logical_bytes": 1866392,
+        "allocated_bytes": 2101248,
+        "range_entries": 0
+      },
+      "checkpoint_files": {
+        "files": 59,
+        "logical_bytes": 2947224,
+        "allocated_bytes": 3137536,
+        "range_entries": 53
+      },
+      "binary_sha256": "f621c7a6e20c8ecfb64f49a01873c61a8e13f4d008a1b9c1fce576f01b1bfbb5",
+      "stdout_sha256": "2ca3cd5f221462b0fd2aa237ac04abdf11627df2376ef50f6a6a7ff706741d33",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "completion_status": "complete",
+      "provisional_observations": 0,
+      "science": {
+        "observations": [
+          {
+            "id": "held_out_20240217",
+            "shape": [
+              128,
+              128
+            ],
+            "source_identity": {
+              "url": "https://localhost:54959/source.nc",
+              "version": {
+                "etag": "\"8c583d1085e24a2c438260a206d38131-1\"",
+                "size": 6527265,
+                "metadata": false
+              },
+              "authenticated_scope": {
+                "canonical_url": "https://localhost:54959/source.nc",
+                "resource_origin": "https://localhost:54961",
+                "head_resource_path": "/head/object",
+                "get_resource_path": "/get/object",
+                "login_origin": "https://127.0.0.1:54960",
+                "credential_forwarding": "login origin only; none to archive or signed resource",
+                "cookies": "memory only; exact origin jars; none to signed resource",
+                "conditional_reads": "strong ETag, If-Match, exact Content-Range and Content-Length, identity encoding",
+                "signed_routes": "GET only, advertised expiry minus 30 seconds, at most 60 seconds; HEAD always canonical",
+                "redirect_hop_limit": 8,
+                "refresh_limit": 1,
+                "per_origin_concurrency_limit": 1,
+                "working_reservation_bytes": 1048576,
+                "redirects": [
+                  {
+                    "from": "https://localhost:54959",
+                    "to": "https://127.0.0.1:54960",
+                    "path": "/oauth/authorize"
+                  },
+                  {
+                    "from": "https://127.0.0.1:54960",
+                    "to": "https://localhost:54959",
+                    "path": "/login"
+                  },
+                  {
+                    "from": "https://localhost:54959",
+                    "to": "https://localhost:54959",
+                    "path": "/source.nc"
+                  },
+                  {
+                    "from": "https://localhost:54959",
+                    "to": "https://localhost:54961",
+                    "path": "/head/object"
+                  },
+                  {
+                    "from": "https://localhost:54959",
+                    "to": "https://localhost:54961",
+                    "path": "/get/object"
+                  }
+                ]
+              }
+            },
+            "all_value_bits_masks_coordinates_time_source_identity_equal": true,
+            "xarray_raw_equal": true,
+            "references": [
+              {
+                "reader": "h5py",
+                "versions": {
+                  "reader": "3.12.1",
+                  "hdf5": "1.12.2"
+                },
+                "access": "local_sparse_reference",
+                "prepare_seconds": 0.0020552499991026707,
+                "completion_seconds": 0.02834229200016125,
+                "api_cpu_seconds": 0.028304000000000024,
+                "peak_rss_bytes": 53739520,
+                "value_sha256": [
+                  "d11f636316920d9af1e9813977a657a2e8d3a270a6e0596f5b0a8e5d55f547d6",
+                  "cb11cbb78d1316aff71e900d208768e3adb9ecaac543f7744755e06e6b431818",
+                  "f4416dc5314ae794942d94b1590ead14fe00cc8e086973361fd328bd0e627faa",
+                  "95095335009e74667907264584a8ec34685d352adb0fbdc7e37e41ce133afafc",
+                  "502dbc75b4c0bf8d74fd3cd3910474f1bba4f64b8c126219cd37e65b547cc426"
+                ],
+                "axis_sha256": [
+                  "4c117689b41b7e3d583827d5e3a777c8d0813caeee6af68bf008d268a31e9578",
+                  "a7459240033c04c362112dd4502b6a6da6b7d9a4075467628d7975512d27cb5e"
+                ],
+                "summary": {
+                  "selected_count": 1310,
+                  "wse_sum_m": 38869.788248062134,
+                  "wse_mean_m": 29.671594082490177,
+                  "uncertainty_count": 1310,
+                  "uncertainty_sum_m": 1074.1131531000137,
+                  "mean_pixel_uncertainty_m": 0.8199337046564991,
+                  "contributing_count": 1310,
+                  "contributing_pixel_sum": 13702
+                },
+                "attributes": {
+                  "root": 50,
+                  "wse": 11,
+                  "wse_qual": 12,
+                  "wse_qual_bitwise": 16,
+                  "wse_uncert": 10,
+                  "n_wse_pix": 10,
+                  "y": 13,
+                  "x": 13,
+                  "crs": 20
+                },
+                "interpreted_attribute_checks": 142,
+                "fixed_attribute_shape_and_byte_checks": 148,
+                "guarded_file_reads": 132,
+                "capture_misses": 0,
+                "trace_sha256": "7adf2c2b298a23666918bd55bbd70958c517df34eb0f775e3862505a19993b87"
+              },
+              {
+                "reader": "netcdf4",
+                "versions": {
+                  "reader": "1.7.4",
+                  "netcdf_c": "4.9.3 of Sep 15 2025 23:01:51 $",
+                  "hdf5": "1.14.6"
+                },
+                "access": "local_sparse_reference",
+                "prepare_seconds": 0.007475583999621449,
+                "completion_seconds": 0.038822917000288726,
+                "api_cpu_seconds": 0.038562,
+                "peak_rss_bytes": 72220672,
+                "value_sha256": [
+                  "d11f636316920d9af1e9813977a657a2e8d3a270a6e0596f5b0a8e5d55f547d6",
+                  "cb11cbb78d1316aff71e900d208768e3adb9ecaac543f7744755e06e6b431818",
+                  "f4416dc5314ae794942d94b1590ead14fe00cc8e086973361fd328bd0e627faa",
+                  "95095335009e74667907264584a8ec34685d352adb0fbdc7e37e41ce133afafc",
+                  "502dbc75b4c0bf8d74fd3cd3910474f1bba4f64b8c126219cd37e65b547cc426"
+                ],
+                "axis_sha256": [
+                  "4c117689b41b7e3d583827d5e3a777c8d0813caeee6af68bf008d268a31e9578",
+                  "a7459240033c04c362112dd4502b6a6da6b7d9a4075467628d7975512d27cb5e"
+                ],
+                "summary": {
+                  "selected_count": 1310,
+                  "wse_sum_m": 38869.788248062134,
+                  "wse_mean_m": 29.671594082490177,
+                  "uncertainty_count": 1310,
+                  "uncertainty_sum_m": 1074.1131531000137,
+                  "mean_pixel_uncertainty_m": 0.8199337046564991,
+                  "contributing_count": 1310,
+                  "contributing_pixel_sum": 13702
+                },
+                "attributes": {
+                  "root": 49,
+                  "wse": 9,
+                  "wse_qual": 10,
+                  "wse_qual_bitwise": 14,
+                  "wse_uncert": 8,
+                  "n_wse_pix": 8,
+                  "y": 8,
+                  "x": 8,
+                  "crs": 20
+                },
+                "interpreted_attribute_checks": 133,
+                "fixed_attribute_shape_and_byte_checks": 0,
+                "guarded_file_reads": 523,
+                "capture_misses": 0,
+                "trace_sha256": "23f7a3e69692eccd4fac06053d690330de6f4f4b86207d70683d5e0eb52edc81"
+              }
+            ]
+          },
+          {
+            "id": "original_20240216",
+            "shape": [
+              128,
+              128
+            ],
+            "source_identity": {
+              "url": "https://localhost:54964/source.nc",
+              "version": {
+                "etag": "\"3b93eefb90f0167506435fdca199aa69-1\"",
+                "size": 89242093,
+                "metadata": false
+              },
+              "authenticated_scope": {
+                "canonical_url": "https://localhost:54964/source.nc",
+                "resource_origin": "https://localhost:54966",
+                "head_resource_path": "/head/object",
+                "get_resource_path": "/get/object",
+                "login_origin": "https://localhost:54965",
+                "credential_forwarding": "login origin only; none to archive or signed resource",
+                "cookies": "memory only; exact origin jars; none to signed resource",
+                "conditional_reads": "strong ETag, If-Match, exact Content-Range and Content-Length, identity encoding",
+                "signed_routes": "GET only, advertised expiry minus 30 seconds, at most 60 seconds; HEAD always canonical",
+                "redirect_hop_limit": 8,
+                "refresh_limit": 1,
+                "per_origin_concurrency_limit": 1,
+                "working_reservation_bytes": 1048576,
+                "redirects": [
+                  {
+                    "from": "https://localhost:54964",
+                    "to": "https://localhost:54965",
+                    "path": "/oauth/authorize"
+                  },
+                  {
+                    "from": "https://localhost:54965",
+                    "to": "https://localhost:54964",
+                    "path": "/login"
+                  },
+                  {
+                    "from": "https://localhost:54964",
+                    "to": "https://localhost:54964",
+                    "path": "/source.nc"
+                  },
+                  {
+                    "from": "https://localhost:54964",
+                    "to": "https://localhost:54966",
+                    "path": "/head/object"
+                  },
+                  {
+                    "from": "https://localhost:54964",
+                    "to": "https://localhost:54966",
+                    "path": "/get/object"
+                  }
+                ]
+              }
+            },
+            "all_value_bits_masks_coordinates_time_source_identity_equal": true,
+            "xarray_raw_equal": true,
+            "references": [
+              {
+                "reader": "h5py",
+                "versions": {
+                  "reader": "3.12.1",
+                  "hdf5": "1.12.2"
+                },
+                "access": "local_sparse_reference",
+                "prepare_seconds": 0.0022444999995059334,
+                "completion_seconds": 0.03589474999898812,
+                "api_cpu_seconds": 0.03581799999999999,
+                "peak_rss_bytes": 54804480,
+                "value_sha256": [
+                  "5973313fdb358b88285b1158a38fe45cfc78f69e5a1047c6c06238bee50d1295",
+                  "f053093b1f3210820c79fe47762b625156b367fde0ce07c1afb4955a191e65fc",
+                  "4df6b42f285d92dfb6b80ea193c213f98ed5cd82fd6c440e6d4c58495fd7b50d",
+                  "e5f1c42683118ea46faad551ef76363ae01a438b2baf3efdaf98ff7cf940a7ae",
+                  "1fac51871cafe0de5e6312eba51a64ec3109501572c2395c0b444860aee6f919"
+                ],
+                "axis_sha256": [
+                  "b5a83038bc717017d7184cfe4187f371fc13eebef2872437e5bc580bc1a14363",
+                  "1fec4444afa5239a37f6f8afa8d2aae338365f1a0b580b9dfb025826d8e3c91f"
+                ],
+                "summary": {
+                  "selected_count": 3076,
+                  "wse_sum_m": 847289.1619262695,
+                  "wse_mean_m": 275.4516131099706,
+                  "uncertainty_count": 3076,
+                  "uncertainty_sum_m": 1167.924199718982,
+                  "mean_pixel_uncertainty_m": 0.3796892716901762,
+                  "contributing_count": 3076,
+                  "contributing_pixel_sum": 21757
+                },
+                "attributes": {
+                  "root": 50,
+                  "wse": 11,
+                  "wse_qual": 12,
+                  "wse_qual_bitwise": 16,
+                  "wse_uncert": 10,
+                  "n_wse_pix": 10,
+                  "y": 13,
+                  "x": 13,
+                  "crs": 20
+                },
+                "interpreted_attribute_checks": 142,
+                "fixed_attribute_shape_and_byte_checks": 148,
+                "guarded_file_reads": 133,
+                "capture_misses": 0,
+                "trace_sha256": "417e3343180cfe2db0e5e7044db04e5726033c33c84d6546e12491a47f4196c9"
+              },
+              {
+                "reader": "netcdf4",
+                "versions": {
+                  "reader": "1.7.4",
+                  "netcdf_c": "4.9.3 of Sep 15 2025 23:01:51 $",
+                  "hdf5": "1.14.6"
+                },
+                "access": "local_sparse_reference",
+                "prepare_seconds": 0.0077183749999676365,
+                "completion_seconds": 0.04122316600114573,
+                "api_cpu_seconds": 0.04063,
+                "peak_rss_bytes": 71892992,
+                "value_sha256": [
+                  "5973313fdb358b88285b1158a38fe45cfc78f69e5a1047c6c06238bee50d1295",
+                  "f053093b1f3210820c79fe47762b625156b367fde0ce07c1afb4955a191e65fc",
+                  "4df6b42f285d92dfb6b80ea193c213f98ed5cd82fd6c440e6d4c58495fd7b50d",
+                  "e5f1c42683118ea46faad551ef76363ae01a438b2baf3efdaf98ff7cf940a7ae",
+                  "1fac51871cafe0de5e6312eba51a64ec3109501572c2395c0b444860aee6f919"
+                ],
+                "axis_sha256": [
+                  "b5a83038bc717017d7184cfe4187f371fc13eebef2872437e5bc580bc1a14363",
+                  "1fec4444afa5239a37f6f8afa8d2aae338365f1a0b580b9dfb025826d8e3c91f"
+                ],
+                "summary": {
+                  "selected_count": 3076,
+                  "wse_sum_m": 847289.1619262695,
+                  "wse_mean_m": 275.4516131099706,
+                  "uncertainty_count": 3076,
+                  "uncertainty_sum_m": 1167.924199718982,
+                  "mean_pixel_uncertainty_m": 0.3796892716901762,
+                  "contributing_count": 3076,
+                  "contributing_pixel_sum": 21757
+                },
+                "attributes": {
+                  "root": 49,
+                  "wse": 9,
+                  "wse_qual": 10,
+                  "wse_qual_bitwise": 14,
+                  "wse_uncert": 8,
+                  "n_wse_pix": 8,
+                  "y": 8,
+                  "x": 8,
+                  "crs": 20
+                },
+                "interpreted_attribute_checks": 133,
+                "fixed_attribute_shape_and_byte_checks": 0,
+                "guarded_file_reads": 524,
+                "capture_misses": 0,
+                "trace_sha256": "a6e36c24a522e66bd54ef8582ae2f75463247940953b27dd839421dfb8678605"
+              }
+            ]
+          }
+        ],
+        "zarr_python": "2.18.3",
+        "xarray": "2025.6.1",
+        "numpy": "2.0.2",
+        "all_passed": true
+      }
+    },
+    {
+      "name": "complete-checkpoint-reconstruction",
+      "command": [
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/target/release/tile-ripper",
+        "fetch",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-job/complete-checkpoint-reconstruction-rbr96di1/job.json",
+        "[runtime access/output flags omitted from compact receipt]"
+      ],
+      "returncode": 0,
+      "wall_seconds": 0.1808906249989377,
+      "cpu_seconds": 0.1125379999999998,
+      "sampled_process_peak_rss_bytes": 38273024,
+      "interruption_sent": false,
+      "error": null,
+      "output": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-job/complete-checkpoint-reconstruction-rbr96di1/observations.zarr",
+      "output_files": {
+        "files": 93,
+        "logical_bytes": 1856979,
+        "allocated_bytes": 2093056,
+        "range_entries": 0
+      },
+      "checkpoint_files": {
+        "files": 59,
+        "logical_bytes": 2947224,
+        "allocated_bytes": 3137536,
+        "range_entries": 53
+      },
+      "binary_sha256": "f621c7a6e20c8ecfb64f49a01873c61a8e13f4d008a1b9c1fce576f01b1bfbb5",
+      "stdout_sha256": "baeb631de0389363085f0d3c06029da3830ee2b2f74f9cf1065653ba00caba5a",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "completion_status": "complete",
+      "provisional_observations": 0,
+      "science": {
+        "observations": [
+          {
+            "id": "held_out_20240217",
+            "shape": [
+              128,
+              128
+            ],
+            "source_identity": {
+              "url": "https://localhost:54959/source.nc",
+              "version": {
+                "etag": "\"8c583d1085e24a2c438260a206d38131-1\"",
+                "size": 6527265,
+                "metadata": false
+              },
+              "authenticated_scope": {
+                "canonical_url": "https://localhost:54959/source.nc",
+                "resource_origin": "https://localhost:54961",
+                "head_resource_path": "/head/object",
+                "get_resource_path": "/get/object",
+                "login_origin": "https://127.0.0.1:54960",
+                "credential_forwarding": "login origin only; none to archive or signed resource",
+                "cookies": "memory only; exact origin jars; none to signed resource",
+                "conditional_reads": "strong ETag, If-Match, exact Content-Range and Content-Length, identity encoding",
+                "signed_routes": "GET only, advertised expiry minus 30 seconds, at most 60 seconds; HEAD always canonical",
+                "redirect_hop_limit": 8,
+                "refresh_limit": 1,
+                "per_origin_concurrency_limit": 1,
+                "working_reservation_bytes": 1048576,
+                "redirects": [
+                  {
+                    "from": "https://localhost:54959",
+                    "to": "https://127.0.0.1:54960",
+                    "path": "/oauth/authorize"
+                  },
+                  {
+                    "from": "https://127.0.0.1:54960",
+                    "to": "https://localhost:54959",
+                    "path": "/login"
+                  },
+                  {
+                    "from": "https://localhost:54959",
+                    "to": "https://localhost:54959",
+                    "path": "/source.nc"
+                  },
+                  {
+                    "from": "https://localhost:54959",
+                    "to": "https://localhost:54961",
+                    "path": "/head/object"
+                  },
+                  {
+                    "from": "https://localhost:54959",
+                    "to": "https://localhost:54961",
+                    "path": "/get/object"
+                  }
+                ]
+              }
+            },
+            "all_value_bits_masks_coordinates_time_source_identity_equal": true,
+            "xarray_raw_equal": true,
+            "references": [
+              {
+                "reader": "h5py",
+                "versions": {
+                  "reader": "3.12.1",
+                  "hdf5": "1.12.2"
+                },
+                "access": "local_sparse_reference",
+                "prepare_seconds": 0.0019778340010816464,
+                "completion_seconds": 0.03451566700096009,
+                "api_cpu_seconds": 0.034448000000000006,
+                "peak_rss_bytes": 53985280,
+                "value_sha256": [
+                  "d11f636316920d9af1e9813977a657a2e8d3a270a6e0596f5b0a8e5d55f547d6",
+                  "cb11cbb78d1316aff71e900d208768e3adb9ecaac543f7744755e06e6b431818",
+                  "f4416dc5314ae794942d94b1590ead14fe00cc8e086973361fd328bd0e627faa",
+                  "95095335009e74667907264584a8ec34685d352adb0fbdc7e37e41ce133afafc",
+                  "502dbc75b4c0bf8d74fd3cd3910474f1bba4f64b8c126219cd37e65b547cc426"
+                ],
+                "axis_sha256": [
+                  "4c117689b41b7e3d583827d5e3a777c8d0813caeee6af68bf008d268a31e9578",
+                  "a7459240033c04c362112dd4502b6a6da6b7d9a4075467628d7975512d27cb5e"
+                ],
+                "summary": {
+                  "selected_count": 1310,
+                  "wse_sum_m": 38869.788248062134,
+                  "wse_mean_m": 29.671594082490177,
+                  "uncertainty_count": 1310,
+                  "uncertainty_sum_m": 1074.1131531000137,
+                  "mean_pixel_uncertainty_m": 0.8199337046564991,
+                  "contributing_count": 1310,
+                  "contributing_pixel_sum": 13702
+                },
+                "attributes": {
+                  "root": 50,
+                  "wse": 11,
+                  "wse_qual": 12,
+                  "wse_qual_bitwise": 16,
+                  "wse_uncert": 10,
+                  "n_wse_pix": 10,
+                  "y": 13,
+                  "x": 13,
+                  "crs": 20
+                },
+                "interpreted_attribute_checks": 142,
+                "fixed_attribute_shape_and_byte_checks": 148,
+                "guarded_file_reads": 132,
+                "capture_misses": 0,
+                "trace_sha256": "7adf2c2b298a23666918bd55bbd70958c517df34eb0f775e3862505a19993b87"
+              },
+              {
+                "reader": "netcdf4",
+                "versions": {
+                  "reader": "1.7.4",
+                  "netcdf_c": "4.9.3 of Sep 15 2025 23:01:51 $",
+                  "hdf5": "1.14.6"
+                },
+                "access": "local_sparse_reference",
+                "prepare_seconds": 0.010429582998767728,
+                "completion_seconds": 0.04061812500003725,
+                "api_cpu_seconds": 0.03918200000000001,
+                "peak_rss_bytes": 72843264,
+                "value_sha256": [
+                  "d11f636316920d9af1e9813977a657a2e8d3a270a6e0596f5b0a8e5d55f547d6",
+                  "cb11cbb78d1316aff71e900d208768e3adb9ecaac543f7744755e06e6b431818",
+                  "f4416dc5314ae794942d94b1590ead14fe00cc8e086973361fd328bd0e627faa",
+                  "95095335009e74667907264584a8ec34685d352adb0fbdc7e37e41ce133afafc",
+                  "502dbc75b4c0bf8d74fd3cd3910474f1bba4f64b8c126219cd37e65b547cc426"
+                ],
+                "axis_sha256": [
+                  "4c117689b41b7e3d583827d5e3a777c8d0813caeee6af68bf008d268a31e9578",
+                  "a7459240033c04c362112dd4502b6a6da6b7d9a4075467628d7975512d27cb5e"
+                ],
+                "summary": {
+                  "selected_count": 1310,
+                  "wse_sum_m": 38869.788248062134,
+                  "wse_mean_m": 29.671594082490177,
+                  "uncertainty_count": 1310,
+                  "uncertainty_sum_m": 1074.1131531000137,
+                  "mean_pixel_uncertainty_m": 0.8199337046564991,
+                  "contributing_count": 1310,
+                  "contributing_pixel_sum": 13702
+                },
+                "attributes": {
+                  "root": 49,
+                  "wse": 9,
+                  "wse_qual": 10,
+                  "wse_qual_bitwise": 14,
+                  "wse_uncert": 8,
+                  "n_wse_pix": 8,
+                  "y": 8,
+                  "x": 8,
+                  "crs": 20
+                },
+                "interpreted_attribute_checks": 133,
+                "fixed_attribute_shape_and_byte_checks": 0,
+                "guarded_file_reads": 523,
+                "capture_misses": 0,
+                "trace_sha256": "23f7a3e69692eccd4fac06053d690330de6f4f4b86207d70683d5e0eb52edc81"
+              }
+            ]
+          },
+          {
+            "id": "original_20240216",
+            "shape": [
+              128,
+              128
+            ],
+            "source_identity": {
+              "url": "https://localhost:54964/source.nc",
+              "version": {
+                "etag": "\"3b93eefb90f0167506435fdca199aa69-1\"",
+                "size": 89242093,
+                "metadata": false
+              },
+              "authenticated_scope": {
+                "canonical_url": "https://localhost:54964/source.nc",
+                "resource_origin": "https://localhost:54966",
+                "head_resource_path": "/head/object",
+                "get_resource_path": "/get/object",
+                "login_origin": "https://localhost:54965",
+                "credential_forwarding": "login origin only; none to archive or signed resource",
+                "cookies": "memory only; exact origin jars; none to signed resource",
+                "conditional_reads": "strong ETag, If-Match, exact Content-Range and Content-Length, identity encoding",
+                "signed_routes": "GET only, advertised expiry minus 30 seconds, at most 60 seconds; HEAD always canonical",
+                "redirect_hop_limit": 8,
+                "refresh_limit": 1,
+                "per_origin_concurrency_limit": 1,
+                "working_reservation_bytes": 1048576,
+                "redirects": [
+                  {
+                    "from": "https://localhost:54964",
+                    "to": "https://localhost:54965",
+                    "path": "/oauth/authorize"
+                  },
+                  {
+                    "from": "https://localhost:54965",
+                    "to": "https://localhost:54964",
+                    "path": "/login"
+                  },
+                  {
+                    "from": "https://localhost:54964",
+                    "to": "https://localhost:54964",
+                    "path": "/source.nc"
+                  },
+                  {
+                    "from": "https://localhost:54964",
+                    "to": "https://localhost:54966",
+                    "path": "/head/object"
+                  },
+                  {
+                    "from": "https://localhost:54964",
+                    "to": "https://localhost:54966",
+                    "path": "/get/object"
+                  }
+                ]
+              }
+            },
+            "all_value_bits_masks_coordinates_time_source_identity_equal": true,
+            "xarray_raw_equal": true,
+            "references": [
+              {
+                "reader": "h5py",
+                "versions": {
+                  "reader": "3.12.1",
+                  "hdf5": "1.12.2"
+                },
+                "access": "local_sparse_reference",
+                "prepare_seconds": 0.002035292000073241,
+                "completion_seconds": 0.03396070800044981,
+                "api_cpu_seconds": 0.033943,
+                "peak_rss_bytes": 53051392,
+                "value_sha256": [
+                  "5973313fdb358b88285b1158a38fe45cfc78f69e5a1047c6c06238bee50d1295",
+                  "f053093b1f3210820c79fe47762b625156b367fde0ce07c1afb4955a191e65fc",
+                  "4df6b42f285d92dfb6b80ea193c213f98ed5cd82fd6c440e6d4c58495fd7b50d",
+                  "e5f1c42683118ea46faad551ef76363ae01a438b2baf3efdaf98ff7cf940a7ae",
+                  "1fac51871cafe0de5e6312eba51a64ec3109501572c2395c0b444860aee6f919"
+                ],
+                "axis_sha256": [
+                  "b5a83038bc717017d7184cfe4187f371fc13eebef2872437e5bc580bc1a14363",
+                  "1fec4444afa5239a37f6f8afa8d2aae338365f1a0b580b9dfb025826d8e3c91f"
+                ],
+                "summary": {
+                  "selected_count": 3076,
+                  "wse_sum_m": 847289.1619262695,
+                  "wse_mean_m": 275.4516131099706,
+                  "uncertainty_count": 3076,
+                  "uncertainty_sum_m": 1167.924199718982,
+                  "mean_pixel_uncertainty_m": 0.3796892716901762,
+                  "contributing_count": 3076,
+                  "contributing_pixel_sum": 21757
+                },
+                "attributes": {
+                  "root": 50,
+                  "wse": 11,
+                  "wse_qual": 12,
+                  "wse_qual_bitwise": 16,
+                  "wse_uncert": 10,
+                  "n_wse_pix": 10,
+                  "y": 13,
+                  "x": 13,
+                  "crs": 20
+                },
+                "interpreted_attribute_checks": 142,
+                "fixed_attribute_shape_and_byte_checks": 148,
+                "guarded_file_reads": 133,
+                "capture_misses": 0,
+                "trace_sha256": "417e3343180cfe2db0e5e7044db04e5726033c33c84d6546e12491a47f4196c9"
+              },
+              {
+                "reader": "netcdf4",
+                "versions": {
+                  "reader": "1.7.4",
+                  "netcdf_c": "4.9.3 of Sep 15 2025 23:01:51 $",
+                  "hdf5": "1.14.6"
+                },
+                "access": "local_sparse_reference",
+                "prepare_seconds": 0.0071418749994336395,
+                "completion_seconds": 0.040205499999501626,
+                "api_cpu_seconds": 0.040017,
+                "peak_rss_bytes": 71139328,
+                "value_sha256": [
+                  "5973313fdb358b88285b1158a38fe45cfc78f69e5a1047c6c06238bee50d1295",
+                  "f053093b1f3210820c79fe47762b625156b367fde0ce07c1afb4955a191e65fc",
+                  "4df6b42f285d92dfb6b80ea193c213f98ed5cd82fd6c440e6d4c58495fd7b50d",
+                  "e5f1c42683118ea46faad551ef76363ae01a438b2baf3efdaf98ff7cf940a7ae",
+                  "1fac51871cafe0de5e6312eba51a64ec3109501572c2395c0b444860aee6f919"
+                ],
+                "axis_sha256": [
+                  "b5a83038bc717017d7184cfe4187f371fc13eebef2872437e5bc580bc1a14363",
+                  "1fec4444afa5239a37f6f8afa8d2aae338365f1a0b580b9dfb025826d8e3c91f"
+                ],
+                "summary": {
+                  "selected_count": 3076,
+                  "wse_sum_m": 847289.1619262695,
+                  "wse_mean_m": 275.4516131099706,
+                  "uncertainty_count": 3076,
+                  "uncertainty_sum_m": 1167.924199718982,
+                  "mean_pixel_uncertainty_m": 0.3796892716901762,
+                  "contributing_count": 3076,
+                  "contributing_pixel_sum": 21757
+                },
+                "attributes": {
+                  "root": 49,
+                  "wse": 9,
+                  "wse_qual": 10,
+                  "wse_qual_bitwise": 14,
+                  "wse_uncert": 8,
+                  "n_wse_pix": 8,
+                  "y": 8,
+                  "x": 8,
+                  "crs": 20
+                },
+                "interpreted_attribute_checks": 133,
+                "fixed_attribute_shape_and_byte_checks": 0,
+                "guarded_file_reads": 524,
+                "capture_misses": 0,
+                "trace_sha256": "a6e36c24a522e66bd54ef8582ae2f75463247940953b27dd839421dfb8678605"
+              }
+            ]
+          }
+        ],
+        "zarr_python": "2.18.3",
+        "xarray": "2025.6.1",
+        "numpy": "2.0.2",
+        "all_passed": true
+      }
+    },
+    {
+      "name": "previous-source-mutation",
+      "command": [
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/target/release/tile-ripper",
+        "fetch",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-job/previous-source-mutation-gc3d0bit/job.json",
+        "[runtime access/output flags omitted from compact receipt]"
+      ],
+      "returncode": 1,
+      "wall_seconds": 0.24374462499872607,
+      "cpu_seconds": 0.11891500000000055,
+      "sampled_process_peak_rss_bytes": 38584320,
+      "interruption_sent": false,
+      "error": "tile-ripper: SWOT job failed at observation held_out_20240217: HDF5 requested ETag differs from source\n",
+      "output": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-job/previous-source-mutation-gc3d0bit/observations.zarr",
+      "output_files": {
+        "files": 0,
+        "logical_bytes": 0,
+        "allocated_bytes": 0,
+        "range_entries": 0
+      },
+      "checkpoint_files": null,
+      "binary_sha256": "f621c7a6e20c8ecfb64f49a01873c61a8e13f4d008a1b9c1fce576f01b1bfbb5",
+      "stdout_sha256": "a5124482c8fba4214d4c6da5b5af6219e8c29838e42dcf53b7e17dbb425af20b",
+      "stderr_sha256": "467e93bfea175dcba1aeeadd027605cc4fef6136a84ad1eb23fc36a5b80fa9fa",
+      "completion_status": "failed",
+      "provisional_observations": 2
+    },
+    {
+      "name": "cross-source-login-refused",
+      "command": [
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/target/release/tile-ripper",
+        "fetch",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-job/cross-source-login-refused-pghs2wp8/job.json",
+        "[runtime access/output flags omitted from compact receipt]"
+      ],
+      "returncode": 1,
+      "wall_seconds": 0.13851370900010807,
+      "cpu_seconds": 0.07140300000000033,
+      "sampled_process_peak_rss_bytes": 33472512,
+      "interruption_sent": false,
+      "error": "tile-ripper: SWOT job failed at observation original_20240216: prepare: invalid data: unsafe or unconfigured authenticated redirect\n",
+      "output": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-job/cross-source-login-refused-pghs2wp8/observations.zarr",
+      "output_files": {
+        "files": 0,
+        "logical_bytes": 0,
+        "allocated_bytes": 0,
+        "range_entries": 0
+      },
+      "checkpoint_files": null,
+      "binary_sha256": "f621c7a6e20c8ecfb64f49a01873c61a8e13f4d008a1b9c1fce576f01b1bfbb5",
+      "stdout_sha256": "1a4b0d322da7d826d4f91c094d5184068449eb3befea0481b978f75e83642969",
+      "stderr_sha256": "44a9f7b6d0201220f502f81de539cafae4353ddbb8baab2b0985a8cde396da88",
+      "completion_status": "failed",
+      "provisional_observations": 1
+    },
+    {
+      "name": "cancel-acquisition",
+      "command": [
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/target/release/tile-ripper",
+        "fetch",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-job/cancel-acquisition-iw02qha4/job.json",
+        "[runtime access/output flags omitted from compact receipt]"
+      ],
+      "returncode": 1,
+      "wall_seconds": 0.2425485829990066,
+      "cpu_seconds": 0.11324999999999918,
+      "sampled_process_peak_rss_bytes": 36405248,
+      "interruption_sent": true,
+      "error": "tile-ripper: SWOT job failed at observation original_20240216: execution: acquisition cancelled\n",
+      "output": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-job/cancel-acquisition-iw02qha4/observations.zarr",
+      "output_files": {
+        "files": 0,
+        "logical_bytes": 0,
+        "allocated_bytes": 0,
+        "range_entries": 0
+      },
+      "checkpoint_files": {
+        "files": 56,
+        "logical_bytes": 1817799,
+        "allocated_bytes": 2002944,
+        "range_entries": 50
+      },
+      "binary_sha256": "f621c7a6e20c8ecfb64f49a01873c61a8e13f4d008a1b9c1fce576f01b1bfbb5",
+      "stdout_sha256": "88bb44c24ef050604645bedcc7103dbf92cc3b41491210abbb9eb0184133a59c",
+      "stderr_sha256": "d8dfdcced2bfb8e23512ccc7a17b30f246ae8a9510a68c98aea2f52ccf55460b",
+      "completion_status": "failed",
+      "provisional_observations": 1
+    },
+    {
+      "name": "cancel-restart",
+      "command": [
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/target/release/tile-ripper",
+        "fetch",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-job/cancel-restart-gad2gt97/job.json",
+        "[runtime access/output flags omitted from compact receipt]"
+      ],
+      "returncode": 0,
+      "wall_seconds": 0.18812808300026518,
+      "cpu_seconds": 0.11230699999999993,
+      "sampled_process_peak_rss_bytes": 38830080,
+      "interruption_sent": false,
+      "error": null,
+      "output": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-job/cancel-restart-gad2gt97/observations.zarr",
+      "output_files": {
+        "files": 93,
+        "logical_bytes": 1858870,
+        "allocated_bytes": 2093056,
+        "range_entries": 0
+      },
+      "checkpoint_files": {
+        "files": 59,
+        "logical_bytes": 2947224,
+        "allocated_bytes": 3137536,
+        "range_entries": 53
+      },
+      "binary_sha256": "f621c7a6e20c8ecfb64f49a01873c61a8e13f4d008a1b9c1fce576f01b1bfbb5",
+      "stdout_sha256": "5827997b2c5eb7ea28ff1f88ffd40572cdd0e90d52f1354ba5f96137fcb8cc92",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "completion_status": "complete",
+      "provisional_observations": 0,
+      "science": {
+        "observations": [
+          {
+            "id": "held_out_20240217",
+            "shape": [
+              128,
+              128
+            ],
+            "source_identity": {
+              "url": "https://localhost:54959/source.nc",
+              "version": {
+                "etag": "\"8c583d1085e24a2c438260a206d38131-1\"",
+                "size": 6527265,
+                "metadata": false
+              },
+              "authenticated_scope": {
+                "canonical_url": "https://localhost:54959/source.nc",
+                "resource_origin": "https://localhost:54961",
+                "head_resource_path": "/head/object",
+                "get_resource_path": "/get/object",
+                "login_origin": "https://127.0.0.1:54960",
+                "credential_forwarding": "login origin only; none to archive or signed resource",
+                "cookies": "memory only; exact origin jars; none to signed resource",
+                "conditional_reads": "strong ETag, If-Match, exact Content-Range and Content-Length, identity encoding",
+                "signed_routes": "GET only, advertised expiry minus 30 seconds, at most 60 seconds; HEAD always canonical",
+                "redirect_hop_limit": 8,
+                "refresh_limit": 1,
+                "per_origin_concurrency_limit": 1,
+                "working_reservation_bytes": 1048576,
+                "redirects": [
+                  {
+                    "from": "https://localhost:54959",
+                    "to": "https://127.0.0.1:54960",
+                    "path": "/oauth/authorize"
+                  },
+                  {
+                    "from": "https://127.0.0.1:54960",
+                    "to": "https://localhost:54959",
+                    "path": "/login"
+                  },
+                  {
+                    "from": "https://localhost:54959",
+                    "to": "https://localhost:54959",
+                    "path": "/source.nc"
+                  },
+                  {
+                    "from": "https://localhost:54959",
+                    "to": "https://localhost:54961",
+                    "path": "/head/object"
+                  },
+                  {
+                    "from": "https://localhost:54959",
+                    "to": "https://localhost:54961",
+                    "path": "/get/object"
+                  }
+                ]
+              }
+            },
+            "all_value_bits_masks_coordinates_time_source_identity_equal": true,
+            "xarray_raw_equal": true,
+            "references": [
+              {
+                "reader": "h5py",
+                "versions": {
+                  "reader": "3.12.1",
+                  "hdf5": "1.12.2"
+                },
+                "access": "local_sparse_reference",
+                "prepare_seconds": 0.0018106249990523793,
+                "completion_seconds": 0.030646040999272373,
+                "api_cpu_seconds": 0.030615000000000003,
+                "peak_rss_bytes": 53641216,
+                "value_sha256": [
+                  "d11f636316920d9af1e9813977a657a2e8d3a270a6e0596f5b0a8e5d55f547d6",
+                  "cb11cbb78d1316aff71e900d208768e3adb9ecaac543f7744755e06e6b431818",
+                  "f4416dc5314ae794942d94b1590ead14fe00cc8e086973361fd328bd0e627faa",
+                  "95095335009e74667907264584a8ec34685d352adb0fbdc7e37e41ce133afafc",
+                  "502dbc75b4c0bf8d74fd3cd3910474f1bba4f64b8c126219cd37e65b547cc426"
+                ],
+                "axis_sha256": [
+                  "4c117689b41b7e3d583827d5e3a777c8d0813caeee6af68bf008d268a31e9578",
+                  "a7459240033c04c362112dd4502b6a6da6b7d9a4075467628d7975512d27cb5e"
+                ],
+                "summary": {
+                  "selected_count": 1310,
+                  "wse_sum_m": 38869.788248062134,
+                  "wse_mean_m": 29.671594082490177,
+                  "uncertainty_count": 1310,
+                  "uncertainty_sum_m": 1074.1131531000137,
+                  "mean_pixel_uncertainty_m": 0.8199337046564991,
+                  "contributing_count": 1310,
+                  "contributing_pixel_sum": 13702
+                },
+                "attributes": {
+                  "root": 50,
+                  "wse": 11,
+                  "wse_qual": 12,
+                  "wse_qual_bitwise": 16,
+                  "wse_uncert": 10,
+                  "n_wse_pix": 10,
+                  "y": 13,
+                  "x": 13,
+                  "crs": 20
+                },
+                "interpreted_attribute_checks": 142,
+                "fixed_attribute_shape_and_byte_checks": 148,
+                "guarded_file_reads": 132,
+                "capture_misses": 0,
+                "trace_sha256": "7adf2c2b298a23666918bd55bbd70958c517df34eb0f775e3862505a19993b87"
+              },
+              {
+                "reader": "netcdf4",
+                "versions": {
+                  "reader": "1.7.4",
+                  "netcdf_c": "4.9.3 of Sep 15 2025 23:01:51 $",
+                  "hdf5": "1.14.6"
+                },
+                "access": "local_sparse_reference",
+                "prepare_seconds": 0.0069029169990244554,
+                "completion_seconds": 0.03553233299862768,
+                "api_cpu_seconds": 0.03519799999999999,
+                "peak_rss_bytes": 72810496,
+                "value_sha256": [
+                  "d11f636316920d9af1e9813977a657a2e8d3a270a6e0596f5b0a8e5d55f547d6",
+                  "cb11cbb78d1316aff71e900d208768e3adb9ecaac543f7744755e06e6b431818",
+                  "f4416dc5314ae794942d94b1590ead14fe00cc8e086973361fd328bd0e627faa",
+                  "95095335009e74667907264584a8ec34685d352adb0fbdc7e37e41ce133afafc",
+                  "502dbc75b4c0bf8d74fd3cd3910474f1bba4f64b8c126219cd37e65b547cc426"
+                ],
+                "axis_sha256": [
+                  "4c117689b41b7e3d583827d5e3a777c8d0813caeee6af68bf008d268a31e9578",
+                  "a7459240033c04c362112dd4502b6a6da6b7d9a4075467628d7975512d27cb5e"
+                ],
+                "summary": {
+                  "selected_count": 1310,
+                  "wse_sum_m": 38869.788248062134,
+                  "wse_mean_m": 29.671594082490177,
+                  "uncertainty_count": 1310,
+                  "uncertainty_sum_m": 1074.1131531000137,
+                  "mean_pixel_uncertainty_m": 0.8199337046564991,
+                  "contributing_count": 1310,
+                  "contributing_pixel_sum": 13702
+                },
+                "attributes": {
+                  "root": 49,
+                  "wse": 9,
+                  "wse_qual": 10,
+                  "wse_qual_bitwise": 14,
+                  "wse_uncert": 8,
+                  "n_wse_pix": 8,
+                  "y": 8,
+                  "x": 8,
+                  "crs": 20
+                },
+                "interpreted_attribute_checks": 133,
+                "fixed_attribute_shape_and_byte_checks": 0,
+                "guarded_file_reads": 523,
+                "capture_misses": 0,
+                "trace_sha256": "23f7a3e69692eccd4fac06053d690330de6f4f4b86207d70683d5e0eb52edc81"
+              }
+            ]
+          },
+          {
+            "id": "original_20240216",
+            "shape": [
+              128,
+              128
+            ],
+            "source_identity": {
+              "url": "https://localhost:54964/source.nc",
+              "version": {
+                "etag": "\"3b93eefb90f0167506435fdca199aa69-1\"",
+                "size": 89242093,
+                "metadata": false
+              },
+              "authenticated_scope": {
+                "canonical_url": "https://localhost:54964/source.nc",
+                "resource_origin": "https://localhost:54966",
+                "head_resource_path": "/head/object",
+                "get_resource_path": "/get/object",
+                "login_origin": "https://localhost:54965",
+                "credential_forwarding": "login origin only; none to archive or signed resource",
+                "cookies": "memory only; exact origin jars; none to signed resource",
+                "conditional_reads": "strong ETag, If-Match, exact Content-Range and Content-Length, identity encoding",
+                "signed_routes": "GET only, advertised expiry minus 30 seconds, at most 60 seconds; HEAD always canonical",
+                "redirect_hop_limit": 8,
+                "refresh_limit": 1,
+                "per_origin_concurrency_limit": 1,
+                "working_reservation_bytes": 1048576,
+                "redirects": [
+                  {
+                    "from": "https://localhost:54964",
+                    "to": "https://localhost:54965",
+                    "path": "/oauth/authorize"
+                  },
+                  {
+                    "from": "https://localhost:54965",
+                    "to": "https://localhost:54964",
+                    "path": "/login"
+                  },
+                  {
+                    "from": "https://localhost:54964",
+                    "to": "https://localhost:54964",
+                    "path": "/source.nc"
+                  },
+                  {
+                    "from": "https://localhost:54964",
+                    "to": "https://localhost:54966",
+                    "path": "/head/object"
+                  },
+                  {
+                    "from": "https://localhost:54964",
+                    "to": "https://localhost:54966",
+                    "path": "/get/object"
+                  }
+                ]
+              }
+            },
+            "all_value_bits_masks_coordinates_time_source_identity_equal": true,
+            "xarray_raw_equal": true,
+            "references": [
+              {
+                "reader": "h5py",
+                "versions": {
+                  "reader": "3.12.1",
+                  "hdf5": "1.12.2"
+                },
+                "access": "local_sparse_reference",
+                "prepare_seconds": 0.0022653329997410765,
+                "completion_seconds": 0.03572641599930648,
+                "api_cpu_seconds": 0.03566899999999998,
+                "peak_rss_bytes": 54919168,
+                "value_sha256": [
+                  "5973313fdb358b88285b1158a38fe45cfc78f69e5a1047c6c06238bee50d1295",
+                  "f053093b1f3210820c79fe47762b625156b367fde0ce07c1afb4955a191e65fc",
+                  "4df6b42f285d92dfb6b80ea193c213f98ed5cd82fd6c440e6d4c58495fd7b50d",
+                  "e5f1c42683118ea46faad551ef76363ae01a438b2baf3efdaf98ff7cf940a7ae",
+                  "1fac51871cafe0de5e6312eba51a64ec3109501572c2395c0b444860aee6f919"
+                ],
+                "axis_sha256": [
+                  "b5a83038bc717017d7184cfe4187f371fc13eebef2872437e5bc580bc1a14363",
+                  "1fec4444afa5239a37f6f8afa8d2aae338365f1a0b580b9dfb025826d8e3c91f"
+                ],
+                "summary": {
+                  "selected_count": 3076,
+                  "wse_sum_m": 847289.1619262695,
+                  "wse_mean_m": 275.4516131099706,
+                  "uncertainty_count": 3076,
+                  "uncertainty_sum_m": 1167.924199718982,
+                  "mean_pixel_uncertainty_m": 0.3796892716901762,
+                  "contributing_count": 3076,
+                  "contributing_pixel_sum": 21757
+                },
+                "attributes": {
+                  "root": 50,
+                  "wse": 11,
+                  "wse_qual": 12,
+                  "wse_qual_bitwise": 16,
+                  "wse_uncert": 10,
+                  "n_wse_pix": 10,
+                  "y": 13,
+                  "x": 13,
+                  "crs": 20
+                },
+                "interpreted_attribute_checks": 142,
+                "fixed_attribute_shape_and_byte_checks": 148,
+                "guarded_file_reads": 133,
+                "capture_misses": 0,
+                "trace_sha256": "417e3343180cfe2db0e5e7044db04e5726033c33c84d6546e12491a47f4196c9"
+              },
+              {
+                "reader": "netcdf4",
+                "versions": {
+                  "reader": "1.7.4",
+                  "netcdf_c": "4.9.3 of Sep 15 2025 23:01:51 $",
+                  "hdf5": "1.14.6"
+                },
+                "access": "local_sparse_reference",
+                "prepare_seconds": 0.011782042000049842,
+                "completion_seconds": 0.04809620800006087,
+                "api_cpu_seconds": 0.04020999999999998,
+                "peak_rss_bytes": 71614464,
+                "value_sha256": [
+                  "5973313fdb358b88285b1158a38fe45cfc78f69e5a1047c6c06238bee50d1295",
+                  "f053093b1f3210820c79fe47762b625156b367fde0ce07c1afb4955a191e65fc",
+                  "4df6b42f285d92dfb6b80ea193c213f98ed5cd82fd6c440e6d4c58495fd7b50d",
+                  "e5f1c42683118ea46faad551ef76363ae01a438b2baf3efdaf98ff7cf940a7ae",
+                  "1fac51871cafe0de5e6312eba51a64ec3109501572c2395c0b444860aee6f919"
+                ],
+                "axis_sha256": [
+                  "b5a83038bc717017d7184cfe4187f371fc13eebef2872437e5bc580bc1a14363",
+                  "1fec4444afa5239a37f6f8afa8d2aae338365f1a0b580b9dfb025826d8e3c91f"
+                ],
+                "summary": {
+                  "selected_count": 3076,
+                  "wse_sum_m": 847289.1619262695,
+                  "wse_mean_m": 275.4516131099706,
+                  "uncertainty_count": 3076,
+                  "uncertainty_sum_m": 1167.924199718982,
+                  "mean_pixel_uncertainty_m": 0.3796892716901762,
+                  "contributing_count": 3076,
+                  "contributing_pixel_sum": 21757
+                },
+                "attributes": {
+                  "root": 49,
+                  "wse": 9,
+                  "wse_qual": 10,
+                  "wse_qual_bitwise": 14,
+                  "wse_uncert": 8,
+                  "n_wse_pix": 8,
+                  "y": 8,
+                  "x": 8,
+                  "crs": 20
+                },
+                "interpreted_attribute_checks": 133,
+                "fixed_attribute_shape_and_byte_checks": 0,
+                "guarded_file_reads": 524,
+                "capture_misses": 0,
+                "trace_sha256": "a6e36c24a522e66bd54ef8582ae2f75463247940953b27dd839421dfb8678605"
+              }
+            ]
+          }
+        ],
+        "zarr_python": "2.18.3",
+        "xarray": "2025.6.1",
+        "numpy": "2.0.2",
+        "all_passed": true
+      }
+    },
+    {
+      "name": "small-aggregate-memory",
+      "command": [
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/target/release/tile-ripper",
+        "fetch",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-job/small-aggregate-memory-tt84bk9c/job.json",
+        "[runtime access/output flags omitted from compact receipt]"
+      ],
+      "returncode": 1,
+      "wall_seconds": 0.010300083999027265,
+      "cpu_seconds": 0.004674000000000067,
+      "sampled_process_peak_rss_bytes": 5210112,
+      "interruption_sent": false,
+      "error": "tile-ripper: job aggregate memory admission failed for held_out_20240217: source request cap 67108864 + writer 593920 + job metadata/receipts 33554432 = 101257216 bytes > aggregate memory_bytes 67108864; working reservations, not RSS\n",
+      "output": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-job/small-aggregate-memory-tt84bk9c/observations.zarr",
+      "output_files": {
+        "files": 0,
+        "logical_bytes": 0,
+        "allocated_bytes": 0,
+        "range_entries": 0
+      },
+      "checkpoint_files": null,
+      "binary_sha256": "f621c7a6e20c8ecfb64f49a01873c61a8e13f4d008a1b9c1fce576f01b1bfbb5",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "376cffeb2b5ebb8c8571f4cf922cfd54ab3bb769976de6593351bda048d5c413",
+      "completion_status": null,
+      "provisional_observations": 0
+    },
+    {
+      "name": "small-aggregate-disk",
+      "command": [
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/target/release/tile-ripper",
+        "fetch",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-job/small-aggregate-disk-icutn6if/job.json",
+        "[runtime access/output flags omitted from compact receipt]"
+      ],
+      "returncode": 1,
+      "wall_seconds": 0.20322650000161957,
+      "cpu_seconds": 0.09709400000000001,
+      "sampled_process_peak_rss_bytes": 35209216,
+      "interruption_sent": false,
+      "error": "tile-ripper: SWOT job failed at observation original_20240216: execution: checkpoint disk byte or entry count limit reached\n",
+      "output": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-job/small-aggregate-disk-icutn6if/observations.zarr",
+      "output_files": {
+        "files": 0,
+        "logical_bytes": 0,
+        "allocated_bytes": 0,
+        "range_entries": 0
+      },
+      "checkpoint_files": {
+        "files": 54,
+        "logical_bytes": 814474,
+        "allocated_bytes": 995328,
+        "range_entries": 48
+      },
+      "binary_sha256": "f621c7a6e20c8ecfb64f49a01873c61a8e13f4d008a1b9c1fce576f01b1bfbb5",
+      "stdout_sha256": "672b4daf427f53cf1491e73e873ed560a57e97f5ca6ede3afa9da52cb189ab5c",
+      "stderr_sha256": "d6e21475d85b8fb587f4d2ec52a92cba4bcd159e101d5d302066c368fd5fbe6e",
+      "completion_status": "failed",
+      "provisional_observations": 1
+    },
+    {
+      "name": "small-aggregate-entries",
+      "command": [
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/target/release/tile-ripper",
+        "fetch",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-job/small-aggregate-entries-jcyztcyt/job.json",
+        "[runtime access/output flags omitted from compact receipt]"
+      ],
+      "returncode": 1,
+      "wall_seconds": 0.0537609999992128,
+      "cpu_seconds": 0.03637600000000085,
+      "sampled_process_peak_rss_bytes": 17465344,
+      "interruption_sent": false,
+      "error": "tile-ripper: SWOT job failed at observation held_out_20240217: prepare: invalid data: checkpoint disk byte or entry count limit reached\n",
+      "output": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-job/small-aggregate-entries-jcyztcyt/observations.zarr",
+      "output_files": {
+        "files": 0,
+        "logical_bytes": 0,
+        "allocated_bytes": 0,
+        "range_entries": 0
+      },
+      "checkpoint_files": {
+        "files": 6,
+        "logical_bytes": 7660,
+        "allocated_bytes": 16384,
+        "range_entries": 1
+      },
+      "binary_sha256": "f621c7a6e20c8ecfb64f49a01873c61a8e13f4d008a1b9c1fce576f01b1bfbb5",
+      "stdout_sha256": "29c2c02eedc7ded9c5e663cc18c72f0890c626b916630b447bed3883f95592a3",
+      "stderr_sha256": "0fdbb1f22f52ddc8cf58bedff2e514cb387586919aac337f2890a946bc524751",
+      "completion_status": "failed",
+      "provisional_observations": 0
+    },
+    {
+      "name": "lowered-disk-retained-inventory",
+      "command": [
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/target/release/tile-ripper",
+        "fetch",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-job/lowered-disk-retained-inventory-0tmcbj0p/job.json",
+        "[runtime access/output flags omitted from compact receipt]"
+      ],
+      "returncode": 1,
+      "wall_seconds": 0.01260454099974595,
+      "cpu_seconds": 0.006688999999999279,
+      "sampled_process_peak_rss_bytes": 9437184,
+      "interruption_sent": false,
+      "error": "tile-ripper: retained source checkpoint exceeds its share of aggregate disk/entry limits\n",
+      "output": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-job/lowered-disk-retained-inventory-0tmcbj0p/observations.zarr",
+      "output_files": {
+        "files": 0,
+        "logical_bytes": 0,
+        "allocated_bytes": 0,
+        "range_entries": 0
+      },
+      "checkpoint_files": {
+        "files": 59,
+        "logical_bytes": 2947224,
+        "allocated_bytes": 3137536,
+        "range_entries": 53
+      },
+      "binary_sha256": "f621c7a6e20c8ecfb64f49a01873c61a8e13f4d008a1b9c1fce576f01b1bfbb5",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "9f9240c4931ba37ba3e68a008026f0fcbb7918aff056c5c73a7225b448e047bf",
+      "completion_status": null,
+      "provisional_observations": 0
+    },
+    {
+      "name": "checkpoint-policy-mismatch",
+      "command": [
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/target/release/tile-ripper",
+        "fetch",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-job/checkpoint-policy-mismatch-f01k4i4n/job.json",
+        "[runtime access/output flags omitted from compact receipt]"
+      ],
+      "returncode": 1,
+      "wall_seconds": 0.010512458000448532,
+      "cpu_seconds": 0.005215000000000414,
+      "sampled_process_peak_rss_bytes": 5488640,
+      "interruption_sent": false,
+      "error": "tile-ripper: checkpoint job acquisition set/order/policy mismatch; choose a fresh checkpoint directory\n",
+      "output": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-job/checkpoint-policy-mismatch-f01k4i4n/observations.zarr",
+      "output_files": {
+        "files": 0,
+        "logical_bytes": 0,
+        "allocated_bytes": 0,
+        "range_entries": 0
+      },
+      "checkpoint_files": {
+        "files": 59,
+        "logical_bytes": 2947224,
+        "allocated_bytes": 3137536,
+        "range_entries": 53
+      },
+      "binary_sha256": "f621c7a6e20c8ecfb64f49a01873c61a8e13f4d008a1b9c1fce576f01b1bfbb5",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "6541a7069a95a900817142f150168aef2188b9d1bdb48e22c2f5f72433cd41ce",
+      "completion_status": null,
+      "provisional_observations": 0
+    },
+    {
+      "name": "different-dimensions-strides",
+      "command": [
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/target/release/tile-ripper",
+        "fetch",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-job/different-dimensions-strides-3g33tl6x/job.json",
+        "[runtime access/output flags omitted from compact receipt]"
+      ],
+      "returncode": 0,
+      "wall_seconds": 0.2632302920010261,
+      "cpu_seconds": 0.1189659999999999,
+      "sampled_process_peak_rss_bytes": 38895616,
+      "interruption_sent": false,
+      "error": null,
+      "output": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-job/different-dimensions-strides-3g33tl6x/observations.zarr",
+      "output_files": {
+        "files": 93,
+        "logical_bytes": 1358206,
+        "allocated_bytes": 1617920,
+        "range_entries": 0
+      },
+      "checkpoint_files": null,
+      "binary_sha256": "f621c7a6e20c8ecfb64f49a01873c61a8e13f4d008a1b9c1fce576f01b1bfbb5",
+      "stdout_sha256": "28060273dc7ae5982e983e4a48b7dfc7b0a3831aef52d06e9704399775f4c16f",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "completion_status": "complete",
+      "provisional_observations": 0,
+      "science": {
+        "observations": [
+          {
+            "id": "held_out_20240217",
+            "shape": [
+              63,
+              45
+            ],
+            "source_identity": {
+              "url": "https://localhost:54959/source.nc",
+              "version": {
+                "etag": "\"8c583d1085e24a2c438260a206d38131-1\"",
+                "size": 6527265,
+                "metadata": false
+              },
+              "authenticated_scope": {
+                "canonical_url": "https://localhost:54959/source.nc",
+                "resource_origin": "https://localhost:54961",
+                "head_resource_path": "/head/object",
+                "get_resource_path": "/get/object",
+                "login_origin": "https://127.0.0.1:54960",
+                "credential_forwarding": "login origin only; none to archive or signed resource",
+                "cookies": "memory only; exact origin jars; none to signed resource",
+                "conditional_reads": "strong ETag, If-Match, exact Content-Range and Content-Length, identity encoding",
+                "signed_routes": "GET only, advertised expiry minus 30 seconds, at most 60 seconds; HEAD always canonical",
+                "redirect_hop_limit": 8,
+                "refresh_limit": 1,
+                "per_origin_concurrency_limit": 1,
+                "working_reservation_bytes": 1048576,
+                "redirects": [
+                  {
+                    "from": "https://localhost:54959",
+                    "to": "https://127.0.0.1:54960",
+                    "path": "/oauth/authorize"
+                  },
+                  {
+                    "from": "https://127.0.0.1:54960",
+                    "to": "https://localhost:54959",
+                    "path": "/login"
+                  },
+                  {
+                    "from": "https://localhost:54959",
+                    "to": "https://localhost:54959",
+                    "path": "/source.nc"
+                  },
+                  {
+                    "from": "https://localhost:54959",
+                    "to": "https://localhost:54961",
+                    "path": "/head/object"
+                  },
+                  {
+                    "from": "https://localhost:54959",
+                    "to": "https://localhost:54961",
+                    "path": "/get/object"
+                  }
+                ]
+              }
+            },
+            "all_value_bits_masks_coordinates_time_source_identity_equal": true,
+            "xarray_raw_equal": true,
+            "references": [
+              {
+                "reader": "h5py",
+                "versions": {
+                  "reader": "3.12.1",
+                  "hdf5": "1.12.2"
+                },
+                "access": "local_sparse_reference",
+                "prepare_seconds": 0.0018593330005387543,
+                "completion_seconds": 0.030653667001388385,
+                "api_cpu_seconds": 0.030585,
+                "peak_rss_bytes": 52183040,
+                "value_sha256": [
+                  "5ae8a6efa3a47cddd8c75ccb8abafa4a33a3c789c792fda0b99f255839e5f5a6",
+                  "7b4b77869b29953d8ba1821f4c108de2e5a8b76d915d75caca29c3feb07e0a01",
+                  "277e6c31a2729a09afbfd82e0d7c0127b59d6c6d3ceee1d410f992cb3cd56d40",
+                  "d74252477fca5a219f5c7c3b441ffac5fc7fec9bc620d4afeb7c23ffe8413110",
+                  "99b6454717404d3a2bc3e50bc791aa4bab1e672f2566221ea7a0dde6c392001b"
+                ],
+                "axis_sha256": [
+                  "95a41be47ecccf87ebd7a4032160918830bf38563e5261352a00e8692636fd38",
+                  "9f1aae95c557d48b8bd0d24056d626badef34e18443819b77666a866f4c9f9bf"
+                ],
+                "summary": {
+                  "selected_count": 162,
+                  "wse_sum_m": 4545.665761947632,
+                  "wse_mean_m": 28.059665197207604,
+                  "uncertainty_count": 162,
+                  "uncertainty_sum_m": 140.750320404768,
+                  "mean_pixel_uncertainty_m": 0.868829138301037,
+                  "contributing_count": 162,
+                  "contributing_pixel_sum": 1869
+                },
+                "attributes": {
+                  "root": 50,
+                  "wse": 11,
+                  "wse_qual": 12,
+                  "wse_qual_bitwise": 16,
+                  "wse_uncert": 10,
+                  "n_wse_pix": 10,
+                  "y": 13,
+                  "x": 13,
+                  "crs": 20
+                },
+                "interpreted_attribute_checks": 142,
+                "fixed_attribute_shape_and_byte_checks": 148,
+                "guarded_file_reads": 132,
+                "capture_misses": 0,
+                "trace_sha256": "7adf2c2b298a23666918bd55bbd70958c517df34eb0f775e3862505a19993b87"
+              },
+              {
+                "reader": "netcdf4",
+                "versions": {
+                  "reader": "1.7.4",
+                  "netcdf_c": "4.9.3 of Sep 15 2025 23:01:51 $",
+                  "hdf5": "1.14.6"
+                },
+                "access": "local_sparse_reference",
+                "prepare_seconds": 0.007202333999885013,
+                "completion_seconds": 0.0388802500001475,
+                "api_cpu_seconds": 0.03886700000000001,
+                "peak_rss_bytes": 71974912,
+                "value_sha256": [
+                  "5ae8a6efa3a47cddd8c75ccb8abafa4a33a3c789c792fda0b99f255839e5f5a6",
+                  "7b4b77869b29953d8ba1821f4c108de2e5a8b76d915d75caca29c3feb07e0a01",
+                  "277e6c31a2729a09afbfd82e0d7c0127b59d6c6d3ceee1d410f992cb3cd56d40",
+                  "d74252477fca5a219f5c7c3b441ffac5fc7fec9bc620d4afeb7c23ffe8413110",
+                  "99b6454717404d3a2bc3e50bc791aa4bab1e672f2566221ea7a0dde6c392001b"
+                ],
+                "axis_sha256": [
+                  "95a41be47ecccf87ebd7a4032160918830bf38563e5261352a00e8692636fd38",
+                  "9f1aae95c557d48b8bd0d24056d626badef34e18443819b77666a866f4c9f9bf"
+                ],
+                "summary": {
+                  "selected_count": 162,
+                  "wse_sum_m": 4545.665761947632,
+                  "wse_mean_m": 28.059665197207604,
+                  "uncertainty_count": 162,
+                  "uncertainty_sum_m": 140.750320404768,
+                  "mean_pixel_uncertainty_m": 0.868829138301037,
+                  "contributing_count": 162,
+                  "contributing_pixel_sum": 1869
+                },
+                "attributes": {
+                  "root": 49,
+                  "wse": 9,
+                  "wse_qual": 10,
+                  "wse_qual_bitwise": 14,
+                  "wse_uncert": 8,
+                  "n_wse_pix": 8,
+                  "y": 8,
+                  "x": 8,
+                  "crs": 20
+                },
+                "interpreted_attribute_checks": 133,
+                "fixed_attribute_shape_and_byte_checks": 0,
+                "guarded_file_reads": 523,
+                "capture_misses": 0,
+                "trace_sha256": "23f7a3e69692eccd4fac06053d690330de6f4f4b86207d70683d5e0eb52edc81"
+              }
+            ]
+          },
+          {
+            "id": "original_20240216",
+            "shape": [
+              96,
+              80
+            ],
+            "source_identity": {
+              "url": "https://localhost:54964/source.nc",
+              "version": {
+                "etag": "\"3b93eefb90f0167506435fdca199aa69-1\"",
+                "size": 89242093,
+                "metadata": false
+              },
+              "authenticated_scope": {
+                "canonical_url": "https://localhost:54964/source.nc",
+                "resource_origin": "https://localhost:54966",
+                "head_resource_path": "/head/object",
+                "get_resource_path": "/get/object",
+                "login_origin": "https://localhost:54965",
+                "credential_forwarding": "login origin only; none to archive or signed resource",
+                "cookies": "memory only; exact origin jars; none to signed resource",
+                "conditional_reads": "strong ETag, If-Match, exact Content-Range and Content-Length, identity encoding",
+                "signed_routes": "GET only, advertised expiry minus 30 seconds, at most 60 seconds; HEAD always canonical",
+                "redirect_hop_limit": 8,
+                "refresh_limit": 1,
+                "per_origin_concurrency_limit": 1,
+                "working_reservation_bytes": 1048576,
+                "redirects": [
+                  {
+                    "from": "https://localhost:54964",
+                    "to": "https://localhost:54965",
+                    "path": "/oauth/authorize"
+                  },
+                  {
+                    "from": "https://localhost:54965",
+                    "to": "https://localhost:54964",
+                    "path": "/login"
+                  },
+                  {
+                    "from": "https://localhost:54964",
+                    "to": "https://localhost:54964",
+                    "path": "/source.nc"
+                  },
+                  {
+                    "from": "https://localhost:54964",
+                    "to": "https://localhost:54966",
+                    "path": "/head/object"
+                  },
+                  {
+                    "from": "https://localhost:54964",
+                    "to": "https://localhost:54966",
+                    "path": "/get/object"
+                  }
+                ]
+              }
+            },
+            "all_value_bits_masks_coordinates_time_source_identity_equal": true,
+            "xarray_raw_equal": true,
+            "references": [
+              {
+                "reader": "h5py",
+                "versions": {
+                  "reader": "3.12.1",
+                  "hdf5": "1.12.2"
+                },
+                "access": "local_sparse_reference",
+                "prepare_seconds": 0.0018906249988503987,
+                "completion_seconds": 0.034563332999823615,
+                "api_cpu_seconds": 0.03447,
+                "peak_rss_bytes": 54001664,
+                "value_sha256": [
+                  "79d2a3f5c26e300dbb67c54d5315879a47de38ebbd95dbf822cc3c4dc7889016",
+                  "4a10b7ffc4dc1d4f6ac1529a816402ca1f12c8f31e5f49ca1f75709b7703dc92",
+                  "1e80a474990c84b449e6c4b57934630c3cedca7088ce7a615333976621bd1d8e",
+                  "a1745c40f11680fe693f92df2203a4d254b48243b2518815a0394beeb0360734",
+                  "5d6b4162d65db496ab9e15de0ce3c11101d71fb4bfa47a2940b189ea9f72c2ec"
+                ],
+                "axis_sha256": [
+                  "28433194866b07f8405d1aff9d4700dc3c2eef7bcf4f062a02e650a4d4a7a464",
+                  "fe2d84080c7ebaeffcd9f57b17166833baef03b11b211ed83622746b3e88ebac"
+                ],
+                "summary": {
+                  "selected_count": 1589,
+                  "wse_sum_m": 493352.5361480713,
+                  "wse_mean_m": 310.47988429708704,
+                  "uncertainty_count": 1589,
+                  "uncertainty_sum_m": 609.0011796951294,
+                  "mean_pixel_uncertainty_m": 0.38326065430782214,
+                  "contributing_count": 1589,
+                  "contributing_pixel_sum": 12817
+                },
+                "attributes": {
+                  "root": 50,
+                  "wse": 11,
+                  "wse_qual": 12,
+                  "wse_qual_bitwise": 16,
+                  "wse_uncert": 10,
+                  "n_wse_pix": 10,
+                  "y": 13,
+                  "x": 13,
+                  "crs": 20
+                },
+                "interpreted_attribute_checks": 142,
+                "fixed_attribute_shape_and_byte_checks": 148,
+                "guarded_file_reads": 133,
+                "capture_misses": 0,
+                "trace_sha256": "417e3343180cfe2db0e5e7044db04e5726033c33c84d6546e12491a47f4196c9"
+              },
+              {
+                "reader": "netcdf4",
+                "versions": {
+                  "reader": "1.7.4",
+                  "netcdf_c": "4.9.3 of Sep 15 2025 23:01:51 $",
+                  "hdf5": "1.14.6"
+                },
+                "access": "local_sparse_reference",
+                "prepare_seconds": 0.0078042079985607415,
+                "completion_seconds": 0.0410513329989044,
+                "api_cpu_seconds": 0.04088499999999999,
+                "peak_rss_bytes": 70369280,
+                "value_sha256": [
+                  "79d2a3f5c26e300dbb67c54d5315879a47de38ebbd95dbf822cc3c4dc7889016",
+                  "4a10b7ffc4dc1d4f6ac1529a816402ca1f12c8f31e5f49ca1f75709b7703dc92",
+                  "1e80a474990c84b449e6c4b57934630c3cedca7088ce7a615333976621bd1d8e",
+                  "a1745c40f11680fe693f92df2203a4d254b48243b2518815a0394beeb0360734",
+                  "5d6b4162d65db496ab9e15de0ce3c11101d71fb4bfa47a2940b189ea9f72c2ec"
+                ],
+                "axis_sha256": [
+                  "28433194866b07f8405d1aff9d4700dc3c2eef7bcf4f062a02e650a4d4a7a464",
+                  "fe2d84080c7ebaeffcd9f57b17166833baef03b11b211ed83622746b3e88ebac"
+                ],
+                "summary": {
+                  "selected_count": 1589,
+                  "wse_sum_m": 493352.5361480713,
+                  "wse_mean_m": 310.47988429708704,
+                  "uncertainty_count": 1589,
+                  "uncertainty_sum_m": 609.0011796951294,
+                  "mean_pixel_uncertainty_m": 0.38326065430782214,
+                  "contributing_count": 1589,
+                  "contributing_pixel_sum": 12817
+                },
+                "attributes": {
+                  "root": 49,
+                  "wse": 9,
+                  "wse_qual": 10,
+                  "wse_qual_bitwise": 14,
+                  "wse_uncert": 8,
+                  "n_wse_pix": 8,
+                  "y": 8,
+                  "x": 8,
+                  "crs": 20
+                },
+                "interpreted_attribute_checks": 133,
+                "fixed_attribute_shape_and_byte_checks": 0,
+                "guarded_file_reads": 524,
+                "capture_misses": 0,
+                "trace_sha256": "a6e36c24a522e66bd54ef8582ae2f75463247940953b27dd839421dfb8678605"
+              }
+            ]
+          }
+        ],
+        "zarr_python": "2.18.3",
+        "xarray": "2025.6.1",
+        "numpy": "2.0.2",
+        "all_passed": true
+      }
+    },
+    {
+      "name": "all-invalid-nonempty",
+      "command": [
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/target/release/tile-ripper",
+        "fetch",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-job/all-invalid-nonempty-sguuj0fu/job.json",
+        "[runtime access/output flags omitted from compact receipt]"
+      ],
+      "returncode": 0,
+      "wall_seconds": 0.15594454200072505,
+      "cpu_seconds": 0.07060900000000059,
+      "sampled_process_peak_rss_bytes": 33374208,
+      "interruption_sent": false,
+      "error": null,
+      "output": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-job/all-invalid-nonempty-sguuj0fu/observations.zarr",
+      "output_files": {
+        "files": 49,
+        "logical_bytes": 928101,
+        "allocated_bytes": 1056768,
+        "range_entries": 0
+      },
+      "checkpoint_files": null,
+      "binary_sha256": "f621c7a6e20c8ecfb64f49a01873c61a8e13f4d008a1b9c1fce576f01b1bfbb5",
+      "stdout_sha256": "3062e4430ff6660c6815d40ab1f3f21a603c45f1254490f7ea6c331ae5ad7b6d",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "completion_status": "complete",
+      "provisional_observations": 0,
+      "science": {
+        "observations": [
+          {
+            "id": "held_out_20240217",
+            "shape": [
+              128,
+              128
+            ],
+            "source_identity": {
+              "url": "https://localhost:54959/source.nc",
+              "version": {
+                "etag": "\"8c583d1085e24a2c438260a206d38131-1\"",
+                "size": 6527265,
+                "metadata": false
+              },
+              "authenticated_scope": {
+                "canonical_url": "https://localhost:54959/source.nc",
+                "resource_origin": "https://localhost:54961",
+                "head_resource_path": "/head/object",
+                "get_resource_path": "/get/object",
+                "login_origin": "https://127.0.0.1:54960",
+                "credential_forwarding": "login origin only; none to archive or signed resource",
+                "cookies": "memory only; exact origin jars; none to signed resource",
+                "conditional_reads": "strong ETag, If-Match, exact Content-Range and Content-Length, identity encoding",
+                "signed_routes": "GET only, advertised expiry minus 30 seconds, at most 60 seconds; HEAD always canonical",
+                "redirect_hop_limit": 8,
+                "refresh_limit": 1,
+                "per_origin_concurrency_limit": 1,
+                "working_reservation_bytes": 1048576,
+                "redirects": [
+                  {
+                    "from": "https://localhost:54959",
+                    "to": "https://127.0.0.1:54960",
+                    "path": "/oauth/authorize"
+                  },
+                  {
+                    "from": "https://127.0.0.1:54960",
+                    "to": "https://localhost:54959",
+                    "path": "/login"
+                  },
+                  {
+                    "from": "https://localhost:54959",
+                    "to": "https://localhost:54959",
+                    "path": "/source.nc"
+                  },
+                  {
+                    "from": "https://localhost:54959",
+                    "to": "https://localhost:54961",
+                    "path": "/head/object"
+                  },
+                  {
+                    "from": "https://localhost:54959",
+                    "to": "https://localhost:54961",
+                    "path": "/get/object"
+                  }
+                ]
+              }
+            },
+            "all_value_bits_masks_coordinates_time_source_identity_equal": true,
+            "xarray_raw_equal": true,
+            "references": [
+              {
+                "reader": "h5py",
+                "versions": {
+                  "reader": "3.12.1",
+                  "hdf5": "1.12.2"
+                },
+                "access": "local_sparse_reference",
+                "prepare_seconds": 0.0020676660005847225,
+                "completion_seconds": 0.03436974999931408,
+                "api_cpu_seconds": 0.034274,
+                "peak_rss_bytes": 53805056,
+                "value_sha256": [
+                  "e48f2822960f87fed5a5ddd859235dea3ec39f390b5e3b5fd0e47ac36ad6a7e4",
+                  "467cc9ea2a7a0e20a11a77ba37179a42ca9de21d8155c14ca5325d56dba1e2c4",
+                  "5c44b6ec7c6751ea8149f4af5b034939cacb411258524d9e2c55c626c6678b21",
+                  "e48f2822960f87fed5a5ddd859235dea3ec39f390b5e3b5fd0e47ac36ad6a7e4",
+                  "de2f256064a0af797747c2b97505dc0b9f3df0de4f489eac731c23ae9ca9cc31"
+                ],
+                "axis_sha256": [
+                  "d7f3b5d1e95d69f29c139b21bb0251285d597170d0949da15799f04c73c4fed2",
+                  "3f0732132b96b9bf142d79b7ab53a1c1e98159f5e5eb88276a652738d6b6aa01"
+                ],
+                "summary": {
+                  "selected_count": 0,
+                  "wse_sum_m": 0.0,
+                  "wse_mean_m": null,
+                  "uncertainty_count": 0,
+                  "uncertainty_sum_m": 0.0,
+                  "mean_pixel_uncertainty_m": null,
+                  "contributing_count": 0,
+                  "contributing_pixel_sum": 0
+                },
+                "attributes": {
+                  "root": 50,
+                  "wse": 11,
+                  "wse_qual": 12,
+                  "wse_qual_bitwise": 16,
+                  "wse_uncert": 10,
+                  "n_wse_pix": 10,
+                  "y": 13,
+                  "x": 13,
+                  "crs": 20
+                },
+                "interpreted_attribute_checks": 142,
+                "fixed_attribute_shape_and_byte_checks": 148,
+                "guarded_file_reads": 132,
+                "capture_misses": 0,
+                "trace_sha256": "7adf2c2b298a23666918bd55bbd70958c517df34eb0f775e3862505a19993b87"
+              },
+              {
+                "reader": "netcdf4",
+                "versions": {
+                  "reader": "1.7.4",
+                  "netcdf_c": "4.9.3 of Sep 15 2025 23:01:51 $",
+                  "hdf5": "1.14.6"
+                },
+                "access": "local_sparse_reference",
+                "prepare_seconds": 0.007291333000466693,
+                "completion_seconds": 0.03891570800078625,
+                "api_cpu_seconds": 0.03885599999999999,
+                "peak_rss_bytes": 73547776,
+                "value_sha256": [
+                  "e48f2822960f87fed5a5ddd859235dea3ec39f390b5e3b5fd0e47ac36ad6a7e4",
+                  "467cc9ea2a7a0e20a11a77ba37179a42ca9de21d8155c14ca5325d56dba1e2c4",
+                  "5c44b6ec7c6751ea8149f4af5b034939cacb411258524d9e2c55c626c6678b21",
+                  "e48f2822960f87fed5a5ddd859235dea3ec39f390b5e3b5fd0e47ac36ad6a7e4",
+                  "de2f256064a0af797747c2b97505dc0b9f3df0de4f489eac731c23ae9ca9cc31"
+                ],
+                "axis_sha256": [
+                  "d7f3b5d1e95d69f29c139b21bb0251285d597170d0949da15799f04c73c4fed2",
+                  "3f0732132b96b9bf142d79b7ab53a1c1e98159f5e5eb88276a652738d6b6aa01"
+                ],
+                "summary": {
+                  "selected_count": 0,
+                  "wse_sum_m": 0.0,
+                  "wse_mean_m": null,
+                  "uncertainty_count": 0,
+                  "uncertainty_sum_m": 0.0,
+                  "mean_pixel_uncertainty_m": null,
+                  "contributing_count": 0,
+                  "contributing_pixel_sum": 0
+                },
+                "attributes": {
+                  "root": 49,
+                  "wse": 9,
+                  "wse_qual": 10,
+                  "wse_qual_bitwise": 14,
+                  "wse_uncert": 8,
+                  "n_wse_pix": 8,
+                  "y": 8,
+                  "x": 8,
+                  "crs": 20
+                },
+                "interpreted_attribute_checks": 133,
+                "fixed_attribute_shape_and_byte_checks": 0,
+                "guarded_file_reads": 523,
+                "capture_misses": 0,
+                "trace_sha256": "23f7a3e69692eccd4fac06053d690330de6f4f4b86207d70683d5e0eb52edc81"
+              }
+            ]
+          }
+        ],
+        "zarr_python": "2.18.3",
+        "xarray": "2025.6.1",
+        "numpy": "2.0.2",
+        "all_passed": true
+      }
+    },
+    {
+      "name": "raw-nan-payloads-signed-zero-high-uint32-packing-time",
+      "command": [
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/target/release/tile-ripper",
+        "fetch",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-job/raw-nan-payloads-signed-zero-high-uint32-packing-time-6vv3_c55/job.json",
+        "[runtime access/output flags omitted from compact receipt]"
+      ],
+      "returncode": 0,
+      "wall_seconds": 0.06165220799994131,
+      "cpu_seconds": 0.053741999999999956,
+      "sampled_process_peak_rss_bytes": 18464768,
+      "interruption_sent": false,
+      "error": null,
+      "output": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-job/raw-nan-payloads-signed-zero-high-uint32-packing-time-6vv3_c55/observations.zarr",
+      "output_files": {
+        "files": 87,
+        "logical_bytes": 270456,
+        "allocated_bytes": 593920,
+        "range_entries": 0
+      },
+      "checkpoint_files": null,
+      "binary_sha256": "f621c7a6e20c8ecfb64f49a01873c61a8e13f4d008a1b9c1fce576f01b1bfbb5",
+      "stdout_sha256": "0b47901c2982c3772a3f1b5c4001b6badfd9956f0d8429b7fa390c34d7680b35",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "completion_status": "complete",
+      "provisional_observations": 0,
+      "science": {
+        "observations": [
+          {
+            "id": "numeric_bit_patterns",
+            "shape": [
+              12,
+              10
+            ],
+            "source_identity": {
+              "kind": "local_pinned_stat",
+              "path": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-job/numeric-fixture-3vy_pefz/source.h5",
+              "version": {
+                "size": 39646,
+                "modified": "1792784880943653402",
+                "unix": [
+                  16777234,
+                  707379929,
+                  1792784880,
+                  943653402
+                ]
+              }
+            },
+            "all_value_bits_masks_coordinates_time_source_identity_equal": true,
+            "xarray_raw_equal": true,
+            "references": [
+              {
+                "reader": "h5py",
+                "versions": {
+                  "reader": "3.12.1",
+                  "hdf5": "1.12.2"
+                },
+                "access": "local_sparse_reference",
+                "prepare_seconds": 0.001395834000504692,
+                "completion_seconds": 0.0035937089996878058,
+                "api_cpu_seconds": 0.003586000000000006,
+                "peak_rss_bytes": 44138496,
+                "value_sha256": [
+                  "8ca51f422578dbeb578c6dfa6887e4f61a36be40468ee353754b1c314322b8f8",
+                  "5846211121d5ba33eddd830293ce48a896a798156f9a23e0b1558fa3efacc8e7",
+                  "7e40f66bec7ba952d37263ce386ea962ade668e4113110d2dddafa387c1be42c",
+                  "d5e38cf573bd19e34eb90bf611b7783e22274c06729dcc6c888d7f4ca613886f",
+                  "be0a9da98cf1880542a26eef6f9f339727b8d8df55af4d772b9d85e6b97755d9"
+                ],
+                "axis_sha256": [
+                  "9c7ed66ef1e69d30922c5cdd2070e0aefd195fcd9827b8f86af18059264a3c4a",
+                  "cae36fa94e007a5abfc8cd6e67ce5a59ccf1ca730bc76e7109cfe5b18f4198b3"
+                ],
+                "summary": {
+                  "selected_count": 81,
+                  "wse_sum_m": 1428.75,
+                  "wse_mean_m": 17.63888888888889,
+                  "uncertainty_count": 78,
+                  "uncertainty_sum_m": 19.5,
+                  "mean_pixel_uncertainty_m": 0.25,
+                  "contributing_count": 77,
+                  "contributing_pixel_sum": 77791
+                },
+                "attributes": {
+                  "root": 2,
+                  "wse": 9,
+                  "wse_qual": 7,
+                  "wse_qual_bitwise": 7,
+                  "wse_uncert": 5,
+                  "n_wse_pix": 5,
+                  "y": 5,
+                  "x": 5,
+                  "crs": 2,
+                  "t": 2
+                },
+                "interpreted_attribute_checks": 42,
+                "fixed_attribute_shape_and_byte_checks": 42,
+                "guarded_file_reads": 0,
+                "capture_misses": 0,
+                "trace_sha256": null
+              },
+              {
+                "reader": "netcdf4",
+                "versions": {
+                  "reader": "1.7.4",
+                  "netcdf_c": "4.9.3 of Sep 15 2025 23:01:51 $",
+                  "hdf5": "1.14.6"
+                },
+                "access": "local_sparse_reference",
+                "prepare_seconds": 0.0012854999986302573,
+                "completion_seconds": 0.0034232079997309484,
+                "api_cpu_seconds": 0.0034229999999999955,
+                "peak_rss_bytes": 46923776,
+                "value_sha256": [
+                  "8ca51f422578dbeb578c6dfa6887e4f61a36be40468ee353754b1c314322b8f8",
+                  "5846211121d5ba33eddd830293ce48a896a798156f9a23e0b1558fa3efacc8e7",
+                  "7e40f66bec7ba952d37263ce386ea962ade668e4113110d2dddafa387c1be42c",
+                  "d5e38cf573bd19e34eb90bf611b7783e22274c06729dcc6c888d7f4ca613886f",
+                  "be0a9da98cf1880542a26eef6f9f339727b8d8df55af4d772b9d85e6b97755d9"
+                ],
+                "axis_sha256": [
+                  "9c7ed66ef1e69d30922c5cdd2070e0aefd195fcd9827b8f86af18059264a3c4a",
+                  "cae36fa94e007a5abfc8cd6e67ce5a59ccf1ca730bc76e7109cfe5b18f4198b3"
+                ],
+                "summary": {
+                  "selected_count": 81,
+                  "wse_sum_m": 1428.75,
+                  "wse_mean_m": 17.63888888888889,
+                  "uncertainty_count": 78,
+                  "uncertainty_sum_m": 19.5,
+                  "mean_pixel_uncertainty_m": 0.25,
+                  "contributing_count": 77,
+                  "contributing_pixel_sum": 77791
+                },
+                "attributes": {
+                  "root": 2,
+                  "wse": 7,
+                  "wse_qual": 6,
+                  "wse_qual_bitwise": 6,
+                  "wse_uncert": 4,
+                  "n_wse_pix": 4,
+                  "y": 2,
+                  "x": 2,
+                  "crs": 2,
+                  "t": 2
+                },
+                "interpreted_attribute_checks": 37,
+                "fixed_attribute_shape_and_byte_checks": 0,
+                "guarded_file_reads": 0,
+                "capture_misses": 0,
+                "trace_sha256": null
+              }
+            ]
+          }
+        ],
+        "zarr_python": "2.18.3",
+        "xarray": "2025.6.1",
+        "numpy": "2.0.2",
+        "all_passed": true
+      }
+    },
+    {
+      "name": "unsupported-processing-release",
+      "command": [
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/target/release/tile-ripper",
+        "fetch",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-job/unsupported-processing-release-t894ra9n/job.json",
+        "[runtime access/output flags omitted from compact receipt]"
+      ],
+      "returncode": 1,
+      "wall_seconds": 0.016250708998995833,
+      "cpu_seconds": 0.010701000000000738,
+      "sampled_process_peak_rss_bytes": 14188544,
+      "interruption_sent": false,
+      "error": "tile-ripper: SWOT job failed at observation numeric_bit_patterns: job profile requires qualified Version D PGD0 metadata; PID0 and other releases are unsupported\n",
+      "output": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-job/unsupported-processing-release-t894ra9n/observations.zarr",
+      "output_files": {
+        "files": 0,
+        "logical_bytes": 0,
+        "allocated_bytes": 0,
+        "range_entries": 0
+      },
+      "checkpoint_files": null,
+      "binary_sha256": "f621c7a6e20c8ecfb64f49a01873c61a8e13f4d008a1b9c1fce576f01b1bfbb5",
+      "stdout_sha256": "f0177f265afdca317dc4e850735f1e7b8f1fecfed0936a3513e574b6590fbf29",
+      "stderr_sha256": "c738a6786011acd9177f725d4552d9bdc279e6158895246b01287b4eb1f941fa",
+      "completion_status": "failed",
+      "provisional_observations": 0
+    },
+    {
+      "name": "unsupported-summary-definitions",
+      "command": [
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/target/release/tile-ripper",
+        "fetch",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-job/unsupported-summary-definitions-wq3brxwj/job.json",
+        "[runtime access/output flags omitted from compact receipt]"
+      ],
+      "returncode": 1,
+      "wall_seconds": 0.015340040999944904,
+      "cpu_seconds": 0.010477000000000292,
+      "sampled_process_peak_rss_bytes": 13615104,
+      "interruption_sent": false,
+      "error": "tile-ripper: SWOT job failed at observation numeric_bit_patterns: ambiguous or uninspected SWOT summary quality definitions\n",
+      "output": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-job/unsupported-summary-definitions-wq3brxwj/observations.zarr",
+      "output_files": {
+        "files": 0,
+        "logical_bytes": 0,
+        "allocated_bytes": 0,
+        "range_entries": 0
+      },
+      "checkpoint_files": null,
+      "binary_sha256": "f621c7a6e20c8ecfb64f49a01873c61a8e13f4d008a1b9c1fce576f01b1bfbb5",
+      "stdout_sha256": "fce14f5dd7e491235203dbfda1ea8aba00ac9cb9da1ee586ed2d380b1b2eb9fc",
+      "stderr_sha256": "ea11f22182dd9bd8becbedfba2064211d76f082bcaf4a96bb8ed4b7477c11a21",
+      "completion_status": "failed",
+      "provisional_observations": 0
+    },
+    {
+      "name": "unsupported-bitwise-definitions",
+      "command": [
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/target/release/tile-ripper",
+        "fetch",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-job/unsupported-bitwise-definitions-r8zfswgu/job.json",
+        "[runtime access/output flags omitted from compact receipt]"
+      ],
+      "returncode": 1,
+      "wall_seconds": 0.015628207998815924,
+      "cpu_seconds": 0.011200000000000987,
+      "sampled_process_peak_rss_bytes": 13844480,
+      "interruption_sent": false,
+      "error": "tile-ripper: SWOT job failed at observation numeric_bit_patterns: ambiguous or uninspected SWOT bitwise quality definitions\n",
+      "output": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-job/unsupported-bitwise-definitions-r8zfswgu/observations.zarr",
+      "output_files": {
+        "files": 0,
+        "logical_bytes": 0,
+        "allocated_bytes": 0,
+        "range_entries": 0
+      },
+      "checkpoint_files": null,
+      "binary_sha256": "f621c7a6e20c8ecfb64f49a01873c61a8e13f4d008a1b9c1fce576f01b1bfbb5",
+      "stdout_sha256": "ebf7fa348dd61d39d923c01cfa3057e899ac09a49ef3417f494470edcc8aab10",
+      "stderr_sha256": "1c8dd10ec29a7e78e44829fe361bbddf4896a3393ec4a30dc0f3a3225151cf0b",
+      "completion_status": "failed",
+      "provisional_observations": 0
+    },
+    {
+      "name": "unsupported-missing-crs",
+      "command": [
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/target/release/tile-ripper",
+        "fetch",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-job/unsupported-missing-crs-pq713kp8/job.json",
+        "[runtime access/output flags omitted from compact receipt]"
+      ],
+      "returncode": 1,
+      "wall_seconds": 0.015199833000224316,
+      "cpu_seconds": 0.010876000000000108,
+      "sampled_process_peak_rss_bytes": 13762560,
+      "interruption_sent": false,
+      "error": "tile-ripper: SWOT job failed at observation numeric_bit_patterns: SWOT job profile requires explicit source /crs mapping attributes and WKT; no CRS is inferred\n",
+      "output": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-job/unsupported-missing-crs-pq713kp8/observations.zarr",
+      "output_files": {
+        "files": 0,
+        "logical_bytes": 0,
+        "allocated_bytes": 0,
+        "range_entries": 0
+      },
+      "checkpoint_files": null,
+      "binary_sha256": "f621c7a6e20c8ecfb64f49a01873c61a8e13f4d008a1b9c1fce576f01b1bfbb5",
+      "stdout_sha256": "cff103e7494a6811e778a6e30ab4b023e76a72a054c8730bcbae9ed00c77170a",
+      "stderr_sha256": "6badd28bea41bca31336e0bdb2334a00999110d3078ccac30cc580805c403e42",
+      "completion_status": "failed",
+      "provisional_observations": 0
+    }
+  ]
+}

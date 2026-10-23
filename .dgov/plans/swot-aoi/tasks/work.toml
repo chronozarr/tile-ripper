@@ -1,0 +1,25 @@
+[tasks.work]
+summary = "Implement and independently validate geographic native-pixel selection"
+role = "worker"
+commit_message = "Resolve geographic SWOT AOIs to verified native windows and independent masks"
+files = { read = ["docs/swot-aoi/brief.md", "src/hdf5.rs", "src/spatial_native.rs", "src/authenticated_http.rs", "src/checkpoint.rs"], edit = ["Cargo.toml", "src/lib.rs", "src/swot_job.rs", "src/swot_discovery/bridge.rs", "src/cli/discovery.rs", "src/scientific_output/swot.rs", "tests/swot_discovery.rs", "README.md", "bench/swot-job-requirements.txt", "bench/swot_job.py"], create = ["src/swot_aoi.rs", "tests/swot_aoi.rs", "examples/swot_aoi_oracle.rs", "examples/swot-aoi-selection.json", "bench/swot_aoi.py", "bench/swot_aoi_profile.py", "bench/swot_aoi_axes_reference.py", "bench/swot_aoi_linux.sh", "docs/swot-aoi/"] }
+prompt = """
+Orient:
+- Continue codex/acquisition-planner at cb69adb. Read docs/swot-aoi/brief.md.
+Edit:
+1. Resolve explicit WGS84 bounds and simple polygons with holes using inspected CRS and stored native axes. Preserve source-global center selection and explicit boundary tolerance.
+2. Retain index selection compatibility, fail conflicting selectors and unsupported geography, and record explicit zero-center outcomes.
+3. Integrate distinct aoi_mask, geographic provenance, source grid fingerprints and checkpoint scientific identity. Preserve raw science, authentication and atomic publication.
+4. Independently compare PROJ/GEOS source-global masks, guarded h5py and NetCDF-C science, and Zarr-Python/xarray output. Use frozen captures and bounded live access.
+5. Measure costs, document limitations and commit locally. No merge, push, remote publication, tag, deploy or ChronoZarr changes.
+Verify:
+- cargo test --locked --no-default-features --features native-hdf5,authenticated-http
+- cargo test --locked --all-features --all-targets
+- cargo clippy --locked --all-features --all-targets -- -D warnings
+- cargo check --locked --no-default-features
+- cargo fmt --all -- --check
+- python bench/swot_aoi.py offline
+- python bench/swot_job.py offline
+- Repeat authentication/checkpoint faults and bounded live AOI acceptance after frozen gates.
+"""
+test_cmd = "cargo test --locked --no-default-features --features native-hdf5,authenticated-http"

@@ -1,0 +1,363 @@
+{
+  "all_passed": true,
+  "raw_receipt": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-aoi/regression-receipts/swot-job-qualification.json",
+  "raw_receipt_sha256": "575df689f155a513f1907d82045351717a9459208be6f6d84fcc89f4a0524d61",
+  "runs": [
+    {
+      "name": "qualified-two-source",
+      "command": [
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/target/release/tile-ripper",
+        "fetch",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-job/qualified-two-source-n5dmv3vy/job.json",
+        "[runtime access/output flags omitted from compact receipt]"
+      ],
+      "returncode": 0,
+      "wall_seconds": 0.2865505829995527,
+      "cpu_seconds": 0.13375899999999996,
+      "sampled_process_peak_rss_bytes": 39059456,
+      "interruption_sent": false,
+      "error": null,
+      "output": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-job/qualified-two-source-n5dmv3vy/observations.zarr",
+      "output_files": {
+        "files": 93,
+        "logical_bytes": 1871991,
+        "allocated_bytes": 2105344,
+        "range_entries": 0
+      },
+      "checkpoint_files": null,
+      "binary_sha256": "f621c7a6e20c8ecfb64f49a01873c61a8e13f4d008a1b9c1fce576f01b1bfbb5",
+      "stdout_sha256": "3d21759dac6c6f0083dc451efb2f39a710d100eeec2bd4f89270192a7435babd",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "completion_status": "complete",
+      "provisional_observations": 0,
+      "science": {
+        "observations": [
+          {
+            "id": "held_out_20240217",
+            "shape": [
+              128,
+              128
+            ],
+            "source_identity": {
+              "url": "https://localhost:54959/source.nc",
+              "version": {
+                "etag": "\"8c583d1085e24a2c438260a206d38131-1\"",
+                "size": 6527265,
+                "metadata": false
+              },
+              "authenticated_scope": {
+                "canonical_url": "https://localhost:54959/source.nc",
+                "resource_origin": "https://localhost:54961",
+                "head_resource_path": "/head/object",
+                "get_resource_path": "/get/object",
+                "login_origin": "https://127.0.0.1:54960",
+                "credential_forwarding": "login origin only; none to archive or signed resource",
+                "cookies": "memory only; exact origin jars; none to signed resource",
+                "conditional_reads": "strong ETag, If-Match, exact Content-Range and Content-Length, identity encoding",
+                "signed_routes": "GET only, advertised expiry minus 30 seconds, at most 60 seconds; HEAD always canonical",
+                "redirect_hop_limit": 8,
+                "refresh_limit": 1,
+                "per_origin_concurrency_limit": 1,
+                "working_reservation_bytes": 1048576,
+                "redirects": [
+                  {
+                    "from": "https://localhost:54959",
+                    "to": "https://127.0.0.1:54960",
+                    "path": "/oauth/authorize"
+                  },
+                  {
+                    "from": "https://127.0.0.1:54960",
+                    "to": "https://localhost:54959",
+                    "path": "/login"
+                  },
+                  {
+                    "from": "https://localhost:54959",
+                    "to": "https://localhost:54959",
+                    "path": "/source.nc"
+                  },
+                  {
+                    "from": "https://localhost:54959",
+                    "to": "https://localhost:54961",
+                    "path": "/head/object"
+                  },
+                  {
+                    "from": "https://localhost:54959",
+                    "to": "https://localhost:54961",
+                    "path": "/get/object"
+                  }
+                ]
+              }
+            },
+            "all_value_bits_masks_coordinates_time_source_identity_equal": true,
+            "xarray_raw_equal": true,
+            "references": [
+              {
+                "reader": "h5py",
+                "versions": {
+                  "reader": "3.12.1",
+                  "hdf5": "1.12.2"
+                },
+                "access": "local_sparse_reference",
+                "prepare_seconds": 0.0020722499994008103,
+                "completion_seconds": 0.0338930830002937,
+                "api_cpu_seconds": 0.033885,
+                "peak_rss_bytes": 52707328,
+                "value_sha256": [
+                  "d11f636316920d9af1e9813977a657a2e8d3a270a6e0596f5b0a8e5d55f547d6",
+                  "cb11cbb78d1316aff71e900d208768e3adb9ecaac543f7744755e06e6b431818",
+                  "f4416dc5314ae794942d94b1590ead14fe00cc8e086973361fd328bd0e627faa",
+                  "95095335009e74667907264584a8ec34685d352adb0fbdc7e37e41ce133afafc",
+                  "502dbc75b4c0bf8d74fd3cd3910474f1bba4f64b8c126219cd37e65b547cc426"
+                ],
+                "axis_sha256": [
+                  "4c117689b41b7e3d583827d5e3a777c8d0813caeee6af68bf008d268a31e9578",
+                  "a7459240033c04c362112dd4502b6a6da6b7d9a4075467628d7975512d27cb5e"
+                ],
+                "summary": {
+                  "selected_count": 1310,
+                  "wse_sum_m": 38869.788248062134,
+                  "wse_mean_m": 29.671594082490177,
+                  "uncertainty_count": 1310,
+                  "uncertainty_sum_m": 1074.1131531000137,
+                  "mean_pixel_uncertainty_m": 0.8199337046564991,
+                  "contributing_count": 1310,
+                  "contributing_pixel_sum": 13702
+                },
+                "attributes": {
+                  "root": 50,
+                  "wse": 11,
+                  "wse_qual": 12,
+                  "wse_qual_bitwise": 16,
+                  "wse_uncert": 10,
+                  "n_wse_pix": 10,
+                  "y": 13,
+                  "x": 13,
+                  "crs": 20
+                },
+                "interpreted_attribute_checks": 142,
+                "fixed_attribute_shape_and_byte_checks": 148,
+                "guarded_file_reads": 132,
+                "capture_misses": 0,
+                "trace_sha256": "7adf2c2b298a23666918bd55bbd70958c517df34eb0f775e3862505a19993b87"
+              },
+              {
+                "reader": "netcdf4",
+                "versions": {
+                  "reader": "1.7.4",
+                  "netcdf_c": "4.9.3 of Sep 15 2025 23:01:51 $",
+                  "hdf5": "1.14.6"
+                },
+                "access": "local_sparse_reference",
+                "prepare_seconds": 0.00841499999842199,
+                "completion_seconds": 0.04028195799946843,
+                "api_cpu_seconds": 0.04013799999999999,
+                "peak_rss_bytes": 72843264,
+                "value_sha256": [
+                  "d11f636316920d9af1e9813977a657a2e8d3a270a6e0596f5b0a8e5d55f547d6",
+                  "cb11cbb78d1316aff71e900d208768e3adb9ecaac543f7744755e06e6b431818",
+                  "f4416dc5314ae794942d94b1590ead14fe00cc8e086973361fd328bd0e627faa",
+                  "95095335009e74667907264584a8ec34685d352adb0fbdc7e37e41ce133afafc",
+                  "502dbc75b4c0bf8d74fd3cd3910474f1bba4f64b8c126219cd37e65b547cc426"
+                ],
+                "axis_sha256": [
+                  "4c117689b41b7e3d583827d5e3a777c8d0813caeee6af68bf008d268a31e9578",
+                  "a7459240033c04c362112dd4502b6a6da6b7d9a4075467628d7975512d27cb5e"
+                ],
+                "summary": {
+                  "selected_count": 1310,
+                  "wse_sum_m": 38869.788248062134,
+                  "wse_mean_m": 29.671594082490177,
+                  "uncertainty_count": 1310,
+                  "uncertainty_sum_m": 1074.1131531000137,
+                  "mean_pixel_uncertainty_m": 0.8199337046564991,
+                  "contributing_count": 1310,
+                  "contributing_pixel_sum": 13702
+                },
+                "attributes": {
+                  "root": 49,
+                  "wse": 9,
+                  "wse_qual": 10,
+                  "wse_qual_bitwise": 14,
+                  "wse_uncert": 8,
+                  "n_wse_pix": 8,
+                  "y": 8,
+                  "x": 8,
+                  "crs": 20
+                },
+                "interpreted_attribute_checks": 133,
+                "fixed_attribute_shape_and_byte_checks": 0,
+                "guarded_file_reads": 523,
+                "capture_misses": 0,
+                "trace_sha256": "23f7a3e69692eccd4fac06053d690330de6f4f4b86207d70683d5e0eb52edc81"
+              }
+            ]
+          },
+          {
+            "id": "original_20240216",
+            "shape": [
+              128,
+              128
+            ],
+            "source_identity": {
+              "url": "https://localhost:54964/source.nc",
+              "version": {
+                "etag": "\"3b93eefb90f0167506435fdca199aa69-1\"",
+                "size": 89242093,
+                "metadata": false
+              },
+              "authenticated_scope": {
+                "canonical_url": "https://localhost:54964/source.nc",
+                "resource_origin": "https://localhost:54966",
+                "head_resource_path": "/head/object",
+                "get_resource_path": "/get/object",
+                "login_origin": "https://localhost:54965",
+                "credential_forwarding": "login origin only; none to archive or signed resource",
+                "cookies": "memory only; exact origin jars; none to signed resource",
+                "conditional_reads": "strong ETag, If-Match, exact Content-Range and Content-Length, identity encoding",
+                "signed_routes": "GET only, advertised expiry minus 30 seconds, at most 60 seconds; HEAD always canonical",
+                "redirect_hop_limit": 8,
+                "refresh_limit": 1,
+                "per_origin_concurrency_limit": 1,
+                "working_reservation_bytes": 1048576,
+                "redirects": [
+                  {
+                    "from": "https://localhost:54964",
+                    "to": "https://localhost:54965",
+                    "path": "/oauth/authorize"
+                  },
+                  {
+                    "from": "https://localhost:54965",
+                    "to": "https://localhost:54964",
+                    "path": "/login"
+                  },
+                  {
+                    "from": "https://localhost:54964",
+                    "to": "https://localhost:54964",
+                    "path": "/source.nc"
+                  },
+                  {
+                    "from": "https://localhost:54964",
+                    "to": "https://localhost:54966",
+                    "path": "/head/object"
+                  },
+                  {
+                    "from": "https://localhost:54964",
+                    "to": "https://localhost:54966",
+                    "path": "/get/object"
+                  }
+                ]
+              }
+            },
+            "all_value_bits_masks_coordinates_time_source_identity_equal": true,
+            "xarray_raw_equal": true,
+            "references": [
+              {
+                "reader": "h5py",
+                "versions": {
+                  "reader": "3.12.1",
+                  "hdf5": "1.12.2"
+                },
+                "access": "local_sparse_reference",
+                "prepare_seconds": 0.0022736659993825015,
+                "completion_seconds": 0.04029741600061243,
+                "api_cpu_seconds": 0.039411,
+                "peak_rss_bytes": 54149120,
+                "value_sha256": [
+                  "5973313fdb358b88285b1158a38fe45cfc78f69e5a1047c6c06238bee50d1295",
+                  "f053093b1f3210820c79fe47762b625156b367fde0ce07c1afb4955a191e65fc",
+                  "4df6b42f285d92dfb6b80ea193c213f98ed5cd82fd6c440e6d4c58495fd7b50d",
+                  "e5f1c42683118ea46faad551ef76363ae01a438b2baf3efdaf98ff7cf940a7ae",
+                  "1fac51871cafe0de5e6312eba51a64ec3109501572c2395c0b444860aee6f919"
+                ],
+                "axis_sha256": [
+                  "b5a83038bc717017d7184cfe4187f371fc13eebef2872437e5bc580bc1a14363",
+                  "1fec4444afa5239a37f6f8afa8d2aae338365f1a0b580b9dfb025826d8e3c91f"
+                ],
+                "summary": {
+                  "selected_count": 3076,
+                  "wse_sum_m": 847289.1619262695,
+                  "wse_mean_m": 275.4516131099706,
+                  "uncertainty_count": 3076,
+                  "uncertainty_sum_m": 1167.924199718982,
+                  "mean_pixel_uncertainty_m": 0.3796892716901762,
+                  "contributing_count": 3076,
+                  "contributing_pixel_sum": 21757
+                },
+                "attributes": {
+                  "root": 50,
+                  "wse": 11,
+                  "wse_qual": 12,
+                  "wse_qual_bitwise": 16,
+                  "wse_uncert": 10,
+                  "n_wse_pix": 10,
+                  "y": 13,
+                  "x": 13,
+                  "crs": 20
+                },
+                "interpreted_attribute_checks": 142,
+                "fixed_attribute_shape_and_byte_checks": 148,
+                "guarded_file_reads": 133,
+                "capture_misses": 0,
+                "trace_sha256": "417e3343180cfe2db0e5e7044db04e5726033c33c84d6546e12491a47f4196c9"
+              },
+              {
+                "reader": "netcdf4",
+                "versions": {
+                  "reader": "1.7.4",
+                  "netcdf_c": "4.9.3 of Sep 15 2025 23:01:51 $",
+                  "hdf5": "1.14.6"
+                },
+                "access": "local_sparse_reference",
+                "prepare_seconds": 0.008241375000579865,
+                "completion_seconds": 0.045117792000382906,
+                "api_cpu_seconds": 0.044952000000000006,
+                "peak_rss_bytes": 69877760,
+                "value_sha256": [
+                  "5973313fdb358b88285b1158a38fe45cfc78f69e5a1047c6c06238bee50d1295",
+                  "f053093b1f3210820c79fe47762b625156b367fde0ce07c1afb4955a191e65fc",
+                  "4df6b42f285d92dfb6b80ea193c213f98ed5cd82fd6c440e6d4c58495fd7b50d",
+                  "e5f1c42683118ea46faad551ef76363ae01a438b2baf3efdaf98ff7cf940a7ae",
+                  "1fac51871cafe0de5e6312eba51a64ec3109501572c2395c0b444860aee6f919"
+                ],
+                "axis_sha256": [
+                  "b5a83038bc717017d7184cfe4187f371fc13eebef2872437e5bc580bc1a14363",
+                  "1fec4444afa5239a37f6f8afa8d2aae338365f1a0b580b9dfb025826d8e3c91f"
+                ],
+                "summary": {
+                  "selected_count": 3076,
+                  "wse_sum_m": 847289.1619262695,
+                  "wse_mean_m": 275.4516131099706,
+                  "uncertainty_count": 3076,
+                  "uncertainty_sum_m": 1167.924199718982,
+                  "mean_pixel_uncertainty_m": 0.3796892716901762,
+                  "contributing_count": 3076,
+                  "contributing_pixel_sum": 21757
+                },
+                "attributes": {
+                  "root": 49,
+                  "wse": 9,
+                  "wse_qual": 10,
+                  "wse_qual_bitwise": 14,
+                  "wse_uncert": 8,
+                  "n_wse_pix": 8,
+                  "y": 8,
+                  "x": 8,
+                  "crs": 20
+                },
+                "interpreted_attribute_checks": 133,
+                "fixed_attribute_shape_and_byte_checks": 0,
+                "guarded_file_reads": 524,
+                "capture_misses": 0,
+                "trace_sha256": "a6e36c24a522e66bd54ef8582ae2f75463247940953b27dd839421dfb8678605"
+              }
+            ]
+          }
+        ],
+        "zarr_python": "2.18.3",
+        "xarray": "2025.6.1",
+        "numpy": "2.0.2",
+        "all_passed": true
+      }
+    }
+  ]
+}

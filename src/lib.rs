@@ -52,4 +52,6 @@ mod hdf5;
 #[cfg(feature = "native-hdf5")]
 pub mod swot;
 #[cfg(feature = "native-hdf5")]
+pub mod swot_aoi;
+#[cfg(feature = "native-hdf5")]
 pub mod swot_job;

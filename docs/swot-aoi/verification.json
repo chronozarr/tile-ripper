@@ -1,0 +1,183 @@
+{
+  "date": "2026-10-23",
+  "timezone": "America/New_York",
+  "baseline_commit": "cb69adbc4de2880a92e8783a8ae201b98f0f4a9d",
+  "branch": "codex/acquisition-planner",
+  "worktree": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper",
+  "rustc": "rustc 1.92.0 (ded5c06cf 2025-12-08)",
+  "python": "3.10.14 (main, May 14 2024, 18:58:29) [Clang 15.0.0 (clang-1500.3.9.4)]",
+  "python_executable": "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+  "platform": "macOS-26.7.1-arm64-arm-64bit",
+  "checks": [
+    {
+      "command": "cargo test --locked --all-features --all-targets",
+      "result": {
+        "passed": 145,
+        "failed": 0,
+        "ignored": 8,
+        "log": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-aoi/all-features-final.log",
+        "sha256": "b6246e7910dfa8ce93bf6fba536fbbb0b6b149c6efe1ffe17ec51610f5ba5034",
+        "ignored_tests": [
+          [
+            "checkpoint::tests::crash_child",
+            "subprocess helper for abrupt persistence exits"
+          ],
+          [
+            "checkpoint::tests::foreign_owned_private_directory_is_rejected",
+            "requires externally supplied directory owned by another uid"
+          ],
+          [
+            "hdf5::tests::standalone_physical_probe",
+            "explicit bounded real-product experiment; TILE_RIPPER_HDF5_PROBE supplies URL"
+          ],
+          [
+            "storage::tests::authenticated_concurrent_routes_and_sticky_conflicts",
+            "run by bench/earthdata_auth.py with its private HTTPS fixtures"
+          ],
+          [
+            "convenience_execute_validates_local_source_after_delivery",
+            "requires TILE_RIPPER_NATIVE_REQUEST from the native COG fault harness"
+          ],
+          [
+            "prepared_metadata_is_private_version_bound_and_repeatable",
+            "requires TILE_RIPPER_NATIVE_HTTP_SNAPSHOT_REQUEST from the HTTP gate"
+          ],
+          [
+            "prepared_http_changes_and_cancellation",
+            "run by bench/remote_zarr.py against its controlled HTTP fixture"
+          ],
+          [
+            "prepared_versions_do_not_reuse_another_snapshot_cache",
+            "run by bench/stac_workflow.py with its bounded local HTTP fixture"
+          ]
+        ]
+      }
+    },
+    {
+      "command": "cargo test --locked --no-default-features --features native-hdf5,authenticated-http",
+      "result": {
+        "passed": 90,
+        "failed": 0,
+        "ignored": 5,
+        "log": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-aoi/native-hdf5-authenticated-tests.log",
+        "sha256": "73427a97678128312fdcc7e4a99c249b437bdd930d8115776be015b7350505e5",
+        "ignored_tests": [
+          [
+            "checkpoint::tests::crash_child",
+            "subprocess helper for abrupt persistence exits"
+          ],
+          [
+            "checkpoint::tests::foreign_owned_private_directory_is_rejected",
+            "requires externally supplied directory owned by another uid"
+          ],
+          [
+            "hdf5::tests::standalone_physical_probe",
+            "explicit bounded real-product experiment; TILE_RIPPER_HDF5_PROBE supplies URL"
+          ],
+          [
+            "storage::tests::authenticated_concurrent_routes_and_sticky_conflicts",
+            "run by bench/earthdata_auth.py with its private HTTPS fixtures"
+          ],
+          [
+            "prepared_http_changes_and_cancellation",
+            "run by bench/remote_zarr.py against its controlled HTTP fixture"
+          ]
+        ]
+      }
+    },
+    {
+      "command": "docker run --rm -v CHECKOUT:/work:ro -v CARGO_REGISTRY:/cache/registry:ro -w /work rust:1.92-slim sh bench/swot_aoi_linux.sh",
+      "result": {
+        "passed": 27,
+        "failed": 0,
+        "ignored": 0,
+        "log": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-aoi/linux-clean.log",
+        "sha256": "7a48da74558e4bb18dff1dcc7e2a5c358b962fef6139599376b858df075a6090",
+        "ignored_tests": []
+      }
+    },
+    {
+      "command": "cargo clippy --locked --all-features --all-targets -- -D warnings",
+      "exit_code": 0,
+      "log": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-aoi/clippy-final.log",
+      "sha256": "0d9c0f594c988e0c2c1e4868af5738ee06858983619adc5d7521c4e6ca7a93bb"
+    },
+    {
+      "command": "cargo fmt --all -- --check",
+      "exit_code": 0,
+      "log": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-aoi/fmt.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": "cargo check --locked --no-default-features",
+      "exit_code": 0,
+      "log": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-aoi/check-no-features.log",
+      "sha256": "2bc683fb4e4f4f21ee9ee39e2b8ecce2efe20d3b1be57bda5316aa519ab3d30a"
+    },
+    {
+      "command": "cargo check --locked --no-default-features --features native-hdf5",
+      "exit_code": 0,
+      "log": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-aoi/check-native-hdf5.log",
+      "sha256": "840eb92d479e81f0ea5abc8fc86c750bfee6ba5bc3a159634aae3dd04da88959"
+    },
+    {
+      "command": "cargo check --locked --no-default-features --features native-cog",
+      "exit_code": 0,
+      "log": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-aoi/check-native-cog.log",
+      "sha256": "299f16a2c523be18fef769975d2df00e0505521db047540feea3a74b94666887"
+    }
+  ],
+  "feature_matrix": "feature-matrix.json",
+  "geometry_oracles": {
+    "cases": 108,
+    "compared_centers": 181548,
+    "all_passed": true
+  },
+  "real_source_grid_partial_outside_oracles": 4,
+  "authentication_scenarios": 38,
+  "checkpoint_scenarios": 32,
+  "multi_observation_fault_restart_scenarios": 19,
+  "all_fault_matrices_passed": true,
+  "python_checks": {
+    "command": "python -m ruff check; python -m ruff format --check; python -m py_compile (all new geographic harnesses and modified swot_job.py)",
+    "exit_code": 0,
+    "files": [
+      "bench/swot_aoi.py",
+      "bench/swot_aoi_axes_reference.py",
+      "bench/swot_aoi_profile.py",
+      "bench/swot_job.py"
+    ],
+    "lint_log_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+    "format_log_sha256": "177f260a5645724013185e4b140c7045cc39e56c0c97b120f5cb23599f85f0de"
+  },
+  "final_executable_sha256": "41000e86ece1b0c10c481c6579de2cb0afc6dbd35dea4a5204564ad5d3bbd9ce",
+  "final_dataset": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-job/aoi-final-binary-checkpoint-reconstruction-rskhh4j8/observations.zarr",
+  "source_file_sha256": {
+    "Cargo.toml": "016c0fc58d973fa84706a8eac521ee09bc6947f1784c96f6826c9ccfe015240e",
+    "src/lib.rs": "9143f1d2cc52cccc60021f676f5e73dcce8c576494041f9ee9222e315d47ae49",
+    "src/swot_aoi.rs": "8c2210bd75501441b3de69021711f1799c3bade787958f4f71435f7a64c2c733",
+    "src/swot_job.rs": "ecfb56c10acb6fa1ca609bb25cf6e788158aedbe49b406c165daea33780b3a4c",
+    "src/swot_discovery/bridge.rs": "2520ea5bef830e12efb5595e8d7e0fb51a0a5ad5e2b7dea42a1f508b9b6c8fab",
+    "src/scientific_output/swot.rs": "70efe33a8b41c3c0d4b121e0d46999536dc454e9b411d45c799dd7e59a825fee",
+    "src/cli/discovery.rs": "130aaf954833e038f6840d3de1d1f430269b712a10c8adeda6126f6a27c77dc5",
+    "tests/swot_aoi.rs": "fd5f4b897a9a0faa969b8e50517525aac44c83feb66107d78b356a1731ff634a",
+    "tests/swot_discovery.rs": "22acb1f210733711cde4137f7102333340b7a71a5487cbf91617a3f7933a61bf",
+    "examples/swot_aoi_oracle.rs": "24f28a6ef3246c3a36401f5f01e0e51c9013138e6b211f7b44f63f407efc832f",
+    "bench/swot_aoi.py": "c5ac4b9cab85810e3599ffe99e3b6d653b1cbe27750daf5306742eca2102d63c",
+    "bench/swot_aoi_axes_reference.py": "a23fae15c8681fc891c45b3917a4c199fa7526686ffb6bd0de4c42986c384ff5",
+    "bench/swot_aoi_profile.py": "c22df5145fafa0d7a274411753687dbb5a2cac6549ba5eef32741339783b3907",
+    "bench/swot_aoi_linux.sh": "79fecb311dd5b91534448af68125f46f8e8f1ade92c32e353a931b4e86a26faa",
+    "bench/swot_job.py": "4e6ed769e1bad1a33b7b8be35731432f46ac03b27512206152a21f1365a67592"
+  },
+  "scope_assertions": {
+    "core_hdf5_reader_changed": false,
+    "authentication_policy_changed": false,
+    "checkpoint_storage_changed": false,
+    "raster_reprojection": false,
+    "mosaicking": false,
+    "cross_granule_alignment": false,
+    "chronozarr_changed": false,
+    "remote_release_actions": false
+  },
+  "all_scientific_gates_passed": true
+}

@@ -15,7 +15,10 @@ Incomplete/failed searches write explicit status JSON and return nonzero.
 discover-job SELECTION.json --auth earthdata --netrc PRIVATE_FILE --output NEW_JOB.json
   Uses the normal job planner and source-version checks; writes review JSON to stdout.
   Selection file: {"catalogs":["candidates.json"],"selection":{...}}.
-See docs/swot-discovery/workflow.md and examples/swot-discovery-selection.json."#;
+  Per granule: exactly one explicit window or WGS84 aoi (bounds / Polygon).
+  Geographic requests inspect actual source axes, preserve aoi_mask and pin the resolved indices.
+See docs/swot-aoi/workflow.md, examples/swot-aoi-selection.json and the native-index
+workflow in docs/swot-discovery/workflow.md."#;
 pub fn run(args: &[String]) -> Result<()> {
     if args.is_empty() || args.iter().any(|s| s == "--help" || s == "-h") {
         println!("{HELP}");
@@ -197,7 +200,13 @@ pub fn job(args: &[String]) -> Result<()> {
         crate::job_session(asset, &access, input.selection.observations.len())
     };
     let ready = draft.inspect_authenticated(&mut sessions)?;
-    let bytes = serde_json::to_vec_pretty(&ready.manifest)?;
+    let Some(manifest) = &ready.manifest else {
+        let review = serde_json::to_vec_pretty(&ready.review)?;
+        std::io::stdout().lock().write_all(&review)?;
+        println!();
+        return Err("selected candidate has zero native AOI centers; review emitted, no job manifest written".into());
+    };
+    let bytes = serde_json::to_vec_pretty(manifest)?;
     if bytes.len() > 64 * 1024 {
         return Err("generated job exceeds manifest input allowance".into());
     }

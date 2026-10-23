@@ -51,6 +51,8 @@ pub struct Observation {
     pub quality_policy: swot::Policy,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub catalog: Option<crate::swot_discovery::CatalogProvenance>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub geographic_selection: Option<crate::swot_aoi::Resolved>,
 }
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -92,6 +94,15 @@ fn identifier(id: &str) -> bool {
             .all(|b| b.is_ascii_alphanumeric() || b == b'_' || b == b'-')
 }
 impl Observation {
+    #[cfg(feature = "authenticated-http")]
+    fn scientific_policy(&self) -> Value {
+        match &self.geographic_selection {
+            Some(selection) => {
+                json!({"quality":self.quality_policy.provenance(),"geographic_selection":selection})
+            }
+            None => self.quality_policy.provenance(),
+        }
+    }
     pub fn asset(&self) -> Result<&Asset> {
         match &self.request.source {
             Source::Assets { assets } if assets.len() == 1 && assets[0].format == Format::Hdf5 => {
@@ -215,6 +226,12 @@ impl Manifest {
                 return fail("empty index selections are unsupported; counts must be positive (all-invalid nonempty selections remain valid)");
             }
             crate::planner::validate(r)?;
+            if let Some(selection) = &entry.geographic_selection {
+                selection.validate_request(entry)?;
+                if crate::cog::remote(&asset.locator) && asset.etag.is_none() {
+                    return fail("resolved remote geographic selection requires the inspected strong source ETag");
+                }
+            }
             if r.budget.max_nodes > 4096 {
                 return fail("SWOT job source max_nodes is bounded at 4096");
             }
@@ -236,7 +253,20 @@ impl Manifest {
                 .checked_add(34)
                 .and_then(|n| n.checked_add(count[0].div_ceil(edge)))
                 .and_then(|n| n.checked_add(count[1].div_ceil(edge)))
-                .and_then(|n| n.checked_add(tiles.checked_mul(11)?))
+                .and_then(|n| {
+                    n.checked_add(tiles.checked_mul(if entry.geographic_selection.is_some() {
+                        12
+                    } else {
+                        11
+                    })?)
+                })
+                .and_then(|n| {
+                    n.checked_add(if entry.geographic_selection.is_some() {
+                        2
+                    } else {
+                        0
+                    })
+                })
                 .ok_or("output object count overflow")?;
             if objects > self.limits.max_output_objects {
                 return fail("scientific output keys exceed aggregate max_output_objects; increase chunk edge or explicit object limit");
@@ -258,6 +288,7 @@ impl Manifest {
             "queued_tiles":0,"consumer_retained_tiles":0,"job_metadata_receipts_bytes":BOOKKEEPING_RESERVATION,"writer_bytes":writer,
             "max_source_request_bytes":source,"aggregate_admitted_cap_bytes":source+writer+BOOKKEEPING_RESERVATION,"aggregate_limit_bytes":self.limits.memory_bytes,
             "source_scope":"source budget includes decoder, encoded-range retention, prepared metadata/coordinates, authentication and checkpoint index/write scratch",
+            "aoi_geometry_bytes_within_job_bookkeeping":if self.observations.iter().any(|e|e.geographic_selection.is_some()) {4*1024*1024} else {0},
             "scope":"working reservations; excludes allocator, TLS/HTTP runtime, OS/filesystem cache and caller-owned inputs; process RSS measured separately"})
     }
 }
@@ -304,7 +335,7 @@ impl<'a> Job<'a> {
                     "checkpoint jobs require authenticated remote sources for every observation",
                 );
             }
-            let identities = manifest.observations.iter().map(|e| Ok(json!({"id":e.id,"scientific":crate::checkpoint::scientific_identity(&e.normalized_request(),e.quality_policy.provenance())?}))).collect::<Result<Vec<_>>>()?;
+            let identities = manifest.observations.iter().map(|e| Ok(json!({"id":e.id,"scientific":crate::checkpoint::scientific_identity(&e.normalized_request(),e.scientific_policy())?}))).collect::<Result<Vec<_>>>()?;
             job.checkpoint = Some(crate::checkpoint::Job::open(options, &identities)?);
         }
         Ok(job)
@@ -329,10 +360,7 @@ impl<'a> Job<'a> {
                 return swot::prepare_using(&request, policy, |r| {
                     let store = checkpoint.store(
                         index,
-                        crate::checkpoint::scientific_identity(
-                            r,
-                            entry.quality_policy.provenance(),
-                        )?,
+                        crate::checkpoint::scientific_identity(r, entry.scientific_policy())?,
                         session.checkpoint_policy()?,
                     )?;
                     acquisition::prepare_bound_checkpoint(r, &mut cache, session, store)
@@ -395,16 +423,23 @@ impl<'a> Job<'a> {
                     &inspection,
                 )?;
             }
-            observations.push(json!({"id":entry.id,"output_group":format!("observations/{}",entry.id),"catalog":entry.catalog,"inspection":inspection}));
+            let geographic = entry
+                .geographic_selection
+                .as_ref()
+                .map(|selection| {
+                    prepared.with_coordinates(|y, x| selection.validate_selected(&inspection, y, x))
+                })
+                .transpose()?;
+            observations.push(json!({"id":entry.id,"output_group":format!("observations/{}",entry.id),"catalog":entry.catalog,"geographic_selection":entry.geographic_selection,"aoi_verification":geographic,"inspection":inspection}));
         }
         Ok(
             json!({"document_type":"swot_job_inspection","job_schema":1,"profile":self.manifest.profile,"saved_plan_execution_supported":false,
             "ordering":"manifest order; repeated IDs and canonical sources rejected; equal timestamps do not imply equal observations",
             "observations":observations,"admission":self.manifest.admission(),"checkpoint":self.checkpoint_description(),
-            "output":{"format":"zarr_v2","encoding":"uncompressed raw stored values","chunk_edge":self.manifest.limits.output_chunk_edge,"max_objects":self.manifest.limits.max_output_objects,"aoi_mask":false},
+            "output":{"format":"zarr_v2","encoding":"uncompressed raw stored values","chunk_edge":self.manifest.limits.output_chunk_edge,"max_objects":self.manifest.limits.max_output_objects,"aoi_mask":self.manifest.observations.iter().any(|e|e.geographic_selection.is_some())},
             "completion":"all required observations must finish, then every source is revalidated in a serial sweep before manifest/synchronization/no-replace publication",
             "known_costs":["full bounded legacy HDF5 index traversal remains default","each source uses its own authentication session; final sweep uses fresh sessions and online eight-byte GET proof","checkpoint replay reconstructs all values and rewrites all output","synchronization and no-replace publication are part of fetch"],
-            "unsupported":["implicit catalog discovery or geographic-to-native selection within a job","empty index selections","reprojection/resampling/mosaicking","aligned time series","additional processing releases or products","partial output or completed-observation recovery"],
+            "unsupported":["implicit catalog discovery or unresolved geography within a job; use discover-job","empty index selections","reprojection/resampling/mosaicking","aligned time series","additional processing releases or products","partial output or completed-observation recovery"],
             "source_snapshot":"per-object versions; not an atomic snapshot of a changing collection"}),
         )
     }
@@ -516,7 +551,7 @@ impl<'a> Job<'a> {
                     "source_snapshot":"individually validated versions; not an atomic snapshot of a changing collection","publication":"existing checked atomic no-replace sibling rename on macOS/Linux",
                     "restart":"new staging and complete scientific reconstruction; reauthenticate every source; reuse verified source bytes only; no append, partial-output recovery or exactly-once processing",
                     "synchronization":"file handles synchronized before close, bottom-up directories, pre-rename device request, no-replace rename, parent synchronization and post-rename device request; process-interruption safety tested; power-loss durability unproven"},
-                "processing":["five raw typed variables; exact selected x/y coordinates; source time and attributes","five separate source masks and a derived quality_mask; no AOI mask for index selection","independent native grids in manifest order; no calibration, alignment, resampling or mosaic"]});
+                "processing":["five raw typed variables; exact selected x/y coordinates; source time and attributes","five separate source masks and a derived quality_mask; distinct aoi_mask for geographic selections only; analysis_mask = aoi_mask & source_valid_wse & quality_mask","independent native grids in manifest order; no calibration, alignment, resampling or mosaic"]});
             bounded(&manifest, MAX_RESULT_BYTES, "job result")?;
             let publication = Instant::now();
             writer.publish(&manifest, &cancelled)?;

@@ -6,21 +6,60 @@ use crate::{
 };
 use serde_json::json;
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct NativeWindow {
-    pub start: [usize; 2],
-    pub count: [usize; 2],
-    pub step: [usize; 2],
-}
+pub use crate::swot_aoi::NativeWindow;
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Selection {
     pub concept_id: String,
     pub observation_id: String,
-    pub window: NativeWindow,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub window: Option<NativeWindow>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "geographic_input"
+    )]
+    pub aoi: Option<Spatial>,
     pub quality_policy: swot::Policy,
     pub expected_etag: Option<String>,
+}
+/// Accept the existing Spatial schema, or explicit CRS plus a normal GeoJSON
+/// Polygon geometry. Both normalize to one stable geographic representation.
+fn geographic_input<'de, D: serde::Deserializer<'de>>(
+    deserializer: D,
+) -> std::result::Result<Option<Spatial>, D::Error> {
+    #[derive(Deserialize)]
+    #[serde(deny_unknown_fields)]
+    struct PolygonInput {
+        #[serde(rename = "type")]
+        kind: String,
+        coordinates: Value,
+    }
+    #[derive(Deserialize)]
+    #[serde(deny_unknown_fields)]
+    struct GeoJsonInput {
+        crs: String,
+        geometry: PolygonInput,
+    }
+    #[derive(Deserialize)]
+    #[serde(untagged)]
+    enum Input {
+        Spatial(Spatial),
+        GeoJson(GeoJsonInput),
+    }
+    let input = Option::<Input>::deserialize(deserializer)?;
+    input
+        .map(|input| match input {
+            Input::Spatial(spatial) => Ok(spatial),
+            Input::GeoJson(input) if input.geometry.kind == "Polygon" => Ok(Spatial::Polygon {
+                crs: input.crs,
+                coordinates: input.geometry.coordinates,
+            }),
+            _ => Err(serde::de::Error::custom(
+                "AOI GeoJSON geometry must be a simple Polygon",
+            )),
+        })
+        .transpose()
 }
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -32,13 +71,16 @@ pub struct JobSelection {
 /// Uninspected requests. This is deliberately not an admitted/ready job.
 pub struct Draft {
     manifest: swot_job::Manifest,
+    geographic: Vec<Option<Spatial>>,
     construction_admission_seconds: f64,
 }
 /// An inspected selection is ready for the explicit native indices at the
 /// recorded source versions. This does not claim useful WSE or river coverage.
 #[derive(Debug, Serialize)]
 pub struct ReadyJob {
-    pub manifest: swot_job::Manifest,
+    /// None if any explicitly selected candidate contains zero AOI centers.
+    /// No replacement or silent omission is allowed.
+    pub manifest: Option<swot_job::Manifest>,
     pub review: Value,
 }
 pub fn draft(catalogs: &[Report], selection: &JobSelection) -> Result<Draft> {
@@ -50,6 +92,23 @@ pub fn draft(catalogs: &[Report], selection: &JobSelection) -> Result<Draft> {
     }
     let mut observations = vec![];
     for selected in &selection.observations {
+        let spatial = match (&selected.window, &selected.aoi) {
+            (Some(window), None) => window.spatial(),
+            (None, Some(aoi)) => {
+                crate::swot_aoi::polygon(aoi)?;
+                // Private inspection probe, never exposed as an executable
+                // geographic manifest or used to stream scientific values.
+                NativeWindow {
+                    start: [0, 0],
+                    count: [1, 1],
+                    step: [1, 1],
+                }
+                .spatial()
+            }
+            _ => {
+                return fail("choose exactly one selection method per granule: window or WGS84 aoi")
+            }
+        };
         let mut matching = vec![];
         for report in catalogs {
             report.query.validate()?;
@@ -114,16 +173,12 @@ pub fn draft(catalogs: &[Report], selection: &JobSelection) -> Result<Draft> {
             id: selected.observation_id.clone(),
             quality_policy: selected.quality_policy.clone(),
             catalog: Some(catalog),
+            geographic_selection: None,
             request: Request {
                 source: Source::Assets {
                     assets: vec![asset],
                 },
-                spatial: Spatial::ArraySlice {
-                    start: selected.window.start,
-                    count: selected.window.count,
-                    step: selected.window.step,
-                    axes: ["/y".into(), "/x".into()],
-                },
+                spatial,
                 time: None,
                 variables: swot::PATHS
                     .iter()
@@ -146,14 +201,22 @@ pub fn draft(catalogs: &[Report], selection: &JobSelection) -> Result<Draft> {
     manifest.validate()?;
     Ok(Draft {
         manifest,
+        geographic: selection
+            .observations
+            .iter()
+            .map(|s| s.aoi.clone())
+            .collect(),
         construction_admission_seconds: started.elapsed().as_secs_f64(),
     })
 }
 impl Draft {
     /// Reviewable draft only: no source compatibility or native-index admission
     /// has been established. Execute normal Job::plan before any readiness claim.
-    pub fn uninspected_manifest(&self) -> &swot_job::Manifest {
-        &self.manifest
+    pub fn uninspected_manifest(&self) -> Result<&swot_job::Manifest> {
+        if self.geographic.iter().any(Option::is_some) {
+            return fail("geographic draft has no executable manifest until actual source axes are inspected");
+        }
+        Ok(&self.manifest)
     }
     pub fn construction_admission_seconds(&self) -> f64 {
         self.construction_admission_seconds
@@ -170,6 +233,33 @@ impl Draft {
         >,
     ) -> Result<ReadyJob> {
         let started = Instant::now();
+        let mut resolutions = Vec::new();
+        let mut empty = false;
+        for (entry, aoi) in self.manifest.observations.iter_mut().zip(&self.geographic) {
+            if let Some(aoi) = aoi {
+                let mut cache = crate::cog::LayoutCache::default();
+                let resolution = crate::swot_aoi::inspect_with(entry, aoi, |request| {
+                    let Source::Assets { assets } = &request.source else {
+                        unreachable!()
+                    };
+                    let session = sessions(&assets[0])?;
+                    session.require_fresh()?;
+                    crate::acquisition::prepare_authenticated(request, &mut cache, session)
+                })?;
+                empty |= !resolution["native_centers_intersect"]
+                    .as_bool()
+                    .unwrap_or(false);
+                resolutions.push(json!({"observation_id":entry.id,"concept_id":entry.asset()?.id,"aoi_resolution":resolution}));
+            }
+        }
+        if empty {
+            return Ok(ReadyJob {
+                manifest: None,
+                review: json!({"discovery_job_schema":1,"status":"not_ready_zero_native_centers",
+                "observations":resolutions,"inspection_seconds":started.elapsed().as_secs_f64(),
+                "manifest_written":false,"scope":"at least one explicitly selected candidate has zero included native centers; no candidate substituted or omitted; final selected five-variable scientific profile not inspected"}),
+            });
+        }
         let plan = swot_job::Job::authenticated(&self.manifest, sessions, None)?.plan()?;
         let inspection_seconds = started.elapsed().as_secs_f64();
         let mut sources = vec![];
@@ -191,23 +281,28 @@ impl Draft {
                 .as_array()
                 .ok_or("missing source datasets")?;
             let d = &datasets[0];
-            sources.push(json!({"observation_id":entry.id,"concept_id":assets[0].id,
+            let geographic = resolutions
+                .iter()
+                .find(|r| r["observation_id"] == entry.id)
+                .map(|r| r["aoi_resolution"].clone());
+            sources.push(json!({"observation_id":entry.id,"concept_id":assets[0].id,"aoi_resolution":geographic,
                 "scientific_profile":"passed_existing_native_profile","selection":"admitted_explicit_native_indices",
                 "useful_selected_wse":"unknown; metadata inspection does not read science pixels or establish river coverage",
                 "catalog":entry.catalog,"source_identity":source["identity"],"source_shape":d["shape"],
                 "source_root_attributes":d["root_attributes"],"native_crs":d["grid_mapping"],"coordinate_definitions":d["axes"],
                 "native_coordinate_ranges":{"x_min":d["root_attributes"]["x_min"],"x_max":d["root_attributes"]["x_max"],"y_min":d["root_attributes"]["y_min"],"y_max":d["root_attributes"]["y_max"]},
                 "explicit_selection":entry.request.spatial,"quality_policy":entry.quality_policy,
+                "geographic_selection":entry.geographic_selection,
                 "catalog_and_native_time":"separately retained; catalog granule times and native coverage times may differ",
                 "inspection_transport":inspected["inspection"]["transport"]}));
         }
         self.manifest.validate()?;
         Ok(ReadyJob {
-            manifest: self.manifest,
+            manifest: Some(self.manifest),
             review: json!({"discovery_job_schema":1,"construction_admission_seconds":self.construction_admission_seconds,
             "status":"ready_for_explicit_native_index_job","inspection_seconds":inspection_seconds,
             "observations":sources,"admission":plan["admission"],"native_plan":plan,
-            "scope":"metadata/profile/selection admission at inspected source versions; fetch reauthenticates and revalidates. No AOI-to-index translation, science-pixel inspection or useful river-WSE assertion."}),
+            "scope":"metadata/profile/native-center selection admission at inspected source versions; fetch reauthenticates and revalidates. No science-pixel inspection or useful river-WSE assertion."}),
         })
     }
 }

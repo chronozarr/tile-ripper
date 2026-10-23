@@ -102,6 +102,12 @@ impl Writer {
         attrs["source"] = source.clone();
         attrs["selection"] = json!(entry.request.spatial);
         attrs["quality_policy"] = entry.quality_policy.provenance();
+        if let Some(selection) = &entry.geographic_selection {
+            attrs["geographic_selection"] = json!(selection);
+            attrs["analysis_mask"] = json!(
+                "aoi_mask & source_valid_wse & quality_mask; raw science arrays remain unchanged"
+            );
+        }
         if let Some(catalog) = &entry.catalog {
             attrs["catalog_provenance"] = json!(catalog);
             attrs["source_datetime_origin"] = json!("catalog granule acquisition_start; native granule and coverage times remain in source_attributes");
@@ -131,7 +137,14 @@ impl Writer {
             } else {
                 "y x"
             });
-            attrs["ancillary_variables"] = json!(format!("source_valid_{name} quality_mask"));
+            attrs["ancillary_variables"] = json!(format!(
+                "source_valid_{name} quality_mask{}",
+                if entry.geographic_selection.is_some() {
+                    " aoi_mask"
+                } else {
+                    ""
+                }
+            ));
             attrs["numeric_semantics"] =
                 json!("raw stored values; no calibration or quality masking");
             let mut fill = match &definition["storage_fill"] {
@@ -172,6 +185,50 @@ impl Writer {
             json!({"_ARRAY_DIMENSIONS":["y","x"],"flag_values":[0,1],"flag_meanings":"excluded accepted","mask_role":"derived quality policy; not source validity or an AOI mask","quality_policy":entry.quality_policy.provenance()}),
             ScientificEncoding::Uncompressed,
         )?;
+        let aoi_verification = if let Some(selection) = &entry.geographic_selection {
+            let verified =
+                prepared.with_coordinates(|y, x| selection.validate_selected(inspection, y, x))?;
+            let evaluator = crate::swot_aoi::Evaluator::new(&selection.aoi, &selection.grid.crs)?;
+            let aoi = array(
+                self.store.clone(),
+                &format!("{prefix}/aoi_mask"),
+                count,
+                &chunks,
+                "|u1",
+                Value::Null,
+                json!({"_ARRAY_DIMENSIONS":["y","x"],"flag_values":[0,1],"flag_meanings":"outside included",
+                    "mask_role":"geographic inclusion of native pixel centers; independent of source validity and quality",
+                    "selection_policy":selection.policy,"coordinate_tolerance_degrees":crate::swot_aoi::COORDINATE_TOLERANCE_DEGREES,
+                    "geographic_aoi":selection.aoi,"mask_sha256":selection.mask_sha256}),
+                ScientificEncoding::Uncompressed,
+            )?;
+            prepared.with_coordinates(|ys, xs| {
+                for row in (0..ys.len()).step_by(self.edge) {
+                    check_cancelled(cancelled)?;
+                    for col in (0..xs.len()).step_by(self.edge) {
+                        let height = (ys.len() - row).min(self.edge);
+                        let width = (xs.len() - col).min(self.edge);
+                        let mut mask = Vec::with_capacity(height * width);
+                        for y in &ys[row..row + height] {
+                            for x in &xs[col..col + width] {
+                                mask.push(evaluator.contains(*x, *y)?);
+                            }
+                        }
+                        let subset = ArraySubset::new_with_start_shape(
+                            vec![row as u64, col as u64],
+                            vec![height as u64, width as u64],
+                        )?;
+                        encode_call(&self.store, &mut self.encode_seconds, || {
+                            aoi.store_array_subset_opt(&subset, &mask, &options)
+                        })?;
+                    }
+                }
+                Ok(())
+            })?;
+            Some(verified)
+        } else {
+            None
+        };
         for (axis, name) in ["y", "x"].iter().enumerate() {
             let mut attrs = attributes(&first["axes"][axis]["attributes"], &[name]);
             attrs["source_path"] = first["axes"][axis]["path"].clone();
@@ -345,6 +402,7 @@ impl Writer {
         Ok(
             json!({"id":entry.id,"group":prefix.trim_start_matches('/'),"status":"source_complete_pending_job_validation","pixels_per_variable":delivered,
             "source":source,"catalog":entry.catalog,"quality_policy":entry.quality_policy.provenance(),"selection":entry.request.spatial,
+            "geographic_selection":entry.geographic_selection,"aoi_verification":aoi_verification,
             "working_memory":inspection["aligned_execution"]["working_memory"],"observed":report,"output_setup_seconds":setup_seconds}),
         )
     }

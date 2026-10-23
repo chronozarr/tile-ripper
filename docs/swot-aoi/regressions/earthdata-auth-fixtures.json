@@ -1,0 +1,1745 @@
+{
+  "cases": [
+    {
+      "case": "success",
+      "expected_success": true,
+      "returncode": 0,
+      "elapsed_seconds": 0.13583295799980988,
+      "wire_counts": {
+        "archive HEAD 303": 5,
+        "resource HEAD 200": 5,
+        "archive GET 302": 1,
+        "login GET 302": 1,
+        "archive GET 301": 1,
+        "archive GET 303": 1,
+        "resource GET 206": 36
+      },
+      "science": {
+        "all_native_value_bits_equal": true,
+        "all_five_source_masks_equal": true,
+        "exact_logical_coverage": true,
+        "all_coordinates_equal": true,
+        "derived_mask_equal": true,
+        "independent_summaries_equal": true,
+        "pixels_per_variable": 323,
+        "tiles": 4,
+        "references": [
+          {
+            "reader": "h5py",
+            "versions": {
+              "reader": "3.12.1",
+              "hdf5": "1.12.2"
+            },
+            "access": "local_sparse_reference",
+            "prepare_seconds": 0.0013257909995445516,
+            "completion_seconds": 0.0037385830000857823,
+            "api_cpu_seconds": 0.003149000000000013,
+            "peak_rss_bytes": 44417024,
+            "value_sha256": [
+              "567e6db446322cf52ae8df9fec083ffd4d8a2cbbff482b0e4e923102476a638d",
+              "b630232200841607598ca0d66887c71e4ee29d670851983e523d5d89f6fa1d57",
+              "dc77a83c56a36839727e8d8075da539bc1af0a3adcd5fcf895616504e4c704a2",
+              "7cb201df99bdfc7a73b0a62f6c8dad23a18aefed2de1fa9df1060b73a5f38d81",
+              "0c71de552c55061453e76c69de110453ce67a328eb9eb4646458d5d3e9434fcf"
+            ],
+            "axis_sha256": [
+              "4e2eb1c524455731887057600285510814994e417f5796a3a6a4fd3b1de736a0",
+              "795c569f0efeb42167b90f98a31689bfbae48ee54dfaf87552171c2622f4e9c2"
+            ],
+            "summary": {
+              "selected_count": 170,
+              "wse_sum_m": 2343.5,
+              "wse_mean_m": 13.785294117647059,
+              "uncertainty_count": 145,
+              "uncertainty_sum_m": 36.25,
+              "mean_pixel_uncertainty_m": 0.25,
+              "contributing_count": 147,
+              "contributing_pixel_sum": 77045
+            },
+            "process_wall_seconds": 0.236090125001283,
+            "process_cpu_seconds": 0.19568100000000002
+          },
+          {
+            "reader": "netcdf4",
+            "versions": {
+              "reader": "1.7.4",
+              "netcdf_c": "4.9.3 of Sep 15 2025 23:01:51 $",
+              "hdf5": "1.14.6"
+            },
+            "access": "local_sparse_reference",
+            "prepare_seconds": 0.003360207998412079,
+            "completion_seconds": 0.005586166998909903,
+            "api_cpu_seconds": 0.003973000000000004,
+            "peak_rss_bytes": 46481408,
+            "value_sha256": [
+              "567e6db446322cf52ae8df9fec083ffd4d8a2cbbff482b0e4e923102476a638d",
+              "b630232200841607598ca0d66887c71e4ee29d670851983e523d5d89f6fa1d57",
+              "dc77a83c56a36839727e8d8075da539bc1af0a3adcd5fcf895616504e4c704a2",
+              "7cb201df99bdfc7a73b0a62f6c8dad23a18aefed2de1fa9df1060b73a5f38d81",
+              "0c71de552c55061453e76c69de110453ce67a328eb9eb4646458d5d3e9434fcf"
+            ],
+            "axis_sha256": [
+              "4e2eb1c524455731887057600285510814994e417f5796a3a6a4fd3b1de736a0",
+              "795c569f0efeb42167b90f98a31689bfbae48ee54dfaf87552171c2622f4e9c2"
+            ],
+            "summary": {
+              "selected_count": 170,
+              "wse_sum_m": 2343.5,
+              "wse_mean_m": 13.785294117647059,
+              "uncertainty_count": 145,
+              "uncertainty_sum_m": 36.25,
+              "mean_pixel_uncertainty_m": 0.25,
+              "contributing_count": 147,
+              "contributing_pixel_sum": 77045
+            },
+            "process_wall_seconds": 0.11320012499891163,
+            "process_cpu_seconds": 0.106479
+          }
+        ]
+      },
+      "transport": {
+        "checkpoint_claims": 0,
+        "peak_in_flight": 1,
+        "wire_head": 10,
+        "wire_get": 40,
+        "redirects": 9,
+        "login_requests": 1,
+        "refreshes": 0,
+        "route_cache_hits": 35,
+        "response_body_bytes": 71210,
+        "redirect_body_bytes": 0,
+        "signing_auth_seconds": 0.039306291,
+        "statuses": {
+          "200": 5,
+          "206": 36,
+          "301": 1,
+          "302": 2,
+          "303": 6
+        },
+        "origins": {
+          "https://127.0.0.1:51928": 1,
+          "https://localhost:51927": 8,
+          "https://localhost:51929": 41
+        }
+      }
+    },
+    {
+      "case": "expired-once",
+      "expected_success": true,
+      "returncode": 0,
+      "elapsed_seconds": 0.08241908399941167,
+      "wire_counts": {
+        "archive HEAD 303": 5,
+        "resource HEAD 200": 5,
+        "archive GET 302": 1,
+        "login GET 302": 1,
+        "archive GET 301": 1,
+        "archive GET 303": 2,
+        "resource GET 403": 1,
+        "resource GET 206": 36
+      },
+      "science": {
+        "all_native_value_bits_equal": true,
+        "all_five_source_masks_equal": true,
+        "exact_logical_coverage": true,
+        "all_coordinates_equal": true,
+        "derived_mask_equal": true,
+        "independent_summaries_equal": true,
+        "pixels_per_variable": 323,
+        "tiles": 4,
+        "references": [
+          {
+            "reader": "h5py",
+            "versions": {
+              "reader": "3.12.1",
+              "hdf5": "1.12.2"
+            },
+            "access": "local_sparse_reference",
+            "prepare_seconds": 0.0012495000009948853,
+            "completion_seconds": 0.0034419170006003696,
+            "api_cpu_seconds": 0.0033259999999999956,
+            "peak_rss_bytes": 44154880,
+            "value_sha256": [
+              "567e6db446322cf52ae8df9fec083ffd4d8a2cbbff482b0e4e923102476a638d",
+              "b630232200841607598ca0d66887c71e4ee29d670851983e523d5d89f6fa1d57",
+              "dc77a83c56a36839727e8d8075da539bc1af0a3adcd5fcf895616504e4c704a2",
+              "7cb201df99bdfc7a73b0a62f6c8dad23a18aefed2de1fa9df1060b73a5f38d81",
+              "0c71de552c55061453e76c69de110453ce67a328eb9eb4646458d5d3e9434fcf"
+            ],
+            "axis_sha256": [
+              "4e2eb1c524455731887057600285510814994e417f5796a3a6a4fd3b1de736a0",
+              "795c569f0efeb42167b90f98a31689bfbae48ee54dfaf87552171c2622f4e9c2"
+            ],
+            "summary": {
+              "selected_count": 170,
+              "wse_sum_m": 2343.5,
+              "wse_mean_m": 13.785294117647059,
+              "uncertainty_count": 145,
+              "uncertainty_sum_m": 36.25,
+              "mean_pixel_uncertainty_m": 0.25,
+              "contributing_count": 147,
+              "contributing_pixel_sum": 77045
+            },
+            "process_wall_seconds": 0.19920416700006172,
+            "process_cpu_seconds": 0.19487600000000005
+          },
+          {
+            "reader": "netcdf4",
+            "versions": {
+              "reader": "1.7.4",
+              "netcdf_c": "4.9.3 of Sep 15 2025 23:01:51 $",
+              "hdf5": "1.14.6"
+            },
+            "access": "local_sparse_reference",
+            "prepare_seconds": 0.0011285000000498258,
+            "completion_seconds": 0.00370945800023037,
+            "api_cpu_seconds": 0.0032869999999999983,
+            "peak_rss_bytes": 46841856,
+            "value_sha256": [
+              "567e6db446322cf52ae8df9fec083ffd4d8a2cbbff482b0e4e923102476a638d",
+              "b630232200841607598ca0d66887c71e4ee29d670851983e523d5d89f6fa1d57",
+              "dc77a83c56a36839727e8d8075da539bc1af0a3adcd5fcf895616504e4c704a2",
+              "7cb201df99bdfc7a73b0a62f6c8dad23a18aefed2de1fa9df1060b73a5f38d81",
+              "0c71de552c55061453e76c69de110453ce67a328eb9eb4646458d5d3e9434fcf"
+            ],
+            "axis_sha256": [
+              "4e2eb1c524455731887057600285510814994e417f5796a3a6a4fd3b1de736a0",
+              "795c569f0efeb42167b90f98a31689bfbae48ee54dfaf87552171c2622f4e9c2"
+            ],
+            "summary": {
+              "selected_count": 170,
+              "wse_sum_m": 2343.5,
+              "wse_mean_m": 13.785294117647059,
+              "uncertainty_count": 145,
+              "uncertainty_sum_m": 36.25,
+              "mean_pixel_uncertainty_m": 0.25,
+              "contributing_count": 147,
+              "contributing_pixel_sum": 77045
+            },
+            "process_wall_seconds": 0.10863408299883304,
+            "process_cpu_seconds": 0.10244899999999993
+          }
+        ]
+      },
+      "transport": {
+        "checkpoint_claims": 0,
+        "peak_in_flight": 1,
+        "wire_head": 10,
+        "wire_get": 42,
+        "redirects": 10,
+        "login_requests": 1,
+        "refreshes": 1,
+        "route_cache_hits": 35,
+        "response_body_bytes": 71210,
+        "redirect_body_bytes": 0,
+        "signing_auth_seconds": 0.03499475,
+        "statuses": {
+          "200": 5,
+          "206": 36,
+          "301": 1,
+          "302": 2,
+          "303": 7,
+          "403": 1
+        },
+        "origins": {
+          "https://127.0.0.1:51928": 1,
+          "https://localhost:51927": 9,
+          "https://localhost:51929": 42
+        }
+      }
+    },
+    {
+      "case": "expired-after-cache",
+      "expected_success": true,
+      "returncode": 0,
+      "elapsed_seconds": 0.08663325000088662,
+      "wire_counts": {
+        "archive HEAD 303": 5,
+        "resource HEAD 200": 5,
+        "archive GET 302": 1,
+        "login GET 302": 1,
+        "archive GET 301": 1,
+        "archive GET 303": 2,
+        "resource GET 206": 36,
+        "resource GET 403": 1
+      },
+      "science": {
+        "all_native_value_bits_equal": true,
+        "all_five_source_masks_equal": true,
+        "exact_logical_coverage": true,
+        "all_coordinates_equal": true,
+        "derived_mask_equal": true,
+        "independent_summaries_equal": true,
+        "pixels_per_variable": 323,
+        "tiles": 4,
+        "references": [
+          {
+            "reader": "h5py",
+            "versions": {
+              "reader": "3.12.1",
+              "hdf5": "1.12.2"
+            },
+            "access": "local_sparse_reference",
+            "prepare_seconds": 0.001237958000274375,
+            "completion_seconds": 0.0034659579996514367,
+            "api_cpu_seconds": 0.0029990000000000017,
+            "peak_rss_bytes": 43728896,
+            "value_sha256": [
+              "567e6db446322cf52ae8df9fec083ffd4d8a2cbbff482b0e4e923102476a638d",
+              "b630232200841607598ca0d66887c71e4ee29d670851983e523d5d89f6fa1d57",
+              "dc77a83c56a36839727e8d8075da539bc1af0a3adcd5fcf895616504e4c704a2",
+              "7cb201df99bdfc7a73b0a62f6c8dad23a18aefed2de1fa9df1060b73a5f38d81",
+              "0c71de552c55061453e76c69de110453ce67a328eb9eb4646458d5d3e9434fcf"
+            ],
+            "axis_sha256": [
+              "4e2eb1c524455731887057600285510814994e417f5796a3a6a4fd3b1de736a0",
+              "795c569f0efeb42167b90f98a31689bfbae48ee54dfaf87552171c2622f4e9c2"
+            ],
+            "summary": {
+              "selected_count": 170,
+              "wse_sum_m": 2343.5,
+              "wse_mean_m": 13.785294117647059,
+              "uncertainty_count": 145,
+              "uncertainty_sum_m": 36.25,
+              "mean_pixel_uncertainty_m": 0.25,
+              "contributing_count": 147,
+              "contributing_pixel_sum": 77045
+            },
+            "process_wall_seconds": 0.19423120799910976,
+            "process_cpu_seconds": 0.19119799999999987
+          },
+          {
+            "reader": "netcdf4",
+            "versions": {
+              "reader": "1.7.4",
+              "netcdf_c": "4.9.3 of Sep 15 2025 23:01:51 $",
+              "hdf5": "1.14.6"
+            },
+            "access": "local_sparse_reference",
+            "prepare_seconds": 0.0011169999997946434,
+            "completion_seconds": 0.0032169170008273795,
+            "api_cpu_seconds": 0.0028529999999999944,
+            "peak_rss_bytes": 46841856,
+            "value_sha256": [
+              "567e6db446322cf52ae8df9fec083ffd4d8a2cbbff482b0e4e923102476a638d",
+              "b630232200841607598ca0d66887c71e4ee29d670851983e523d5d89f6fa1d57",
+              "dc77a83c56a36839727e8d8075da539bc1af0a3adcd5fcf895616504e4c704a2",
+              "7cb201df99bdfc7a73b0a62f6c8dad23a18aefed2de1fa9df1060b73a5f38d81",
+              "0c71de552c55061453e76c69de110453ce67a328eb9eb4646458d5d3e9434fcf"
+            ],
+            "axis_sha256": [
+              "4e2eb1c524455731887057600285510814994e417f5796a3a6a4fd3b1de736a0",
+              "795c569f0efeb42167b90f98a31689bfbae48ee54dfaf87552171c2622f4e9c2"
+            ],
+            "summary": {
+              "selected_count": 170,
+              "wse_sum_m": 2343.5,
+              "wse_mean_m": 13.785294117647059,
+              "uncertainty_count": 145,
+              "uncertainty_sum_m": 36.25,
+              "mean_pixel_uncertainty_m": 0.25,
+              "contributing_count": 147,
+              "contributing_pixel_sum": 77045
+            },
+            "process_wall_seconds": 0.10899054199944658,
+            "process_cpu_seconds": 0.10321100000000008
+          }
+        ]
+      },
+      "transport": {
+        "checkpoint_claims": 0,
+        "peak_in_flight": 1,
+        "wire_head": 10,
+        "wire_get": 42,
+        "redirects": 10,
+        "login_requests": 1,
+        "refreshes": 1,
+        "route_cache_hits": 35,
+        "response_body_bytes": 71210,
+        "redirect_body_bytes": 0,
+        "signing_auth_seconds": 0.034949083,
+        "statuses": {
+          "200": 5,
+          "206": 36,
+          "301": 1,
+          "302": 2,
+          "303": 7,
+          "403": 1
+        },
+        "origins": {
+          "https://127.0.0.1:51928": 1,
+          "https://localhost:51927": 9,
+          "https://localhost:51929": 42
+        }
+      }
+    },
+    {
+      "case": "short-expiry",
+      "expected_success": true,
+      "returncode": 0,
+      "elapsed_seconds": 0.08132408299934468,
+      "wire_counts": {
+        "archive HEAD 303": 5,
+        "resource HEAD 200": 5,
+        "archive GET 302": 1,
+        "login GET 302": 1,
+        "archive GET 301": 1,
+        "archive GET 303": 36,
+        "resource GET 206": 36
+      },
+      "science": {
+        "all_native_value_bits_equal": true,
+        "all_five_source_masks_equal": true,
+        "exact_logical_coverage": true,
+        "all_coordinates_equal": true,
+        "derived_mask_equal": true,
+        "independent_summaries_equal": true,
+        "pixels_per_variable": 323,
+        "tiles": 4,
+        "references": [
+          {
+            "reader": "h5py",
+            "versions": {
+              "reader": "3.12.1",
+              "hdf5": "1.12.2"
+            },
+            "access": "local_sparse_reference",
+            "prepare_seconds": 0.0018818749995261896,
+            "completion_seconds": 0.006318833000477753,
+            "api_cpu_seconds": 0.003937999999999997,
+            "peak_rss_bytes": 44236800,
+            "value_sha256": [
+              "567e6db446322cf52ae8df9fec083ffd4d8a2cbbff482b0e4e923102476a638d",
+              "b630232200841607598ca0d66887c71e4ee29d670851983e523d5d89f6fa1d57",
+              "dc77a83c56a36839727e8d8075da539bc1af0a3adcd5fcf895616504e4c704a2",
+              "7cb201df99bdfc7a73b0a62f6c8dad23a18aefed2de1fa9df1060b73a5f38d81",
+              "0c71de552c55061453e76c69de110453ce67a328eb9eb4646458d5d3e9434fcf"
+            ],
+            "axis_sha256": [
+              "4e2eb1c524455731887057600285510814994e417f5796a3a6a4fd3b1de736a0",
+              "795c569f0efeb42167b90f98a31689bfbae48ee54dfaf87552171c2622f4e9c2"
+            ],
+            "summary": {
+              "selected_count": 170,
+              "wse_sum_m": 2343.5,
+              "wse_mean_m": 13.785294117647059,
+              "uncertainty_count": 145,
+              "uncertainty_sum_m": 36.25,
+              "mean_pixel_uncertainty_m": 0.25,
+              "contributing_count": 147,
+              "contributing_pixel_sum": 77045
+            },
+            "process_wall_seconds": 0.20134733399936522,
+            "process_cpu_seconds": 0.1953430000000001
+          },
+          {
+            "reader": "netcdf4",
+            "versions": {
+              "reader": "1.7.4",
+              "netcdf_c": "4.9.3 of Sep 15 2025 23:01:51 $",
+              "hdf5": "1.14.6"
+            },
+            "access": "local_sparse_reference",
+            "prepare_seconds": 0.0011553749991435325,
+            "completion_seconds": 0.003058915999645251,
+            "api_cpu_seconds": 0.0029630000000000073,
+            "peak_rss_bytes": 46432256,
+            "value_sha256": [
+              "567e6db446322cf52ae8df9fec083ffd4d8a2cbbff482b0e4e923102476a638d",
+              "b630232200841607598ca0d66887c71e4ee29d670851983e523d5d89f6fa1d57",
+              "dc77a83c56a36839727e8d8075da539bc1af0a3adcd5fcf895616504e4c704a2",
+              "7cb201df99bdfc7a73b0a62f6c8dad23a18aefed2de1fa9df1060b73a5f38d81",
+              "0c71de552c55061453e76c69de110453ce67a328eb9eb4646458d5d3e9434fcf"
+            ],
+            "axis_sha256": [
+              "4e2eb1c524455731887057600285510814994e417f5796a3a6a4fd3b1de736a0",
+              "795c569f0efeb42167b90f98a31689bfbae48ee54dfaf87552171c2622f4e9c2"
+            ],
+            "summary": {
+              "selected_count": 170,
+              "wse_sum_m": 2343.5,
+              "wse_mean_m": 13.785294117647059,
+              "uncertainty_count": 145,
+              "uncertainty_sum_m": 36.25,
+              "mean_pixel_uncertainty_m": 0.25,
+              "contributing_count": 147,
+              "contributing_pixel_sum": 77045
+            },
+            "process_wall_seconds": 0.10561549999874842,
+            "process_cpu_seconds": 0.10124799999999984
+          }
+        ]
+      },
+      "transport": {
+        "checkpoint_claims": 0,
+        "peak_in_flight": 1,
+        "wire_head": 10,
+        "wire_get": 75,
+        "redirects": 44,
+        "login_requests": 1,
+        "refreshes": 0,
+        "route_cache_hits": 0,
+        "response_body_bytes": 71210,
+        "redirect_body_bytes": 0,
+        "signing_auth_seconds": 0.049869208000000005,
+        "statuses": {
+          "200": 5,
+          "206": 36,
+          "301": 1,
+          "302": 2,
+          "303": 41
+        },
+        "origins": {
+          "https://127.0.0.1:51928": 1,
+          "https://localhost:51927": 43,
+          "https://localhost:51929": 41
+        }
+      }
+    },
+    {
+      "case": "canonical-429",
+      "expected_success": true,
+      "returncode": 0,
+      "elapsed_seconds": 0.08147774999997637,
+      "wire_counts": {
+        "archive HEAD 429": 1,
+        "archive HEAD 303": 5,
+        "resource HEAD 200": 5,
+        "archive GET 302": 1,
+        "login GET 302": 1,
+        "archive GET 301": 1,
+        "archive GET 303": 1,
+        "resource GET 206": 36
+      },
+      "science": {
+        "all_native_value_bits_equal": true,
+        "all_five_source_masks_equal": true,
+        "exact_logical_coverage": true,
+        "all_coordinates_equal": true,
+        "derived_mask_equal": true,
+        "independent_summaries_equal": true,
+        "pixels_per_variable": 323,
+        "tiles": 4,
+        "references": [
+          {
+            "reader": "h5py",
+            "versions": {
+              "reader": "3.12.1",
+              "hdf5": "1.12.2"
+            },
+            "access": "local_sparse_reference",
+            "prepare_seconds": 0.001144583999121096,
+            "completion_seconds": 0.0029432499995891703,
+            "api_cpu_seconds": 0.002834000000000003,
+            "peak_rss_bytes": 43761664,
+            "value_sha256": [
+              "567e6db446322cf52ae8df9fec083ffd4d8a2cbbff482b0e4e923102476a638d",
+              "b630232200841607598ca0d66887c71e4ee29d670851983e523d5d89f6fa1d57",
+              "dc77a83c56a36839727e8d8075da539bc1af0a3adcd5fcf895616504e4c704a2",
+              "7cb201df99bdfc7a73b0a62f6c8dad23a18aefed2de1fa9df1060b73a5f38d81",
+              "0c71de552c55061453e76c69de110453ce67a328eb9eb4646458d5d3e9434fcf"
+            ],
+            "axis_sha256": [
+              "4e2eb1c524455731887057600285510814994e417f5796a3a6a4fd3b1de736a0",
+              "795c569f0efeb42167b90f98a31689bfbae48ee54dfaf87552171c2622f4e9c2"
+            ],
+            "summary": {
+              "selected_count": 170,
+              "wse_sum_m": 2343.5,
+              "wse_mean_m": 13.785294117647059,
+              "uncertainty_count": 145,
+              "uncertainty_sum_m": 36.25,
+              "mean_pixel_uncertainty_m": 0.25,
+              "contributing_count": 147,
+              "contributing_pixel_sum": 77045
+            },
+            "process_wall_seconds": 0.19620479200057162,
+            "process_cpu_seconds": 0.19210999999999995
+          },
+          {
+            "reader": "netcdf4",
+            "versions": {
+              "reader": "1.7.4",
+              "netcdf_c": "4.9.3 of Sep 15 2025 23:01:51 $",
+              "hdf5": "1.14.6"
+            },
+            "access": "local_sparse_reference",
+            "prepare_seconds": 0.001126791999922716,
+            "completion_seconds": 0.003098833998592454,
+            "api_cpu_seconds": 0.002911999999999998,
+            "peak_rss_bytes": 46301184,
+            "value_sha256": [
+              "567e6db446322cf52ae8df9fec083ffd4d8a2cbbff482b0e4e923102476a638d",
+              "b630232200841607598ca0d66887c71e4ee29d670851983e523d5d89f6fa1d57",
+              "dc77a83c56a36839727e8d8075da539bc1af0a3adcd5fcf895616504e4c704a2",
+              "7cb201df99bdfc7a73b0a62f6c8dad23a18aefed2de1fa9df1060b73a5f38d81",
+              "0c71de552c55061453e76c69de110453ce67a328eb9eb4646458d5d3e9434fcf"
+            ],
+            "axis_sha256": [
+              "4e2eb1c524455731887057600285510814994e417f5796a3a6a4fd3b1de736a0",
+              "795c569f0efeb42167b90f98a31689bfbae48ee54dfaf87552171c2622f4e9c2"
+            ],
+            "summary": {
+              "selected_count": 170,
+              "wse_sum_m": 2343.5,
+              "wse_mean_m": 13.785294117647059,
+              "uncertainty_count": 145,
+              "uncertainty_sum_m": 36.25,
+              "mean_pixel_uncertainty_m": 0.25,
+              "contributing_count": 147,
+              "contributing_pixel_sum": 77045
+            },
+            "process_wall_seconds": 0.10279858300054912,
+            "process_cpu_seconds": 0.09732700000000011
+          }
+        ]
+      },
+      "transport": {
+        "checkpoint_claims": 0,
+        "peak_in_flight": 1,
+        "wire_head": 11,
+        "wire_get": 40,
+        "redirects": 9,
+        "login_requests": 1,
+        "refreshes": 0,
+        "route_cache_hits": 35,
+        "response_body_bytes": 71210,
+        "redirect_body_bytes": 0,
+        "signing_auth_seconds": 0.034300501,
+        "statuses": {
+          "200": 5,
+          "206": 36,
+          "301": 1,
+          "302": 2,
+          "303": 6,
+          "429": 1
+        },
+        "origins": {
+          "https://127.0.0.1:51928": 1,
+          "https://localhost:51927": 9,
+          "https://localhost:51929": 41
+        }
+      }
+    },
+    {
+      "case": "resource-429",
+      "expected_success": true,
+      "returncode": 0,
+      "elapsed_seconds": 0.08646425000006275,
+      "wire_counts": {
+        "archive HEAD 303": 5,
+        "resource HEAD 200": 5,
+        "archive GET 302": 1,
+        "login GET 302": 1,
+        "archive GET 301": 1,
+        "archive GET 303": 2,
+        "resource GET 429": 1,
+        "resource GET 206": 36
+      },
+      "science": {
+        "all_native_value_bits_equal": true,
+        "all_five_source_masks_equal": true,
+        "exact_logical_coverage": true,
+        "all_coordinates_equal": true,
+        "derived_mask_equal": true,
+        "independent_summaries_equal": true,
+        "pixels_per_variable": 323,
+        "tiles": 4,
+        "references": [
+          {
+            "reader": "h5py",
+            "versions": {
+              "reader": "3.12.1",
+              "hdf5": "1.12.2"
+            },
+            "access": "local_sparse_reference",
+            "prepare_seconds": 0.0011640409993560752,
+            "completion_seconds": 0.0030128749986033654,
+            "api_cpu_seconds": 0.002806000000000003,
+            "peak_rss_bytes": 44007424,
+            "value_sha256": [
+              "567e6db446322cf52ae8df9fec083ffd4d8a2cbbff482b0e4e923102476a638d",
+              "b630232200841607598ca0d66887c71e4ee29d670851983e523d5d89f6fa1d57",
+              "dc77a83c56a36839727e8d8075da539bc1af0a3adcd5fcf895616504e4c704a2",
+              "7cb201df99bdfc7a73b0a62f6c8dad23a18aefed2de1fa9df1060b73a5f38d81",
+              "0c71de552c55061453e76c69de110453ce67a328eb9eb4646458d5d3e9434fcf"
+            ],
+            "axis_sha256": [
+              "4e2eb1c524455731887057600285510814994e417f5796a3a6a4fd3b1de736a0",
+              "795c569f0efeb42167b90f98a31689bfbae48ee54dfaf87552171c2622f4e9c2"
+            ],
+            "summary": {
+              "selected_count": 170,
+              "wse_sum_m": 2343.5,
+              "wse_mean_m": 13.785294117647059,
+              "uncertainty_count": 145,
+              "uncertainty_sum_m": 36.25,
+              "mean_pixel_uncertainty_m": 0.25,
+              "contributing_count": 147,
+              "contributing_pixel_sum": 77045
+            },
+            "process_wall_seconds": 0.18753591700078687,
+            "process_cpu_seconds": 0.18453999999999982
+          },
+          {
+            "reader": "netcdf4",
+            "versions": {
+              "reader": "1.7.4",
+              "netcdf_c": "4.9.3 of Sep 15 2025 23:01:51 $",
+              "hdf5": "1.14.6"
+            },
+            "access": "local_sparse_reference",
+            "prepare_seconds": 0.0011985829987679608,
+            "completion_seconds": 0.003253416000006837,
+            "api_cpu_seconds": 0.0030619999999999953,
+            "peak_rss_bytes": 46465024,
+            "value_sha256": [
+              "567e6db446322cf52ae8df9fec083ffd4d8a2cbbff482b0e4e923102476a638d",
+              "b630232200841607598ca0d66887c71e4ee29d670851983e523d5d89f6fa1d57",
+              "dc77a83c56a36839727e8d8075da539bc1af0a3adcd5fcf895616504e4c704a2",
+              "7cb201df99bdfc7a73b0a62f6c8dad23a18aefed2de1fa9df1060b73a5f38d81",
+              "0c71de552c55061453e76c69de110453ce67a328eb9eb4646458d5d3e9434fcf"
+            ],
+            "axis_sha256": [
+              "4e2eb1c524455731887057600285510814994e417f5796a3a6a4fd3b1de736a0",
+              "795c569f0efeb42167b90f98a31689bfbae48ee54dfaf87552171c2622f4e9c2"
+            ],
+            "summary": {
+              "selected_count": 170,
+              "wse_sum_m": 2343.5,
+              "wse_mean_m": 13.785294117647059,
+              "uncertainty_count": 145,
+              "uncertainty_sum_m": 36.25,
+              "mean_pixel_uncertainty_m": 0.25,
+              "contributing_count": 147,
+              "contributing_pixel_sum": 77045
+            },
+            "process_wall_seconds": 0.10959854100110533,
+            "process_cpu_seconds": 0.1042780000000002
+          }
+        ]
+      },
+      "transport": {
+        "checkpoint_claims": 0,
+        "peak_in_flight": 1,
+        "wire_head": 10,
+        "wire_get": 42,
+        "redirects": 10,
+        "login_requests": 1,
+        "refreshes": 0,
+        "route_cache_hits": 35,
+        "response_body_bytes": 71210,
+        "redirect_body_bytes": 0,
+        "signing_auth_seconds": 0.034088333000000005,
+        "statuses": {
+          "200": 5,
+          "206": 36,
+          "301": 1,
+          "302": 2,
+          "303": 7,
+          "429": 1
+        },
+        "origins": {
+          "https://127.0.0.1:51928": 1,
+          "https://localhost:51927": 9,
+          "https://localhost:51929": 42
+        }
+      }
+    },
+    {
+      "case": "resource-401",
+      "expected_success": false,
+      "returncode": 1,
+      "elapsed_seconds": 0.08149629099898448,
+      "wire_counts": {
+        "archive HEAD 303": 2,
+        "resource HEAD 200": 2,
+        "archive GET 302": 1,
+        "login GET 302": 1,
+        "archive GET 301": 1,
+        "archive GET 303": 2,
+        "resource GET 401": 2
+      },
+      "error": "Error: \"prepare: invalid data: authenticated access rejected; refresh exhausted\"",
+      "transport": {
+        "checkpoint_claims": 0,
+        "peak_in_flight": 1,
+        "wire_head": 4,
+        "wire_get": 7,
+        "redirects": 7,
+        "login_requests": 1,
+        "refreshes": 1,
+        "route_cache_hits": 0,
+        "response_body_bytes": 0,
+        "redirect_body_bytes": 0,
+        "signing_auth_seconds": 0.030706458000000002,
+        "statuses": {
+          "200": 2,
+          "301": 1,
+          "302": 2,
+          "303": 4,
+          "401": 2
+        },
+        "origins": {
+          "https://127.0.0.1:51928": 1,
+          "https://localhost:51927": 6,
+          "https://localhost:51929": 4
+        }
+      }
+    },
+    {
+      "case": "login-401",
+      "expected_success": false,
+      "returncode": 1,
+      "elapsed_seconds": 0.07904820799922163,
+      "wire_counts": {
+        "archive HEAD 303": 2,
+        "resource HEAD 200": 2,
+        "archive GET 302": 1,
+        "login GET 401": 1
+      },
+      "error": "Error: \"prepare: invalid data: authenticated access rejected; refresh exhausted\"",
+      "transport": {
+        "checkpoint_claims": 0,
+        "peak_in_flight": 1,
+        "wire_head": 4,
+        "wire_get": 2,
+        "redirects": 3,
+        "login_requests": 1,
+        "refreshes": 0,
+        "route_cache_hits": 0,
+        "response_body_bytes": 0,
+        "redirect_body_bytes": 0,
+        "signing_auth_seconds": 0.030500582999999998,
+        "statuses": {
+          "200": 2,
+          "302": 1,
+          "303": 2,
+          "401": 1
+        },
+        "origins": {
+          "https://127.0.0.1:51928": 1,
+          "https://localhost:51927": 3,
+          "https://localhost:51929": 2
+        }
+      }
+    },
+    {
+      "case": "resource-412",
+      "expected_success": false,
+      "returncode": 1,
+      "elapsed_seconds": 0.0827395409996825,
+      "wire_counts": {
+        "archive HEAD 303": 2,
+        "resource HEAD 200": 2,
+        "archive GET 302": 1,
+        "login GET 302": 1,
+        "archive GET 301": 1,
+        "archive GET 303": 1,
+        "resource GET 412": 1
+      },
+      "error": "Error: \"prepare: invalid data: HTTP source version conflict; prepare again\"",
+      "transport": {
+        "checkpoint_claims": 0,
+        "peak_in_flight": 1,
+        "wire_head": 4,
+        "wire_get": 5,
+        "redirects": 6,
+        "login_requests": 1,
+        "refreshes": 0,
+        "route_cache_hits": 0,
+        "response_body_bytes": 0,
+        "redirect_body_bytes": 0,
+        "signing_auth_seconds": 0.035877542,
+        "statuses": {
+          "200": 2,
+          "301": 1,
+          "302": 2,
+          "303": 3,
+          "412": 1
+        },
+        "origins": {
+          "https://127.0.0.1:51928": 1,
+          "https://localhost:51927": 5,
+          "https://localhost:51929": 3
+        }
+      }
+    },
+    {
+      "case": "refresh-exhausted",
+      "expected_success": false,
+      "returncode": 1,
+      "elapsed_seconds": 0.08240716600084852,
+      "wire_counts": {
+        "archive HEAD 303": 2,
+        "resource HEAD 200": 2,
+        "archive GET 302": 1,
+        "login GET 302": 1,
+        "archive GET 301": 1,
+        "archive GET 303": 2,
+        "resource GET 403": 2
+      },
+      "error": "Error: \"prepare: invalid data: authenticated access rejected; refresh exhausted\"",
+      "transport": {
+        "checkpoint_claims": 0,
+        "peak_in_flight": 1,
+        "wire_head": 4,
+        "wire_get": 7,
+        "redirects": 7,
+        "login_requests": 1,
+        "refreshes": 1,
+        "route_cache_hits": 0,
+        "response_body_bytes": 0,
+        "redirect_body_bytes": 0,
+        "signing_auth_seconds": 0.03052475,
+        "statuses": {
+          "200": 2,
+          "301": 1,
+          "302": 2,
+          "303": 4,
+          "403": 2
+        },
+        "origins": {
+          "https://127.0.0.1:51928": 1,
+          "https://localhost:51927": 6,
+          "https://localhost:51929": 4
+        }
+      }
+    },
+    {
+      "case": "downgrade",
+      "expected_success": false,
+      "returncode": 1,
+      "elapsed_seconds": 0.08258712499991816,
+      "wire_counts": {
+        "archive HEAD 302": 1
+      },
+      "error": "Error: \"prepare: unsafe or unconfigured authenticated redirect\"",
+      "transport": {
+        "checkpoint_claims": 0,
+        "peak_in_flight": 1,
+        "wire_head": 1,
+        "wire_get": 0,
+        "redirects": 0,
+        "login_requests": 0,
+        "refreshes": 0,
+        "route_cache_hits": 0,
+        "response_body_bytes": 0,
+        "redirect_body_bytes": 0,
+        "signing_auth_seconds": 0.0,
+        "statuses": {
+          "302": 1
+        },
+        "origins": {
+          "https://localhost:51927": 1
+        }
+      }
+    },
+    {
+      "case": "untrusted",
+      "expected_success": false,
+      "returncode": 1,
+      "elapsed_seconds": 0.0823623750002298,
+      "wire_counts": {
+        "archive HEAD 302": 1
+      },
+      "error": "Error: \"prepare: unsafe or unconfigured authenticated redirect\"",
+      "transport": {
+        "checkpoint_claims": 0,
+        "peak_in_flight": 1,
+        "wire_head": 1,
+        "wire_get": 0,
+        "redirects": 0,
+        "login_requests": 0,
+        "refreshes": 0,
+        "route_cache_hits": 0,
+        "response_body_bytes": 0,
+        "redirect_body_bytes": 0,
+        "signing_auth_seconds": 0.0,
+        "statuses": {
+          "302": 1
+        },
+        "origins": {
+          "https://localhost:51927": 1
+        }
+      }
+    },
+    {
+      "case": "unexpected-path",
+      "expected_success": false,
+      "returncode": 1,
+      "elapsed_seconds": 0.048425624998344574,
+      "wire_counts": {
+        "archive HEAD 302": 1
+      },
+      "error": "Error: \"prepare: unsafe or unconfigured authenticated redirect\"",
+      "transport": {
+        "checkpoint_claims": 0,
+        "peak_in_flight": 1,
+        "wire_head": 1,
+        "wire_get": 0,
+        "redirects": 0,
+        "login_requests": 0,
+        "refreshes": 0,
+        "route_cache_hits": 0,
+        "response_body_bytes": 0,
+        "redirect_body_bytes": 0,
+        "signing_auth_seconds": 0.0,
+        "statuses": {
+          "302": 1
+        },
+        "origins": {
+          "https://localhost:51927": 1
+        }
+      }
+    },
+    {
+      "case": "loop",
+      "expected_success": false,
+      "returncode": 1,
+      "elapsed_seconds": 0.08084791700093774,
+      "wire_counts": {
+        "archive HEAD 302": 1
+      },
+      "error": "Error: \"prepare: authenticated redirect loop\"",
+      "transport": {
+        "checkpoint_claims": 0,
+        "peak_in_flight": 1,
+        "wire_head": 1,
+        "wire_get": 0,
+        "redirects": 1,
+        "login_requests": 0,
+        "refreshes": 0,
+        "route_cache_hits": 0,
+        "response_body_bytes": 0,
+        "redirect_body_bytes": 0,
+        "signing_auth_seconds": 0.0,
+        "statuses": {
+          "302": 1
+        },
+        "origins": {
+          "https://localhost:51927": 1
+        }
+      }
+    },
+    {
+      "case": "hop-budget",
+      "expected_success": false,
+      "returncode": 1,
+      "elapsed_seconds": 0.08269804100018519,
+      "wire_counts": {
+        "archive HEAD 302": 9
+      },
+      "error": "Error: \"prepare: authenticated redirect hop budget exhausted\"",
+      "transport": {
+        "checkpoint_claims": 0,
+        "peak_in_flight": 1,
+        "wire_head": 9,
+        "wire_get": 0,
+        "redirects": 8,
+        "login_requests": 0,
+        "refreshes": 0,
+        "route_cache_hits": 0,
+        "response_body_bytes": 0,
+        "redirect_body_bytes": 0,
+        "signing_auth_seconds": 0.0,
+        "statuses": {
+          "302": 9
+        },
+        "origins": {
+          "https://localhost:51927": 9
+        }
+      }
+    },
+    {
+      "case": "wrong-method",
+      "expected_success": false,
+      "returncode": 1,
+      "elapsed_seconds": 0.07969341700118093,
+      "wire_counts": {
+        "archive HEAD 303": 1
+      },
+      "error": "Error: \"prepare: unsafe or unconfigured authenticated redirect\"",
+      "transport": {
+        "checkpoint_claims": 0,
+        "peak_in_flight": 1,
+        "wire_head": 1,
+        "wire_get": 0,
+        "redirects": 0,
+        "login_requests": 0,
+        "refreshes": 0,
+        "route_cache_hits": 0,
+        "response_body_bytes": 0,
+        "redirect_body_bytes": 0,
+        "signing_auth_seconds": 0.0,
+        "statuses": {
+          "303": 1
+        },
+        "origins": {
+          "https://localhost:51927": 1
+        }
+      }
+    },
+    {
+      "case": "resource-redirect",
+      "expected_success": false,
+      "returncode": 1,
+      "elapsed_seconds": 0.07877783299954899,
+      "wire_counts": {
+        "archive HEAD 303": 1,
+        "resource HEAD 302": 1
+      },
+      "error": "Error: \"prepare: unsafe or unconfigured authenticated redirect\"",
+      "transport": {
+        "checkpoint_claims": 0,
+        "peak_in_flight": 1,
+        "wire_head": 2,
+        "wire_get": 0,
+        "redirects": 1,
+        "login_requests": 0,
+        "refreshes": 0,
+        "route_cache_hits": 0,
+        "response_body_bytes": 0,
+        "redirect_body_bytes": 0,
+        "signing_auth_seconds": 0.0,
+        "statuses": {
+          "302": 1,
+          "303": 1
+        },
+        "origins": {
+          "https://localhost:51927": 1,
+          "https://localhost:51929": 1
+        }
+      }
+    },
+    {
+      "case": "missing-etag",
+      "expected_success": false,
+      "returncode": 1,
+      "elapsed_seconds": 0.08042879200002062,
+      "wire_counts": {
+        "archive HEAD 303": 1,
+        "resource HEAD 200": 1
+      },
+      "error": "Error: \"prepare: HTTP source requires strong ETags\"",
+      "transport": {
+        "checkpoint_claims": 0,
+        "peak_in_flight": 1,
+        "wire_head": 2,
+        "wire_get": 0,
+        "redirects": 1,
+        "login_requests": 0,
+        "refreshes": 0,
+        "route_cache_hits": 0,
+        "response_body_bytes": 0,
+        "redirect_body_bytes": 0,
+        "signing_auth_seconds": 0.030204916,
+        "statuses": {
+          "200": 1,
+          "303": 1
+        },
+        "origins": {
+          "https://localhost:51927": 1,
+          "https://localhost:51929": 1
+        }
+      }
+    },
+    {
+      "case": "weak-etag",
+      "expected_success": false,
+      "returncode": 1,
+      "elapsed_seconds": 0.08109041599891498,
+      "wire_counts": {
+        "archive HEAD 303": 1,
+        "resource HEAD 200": 1
+      },
+      "error": "Error: \"prepare: HTTP source requires strong ETags\"",
+      "transport": {
+        "checkpoint_claims": 0,
+        "peak_in_flight": 1,
+        "wire_head": 2,
+        "wire_get": 0,
+        "redirects": 1,
+        "login_requests": 0,
+        "refreshes": 0,
+        "route_cache_hits": 0,
+        "response_body_bytes": 0,
+        "redirect_body_bytes": 0,
+        "signing_auth_seconds": 0.029999666,
+        "statuses": {
+          "200": 1,
+          "303": 1
+        },
+        "origins": {
+          "https://localhost:51927": 1,
+          "https://localhost:51929": 1
+        }
+      }
+    },
+    {
+      "case": "missing-get-etag",
+      "expected_success": false,
+      "returncode": 1,
+      "elapsed_seconds": 0.07864958299978753,
+      "wire_counts": {
+        "archive HEAD 303": 2,
+        "resource HEAD 200": 2,
+        "archive GET 302": 1,
+        "login GET 302": 1,
+        "archive GET 301": 1,
+        "archive GET 303": 1,
+        "resource GET 206": 1
+      },
+      "error": "Error: \"prepare: invalid data: HTTP source requires strong ETags\"",
+      "transport": {
+        "checkpoint_claims": 0,
+        "peak_in_flight": 1,
+        "wire_head": 4,
+        "wire_get": 5,
+        "redirects": 6,
+        "login_requests": 1,
+        "refreshes": 0,
+        "route_cache_hits": 0,
+        "response_body_bytes": 0,
+        "redirect_body_bytes": 0,
+        "signing_auth_seconds": 0.032126541,
+        "statuses": {
+          "200": 2,
+          "206": 1,
+          "301": 1,
+          "302": 2,
+          "303": 3
+        },
+        "origins": {
+          "https://127.0.0.1:51928": 1,
+          "https://localhost:51927": 5,
+          "https://localhost:51929": 3
+        }
+      }
+    },
+    {
+      "case": "weak-get-etag",
+      "expected_success": false,
+      "returncode": 1,
+      "elapsed_seconds": 0.07952070799910871,
+      "wire_counts": {
+        "archive HEAD 303": 2,
+        "resource HEAD 200": 2,
+        "archive GET 302": 1,
+        "login GET 302": 1,
+        "archive GET 301": 1,
+        "archive GET 303": 1,
+        "resource GET 206": 1
+      },
+      "error": "Error: \"prepare: invalid data: HTTP source requires strong ETags\"",
+      "transport": {
+        "checkpoint_claims": 0,
+        "peak_in_flight": 1,
+        "wire_head": 4,
+        "wire_get": 5,
+        "redirects": 6,
+        "login_requests": 1,
+        "refreshes": 0,
+        "route_cache_hits": 0,
+        "response_body_bytes": 0,
+        "redirect_body_bytes": 0,
+        "signing_auth_seconds": 0.032632165000000005,
+        "statuses": {
+          "200": 2,
+          "206": 1,
+          "301": 1,
+          "302": 2,
+          "303": 3
+        },
+        "origins": {
+          "https://127.0.0.1:51928": 1,
+          "https://localhost:51927": 5,
+          "https://localhost:51929": 3
+        }
+      }
+    },
+    {
+      "case": "changed-etag",
+      "expected_success": false,
+      "returncode": 1,
+      "elapsed_seconds": 0.07808954100073606,
+      "wire_counts": {
+        "archive HEAD 303": 2,
+        "resource HEAD 200": 2,
+        "archive GET 302": 1,
+        "login GET 302": 1,
+        "archive GET 301": 1,
+        "archive GET 303": 1,
+        "resource GET 206": 1
+      },
+      "error": "Error: \"prepare: invalid data: HTTP source version conflict; prepare again\"",
+      "transport": {
+        "checkpoint_claims": 0,
+        "peak_in_flight": 1,
+        "wire_head": 4,
+        "wire_get": 5,
+        "redirects": 6,
+        "login_requests": 1,
+        "refreshes": 0,
+        "route_cache_hits": 0,
+        "response_body_bytes": 0,
+        "redirect_body_bytes": 0,
+        "signing_auth_seconds": 0.034003542,
+        "statuses": {
+          "200": 2,
+          "206": 1,
+          "301": 1,
+          "302": 2,
+          "303": 3
+        },
+        "origins": {
+          "https://127.0.0.1:51928": 1,
+          "https://localhost:51927": 5,
+          "https://localhost:51929": 3
+        }
+      }
+    },
+    {
+      "case": "length-head",
+      "expected_success": false,
+      "returncode": 1,
+      "elapsed_seconds": 0.08323504100007995,
+      "wire_counts": {
+        "archive HEAD 303": 2,
+        "resource HEAD 200": 2
+      },
+      "error": "Error: \"prepare: HTTP source version conflict; prepare again\"",
+      "transport": {
+        "checkpoint_claims": 0,
+        "peak_in_flight": 1,
+        "wire_head": 4,
+        "wire_get": 0,
+        "redirects": 2,
+        "login_requests": 0,
+        "refreshes": 0,
+        "route_cache_hits": 0,
+        "response_body_bytes": 0,
+        "redirect_body_bytes": 0,
+        "signing_auth_seconds": 0.028928416,
+        "statuses": {
+          "200": 2,
+          "303": 2
+        },
+        "origins": {
+          "https://localhost:51927": 2,
+          "https://localhost:51929": 2
+        }
+      }
+    },
+    {
+      "case": "changed-length",
+      "expected_success": false,
+      "returncode": 1,
+      "elapsed_seconds": 0.07947620799859578,
+      "wire_counts": {
+        "archive HEAD 303": 2,
+        "resource HEAD 200": 2,
+        "archive GET 302": 1,
+        "login GET 302": 1,
+        "archive GET 301": 1,
+        "archive GET 303": 1,
+        "resource GET 206": 1
+      },
+      "error": "Error: \"prepare: invalid data: invalid HTTP range framing\"",
+      "transport": {
+        "checkpoint_claims": 0,
+        "peak_in_flight": 1,
+        "wire_head": 4,
+        "wire_get": 5,
+        "redirects": 6,
+        "login_requests": 1,
+        "refreshes": 0,
+        "route_cache_hits": 0,
+        "response_body_bytes": 0,
+        "redirect_body_bytes": 0,
+        "signing_auth_seconds": 0.033274583,
+        "statuses": {
+          "200": 2,
+          "206": 1,
+          "301": 1,
+          "302": 2,
+          "303": 3
+        },
+        "origins": {
+          "https://127.0.0.1:51928": 1,
+          "https://localhost:51927": 5,
+          "https://localhost:51929": 3
+        }
+      }
+    },
+    {
+      "case": "wrong-range",
+      "expected_success": false,
+      "returncode": 1,
+      "elapsed_seconds": 0.08224349999909464,
+      "wire_counts": {
+        "archive HEAD 303": 2,
+        "resource HEAD 200": 2,
+        "archive GET 302": 1,
+        "login GET 302": 1,
+        "archive GET 301": 1,
+        "archive GET 303": 1,
+        "resource GET 206": 1
+      },
+      "error": "Error: \"prepare: invalid data: invalid HTTP range framing\"",
+      "transport": {
+        "checkpoint_claims": 0,
+        "peak_in_flight": 1,
+        "wire_head": 4,
+        "wire_get": 5,
+        "redirects": 6,
+        "login_requests": 1,
+        "refreshes": 0,
+        "route_cache_hits": 0,
+        "response_body_bytes": 0,
+        "redirect_body_bytes": 0,
+        "signing_auth_seconds": 0.033897083,
+        "statuses": {
+          "200": 2,
+          "206": 1,
+          "301": 1,
+          "302": 2,
+          "303": 3
+        },
+        "origins": {
+          "https://127.0.0.1:51928": 1,
+          "https://localhost:51927": 5,
+          "https://localhost:51929": 3
+        }
+      }
+    },
+    {
+      "case": "oversized",
+      "expected_success": false,
+      "returncode": 1,
+      "elapsed_seconds": 0.08012458399934985,
+      "wire_counts": {
+        "archive HEAD 303": 2,
+        "resource HEAD 200": 2,
+        "archive GET 302": 1,
+        "login GET 302": 1,
+        "archive GET 301": 1,
+        "archive GET 303": 1,
+        "resource GET 206": 1
+      },
+      "error": "Error: \"prepare: invalid data: invalid HTTP range framing\"",
+      "transport": {
+        "checkpoint_claims": 0,
+        "peak_in_flight": 1,
+        "wire_head": 4,
+        "wire_get": 5,
+        "redirects": 6,
+        "login_requests": 1,
+        "refreshes": 0,
+        "route_cache_hits": 0,
+        "response_body_bytes": 0,
+        "redirect_body_bytes": 0,
+        "signing_auth_seconds": 0.033644376000000004,
+        "statuses": {
+          "200": 2,
+          "206": 1,
+          "301": 1,
+          "302": 2,
+          "303": 3
+        },
+        "origins": {
+          "https://127.0.0.1:51928": 1,
+          "https://localhost:51927": 5,
+          "https://localhost:51929": 3
+        }
+      }
+    },
+    {
+      "case": "encoded",
+      "expected_success": false,
+      "returncode": 1,
+      "elapsed_seconds": 0.0810666659999697,
+      "wire_counts": {
+        "archive HEAD 303": 2,
+        "resource HEAD 200": 2,
+        "archive GET 302": 1,
+        "login GET 302": 1,
+        "archive GET 301": 1,
+        "archive GET 303": 1,
+        "resource GET 206": 1
+      },
+      "error": "Error: \"prepare: invalid data: encoded HTTP range responses are unsupported\"",
+      "transport": {
+        "checkpoint_claims": 0,
+        "peak_in_flight": 1,
+        "wire_head": 4,
+        "wire_get": 5,
+        "redirects": 6,
+        "login_requests": 1,
+        "refreshes": 0,
+        "route_cache_hits": 0,
+        "response_body_bytes": 0,
+        "redirect_body_bytes": 0,
+        "signing_auth_seconds": 0.033041708,
+        "statuses": {
+          "200": 2,
+          "206": 1,
+          "301": 1,
+          "302": 2,
+          "303": 3
+        },
+        "origins": {
+          "https://127.0.0.1:51928": 1,
+          "https://localhost:51927": 5,
+          "https://localhost:51929": 3
+        }
+      }
+    },
+    {
+      "case": "corrupt",
+      "expected_success": false,
+      "returncode": 1,
+      "elapsed_seconds": 0.08260225000049104,
+      "wire_counts": {
+        "archive HEAD 303": 2,
+        "resource HEAD 200": 2,
+        "archive GET 302": 1,
+        "login GET 302": 1,
+        "archive GET 301": 1,
+        "archive GET 303": 1,
+        "resource GET 206": 3
+      },
+      "error": "Error: \"prepare: invalid HDF5 magic bytes\"",
+      "transport": {
+        "checkpoint_claims": 0,
+        "peak_in_flight": 1,
+        "wire_head": 4,
+        "wire_get": 7,
+        "redirects": 6,
+        "login_requests": 1,
+        "refreshes": 0,
+        "route_cache_hits": 2,
+        "response_body_bytes": 36649,
+        "redirect_body_bytes": 0,
+        "signing_auth_seconds": 0.034288625,
+        "statuses": {
+          "200": 2,
+          "206": 3,
+          "301": 1,
+          "302": 2,
+          "303": 3
+        },
+        "origins": {
+          "https://127.0.0.1:51928": 1,
+          "https://localhost:51927": 5,
+          "https://localhost:51929": 5
+        }
+      }
+    },
+    {
+      "case": "truncated",
+      "expected_success": false,
+      "returncode": 1,
+      "elapsed_seconds": 0.13595920799889427,
+      "wire_counts": {
+        "archive HEAD 303": 2,
+        "resource HEAD 200": 2,
+        "archive GET 302": 1,
+        "login GET 302": 1,
+        "archive GET 301": 1,
+        "archive GET 303": 1,
+        "resource GET 206": 3
+      },
+      "error": "Error: \"prepare: invalid data: HTTP retry budget exhausted after 3 attempts (last status 206; retryable authenticated connection or body failure)\"",
+      "transport": {
+        "checkpoint_claims": 0,
+        "peak_in_flight": 1,
+        "wire_head": 4,
+        "wire_get": 7,
+        "redirects": 6,
+        "login_requests": 1,
+        "refreshes": 0,
+        "route_cache_hits": 2,
+        "response_body_bytes": 49149,
+        "redirect_body_bytes": 0,
+        "signing_auth_seconds": 0.032822458,
+        "statuses": {
+          "200": 2,
+          "206": 3,
+          "301": 1,
+          "302": 2,
+          "303": 3
+        },
+        "origins": {
+          "https://127.0.0.1:51928": 1,
+          "https://localhost:51927": 5,
+          "https://localhost:51929": 5
+        }
+      }
+    },
+    {
+      "case": "ignored-range",
+      "expected_success": false,
+      "returncode": 1,
+      "elapsed_seconds": 0.0770255419993191,
+      "wire_counts": {
+        "archive HEAD 303": 2,
+        "resource HEAD 200": 2,
+        "archive GET 302": 1,
+        "login GET 302": 1,
+        "archive GET 301": 1,
+        "archive GET 303": 1,
+        "resource GET 200": 1
+      },
+      "error": "Error: \"prepare: invalid data: HTTP object request rejected (unsupported status or redirect)\"",
+      "transport": {
+        "checkpoint_claims": 0,
+        "peak_in_flight": 1,
+        "wire_head": 4,
+        "wire_get": 5,
+        "redirects": 6,
+        "login_requests": 1,
+        "refreshes": 0,
+        "route_cache_hits": 0,
+        "response_body_bytes": 0,
+        "redirect_body_bytes": 0,
+        "signing_auth_seconds": 0.033763207999999996,
+        "statuses": {
+          "200": 3,
+          "301": 1,
+          "302": 2,
+          "303": 3
+        },
+        "origins": {
+          "https://127.0.0.1:51928": 1,
+          "https://localhost:51927": 5,
+          "https://localhost:51929": 3
+        }
+      }
+    },
+    {
+      "case": "mutate-final",
+      "expected_success": false,
+      "returncode": 1,
+      "elapsed_seconds": 0.08045895800023573,
+      "wire_counts": {
+        "archive HEAD 303": 5,
+        "resource HEAD 200": 5,
+        "archive GET 302": 1,
+        "login GET 302": 1,
+        "archive GET 301": 1,
+        "archive GET 303": 1,
+        "resource GET 206": 36
+      },
+      "error": "Error: \"HTTP source version conflict; prepare again\""
+    },
+    {
+      "case": "pending-range",
+      "expected_success": false,
+      "returncode": 1,
+      "elapsed_seconds": 0.13641774999996414,
+      "wire_counts": {
+        "archive HEAD 303": 4,
+        "resource HEAD 200": 4,
+        "archive GET 302": 1,
+        "login GET 302": 1,
+        "archive GET 301": 1,
+        "archive GET 303": 1,
+        "resource GET 206": 12,
+        "control GET 200": 1
+      },
+      "error": "Error: \"execution: acquisition cancelled at configured resource origin\""
+    },
+    {
+      "case": "pending-auth",
+      "expected_success": false,
+      "returncode": 1,
+      "elapsed_seconds": 0.0845345420002559,
+      "wire_counts": {
+        "archive HEAD 303": 4,
+        "resource HEAD 200": 4,
+        "archive GET 302": 2,
+        "login GET 302": 1,
+        "archive GET 301": 1,
+        "archive GET 303": 1,
+        "resource GET 206": 12,
+        "resource GET 403": 1,
+        "control GET 200": 1
+      },
+      "error": "Error: \"execution: acquisition cancelled at configured login origin\""
+    },
+    {
+      "case": "pending-body",
+      "expected_success": false,
+      "returncode": 1,
+      "elapsed_seconds": 0.134341625000161,
+      "wire_counts": {
+        "archive HEAD 303": 4,
+        "resource HEAD 200": 4,
+        "archive GET 302": 1,
+        "login GET 302": 1,
+        "archive GET 301": 1,
+        "archive GET 303": 1,
+        "resource GET 206": 12,
+        "control GET 200": 1
+      },
+      "error": "Error: \"execution: acquisition cancelled\""
+    },
+    {
+      "case": "anonymous",
+      "expected_success": false,
+      "returncode": 1,
+      "elapsed_seconds": 0.13591966700005287,
+      "wire_counts": {},
+      "error": "Error: \"prepare: HTTP retry budget exhausted after 3 attempts (last status 0; retryable HTTP transport failure)\""
+    },
+    {
+      "case": "unrelated",
+      "expected_success": false,
+      "returncode": 1,
+      "elapsed_seconds": 0.018546375000369153,
+      "wire_counts": {},
+      "error": "Error: \"authenticated preparation requires its exact configured native HDF5 object\"",
+      "transport": {
+        "checkpoint_claims": 0,
+        "peak_in_flight": 0,
+        "wire_head": 0,
+        "wire_get": 0,
+        "redirects": 0,
+        "login_requests": 0,
+        "refreshes": 0,
+        "route_cache_hits": 0,
+        "response_body_bytes": 0,
+        "redirect_body_bytes": 0,
+        "signing_auth_seconds": 0.0,
+        "statuses": {},
+        "origins": {}
+      }
+    },
+    {
+      "case": "public-netrc",
+      "expected_success": false,
+      "returncode": 1,
+      "elapsed_seconds": 0.019178333999661845,
+      "wire_counts": {},
+      "error": "Error: \"netrc credential source must be private and owned by the caller\""
+    },
+    {
+      "case": "concurrent-expiration-and-sticky-conflict",
+      "passed": true,
+      "wire_counts": {
+        "archive HEAD 303": 2,
+        "resource HEAD 200": 2,
+        "archive GET 302": 1,
+        "login GET 302": 1,
+        "archive GET 301": 1,
+        "archive GET 303": 2,
+        "resource GET 206": 9,
+        "resource GET 403": 1,
+        "control GET 200": 2
+      }
+    }
+  ],
+  "passed": 38,
+  "public_provider_requests": 0
+}

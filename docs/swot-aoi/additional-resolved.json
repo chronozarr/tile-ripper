@@ -1,0 +1,128 @@
+{
+  "id": "additional_20240216",
+  "request": {
+    "source": {
+      "kind": "assets",
+      "assets": [
+        {
+          "etag": "\"88a204b4f8bfb3fd8bc0bb3a18d9682e-1\"",
+          "id": "G3927661761-POCLOUD",
+          "locator": "http://127.0.0.1:54383/source.nc",
+          "format": "hdf5",
+          "datetime": "2024-02-16T02:51:38.377Z"
+        }
+      ]
+    },
+    "spatial": {
+      "kind": "array_slice",
+      "start": [
+        785,
+        793
+      ],
+      "count": [
+        12,
+        8
+      ],
+      "step": [
+        1,
+        1
+      ],
+      "axes": [
+        "/y",
+        "/x"
+      ]
+    },
+    "time": null,
+    "variables": [
+      {
+        "kind": "dataset",
+        "path": "/wse"
+      },
+      {
+        "kind": "dataset",
+        "path": "/wse_qual"
+      },
+      {
+        "kind": "dataset",
+        "path": "/wse_qual_bitwise"
+      },
+      {
+        "kind": "dataset",
+        "path": "/wse_uncert"
+      },
+      {
+        "kind": "dataset",
+        "path": "/n_wse_pix"
+      }
+    ],
+    "quality": [],
+    "grid": {
+      "kind": "native"
+    },
+    "operations": [],
+    "sink": {
+      "kind": "callback"
+    },
+    "budget": {
+      "buffer_bytes": 67108864,
+      "max_nodes": 4096,
+      "chunk_edge": 32
+    }
+  },
+  "quality_policy": {
+    "kind": "summary",
+    "accepted": [
+      "good",
+      "suspect"
+    ]
+  },
+  "geographic_selection": {
+    "policy": "swot-wgs84-native-centers-v1",
+    "aoi": {
+      "kind": "bounds",
+      "crs": "EPSG:4326",
+      "bbox": [
+        -71.85,
+        41.53,
+        -71.84,
+        41.54
+      ]
+    },
+    "grid": {
+      "crs": "EPSG:32619",
+      "shape": [
+        1578,
+        1577
+      ],
+      "direction": [
+        "increasing",
+        "increasing"
+      ],
+      "coordinate_sha256": [
+        "9d28b0558dcca3db3913e6f6a266c0922ab368f9c0c98e55792c13d6d073f67f",
+        "3df0120ee05f2cd632030a3a7fc082c599e2f471789acad709d8754095731b84"
+      ],
+      "mapping_sha256": "c00d4a4674173525bd71954e0682332085cd27d0fc5bf84630891d4ab9846124"
+    },
+    "window": {
+      "start": [
+        785,
+        793
+      ],
+      "count": [
+        12,
+        8
+      ],
+      "step": [
+        1,
+        1
+      ]
+    },
+    "included_centers": 91,
+    "selected_coordinate_sha256": [
+      "cda774fd4d87081978122a51fb7b5d8ec89eedc64a104263e1750867f01e7268",
+      "1f7470f58db08dedc5bc4b6625943eba2c0a3c2b0aeada29ff4c4d38d8588a03"
+    ],
+    "mask_sha256": "3411fd7895b2a5e4d1a63f13ee214fd7abf6328b1ae7677d90b34bf8151f216d"
+  }
+}
