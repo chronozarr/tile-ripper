@@ -108,6 +108,42 @@ fn invalid_inherited_cog_backend_is_rejected_before_catalog_discovery() {
 }
 
 #[test]
+fn checkpoint_and_authentication_require_explicit_complete_options() {
+    for (args, expected) in [
+        (
+            vec!["stream", "missing.json", "--checkpoint", "unused"],
+            "--checkpoint requires explicit authenticated",
+        ),
+        (
+            vec!["stream", "missing.json", "--netrc", "private"],
+            "authentication requires explicit --auth and --netrc",
+        ),
+        (
+            vec!["stream", "missing.json", "--checkpoint-entries", "4"],
+            "checkpoint limits require --checkpoint",
+        ),
+        (
+            vec!["stream", "missing.json", "--values"],
+            "--values requires stream --quality-policy",
+        ),
+    ] {
+        let result = run(&args);
+        let error = String::from_utf8_lossy(&result.stderr);
+        assert!(!result.status.success());
+        assert!(error.contains(expected), "{error}");
+    }
+    let result = Command::new(env!("CARGO_BIN_EXE_tile-ripper"))
+        .args(["plan", "missing.json"])
+        .env("TILE_RIPPER_AUTH_NETRC", "nonexistent-secret-path")
+        .env("NETRC", "nonexistent-secret-path")
+        .output()
+        .unwrap();
+    let error = String::from_utf8_lossy(&result.stderr);
+    assert!(error.contains("cannot read request file"));
+    assert!(!error.contains("secret"));
+}
+
+#[test]
 #[cfg(all(not(feature = "gdal"), feature = "native-cog"))]
 fn gdal_free_geotiff_fetch_has_an_actionable_zarr_alternative_before_network() {
     let result = run(&[

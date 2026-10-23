@@ -17,6 +17,12 @@ const HELP: &str = r#"tile-ripper plan|fetch|stream [request.json] [options]
   --human | --json                  JSON default, stable for scripts
   --dry-run                        fetch behaves as plan; metadata may download
   --cache FILE --discover-only      discover-only requires plan
+  --auth earthdata|configured --netrc PRIVATE_FILE   explicit native HDF5 auth
+  --auth-policy PUBLIC_JSON --auth-ca PEM           configured exact-object policy
+  --quality-policy POLICY_JSON      aligned five-layer SWOT plan/stream
+  --checkpoint PRIVATE_DIRECTORY    opt-in authenticated source-range resume
+  --checkpoint-mib N --checkpoint-entry-mib N --checkpoint-entries N
+  --values                         stream native bits as base64 LE plus masks/axes
 JSON requests retain the full advanced schema. Do not mix selection flags and JSON.
 stream emits NDJSON descriptors and completion; Rust streaming yields native values.
 GDAL remains the default. --backend native in a dual-feature build still links GDAL.
@@ -54,6 +60,30 @@ pub struct Options {
     pub backend: Option<Backend>,
     pub gdal_free: bool,
     pub output_format: Option<String>,
+    pub access: Option<Access>,
+    pub checkpoint: Option<Checkpoint>,
+    pub quality_policy: Option<String>,
+    pub values: bool,
+}
+#[cfg_attr(
+    not(all(feature = "native-hdf5", feature = "authenticated-http")),
+    allow(dead_code)
+)]
+pub struct Access {
+    pub profile: String,
+    pub netrc: String,
+    pub policy: Option<String>,
+    pub ca: Option<String>,
+}
+#[cfg_attr(
+    not(all(feature = "native-hdf5", feature = "authenticated-http")),
+    allow(dead_code)
+)]
+pub struct Checkpoint {
+    pub directory: String,
+    pub mib: usize,
+    pub entry_mib: usize,
+    pub entries: usize,
 }
 pub fn parse(args: &[String]) -> Result<Option<Options>> {
     if args.is_empty() || args.iter().any(|s| s == "--help" || s == "-h") {
@@ -70,6 +100,7 @@ pub fn parse(args: &[String]) -> Result<Option<Options>> {
     let mut discover_only = false;
     let mut dry = false;
     let mut gdal_free = false;
+    let mut values = false;
     let mut i = 1;
     while i < args.len() {
         match args[i].as_str() {
@@ -78,9 +109,31 @@ pub fn parse(args: &[String]) -> Result<Option<Options>> {
             "--dry-run" => dry = true,
             "--discover-only" => discover_only = true,
             "--gdal-free" => gdal_free = true,
-            key @ ("--source" | "--format" | "--collection" | "--bbox" | "--aoi" | "--start"
-            | "--end" | "--variables" | "--buffer-mib" | "--output" | "--cache"
-            | "--workers" | "--per-host" | "--backend" | "--output-format") => {
+            "--values" => values = true,
+            key @ ("--source"
+            | "--format"
+            | "--collection"
+            | "--bbox"
+            | "--aoi"
+            | "--start"
+            | "--end"
+            | "--variables"
+            | "--buffer-mib"
+            | "--output"
+            | "--cache"
+            | "--workers"
+            | "--per-host"
+            | "--backend"
+            | "--output-format"
+            | "--auth"
+            | "--netrc"
+            | "--auth-policy"
+            | "--auth-ca"
+            | "--quality-policy"
+            | "--checkpoint"
+            | "--checkpoint-mib"
+            | "--checkpoint-entry-mib"
+            | "--checkpoint-entries") => {
                 i += 1;
                 let value = args
                     .get(i)
@@ -134,6 +187,70 @@ pub fn parse(args: &[String]) -> Result<Option<Options>> {
     let per_host = resource("--per-host")?;
     let output = flags.remove("--output");
     let cache_path = flags.remove("--cache");
+    let profile = flags.remove("--auth");
+    let netrc = flags.remove("--netrc");
+    let policy = flags.remove("--auth-policy");
+    let ca = flags.remove("--auth-ca");
+    let access = match (profile, netrc) {
+        (Some(profile), Some(netrc)) => {
+            if !cfg!(all(feature = "native-hdf5", feature = "authenticated-http")) {
+                return Err("authenticated CLI requires native-hdf5,authenticated-http features".into());
+            }
+            if !matches!(profile.as_str(), "earthdata" | "configured")
+                || (profile == "configured") != policy.is_some()
+                || ca.is_some() && policy.is_none()
+            {return Err("use --auth earthdata --netrc FILE, or --auth configured --netrc FILE --auth-policy FILE [--auth-ca PEM]".into())}
+            Some(Access {profile, netrc, policy, ca})
+        }
+        (None, None) if policy.is_none() && ca.is_none() => None,
+        _ => return Err("authentication requires explicit --auth and --netrc; credential environment variables are not used".into()),
+    };
+    let quality_policy = flags.remove("--quality-policy");
+    if quality_policy.is_some() && !cfg!(feature = "native-hdf5") {
+        return Err("--quality-policy requires native-hdf5".into());
+    }
+    let directory = flags.remove("--checkpoint");
+    let has_limits = [
+        "--checkpoint-mib",
+        "--checkpoint-entry-mib",
+        "--checkpoint-entries",
+    ]
+    .iter()
+    .any(|k| flags.contains_key(*k));
+    let checkpoint = if let Some(directory) = directory {
+        if access.is_none() {
+            return Err("--checkpoint requires explicit authenticated native HDF5 access".into());
+        }
+        let mut limit = |key: &str, default: usize, maximum: usize| -> Result<usize> {
+            let value = flags
+                .remove(key)
+                .map(|v| v.parse::<usize>())
+                .transpose()
+                .map_err(|_| "checkpoint limits require positive integers")?
+                .unwrap_or(default);
+            if value == 0 || value > maximum {
+                return Err("checkpoint limit exceeds supported bounds".into());
+            }
+            Ok(value)
+        };
+        Some(Checkpoint {
+            directory,
+            mib: limit("--checkpoint-mib", 64, 1048576)?,
+            entry_mib: limit("--checkpoint-entry-mib", 8, 16)?,
+            entries: limit("--checkpoint-entries", 2048, 16384)?,
+        })
+    } else {
+        if has_limits {
+            return Err("checkpoint limits require --checkpoint DIRECTORY".into());
+        }
+        None
+    };
+    if (access.is_some() || quality_policy.is_some()) && (command == "fetch" || discover_only) {
+        return Err("authenticated/quality CLI supports plan and stream with a fresh provisional stream; no HDF5 output writer".into());
+    }
+    if values && (command != "stream" || quality_policy.is_none()) {
+        return Err("--values requires stream --quality-policy FILE".into());
+    }
     let input = if let Some(file) = file {
         if !flags.is_empty() {
             return Err("do not mix request JSON with source/selection flags; edit JSON or use direct flags".into());
@@ -261,6 +378,10 @@ pub fn parse(args: &[String]) -> Result<Option<Options>> {
         backend,
         gdal_free,
         output_format,
+        access,
+        checkpoint,
+        quality_policy,
+        values,
     }))
 }
 

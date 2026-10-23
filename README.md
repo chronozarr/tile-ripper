@@ -1,5 +1,11 @@
 # Tile-Ripper
 
+Opt-in authenticated source-range resume for the qualified SWOT Raster D
+workflow is available through the normal `plan`/`stream` CLI and Rust APIs.
+See [the tested workflow](docs/transfer-resume/workflow.md) and
+[the local decision gate](docs/transfer-resume/report.md). A resumed scientific
+stream starts at its beginning; results remain provisional until `finish()`.
+
 [Private alpha candidate: installation and first scientist trial](ALPHA.md).
 
 Retrieve native scientific raster subsets with one Rust library and one

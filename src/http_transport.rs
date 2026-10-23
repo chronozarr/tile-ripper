@@ -9,6 +9,11 @@ pub(crate) enum Transport {
     Anonymous,
     #[cfg(feature = "authenticated-http")]
     Authenticated(std::sync::Arc<crate::authenticated_http::AuthenticatedHttp>),
+    #[cfg(all(feature = "native-hdf5", feature = "authenticated-http"))]
+    Checkpointed {
+        session: std::sync::Arc<crate::authenticated_http::AuthenticatedHttp>,
+        store: std::sync::Arc<crate::checkpoint::Store>,
+    },
 }
 pub(crate) enum Response<'a> {
     Anonymous(
@@ -38,6 +43,10 @@ impl Transport {
             Self::Authenticated(t) => t
                 .send(method, url, headers, _cancelled)
                 .map(Response::Authenticated),
+            #[cfg(all(feature = "native-hdf5", feature = "authenticated-http"))]
+            Self::Checkpointed { session, .. } => session
+                .send(method, url, headers, _cancelled)
+                .map(Response::Authenticated),
         }
     }
     pub(crate) fn authenticated(&self) -> bool {
@@ -49,6 +58,10 @@ impl Transport {
             Self::Anonymous => 0,
             #[cfg(feature = "authenticated-http")]
             Self::Authenticated(_) => crate::authenticated_http::WORKING_RESERVATION,
+            #[cfg(all(feature = "native-hdf5", feature = "authenticated-http"))]
+            Self::Checkpointed { store, .. } => {
+                crate::authenticated_http::WORKING_RESERVATION + store.reservation()
+            }
         }
     }
     pub(crate) fn identity(&self) -> serde_json::Value {
@@ -56,6 +69,8 @@ impl Transport {
             Self::Anonymous => serde_json::Value::Null,
             #[cfg(feature = "authenticated-http")]
             Self::Authenticated(t) => t.identity(),
+            #[cfg(all(feature = "native-hdf5", feature = "authenticated-http"))]
+            Self::Checkpointed { session, .. } => session.identity(),
         }
     }
     #[cfg(feature = "native-hdf5")]
@@ -64,6 +79,15 @@ impl Transport {
             Self::Anonymous => serde_json::Value::Null,
             #[cfg(feature = "authenticated-http")]
             Self::Authenticated(t) => t.stats(),
+            #[cfg(all(feature = "native-hdf5", feature = "authenticated-http"))]
+            Self::Checkpointed { session, .. } => session.stats(),
+        }
+    }
+    #[cfg(all(feature = "native-hdf5", feature = "authenticated-http"))]
+    pub(crate) fn checkpoint(&self) -> Option<&crate::checkpoint::Store> {
+        match self {
+            Self::Checkpointed { store, .. } => Some(store),
+            _ => None,
         }
     }
 }

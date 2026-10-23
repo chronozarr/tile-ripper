@@ -59,15 +59,17 @@ def environment(values):
 
 
 class Fixture:
-    def __init__(self):
+    def __init__(self, hook=None, directory=None):
+        fixture_work = Path(directory) if directory else WORK
         self.events = []
         self.case = ""
         self.counts = Counter()
+        self.route_generation = 0
         self.pending = threading.Event()
         self.release = threading.Event()
         self.bytes = (ROOT / "tests/data/swot/quality-le.h5").read_bytes()
         self.etag = '"fixture-pinned-version"'
-        cert, key = WORK / "fixture-cert.pem", WORK / "fixture-key.pem"
+        cert, key = fixture_work / "fixture-cert.pem", fixture_work / "fixture-key.pem"
         subprocess.run(
             [
                 "openssl",
@@ -153,6 +155,8 @@ class Fixture:
                     respond(status, h)
 
                 case = fixture.case
+                if hook and hook(self, role, path, respond):
+                    return
                 if role == "trap":
                     respond(500)
                 elif role == "control":
@@ -220,9 +224,10 @@ class Fixture:
                         method = "head" if self.command == "HEAD" else "get"
                         if case == "wrong-method":
                             method = "get" if method == "head" else "head"
+                        fixture.route_generation += 1
                         redirect(
                             fixture.resource
-                            + f"/{method}/object?Expires={expiry}&Signature=FIXTURE_SIGNATURE&generation={fixture.counts[(role, self.command)]}",
+                            + f"/{method}/object?Expires={expiry}&Signature=FIXTURE_SIGNATURE&generation={fixture.route_generation}",
                             303,
                         )
                 else:
@@ -404,9 +409,9 @@ class Fixture:
                 rule(self.archive, self.resource, "/get/object"),
             ],
         }
-        self.config_path = WORK / "fixture-policy.json"
+        self.config_path = fixture_work / "fixture-policy.json"
         self.config_path.write_text(json.dumps(config))
-        self.netrc = WORK / "fixture.netrc"
+        self.netrc = fixture_work / "fixture.netrc"
         self.netrc.write_text(
             "machine 127.0.0.1 login fixture password FIXTURE_PASSWORD\n"
         )

@@ -244,6 +244,22 @@ pub fn prepare_authenticated(
         acquisition::prepare_authenticated(r, cache, transport)
     })
 }
+/// Exact-range transfer resume. Quality policy and interpreted source flag
+/// definitions participate in identity; delivered tiles can repeat after restart.
+#[cfg(feature = "authenticated-http")]
+pub fn prepare_authenticated_checkpointed(
+    request: &Request,
+    policy: Policy,
+    cache: &mut LayoutCache,
+    session: Arc<crate::authenticated_http::AuthenticatedHttp>,
+    options: crate::checkpoint::Options,
+) -> Result<Prepared> {
+    policy.masks()?;
+    let quality = policy.provenance();
+    prepare_using(request, policy, |r| {
+        acquisition::prepare_checkpointed(r, cache, session, options, quality)
+    })
+}
 fn prepare_using(
     request: &Request,
     policy: Policy,
@@ -280,8 +296,12 @@ impl Prepared {
         value
     }
     pub fn into_stream(self) -> Result<Stream> {
-        let provenance = self.explain();
         let cancelled = Arc::new(AtomicBool::new(false));
+        self.into_stream_cancellable(cancelled)
+    }
+    /// A caller-owned cancellation flag, also suitable for CLI signal handlers.
+    pub fn into_stream_cancellable(self, cancelled: Arc<AtomicBool>) -> Result<Stream> {
+        let provenance = self.explain();
         let flag = cancelled.clone();
         let (sender, receiver) = mpsc::sync_channel(0);
         let worker = std::thread::Builder::new()

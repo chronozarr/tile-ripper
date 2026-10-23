@@ -1108,6 +1108,37 @@ impl ObjectFile {
                 }
             }
             http.seal()?;
+            #[cfg(all(feature = "native-hdf5", feature = "authenticated-http"))]
+            if let Some(checkpoint) = http.transport.checkpoint() {
+                let version = http
+                    .state
+                    .lock()
+                    .unwrap()
+                    .versions
+                    .get(key.as_str())
+                    .and_then(Option::as_ref)
+                    .cloned()
+                    .ok_or("checkpoint source lacks pinned version")?;
+                if version.size == 0 {
+                    return fail("checkpoint source object is empty");
+                }
+                // Canonical HEAD can be public even for a protected object.
+                // Never let a complete checkpoint bypass a fresh GET login.
+                http.state.lock().unwrap().phase = "checkpoint_online_authorization";
+                let proof = http
+                    .request(
+                        &key,
+                        Access::Range {
+                            start: 0,
+                            end: version.size.min(8),
+                        },
+                    )?
+                    .ok_or("checkpoint authorization object absent")?
+                    .1;
+                http.state.lock().unwrap().phase = "planning";
+                checkpoint.bind(&asset.locator, &version.etag, version.size)?;
+                checkpoint.write(0, &proof)?;
+            }
             (Objects::Http(http), key)
         } else {
             if asset.etag.is_some() {
@@ -1157,11 +1188,35 @@ impl ObjectFile {
             if len == 0 {
                 return Ok(Vec::new());
             }
+            if cancelled.is_some_and(|c| c.load(Ordering::Acquire)) {
+                return fail("acquisition cancelled");
+            }
+            if h.state.lock().unwrap().failed {
+                return fail(
+                    "HTTP source binding invalidated by an earlier failure; prepare again",
+                );
+            }
             let end = start.checked_add(len as u64).ok_or("HDF5 range overflow")?;
-            return Ok(h
+            #[cfg(all(feature = "native-hdf5", feature = "authenticated-http"))]
+            if let Some(store) = h.transport.checkpoint() {
+                if len > h.cap || end > self.size {
+                    return fail(
+                        "checkpoint read exceeds current object or transport buffer bounds",
+                    );
+                }
+                if let Some(body) = store.read(start, len)? {
+                    return Ok(body);
+                }
+            }
+            let body = h
                 .request_cancellable(&self.key, Access::Range { start, end }, cancelled)?
                 .ok_or("HDF5 range absent")?
-                .1);
+                .1;
+            #[cfg(all(feature = "native-hdf5", feature = "authenticated-http"))]
+            if let Some(store) = h.transport.checkpoint() {
+                store.write(start, &body)?;
+            }
+            return Ok(body);
         }
         if len == 0 {
             return Ok(Vec::new());
@@ -1213,6 +1268,10 @@ impl ObjectFile {
         self.objects.http().map_or(serde_json::Value::Null, |h| {
             let mut stats = serde_json::json!(h.state.lock().unwrap().stats);
             stats["authenticated_http"] = h.transport.stats();
+            #[cfg(all(feature = "native-hdf5", feature = "authenticated-http"))]
+            if let Some(store) = h.transport.checkpoint() {
+                stats["checkpoint"] = store.stats();
+            }
             stats
         })
     }

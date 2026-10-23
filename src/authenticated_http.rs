@@ -62,6 +62,7 @@ struct Session {
 }
 #[derive(Default, Serialize)]
 struct Counts {
+    checkpoint_claims: u64,
     peak_in_flight: usize,
     wire_head: u64,
     wire_get: u64,
@@ -620,6 +621,53 @@ impl AuthenticatedHttp {
             "redirect_hop_limit":MAX_HOPS,"refresh_limit":1,"per_origin_concurrency_limit":self.concurrency_limit,"working_reservation_bytes":WORKING_RESERVATION,
             "redirects":self.config.redirects.iter().map(|r|serde_json::json!({"from":r.from_origin,"to":r.to_origin,"path":r.destination_path})).collect::<Vec<_>>()})
     }
+    #[cfg(feature = "native-hdf5")]
+    pub(crate) fn checkpoint_policy(&self) -> Result<serde_json::Value> {
+        // Route expiry, session cookies, credentials, CA-store contents and
+        // concurrency are not object access-policy identity. TLS validation
+        // still runs afresh; caller-added trust roots never authorize new paths.
+        #[derive(Serialize)]
+        struct Policy<'a> {
+            policy_version: &'static str,
+            canonical: &'a str,
+            login_origin: &'a str,
+            resource_origin: &'a str,
+            head_path: &'a str,
+            get_path: &'a str,
+            redirects: Vec<[&'a str; 3]>,
+        }
+        crate::checkpoint::bounded_identity(&Policy {
+            policy_version: "exact-object-https-netrc-v1",
+            canonical: self.canonical.as_str(),
+            login_origin: &self.config.login_origin,
+            resource_origin: &self.config.resource_origin,
+            head_path: &self.config.head_resource_path,
+            get_path: &self.config.get_resource_path,
+            redirects: self
+                .config
+                .redirects
+                .iter()
+                .map(|r| {
+                    [
+                        r.from_origin.as_str(),
+                        r.to_origin.as_str(),
+                        r.destination_path.as_str(),
+                    ]
+                })
+                .collect(),
+        })
+    }
+    #[cfg(feature = "native-hdf5")]
+    pub(crate) fn claim_checkpoint(&self) -> Result<()> {
+        let mut counts = self.counts.lock().unwrap();
+        if counts.wire_head != 0 || counts.wire_get != 0 || counts.checkpoint_claims != 0 {
+            return fail(
+                "checkpoint preparation requires a fresh caller-owned authenticated session",
+            );
+        }
+        counts.checkpoint_claims = 1;
+        Ok(())
+    }
     pub fn statistics(&self) -> serde_json::Value {
         self.stats()
     }
@@ -788,6 +836,29 @@ fn tokenize(input: &str) -> Result<Vec<String>> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[cfg(all(unix, feature = "native-hdf5"))]
+    #[test]
+    fn checkpoint_claim_requires_an_unused_session_and_is_single_use() -> Result<()> {
+        use std::io::Write;
+        use std::os::unix::fs::OpenOptionsExt;
+        let path =
+            std::env::temp_dir().join(format!("tile-ripper-session-{}.netrc", std::process::id()));
+        let mut file = std::fs::OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .mode(0o600)
+            .open(&path)?;
+        file.write_all(b"machine urs.earthdata.nasa.gov login fixture password fixture\n")?;
+        let url="https://archive.swot.podaac.earthdata.nasa.gov/podaac-swot-ops-cumulus-protected/SWOT_L2_HR_Raster_D/product.nc";
+        let session = AuthenticatedHttp::earthdata(url, &path)?;
+        session.claim_checkpoint()?;
+        assert!(session.claim_checkpoint().is_err());
+        let used = AuthenticatedHttp::earthdata(url, &path)?;
+        used.counts.lock().unwrap().wire_head = 1;
+        assert!(used.claim_checkpoint().is_err());
+        std::fs::remove_file(path)?;
+        Ok(())
+    }
     #[test]
     fn netrc_quotes_comments_and_invalid_values() {
         assert_eq!(

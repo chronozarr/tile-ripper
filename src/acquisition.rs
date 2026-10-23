@@ -448,6 +448,58 @@ pub fn prepare_authenticated(
     )
     .map_err(|e| safe_error(request, "prepare", e))
 }
+/// Resume verified source bytes; reconstruct all scientific chunks from the
+/// beginning. The caller owns a fresh online session and must finish the stream
+/// before committing any result. The checkpoint lock lasts as long as Prepared
+/// or any of its streams/clones. Selection/policy conflicts require a new directory.
+#[cfg(all(feature = "native-hdf5", feature = "authenticated-http"))]
+pub fn prepare_authenticated_checkpointed(
+    request: &Request,
+    cache: &mut LayoutCache,
+    session: std::sync::Arc<crate::authenticated_http::AuthenticatedHttp>,
+    options: crate::checkpoint::Options,
+) -> Result<Prepared> {
+    prepare_checkpointed(request, cache, session, options, Value::Null)
+}
+#[cfg(all(feature = "native-hdf5", feature = "authenticated-http"))]
+pub(crate) fn prepare_checkpointed(
+    request: &Request,
+    cache: &mut LayoutCache,
+    session: std::sync::Arc<crate::authenticated_http::AuthenticatedHttp>,
+    options: crate::checkpoint::Options,
+    quality: Value,
+) -> Result<Prepared> {
+    if !matches!(&request.source, Source::Assets {assets} if assets.len()==1 && assets[0].format == Format::Hdf5 && session.accepts(&assets[0].locator))
+    {
+        return fail(
+            "checkpoint preparation requires its exact configured authenticated native HDF5 object",
+        );
+    }
+    crate::planner::validate(request)?;
+    if !matches!(request.spatial, Spatial::ArraySlice { .. }) {
+        return fail("checkpointed native HDF5 requires an explicit array_slice");
+    }
+    if options
+        .reservation()?
+        .checked_add(crate::authenticated_http::WORKING_RESERVATION)
+        .is_none_or(|n| n > request.budget.buffer_bytes / 2)
+    {
+        return fail("checkpoint/transport working reservation exceeds half buffer_bytes");
+    }
+    session.claim_checkpoint()?;
+    let store = std::sync::Arc::new(crate::checkpoint::Store::open(
+        options,
+        crate::checkpoint::scientific_identity(request, quality)?,
+        session.checkpoint_policy()?,
+    )?);
+    let _quiet = crate::diagnostics::QuietNative::enter();
+    prepare_inner(
+        request,
+        cache,
+        crate::http_transport::Transport::Checkpointed { session, store },
+    )
+    .map_err(|e| safe_error(request, "prepare", e))
+}
 fn prepare_inner(
     request: &Request,
     cache: &mut LayoutCache,

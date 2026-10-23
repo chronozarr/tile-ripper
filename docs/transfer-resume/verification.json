@@ -1,0 +1,107 @@
+{
+  "date": "2026-10-22",
+  "starting_commit": "60008d3",
+  "branch": "codex/acquisition-planner",
+  "rust": [
+    {
+      "name": "rust-all",
+      "command": "cargo test --locked --all-features",
+      "log_sha256": "5998bc65c2df961adeb6fb197cc6ca1280b0530097e42737e44e6142450cb735",
+      "passed": 114,
+      "failed": 0,
+      "ignored": 7
+    },
+    {
+      "name": "rust-native-auth",
+      "command": "cargo test --locked --no-default-features --features native-hdf5,authenticated-http",
+      "log_sha256": "1b5637aaf08f6c36059b589d7391a902ad17208a57d7b1263a9d03f90fc600d6",
+      "passed": 59,
+      "failed": 0,
+      "ignored": 4
+    },
+    {
+      "name": "rust-none",
+      "command": "cargo test --locked --no-default-features",
+      "log_sha256": "cf32fb1dd5fa073f3bf15643b7046e318dbde2015a476dd17d274faf11660d83",
+      "passed": 39,
+      "failed": 0,
+      "ignored": 1
+    },
+    {
+      "name": "clippy-all",
+      "command": "cargo clippy --locked --all-features --all-targets -- -D warnings",
+      "log_sha256": "f98cfa920ce19bf7c72a026ba90eed48a7df0d1657e989440100b62e69ac62eb",
+      "passed": true
+    },
+    {
+      "name": "clippy-native-auth",
+      "command": "cargo clippy --locked --no-default-features --features native-hdf5,authenticated-http --all-targets -- -D warnings",
+      "log_sha256": "8be29e919092615c88645e80da90ec8c5fc3310de2293d6ac386269471d5c99e",
+      "passed": true
+    },
+    {
+      "name": "clippy-none",
+      "command": "cargo clippy --locked --no-default-features --all-targets -- -D warnings",
+      "log_sha256": "2b34696728dc82b03cbf6311d7e3a6a41658bbde097834c3010a78bc82842c1a",
+      "passed": true
+    }
+  ],
+  "authenticated_transport_cases": 38,
+  "source_resume_fixture_cases": 32,
+  "matrix_trials": 9,
+  "matrix_failed_initial_auth_controls": 3,
+  "quality_science_cases": 38,
+  "quality_faults": 31,
+  "qualified_live_resume_passed": true,
+  "source_sha256": {
+    "Cargo.toml": "9357e3bd3484335f71882578ff7d0522765ca35a8bc17cd3b9c3519a8667e8f2",
+    "Cargo.lock": "97f86672b776d1ab262ea5f75597346d08fb069661a79fe08e3ae5036595f337",
+    "src/stream.rs": "0a10f91d53dd9778e5f46a7580ebb8a9e77948384fc651fecea227636e174972",
+    "src/spatial.rs": "81cdbf75401933ff02511dc900587067e6a3002bfafddf8ff0b472e0e1404184",
+    "src/zarr_v3.rs": "edf49345742f51961f67523da4765fa2a772b718eefdd8e266a145eca27af164",
+    "src/hdf5.rs": "d3d4124e7ca7103a01156ffda614b3bea7177495434143c05cbed57847479649",
+    "src/cog_gdal_reader.rs": "cfe62e5925059cada6df6926d568f8ed2ea60b5ce6307d454dfc9591617559cc",
+    "src/diagnostics.rs": "2c225babd4c7cc7ecb7a381636277e154c2dd8574fb0a55c17750c77b391658b",
+    "src/stac_workflow.rs": "51a6236b813b05ee032bbab6dc56ea548ca3dbb4fdfff3e93aa846433a12eed9",
+    "src/execute.rs": "b9f99bcb47e965933f3553b4a128bb6e611abab228327b7d97f50838ed606dd6",
+    "src/checkpoint.rs": "93d387fd57bc622551846bdc4a95844055f13b05c9d24f277d848607e04295f1",
+    "src/cog_gdal.rs": "a8238ee35126059ac8413681cc9478153f33fce963d30a73ca4ae1f06f2a55e4",
+    "src/authenticated_http.rs": "9cf11d43909c901ce0ef07284bc5776d8402fb76bafbe06c0dd36ebab79d167a",
+    "src/lib.rs": "258d1b4264691594f280b5a996954820df0c1f2c46d8d035125d3a4641fe1bef",
+    "src/pixels.rs": "6346d5c74383dee7a2e07d05d79598c7f28225a31b17418d5dd07cc496ce1307",
+    "src/diagnostics_gdal.rs": "991cd459830bd2154862eaedb7cdfc53c18a310d3c9fe476bc7195b33f719efe",
+    "src/spatial_gdal.rs": "c1f1807008602f8cf217e85177487b1f09e02f0649cea4de606fdda44ebf362f",
+    "src/planner.rs": "c1d49c002d2bf66455a042a391c30436798a4fd351c82a8ee16a3e1150eb81a7",
+    "src/zarr_decode.rs": "4bbbb6587147c81910c1c37d3166450be4f2a7c067351164a978a95b662772c5",
+    "src/zarr_acquire.rs": "59891944c14ea2c0340f656b37ecafa87758f0be983991058e76d31d21170d42",
+    "src/spatial_native.rs": "d52df683a700c62c39b898e3f15da2a223e8a3b3ffb2845834f6650bc7e241e2",
+    "src/acquisition.rs": "3903fb442c0b1f2c9fbb84f8b26351ebba4c24dfd578084cc1b666ebc7ae62cd",
+    "src/zarr.rs": "cd1af3e766e9697a157a61b41919b0c97d7a8e22c469c9872eba2d67101715ae",
+    "src/zarr_io.rs": "b2c2ffd76b9c00a20795ab12d654857d524897206a666e3c684a5afe1288a835",
+    "src/scheduler.rs": "167cffcfd61c07430c76b059c374d0a74a65c7bb318991edbb3ff2c551c70176",
+    "src/cog.rs": "47f1003427aa69dd838e23e748d7880bb00c025d45a1c53284a108a90f6e13a6",
+    "src/main.rs": "57e26293ecf4869805c4ef4da20f125d2a3dc37ae6fd10bff72a9ee504c6d7a7",
+    "src/cog_range.rs": "d9c46c90379065336e22033f571a201eab6a7a0d8cfe1c740d60459370e8c094",
+    "src/storage.rs": "8a3b37aaf047cc9f0e8d56e29b9b69ea8f8cb502c44c3afcb546c6d75adbfe16",
+    "src/http_transport.rs": "24c7e352c66fe061dc3eb395f40e4d39e55903a9eacdd522ffa915ec49095459",
+    "src/zarr_ranges.rs": "3175b0fe7fb6043d0fa0ddd420199600c7fcad1b016d0ecea1df4da7461a173c",
+    "src/swot.rs": "55dea77cdcd25b70790dcd3c1fda07a7a992161b86b22c76e6f31a244faf5ccb",
+    "src/model.rs": "20060a272fd8d45db205df912eceaeccd63539fc1ae6da60e5243833ac1d1bf8",
+    "src/native_cog.rs": "2c564b6ad48e8d3d76c7b9e482639a8c3ad0b7acde3a474542a4704798fa21b8",
+    "src/scientific_output.rs": "51f23f3b93da515fc84bdf26c02912c8eb693de986c3ef495687cdfc3e2a5ce6",
+    "src/cli/mod.rs": "92e8238b2e2f04072f327b42d0a8ef23957156843a18ab3334eda81de79b6c58",
+    "tests/cli.rs": "84d9b2247400da07e4179b563a3791cff8a18204a58ae870f732e89ffcc81867",
+    "bench/transfer_resume.py": "8ea17b11cda11a68f782481c7fa7fdb0ff753a38cabb59a5884536a664a84d43",
+    "bench/earthdata_auth.py": "c1a1027e6e1b37d3bc2563499b843fc57ede1f02ddb7c5943c3a89657bc37895",
+    "examples/consume_swot_ndjson.py": "0d0ea53474cc2fbdc03617f89879639271336395c713f58b37dff92d97a78024"
+  },
+  "native_binary_sha256": "05af91ef4cb93c1d511d85ece028117e2653d0ffc4dfe2f093282c4023f99594",
+  "scope": "local only; no push, merge, tag, publication, deployment, ChronoZarr changes or upstream patch",
+  "held_out_independent_netcdf_passed": false,
+  "style_checks": [
+    "cargo fmt --check",
+    "ruff check bench/transfer_resume.py bench/earthdata_auth.py examples/consume_swot_ndjson.py",
+    "ruff format --check bench/transfer_resume.py bench/earthdata_auth.py examples/consume_swot_ndjson.py",
+    "git diff --check"
+  ]
+}

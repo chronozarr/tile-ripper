@@ -23,6 +23,8 @@ mod diagnostics;
 
 #[cfg(feature = "authenticated-http")]
 pub mod authenticated_http;
+#[cfg(all(feature = "native-hdf5", feature = "authenticated-http"))]
+pub mod checkpoint;
 mod http_transport;
 mod storage;
 mod zarr_io;
