@@ -1,5 +1,11 @@
 # Tile-Ripper
 
+Explicit one-to-four-observation SWOT Raster D PGD0 jobs now use normal
+`plan` / `fetch` commands to write one scientific Zarr v2 dataset. Each granule
+keeps its native grid, raw variable types, source masks and quality policy.
+See the [runnable workflow and Rust API](docs/swot-job/workflow.md) and
+[scientific, recovery, resource and measurement evidence](docs/swot-job/report.md).
+
 Opt-in authenticated source-range resume for the qualified SWOT Raster D
 workflow is available through the normal `plan`/`stream` CLI and Rust APIs.
 See [the tested workflow](docs/transfer-resume/workflow.md) and

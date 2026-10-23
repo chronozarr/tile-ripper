@@ -23,6 +23,14 @@ const HELP: &str = r#"tile-ripper plan|fetch|stream [request.json] [options]
   --checkpoint PRIVATE_DIRECTORY    opt-in authenticated source-range resume
   --checkpoint-mib N --checkpoint-entry-mib N --checkpoint-entries N
   --values                         stream native bits as base64 LE plus masks/axes
+SWOT job JSON: plan/fetch with one to four explicit observations and inline policies.
+  tile-ripper plan job.json --auth earthdata --netrc PRIVATE_FILE
+  tile-ripper fetch job.json --auth earthdata --netrc PRIVATE_FILE \
+      --checkpoint PRIVATE_DIRECTORY --output NEW.zarr
+Job checkpoint byte/entry flags are AGGREGATE limits, divided into fixed source quotas.
+Configured job --auth-policy JSON contains a sources array of exact-object policies.
+Requires native-hdf5 (plus authenticated-http for opt-in auth/checkpoints).
+Job contract, aggregate memory limits and native groups: docs/swot-job/workflow.md.
 JSON requests retain the full advanced schema. Do not mix selection flags and JSON.
 stream emits NDJSON descriptors and completion; Rust streaming yields native values.
 GDAL remains the default. --backend native in a dual-feature build still links GDAL.
@@ -245,9 +253,6 @@ pub fn parse(args: &[String]) -> Result<Option<Options>> {
         }
         None
     };
-    if (access.is_some() || quality_policy.is_some()) && (command == "fetch" || discover_only) {
-        return Err("authenticated/quality CLI supports plan and stream with a fresh provisional stream; no HDF5 output writer".into());
-    }
     if values && (command != "stream" || quality_policy.is_none()) {
         return Err("--values requires stream --quality-policy FILE".into());
     }
@@ -255,10 +260,22 @@ pub fn parse(args: &[String]) -> Result<Option<Options>> {
         if !flags.is_empty() {
             return Err("do not mix request JSON with source/selection flags; edit JSON or use direct flags".into());
         }
-        let bytes =
-            fs::read(file).map_err(|_| "cannot read request file; check path and permissions")?;
-        serde_json::from_slice(&bytes)
-            .map_err(|_| "invalid request JSON syntax; see examples/weatherbench2.json")?
+        use std::io::Read;
+        let mut bytes = Vec::new();
+        fs::File::open(file)
+            .map_err(|_| "cannot read request file; check path and permissions")?
+            .take(16 * 1024 * 1024 + 1)
+            .read_to_end(&mut bytes)
+            .map_err(|_| "cannot read request JSON")?;
+        if bytes.len() > 16 * 1024 * 1024 {
+            return Err("request JSON exceeds 16 MiB input bound".into());
+        }
+        let input: Value = serde_json::from_slice(&bytes)
+            .map_err(|_| "invalid request JSON syntax; see examples/weatherbench2.json")?;
+        if input.get("job_schema").is_some() && bytes.len() > 64 * 1024 {
+            return Err("job manifest exceeds 64 KiB input bound".into());
+        }
+        input
     } else {
         let required = |name: &str| {
             flags
@@ -366,6 +383,12 @@ pub fn parse(args: &[String]) -> Result<Option<Options>> {
         };
         json!({"source":source,"spatial":spatial,"time":{"kind":"interval","start":start,"end":end},"variables":variables,"grid":{"kind":"native"},"sink":sink,"budget":{"buffer_bytes":bytes,"max_nodes":100000,"chunk_edge":512}})
     };
+    if input.get("job_schema").is_none()
+        && (access.is_some() || quality_policy.is_some())
+        && (command == "fetch" || discover_only)
+    {
+        return Err("authenticated/quality single-source CLI supports plan and stream; use a SWOT job manifest for scientific Zarr fetch".into());
+    }
     Ok(Some(Options {
         command,
         input,

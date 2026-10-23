@@ -671,6 +671,14 @@ impl AuthenticatedHttp {
     pub fn statistics(&self) -> serde_json::Value {
         self.stats()
     }
+    #[cfg(feature = "native-hdf5")]
+    pub(crate) fn require_fresh(&self) -> Result<()> {
+        let counts = self.counts.lock().unwrap();
+        if counts.wire_head != 0 || counts.wire_get != 0 || counts.checkpoint_claims != 0 {
+            return fail("job factory must return a fresh caller-owned exact-object session");
+        }
+        Ok(())
+    }
     pub(crate) fn stats(&self) -> serde_json::Value {
         serde_json::json!(*self.counts.lock().unwrap())
     }

@@ -666,6 +666,14 @@ fn validate_coordinate_markers(axis: &Dataset, values: &[f64]) -> Result<()> {
     Ok(())
 }
 impl Context {
+    pub(crate) fn with_coordinates<T>(
+        &self,
+        asset: &str,
+        f: impl FnOnce(&[f64], &[f64]) -> Result<T>,
+    ) -> Result<T> {
+        let binding = self.binding(asset, crate::swot::PATHS[0])?;
+        f(&binding.coordinates[0], &binding.coordinates[1])
+    }
     pub fn binding(&self, asset: &str, path: &str) -> Result<Arc<Binding>> {
         self.bindings
             .lock()

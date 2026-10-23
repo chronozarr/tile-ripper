@@ -227,6 +227,22 @@ impl Prepared {
         }
     }
     #[cfg(feature = "native-hdf5")]
+    pub(crate) fn with_swot_coordinates<T>(
+        &self,
+        f: impl FnOnce(&[f64], &[f64]) -> Result<T>,
+    ) -> Result<T> {
+        let Runtime::Direct {
+            request, sources, ..
+        } = self.runtime.as_ref()
+        else {
+            return fail("SWOT coordinates require direct HDF5 assets");
+        };
+        let Source::Assets { assets } = &request.source else {
+            return fail("missing SWOT source");
+        };
+        sources.hdf5.with_coordinates(&assets[0].id, f)
+    }
+    #[cfg(feature = "native-hdf5")]
     pub(crate) fn swot_working_memory(&self) -> Result<Value> {
         let Runtime::Direct {
             request, sources, ..
@@ -499,12 +515,37 @@ pub(crate) fn prepare_checkpointed(
     {
         return fail("checkpoint/transport working reservation exceeds half buffer_bytes");
     }
-    session.claim_checkpoint()?;
+    session.require_fresh()?;
     let store = std::sync::Arc::new(crate::checkpoint::Store::open(
         options,
         crate::checkpoint::scientific_identity(request, quality)?,
         session.checkpoint_policy()?,
     )?);
+    prepare_bound_checkpoint(request, cache, session, store)
+}
+#[cfg(all(feature = "native-hdf5", feature = "authenticated-http"))]
+pub(crate) fn prepare_bound_checkpoint(
+    request: &Request,
+    cache: &mut LayoutCache,
+    session: std::sync::Arc<crate::authenticated_http::AuthenticatedHttp>,
+    store: std::sync::Arc<crate::checkpoint::Store>,
+) -> Result<Prepared> {
+    if !matches!(&request.source, Source::Assets {assets} if assets.len()==1 && assets[0].format == Format::Hdf5 && session.accepts(&assets[0].locator))
+    {
+        return fail(
+            "checkpoint preparation requires its exact configured authenticated native HDF5 object",
+        );
+    }
+    crate::planner::validate(request)?;
+    if !matches!(request.spatial, Spatial::ArraySlice { .. })
+        || store
+            .reservation()
+            .checked_add(crate::authenticated_http::WORKING_RESERVATION)
+            .is_none_or(|n| n > request.budget.buffer_bytes / 2)
+    {
+        return fail("checkpoint/transport working reservation exceeds half buffer_bytes");
+    }
+    session.claim_checkpoint()?;
     let _quiet = crate::diagnostics::QuietNative::enter();
     prepare_inner(
         request,

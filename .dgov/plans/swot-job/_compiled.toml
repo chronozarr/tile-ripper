@@ -1,0 +1,31 @@
+[plan]
+name = "swot-job"
+source_mtime_max = "2026-10-23T17:21:41.729413Z"
+sop_set_hash = ""
+
+[tasks."tasks/work.work"]
+summary = "Implement and validate the serial explicit-observation acquisition job"
+prompt = """
+Orient:
+- Read docs/swot-job/brief.md and continue codex/acquisition-planner at 7e7aa93.
+- Preserve the prior held-out failure and corrected capture guards.
+Edit:
+1. Reuse qualified native decoding, authenticated sessions and exact-range checkpoints.
+2. Keep explicit observations on separate native grids; enforce serial aggregate memory, static checkpoint disk/entry quotas and bounded metadata.
+3. Extend the existing Zarr v2 arrays/store/checked transaction with typed scientific output and complete provenance.
+4. Provide normal plan/fetch CLI and typed Rust workflow, exact independent h5py/NetCDF-C/Zarr-Python/xarray gates, faults/restart/publication checks and matched durable-write measurements.
+5. Commit validated implementation and evidence locally. No merge, push, tag, remote publication, deployment or ChronoZarr changes.
+Verify:
+- cargo test --locked --no-default-features --features native-hdf5,authenticated-http
+- cargo clippy --locked --all-features --all-targets -- -D warnings
+- cargo check --locked --no-default-features
+- cargo fmt --all -- --check
+- python bench/swot_job.py offline
+- Run one bounded live acceptance only after offline science/fault gates pass.
+"""
+commit_message = "Acquire bounded multi-granule SWOT jobs into scientific Zarr observations"
+timeout_s = 0
+test_cmd = "cargo test --locked --no-default-features --features native-hdf5,authenticated-http"
+files.create = ["src/swot_job.rs", "src/scientific_output/swot.rs", "tests/swot_job.rs", "examples/swot_job.rs", "examples/swot-job.json", "bench/swot_job.py", "bench/swot_job_reference.py", "bench/swot_job_linux.sh", "bench/swot-job-requirements.txt", "docs/swot-job/"]
+files.edit = ["src/lib.rs", "src/swot.rs", "src/acquisition.rs", "src/hdf5.rs", "src/authenticated_http.rs", "src/checkpoint.rs", "src/scientific_output.rs", "src/main.rs", "src/cli/mod.rs", "README.md"]
+files.read = ["docs/swot-job/brief.md", "bench/swot_quality_reference.py", "bench/capture_guard.c"]

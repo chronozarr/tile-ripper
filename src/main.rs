@@ -14,6 +14,12 @@ fn run() -> Result<()> {
     let Some(options) = options else {
         return Ok(());
     };
+    if options.input.get("job_schema").is_some() {
+        #[cfg(feature = "native-hdf5")]
+        return run_job(options);
+        #[cfg(not(feature = "native-hdf5"))]
+        return Err("SWOT jobs require the native-hdf5 feature".into());
+    }
     let cli::Options {
         command,
         input,
@@ -480,6 +486,119 @@ impl Summary {
         }
         Ok(())
     }
+}
+#[cfg(feature = "native-hdf5")]
+fn run_job(options: cli::Options) -> Result<()> {
+    use std::sync::{
+        atomic::{AtomicBool, Ordering},
+        Arc,
+    };
+    use tile_ripper::swot_job::{Job, Manifest};
+    if options.command == "stream"
+        || options.discover_only
+        || options.cache_path.is_some()
+        || options.quality_policy.is_some()
+        || options.values
+        || options.backend.is_some()
+        || options.workers.is_some_and(|n| n != 1)
+        || options.per_host.is_some_and(|n| n != 1)
+        || options
+            .output_format
+            .as_deref()
+            .is_some_and(|v| v != "zarr_v2")
+    {
+        return Err("SWOT jobs support serial plan/fetch with inline quality policies and Zarr v2; no discovery, metadata cache, COG backend or stream flags".into());
+    }
+    if options.gdal_free {
+        tile_ripper::cog::require_gdal_free()?;
+    }
+    let manifest: Manifest = serde_json::from_value(options.input)
+        .map_err(|_| "invalid SWOT job schema; see docs/swot-job/workflow.md")?;
+    manifest.validate()?;
+    if options.command == "fetch" && options.output.is_none() {
+        return Err("job fetch requires --output NEW_DIRECTORY".into());
+    }
+    let cancelled = Arc::new(AtomicBool::new(false));
+    if options.command == "fetch" {
+        let flag = cancelled.clone();
+        ctrlc::set_handler(move || flag.store(true, Ordering::Release))?;
+    }
+    #[cfg(feature = "authenticated-http")]
+    let mut factory = |asset: &tile_ripper::Asset| -> Result<Arc<tile_ripper::authenticated_http::AuthenticatedHttp>> {
+        let access = options.access.as_ref().ok_or("missing explicit authentication opt-in")?;
+        let session = if access.profile == "earthdata" {
+            tile_ripper::authenticated_http::AuthenticatedHttp::earthdata(&asset.locator,&access.netrc)?
+        } else {
+            use std::io::Read;
+            let mut bytes = Vec::new();
+            std::fs::File::open(access.policy.as_ref().ok_or("missing job access policy")?).map_err(|_| "cannot read public job access policy")?
+                .take(256*1024+1).read_to_end(&mut bytes).map_err(|_| "cannot read public job access policy")?;
+            if bytes.len()>256*1024 { return Err("public job access policy exceeds 256 KiB".into()); }
+            #[derive(serde::Deserialize)]
+            #[serde(deny_unknown_fields)]
+            struct Policies { sources: Vec<serde_json::Value> }
+            let policies: Policies = serde_json::from_slice(&bytes).map_err(|_| "job --auth-policy requires a sources array of public exact-object policies")?;
+            if policies.sources.len() != manifest.observations.len() { return Err("job access policies must match the explicit source count".into()); }
+            let matching: Vec<_> = policies.sources.iter().filter(|p| p["canonical_url"]==asset.locator).collect();
+            if matching.len()!=1 { return Err("each job source requires exactly one matching public access policy".into()); }
+            let mut config: tile_ripper::authenticated_http::Config = serde_json::from_value(matching[0].clone()).map_err(|_| "invalid public job access policy")?;
+            if let Some(ca) = &access.ca {
+                config.additional_roots.push(reqwest::Certificate::from_pem(&std::fs::read(ca).map_err(|_| "cannot read trust root")?).map_err(|_| "invalid trust root")?);
+            }
+            tile_ripper::authenticated_http::AuthenticatedHttp::new(config,&access.netrc)?
+        };
+        Ok(Arc::new(session))
+    };
+    #[cfg(feature = "authenticated-http")]
+    let job = if options.access.is_some() {
+        Job::authenticated(
+            &manifest,
+            &mut factory,
+            options.checkpoint.map(checkpoint_options),
+        )?
+    } else {
+        Job::new(&manifest)?
+    };
+    #[cfg(not(feature = "authenticated-http"))]
+    let job = Job::new(&manifest)?;
+    let value = if options.command == "plan" {
+        job.plan()?
+    } else {
+        match job.fetch(options.output.as_ref().unwrap(), cancelled) {
+            Ok(value) => value,
+            Err(error) => {
+                if let Some(failure) = error.downcast_ref::<tile_ripper::swot_job::Failure>() {
+                    println!("{}", serde_json::to_string_pretty(&failure.receipt)?);
+                }
+                return Err(error);
+            }
+        }
+    };
+    if options.human {
+        println!(
+            "SWOT job {}: {} explicit native-grid observation(s), manifest order.",
+            if options.command == "plan" {
+                "inspection"
+            } else {
+                "complete"
+            },
+            manifest.observations.len()
+        );
+        for entry in &manifest.observations {
+            println!(
+                "  {} -> observations/{}; {:?}",
+                entry.id, entry.id, entry.request.spatial
+            );
+        }
+        println!("Aggregate working admission: {} bytes (limit {}); one active source, synchronous writer. Process RSS is separate.",value["admission"]["aggregate_admitted_cap_bytes"],manifest.limits.memory_bytes);
+        if let Some(output) = options.output {
+            println!("Output: {output}");
+        }
+        println!("Full source/grid/variable, memory, checkpoint and completion details: repeat with --json.");
+    } else {
+        println!("{}", serde_json::to_string_pretty(&value)?);
+    }
+    Ok(())
 }
 fn cog_source(source: &Source) -> bool {
     match source {

@@ -84,7 +84,7 @@ impl Policy {
             accepted: vec![SummaryQuality::Good, SummaryQuality::Suspect],
         }
     }
-    fn masks(&self) -> Result<(u32, u32)> {
+    pub(crate) fn masks(&self) -> Result<(u32, u32)> {
         fn names(values: &[String]) -> Result<u32> {
             let mut mask = 0;
             for name in values {
@@ -122,7 +122,7 @@ impl Policy {
             Self::Raw => Ok((0, 0)),
         }
     }
-    fn validate_definitions(&self, inspection: &Value) -> Result<()> {
+    pub(crate) fn validate_definitions(&self, inspection: &Value) -> Result<()> {
         self.masks()?;
         let ds = inspection["sources"][0]["object_identities"]["datasets"]
             .as_array()
@@ -261,7 +261,7 @@ pub fn prepare_authenticated_checkpointed(
         acquisition::prepare_checkpointed(r, cache, session, options, quality)
     })
 }
-fn prepare_using(
+pub(crate) fn prepare_using(
     request: &Request,
     policy: Policy,
     prepare: impl FnOnce(&Request) -> Result<acquisition::Prepared>,
@@ -295,6 +295,24 @@ fn prepare_using(
     })
 }
 impl Prepared {
+    pub(crate) fn with_coordinates<T>(
+        &self,
+        f: impl FnOnce(&[f64], &[f64]) -> Result<T>,
+    ) -> Result<T> {
+        self.base.with_swot_coordinates(f)
+    }
+    /// Synchronous delivery keeps the job writer and the next decoder mutually
+    /// exclusive. Unlike a stream consumer, this path retains no preceding tile.
+    pub(crate) fn execute_tiles(
+        &self,
+        cancelled: &AtomicBool,
+        mut sink: impl FnMut(Tile) -> Result<()>,
+    ) -> Result<ExecutionReport> {
+        self.base.execute_swot_cancellable(cancelled, |layers| {
+            let validity = self.policy.mask(&layers)?;
+            sink(Tile { layers, validity })
+        })
+    }
     pub fn explain(&self) -> Value {
         let mut value = self.base.explain();
         value["quality_policy"] = self.policy.provenance();

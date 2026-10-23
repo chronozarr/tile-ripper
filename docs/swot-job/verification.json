@@ -1,0 +1,168 @@
+{
+  "date": "2026-10-23",
+  "starting_commit": "7e7aa93",
+  "branch": "codex/acquisition-planner",
+  "platform": "macOS-26.7.1-arm64-arm-64bit",
+  "python": "3.10.14 (main, May 14 2024, 18:58:29) [Clang 15.0.0 (clang-1500.3.9.4)]",
+  "python_executable": "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+  "rustc": "rustc 1.92.0 (ded5c06cf 2025-12-08)",
+  "cargo": "cargo 1.92.0 (344c4567c 2025-10-21)",
+  "native_binary_sha256": "7c8052fec041b8a1779c1868294e23fbbd8214f34a188c42ac3bfccccdf72de9",
+  "native_dynamic_libraries": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/target/release/tile-ripper:\n\t/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1356.0.0)\n\t/usr/lib/libobjc.A.dylib (compatibility version 1.0.0, current version 228.0.0)\n\t/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation (compatibility version 300.0.0, current version 4201.0.0)\n\t/System/Library/Frameworks/Security.framework/Versions/A/Security (compatibility version 1.0.0, current version 61901.60.40)\n\t/System/Library/Frameworks/SystemConfiguration.framework/Versions/A/SystemConfiguration (compatibility version 1.0.0, current version 1385.60.3)\n\t/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation (compatibility version 150.0.0, current version 4201.0.0)\n\t/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2000.67.0)\n\t/usr/lib/libiconv.2.dylib (compatibility version 7.0.0, current version 7.0.0)\n",
+  "final_binary_matches_offline_and_live_reconstruction": true,
+  "checks": [
+    {
+      "command": "cargo test --locked --no-default-features --features native-hdf5,authenticated-http",
+      "passed": true,
+      "log": "prototype-output/swot-job-rust-final.log",
+      "log_sha256": "b035b299a3f4d1aeadc9999871dba44762111a69f0939ef3e3f50dff832a49d4",
+      "passed_tests": 69,
+      "failed_tests": 0,
+      "ignored": 5
+    },
+    {
+      "command": "cargo clippy --locked --all-features --all-targets -- -D warnings",
+      "passed": true,
+      "log": "prototype-output/swot-job-clippy.log",
+      "log_sha256": "18dbd7d55697a44a2c7676470f668d8ba88800b7cd7cd24f557d2a48134192c6"
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --features native-hdf5 --all-targets -- -D warnings",
+      "passed": true,
+      "log": "prototype-output/swot-job-clippy-no-auth.log",
+      "log_sha256": "02a77d4c855ece2223f0ff76860458669b26ec5b09b2f30c6339553a9af61181"
+    },
+    {
+      "command": "cargo check --locked --no-default-features",
+      "passed": true,
+      "log": "prototype-output/swot-job-no-features-final.log",
+      "log_sha256": "2b34696728dc82b03cbf6311d7e3a6a41658bbde097834c3010a78bc82842c1a"
+    },
+    {
+      "command": "cargo fmt --all -- --check",
+      "passed": true,
+      "log": "prototype-output/swot-job-fmt-final.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": "python bench/swot_job.py offline",
+      "passed": true,
+      "log": "prototype-output/swot-job-offline-final.log",
+      "log_sha256": "7b55490eb5dcf1af1c97fbbdeafbb97b00b0d64f7feb9e6b266f02a0550213f9"
+    },
+    {
+      "command": "python bench/swot_held_out.py preserve",
+      "passed": true,
+      "log": "prototype-output/swot-job-preservation.log",
+      "log_sha256": "bf40541010b52f587d41385cf348d3c903fc774c7f5cf8e694f51b90b79b904b"
+    },
+    {
+      "command": "dgov compile .dgov/plans/swot-job --dry-run",
+      "passed": true,
+      "log": "prototype-output/swot-job-plan-compile.log",
+      "log_sha256": "af954e9e3c9adc2435c26a9408016559e040677674705b80c6fcfe97aaf11652"
+    },
+    {
+      "command": "docker run --rm -v \"$PWD:/src:ro\" -v \"$HOME/.cargo/registry:/usr/local/cargo/registry:ro\" -w /src rust:1.92-slim sh bench/swot_job_linux.sh",
+      "passed": true,
+      "log": "prototype-output/swot-job-linux-final.log",
+      "log_sha256": "90ae694159310bf66bcfa0dd65cc827c6a9ae137274212b966b6625cede9e728",
+      "passed_tests": 8,
+      "failed_tests": 0,
+      "ignored": 0
+    },
+    {
+      "command": "Isolated existing transfer_resume.fixtures() with WORK/DOCS redirected under swot-job",
+      "passed": true,
+      "log": "prototype-output/swot-job-transfer-regression.log",
+      "log_sha256": "5290057cf473ba3b5dd5231337e892f8b541b8f751e8d853e5dfce9004ef3faf"
+    },
+    {
+      "command": "Final binary live checkpoint reconstruction using same qualified manifest and existing live job checkpoint",
+      "passed": true,
+      "log": "prototype-output/swot-job-live-final.log",
+      "log_sha256": "9e56fe04aecfa742a70a78db1d0ccf82b5a0e9e7dab1c76edb73eb0b344f6ecc"
+    },
+    {
+      "command": "Compiled typed Rust example plan/fetch; exact independent h5py/NetCDF-C/Zarr/xarray comparison",
+      "passed": true,
+      "log": "prototype-output/swot-job-rust-api.log",
+      "log_sha256": "b8b8248348a6bf96dc70c1e86bb12946dce6f7d9dfce452c4f86a93fe255cc7a"
+    },
+    {
+      "command": "ruff check bench/swot_job.py bench/swot_job_reference.py",
+      "passed": true
+    },
+    {
+      "command": "ruff format --check bench/swot_job.py bench/swot_job_reference.py",
+      "passed": true
+    },
+    {
+      "command": "python -m py_compile bench/swot_job.py bench/swot_job_reference.py",
+      "passed": true
+    },
+    {
+      "command": "sh -n bench/swot_job_linux.sh",
+      "passed": true
+    },
+    {
+      "command": "git diff --check",
+      "passed": true
+    }
+  ],
+  "source_sha256": {
+    "src/acquisition.rs": "099c1061113352d24cf2d2b5845b15003e17c15efdba7490a33ec6c86c33718e",
+    "src/authenticated_http.rs": "90a269d299c0c08e53c8f96e02dc04a8c744593b3aab30aa49bc90c402c2b5d2",
+    "src/checkpoint.rs": "e5b1abb2678c248d239a4ae1acb32ec934d0a85936f255005bf6eb8b8cd3c819",
+    "src/cli/mod.rs": "54089016392489f0a8318c74e70356dd5d8a4cde1b323b5910ece04950b16eea",
+    "src/cog.rs": "47f1003427aa69dd838e23e748d7880bb00c025d45a1c53284a108a90f6e13a6",
+    "src/cog_gdal.rs": "a8238ee35126059ac8413681cc9478153f33fce963d30a73ca4ae1f06f2a55e4",
+    "src/cog_gdal_reader.rs": "cfe62e5925059cada6df6926d568f8ed2ea60b5ce6307d454dfc9591617559cc",
+    "src/cog_range.rs": "d9c46c90379065336e22033f571a201eab6a7a0d8cfe1c740d60459370e8c094",
+    "src/diagnostics.rs": "2c225babd4c7cc7ecb7a381636277e154c2dd8574fb0a55c17750c77b391658b",
+    "src/diagnostics_gdal.rs": "991cd459830bd2154862eaedb7cdfc53c18a310d3c9fe476bc7195b33f719efe",
+    "src/execute.rs": "b9f99bcb47e965933f3553b4a128bb6e611abab228327b7d97f50838ed606dd6",
+    "src/hdf5.rs": "488226debd2060d76b2c549f7f87df64786415d2c3d5cedcc7fadc10b4dbb6ce",
+    "src/http_transport.rs": "24c7e352c66fe061dc3eb395f40e4d39e55903a9eacdd522ffa915ec49095459",
+    "src/lib.rs": "c6db982099e8e6727404a40470f97d143c3b8b56a85c5c9cad9954c365fcc53e",
+    "src/main.rs": "aa83fc4f0495dddcb500f36550859cd3ef89c79ca4e7914379077deb3326e178",
+    "src/model.rs": "20060a272fd8d45db205df912eceaeccd63539fc1ae6da60e5243833ac1d1bf8",
+    "src/native_cog.rs": "2c564b6ad48e8d3d76c7b9e482639a8c3ad0b7acde3a474542a4704798fa21b8",
+    "src/pixels.rs": "6346d5c74383dee7a2e07d05d79598c7f28225a31b17418d5dd07cc496ce1307",
+    "src/planner.rs": "c1d49c002d2bf66455a042a391c30436798a4fd351c82a8ee16a3e1150eb81a7",
+    "src/scheduler.rs": "167cffcfd61c07430c76b059c374d0a74a65c7bb318991edbb3ff2c551c70176",
+    "src/scientific_output/swot.rs": "533a7fe9c12f6f96bee326a971f88a359097dcebcbcad39a755a28b46a34f142",
+    "src/scientific_output.rs": "96952591d432870519afd02e61fe2330421b3d7246ab8509a28264e7e2e04584",
+    "src/spatial.rs": "81cdbf75401933ff02511dc900587067e6a3002bfafddf8ff0b472e0e1404184",
+    "src/spatial_gdal.rs": "c1f1807008602f8cf217e85177487b1f09e02f0649cea4de606fdda44ebf362f",
+    "src/spatial_native.rs": "d52df683a700c62c39b898e3f15da2a223e8a3b3ffb2845834f6650bc7e241e2",
+    "src/stac_workflow.rs": "51a6236b813b05ee032bbab6dc56ea548ca3dbb4fdfff3e93aa846433a12eed9",
+    "src/storage.rs": "8a3b37aaf047cc9f0e8d56e29b9b69ea8f8cb502c44c3afcb546c6d75adbfe16",
+    "src/stream.rs": "0a10f91d53dd9778e5f46a7580ebb8a9e77948384fc651fecea227636e174972",
+    "src/swot.rs": "04619d7e539eeda03382abc8c3044132f7c13b69530f6009bb32fcbf9d2f0f1c",
+    "src/swot_job.rs": "f9e9439ccd01f7441047e21a31f69b3cc94195a8965444de4f9a9531f1b89a4b",
+    "src/zarr.rs": "cd1af3e766e9697a157a61b41919b0c97d7a8e22c469c9872eba2d67101715ae",
+    "src/zarr_acquire.rs": "59891944c14ea2c0340f656b37ecafa87758f0be983991058e76d31d21170d42",
+    "src/zarr_decode.rs": "4bbbb6587147c81910c1c37d3166450be4f2a7c067351164a978a95b662772c5",
+    "src/zarr_io.rs": "b2c2ffd76b9c00a20795ab12d654857d524897206a666e3c684a5afe1288a835",
+    "src/zarr_ranges.rs": "3175b0fe7fb6043d0fa0ddd420199600c7fcad1b016d0ecea1df4da7461a173c",
+    "src/zarr_v3.rs": "edf49345742f51961f67523da4765fa2a772b718eefdd8e266a145eca27af164",
+    "examples/swot_job.rs": "804324a5d8ffa6811261aa42fd1b12eb76dc50feee29dc276dc5b1d602afeca2",
+    "tests/swot_job.rs": "57fc69e31b02b23d654344cffdfdf4d0ebd40f59999e9352673c5be84ef741c7",
+    "bench/swot_job.py": "b1930ef27cd5bfbd5fcc5609b2a13cc5f5bf1272812252ad7d371f47edc073c0",
+    "bench/swot_job_reference.py": "d9313757ad13d4165542a48da1e26ffafb36c91234eb1c66c0a488c916bc61f0",
+    "bench/swot_job_linux.sh": "3b2a8abb3f1dbd9957d875437e90caccf849e422a95e19168e77e2f5e46876d8",
+    "bench/capture_guard.c": "67e410c3e0e457655a224991178df2cce3e5912c9503c01729425e1f4c6851a9"
+  },
+  "linux": {
+    "image": "rust:1.92-slim",
+    "image_id": "sha256:2524356c645558866050e7327090261ea03756cc300047329c28f3298ca27c46",
+    "architecture": "ARM64",
+    "test_uid": 1000,
+    "source_registry_mounts": "read-only",
+    "outputs_and_target": "container /tmp",
+    "scope": "new root quota/lock test and seven job tests; not power-loss testing"
+  },
+  "preservation": "original held-out failure snapshot reverified; prior qualification/capture guards and source captures unchanged",
+  "local_only": "no merge, push, tag, external publication, deployment, ChronoZarr edits or upstream patches"
+}

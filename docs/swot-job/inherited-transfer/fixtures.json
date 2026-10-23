@@ -1,0 +1,4477 @@
+{
+  "passed": 32,
+  "cases": [
+    {
+      "case": "anonymous-ignores-credential-environment",
+      "binary_sha256": "7c8052fec041b8a1779c1868294e23fbbd8214f34a188c42ac3bfccccdf72de9",
+      "returncode": 1,
+      "elapsed_seconds": 0.122588000000178,
+      "cpu_seconds": 0.031484000000000005,
+      "sampled_peak_rss_bytes": 14958592,
+      "first_chunk_seconds": null,
+      "prepared_seconds": null,
+      "tiles_received": 0,
+      "completion_emitted": false,
+      "interruption_sent": false,
+      "error": "tile-ripper: prepare: HTTP retry budget exhausted after 3 attempts (last status 0; retryable HTTP transport failure)\n",
+      "server": {
+        "requests": {},
+        "response_body_bytes": 0,
+        "route_generation": 0,
+        "range_requests": 0,
+        "range_trace_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      }
+    },
+    {
+      "case": "uninterrupted",
+      "binary_sha256": "7c8052fec041b8a1779c1868294e23fbbd8214f34a188c42ac3bfccccdf72de9",
+      "returncode": 0,
+      "elapsed_seconds": 0.31568133299970214,
+      "cpu_seconds": 0.04724599999999999,
+      "sampled_peak_rss_bytes": 19120128,
+      "first_chunk_seconds": 0.2699822919998951,
+      "prepared_seconds": 0.24356641699978354,
+      "tiles_received": 4,
+      "completion_emitted": true,
+      "interruption_sent": false,
+      "error": null,
+      "server": {
+        "requests": {
+          "archive HEAD 303": 5,
+          "resource HEAD 200": 5,
+          "archive GET 302": 1,
+          "login GET 302": 1,
+          "archive GET 301": 1,
+          "archive GET 303": 1,
+          "resource GET 206": 93
+        },
+        "response_body_bytes": 14177,
+        "route_generation": 6,
+        "range_requests": 93,
+        "range_trace_sha256": "a31792f2c3468f1b87a87e67cba1a005b0a85ac900022694c8d8ff1acd2a5e23"
+      },
+      "science": {
+        "all_native_value_bits_equal": true,
+        "all_five_source_masks_equal": true,
+        "exact_logical_coverage": true,
+        "all_coordinates_equal": true,
+        "derived_mask_equal": true,
+        "independent_summaries_equal": true,
+        "pixels_per_variable": 323,
+        "tiles": 4,
+        "references": [
+          {
+            "reader": "h5py",
+            "versions": {
+              "reader": "3.12.1",
+              "hdf5": "1.12.2"
+            },
+            "access": "local_sparse_reference",
+            "prepare_seconds": 0.0013532500001929293,
+            "completion_seconds": 0.003959791999932349,
+            "api_cpu_seconds": 0.003619000000000011,
+            "peak_rss_bytes": 44122112,
+            "value_sha256": [
+              "567e6db446322cf52ae8df9fec083ffd4d8a2cbbff482b0e4e923102476a638d",
+              "b630232200841607598ca0d66887c71e4ee29d670851983e523d5d89f6fa1d57",
+              "dc77a83c56a36839727e8d8075da539bc1af0a3adcd5fcf895616504e4c704a2",
+              "7cb201df99bdfc7a73b0a62f6c8dad23a18aefed2de1fa9df1060b73a5f38d81",
+              "0c71de552c55061453e76c69de110453ce67a328eb9eb4646458d5d3e9434fcf"
+            ],
+            "axis_sha256": [
+              "4e2eb1c524455731887057600285510814994e417f5796a3a6a4fd3b1de736a0",
+              "795c569f0efeb42167b90f98a31689bfbae48ee54dfaf87552171c2622f4e9c2"
+            ],
+            "summary": {
+              "selected_count": 170,
+              "wse_sum_m": 2343.5,
+              "wse_mean_m": 13.785294117647059,
+              "uncertainty_count": 145,
+              "uncertainty_sum_m": 36.25,
+              "mean_pixel_uncertainty_m": 0.25,
+              "contributing_count": 147,
+              "contributing_pixel_sum": 77045
+            },
+            "process_wall_seconds": 0.18721320800023022,
+            "process_cpu_seconds": 0.18420899999999996
+          },
+          {
+            "reader": "netcdf4",
+            "versions": {
+              "reader": "1.7.4",
+              "netcdf_c": "4.9.3 of Sep 15 2025 23:01:51 $",
+              "hdf5": "1.14.6"
+            },
+            "access": "local_sparse_reference",
+            "prepare_seconds": 0.0011837500001092849,
+            "completion_seconds": 0.0030166249998728745,
+            "api_cpu_seconds": 0.002907999999999994,
+            "peak_rss_bytes": 46956544,
+            "value_sha256": [
+              "567e6db446322cf52ae8df9fec083ffd4d8a2cbbff482b0e4e923102476a638d",
+              "b630232200841607598ca0d66887c71e4ee29d670851983e523d5d89f6fa1d57",
+              "dc77a83c56a36839727e8d8075da539bc1af0a3adcd5fcf895616504e4c704a2",
+              "7cb201df99bdfc7a73b0a62f6c8dad23a18aefed2de1fa9df1060b73a5f38d81",
+              "0c71de552c55061453e76c69de110453ce67a328eb9eb4646458d5d3e9434fcf"
+            ],
+            "axis_sha256": [
+              "4e2eb1c524455731887057600285510814994e417f5796a3a6a4fd3b1de736a0",
+              "795c569f0efeb42167b90f98a31689bfbae48ee54dfaf87552171c2622f4e9c2"
+            ],
+            "summary": {
+              "selected_count": 170,
+              "wse_sum_m": 2343.5,
+              "wse_mean_m": 13.785294117647059,
+              "uncertainty_count": 145,
+              "uncertainty_sum_m": 36.25,
+              "mean_pixel_uncertainty_m": 0.25,
+              "contributing_count": 147,
+              "contributing_pixel_sum": 77045
+            },
+            "process_wall_seconds": 0.10617495800033794,
+            "process_cpu_seconds": 0.10125700000000001
+          }
+        ],
+        "fresh_consumer_calculation_equal": true
+      },
+      "summary": {
+        "selected_count": 170,
+        "wse_sum_m": 2343.5,
+        "uncertainty_count": 145,
+        "uncertainty_sum_m": 36.25,
+        "contributing_count": 147,
+        "contributing_pixel_sum": 77045,
+        "wse_mean_m": 13.785294117647059,
+        "mean_pixel_uncertainty_m": 0.25
+      },
+      "transport": {
+        "phases": {
+          "hdf5_bitwise_quality_payload": {
+            "GET source.nc": {
+              "seconds": 0.022745541,
+              "attempts": 8,
+              "bytes": 342,
+              "retries": 0,
+              "statuses": {
+                "206": 8
+              }
+            }
+          },
+          "hdf5_chunk_index_discovery": {
+            "GET source.nc": {
+              "seconds": 0.028144583999999993,
+              "attempts": 10,
+              "bytes": 4480,
+              "retries": 0,
+              "statuses": {
+                "206": 10
+              }
+            }
+          },
+          "hdf5_coordinate_chunks": {
+            "GET source.nc": {
+              "seconds": 0.023160626,
+              "attempts": 8,
+              "bytes": 233,
+              "retries": 0,
+              "statuses": {
+                "206": 8
+              }
+            }
+          },
+          "hdf5_coordinate_index_discovery": {
+            "GET source.nc": {
+              "seconds": 0.011453542,
+              "attempts": 4,
+              "bytes": 656,
+              "retries": 0,
+              "statuses": {
+                "206": 4
+              }
+            }
+          },
+          "hdf5_pixel_count_payload": {
+            "GET source.nc": {
+              "seconds": 0.01985479,
+              "attempts": 7,
+              "bytes": 856,
+              "retries": 0,
+              "statuses": {
+                "206": 7
+              }
+            }
+          },
+          "hdf5_summary_quality_payload": {
+            "GET source.nc": {
+              "seconds": 0.002773209,
+              "attempts": 1,
+              "bytes": 36,
+              "retries": 0,
+              "statuses": {
+                "206": 1
+              }
+            }
+          },
+          "hdf5_uncertainty_payload": {
+            "GET source.nc": {
+              "seconds": 0.014175291,
+              "attempts": 5,
+              "bytes": 110,
+              "retries": 0,
+              "statuses": {
+                "206": 5
+              }
+            }
+          },
+          "hdf5_wse_payload": {
+            "GET source.nc": {
+              "seconds": 0.0083445,
+              "attempts": 3,
+              "bytes": 216,
+              "retries": 0,
+              "statuses": {
+                "206": 3
+              }
+            }
+          },
+          "metadata_index_discovery": {
+            "GET source.nc": {
+              "seconds": 0.137818081,
+              "attempts": 47,
+              "bytes": 7248,
+              "retries": 0,
+              "statuses": {
+                "206": 47
+              }
+            },
+            "HEAD source.nc": {
+              "seconds": 0.0004215,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            }
+          },
+          "planning": {
+            "HEAD source.nc": {
+              "seconds": 0.029601292,
+              "attempts": 2,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 2
+              }
+            }
+          },
+          "post_execution_validation": {
+            "HEAD source.nc": {
+              "seconds": 0.0004305,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            }
+          },
+          "pre_execution_validation": {
+            "HEAD source.nc": {
+              "seconds": 0.000531292,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            }
+          }
+        },
+        "requests": 98,
+        "bytes": 14177,
+        "retries": 0,
+        "seconds": 0.2994209559999999,
+        "objects": {
+          "GET source.nc": {
+            "seconds": 0.26848561900000006,
+            "attempts": 93,
+            "bytes": 14177,
+            "retries": 0,
+            "statuses": {
+              "206": 93
+            }
+          },
+          "HEAD source.nc": {
+            "seconds": 0.0309855,
+            "attempts": 5,
+            "bytes": 0,
+            "retries": 0,
+            "statuses": {
+              "200": 5
+            }
+          }
+        },
+        "authenticated_http": {
+          "checkpoint_claims": 0,
+          "peak_in_flight": 1,
+          "wire_head": 10,
+          "wire_get": 97,
+          "redirects": 9,
+          "login_requests": 1,
+          "refreshes": 0,
+          "route_cache_hits": 92,
+          "response_body_bytes": 14177,
+          "redirect_body_bytes": 0,
+          "signing_auth_seconds": 0.037062625,
+          "statuses": {
+            "200": 5,
+            "206": 93,
+            "301": 1,
+            "302": 2,
+            "303": 6
+          },
+          "origins": {
+            "https://127.0.0.1:52912": 1,
+            "https://localhost:52911": 8,
+            "https://localhost:52913": 98
+          }
+        },
+        "cached_metadata_bytes": 22144,
+        "range_trace_sha256": "9bdd1472c36509f62459ffa804379e794843ee52b0154cfe8678166e29f784ed",
+        "range_identities": 93
+      },
+      "scheduler": {
+        "profile": "bounded aligned SWOT tiles",
+        "workers": 1,
+        "queue_capacity": 0,
+        "reserved_bytes_peak": 5582636,
+        "budget_bytes": 33554432,
+        "encoded_cache_cap_bytes": 4194304,
+        "encoded_cache_hits": 18,
+        "tiles": 4,
+        "max_tile_pixels": 218548,
+        "redecoded_intersections": 42
+      }
+    },
+    {
+      "case": "after-metadata-planning",
+      "binary_sha256": "7c8052fec041b8a1779c1868294e23fbbd8214f34a188c42ac3bfccccdf72de9",
+      "returncode": 0,
+      "elapsed_seconds": 0.27689183400025286,
+      "cpu_seconds": 0.06496899999999994,
+      "sampled_peak_rss_bytes": 17760256,
+      "first_chunk_seconds": null,
+      "prepared_seconds": null,
+      "tiles_received": 0,
+      "completion_emitted": false,
+      "interruption_sent": false,
+      "error": null,
+      "server": {
+        "requests": {
+          "archive HEAD 303": 3,
+          "resource HEAD 200": 3,
+          "archive GET 302": 1,
+          "login GET 302": 1,
+          "archive GET 301": 1,
+          "archive GET 303": 1,
+          "resource GET 206": 69
+        },
+        "response_body_bytes": 12617,
+        "route_generation": 10,
+        "range_requests": 69,
+        "range_trace_sha256": "05c4c73578fb485f554f37696cab3e44e94ec3476bf011ad1d6a15489575ae5d"
+      }
+    },
+    {
+      "case": "resume-after-metadata",
+      "binary_sha256": "7c8052fec041b8a1779c1868294e23fbbd8214f34a188c42ac3bfccccdf72de9",
+      "returncode": 0,
+      "elapsed_seconds": 0.1394030839996958,
+      "cpu_seconds": 0.05394699999999994,
+      "sampled_peak_rss_bytes": 19218432,
+      "first_chunk_seconds": 0.08593654199967204,
+      "prepared_seconds": 0.05385395899975265,
+      "tiles_received": 4,
+      "completion_emitted": true,
+      "interruption_sent": false,
+      "error": null,
+      "server": {
+        "requests": {
+          "archive HEAD 303": 5,
+          "resource HEAD 200": 5,
+          "archive GET 302": 1,
+          "login GET 302": 1,
+          "archive GET 301": 1,
+          "archive GET 303": 1,
+          "resource GET 206": 25
+        },
+        "response_body_bytes": 1568,
+        "route_generation": 16,
+        "range_requests": 25,
+        "range_trace_sha256": "f335c296d49a1bc27b31d3568a90c4ae1743465d2cd51bd2675393e842b19fef"
+      },
+      "science": {
+        "all_native_value_bits_equal": true,
+        "all_five_source_masks_equal": true,
+        "exact_logical_coverage": true,
+        "all_coordinates_equal": true,
+        "derived_mask_equal": true,
+        "independent_summaries_equal": true,
+        "pixels_per_variable": 323,
+        "tiles": 4,
+        "references": [
+          {
+            "reader": "h5py",
+            "versions": {
+              "reader": "3.12.1",
+              "hdf5": "1.12.2"
+            },
+            "access": "local_sparse_reference",
+            "prepare_seconds": 0.001157290999799443,
+            "completion_seconds": 0.003672165999887511,
+            "api_cpu_seconds": 0.003374000000000016,
+            "peak_rss_bytes": 44138496,
+            "value_sha256": [
+              "567e6db446322cf52ae8df9fec083ffd4d8a2cbbff482b0e4e923102476a638d",
+              "b630232200841607598ca0d66887c71e4ee29d670851983e523d5d89f6fa1d57",
+              "dc77a83c56a36839727e8d8075da539bc1af0a3adcd5fcf895616504e4c704a2",
+              "7cb201df99bdfc7a73b0a62f6c8dad23a18aefed2de1fa9df1060b73a5f38d81",
+              "0c71de552c55061453e76c69de110453ce67a328eb9eb4646458d5d3e9434fcf"
+            ],
+            "axis_sha256": [
+              "4e2eb1c524455731887057600285510814994e417f5796a3a6a4fd3b1de736a0",
+              "795c569f0efeb42167b90f98a31689bfbae48ee54dfaf87552171c2622f4e9c2"
+            ],
+            "summary": {
+              "selected_count": 170,
+              "wse_sum_m": 2343.5,
+              "wse_mean_m": 13.785294117647059,
+              "uncertainty_count": 145,
+              "uncertainty_sum_m": 36.25,
+              "mean_pixel_uncertainty_m": 0.25,
+              "contributing_count": 147,
+              "contributing_pixel_sum": 77045
+            },
+            "process_wall_seconds": 0.19839129100000719,
+            "process_cpu_seconds": 0.19400500000000004
+          },
+          {
+            "reader": "netcdf4",
+            "versions": {
+              "reader": "1.7.4",
+              "netcdf_c": "4.9.3 of Sep 15 2025 23:01:51 $",
+              "hdf5": "1.14.6"
+            },
+            "access": "local_sparse_reference",
+            "prepare_seconds": 0.0012633750002351007,
+            "completion_seconds": 0.003552334000232804,
+            "api_cpu_seconds": 0.0034320000000000045,
+            "peak_rss_bytes": 46514176,
+            "value_sha256": [
+              "567e6db446322cf52ae8df9fec083ffd4d8a2cbbff482b0e4e923102476a638d",
+              "b630232200841607598ca0d66887c71e4ee29d670851983e523d5d89f6fa1d57",
+              "dc77a83c56a36839727e8d8075da539bc1af0a3adcd5fcf895616504e4c704a2",
+              "7cb201df99bdfc7a73b0a62f6c8dad23a18aefed2de1fa9df1060b73a5f38d81",
+              "0c71de552c55061453e76c69de110453ce67a328eb9eb4646458d5d3e9434fcf"
+            ],
+            "axis_sha256": [
+              "4e2eb1c524455731887057600285510814994e417f5796a3a6a4fd3b1de736a0",
+              "795c569f0efeb42167b90f98a31689bfbae48ee54dfaf87552171c2622f4e9c2"
+            ],
+            "summary": {
+              "selected_count": 170,
+              "wse_sum_m": 2343.5,
+              "wse_mean_m": 13.785294117647059,
+              "uncertainty_count": 145,
+              "uncertainty_sum_m": 36.25,
+              "mean_pixel_uncertainty_m": 0.25,
+              "contributing_count": 147,
+              "contributing_pixel_sum": 77045
+            },
+            "process_wall_seconds": 0.11020387500002471,
+            "process_cpu_seconds": 0.10533099999999995
+          }
+        ],
+        "fresh_consumer_calculation_equal": true
+      },
+      "summary": {
+        "selected_count": 170,
+        "wse_sum_m": 2343.5,
+        "uncertainty_count": 145,
+        "uncertainty_sum_m": 36.25,
+        "contributing_count": 147,
+        "contributing_pixel_sum": 77045,
+        "wse_mean_m": 13.785294117647059,
+        "mean_pixel_uncertainty_m": 0.25
+      },
+      "transport": {
+        "phases": {
+          "checkpoint_online_authorization": {
+            "GET source.nc": {
+              "seconds": 0.006807333,
+              "attempts": 1,
+              "bytes": 8,
+              "retries": 0,
+              "statuses": {
+                "206": 1
+              }
+            }
+          },
+          "hdf5_bitwise_quality_payload": {
+            "GET source.nc": {
+              "seconds": 0.024914749000000003,
+              "attempts": 8,
+              "bytes": 342,
+              "retries": 0,
+              "statuses": {
+                "206": 8
+              }
+            }
+          },
+          "hdf5_pixel_count_payload": {
+            "GET source.nc": {
+              "seconds": 0.021467374,
+              "attempts": 7,
+              "bytes": 856,
+              "retries": 0,
+              "statuses": {
+                "206": 7
+              }
+            }
+          },
+          "hdf5_summary_quality_payload": {
+            "GET source.nc": {
+              "seconds": 0.003020958,
+              "attempts": 1,
+              "bytes": 36,
+              "retries": 0,
+              "statuses": {
+                "206": 1
+              }
+            }
+          },
+          "hdf5_uncertainty_payload": {
+            "GET source.nc": {
+              "seconds": 0.015336918000000001,
+              "attempts": 5,
+              "bytes": 110,
+              "retries": 0,
+              "statuses": {
+                "206": 5
+              }
+            }
+          },
+          "hdf5_wse_payload": {
+            "GET source.nc": {
+              "seconds": 0.009012873999999999,
+              "attempts": 3,
+              "bytes": 216,
+              "retries": 0,
+              "statuses": {
+                "206": 3
+              }
+            }
+          },
+          "metadata_index_discovery": {
+            "HEAD source.nc": {
+              "seconds": 0.000766875,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            }
+          },
+          "planning": {
+            "HEAD source.nc": {
+              "seconds": 0.029276458,
+              "attempts": 2,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 2
+              }
+            }
+          },
+          "post_execution_validation": {
+            "HEAD source.nc": {
+              "seconds": 0.000685792,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            }
+          },
+          "pre_execution_validation": {
+            "HEAD source.nc": {
+              "seconds": 0.000840333,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            }
+          }
+        },
+        "requests": 30,
+        "bytes": 1568,
+        "retries": 0,
+        "seconds": 0.11209958299999999,
+        "objects": {
+          "GET source.nc": {
+            "seconds": 0.08056879199999999,
+            "attempts": 25,
+            "bytes": 1568,
+            "retries": 0,
+            "statuses": {
+              "206": 25
+            }
+          },
+          "HEAD source.nc": {
+            "seconds": 0.031570792,
+            "attempts": 5,
+            "bytes": 0,
+            "retries": 0,
+            "statuses": {
+              "200": 5
+            }
+          }
+        },
+        "authenticated_http": {
+          "checkpoint_claims": 1,
+          "peak_in_flight": 1,
+          "wire_head": 10,
+          "wire_get": 29,
+          "redirects": 9,
+          "login_requests": 1,
+          "refreshes": 0,
+          "route_cache_hits": 24,
+          "response_body_bytes": 1568,
+          "redirect_body_bytes": 0,
+          "signing_auth_seconds": 0.038311877,
+          "statuses": {
+            "200": 5,
+            "206": 25,
+            "301": 1,
+            "302": 2,
+            "303": 6
+          },
+          "origins": {
+            "https://127.0.0.1:52912": 1,
+            "https://localhost:52911": 8,
+            "https://localhost:52913": 30
+          }
+        },
+        "checkpoint": {
+          "schema_version": 1,
+          "reuse": "exact source ranges; scientific stream restarts; tiles may repeat",
+          "limit_policy": "fail acquisition; no eviction or uncached fallback",
+          "limits": {
+            "logical_disk_bytes": 67108864,
+            "entry_bytes": 8388608,
+            "entries": 2048,
+            "working_reservation_bytes": 2162688,
+            "active_writes": 1,
+            "open_files_max": 5
+          },
+          "disk_bytes": 25281,
+          "entries": 93,
+          "failed": false,
+          "counts": {
+            "reused_ranges": 69,
+            "reused_bytes": 12617,
+            "retained_ranges_reused": 69,
+            "retained_bytes_reused": 12617,
+            "written_ranges": 24,
+            "written_bytes": 1560,
+            "read_seconds": 0.0012566599999999995,
+            "write_seconds": 0.006571209000000001
+          }
+        },
+        "cached_metadata_bytes": 22144,
+        "range_trace_sha256": "1020db8d81f496a08e8150670dc4c398a87349f67862ffd14011f15a51f837a2",
+        "range_identities": 25
+      },
+      "scheduler": {
+        "profile": "bounded aligned SWOT tiles",
+        "workers": 1,
+        "queue_capacity": 0,
+        "reserved_bytes_peak": 7745324,
+        "budget_bytes": 33554432,
+        "encoded_cache_cap_bytes": 4194304,
+        "encoded_cache_hits": 18,
+        "tiles": 4,
+        "max_tile_pixels": 201652,
+        "redecoded_intersections": 42
+      }
+    },
+    {
+      "case": "complete-checkpoint-no-auth",
+      "binary_sha256": "7c8052fec041b8a1779c1868294e23fbbd8214f34a188c42ac3bfccccdf72de9",
+      "returncode": 1,
+      "elapsed_seconds": 0.04483645799973601,
+      "cpu_seconds": 0.03339399999999995,
+      "sampled_peak_rss_bytes": 15958016,
+      "first_chunk_seconds": null,
+      "prepared_seconds": null,
+      "tiles_received": 0,
+      "completion_emitted": false,
+      "interruption_sent": false,
+      "error": "{\"authenticated_http\":{\"checkpoint_claims\":1,\"peak_in_flight\":1,\"wire_head\":4,\"wire_get\":2,\"redirects\":3,\"login_requests\":1,\"refreshes\":0,\"route_cache_hits\":0,\"response_body_bytes\":0,\"redirect_body_bytes\":0,\"signing_auth_seconds\":0.029744125,\"statuses\":{\"200\":2,\"302\":1,\"303\":2,\"401\":1},\"origins\":{\"https://127.0.0.1:52912\":1,\"https://localhost:52911\":3,\"https://localhost:52913\":2}}}\ntile-ripper: prepare: authenticated access rejected; refresh exhausted\n",
+      "server": {
+        "requests": {
+          "archive HEAD 303": 2,
+          "resource HEAD 200": 2,
+          "archive GET 302": 1,
+          "login GET 401": 1
+        },
+        "response_body_bytes": 0,
+        "route_generation": 18,
+        "range_requests": 0,
+        "range_trace_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      }
+    },
+    {
+      "case": "complete-checkpoint-success",
+      "binary_sha256": "7c8052fec041b8a1779c1868294e23fbbd8214f34a188c42ac3bfccccdf72de9",
+      "returncode": 0,
+      "elapsed_seconds": 0.05795575000001918,
+      "cpu_seconds": 0.041706000000000076,
+      "sampled_peak_rss_bytes": 19185664,
+      "first_chunk_seconds": 0.053614749999724154,
+      "prepared_seconds": 0.052471333999619674,
+      "tiles_received": 4,
+      "completion_emitted": true,
+      "interruption_sent": false,
+      "error": null,
+      "server": {
+        "requests": {
+          "archive HEAD 303": 5,
+          "resource HEAD 200": 5,
+          "archive GET 302": 1,
+          "login GET 302": 1,
+          "archive GET 301": 1,
+          "archive GET 303": 1,
+          "resource GET 206": 1
+        },
+        "response_body_bytes": 8,
+        "route_generation": 24,
+        "range_requests": 1,
+        "range_trace_sha256": "b33e7d7ea69abf3270b6423805223ed511c707e9e4e48cfc5ec6a2fbf27ad88e"
+      },
+      "science": {
+        "all_native_value_bits_equal": true,
+        "all_five_source_masks_equal": true,
+        "exact_logical_coverage": true,
+        "all_coordinates_equal": true,
+        "derived_mask_equal": true,
+        "independent_summaries_equal": true,
+        "pixels_per_variable": 323,
+        "tiles": 4,
+        "references": [
+          {
+            "reader": "h5py",
+            "versions": {
+              "reader": "3.12.1",
+              "hdf5": "1.12.2"
+            },
+            "access": "local_sparse_reference",
+            "prepare_seconds": 0.0028808329998355475,
+            "completion_seconds": 0.005482999999912863,
+            "api_cpu_seconds": 0.004602999999999996,
+            "peak_rss_bytes": 44335104,
+            "value_sha256": [
+              "567e6db446322cf52ae8df9fec083ffd4d8a2cbbff482b0e4e923102476a638d",
+              "b630232200841607598ca0d66887c71e4ee29d670851983e523d5d89f6fa1d57",
+              "dc77a83c56a36839727e8d8075da539bc1af0a3adcd5fcf895616504e4c704a2",
+              "7cb201df99bdfc7a73b0a62f6c8dad23a18aefed2de1fa9df1060b73a5f38d81",
+              "0c71de552c55061453e76c69de110453ce67a328eb9eb4646458d5d3e9434fcf"
+            ],
+            "axis_sha256": [
+              "4e2eb1c524455731887057600285510814994e417f5796a3a6a4fd3b1de736a0",
+              "795c569f0efeb42167b90f98a31689bfbae48ee54dfaf87552171c2622f4e9c2"
+            ],
+            "summary": {
+              "selected_count": 170,
+              "wse_sum_m": 2343.5,
+              "wse_mean_m": 13.785294117647059,
+              "uncertainty_count": 145,
+              "uncertainty_sum_m": 36.25,
+              "mean_pixel_uncertainty_m": 0.25,
+              "contributing_count": 147,
+              "contributing_pixel_sum": 77045
+            },
+            "process_wall_seconds": 0.21045054200021696,
+            "process_cpu_seconds": 0.20308799999999985
+          },
+          {
+            "reader": "netcdf4",
+            "versions": {
+              "reader": "1.7.4",
+              "netcdf_c": "4.9.3 of Sep 15 2025 23:01:51 $",
+              "hdf5": "1.14.6"
+            },
+            "access": "local_sparse_reference",
+            "prepare_seconds": 0.0014955829997234105,
+            "completion_seconds": 0.0037967919997754507,
+            "api_cpu_seconds": 0.0036670000000000036,
+            "peak_rss_bytes": 46481408,
+            "value_sha256": [
+              "567e6db446322cf52ae8df9fec083ffd4d8a2cbbff482b0e4e923102476a638d",
+              "b630232200841607598ca0d66887c71e4ee29d670851983e523d5d89f6fa1d57",
+              "dc77a83c56a36839727e8d8075da539bc1af0a3adcd5fcf895616504e4c704a2",
+              "7cb201df99bdfc7a73b0a62f6c8dad23a18aefed2de1fa9df1060b73a5f38d81",
+              "0c71de552c55061453e76c69de110453ce67a328eb9eb4646458d5d3e9434fcf"
+            ],
+            "axis_sha256": [
+              "4e2eb1c524455731887057600285510814994e417f5796a3a6a4fd3b1de736a0",
+              "795c569f0efeb42167b90f98a31689bfbae48ee54dfaf87552171c2622f4e9c2"
+            ],
+            "summary": {
+              "selected_count": 170,
+              "wse_sum_m": 2343.5,
+              "wse_mean_m": 13.785294117647059,
+              "uncertainty_count": 145,
+              "uncertainty_sum_m": 36.25,
+              "mean_pixel_uncertainty_m": 0.25,
+              "contributing_count": 147,
+              "contributing_pixel_sum": 77045
+            },
+            "process_wall_seconds": 0.1351804999999331,
+            "process_cpu_seconds": 0.12157500000000016
+          }
+        ],
+        "fresh_consumer_calculation_equal": true
+      },
+      "summary": {
+        "selected_count": 170,
+        "wse_sum_m": 2343.5,
+        "uncertainty_count": 145,
+        "uncertainty_sum_m": 36.25,
+        "contributing_count": 147,
+        "contributing_pixel_sum": 77045,
+        "wse_mean_m": 13.785294117647059,
+        "mean_pixel_uncertainty_m": 0.25
+      },
+      "transport": {
+        "phases": {
+          "checkpoint_online_authorization": {
+            "GET source.nc": {
+              "seconds": 0.006426708,
+              "attempts": 1,
+              "bytes": 8,
+              "retries": 0,
+              "statuses": {
+                "206": 1
+              }
+            }
+          },
+          "metadata_index_discovery": {
+            "HEAD source.nc": {
+              "seconds": 0.00093375,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            }
+          },
+          "planning": {
+            "HEAD source.nc": {
+              "seconds": 0.028857292,
+              "attempts": 2,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 2
+              }
+            }
+          },
+          "post_execution_validation": {
+            "HEAD source.nc": {
+              "seconds": 0.00055925,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            }
+          },
+          "pre_execution_validation": {
+            "HEAD source.nc": {
+              "seconds": 0.000634417,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            }
+          }
+        },
+        "requests": 6,
+        "bytes": 8,
+        "retries": 0,
+        "seconds": 0.03740141799999999,
+        "objects": {
+          "GET source.nc": {
+            "seconds": 0.006427375,
+            "attempts": 1,
+            "bytes": 8,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "HEAD source.nc": {
+            "seconds": 0.030986625999999996,
+            "attempts": 5,
+            "bytes": 0,
+            "retries": 0,
+            "statuses": {
+              "200": 5
+            }
+          }
+        },
+        "authenticated_http": {
+          "checkpoint_claims": 1,
+          "peak_in_flight": 1,
+          "wire_head": 10,
+          "wire_get": 5,
+          "redirects": 9,
+          "login_requests": 1,
+          "refreshes": 0,
+          "route_cache_hits": 0,
+          "response_body_bytes": 8,
+          "redirect_body_bytes": 0,
+          "signing_auth_seconds": 0.037334,
+          "statuses": {
+            "200": 5,
+            "206": 1,
+            "301": 1,
+            "302": 2,
+            "303": 6
+          },
+          "origins": {
+            "https://127.0.0.1:52912": 1,
+            "https://localhost:52911": 8,
+            "https://localhost:52913": 6
+          }
+        },
+        "checkpoint": {
+          "schema_version": 1,
+          "reuse": "exact source ranges; scientific stream restarts; tiles may repeat",
+          "limit_policy": "fail acquisition; no eviction or uncached fallback",
+          "limits": {
+            "logical_disk_bytes": 67108864,
+            "entry_bytes": 8388608,
+            "entries": 2048,
+            "working_reservation_bytes": 2162688,
+            "active_writes": 1,
+            "open_files_max": 5
+          },
+          "disk_bytes": 25281,
+          "entries": 93,
+          "failed": false,
+          "counts": {
+            "reused_ranges": 93,
+            "reused_bytes": 14177,
+            "retained_ranges_reused": 93,
+            "retained_bytes_reused": 14177,
+            "written_ranges": 0,
+            "written_bytes": 0,
+            "read_seconds": 0.0018624190000000001,
+            "write_seconds": 8.3e-08
+          }
+        },
+        "cached_metadata_bytes": 22144,
+        "range_trace_sha256": "16478bbe010e1694de5111f819d8106a4d1a4f61f3825ace2f338fb30ff61327",
+        "range_identities": 1
+      },
+      "scheduler": {
+        "profile": "bounded aligned SWOT tiles",
+        "workers": 1,
+        "queue_capacity": 0,
+        "reserved_bytes_peak": 7745324,
+        "budget_bytes": 33554432,
+        "encoded_cache_cap_bytes": 4194304,
+        "encoded_cache_hits": 18,
+        "tiles": 4,
+        "max_tile_pixels": 201652,
+        "redecoded_intersections": 42
+      }
+    },
+    {
+      "case": "fresh-signed-route",
+      "binary_sha256": "7c8052fec041b8a1779c1868294e23fbbd8214f34a188c42ac3bfccccdf72de9",
+      "returncode": 0,
+      "elapsed_seconds": 0.06292183300001852,
+      "cpu_seconds": 0.041506000000000265,
+      "sampled_peak_rss_bytes": 19218432,
+      "first_chunk_seconds": 0.058842125000410306,
+      "prepared_seconds": 0.05742912499999875,
+      "tiles_received": 4,
+      "completion_emitted": true,
+      "interruption_sent": false,
+      "error": null,
+      "server": {
+        "requests": {
+          "archive HEAD 303": 5,
+          "resource HEAD 200": 5,
+          "archive GET 302": 1,
+          "login GET 302": 1,
+          "archive GET 301": 1,
+          "archive GET 303": 2,
+          "resource GET 403": 1,
+          "resource GET 206": 1
+        },
+        "response_body_bytes": 8,
+        "route_generation": 31,
+        "range_requests": 2,
+        "range_trace_sha256": "f22c3d9fbaf3e517887b8508cc65abc7b1d219d48c67be553fa54fecf6705502"
+      },
+      "science": {
+        "all_native_value_bits_equal": true,
+        "all_five_source_masks_equal": true,
+        "exact_logical_coverage": true,
+        "all_coordinates_equal": true,
+        "derived_mask_equal": true,
+        "independent_summaries_equal": true,
+        "pixels_per_variable": 323,
+        "tiles": 4,
+        "references": [
+          {
+            "reader": "h5py",
+            "versions": {
+              "reader": "3.12.1",
+              "hdf5": "1.12.2"
+            },
+            "access": "local_sparse_reference",
+            "prepare_seconds": 0.0012377090001791657,
+            "completion_seconds": 0.004726749999917956,
+            "api_cpu_seconds": 0.003600999999999993,
+            "peak_rss_bytes": 44384256,
+            "value_sha256": [
+              "567e6db446322cf52ae8df9fec083ffd4d8a2cbbff482b0e4e923102476a638d",
+              "b630232200841607598ca0d66887c71e4ee29d670851983e523d5d89f6fa1d57",
+              "dc77a83c56a36839727e8d8075da539bc1af0a3adcd5fcf895616504e4c704a2",
+              "7cb201df99bdfc7a73b0a62f6c8dad23a18aefed2de1fa9df1060b73a5f38d81",
+              "0c71de552c55061453e76c69de110453ce67a328eb9eb4646458d5d3e9434fcf"
+            ],
+            "axis_sha256": [
+              "4e2eb1c524455731887057600285510814994e417f5796a3a6a4fd3b1de736a0",
+              "795c569f0efeb42167b90f98a31689bfbae48ee54dfaf87552171c2622f4e9c2"
+            ],
+            "summary": {
+              "selected_count": 170,
+              "wse_sum_m": 2343.5,
+              "wse_mean_m": 13.785294117647059,
+              "uncertainty_count": 145,
+              "uncertainty_sum_m": 36.25,
+              "mean_pixel_uncertainty_m": 0.25,
+              "contributing_count": 147,
+              "contributing_pixel_sum": 77045
+            },
+            "process_wall_seconds": 0.1973578339998312,
+            "process_cpu_seconds": 0.1931869999999999
+          },
+          {
+            "reader": "netcdf4",
+            "versions": {
+              "reader": "1.7.4",
+              "netcdf_c": "4.9.3 of Sep 15 2025 23:01:51 $",
+              "hdf5": "1.14.6"
+            },
+            "access": "local_sparse_reference",
+            "prepare_seconds": 0.0011087500001849548,
+            "completion_seconds": 0.0032643340000504395,
+            "api_cpu_seconds": 0.0031729999999999953,
+            "peak_rss_bytes": 46694400,
+            "value_sha256": [
+              "567e6db446322cf52ae8df9fec083ffd4d8a2cbbff482b0e4e923102476a638d",
+              "b630232200841607598ca0d66887c71e4ee29d670851983e523d5d89f6fa1d57",
+              "dc77a83c56a36839727e8d8075da539bc1af0a3adcd5fcf895616504e4c704a2",
+              "7cb201df99bdfc7a73b0a62f6c8dad23a18aefed2de1fa9df1060b73a5f38d81",
+              "0c71de552c55061453e76c69de110453ce67a328eb9eb4646458d5d3e9434fcf"
+            ],
+            "axis_sha256": [
+              "4e2eb1c524455731887057600285510814994e417f5796a3a6a4fd3b1de736a0",
+              "795c569f0efeb42167b90f98a31689bfbae48ee54dfaf87552171c2622f4e9c2"
+            ],
+            "summary": {
+              "selected_count": 170,
+              "wse_sum_m": 2343.5,
+              "wse_mean_m": 13.785294117647059,
+              "uncertainty_count": 145,
+              "uncertainty_sum_m": 36.25,
+              "mean_pixel_uncertainty_m": 0.25,
+              "contributing_count": 147,
+              "contributing_pixel_sum": 77045
+            },
+            "process_wall_seconds": 0.10868420800034073,
+            "process_cpu_seconds": 0.10420999999999986
+          }
+        ],
+        "fresh_consumer_calculation_equal": true
+      },
+      "summary": {
+        "selected_count": 170,
+        "wse_sum_m": 2343.5,
+        "uncertainty_count": 145,
+        "uncertainty_sum_m": 36.25,
+        "contributing_count": 147,
+        "contributing_pixel_sum": 77045,
+        "wse_mean_m": 13.785294117647059,
+        "mean_pixel_uncertainty_m": 0.25
+      },
+      "transport": {
+        "phases": {
+          "checkpoint_online_authorization": {
+            "GET source.nc": {
+              "seconds": 0.009185458,
+              "attempts": 1,
+              "bytes": 8,
+              "retries": 0,
+              "statuses": {
+                "206": 1
+              }
+            }
+          },
+          "metadata_index_discovery": {
+            "HEAD source.nc": {
+              "seconds": 0.000659458,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            }
+          },
+          "planning": {
+            "HEAD source.nc": {
+              "seconds": 0.029431417,
+              "attempts": 2,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 2
+              }
+            }
+          },
+          "post_execution_validation": {
+            "HEAD source.nc": {
+              "seconds": 0.000630375,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            }
+          },
+          "pre_execution_validation": {
+            "HEAD source.nc": {
+              "seconds": 0.000873542,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            }
+          }
+        },
+        "requests": 6,
+        "bytes": 8,
+        "retries": 0,
+        "seconds": 0.040768251,
+        "objects": {
+          "GET source.nc": {
+            "seconds": 0.009186,
+            "attempts": 1,
+            "bytes": 8,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "HEAD source.nc": {
+            "seconds": 0.0316015,
+            "attempts": 5,
+            "bytes": 0,
+            "retries": 0,
+            "statuses": {
+              "200": 5
+            }
+          }
+        },
+        "authenticated_http": {
+          "checkpoint_claims": 1,
+          "peak_in_flight": 1,
+          "wire_head": 10,
+          "wire_get": 7,
+          "redirects": 10,
+          "login_requests": 1,
+          "refreshes": 1,
+          "route_cache_hits": 0,
+          "response_body_bytes": 8,
+          "redirect_body_bytes": 0,
+          "signing_auth_seconds": 0.03474875000000001,
+          "statuses": {
+            "200": 5,
+            "206": 1,
+            "301": 1,
+            "302": 2,
+            "303": 7,
+            "403": 1
+          },
+          "origins": {
+            "https://127.0.0.1:52912": 1,
+            "https://localhost:52911": 9,
+            "https://localhost:52913": 7
+          }
+        },
+        "checkpoint": {
+          "schema_version": 1,
+          "reuse": "exact source ranges; scientific stream restarts; tiles may repeat",
+          "limit_policy": "fail acquisition; no eviction or uncached fallback",
+          "limits": {
+            "logical_disk_bytes": 67108864,
+            "entry_bytes": 8388608,
+            "entries": 2048,
+            "working_reservation_bytes": 2162688,
+            "active_writes": 1,
+            "open_files_max": 5
+          },
+          "disk_bytes": 25281,
+          "entries": 93,
+          "failed": false,
+          "counts": {
+            "reused_ranges": 93,
+            "reused_bytes": 14177,
+            "retained_ranges_reused": 93,
+            "retained_bytes_reused": 14177,
+            "written_ranges": 0,
+            "written_bytes": 0,
+            "read_seconds": 0.0018482059999999994,
+            "write_seconds": 2.09e-07
+          }
+        },
+        "cached_metadata_bytes": 22144,
+        "range_trace_sha256": "51ef4e1b4313d592403d16cccd0f32d2a6287c6f70c61cfda841687e7719ada0",
+        "range_identities": 1
+      },
+      "scheduler": {
+        "profile": "bounded aligned SWOT tiles",
+        "workers": 1,
+        "queue_capacity": 0,
+        "reserved_bytes_peak": 7745324,
+        "budget_bytes": 33554432,
+        "encoded_cache_cap_bytes": 4194304,
+        "encoded_cache_hits": 18,
+        "tiles": 4,
+        "max_tile_pixels": 201652,
+        "redecoded_intersections": 42
+      }
+    },
+    {
+      "case": "mutation-after-replay",
+      "binary_sha256": "7c8052fec041b8a1779c1868294e23fbbd8214f34a188c42ac3bfccccdf72de9",
+      "returncode": 1,
+      "elapsed_seconds": 0.05558770800007551,
+      "cpu_seconds": 0.04016800000000004,
+      "sampled_peak_rss_bytes": 18939904,
+      "first_chunk_seconds": 0.05128104200002781,
+      "prepared_seconds": 0.05027912500008824,
+      "tiles_received": 4,
+      "completion_emitted": false,
+      "interruption_sent": false,
+      "error": "{\"authenticated_http\":{\"checkpoint_claims\":1,\"peak_in_flight\":1,\"wire_head\":10,\"wire_get\":5,\"redirects\":9,\"login_requests\":1,\"refreshes\":0,\"route_cache_hits\":0,\"response_body_bytes\":8,\"redirect_body_bytes\":0,\"signing_auth_seconds\":0.036283082999999994,\"statuses\":{\"200\":5,\"206\":1,\"301\":1,\"302\":2,\"303\":6},\"origins\":{\"https://127.0.0.1:52912\":1,\"https://localhost:52911\":8,\"https://localhost:52913\":6}}}\ntile-ripper: HTTP source version conflict; prepare again\n",
+      "server": {
+        "requests": {
+          "archive HEAD 303": 5,
+          "resource HEAD 200": 5,
+          "archive GET 302": 1,
+          "login GET 302": 1,
+          "archive GET 301": 1,
+          "archive GET 303": 1,
+          "resource GET 206": 1
+        },
+        "response_body_bytes": 8,
+        "route_generation": 37,
+        "range_requests": 1,
+        "range_trace_sha256": "b33e7d7ea69abf3270b6423805223ed511c707e9e4e48cfc5ec6a2fbf27ad88e"
+      }
+    },
+    {
+      "case": "interrupted-partial",
+      "binary_sha256": "7c8052fec041b8a1779c1868294e23fbbd8214f34a188c42ac3bfccccdf72de9",
+      "returncode": 1,
+      "elapsed_seconds": 0.2981846249999762,
+      "cpu_seconds": 0.05645200000000006,
+      "sampled_peak_rss_bytes": 19398656,
+      "first_chunk_seconds": null,
+      "prepared_seconds": 0.261151417000292,
+      "tiles_received": 0,
+      "completion_emitted": false,
+      "interruption_sent": true,
+      "error": "{\"authenticated_http\":{\"checkpoint_claims\":1,\"peak_in_flight\":1,\"wire_head\":8,\"wire_get\":75,\"redirects\":8,\"login_requests\":1,\"refreshes\":0,\"route_cache_hits\":70,\"response_body_bytes\":12707,\"redirect_body_bytes\":0,\"signing_auth_seconds\":0.03602804,\"statuses\":{\"200\":4,\"206\":71,\"301\":1,\"302\":2,\"303\":5},\"origins\":{\"https://127.0.0.1:52912\":1,\"https://localhost:52911\":7,\"https://localhost:52913\":75}}}\ntile-ripper: execution: acquisition cancelled\n",
+      "server": {
+        "requests": {
+          "archive HEAD 303": 4,
+          "resource HEAD 200": 4,
+          "archive GET 302": 1,
+          "login GET 302": 1,
+          "archive GET 301": 1,
+          "archive GET 303": 1,
+          "resource GET 206": 71
+        },
+        "response_body_bytes": 12707,
+        "route_generation": 42,
+        "range_requests": 71,
+        "range_trace_sha256": "6c6064e95ef0c574d7ff9cbf30f3c85722dd3824d747ec59dade3cbfd0b9b107"
+      }
+    },
+    {
+      "case": "resumed-partial",
+      "binary_sha256": "7c8052fec041b8a1779c1868294e23fbbd8214f34a188c42ac3bfccccdf72de9",
+      "returncode": 0,
+      "elapsed_seconds": 0.12457512500031953,
+      "cpu_seconds": 0.04657800000000012,
+      "sampled_peak_rss_bytes": 19169280,
+      "first_chunk_seconds": 0.07611620800025776,
+      "prepared_seconds": 0.05043400000022302,
+      "tiles_received": 4,
+      "completion_emitted": true,
+      "interruption_sent": false,
+      "error": null,
+      "server": {
+        "requests": {
+          "archive HEAD 303": 5,
+          "resource HEAD 200": 5,
+          "archive GET 302": 1,
+          "login GET 302": 1,
+          "archive GET 301": 1,
+          "archive GET 303": 1,
+          "resource GET 206": 24
+        },
+        "response_body_bytes": 1496,
+        "route_generation": 48,
+        "range_requests": 24,
+        "range_trace_sha256": "660e123223cb26871651a7136548b40a83fb918018580458b672db672120944d"
+      },
+      "science": {
+        "all_native_value_bits_equal": true,
+        "all_five_source_masks_equal": true,
+        "exact_logical_coverage": true,
+        "all_coordinates_equal": true,
+        "derived_mask_equal": true,
+        "independent_summaries_equal": true,
+        "pixels_per_variable": 323,
+        "tiles": 4,
+        "references": [
+          {
+            "reader": "h5py",
+            "versions": {
+              "reader": "3.12.1",
+              "hdf5": "1.12.2"
+            },
+            "access": "local_sparse_reference",
+            "prepare_seconds": 0.0015557089996036666,
+            "completion_seconds": 0.003716333999818744,
+            "api_cpu_seconds": 0.0035260000000000014,
+            "peak_rss_bytes": 43892736,
+            "value_sha256": [
+              "567e6db446322cf52ae8df9fec083ffd4d8a2cbbff482b0e4e923102476a638d",
+              "b630232200841607598ca0d66887c71e4ee29d670851983e523d5d89f6fa1d57",
+              "dc77a83c56a36839727e8d8075da539bc1af0a3adcd5fcf895616504e4c704a2",
+              "7cb201df99bdfc7a73b0a62f6c8dad23a18aefed2de1fa9df1060b73a5f38d81",
+              "0c71de552c55061453e76c69de110453ce67a328eb9eb4646458d5d3e9434fcf"
+            ],
+            "axis_sha256": [
+              "4e2eb1c524455731887057600285510814994e417f5796a3a6a4fd3b1de736a0",
+              "795c569f0efeb42167b90f98a31689bfbae48ee54dfaf87552171c2622f4e9c2"
+            ],
+            "summary": {
+              "selected_count": 170,
+              "wse_sum_m": 2343.5,
+              "wse_mean_m": 13.785294117647059,
+              "uncertainty_count": 145,
+              "uncertainty_sum_m": 36.25,
+              "mean_pixel_uncertainty_m": 0.25,
+              "contributing_count": 147,
+              "contributing_pixel_sum": 77045
+            },
+            "process_wall_seconds": 0.19222220800020295,
+            "process_cpu_seconds": 0.18890699999999977
+          },
+          {
+            "reader": "netcdf4",
+            "versions": {
+              "reader": "1.7.4",
+              "netcdf_c": "4.9.3 of Sep 15 2025 23:01:51 $",
+              "hdf5": "1.14.6"
+            },
+            "access": "local_sparse_reference",
+            "prepare_seconds": 0.0011937919998672442,
+            "completion_seconds": 0.0033908329996847897,
+            "api_cpu_seconds": 0.003273999999999999,
+            "peak_rss_bytes": 46940160,
+            "value_sha256": [
+              "567e6db446322cf52ae8df9fec083ffd4d8a2cbbff482b0e4e923102476a638d",
+              "b630232200841607598ca0d66887c71e4ee29d670851983e523d5d89f6fa1d57",
+              "dc77a83c56a36839727e8d8075da539bc1af0a3adcd5fcf895616504e4c704a2",
+              "7cb201df99bdfc7a73b0a62f6c8dad23a18aefed2de1fa9df1060b73a5f38d81",
+              "0c71de552c55061453e76c69de110453ce67a328eb9eb4646458d5d3e9434fcf"
+            ],
+            "axis_sha256": [
+              "4e2eb1c524455731887057600285510814994e417f5796a3a6a4fd3b1de736a0",
+              "795c569f0efeb42167b90f98a31689bfbae48ee54dfaf87552171c2622f4e9c2"
+            ],
+            "summary": {
+              "selected_count": 170,
+              "wse_sum_m": 2343.5,
+              "wse_mean_m": 13.785294117647059,
+              "uncertainty_count": 145,
+              "uncertainty_sum_m": 36.25,
+              "mean_pixel_uncertainty_m": 0.25,
+              "contributing_count": 147,
+              "contributing_pixel_sum": 77045
+            },
+            "process_wall_seconds": 0.10920233400020152,
+            "process_cpu_seconds": 0.1049719999999999
+          }
+        ],
+        "fresh_consumer_calculation_equal": true
+      },
+      "summary": {
+        "selected_count": 170,
+        "wse_sum_m": 2343.5,
+        "uncertainty_count": 145,
+        "uncertainty_sum_m": 36.25,
+        "contributing_count": 147,
+        "contributing_pixel_sum": 77045,
+        "wse_mean_m": 13.785294117647059,
+        "mean_pixel_uncertainty_m": 0.25
+      },
+      "transport": {
+        "phases": {
+          "checkpoint_online_authorization": {
+            "GET source.nc": {
+              "seconds": 0.00593575,
+              "attempts": 1,
+              "bytes": 8,
+              "retries": 0,
+              "statuses": {
+                "206": 1
+              }
+            }
+          },
+          "hdf5_bitwise_quality_payload": {
+            "GET source.nc": {
+              "seconds": 0.021986792,
+              "attempts": 8,
+              "bytes": 342,
+              "retries": 0,
+              "statuses": {
+                "206": 8
+              }
+            }
+          },
+          "hdf5_pixel_count_payload": {
+            "GET source.nc": {
+              "seconds": 0.020064958999999997,
+              "attempts": 7,
+              "bytes": 856,
+              "retries": 0,
+              "statuses": {
+                "206": 7
+              }
+            }
+          },
+          "hdf5_summary_quality_payload": {
+            "GET source.nc": {
+              "seconds": 0.002790083,
+              "attempts": 1,
+              "bytes": 36,
+              "retries": 0,
+              "statuses": {
+                "206": 1
+              }
+            }
+          },
+          "hdf5_uncertainty_payload": {
+            "GET source.nc": {
+              "seconds": 0.014324458,
+              "attempts": 5,
+              "bytes": 110,
+              "retries": 0,
+              "statuses": {
+                "206": 5
+              }
+            }
+          },
+          "hdf5_wse_payload": {
+            "GET source.nc": {
+              "seconds": 0.005874750999999999,
+              "attempts": 2,
+              "bytes": 144,
+              "retries": 0,
+              "statuses": {
+                "206": 2
+              }
+            }
+          },
+          "metadata_index_discovery": {
+            "HEAD source.nc": {
+              "seconds": 0.000611875,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            }
+          },
+          "planning": {
+            "HEAD source.nc": {
+              "seconds": 0.028351125,
+              "attempts": 2,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 2
+              }
+            }
+          },
+          "post_execution_validation": {
+            "HEAD source.nc": {
+              "seconds": 0.000554916,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            }
+          },
+          "pre_execution_validation": {
+            "HEAD source.nc": {
+              "seconds": 0.000608125,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            }
+          }
+        },
+        "requests": 29,
+        "bytes": 1496,
+        "retries": 0,
+        "seconds": 0.10108770900000001,
+        "objects": {
+          "GET source.nc": {
+            "seconds": 0.07098216800000001,
+            "attempts": 24,
+            "bytes": 1496,
+            "retries": 0,
+            "statuses": {
+              "206": 24
+            }
+          },
+          "HEAD source.nc": {
+            "seconds": 0.030127208,
+            "attempts": 5,
+            "bytes": 0,
+            "retries": 0,
+            "statuses": {
+              "200": 5
+            }
+          }
+        },
+        "authenticated_http": {
+          "checkpoint_claims": 1,
+          "peak_in_flight": 1,
+          "wire_head": 10,
+          "wire_get": 28,
+          "redirects": 9,
+          "login_requests": 1,
+          "refreshes": 0,
+          "route_cache_hits": 23,
+          "response_body_bytes": 1496,
+          "redirect_body_bytes": 0,
+          "signing_auth_seconds": 0.035985290999999996,
+          "statuses": {
+            "200": 5,
+            "206": 24,
+            "301": 1,
+            "302": 2,
+            "303": 6
+          },
+          "origins": {
+            "https://127.0.0.1:52912": 1,
+            "https://localhost:52911": 8,
+            "https://localhost:52913": 29
+          }
+        },
+        "checkpoint": {
+          "schema_version": 1,
+          "reuse": "exact source ranges; scientific stream restarts; tiles may repeat",
+          "limit_policy": "fail acquisition; no eviction or uncached fallback",
+          "limits": {
+            "logical_disk_bytes": 67108864,
+            "entry_bytes": 8388608,
+            "entries": 2048,
+            "working_reservation_bytes": 2162688,
+            "active_writes": 1,
+            "open_files_max": 5
+          },
+          "disk_bytes": 25281,
+          "entries": 93,
+          "failed": false,
+          "counts": {
+            "reused_ranges": 70,
+            "reused_bytes": 12689,
+            "retained_ranges_reused": 70,
+            "retained_bytes_reused": 12689,
+            "written_ranges": 23,
+            "written_bytes": 1488,
+            "read_seconds": 0.0010310829999999986,
+            "write_seconds": 0.0045107490000000005
+          }
+        },
+        "cached_metadata_bytes": 22144,
+        "range_trace_sha256": "fa102e243338bffe1f790f1de0aeb1924e047356689ac4b22603e4fcd782cf8c",
+        "range_identities": 24
+      },
+      "scheduler": {
+        "profile": "bounded aligned SWOT tiles",
+        "workers": 1,
+        "queue_capacity": 0,
+        "reserved_bytes_peak": 7745324,
+        "budget_bytes": 33554432,
+        "encoded_cache_cap_bytes": 4194304,
+        "encoded_cache_hits": 18,
+        "tiles": 4,
+        "max_tile_pixels": 201652,
+        "redecoded_intersections": 42
+      }
+    },
+    {
+      "case": "interrupted-science-gate",
+      "binary_sha256": "7c8052fec041b8a1779c1868294e23fbbd8214f34a188c42ac3bfccccdf72de9",
+      "returncode": 1,
+      "elapsed_seconds": 0.287826166999821,
+      "cpu_seconds": 0.05475099999999966,
+      "sampled_peak_rss_bytes": 19202048,
+      "first_chunk_seconds": null,
+      "prepared_seconds": 0.25443683299999975,
+      "tiles_received": 0,
+      "completion_emitted": false,
+      "interruption_sent": true,
+      "error": "{\"authenticated_http\":{\"checkpoint_claims\":1,\"peak_in_flight\":1,\"wire_head\":8,\"wire_get\":76,\"redirects\":8,\"login_requests\":1,\"refreshes\":0,\"route_cache_hits\":71,\"response_body_bytes\":12725,\"redirect_body_bytes\":0,\"signing_auth_seconds\":0.035522251,\"statuses\":{\"200\":4,\"206\":72,\"301\":1,\"302\":2,\"303\":5},\"origins\":{\"https://127.0.0.1:52912\":1,\"https://localhost:52911\":7,\"https://localhost:52913\":76}}}\ntile-ripper: execution: acquisition cancelled\n",
+      "server": {
+        "requests": {
+          "archive HEAD 303": 4,
+          "resource HEAD 200": 4,
+          "archive GET 302": 1,
+          "login GET 302": 1,
+          "archive GET 301": 1,
+          "archive GET 303": 1,
+          "resource GET 206": 72
+        },
+        "response_body_bytes": 12725,
+        "route_generation": 53,
+        "range_requests": 72,
+        "range_trace_sha256": "ade45bcf04578479cec4e20f166c303118a70b7cb3b04f29d4dd2f53203e260b"
+      }
+    },
+    {
+      "case": "resumed-science-gate",
+      "binary_sha256": "7c8052fec041b8a1779c1868294e23fbbd8214f34a188c42ac3bfccccdf72de9",
+      "returncode": 0,
+      "elapsed_seconds": 0.12406629199995223,
+      "cpu_seconds": 0.04611500000000013,
+      "sampled_peak_rss_bytes": 18890752,
+      "first_chunk_seconds": 0.07345066699963354,
+      "prepared_seconds": 0.05024066699979812,
+      "tiles_received": 4,
+      "completion_emitted": true,
+      "interruption_sent": false,
+      "error": null,
+      "server": {
+        "requests": {
+          "archive HEAD 303": 5,
+          "resource HEAD 200": 5,
+          "archive GET 302": 1,
+          "login GET 302": 1,
+          "archive GET 301": 1,
+          "archive GET 303": 1,
+          "resource GET 206": 23
+        },
+        "response_body_bytes": 1460,
+        "route_generation": 59,
+        "range_requests": 23,
+        "range_trace_sha256": "496f7a4c40c511f2acd641e46d96423b3b8325b6320333c11eceef8505b68168"
+      },
+      "science": {
+        "all_native_value_bits_equal": true,
+        "all_five_source_masks_equal": true,
+        "exact_logical_coverage": true,
+        "all_coordinates_equal": true,
+        "derived_mask_equal": true,
+        "independent_summaries_equal": true,
+        "pixels_per_variable": 323,
+        "tiles": 4,
+        "references": [
+          {
+            "reader": "h5py",
+            "versions": {
+              "reader": "3.12.1",
+              "hdf5": "1.12.2"
+            },
+            "access": "local_sparse_reference",
+            "prepare_seconds": 0.0011312090000501485,
+            "completion_seconds": 0.0035312089999024465,
+            "api_cpu_seconds": 0.0034279999999999866,
+            "peak_rss_bytes": 44335104,
+            "value_sha256": [
+              "567e6db446322cf52ae8df9fec083ffd4d8a2cbbff482b0e4e923102476a638d",
+              "b630232200841607598ca0d66887c71e4ee29d670851983e523d5d89f6fa1d57",
+              "dc77a83c56a36839727e8d8075da539bc1af0a3adcd5fcf895616504e4c704a2",
+              "7cb201df99bdfc7a73b0a62f6c8dad23a18aefed2de1fa9df1060b73a5f38d81",
+              "0c71de552c55061453e76c69de110453ce67a328eb9eb4646458d5d3e9434fcf"
+            ],
+            "axis_sha256": [
+              "4e2eb1c524455731887057600285510814994e417f5796a3a6a4fd3b1de736a0",
+              "795c569f0efeb42167b90f98a31689bfbae48ee54dfaf87552171c2622f4e9c2"
+            ],
+            "summary": {
+              "selected_count": 170,
+              "wse_sum_m": 2343.5,
+              "wse_mean_m": 13.785294117647059,
+              "uncertainty_count": 145,
+              "uncertainty_sum_m": 36.25,
+              "mean_pixel_uncertainty_m": 0.25,
+              "contributing_count": 147,
+              "contributing_pixel_sum": 77045
+            },
+            "process_wall_seconds": 0.1924497079999128,
+            "process_cpu_seconds": 0.18962599999999985
+          },
+          {
+            "reader": "netcdf4",
+            "versions": {
+              "reader": "1.7.4",
+              "netcdf_c": "4.9.3 of Sep 15 2025 23:01:51 $",
+              "hdf5": "1.14.6"
+            },
+            "access": "local_sparse_reference",
+            "prepare_seconds": 0.0011815409998234827,
+            "completion_seconds": 0.0032722079999985,
+            "api_cpu_seconds": 0.0031179999999999958,
+            "peak_rss_bytes": 46809088,
+            "value_sha256": [
+              "567e6db446322cf52ae8df9fec083ffd4d8a2cbbff482b0e4e923102476a638d",
+              "b630232200841607598ca0d66887c71e4ee29d670851983e523d5d89f6fa1d57",
+              "dc77a83c56a36839727e8d8075da539bc1af0a3adcd5fcf895616504e4c704a2",
+              "7cb201df99bdfc7a73b0a62f6c8dad23a18aefed2de1fa9df1060b73a5f38d81",
+              "0c71de552c55061453e76c69de110453ce67a328eb9eb4646458d5d3e9434fcf"
+            ],
+            "axis_sha256": [
+              "4e2eb1c524455731887057600285510814994e417f5796a3a6a4fd3b1de736a0",
+              "795c569f0efeb42167b90f98a31689bfbae48ee54dfaf87552171c2622f4e9c2"
+            ],
+            "summary": {
+              "selected_count": 170,
+              "wse_sum_m": 2343.5,
+              "wse_mean_m": 13.785294117647059,
+              "uncertainty_count": 145,
+              "uncertainty_sum_m": 36.25,
+              "mean_pixel_uncertainty_m": 0.25,
+              "contributing_count": 147,
+              "contributing_pixel_sum": 77045
+            },
+            "process_wall_seconds": 0.1064031660002911,
+            "process_cpu_seconds": 0.10184100000000007
+          }
+        ],
+        "fresh_consumer_calculation_equal": true
+      },
+      "summary": {
+        "selected_count": 170,
+        "wse_sum_m": 2343.5,
+        "uncertainty_count": 145,
+        "uncertainty_sum_m": 36.25,
+        "contributing_count": 147,
+        "contributing_pixel_sum": 77045,
+        "wse_mean_m": 13.785294117647059,
+        "mean_pixel_uncertainty_m": 0.25
+      },
+      "transport": {
+        "phases": {
+          "checkpoint_online_authorization": {
+            "GET source.nc": {
+              "seconds": 0.006058459,
+              "attempts": 1,
+              "bytes": 8,
+              "retries": 0,
+              "statuses": {
+                "206": 1
+              }
+            }
+          },
+          "hdf5_bitwise_quality_payload": {
+            "GET source.nc": {
+              "seconds": 0.02304075,
+              "attempts": 8,
+              "bytes": 342,
+              "retries": 0,
+              "statuses": {
+                "206": 8
+              }
+            }
+          },
+          "hdf5_pixel_count_payload": {
+            "GET source.nc": {
+              "seconds": 0.020100123999999997,
+              "attempts": 7,
+              "bytes": 856,
+              "retries": 0,
+              "statuses": {
+                "206": 7
+              }
+            }
+          },
+          "hdf5_uncertainty_payload": {
+            "GET source.nc": {
+              "seconds": 0.014340874,
+              "attempts": 5,
+              "bytes": 110,
+              "retries": 0,
+              "statuses": {
+                "206": 5
+              }
+            }
+          },
+          "hdf5_wse_payload": {
+            "GET source.nc": {
+              "seconds": 0.005981959,
+              "attempts": 2,
+              "bytes": 144,
+              "retries": 0,
+              "statuses": {
+                "206": 2
+              }
+            }
+          },
+          "metadata_index_discovery": {
+            "HEAD source.nc": {
+              "seconds": 0.000606084,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            }
+          },
+          "planning": {
+            "HEAD source.nc": {
+              "seconds": 0.029014708,
+              "attempts": 2,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 2
+              }
+            }
+          },
+          "post_execution_validation": {
+            "HEAD source.nc": {
+              "seconds": 0.000463625,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            }
+          },
+          "pre_execution_validation": {
+            "HEAD source.nc": {
+              "seconds": 0.000588541,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            }
+          }
+        },
+        "requests": 28,
+        "bytes": 1460,
+        "retries": 0,
+        "seconds": 0.10018054,
+        "objects": {
+          "GET source.nc": {
+            "seconds": 0.06952683300000001,
+            "attempts": 23,
+            "bytes": 1460,
+            "retries": 0,
+            "statuses": {
+              "206": 23
+            }
+          },
+          "HEAD source.nc": {
+            "seconds": 0.030680459,
+            "attempts": 5,
+            "bytes": 0,
+            "retries": 0,
+            "statuses": {
+              "200": 5
+            }
+          }
+        },
+        "authenticated_http": {
+          "checkpoint_claims": 1,
+          "peak_in_flight": 1,
+          "wire_head": 10,
+          "wire_get": 27,
+          "redirects": 9,
+          "login_requests": 1,
+          "refreshes": 0,
+          "route_cache_hits": 22,
+          "response_body_bytes": 1460,
+          "redirect_body_bytes": 0,
+          "signing_auth_seconds": 0.036647708,
+          "statuses": {
+            "200": 5,
+            "206": 23,
+            "301": 1,
+            "302": 2,
+            "303": 6
+          },
+          "origins": {
+            "https://127.0.0.1:52912": 1,
+            "https://localhost:52911": 8,
+            "https://localhost:52913": 28
+          }
+        },
+        "checkpoint": {
+          "schema_version": 1,
+          "reuse": "exact source ranges; scientific stream restarts; tiles may repeat",
+          "limit_policy": "fail acquisition; no eviction or uncached fallback",
+          "limits": {
+            "logical_disk_bytes": 67108864,
+            "entry_bytes": 8388608,
+            "entries": 2048,
+            "working_reservation_bytes": 2162688,
+            "active_writes": 1,
+            "open_files_max": 5
+          },
+          "disk_bytes": 25281,
+          "entries": 93,
+          "failed": false,
+          "counts": {
+            "reused_ranges": 71,
+            "reused_bytes": 12725,
+            "retained_ranges_reused": 71,
+            "retained_bytes_reused": 12725,
+            "written_ranges": 22,
+            "written_bytes": 1452,
+            "read_seconds": 0.0009681290000000005,
+            "write_seconds": 0.004153169999999999
+          }
+        },
+        "cached_metadata_bytes": 22144,
+        "range_trace_sha256": "1a386ffaa172fd3219d19d9bb8f70f6b2f7f8765afad2168b5fcce73b341eae5",
+        "range_identities": 23
+      },
+      "scheduler": {
+        "profile": "bounded aligned SWOT tiles",
+        "workers": 1,
+        "queue_capacity": 0,
+        "reserved_bytes_peak": 7745324,
+        "budget_bytes": 33554432,
+        "encoded_cache_cap_bytes": 4194304,
+        "encoded_cache_hits": 18,
+        "tiles": 4,
+        "max_tile_pixels": 201652,
+        "redecoded_intersections": 42
+      }
+    },
+    {
+      "case": "interrupted-success",
+      "binary_sha256": "7c8052fec041b8a1779c1868294e23fbbd8214f34a188c42ac3bfccccdf72de9",
+      "returncode": 1,
+      "elapsed_seconds": 0.29010854099988137,
+      "cpu_seconds": 0.058751999999999915,
+      "sampled_peak_rss_bytes": 19333120,
+      "first_chunk_seconds": 0.28436854099982156,
+      "prepared_seconds": 0.25624087500000314,
+      "tiles_received": 1,
+      "completion_emitted": false,
+      "interruption_sent": true,
+      "error": "{\"authenticated_http\":{\"checkpoint_claims\":1,\"peak_in_flight\":1,\"wire_head\":8,\"wire_get\":83,\"redirects\":8,\"login_requests\":1,\"refreshes\":0,\"route_cache_hits\":78,\"response_body_bytes\":13139,\"redirect_body_bytes\":0,\"signing_auth_seconds\":0.035799167,\"statuses\":{\"200\":4,\"206\":79,\"301\":1,\"302\":2,\"303\":5},\"origins\":{\"https://127.0.0.1:52912\":1,\"https://localhost:52911\":7,\"https://localhost:52913\":83}}}\ntile-ripper: execution: acquisition cancelled\n",
+      "server": {
+        "requests": {
+          "archive HEAD 303": 4,
+          "resource HEAD 200": 4,
+          "archive GET 302": 1,
+          "login GET 302": 1,
+          "archive GET 301": 1,
+          "archive GET 303": 1,
+          "resource GET 206": 79
+        },
+        "response_body_bytes": 13211,
+        "route_generation": 64,
+        "range_requests": 79,
+        "range_trace_sha256": "1a566c9a353087536abe79e86b502068d968e63c61cf1130308a54d4f655a806"
+      }
+    },
+    {
+      "case": "resumed-success",
+      "binary_sha256": "7c8052fec041b8a1779c1868294e23fbbd8214f34a188c42ac3bfccccdf72de9",
+      "returncode": 0,
+      "elapsed_seconds": 0.10211554199986494,
+      "cpu_seconds": 0.0447820000000001,
+      "sampled_peak_rss_bytes": 19202048,
+      "first_chunk_seconds": 0.05230245799975819,
+      "prepared_seconds": 0.05115849999992861,
+      "tiles_received": 4,
+      "completion_emitted": true,
+      "interruption_sent": false,
+      "error": null,
+      "server": {
+        "requests": {
+          "archive HEAD 303": 5,
+          "resource HEAD 200": 5,
+          "archive GET 302": 1,
+          "login GET 302": 1,
+          "archive GET 301": 1,
+          "archive GET 303": 1,
+          "resource GET 206": 16
+        },
+        "response_body_bytes": 1046,
+        "route_generation": 70,
+        "range_requests": 16,
+        "range_trace_sha256": "20d4809b2f1341ca05668946e1e5ba1364c165d34becf937890e1da22cc58cce"
+      },
+      "science": {
+        "all_native_value_bits_equal": true,
+        "all_five_source_masks_equal": true,
+        "exact_logical_coverage": true,
+        "all_coordinates_equal": true,
+        "derived_mask_equal": true,
+        "independent_summaries_equal": true,
+        "pixels_per_variable": 323,
+        "tiles": 4,
+        "references": [
+          {
+            "reader": "h5py",
+            "versions": {
+              "reader": "3.12.1",
+              "hdf5": "1.12.2"
+            },
+            "access": "local_sparse_reference",
+            "prepare_seconds": 0.001247166999746696,
+            "completion_seconds": 0.0031764169998496072,
+            "api_cpu_seconds": 0.003168000000000004,
+            "peak_rss_bytes": 44253184,
+            "value_sha256": [
+              "567e6db446322cf52ae8df9fec083ffd4d8a2cbbff482b0e4e923102476a638d",
+              "b630232200841607598ca0d66887c71e4ee29d670851983e523d5d89f6fa1d57",
+              "dc77a83c56a36839727e8d8075da539bc1af0a3adcd5fcf895616504e4c704a2",
+              "7cb201df99bdfc7a73b0a62f6c8dad23a18aefed2de1fa9df1060b73a5f38d81",
+              "0c71de552c55061453e76c69de110453ce67a328eb9eb4646458d5d3e9434fcf"
+            ],
+            "axis_sha256": [
+              "4e2eb1c524455731887057600285510814994e417f5796a3a6a4fd3b1de736a0",
+              "795c569f0efeb42167b90f98a31689bfbae48ee54dfaf87552171c2622f4e9c2"
+            ],
+            "summary": {
+              "selected_count": 170,
+              "wse_sum_m": 2343.5,
+              "wse_mean_m": 13.785294117647059,
+              "uncertainty_count": 145,
+              "uncertainty_sum_m": 36.25,
+              "mean_pixel_uncertainty_m": 0.25,
+              "contributing_count": 147,
+              "contributing_pixel_sum": 77045
+            },
+            "process_wall_seconds": 0.19144274999962363,
+            "process_cpu_seconds": 0.18806499999999982
+          },
+          {
+            "reader": "netcdf4",
+            "versions": {
+              "reader": "1.7.4",
+              "netcdf_c": "4.9.3 of Sep 15 2025 23:01:51 $",
+              "hdf5": "1.14.6"
+            },
+            "access": "local_sparse_reference",
+            "prepare_seconds": 0.001298958000006678,
+            "completion_seconds": 0.0036870420003651816,
+            "api_cpu_seconds": 0.0035479999999999956,
+            "peak_rss_bytes": 46530560,
+            "value_sha256": [
+              "567e6db446322cf52ae8df9fec083ffd4d8a2cbbff482b0e4e923102476a638d",
+              "b630232200841607598ca0d66887c71e4ee29d670851983e523d5d89f6fa1d57",
+              "dc77a83c56a36839727e8d8075da539bc1af0a3adcd5fcf895616504e4c704a2",
+              "7cb201df99bdfc7a73b0a62f6c8dad23a18aefed2de1fa9df1060b73a5f38d81",
+              "0c71de552c55061453e76c69de110453ce67a328eb9eb4646458d5d3e9434fcf"
+            ],
+            "axis_sha256": [
+              "4e2eb1c524455731887057600285510814994e417f5796a3a6a4fd3b1de736a0",
+              "795c569f0efeb42167b90f98a31689bfbae48ee54dfaf87552171c2622f4e9c2"
+            ],
+            "summary": {
+              "selected_count": 170,
+              "wse_sum_m": 2343.5,
+              "wse_mean_m": 13.785294117647059,
+              "uncertainty_count": 145,
+              "uncertainty_sum_m": 36.25,
+              "mean_pixel_uncertainty_m": 0.25,
+              "contributing_count": 147,
+              "contributing_pixel_sum": 77045
+            },
+            "process_wall_seconds": 0.1052273340001193,
+            "process_cpu_seconds": 0.1004149999999997
+          }
+        ],
+        "fresh_consumer_calculation_equal": true
+      },
+      "summary": {
+        "selected_count": 170,
+        "wse_sum_m": 2343.5,
+        "uncertainty_count": 145,
+        "uncertainty_sum_m": 36.25,
+        "contributing_count": 147,
+        "contributing_pixel_sum": 77045,
+        "wse_mean_m": 13.785294117647059,
+        "mean_pixel_uncertainty_m": 0.25
+      },
+      "transport": {
+        "phases": {
+          "checkpoint_online_authorization": {
+            "GET source.nc": {
+              "seconds": 0.0060185,
+              "attempts": 1,
+              "bytes": 8,
+              "retries": 0,
+              "statuses": {
+                "206": 1
+              }
+            }
+          },
+          "hdf5_bitwise_quality_payload": {
+            "GET source.nc": {
+              "seconds": 0.014390166999999999,
+              "attempts": 5,
+              "bytes": 215,
+              "retries": 0,
+              "statuses": {
+                "206": 5
+              }
+            }
+          },
+          "hdf5_pixel_count_payload": {
+            "GET source.nc": {
+              "seconds": 0.014143169,
+              "attempts": 5,
+              "bytes": 613,
+              "retries": 0,
+              "statuses": {
+                "206": 5
+              }
+            }
+          },
+          "hdf5_uncertainty_payload": {
+            "GET source.nc": {
+              "seconds": 0.008218333000000001,
+              "attempts": 3,
+              "bytes": 66,
+              "retries": 0,
+              "statuses": {
+                "206": 3
+              }
+            }
+          },
+          "hdf5_wse_payload": {
+            "GET source.nc": {
+              "seconds": 0.005474541,
+              "attempts": 2,
+              "bytes": 144,
+              "retries": 0,
+              "statuses": {
+                "206": 2
+              }
+            }
+          },
+          "metadata_index_discovery": {
+            "HEAD source.nc": {
+              "seconds": 0.000547334,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            }
+          },
+          "planning": {
+            "HEAD source.nc": {
+              "seconds": 0.029374167,
+              "attempts": 2,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 2
+              }
+            }
+          },
+          "post_execution_validation": {
+            "HEAD source.nc": {
+              "seconds": 0.000421709,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            }
+          },
+          "pre_execution_validation": {
+            "HEAD source.nc": {
+              "seconds": 0.00065825,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            }
+          }
+        },
+        "requests": 21,
+        "bytes": 1046,
+        "retries": 0,
+        "seconds": 0.079232876,
+        "objects": {
+          "GET source.nc": {
+            "seconds": 0.04824758399999999,
+            "attempts": 16,
+            "bytes": 1046,
+            "retries": 0,
+            "statuses": {
+              "206": 16
+            }
+          },
+          "HEAD source.nc": {
+            "seconds": 0.031002501,
+            "attempts": 5,
+            "bytes": 0,
+            "retries": 0,
+            "statuses": {
+              "200": 5
+            }
+          }
+        },
+        "authenticated_http": {
+          "checkpoint_claims": 1,
+          "peak_in_flight": 1,
+          "wire_head": 10,
+          "wire_get": 20,
+          "redirects": 9,
+          "login_requests": 1,
+          "refreshes": 0,
+          "route_cache_hits": 15,
+          "response_body_bytes": 1046,
+          "redirect_body_bytes": 0,
+          "signing_auth_seconds": 0.036940456999999996,
+          "statuses": {
+            "200": 5,
+            "206": 16,
+            "301": 1,
+            "302": 2,
+            "303": 6
+          },
+          "origins": {
+            "https://127.0.0.1:52912": 1,
+            "https://localhost:52911": 8,
+            "https://localhost:52913": 21
+          }
+        },
+        "checkpoint": {
+          "schema_version": 1,
+          "reuse": "exact source ranges; scientific stream restarts; tiles may repeat",
+          "limit_policy": "fail acquisition; no eviction or uncached fallback",
+          "limits": {
+            "logical_disk_bytes": 67108864,
+            "entry_bytes": 8388608,
+            "entries": 2048,
+            "working_reservation_bytes": 2162688,
+            "active_writes": 1,
+            "open_files_max": 5
+          },
+          "disk_bytes": 25281,
+          "entries": 93,
+          "failed": false,
+          "counts": {
+            "reused_ranges": 78,
+            "reused_bytes": 13139,
+            "retained_ranges_reused": 78,
+            "retained_bytes_reused": 13139,
+            "written_ranges": 15,
+            "written_bytes": 1038,
+            "read_seconds": 0.001315117999999999,
+            "write_seconds": 0.0031045430000000004
+          }
+        },
+        "cached_metadata_bytes": 22144,
+        "range_trace_sha256": "ecfd3a0f010babb6d9db7054b55e3510bd8135bf20d4fb5432b60574e9e3ea96",
+        "range_identities": 16
+      },
+      "scheduler": {
+        "profile": "bounded aligned SWOT tiles",
+        "workers": 1,
+        "queue_capacity": 0,
+        "reserved_bytes_peak": 7745324,
+        "budget_bytes": 33554432,
+        "encoded_cache_cap_bytes": 4194304,
+        "encoded_cache_hits": 18,
+        "tiles": 4,
+        "max_tile_pixels": 201652,
+        "redecoded_intersections": 42
+      }
+    },
+    {
+      "case": "initial-auth-no-ranges",
+      "binary_sha256": "7c8052fec041b8a1779c1868294e23fbbd8214f34a188c42ac3bfccccdf72de9",
+      "returncode": 1,
+      "elapsed_seconds": 0.04296741699999984,
+      "cpu_seconds": 0.0316810000000004,
+      "sampled_peak_rss_bytes": 15826944,
+      "first_chunk_seconds": null,
+      "prepared_seconds": null,
+      "tiles_received": 0,
+      "completion_emitted": false,
+      "interruption_sent": false,
+      "error": "{\"authenticated_http\":{\"checkpoint_claims\":1,\"peak_in_flight\":1,\"wire_head\":4,\"wire_get\":2,\"redirects\":3,\"login_requests\":1,\"refreshes\":0,\"route_cache_hits\":0,\"response_body_bytes\":0,\"redirect_body_bytes\":0,\"signing_auth_seconds\":0.028868916999999997,\"statuses\":{\"200\":2,\"302\":1,\"303\":2,\"401\":1},\"origins\":{\"https://127.0.0.1:52912\":1,\"https://localhost:52911\":3,\"https://localhost:52913\":2}}}\ntile-ripper: prepare: authenticated access rejected; refresh exhausted\n",
+      "server": {
+        "requests": {
+          "archive HEAD 303": 2,
+          "resource HEAD 200": 2,
+          "archive GET 302": 1,
+          "login GET 401": 1
+        },
+        "response_body_bytes": 0,
+        "route_generation": 72,
+        "range_requests": 0,
+        "range_trace_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      }
+    },
+    {
+      "case": "resume-after-auth-failure",
+      "binary_sha256": "7c8052fec041b8a1779c1868294e23fbbd8214f34a188c42ac3bfccccdf72de9",
+      "returncode": 0,
+      "elapsed_seconds": 0.3391321250001056,
+      "cpu_seconds": 0.06937499999999963,
+      "sampled_peak_rss_bytes": 19529728,
+      "first_chunk_seconds": 0.285204917000101,
+      "prepared_seconds": 0.25681470800009265,
+      "tiles_received": 4,
+      "completion_emitted": true,
+      "interruption_sent": false,
+      "error": null,
+      "server": {
+        "requests": {
+          "archive HEAD 303": 5,
+          "resource HEAD 200": 5,
+          "archive GET 302": 1,
+          "login GET 302": 1,
+          "archive GET 301": 1,
+          "archive GET 303": 1,
+          "resource GET 206": 93
+        },
+        "response_body_bytes": 14177,
+        "route_generation": 78,
+        "range_requests": 93,
+        "range_trace_sha256": "a31792f2c3468f1b87a87e67cba1a005b0a85ac900022694c8d8ff1acd2a5e23"
+      },
+      "science": {
+        "all_native_value_bits_equal": true,
+        "all_five_source_masks_equal": true,
+        "exact_logical_coverage": true,
+        "all_coordinates_equal": true,
+        "derived_mask_equal": true,
+        "independent_summaries_equal": true,
+        "pixels_per_variable": 323,
+        "tiles": 4,
+        "references": [
+          {
+            "reader": "h5py",
+            "versions": {
+              "reader": "3.12.1",
+              "hdf5": "1.12.2"
+            },
+            "access": "local_sparse_reference",
+            "prepare_seconds": 0.0011369169997124118,
+            "completion_seconds": 0.003411083999708353,
+            "api_cpu_seconds": 0.003036999999999984,
+            "peak_rss_bytes": 44384256,
+            "value_sha256": [
+              "567e6db446322cf52ae8df9fec083ffd4d8a2cbbff482b0e4e923102476a638d",
+              "b630232200841607598ca0d66887c71e4ee29d670851983e523d5d89f6fa1d57",
+              "dc77a83c56a36839727e8d8075da539bc1af0a3adcd5fcf895616504e4c704a2",
+              "7cb201df99bdfc7a73b0a62f6c8dad23a18aefed2de1fa9df1060b73a5f38d81",
+              "0c71de552c55061453e76c69de110453ce67a328eb9eb4646458d5d3e9434fcf"
+            ],
+            "axis_sha256": [
+              "4e2eb1c524455731887057600285510814994e417f5796a3a6a4fd3b1de736a0",
+              "795c569f0efeb42167b90f98a31689bfbae48ee54dfaf87552171c2622f4e9c2"
+            ],
+            "summary": {
+              "selected_count": 170,
+              "wse_sum_m": 2343.5,
+              "wse_mean_m": 13.785294117647059,
+              "uncertainty_count": 145,
+              "uncertainty_sum_m": 36.25,
+              "mean_pixel_uncertainty_m": 0.25,
+              "contributing_count": 147,
+              "contributing_pixel_sum": 77045
+            },
+            "process_wall_seconds": 0.19395058400004928,
+            "process_cpu_seconds": 0.1906880000000002
+          },
+          {
+            "reader": "netcdf4",
+            "versions": {
+              "reader": "1.7.4",
+              "netcdf_c": "4.9.3 of Sep 15 2025 23:01:51 $",
+              "hdf5": "1.14.6"
+            },
+            "access": "local_sparse_reference",
+            "prepare_seconds": 0.001265542000055575,
+            "completion_seconds": 0.0033934170000975428,
+            "api_cpu_seconds": 0.003273999999999999,
+            "peak_rss_bytes": 46333952,
+            "value_sha256": [
+              "567e6db446322cf52ae8df9fec083ffd4d8a2cbbff482b0e4e923102476a638d",
+              "b630232200841607598ca0d66887c71e4ee29d670851983e523d5d89f6fa1d57",
+              "dc77a83c56a36839727e8d8075da539bc1af0a3adcd5fcf895616504e4c704a2",
+              "7cb201df99bdfc7a73b0a62f6c8dad23a18aefed2de1fa9df1060b73a5f38d81",
+              "0c71de552c55061453e76c69de110453ce67a328eb9eb4646458d5d3e9434fcf"
+            ],
+            "axis_sha256": [
+              "4e2eb1c524455731887057600285510814994e417f5796a3a6a4fd3b1de736a0",
+              "795c569f0efeb42167b90f98a31689bfbae48ee54dfaf87552171c2622f4e9c2"
+            ],
+            "summary": {
+              "selected_count": 170,
+              "wse_sum_m": 2343.5,
+              "wse_mean_m": 13.785294117647059,
+              "uncertainty_count": 145,
+              "uncertainty_sum_m": 36.25,
+              "mean_pixel_uncertainty_m": 0.25,
+              "contributing_count": 147,
+              "contributing_pixel_sum": 77045
+            },
+            "process_wall_seconds": 0.10685087499996371,
+            "process_cpu_seconds": 0.10190599999999994
+          }
+        ],
+        "fresh_consumer_calculation_equal": true
+      },
+      "summary": {
+        "selected_count": 170,
+        "wse_sum_m": 2343.5,
+        "uncertainty_count": 145,
+        "uncertainty_sum_m": 36.25,
+        "contributing_count": 147,
+        "contributing_pixel_sum": 77045,
+        "wse_mean_m": 13.785294117647059,
+        "mean_pixel_uncertainty_m": 0.25
+      },
+      "transport": {
+        "phases": {
+          "checkpoint_online_authorization": {
+            "GET source.nc": {
+              "seconds": 0.005764375,
+              "attempts": 1,
+              "bytes": 8,
+              "retries": 0,
+              "statuses": {
+                "206": 1
+              }
+            }
+          },
+          "hdf5_bitwise_quality_payload": {
+            "GET source.nc": {
+              "seconds": 0.023157499,
+              "attempts": 8,
+              "bytes": 342,
+              "retries": 0,
+              "statuses": {
+                "206": 8
+              }
+            }
+          },
+          "hdf5_chunk_index_discovery": {
+            "GET source.nc": {
+              "seconds": 0.028712418,
+              "attempts": 10,
+              "bytes": 4480,
+              "retries": 0,
+              "statuses": {
+                "206": 10
+              }
+            }
+          },
+          "hdf5_coordinate_chunks": {
+            "GET source.nc": {
+              "seconds": 0.023269414999999998,
+              "attempts": 8,
+              "bytes": 233,
+              "retries": 0,
+              "statuses": {
+                "206": 8
+              }
+            }
+          },
+          "hdf5_coordinate_index_discovery": {
+            "GET source.nc": {
+              "seconds": 0.011569291,
+              "attempts": 4,
+              "bytes": 656,
+              "retries": 0,
+              "statuses": {
+                "206": 4
+              }
+            }
+          },
+          "hdf5_pixel_count_payload": {
+            "GET source.nc": {
+              "seconds": 0.020361416,
+              "attempts": 7,
+              "bytes": 856,
+              "retries": 0,
+              "statuses": {
+                "206": 7
+              }
+            }
+          },
+          "hdf5_summary_quality_payload": {
+            "GET source.nc": {
+              "seconds": 0.002879,
+              "attempts": 1,
+              "bytes": 36,
+              "retries": 0,
+              "statuses": {
+                "206": 1
+              }
+            }
+          },
+          "hdf5_uncertainty_payload": {
+            "GET source.nc": {
+              "seconds": 0.014505792,
+              "attempts": 5,
+              "bytes": 110,
+              "retries": 0,
+              "statuses": {
+                "206": 5
+              }
+            }
+          },
+          "hdf5_wse_payload": {
+            "GET source.nc": {
+              "seconds": 0.008666584,
+              "attempts": 3,
+              "bytes": 216,
+              "retries": 0,
+              "statuses": {
+                "206": 3
+              }
+            }
+          },
+          "metadata_index_discovery": {
+            "GET source.nc": {
+              "seconds": 0.13104604399999997,
+              "attempts": 46,
+              "bytes": 7240,
+              "retries": 0,
+              "statuses": {
+                "206": 46
+              }
+            },
+            "HEAD source.nc": {
+              "seconds": 0.000453959,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            }
+          },
+          "planning": {
+            "HEAD source.nc": {
+              "seconds": 0.027533540999999998,
+              "attempts": 2,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 2
+              }
+            }
+          },
+          "post_execution_validation": {
+            "HEAD source.nc": {
+              "seconds": 0.000688333,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            }
+          },
+          "pre_execution_validation": {
+            "HEAD source.nc": {
+              "seconds": 0.0006245,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            }
+          }
+        },
+        "requests": 98,
+        "bytes": 14177,
+        "retries": 0,
+        "seconds": 0.29918070599999985,
+        "objects": {
+          "GET source.nc": {
+            "seconds": 0.2699530819999999,
+            "attempts": 93,
+            "bytes": 14177,
+            "retries": 0,
+            "statuses": {
+              "206": 93
+            }
+          },
+          "HEAD source.nc": {
+            "seconds": 0.029301582,
+            "attempts": 5,
+            "bytes": 0,
+            "retries": 0,
+            "statuses": {
+              "200": 5
+            }
+          }
+        },
+        "authenticated_http": {
+          "checkpoint_claims": 1,
+          "peak_in_flight": 1,
+          "wire_head": 10,
+          "wire_get": 97,
+          "redirects": 9,
+          "login_requests": 1,
+          "refreshes": 0,
+          "route_cache_hits": 92,
+          "response_body_bytes": 14177,
+          "redirect_body_bytes": 0,
+          "signing_auth_seconds": 0.034977,
+          "statuses": {
+            "200": 5,
+            "206": 93,
+            "301": 1,
+            "302": 2,
+            "303": 6
+          },
+          "origins": {
+            "https://127.0.0.1:52912": 1,
+            "https://localhost:52911": 8,
+            "https://localhost:52913": 98
+          }
+        },
+        "checkpoint": {
+          "schema_version": 1,
+          "reuse": "exact source ranges; scientific stream restarts; tiles may repeat",
+          "limit_policy": "fail acquisition; no eviction or uncached fallback",
+          "limits": {
+            "logical_disk_bytes": 67108864,
+            "entry_bytes": 8388608,
+            "entries": 2048,
+            "working_reservation_bytes": 2162688,
+            "active_writes": 1,
+            "open_files_max": 5
+          },
+          "disk_bytes": 25281,
+          "entries": 93,
+          "failed": false,
+          "counts": {
+            "reused_ranges": 1,
+            "reused_bytes": 8,
+            "retained_ranges_reused": 0,
+            "retained_bytes_reused": 0,
+            "written_ranges": 93,
+            "written_bytes": 14177,
+            "read_seconds": 3.833300000000002e-05,
+            "write_seconds": 0.020130215
+          }
+        },
+        "cached_metadata_bytes": 22144,
+        "range_trace_sha256": "28b6bac55b03690f98f15a4c6774b492367060c45c6b86c88ce7a946a70898d9",
+        "range_identities": 93
+      },
+      "scheduler": {
+        "profile": "bounded aligned SWOT tiles",
+        "workers": 1,
+        "queue_capacity": 0,
+        "reserved_bytes_peak": 7745324,
+        "budget_bytes": 33554432,
+        "encoded_cache_cap_bytes": 4194304,
+        "encoded_cache_hits": 18,
+        "tiles": 4,
+        "max_tile_pixels": 201652,
+        "redecoded_intersections": 42
+      }
+    },
+    {
+      "case": "changed-selection",
+      "binary_sha256": "7c8052fec041b8a1779c1868294e23fbbd8214f34a188c42ac3bfccccdf72de9",
+      "returncode": 1,
+      "elapsed_seconds": 0.04538879199981238,
+      "cpu_seconds": 0.03145599999999993,
+      "sampled_peak_rss_bytes": 16105472,
+      "first_chunk_seconds": null,
+      "prepared_seconds": null,
+      "tiles_received": 0,
+      "completion_emitted": false,
+      "interruption_sent": false,
+      "error": "{\"authenticated_http\":{\"checkpoint_claims\":1,\"peak_in_flight\":1,\"wire_head\":4,\"wire_get\":5,\"redirects\":6,\"login_requests\":1,\"refreshes\":0,\"route_cache_hits\":0,\"response_body_bytes\":8,\"redirect_body_bytes\":0,\"signing_auth_seconds\":0.033435332,\"statuses\":{\"200\":2,\"206\":1,\"301\":1,\"302\":2,\"303\":3},\"origins\":{\"https://127.0.0.1:52912\":1,\"https://localhost:52911\":5,\"https://localhost:52913\":3}}}\ntile-ripper: prepare: checkpoint source/request/access-policy mismatch; choose a fresh checkpoint directory\n",
+      "server": {
+        "requests": {
+          "archive HEAD 303": 2,
+          "resource HEAD 200": 2,
+          "archive GET 302": 1,
+          "login GET 302": 1,
+          "archive GET 301": 1,
+          "archive GET 303": 1,
+          "resource GET 206": 1
+        },
+        "response_body_bytes": 8,
+        "route_generation": 81,
+        "range_requests": 1,
+        "range_trace_sha256": "b33e7d7ea69abf3270b6423805223ed511c707e9e4e48cfc5ec6a2fbf27ad88e"
+      }
+    },
+    {
+      "case": "changed-stride",
+      "binary_sha256": "7c8052fec041b8a1779c1868294e23fbbd8214f34a188c42ac3bfccccdf72de9",
+      "returncode": 1,
+      "elapsed_seconds": 0.048860541000067315,
+      "cpu_seconds": 0.03300599999999987,
+      "sampled_peak_rss_bytes": 15826944,
+      "first_chunk_seconds": null,
+      "prepared_seconds": null,
+      "tiles_received": 0,
+      "completion_emitted": false,
+      "interruption_sent": false,
+      "error": "{\"authenticated_http\":{\"checkpoint_claims\":1,\"peak_in_flight\":1,\"wire_head\":4,\"wire_get\":5,\"redirects\":6,\"login_requests\":1,\"refreshes\":0,\"route_cache_hits\":0,\"response_body_bytes\":8,\"redirect_body_bytes\":0,\"signing_auth_seconds\":0.035808709,\"statuses\":{\"200\":2,\"206\":1,\"301\":1,\"302\":2,\"303\":3},\"origins\":{\"https://127.0.0.1:52912\":1,\"https://localhost:52911\":5,\"https://localhost:52913\":3}}}\ntile-ripper: prepare: checkpoint source/request/access-policy mismatch; choose a fresh checkpoint directory\n",
+      "server": {
+        "requests": {
+          "archive HEAD 303": 2,
+          "resource HEAD 200": 2,
+          "archive GET 302": 1,
+          "login GET 302": 1,
+          "archive GET 301": 1,
+          "archive GET 303": 1,
+          "resource GET 206": 1
+        },
+        "response_body_bytes": 8,
+        "route_generation": 84,
+        "range_requests": 1,
+        "range_trace_sha256": "b33e7d7ea69abf3270b6423805223ed511c707e9e4e48cfc5ec6a2fbf27ad88e"
+      }
+    },
+    {
+      "case": "changed-coordinates",
+      "binary_sha256": "7c8052fec041b8a1779c1868294e23fbbd8214f34a188c42ac3bfccccdf72de9",
+      "returncode": 1,
+      "elapsed_seconds": 0.04631533300016599,
+      "cpu_seconds": 0.03245500000000012,
+      "sampled_peak_rss_bytes": 16007168,
+      "first_chunk_seconds": null,
+      "prepared_seconds": null,
+      "tiles_received": 0,
+      "completion_emitted": false,
+      "interruption_sent": false,
+      "error": "{\"authenticated_http\":{\"checkpoint_claims\":1,\"peak_in_flight\":1,\"wire_head\":4,\"wire_get\":5,\"redirects\":6,\"login_requests\":1,\"refreshes\":0,\"route_cache_hits\":0,\"response_body_bytes\":8,\"redirect_body_bytes\":0,\"signing_auth_seconds\":0.034884541,\"statuses\":{\"200\":2,\"206\":1,\"301\":1,\"302\":2,\"303\":3},\"origins\":{\"https://127.0.0.1:52912\":1,\"https://localhost:52911\":5,\"https://localhost:52913\":3}}}\ntile-ripper: prepare: checkpoint source/request/access-policy mismatch; choose a fresh checkpoint directory\n",
+      "server": {
+        "requests": {
+          "archive HEAD 303": 2,
+          "resource HEAD 200": 2,
+          "archive GET 302": 1,
+          "login GET 302": 1,
+          "archive GET 301": 1,
+          "archive GET 303": 1,
+          "resource GET 206": 1
+        },
+        "response_body_bytes": 8,
+        "route_generation": 87,
+        "range_requests": 1,
+        "range_trace_sha256": "b33e7d7ea69abf3270b6423805223ed511c707e9e4e48cfc5ec6a2fbf27ad88e"
+      }
+    },
+    {
+      "case": "changed-quality",
+      "binary_sha256": "7c8052fec041b8a1779c1868294e23fbbd8214f34a188c42ac3bfccccdf72de9",
+      "returncode": 1,
+      "elapsed_seconds": 0.047907042000133515,
+      "cpu_seconds": 0.03268199999999988,
+      "sampled_peak_rss_bytes": 15876096,
+      "first_chunk_seconds": null,
+      "prepared_seconds": null,
+      "tiles_received": 0,
+      "completion_emitted": false,
+      "interruption_sent": false,
+      "error": "{\"authenticated_http\":{\"checkpoint_claims\":1,\"peak_in_flight\":1,\"wire_head\":4,\"wire_get\":5,\"redirects\":6,\"login_requests\":1,\"refreshes\":0,\"route_cache_hits\":0,\"response_body_bytes\":8,\"redirect_body_bytes\":0,\"signing_auth_seconds\":0.036722167,\"statuses\":{\"200\":2,\"206\":1,\"301\":1,\"302\":2,\"303\":3},\"origins\":{\"https://127.0.0.1:52912\":1,\"https://localhost:52911\":5,\"https://localhost:52913\":3}}}\ntile-ripper: prepare: checkpoint source/request/access-policy mismatch; choose a fresh checkpoint directory\n",
+      "server": {
+        "requests": {
+          "archive HEAD 303": 2,
+          "resource HEAD 200": 2,
+          "archive GET 302": 1,
+          "login GET 302": 1,
+          "archive GET 301": 1,
+          "archive GET 303": 1,
+          "resource GET 206": 1
+        },
+        "response_body_bytes": 8,
+        "route_generation": 90,
+        "range_requests": 1,
+        "range_trace_sha256": "b33e7d7ea69abf3270b6423805223ed511c707e9e4e48cfc5ec6a2fbf27ad88e"
+      }
+    },
+    {
+      "case": "changed-etag",
+      "binary_sha256": "7c8052fec041b8a1779c1868294e23fbbd8214f34a188c42ac3bfccccdf72de9",
+      "returncode": 1,
+      "elapsed_seconds": 0.04576158299960298,
+      "cpu_seconds": 0.03215199999999985,
+      "sampled_peak_rss_bytes": 15810560,
+      "first_chunk_seconds": null,
+      "prepared_seconds": null,
+      "tiles_received": 0,
+      "completion_emitted": false,
+      "interruption_sent": false,
+      "error": "{\"authenticated_http\":{\"checkpoint_claims\":1,\"peak_in_flight\":1,\"wire_head\":4,\"wire_get\":5,\"redirects\":6,\"login_requests\":1,\"refreshes\":0,\"route_cache_hits\":0,\"response_body_bytes\":8,\"redirect_body_bytes\":0,\"signing_auth_seconds\":0.035129874,\"statuses\":{\"200\":2,\"206\":1,\"301\":1,\"302\":2,\"303\":3},\"origins\":{\"https://127.0.0.1:52912\":1,\"https://localhost:52911\":5,\"https://localhost:52913\":3}}}\ntile-ripper: prepare: checkpoint source/request/access-policy mismatch; choose a fresh checkpoint directory\n",
+      "server": {
+        "requests": {
+          "archive HEAD 303": 2,
+          "resource HEAD 200": 2,
+          "archive GET 302": 1,
+          "login GET 302": 1,
+          "archive GET 301": 1,
+          "archive GET 303": 1,
+          "resource GET 206": 1
+        },
+        "response_body_bytes": 8,
+        "route_generation": 93,
+        "range_requests": 1,
+        "range_trace_sha256": "b33e7d7ea69abf3270b6423805223ed511c707e9e4e48cfc5ec6a2fbf27ad88e"
+      }
+    },
+    {
+      "case": "changed-length",
+      "binary_sha256": "7c8052fec041b8a1779c1868294e23fbbd8214f34a188c42ac3bfccccdf72de9",
+      "returncode": 1,
+      "elapsed_seconds": 0.047504749999916385,
+      "cpu_seconds": 0.03247500000000014,
+      "sampled_peak_rss_bytes": 15990784,
+      "first_chunk_seconds": null,
+      "prepared_seconds": null,
+      "tiles_received": 0,
+      "completion_emitted": false,
+      "interruption_sent": false,
+      "error": "{\"authenticated_http\":{\"checkpoint_claims\":1,\"peak_in_flight\":1,\"wire_head\":4,\"wire_get\":5,\"redirects\":6,\"login_requests\":1,\"refreshes\":0,\"route_cache_hits\":0,\"response_body_bytes\":8,\"redirect_body_bytes\":0,\"signing_auth_seconds\":0.035182958,\"statuses\":{\"200\":2,\"206\":1,\"301\":1,\"302\":2,\"303\":3},\"origins\":{\"https://127.0.0.1:52912\":1,\"https://localhost:52911\":5,\"https://localhost:52913\":3}}}\ntile-ripper: prepare: checkpoint source/request/access-policy mismatch; choose a fresh checkpoint directory\n",
+      "server": {
+        "requests": {
+          "archive HEAD 303": 2,
+          "resource HEAD 200": 2,
+          "archive GET 302": 1,
+          "login GET 302": 1,
+          "archive GET 301": 1,
+          "archive GET 303": 1,
+          "resource GET 206": 1
+        },
+        "response_body_bytes": 8,
+        "route_generation": 96,
+        "range_requests": 1,
+        "range_trace_sha256": "b33e7d7ea69abf3270b6423805223ed511c707e9e4e48cfc5ec6a2fbf27ad88e"
+      }
+    },
+    {
+      "case": "changed-access",
+      "binary_sha256": "7c8052fec041b8a1779c1868294e23fbbd8214f34a188c42ac3bfccccdf72de9",
+      "returncode": 1,
+      "elapsed_seconds": 0.04545641599997907,
+      "cpu_seconds": 0.031365999999999894,
+      "sampled_peak_rss_bytes": 15810560,
+      "first_chunk_seconds": null,
+      "prepared_seconds": null,
+      "tiles_received": 0,
+      "completion_emitted": false,
+      "interruption_sent": false,
+      "error": "{\"authenticated_http\":{\"checkpoint_claims\":1,\"peak_in_flight\":1,\"wire_head\":4,\"wire_get\":5,\"redirects\":6,\"login_requests\":1,\"refreshes\":0,\"route_cache_hits\":0,\"response_body_bytes\":8,\"redirect_body_bytes\":0,\"signing_auth_seconds\":0.034843209,\"statuses\":{\"200\":2,\"206\":1,\"301\":1,\"302\":2,\"303\":3},\"origins\":{\"https://127.0.0.1:52912\":1,\"https://localhost:52911\":5,\"https://localhost:52913\":3}}}\ntile-ripper: prepare: checkpoint source/request/access-policy mismatch; choose a fresh checkpoint directory\n",
+      "server": {
+        "requests": {
+          "archive HEAD 303": 2,
+          "resource HEAD 200": 2,
+          "archive GET 302": 1,
+          "login GET 302": 1,
+          "archive GET 301": 1,
+          "archive GET 303": 1,
+          "resource GET 206": 1
+        },
+        "response_body_bytes": 8,
+        "route_generation": 99,
+        "range_requests": 1,
+        "range_trace_sha256": "b33e7d7ea69abf3270b6423805223ed511c707e9e4e48cfc5ec6a2fbf27ad88e"
+      }
+    },
+    {
+      "case": "truncated",
+      "binary_sha256": "7c8052fec041b8a1779c1868294e23fbbd8214f34a188c42ac3bfccccdf72de9",
+      "returncode": 1,
+      "elapsed_seconds": 0.13259337499994217,
+      "cpu_seconds": 0.03454999999999975,
+      "sampled_peak_rss_bytes": 15925248,
+      "first_chunk_seconds": null,
+      "prepared_seconds": null,
+      "tiles_received": 0,
+      "completion_emitted": false,
+      "interruption_sent": false,
+      "error": "{\"authenticated_http\":{\"checkpoint_claims\":1,\"peak_in_flight\":1,\"wire_head\":4,\"wire_get\":7,\"redirects\":6,\"login_requests\":1,\"refreshes\":0,\"route_cache_hits\":2,\"response_body_bytes\":21,\"redirect_body_bytes\":0,\"signing_auth_seconds\":0.0352845,\"statuses\":{\"200\":2,\"206\":3,\"301\":1,\"302\":2,\"303\":3},\"origins\":{\"https://127.0.0.1:52912\":1,\"https://localhost:52911\":5,\"https://localhost:52913\":5}}}\ntile-ripper: prepare: HTTP retry budget exhausted after 3 attempts (last status 206; retryable authenticated connection or body failure)\n",
+      "server": {
+        "requests": {
+          "archive HEAD 303": 2,
+          "resource HEAD 200": 2,
+          "archive GET 302": 1,
+          "login GET 302": 1,
+          "archive GET 301": 1,
+          "archive GET 303": 1,
+          "resource GET 206": 3
+        },
+        "response_body_bytes": 21,
+        "route_generation": 102,
+        "range_requests": 3,
+        "range_trace_sha256": "b3086724521caf59b699feebda7bfa7febb0bf4af78df4f00117b3f465bf1734"
+      }
+    },
+    {
+      "case": "resource-429",
+      "binary_sha256": "7c8052fec041b8a1779c1868294e23fbbd8214f34a188c42ac3bfccccdf72de9",
+      "returncode": 0,
+      "elapsed_seconds": 0.3384725839996463,
+      "cpu_seconds": 0.06616100000000014,
+      "sampled_peak_rss_bytes": 19349504,
+      "first_chunk_seconds": 0.28516216699972574,
+      "prepared_seconds": 0.2570534999999836,
+      "tiles_received": 4,
+      "completion_emitted": true,
+      "interruption_sent": false,
+      "error": null,
+      "server": {
+        "requests": {
+          "archive HEAD 303": 5,
+          "resource HEAD 200": 5,
+          "archive GET 302": 1,
+          "login GET 302": 1,
+          "archive GET 301": 1,
+          "archive GET 303": 2,
+          "resource GET 429": 1,
+          "resource GET 206": 93
+        },
+        "response_body_bytes": 14177,
+        "route_generation": 109,
+        "range_requests": 94,
+        "range_trace_sha256": "eb8ab5b98549a5e4cc8b4d6a3ae449b4803f46af71dbe40465534044806a31d5"
+      },
+      "science": {
+        "all_native_value_bits_equal": true,
+        "all_five_source_masks_equal": true,
+        "exact_logical_coverage": true,
+        "all_coordinates_equal": true,
+        "derived_mask_equal": true,
+        "independent_summaries_equal": true,
+        "pixels_per_variable": 323,
+        "tiles": 4,
+        "references": [
+          {
+            "reader": "h5py",
+            "versions": {
+              "reader": "3.12.1",
+              "hdf5": "1.12.2"
+            },
+            "access": "local_sparse_reference",
+            "prepare_seconds": 0.0011446249995969993,
+            "completion_seconds": 0.0032227919996330456,
+            "api_cpu_seconds": 0.003124999999999989,
+            "peak_rss_bytes": 44335104,
+            "value_sha256": [
+              "567e6db446322cf52ae8df9fec083ffd4d8a2cbbff482b0e4e923102476a638d",
+              "b630232200841607598ca0d66887c71e4ee29d670851983e523d5d89f6fa1d57",
+              "dc77a83c56a36839727e8d8075da539bc1af0a3adcd5fcf895616504e4c704a2",
+              "7cb201df99bdfc7a73b0a62f6c8dad23a18aefed2de1fa9df1060b73a5f38d81",
+              "0c71de552c55061453e76c69de110453ce67a328eb9eb4646458d5d3e9434fcf"
+            ],
+            "axis_sha256": [
+              "4e2eb1c524455731887057600285510814994e417f5796a3a6a4fd3b1de736a0",
+              "795c569f0efeb42167b90f98a31689bfbae48ee54dfaf87552171c2622f4e9c2"
+            ],
+            "summary": {
+              "selected_count": 170,
+              "wse_sum_m": 2343.5,
+              "wse_mean_m": 13.785294117647059,
+              "uncertainty_count": 145,
+              "uncertainty_sum_m": 36.25,
+              "mean_pixel_uncertainty_m": 0.25,
+              "contributing_count": 147,
+              "contributing_pixel_sum": 77045
+            },
+            "process_wall_seconds": 0.19366566600001534,
+            "process_cpu_seconds": 0.1902499999999997
+          },
+          {
+            "reader": "netcdf4",
+            "versions": {
+              "reader": "1.7.4",
+              "netcdf_c": "4.9.3 of Sep 15 2025 23:01:51 $",
+              "hdf5": "1.14.6"
+            },
+            "access": "local_sparse_reference",
+            "prepare_seconds": 0.0011771669996960554,
+            "completion_seconds": 0.003687874999741325,
+            "api_cpu_seconds": 0.0032180000000000125,
+            "peak_rss_bytes": 46432256,
+            "value_sha256": [
+              "567e6db446322cf52ae8df9fec083ffd4d8a2cbbff482b0e4e923102476a638d",
+              "b630232200841607598ca0d66887c71e4ee29d670851983e523d5d89f6fa1d57",
+              "dc77a83c56a36839727e8d8075da539bc1af0a3adcd5fcf895616504e4c704a2",
+              "7cb201df99bdfc7a73b0a62f6c8dad23a18aefed2de1fa9df1060b73a5f38d81",
+              "0c71de552c55061453e76c69de110453ce67a328eb9eb4646458d5d3e9434fcf"
+            ],
+            "axis_sha256": [
+              "4e2eb1c524455731887057600285510814994e417f5796a3a6a4fd3b1de736a0",
+              "795c569f0efeb42167b90f98a31689bfbae48ee54dfaf87552171c2622f4e9c2"
+            ],
+            "summary": {
+              "selected_count": 170,
+              "wse_sum_m": 2343.5,
+              "wse_mean_m": 13.785294117647059,
+              "uncertainty_count": 145,
+              "uncertainty_sum_m": 36.25,
+              "mean_pixel_uncertainty_m": 0.25,
+              "contributing_count": 147,
+              "contributing_pixel_sum": 77045
+            },
+            "process_wall_seconds": 0.10722970799997711,
+            "process_cpu_seconds": 0.10222200000000015
+          }
+        ],
+        "fresh_consumer_calculation_equal": true
+      },
+      "summary": {
+        "selected_count": 170,
+        "wse_sum_m": 2343.5,
+        "uncertainty_count": 145,
+        "uncertainty_sum_m": 36.25,
+        "contributing_count": 147,
+        "contributing_pixel_sum": 77045,
+        "wse_mean_m": 13.785294117647059,
+        "mean_pixel_uncertainty_m": 0.25
+      },
+      "transport": {
+        "phases": {
+          "checkpoint_online_authorization": {
+            "GET source.nc": {
+              "seconds": 0.008944333,
+              "attempts": 2,
+              "bytes": 8,
+              "retries": 1,
+              "statuses": {
+                "206": 1,
+                "429": 1
+              }
+            }
+          },
+          "hdf5_bitwise_quality_payload": {
+            "GET source.nc": {
+              "seconds": 0.0236945,
+              "attempts": 8,
+              "bytes": 342,
+              "retries": 0,
+              "statuses": {
+                "206": 8
+              }
+            }
+          },
+          "hdf5_chunk_index_discovery": {
+            "GET source.nc": {
+              "seconds": 0.027487918,
+              "attempts": 10,
+              "bytes": 4480,
+              "retries": 0,
+              "statuses": {
+                "206": 10
+              }
+            }
+          },
+          "hdf5_coordinate_chunks": {
+            "GET source.nc": {
+              "seconds": 0.022566126000000002,
+              "attempts": 8,
+              "bytes": 233,
+              "retries": 0,
+              "statuses": {
+                "206": 8
+              }
+            }
+          },
+          "hdf5_coordinate_index_discovery": {
+            "GET source.nc": {
+              "seconds": 0.01130896,
+              "attempts": 4,
+              "bytes": 656,
+              "retries": 0,
+              "statuses": {
+                "206": 4
+              }
+            }
+          },
+          "hdf5_pixel_count_payload": {
+            "GET source.nc": {
+              "seconds": 0.020174624,
+              "attempts": 7,
+              "bytes": 856,
+              "retries": 0,
+              "statuses": {
+                "206": 7
+              }
+            }
+          },
+          "hdf5_summary_quality_payload": {
+            "GET source.nc": {
+              "seconds": 0.002656041,
+              "attempts": 1,
+              "bytes": 36,
+              "retries": 0,
+              "statuses": {
+                "206": 1
+              }
+            }
+          },
+          "hdf5_uncertainty_payload": {
+            "GET source.nc": {
+              "seconds": 0.014579042,
+              "attempts": 5,
+              "bytes": 110,
+              "retries": 0,
+              "statuses": {
+                "206": 5
+              }
+            }
+          },
+          "hdf5_wse_payload": {
+            "GET source.nc": {
+              "seconds": 0.008394791,
+              "attempts": 3,
+              "bytes": 216,
+              "retries": 0,
+              "statuses": {
+                "206": 3
+              }
+            }
+          },
+          "metadata_index_discovery": {
+            "GET source.nc": {
+              "seconds": 0.13145820700000002,
+              "attempts": 46,
+              "bytes": 7240,
+              "retries": 0,
+              "statuses": {
+                "206": 46
+              }
+            },
+            "HEAD source.nc": {
+              "seconds": 0.00044075,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            }
+          },
+          "planning": {
+            "HEAD source.nc": {
+              "seconds": 0.028939709,
+              "attempts": 2,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 2
+              }
+            }
+          },
+          "post_execution_validation": {
+            "HEAD source.nc": {
+              "seconds": 0.000505375,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            }
+          },
+          "pre_execution_validation": {
+            "HEAD source.nc": {
+              "seconds": 0.000698458,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            }
+          }
+        },
+        "requests": 99,
+        "bytes": 14177,
+        "retries": 1,
+        "seconds": 0.301793791,
+        "objects": {
+          "GET source.nc": {
+            "seconds": 0.2712845820000001,
+            "attempts": 94,
+            "bytes": 14177,
+            "retries": 1,
+            "statuses": {
+              "206": 93,
+              "429": 1
+            }
+          },
+          "HEAD source.nc": {
+            "seconds": 0.030587376,
+            "attempts": 5,
+            "bytes": 0,
+            "retries": 0,
+            "statuses": {
+              "200": 5
+            }
+          }
+        },
+        "authenticated_http": {
+          "checkpoint_claims": 1,
+          "peak_in_flight": 1,
+          "wire_head": 10,
+          "wire_get": 99,
+          "redirects": 10,
+          "login_requests": 1,
+          "refreshes": 0,
+          "route_cache_hits": 92,
+          "response_body_bytes": 14177,
+          "redirect_body_bytes": 0,
+          "signing_auth_seconds": 0.039427000000000004,
+          "statuses": {
+            "200": 5,
+            "206": 93,
+            "301": 1,
+            "302": 2,
+            "303": 7,
+            "429": 1
+          },
+          "origins": {
+            "https://127.0.0.1:52912": 1,
+            "https://localhost:52911": 9,
+            "https://localhost:52913": 99
+          }
+        },
+        "checkpoint": {
+          "schema_version": 1,
+          "reuse": "exact source ranges; scientific stream restarts; tiles may repeat",
+          "limit_policy": "fail acquisition; no eviction or uncached fallback",
+          "limits": {
+            "logical_disk_bytes": 67108864,
+            "entry_bytes": 8388608,
+            "entries": 2048,
+            "working_reservation_bytes": 2162688,
+            "active_writes": 1,
+            "open_files_max": 5
+          },
+          "disk_bytes": 25281,
+          "entries": 93,
+          "failed": false,
+          "counts": {
+            "reused_ranges": 1,
+            "reused_bytes": 8,
+            "retained_ranges_reused": 0,
+            "retained_bytes_reused": 0,
+            "written_ranges": 93,
+            "written_bytes": 14177,
+            "read_seconds": 3.924900000000003e-05,
+            "write_seconds": 0.017597505999999992
+          }
+        },
+        "cached_metadata_bytes": 22144,
+        "range_trace_sha256": "e2e37bf2cc908f1ac6f883f58b81add9f4b3a6a155f228c1e8b2908ba832f7d5",
+        "range_identities": 93
+      },
+      "scheduler": {
+        "profile": "bounded aligned SWOT tiles",
+        "workers": 1,
+        "queue_capacity": 0,
+        "reserved_bytes_peak": 7745324,
+        "budget_bytes": 33554432,
+        "encoded_cache_cap_bytes": 4194304,
+        "encoded_cache_hits": 18,
+        "tiles": 4,
+        "max_tile_pixels": 201652,
+        "redecoded_intersections": 42
+      }
+    },
+    {
+      "case": "refresh-exhausted",
+      "binary_sha256": "7c8052fec041b8a1779c1868294e23fbbd8214f34a188c42ac3bfccccdf72de9",
+      "returncode": 1,
+      "elapsed_seconds": 0.04899166700033675,
+      "cpu_seconds": 0.03239000000000003,
+      "sampled_peak_rss_bytes": 15925248,
+      "first_chunk_seconds": null,
+      "prepared_seconds": null,
+      "tiles_received": 0,
+      "completion_emitted": false,
+      "interruption_sent": false,
+      "error": "{\"authenticated_http\":{\"checkpoint_claims\":1,\"peak_in_flight\":1,\"wire_head\":4,\"wire_get\":7,\"redirects\":7,\"login_requests\":1,\"refreshes\":1,\"route_cache_hits\":0,\"response_body_bytes\":0,\"redirect_body_bytes\":0,\"signing_auth_seconds\":0.028816583,\"statuses\":{\"200\":2,\"301\":1,\"302\":2,\"303\":4,\"403\":2},\"origins\":{\"https://127.0.0.1:52912\":1,\"https://localhost:52911\":6,\"https://localhost:52913\":4}}}\ntile-ripper: prepare: authenticated access rejected; refresh exhausted\n",
+      "server": {
+        "requests": {
+          "archive HEAD 303": 2,
+          "resource HEAD 200": 2,
+          "archive GET 302": 1,
+          "login GET 302": 1,
+          "archive GET 301": 1,
+          "archive GET 303": 2,
+          "resource GET 403": 2
+        },
+        "response_body_bytes": 0,
+        "route_generation": 113,
+        "range_requests": 2,
+        "range_trace_sha256": "f22c3d9fbaf3e517887b8508cc65abc7b1d219d48c67be553fa54fecf6705502"
+      }
+    },
+    {
+      "case": "limit-entries",
+      "binary_sha256": "7c8052fec041b8a1779c1868294e23fbbd8214f34a188c42ac3bfccccdf72de9",
+      "returncode": 1,
+      "elapsed_seconds": 0.05122566700038078,
+      "cpu_seconds": 0.032752000000000225,
+      "sampled_peak_rss_bytes": 16302080,
+      "first_chunk_seconds": null,
+      "prepared_seconds": null,
+      "tiles_received": 0,
+      "completion_emitted": false,
+      "interruption_sent": false,
+      "error": "{\"authenticated_http\":{\"checkpoint_claims\":1,\"peak_in_flight\":1,\"wire_head\":4,\"wire_get\":6,\"redirects\":6,\"login_requests\":1,\"refreshes\":0,\"route_cache_hits\":1,\"response_body_bytes\":264,\"redirect_body_bytes\":0,\"signing_auth_seconds\":0.035383166,\"statuses\":{\"200\":2,\"206\":2,\"301\":1,\"302\":2,\"303\":3},\"origins\":{\"https://127.0.0.1:52912\":1,\"https://localhost:52911\":5,\"https://localhost:52913\":4}}}\ntile-ripper: prepare: invalid data: checkpoint disk byte or entry count limit reached\n",
+      "server": {
+        "requests": {
+          "archive HEAD 303": 2,
+          "resource HEAD 200": 2,
+          "archive GET 302": 1,
+          "login GET 302": 1,
+          "archive GET 301": 1,
+          "archive GET 303": 1,
+          "resource GET 206": 2
+        },
+        "response_body_bytes": 264,
+        "route_generation": 116,
+        "range_requests": 2,
+        "range_trace_sha256": "c09d35e1de2530999726a5d1174a9f9e28c0211d56deeb2afc3c3dd734f1830b"
+      }
+    },
+    {
+      "case": "retry-exhausted",
+      "binary_sha256": "7c8052fec041b8a1779c1868294e23fbbd8214f34a188c42ac3bfccccdf72de9",
+      "returncode": 1,
+      "elapsed_seconds": 0.04373179200001687,
+      "cpu_seconds": 0.032039000000000484,
+      "sampled_peak_rss_bytes": 16039936,
+      "first_chunk_seconds": null,
+      "prepared_seconds": null,
+      "tiles_received": 0,
+      "completion_emitted": false,
+      "interruption_sent": false,
+      "error": "{\"authenticated_http\":{\"checkpoint_claims\":1,\"peak_in_flight\":1,\"wire_head\":4,\"wire_get\":9,\"redirects\":8,\"login_requests\":1,\"refreshes\":0,\"route_cache_hits\":0,\"response_body_bytes\":0,\"redirect_body_bytes\":0,\"signing_auth_seconds\":0.03283304,\"statuses\":{\"200\":2,\"301\":1,\"302\":2,\"303\":5,\"503\":3},\"origins\":{\"https://127.0.0.1:52912\":1,\"https://localhost:52911\":7,\"https://localhost:52913\":5}}}\ntile-ripper: prepare: HTTP retry budget exhausted after 3 attempts (last status 503; retryable HTTP status)\n",
+      "server": {
+        "requests": {
+          "archive HEAD 303": 2,
+          "resource HEAD 200": 2,
+          "archive GET 302": 1,
+          "login GET 302": 1,
+          "archive GET 301": 1,
+          "archive GET 303": 3,
+          "resource GET 503": 3
+        },
+        "response_body_bytes": 0,
+        "route_generation": 121,
+        "range_requests": 0,
+        "range_trace_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      }
+    },
+    {
+      "case": "small-memory",
+      "binary_sha256": "7c8052fec041b8a1779c1868294e23fbbd8214f34a188c42ac3bfccccdf72de9",
+      "returncode": 1,
+      "elapsed_seconds": 0.007592334000037226,
+      "cpu_seconds": 0.004558999999999869,
+      "sampled_peak_rss_bytes": 5980160,
+      "first_chunk_seconds": null,
+      "prepared_seconds": null,
+      "tiles_received": 0,
+      "completion_emitted": false,
+      "interruption_sent": false,
+      "error": "{\"authenticated_http\":{\"checkpoint_claims\":0,\"peak_in_flight\":0,\"wire_head\":0,\"wire_get\":0,\"redirects\":0,\"login_requests\":0,\"refreshes\":0,\"route_cache_hits\":0,\"response_body_bytes\":0,\"redirect_body_bytes\":0,\"signing_auth_seconds\":0.0,\"statuses\":{},\"origins\":{}}}\ntile-ripper: checkpoint/transport working reservation exceeds half buffer_bytes\n",
+      "server": {
+        "requests": {},
+        "response_body_bytes": 0,
+        "route_generation": 121,
+        "range_requests": 0,
+        "range_trace_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      }
+    },
+    {
+      "case": "strided-cookbook",
+      "interrupted": {
+        "binary_sha256": "7c8052fec041b8a1779c1868294e23fbbd8214f34a188c42ac3bfccccdf72de9",
+        "returncode": 1,
+        "elapsed_seconds": 0.3061126669999794,
+        "cpu_seconds": 0.06030099999999983,
+        "sampled_peak_rss_bytes": 20267008,
+        "first_chunk_seconds": null,
+        "prepared_seconds": 0.27563833300018814,
+        "tiles_received": 0,
+        "completion_emitted": false,
+        "interruption_sent": true,
+        "error": "{\"authenticated_http\":{\"checkpoint_claims\":1,\"peak_in_flight\":1,\"wire_head\":8,\"wire_get\":81,\"redirects\":8,\"login_requests\":1,\"refreshes\":0,\"route_cache_hits\":76,\"response_body_bytes\":12879,\"redirect_body_bytes\":0,\"signing_auth_seconds\":0.035800668,\"statuses\":{\"200\":4,\"206\":77,\"301\":1,\"302\":2,\"303\":5},\"origins\":{\"https://127.0.0.1:52912\":1,\"https://localhost:52911\":7,\"https://localhost:52913\":81}}}\ntile-ripper: execution: acquisition cancelled\n",
+        "server": {
+          "requests": {
+            "archive HEAD 303": 4,
+            "resource HEAD 200": 4,
+            "archive GET 302": 1,
+            "login GET 302": 1,
+            "archive GET 301": 1,
+            "archive GET 303": 1,
+            "resource GET 206": 77
+          },
+          "response_body_bytes": 12879,
+          "route_generation": 126,
+          "range_requests": 77,
+          "range_trace_sha256": "99c946e2407fa3f8cd456a7f733d92e0a500a1f53a1c4071882eda32cc873f3b"
+        }
+      },
+      "resumed": {
+        "binary_sha256": "7c8052fec041b8a1779c1868294e23fbbd8214f34a188c42ac3bfccccdf72de9",
+        "returncode": 0,
+        "elapsed_seconds": 0.2997427499999503,
+        "cpu_seconds": 0.06903199999999976,
+        "sampled_peak_rss_bytes": 20250624,
+        "first_chunk_seconds": 0.07826324999996359,
+        "prepared_seconds": 0.052563666999958514,
+        "tiles_received": 16,
+        "completion_emitted": true,
+        "interruption_sent": false,
+        "error": null,
+        "server": {
+          "requests": {
+            "archive HEAD 303": 5,
+            "resource HEAD 200": 5,
+            "archive GET 302": 1,
+            "login GET 302": 1,
+            "archive GET 301": 1,
+            "archive GET 303": 1,
+            "resource GET 206": 79
+          },
+          "response_body_bytes": 5045,
+          "route_generation": 132,
+          "range_requests": 79,
+          "range_trace_sha256": "26584694bd0d535048aaabac2f6c70b566c62f0dc9dbbfa81f1dbc1d8f841348"
+        },
+        "science": {
+          "all_native_value_bits_equal": true,
+          "all_five_source_masks_equal": true,
+          "exact_logical_coverage": true,
+          "all_coordinates_equal": true,
+          "derived_mask_equal": true,
+          "independent_summaries_equal": true,
+          "pixels_per_variable": 120,
+          "tiles": 16,
+          "references": [
+            {
+              "reader": "h5py",
+              "versions": {
+                "reader": "3.12.1",
+                "hdf5": "1.12.2"
+              },
+              "access": "local_sparse_reference",
+              "prepare_seconds": 0.0012417920002008032,
+              "completion_seconds": 0.003622208000251703,
+              "api_cpu_seconds": 0.0033949999999999814,
+              "peak_rss_bytes": 44597248,
+              "value_sha256": [
+                "7deb9ba81fefe4e6b7a9807227dab582b894fabf83889ff7e97a28858cbb1421",
+                "5846211121d5ba33eddd830293ce48a896a798156f9a23e0b1558fa3efacc8e7",
+                "7e40f66bec7ba952d37263ce386ea962ade668e4113110d2dddafa387c1be42c",
+                "d5e38cf573bd19e34eb90bf611b7783e22274c06729dcc6c888d7f4ca613886f",
+                "575a3318184ce3b3f4aaeed9bc182e90ca6b20fa8d4a5f6acabf5e2d77798cac"
+              ],
+              "axis_sha256": [
+                "9c7ed66ef1e69d30922c5cdd2070e0aefd195fcd9827b8f86af18059264a3c4a",
+                "cae36fa94e007a5abfc8cd6e67ce5a59ccf1ca730bc76e7109cfe5b18f4198b3"
+              ],
+              "summary": {
+                "selected_count": 83,
+                "wse_sum_m": 1451.125,
+                "wse_mean_m": 17.48343373493976,
+                "uncertainty_count": 80,
+                "uncertainty_sum_m": 20.0,
+                "mean_pixel_uncertainty_m": 0.25,
+                "contributing_count": 79,
+                "contributing_pixel_sum": 78067
+              },
+              "process_wall_seconds": 0.19340099999999438,
+              "process_cpu_seconds": 0.19044799999999995
+            },
+            {
+              "reader": "netcdf4",
+              "versions": {
+                "reader": "1.7.4",
+                "netcdf_c": "4.9.3 of Sep 15 2025 23:01:51 $",
+                "hdf5": "1.14.6"
+              },
+              "access": "local_sparse_reference",
+              "prepare_seconds": 0.0012799169999198057,
+              "completion_seconds": 0.003873332999773993,
+              "api_cpu_seconds": 0.0036589999999999956,
+              "peak_rss_bytes": 46956544,
+              "value_sha256": [
+                "7deb9ba81fefe4e6b7a9807227dab582b894fabf83889ff7e97a28858cbb1421",
+                "5846211121d5ba33eddd830293ce48a896a798156f9a23e0b1558fa3efacc8e7",
+                "7e40f66bec7ba952d37263ce386ea962ade668e4113110d2dddafa387c1be42c",
+                "d5e38cf573bd19e34eb90bf611b7783e22274c06729dcc6c888d7f4ca613886f",
+                "575a3318184ce3b3f4aaeed9bc182e90ca6b20fa8d4a5f6acabf5e2d77798cac"
+              ],
+              "axis_sha256": [
+                "9c7ed66ef1e69d30922c5cdd2070e0aefd195fcd9827b8f86af18059264a3c4a",
+                "cae36fa94e007a5abfc8cd6e67ce5a59ccf1ca730bc76e7109cfe5b18f4198b3"
+              ],
+              "summary": {
+                "selected_count": 83,
+                "wse_sum_m": 1451.125,
+                "wse_mean_m": 17.48343373493976,
+                "uncertainty_count": 80,
+                "uncertainty_sum_m": 20.0,
+                "mean_pixel_uncertainty_m": 0.25,
+                "contributing_count": 79,
+                "contributing_pixel_sum": 78067
+              },
+              "process_wall_seconds": 0.10785554099993533,
+              "process_cpu_seconds": 0.10256100000000057
+            }
+          ],
+          "fresh_consumer_calculation_equal": true
+        },
+        "summary": {
+          "selected_count": 83,
+          "wse_sum_m": 1451.125,
+          "uncertainty_count": 80,
+          "uncertainty_sum_m": 20.0,
+          "contributing_count": 79,
+          "contributing_pixel_sum": 78067,
+          "wse_mean_m": 17.48343373493976,
+          "mean_pixel_uncertainty_m": 0.25
+        },
+        "transport": {
+          "phases": {
+            "checkpoint_online_authorization": {
+              "GET source.nc": {
+                "seconds": 0.005743542,
+                "attempts": 1,
+                "bytes": 8,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              }
+            },
+            "hdf5_bitwise_quality_payload": {
+              "GET source.nc": {
+                "seconds": 0.08294845799999999,
+                "attempts": 29,
+                "bytes": 1484,
+                "retries": 0,
+                "statuses": {
+                  "206": 29
+                }
+              }
+            },
+            "hdf5_pixel_count_payload": {
+              "GET source.nc": {
+                "seconds": 0.04780825000000001,
+                "attempts": 17,
+                "bytes": 2075,
+                "retries": 0,
+                "statuses": {
+                  "206": 17
+                }
+              }
+            },
+            "hdf5_summary_quality_payload": {
+              "GET source.nc": {
+                "seconds": 0.002898917,
+                "attempts": 1,
+                "bytes": 36,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              }
+            },
+            "hdf5_uncertainty_payload": {
+              "GET source.nc": {
+                "seconds": 0.04809000000000001,
+                "attempts": 17,
+                "bytes": 458,
+                "retries": 0,
+                "statuses": {
+                  "206": 17
+                }
+              }
+            },
+            "hdf5_wse_payload": {
+              "GET source.nc": {
+                "seconds": 0.04048525,
+                "attempts": 14,
+                "bytes": 984,
+                "retries": 0,
+                "statuses": {
+                  "206": 14
+                }
+              }
+            },
+            "metadata_index_discovery": {
+              "HEAD source.nc": {
+                "seconds": 0.000583292,
+                "attempts": 1,
+                "bytes": 0,
+                "retries": 0,
+                "statuses": {
+                  "200": 1
+                }
+              }
+            },
+            "planning": {
+              "HEAD source.nc": {
+                "seconds": 0.029417083,
+                "attempts": 2,
+                "bytes": 0,
+                "retries": 0,
+                "statuses": {
+                  "200": 2
+                }
+              }
+            },
+            "post_execution_validation": {
+              "HEAD source.nc": {
+                "seconds": 0.000477667,
+                "attempts": 1,
+                "bytes": 0,
+                "retries": 0,
+                "statuses": {
+                  "200": 1
+                }
+              }
+            },
+            "pre_execution_validation": {
+              "HEAD source.nc": {
+                "seconds": 0.000724167,
+                "attempts": 1,
+                "bytes": 0,
+                "retries": 0,
+                "statuses": {
+                  "200": 1
+                }
+              }
+            }
+          },
+          "requests": 84,
+          "bytes": 5045,
+          "retries": 0,
+          "seconds": 0.25913491800000005,
+          "objects": {
+            "GET source.nc": {
+              "seconds": 0.22798987699999998,
+              "attempts": 79,
+              "bytes": 5045,
+              "retries": 0,
+              "statuses": {
+                "206": 79
+              }
+            },
+            "HEAD source.nc": {
+              "seconds": 0.031203206999999997,
+              "attempts": 5,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 5
+              }
+            }
+          },
+          "authenticated_http": {
+            "checkpoint_claims": 1,
+            "peak_in_flight": 1,
+            "wire_head": 10,
+            "wire_get": 83,
+            "redirects": 9,
+            "login_requests": 1,
+            "refreshes": 0,
+            "route_cache_hits": 78,
+            "response_body_bytes": 5045,
+            "redirect_body_bytes": 0,
+            "signing_auth_seconds": 0.036867833,
+            "statuses": {
+              "200": 5,
+              "206": 79,
+              "301": 1,
+              "302": 2,
+              "303": 6
+            },
+            "origins": {
+              "https://127.0.0.1:52912": 1,
+              "https://localhost:52911": 8,
+              "https://localhost:52913": 84
+            }
+          },
+          "checkpoint": {
+            "schema_version": 1,
+            "reuse": "exact source ranges; scientific stream restarts; tiles may repeat",
+            "limit_policy": "fail acquisition; no eviction or uncached fallback",
+            "limits": {
+              "logical_disk_bytes": 67108864,
+              "entry_bytes": 8388608,
+              "entries": 2048,
+              "working_reservation_bytes": 2162688,
+              "active_writes": 1,
+              "open_files_max": 5
+            },
+            "disk_bytes": 34370,
+            "entries": 154,
+            "failed": false,
+            "counts": {
+              "reused_ranges": 76,
+              "reused_bytes": 12861,
+              "retained_ranges_reused": 76,
+              "retained_bytes_reused": 12861,
+              "written_ranges": 78,
+              "written_bytes": 5037,
+              "read_seconds": 0.0014816239999999967,
+              "write_seconds": 0.015155207000000007
+            }
+          },
+          "cached_metadata_bytes": 22144,
+          "range_trace_sha256": "f10e5dc1132e1fe8e849adf5483f94d6ef26779ce8e3156e8cb885eb1c78beeb",
+          "range_identities": 79
+        },
+        "scheduler": {
+          "profile": "bounded aligned SWOT tiles",
+          "workers": 1,
+          "queue_capacity": 0,
+          "reserved_bytes_peak": 7809436,
+          "budget_bytes": 33554432,
+          "encoded_cache_cap_bytes": 4194304,
+          "encoded_cache_hits": 70,
+          "tiles": 16,
+          "max_tile_pixels": 201136,
+          "redecoded_intersections": 149
+        }
+      }
+    },
+    {
+      "case": "strided-bitwise",
+      "interrupted": {
+        "binary_sha256": "7c8052fec041b8a1779c1868294e23fbbd8214f34a188c42ac3bfccccdf72de9",
+        "returncode": 1,
+        "elapsed_seconds": 0.32017604199972993,
+        "cpu_seconds": 0.060193000000000385,
+        "sampled_peak_rss_bytes": 20234240,
+        "first_chunk_seconds": null,
+        "prepared_seconds": 0.28678120799986573,
+        "tiles_received": 0,
+        "completion_emitted": false,
+        "interruption_sent": true,
+        "error": "{\"authenticated_http\":{\"checkpoint_claims\":1,\"peak_in_flight\":1,\"wire_head\":8,\"wire_get\":81,\"redirects\":8,\"login_requests\":1,\"refreshes\":0,\"route_cache_hits\":76,\"response_body_bytes\":12879,\"redirect_body_bytes\":0,\"signing_auth_seconds\":0.041598376000000006,\"statuses\":{\"200\":4,\"206\":77,\"301\":1,\"302\":2,\"303\":5},\"origins\":{\"https://127.0.0.1:52912\":1,\"https://localhost:52911\":7,\"https://localhost:52913\":81}}}\ntile-ripper: execution: acquisition cancelled\n",
+        "server": {
+          "requests": {
+            "archive HEAD 303": 4,
+            "resource HEAD 200": 4,
+            "archive GET 302": 1,
+            "login GET 302": 1,
+            "archive GET 301": 1,
+            "archive GET 303": 1,
+            "resource GET 206": 77
+          },
+          "response_body_bytes": 12879,
+          "route_generation": 137,
+          "range_requests": 77,
+          "range_trace_sha256": "99c946e2407fa3f8cd456a7f733d92e0a500a1f53a1c4071882eda32cc873f3b"
+        }
+      },
+      "resumed": {
+        "binary_sha256": "7c8052fec041b8a1779c1868294e23fbbd8214f34a188c42ac3bfccccdf72de9",
+        "returncode": 0,
+        "elapsed_seconds": 0.29794245900029637,
+        "cpu_seconds": 0.06885299999999939,
+        "sampled_peak_rss_bytes": 20217856,
+        "first_chunk_seconds": 0.0768284170003426,
+        "prepared_seconds": 0.05206399999997302,
+        "tiles_received": 16,
+        "completion_emitted": true,
+        "interruption_sent": false,
+        "error": null,
+        "server": {
+          "requests": {
+            "archive HEAD 303": 5,
+            "resource HEAD 200": 5,
+            "archive GET 302": 1,
+            "login GET 302": 1,
+            "archive GET 301": 1,
+            "archive GET 303": 1,
+            "resource GET 206": 79
+          },
+          "response_body_bytes": 5045,
+          "route_generation": 143,
+          "range_requests": 79,
+          "range_trace_sha256": "26584694bd0d535048aaabac2f6c70b566c62f0dc9dbbfa81f1dbc1d8f841348"
+        },
+        "science": {
+          "all_native_value_bits_equal": true,
+          "all_five_source_masks_equal": true,
+          "exact_logical_coverage": true,
+          "all_coordinates_equal": true,
+          "derived_mask_equal": true,
+          "independent_summaries_equal": true,
+          "pixels_per_variable": 120,
+          "tiles": 16,
+          "references": [
+            {
+              "reader": "h5py",
+              "versions": {
+                "reader": "3.12.1",
+                "hdf5": "1.12.2"
+              },
+              "access": "local_sparse_reference",
+              "prepare_seconds": 0.0013564580003730953,
+              "completion_seconds": 0.003961792000154674,
+              "api_cpu_seconds": 0.0036480000000000123,
+              "peak_rss_bytes": 44400640,
+              "value_sha256": [
+                "7deb9ba81fefe4e6b7a9807227dab582b894fabf83889ff7e97a28858cbb1421",
+                "5846211121d5ba33eddd830293ce48a896a798156f9a23e0b1558fa3efacc8e7",
+                "7e40f66bec7ba952d37263ce386ea962ade668e4113110d2dddafa387c1be42c",
+                "d5e38cf573bd19e34eb90bf611b7783e22274c06729dcc6c888d7f4ca613886f",
+                "575a3318184ce3b3f4aaeed9bc182e90ca6b20fa8d4a5f6acabf5e2d77798cac"
+              ],
+              "axis_sha256": [
+                "9c7ed66ef1e69d30922c5cdd2070e0aefd195fcd9827b8f86af18059264a3c4a",
+                "cae36fa94e007a5abfc8cd6e67ce5a59ccf1ca730bc76e7109cfe5b18f4198b3"
+              ],
+              "summary": {
+                "selected_count": 70,
+                "wse_sum_m": 1231.125,
+                "wse_mean_m": 17.5875,
+                "uncertainty_count": 67,
+                "uncertainty_sum_m": 16.75,
+                "mean_pixel_uncertainty_m": 0.25,
+                "contributing_count": 67,
+                "contributing_pixel_sum": 66656
+              },
+              "process_wall_seconds": 0.19145612500005882,
+              "process_cpu_seconds": 0.1880270000000004
+            },
+            {
+              "reader": "netcdf4",
+              "versions": {
+                "reader": "1.7.4",
+                "netcdf_c": "4.9.3 of Sep 15 2025 23:01:51 $",
+                "hdf5": "1.14.6"
+              },
+              "access": "local_sparse_reference",
+              "prepare_seconds": 0.001120208999964234,
+              "completion_seconds": 0.0032521250000172586,
+              "api_cpu_seconds": 0.003141000000000005,
+              "peak_rss_bytes": 46727168,
+              "value_sha256": [
+                "7deb9ba81fefe4e6b7a9807227dab582b894fabf83889ff7e97a28858cbb1421",
+                "5846211121d5ba33eddd830293ce48a896a798156f9a23e0b1558fa3efacc8e7",
+                "7e40f66bec7ba952d37263ce386ea962ade668e4113110d2dddafa387c1be42c",
+                "d5e38cf573bd19e34eb90bf611b7783e22274c06729dcc6c888d7f4ca613886f",
+                "575a3318184ce3b3f4aaeed9bc182e90ca6b20fa8d4a5f6acabf5e2d77798cac"
+              ],
+              "axis_sha256": [
+                "9c7ed66ef1e69d30922c5cdd2070e0aefd195fcd9827b8f86af18059264a3c4a",
+                "cae36fa94e007a5abfc8cd6e67ce5a59ccf1ca730bc76e7109cfe5b18f4198b3"
+              ],
+              "summary": {
+                "selected_count": 70,
+                "wse_sum_m": 1231.125,
+                "wse_mean_m": 17.5875,
+                "uncertainty_count": 67,
+                "uncertainty_sum_m": 16.75,
+                "mean_pixel_uncertainty_m": 0.25,
+                "contributing_count": 67,
+                "contributing_pixel_sum": 66656
+              },
+              "process_wall_seconds": 0.10468374999982188,
+              "process_cpu_seconds": 0.10025700000000026
+            }
+          ],
+          "fresh_consumer_calculation_equal": true
+        },
+        "summary": {
+          "selected_count": 70,
+          "wse_sum_m": 1231.125,
+          "uncertainty_count": 67,
+          "uncertainty_sum_m": 16.75,
+          "contributing_count": 67,
+          "contributing_pixel_sum": 66656,
+          "wse_mean_m": 17.5875,
+          "mean_pixel_uncertainty_m": 0.25
+        },
+        "transport": {
+          "phases": {
+            "checkpoint_online_authorization": {
+              "GET source.nc": {
+                "seconds": 0.00555775,
+                "attempts": 1,
+                "bytes": 8,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              }
+            },
+            "hdf5_bitwise_quality_payload": {
+              "GET source.nc": {
+                "seconds": 0.08234845500000003,
+                "attempts": 29,
+                "bytes": 1484,
+                "retries": 0,
+                "statuses": {
+                  "206": 29
+                }
+              }
+            },
+            "hdf5_pixel_count_payload": {
+              "GET source.nc": {
+                "seconds": 0.04884975,
+                "attempts": 17,
+                "bytes": 2075,
+                "retries": 0,
+                "statuses": {
+                  "206": 17
+                }
+              }
+            },
+            "hdf5_summary_quality_payload": {
+              "GET source.nc": {
+                "seconds": 0.002813167,
+                "attempts": 1,
+                "bytes": 36,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              }
+            },
+            "hdf5_uncertainty_payload": {
+              "GET source.nc": {
+                "seconds": 0.047980502,
+                "attempts": 17,
+                "bytes": 458,
+                "retries": 0,
+                "statuses": {
+                  "206": 17
+                }
+              }
+            },
+            "hdf5_wse_payload": {
+              "GET source.nc": {
+                "seconds": 0.040699334999999996,
+                "attempts": 14,
+                "bytes": 984,
+                "retries": 0,
+                "statuses": {
+                  "206": 14
+                }
+              }
+            },
+            "metadata_index_discovery": {
+              "HEAD source.nc": {
+                "seconds": 0.000581042,
+                "attempts": 1,
+                "bytes": 0,
+                "retries": 0,
+                "statuses": {
+                  "200": 1
+                }
+              }
+            },
+            "planning": {
+              "HEAD source.nc": {
+                "seconds": 0.029080957999999997,
+                "attempts": 2,
+                "bytes": 0,
+                "retries": 0,
+                "statuses": {
+                  "200": 2
+                }
+              }
+            },
+            "post_execution_validation": {
+              "HEAD source.nc": {
+                "seconds": 0.000447375,
+                "attempts": 1,
+                "bytes": 0,
+                "retries": 0,
+                "statuses": {
+                  "200": 1
+                }
+              }
+            },
+            "pre_execution_validation": {
+              "HEAD source.nc": {
+                "seconds": 0.000819792,
+                "attempts": 1,
+                "bytes": 0,
+                "retries": 0,
+                "statuses": {
+                  "200": 1
+                }
+              }
+            }
+          },
+          "requests": 84,
+          "bytes": 5045,
+          "retries": 0,
+          "seconds": 0.25914333600000006,
+          "objects": {
+            "GET source.nc": {
+              "seconds": 0.22826550299999998,
+              "attempts": 79,
+              "bytes": 5045,
+              "retries": 0,
+              "statuses": {
+                "206": 79
+              }
+            },
+            "HEAD source.nc": {
+              "seconds": 0.030930542000000002,
+              "attempts": 5,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 5
+              }
+            }
+          },
+          "authenticated_http": {
+            "checkpoint_claims": 1,
+            "peak_in_flight": 1,
+            "wire_head": 10,
+            "wire_get": 83,
+            "redirects": 9,
+            "login_requests": 1,
+            "refreshes": 0,
+            "route_cache_hits": 78,
+            "response_body_bytes": 5045,
+            "redirect_body_bytes": 0,
+            "signing_auth_seconds": 0.036408583999999994,
+            "statuses": {
+              "200": 5,
+              "206": 79,
+              "301": 1,
+              "302": 2,
+              "303": 6
+            },
+            "origins": {
+              "https://127.0.0.1:52912": 1,
+              "https://localhost:52911": 8,
+              "https://localhost:52913": 84
+            }
+          },
+          "checkpoint": {
+            "schema_version": 1,
+            "reuse": "exact source ranges; scientific stream restarts; tiles may repeat",
+            "limit_policy": "fail acquisition; no eviction or uncached fallback",
+            "limits": {
+              "logical_disk_bytes": 67108864,
+              "entry_bytes": 8388608,
+              "entries": 2048,
+              "working_reservation_bytes": 2162688,
+              "active_writes": 1,
+              "open_files_max": 5
+            },
+            "disk_bytes": 34508,
+            "entries": 154,
+            "failed": false,
+            "counts": {
+              "reused_ranges": 76,
+              "reused_bytes": 12861,
+              "retained_ranges_reused": 76,
+              "retained_bytes_reused": 12861,
+              "written_ranges": 78,
+              "written_bytes": 5037,
+              "read_seconds": 0.001132213999999997,
+              "write_seconds": 0.015237746999999998
+            }
+          },
+          "cached_metadata_bytes": 22144,
+          "range_trace_sha256": "b866a5ed59382ce48d792069e203413599695d4a73414269e44d64d0a4c4b75f",
+          "range_identities": 79
+        },
+        "scheduler": {
+          "profile": "bounded aligned SWOT tiles",
+          "workers": 1,
+          "queue_capacity": 0,
+          "reserved_bytes_peak": 7809436,
+          "budget_bytes": 33554432,
+          "encoded_cache_cap_bytes": 4194304,
+          "encoded_cache_hits": 70,
+          "tiles": 16,
+          "max_tile_pixels": 201136,
+          "redecoded_intersections": 149
+        }
+      }
+    },
+    {
+      "case": "execution-tuning",
+      "binary_sha256": "7c8052fec041b8a1779c1868294e23fbbd8214f34a188c42ac3bfccccdf72de9",
+      "returncode": 0,
+      "elapsed_seconds": 0.07960937500001819,
+      "cpu_seconds": 0.04143600000000025,
+      "sampled_peak_rss_bytes": 19054592,
+      "first_chunk_seconds": 0.07499041700020825,
+      "prepared_seconds": 0.07398016700017251,
+      "tiles_received": 4,
+      "completion_emitted": true,
+      "interruption_sent": false,
+      "error": null,
+      "server": {
+        "requests": {
+          "archive HEAD 303": 5,
+          "resource HEAD 200": 5,
+          "archive GET 302": 1,
+          "login GET 302": 1,
+          "archive GET 301": 1,
+          "archive GET 303": 1,
+          "resource GET 206": 9
+        },
+        "response_body_bytes": 48945,
+        "route_generation": 149,
+        "range_requests": 9,
+        "range_trace_sha256": "030c97e6622408501b2363b4d5d5991b99cb689a1543c80e0b869b8080707532"
+      },
+      "science": {
+        "all_native_value_bits_equal": true,
+        "all_five_source_masks_equal": true,
+        "exact_logical_coverage": true,
+        "all_coordinates_equal": true,
+        "derived_mask_equal": true,
+        "independent_summaries_equal": true,
+        "pixels_per_variable": 323,
+        "tiles": 4,
+        "references": [
+          {
+            "reader": "h5py",
+            "versions": {
+              "reader": "3.12.1",
+              "hdf5": "1.12.2"
+            },
+            "access": "local_sparse_reference",
+            "prepare_seconds": 0.001293291999900248,
+            "completion_seconds": 0.003551166999841371,
+            "api_cpu_seconds": 0.0033999999999999864,
+            "peak_rss_bytes": 44040192,
+            "value_sha256": [
+              "567e6db446322cf52ae8df9fec083ffd4d8a2cbbff482b0e4e923102476a638d",
+              "b630232200841607598ca0d66887c71e4ee29d670851983e523d5d89f6fa1d57",
+              "dc77a83c56a36839727e8d8075da539bc1af0a3adcd5fcf895616504e4c704a2",
+              "7cb201df99bdfc7a73b0a62f6c8dad23a18aefed2de1fa9df1060b73a5f38d81",
+              "0c71de552c55061453e76c69de110453ce67a328eb9eb4646458d5d3e9434fcf"
+            ],
+            "axis_sha256": [
+              "4e2eb1c524455731887057600285510814994e417f5796a3a6a4fd3b1de736a0",
+              "795c569f0efeb42167b90f98a31689bfbae48ee54dfaf87552171c2622f4e9c2"
+            ],
+            "summary": {
+              "selected_count": 170,
+              "wse_sum_m": 2343.5,
+              "wse_mean_m": 13.785294117647059,
+              "uncertainty_count": 145,
+              "uncertainty_sum_m": 36.25,
+              "mean_pixel_uncertainty_m": 0.25,
+              "contributing_count": 147,
+              "contributing_pixel_sum": 77045
+            },
+            "process_wall_seconds": 0.19487870900002235,
+            "process_cpu_seconds": 0.19162399999999957
+          },
+          {
+            "reader": "netcdf4",
+            "versions": {
+              "reader": "1.7.4",
+              "netcdf_c": "4.9.3 of Sep 15 2025 23:01:51 $",
+              "hdf5": "1.14.6"
+            },
+            "access": "local_sparse_reference",
+            "prepare_seconds": 0.001123833999827184,
+            "completion_seconds": 0.0033759170000848826,
+            "api_cpu_seconds": 0.0030869999999999925,
+            "peak_rss_bytes": 46907392,
+            "value_sha256": [
+              "567e6db446322cf52ae8df9fec083ffd4d8a2cbbff482b0e4e923102476a638d",
+              "b630232200841607598ca0d66887c71e4ee29d670851983e523d5d89f6fa1d57",
+              "dc77a83c56a36839727e8d8075da539bc1af0a3adcd5fcf895616504e4c704a2",
+              "7cb201df99bdfc7a73b0a62f6c8dad23a18aefed2de1fa9df1060b73a5f38d81",
+              "0c71de552c55061453e76c69de110453ce67a328eb9eb4646458d5d3e9434fcf"
+            ],
+            "axis_sha256": [
+              "4e2eb1c524455731887057600285510814994e417f5796a3a6a4fd3b1de736a0",
+              "795c569f0efeb42167b90f98a31689bfbae48ee54dfaf87552171c2622f4e9c2"
+            ],
+            "summary": {
+              "selected_count": 170,
+              "wse_sum_m": 2343.5,
+              "wse_mean_m": 13.785294117647059,
+              "uncertainty_count": 145,
+              "uncertainty_sum_m": 36.25,
+              "mean_pixel_uncertainty_m": 0.25,
+              "contributing_count": 147,
+              "contributing_pixel_sum": 77045
+            },
+            "process_wall_seconds": 0.10442275000013979,
+            "process_cpu_seconds": 0.09995600000000038
+          }
+        ],
+        "fresh_consumer_calculation_equal": true
+      },
+      "summary": {
+        "selected_count": 170,
+        "wse_sum_m": 2343.5,
+        "uncertainty_count": 145,
+        "uncertainty_sum_m": 36.25,
+        "contributing_count": 147,
+        "contributing_pixel_sum": 77045,
+        "wse_mean_m": 13.785294117647059,
+        "mean_pixel_uncertainty_m": 0.25
+      },
+      "transport": {
+        "phases": {
+          "checkpoint_online_authorization": {
+            "GET source.nc": {
+              "seconds": 0.005913708,
+              "attempts": 1,
+              "bytes": 8,
+              "retries": 0,
+              "statuses": {
+                "206": 1
+              }
+            }
+          },
+          "hdf5_chunk_index_discovery": {
+            "GET source.nc": {
+              "seconds": 0.002890083,
+              "attempts": 1,
+              "bytes": 3881,
+              "retries": 0,
+              "statuses": {
+                "206": 1
+              }
+            }
+          },
+          "metadata_index_discovery": {
+            "GET source.nc": {
+              "seconds": 0.020178043,
+              "attempts": 7,
+              "bytes": 45056,
+              "retries": 0,
+              "statuses": {
+                "206": 7
+              }
+            },
+            "HEAD source.nc": {
+              "seconds": 0.000538125,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            }
+          },
+          "planning": {
+            "HEAD source.nc": {
+              "seconds": 0.028248375000000003,
+              "attempts": 2,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 2
+              }
+            }
+          },
+          "post_execution_validation": {
+            "HEAD source.nc": {
+              "seconds": 0.000456791,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            }
+          },
+          "pre_execution_validation": {
+            "HEAD source.nc": {
+              "seconds": 0.000605083,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            }
+          }
+        },
+        "requests": 14,
+        "bytes": 48945,
+        "retries": 0,
+        "seconds": 0.058815376999999995,
+        "objects": {
+          "GET source.nc": {
+            "seconds": 0.028983792,
+            "attempts": 9,
+            "bytes": 48945,
+            "retries": 0,
+            "statuses": {
+              "206": 9
+            }
+          },
+          "HEAD source.nc": {
+            "seconds": 0.029849332000000003,
+            "attempts": 5,
+            "bytes": 0,
+            "retries": 0,
+            "statuses": {
+              "200": 5
+            }
+          }
+        },
+        "authenticated_http": {
+          "checkpoint_claims": 1,
+          "peak_in_flight": 1,
+          "wire_head": 10,
+          "wire_get": 13,
+          "redirects": 9,
+          "login_requests": 1,
+          "refreshes": 0,
+          "route_cache_hits": 8,
+          "response_body_bytes": 48945,
+          "redirect_body_bytes": 0,
+          "signing_auth_seconds": 0.035687874,
+          "statuses": {
+            "200": 5,
+            "206": 9,
+            "301": 1,
+            "302": 2,
+            "303": 6
+          },
+          "origins": {
+            "https://127.0.0.1:52912": 1,
+            "https://localhost:52911": 8,
+            "https://localhost:52913": 14
+          }
+        },
+        "checkpoint": {
+          "schema_version": 1,
+          "reuse": "exact source ranges; scientific stream restarts; tiles may repeat",
+          "limit_policy": "fail acquisition; no eviction or uncached fallback",
+          "limits": {
+            "logical_disk_bytes": 67108864,
+            "entry_bytes": 8388608,
+            "entries": 2048,
+            "working_reservation_bytes": 2162688,
+            "active_writes": 1,
+            "open_files_max": 5
+          },
+          "disk_bytes": 74922,
+          "entries": 101,
+          "failed": false,
+          "counts": {
+            "reused_ranges": 32,
+            "reused_bytes": 1793,
+            "retained_ranges_reused": 32,
+            "retained_bytes_reused": 1793,
+            "written_ranges": 8,
+            "written_bytes": 48937,
+            "read_seconds": 0.0006994210000000001,
+            "write_seconds": 0.001942085
+          }
+        },
+        "cached_metadata_bytes": 50825,
+        "range_trace_sha256": "984c61d3800f27f4372526ce38a79f5d3c75fb56b612311bc8f3c112dd0e0cb8",
+        "range_identities": 9
+      },
+      "scheduler": {
+        "profile": "bounded aligned SWOT tiles",
+        "workers": 1,
+        "queue_capacity": 0,
+        "reserved_bytes_peak": 7860064,
+        "budget_bytes": 33554432,
+        "encoded_cache_cap_bytes": 4194304,
+        "encoded_cache_hits": 18,
+        "tiles": 4,
+        "max_tile_pixels": 200755,
+        "redecoded_intersections": 42
+      }
+    }
+  ],
+  "public_provider_requests": 0,
+  "binary_sha256": "7c8052fec041b8a1779c1868294e23fbbd8214f34a188c42ac3bfccccdf72de9"
+}

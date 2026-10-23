@@ -25,6 +25,9 @@ use zarrs_filesystem::{FilesystemStore, FilesystemStoreOptions};
 type Metrics = PerformanceMetricsStorageAdapter<FilesystemStore>;
 type Store = crate::zarr_io::Timed<Metrics>;
 
+#[cfg(feature = "native-hdf5")]
+pub(crate) mod swot;
+
 /// Lossless scientific-output candidates. The ordinary fetch stays Zarr v2,
 /// uncompressed. V3 is deliberately gated at build time.
 #[derive(Clone, Copy, Debug, serde::Serialize)]

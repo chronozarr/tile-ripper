@@ -145,12 +145,21 @@ pub(crate) struct Store {
 impl Store {
     pub(crate) fn open(options: Options, scientific: Value, access: Value) -> Result<Self> {
         options.reservation()?;
+        let directory = private_fs::Directory::open(&options.directory)?;
+        Self::open_in(options, scientific, access, directory)
+    }
+    fn open_in(
+        options: Options,
+        scientific: Value,
+        access: Value,
+        directory: private_fs::Directory,
+    ) -> Result<Self> {
+        options.reservation()?;
         if serde_json::to_vec(&scientific)?.len() + serde_json::to_vec(&access)?.len()
             > IDENTITY_CAP / 2
         {
             return fail("checkpoint acquisition identity exceeds metadata bound");
         }
-        let directory = private_fs::Directory::open(&options.directory)?;
         Ok(Self {
             options,
             scientific,
@@ -379,6 +388,118 @@ impl Store {
             "entries":state.bound.as_ref().map_or(0, |b| b.entries.len()),"failed":state.failed,"counts":state.counts})
     }
 }
+
+/// One private, locked job namespace. Static equal quotas include each source's
+/// identity and range headers; the root identity is charged before partitioning.
+/// A changed acquisition set requires a new root. There is no cache eviction.
+pub(crate) struct Job {
+    directory: private_fs::Directory,
+    options: Options,
+    names: Vec<String>,
+    identity_bytes: u64,
+    per_source_bytes: u64,
+    per_source_entries: usize,
+}
+impl Job {
+    pub(crate) fn open(options: Options, identities: &[Value]) -> Result<Self> {
+        options.reservation()?;
+        if identities.is_empty() || identities.len() > 4 {
+            return fail("job checkpoint requires one to four acquisitions");
+        }
+        let bytes = bounded_bytes(
+            &json!({"job_checkpoint_schema":1,"acquisitions":identities}),
+            IDENTITY_CAP,
+        )?;
+        let identity_bytes = bytes.len() as u64;
+        let per_source_bytes = options
+            .max_bytes
+            .checked_sub(identity_bytes)
+            .map(|n| n / identities.len() as u64)
+            .filter(|n| *n > 0)
+            .ok_or("aggregate checkpoint disk budget cannot fit the job identity and sources")?;
+        let per_source_entries = options.max_entries / identities.len();
+        if per_source_entries == 0 {
+            return fail("aggregate checkpoint entry budget cannot allocate one entry per source");
+        }
+        let names: Vec<_> = identities
+            .iter()
+            .map(|v| {
+                let digest = hash(&serde_json::to_vec(v).expect("JSON value"));
+                format!(
+                    "source-{}",
+                    digest
+                        .iter()
+                        .map(|b| format!("{b:02x}"))
+                        .collect::<String>()
+                )
+            })
+            .collect();
+        let directory =
+            private_fs::Directory::open_named(&options.directory, "tile-ripper-job-v1")?;
+        let existing = directory.read_identity()?;
+        if existing.as_ref().is_some_and(|v| v != &bytes) {
+            return fail("checkpoint job acquisition set/order/policy mismatch; choose a fresh checkpoint directory");
+        }
+        directory.scan(identities.len() + 4, |name| {
+            if name == "lock" || name == "identity.json" {
+                return Ok(());
+            }
+            if name == ".pending-identity" {
+                return directory.discard_temporary(name);
+            }
+            if existing.is_some() && names.iter().any(|n| n == name) {
+                return Ok(());
+            }
+            fail("unexpected job checkpoint file; preserved without modification")
+        })?;
+        if existing.is_none() {
+            directory.install_identity(&bytes)?;
+        }
+        let job = Self {
+            directory,
+            options,
+            names,
+            identity_bytes,
+            per_source_bytes,
+            per_source_entries,
+        };
+        // Validate ALL retained namespaces against current quotas before allowing
+        // any source to add bytes, including when limits were lowered on retry.
+        for name in &job.names {
+            let child = job.directory.child(name)?;
+            let (bytes, entries) =
+                child.inventory(job.per_source_entries, job.options.max_entry_bytes)?;
+            if bytes > job.per_source_bytes || entries > job.per_source_entries {
+                return fail(
+                    "retained source checkpoint exceeds its share of aggregate disk/entry limits",
+                );
+            }
+        }
+        Ok(job)
+    }
+    pub(crate) fn store(
+        &self,
+        index: usize,
+        scientific: Value,
+        access: Value,
+    ) -> Result<std::sync::Arc<Store>> {
+        let mut options = self.options.clone();
+        options.max_bytes = self.per_source_bytes;
+        options.max_entries = self.per_source_entries;
+        let directory = self.directory.child(&self.names[index])?;
+        Ok(std::sync::Arc::new(Store::open_in(
+            options, scientific, access, directory,
+        )?))
+    }
+    pub(crate) fn describe(&self) -> Value {
+        json!({"allocation":"fixed equal per-source quotas; no borrowing or eviction",
+            "aggregate_logical_disk_limit":self.options.max_bytes,"aggregate_range_entry_limit":self.options.max_entries,
+            "root_identity_bytes":self.identity_bytes,"per_source_logical_disk_limit":self.per_source_bytes,
+            "per_source_range_entry_limit":self.per_source_entries,"source_namespaces":self.names,
+            "scope":"managed logical file bytes including source identities, range headers and at most one active pending range; excludes filesystem blocks/inodes/directories and caller files",
+            "ownership":"exclusive job lock; exact acquisition set and order; retained on success/failure for explicit caller cleanup; no completed-observation reuse"})
+    }
+}
 fn parse_name(value: &str) -> Option<(u64, u64)> {
     let (a, b) = value.strip_prefix("range-")?.split_once('-')?;
     let start = a.parse().ok()?;
@@ -470,6 +591,9 @@ mod private_fs {
     }
     impl Directory {
         pub(super) fn open(path: &Path) -> Result<Self> {
+            Self::open_named(path, "tile-ripper-checkpoint-v1")
+        }
+        pub(super) fn open_named(path: &Path, namespace: &str) -> Result<Self> {
             if path.as_os_str().as_bytes().len() > 4096 {
                 return fail("checkpoint path exceeds bounds");
             }
@@ -496,7 +620,13 @@ mod private_fs {
                 parent = dir_at(&parent, &part, i + 1 == parts.len())?;
             }
             private(&parent.metadata()?, true)?;
-            let fd = dir_at(&parent, &cstr("tile-ripper-checkpoint-v1")?, true)?;
+            let fd = dir_at(&parent, &cstr(namespace)?, true)?;
+            Self::locked(fd)
+        }
+        pub(super) fn child(&self, name: &str) -> Result<Self> {
+            Self::locked(dir_at(&self.fd, &cstr(name)?, true)?)
+        }
+        fn locked(fd: File) -> Result<Self> {
             private(&fd.metadata()?, true)?;
             let lock_name = cstr("lock")?;
             // SAFETY: pinned directory, constant basename, no-follow regular-file check below.
@@ -521,6 +651,39 @@ mod private_fs {
                 return fail("checkpoint is already in use by another acquisition");
             }
             Ok(Self { fd, _lock: lock })
+        }
+        pub(super) fn inventory(
+            &self,
+            max_entries: usize,
+            max_entry_bytes: usize,
+        ) -> Result<(u64, usize)> {
+            let mut bytes = 0u64;
+            let mut entries = 0usize;
+            self.scan(max_entries * 2 + 8, |name| {
+                if name == "lock" {
+                    return Ok(());
+                }
+                if name == ".pending-entry" || name == ".pending-identity" {
+                    return self.discard_temporary(name);
+                }
+                let file = self.read_file(name)?.ok_or("checkpoint file disappeared")?;
+                let len = file.metadata()?.len();
+                if name == "identity.json" {
+                    if len > IDENTITY_CAP as u64 {
+                        return fail("checkpoint identity exceeds metadata bound");
+                    }
+                } else if let Some((_, size)) = parse_name(name) {
+                    if size == 0 || size > max_entry_bytes as u64 || len != size + HEADER as u64 {
+                        return fail("retained checkpoint range exceeds entry limits");
+                    }
+                    entries += 1;
+                } else {
+                    return fail("unexpected checkpoint file; preserved without modification");
+                }
+                bytes = bytes.checked_add(len).ok_or("checkpoint byte overflow")?;
+                Ok(())
+            })?;
+            Ok((bytes, entries))
         }
         fn read_file(&self, name: &str) -> Result<Option<File>> {
             let name = cstr(name)?;
@@ -804,6 +967,46 @@ mod tests {
     }
     fn bind(s: &Store) -> Result<()> {
         s.bind("https://archive.test/public.nc", "\"strong-version\"", 1024)
+    }
+    #[test]
+    fn job_root_lock_static_quotas_and_lowered_limit_inventory() -> Result<()> {
+        let _serial = serial();
+        let root = Root::new();
+        let identities = vec![json!({"id":"a"}), json!({"id":"b"})];
+        let mut options = root.options();
+        options.max_bytes = 2048;
+        options.max_entries = 4;
+        let job = Job::open(options.clone(), &identities)?;
+        assert!(Job::open(options.clone(), &identities).is_err());
+        let source = job.store(0, identities[0].clone(), json!({"access":1}))?;
+        bind(&source)?;
+        source.write(0, b"abcd")?;
+        source.write(4, b"efgh")?;
+        assert!(source.write(8, b"ijkl").is_err());
+        let stats = source.stats();
+        assert_eq!(stats["entries"], 2);
+        assert!(stats["disk_bytes"].as_u64().unwrap() <= job.per_source_bytes);
+        drop(source);
+        drop(job);
+        let mut smaller = options.clone();
+        smaller.max_bytes = 512;
+        assert!(Job::open(smaller, &identities).is_err());
+        let job = Job::open(options.clone(), &identities)?;
+        let source = job.store(0, identities[0].clone(), json!({"access":1}))?;
+        bind(&source)?;
+        assert_eq!(source.read(0, 4)?, Some(b"abcd".to_vec()));
+        drop(source);
+        drop(job);
+        let mut reversed = identities.clone();
+        reversed.reverse();
+        assert!(Job::open(options.clone(), &reversed).is_err());
+        fs::write(root.0.join("tile-ripper-job-v1/unrelated"), b"preserve")?;
+        assert!(Job::open(options, &identities).is_err());
+        assert_eq!(
+            fs::read(root.0.join("tile-ripper-job-v1/unrelated"))?,
+            b"preserve"
+        );
+        Ok(())
     }
     #[test]
     fn exact_ranges_reopen_with_local_digest_and_no_delivery_cursor() -> Result<()> {
@@ -1133,6 +1336,15 @@ mod private_fs {
     impl Directory {
         pub(super) fn open(_: &std::path::Path) -> Result<Self> {
             fail("checkpointing requires Unix private filesystem semantics")
+        }
+        pub(super) fn open_named(_: &std::path::Path, _: &str) -> Result<Self> {
+            fail("checkpointing requires Unix private filesystem semantics")
+        }
+        pub(super) fn child(&self, _: &str) -> Result<Self> {
+            unreachable!()
+        }
+        pub(super) fn inventory(&self, _: usize, _: usize) -> Result<(u64, usize)> {
+            unreachable!()
         }
         pub(super) fn read_identity(&self) -> Result<Option<Vec<u8>>> {
             unreachable!()
