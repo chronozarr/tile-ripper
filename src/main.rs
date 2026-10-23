@@ -10,6 +10,15 @@ fn run() -> Result<()> {
             _ => {}
         }
     }
+    if args.get(1).is_some_and(|s| s == "discover") {
+        return cli::discovery::run(&args[2..]);
+    }
+    if args.get(1).is_some_and(|s| s == "discover-job") {
+        #[cfg(all(feature = "native-hdf5", feature = "authenticated-http"))]
+        return cli::discovery::job(&args[2..]);
+        #[cfg(not(all(feature = "native-hdf5", feature = "authenticated-http")))]
+        return Err("discover-job requires native-hdf5,authenticated-http features".into());
+    }
     let options = cli::parse(&args[1..])?;
     let Some(options) = options else {
         return Ok(());
@@ -524,30 +533,15 @@ fn run_job(options: cli::Options) -> Result<()> {
         ctrlc::set_handler(move || flag.store(true, Ordering::Release))?;
     }
     #[cfg(feature = "authenticated-http")]
-    let mut factory = |asset: &tile_ripper::Asset| -> Result<Arc<tile_ripper::authenticated_http::AuthenticatedHttp>> {
-        let access = options.access.as_ref().ok_or("missing explicit authentication opt-in")?;
-        let session = if access.profile == "earthdata" {
-            tile_ripper::authenticated_http::AuthenticatedHttp::earthdata(&asset.locator,&access.netrc)?
-        } else {
-            use std::io::Read;
-            let mut bytes = Vec::new();
-            std::fs::File::open(access.policy.as_ref().ok_or("missing job access policy")?).map_err(|_| "cannot read public job access policy")?
-                .take(256*1024+1).read_to_end(&mut bytes).map_err(|_| "cannot read public job access policy")?;
-            if bytes.len()>256*1024 { return Err("public job access policy exceeds 256 KiB".into()); }
-            #[derive(serde::Deserialize)]
-            #[serde(deny_unknown_fields)]
-            struct Policies { sources: Vec<serde_json::Value> }
-            let policies: Policies = serde_json::from_slice(&bytes).map_err(|_| "job --auth-policy requires a sources array of public exact-object policies")?;
-            if policies.sources.len() != manifest.observations.len() { return Err("job access policies must match the explicit source count".into()); }
-            let matching: Vec<_> = policies.sources.iter().filter(|p| p["canonical_url"]==asset.locator).collect();
-            if matching.len()!=1 { return Err("each job source requires exactly one matching public access policy".into()); }
-            let mut config: tile_ripper::authenticated_http::Config = serde_json::from_value(matching[0].clone()).map_err(|_| "invalid public job access policy")?;
-            if let Some(ca) = &access.ca {
-                config.additional_roots.push(reqwest::Certificate::from_pem(&std::fs::read(ca).map_err(|_| "cannot read trust root")?).map_err(|_| "invalid trust root")?);
-            }
-            tile_ripper::authenticated_http::AuthenticatedHttp::new(config,&access.netrc)?
-        };
-        Ok(Arc::new(session))
+    let mut factory = |asset: &tile_ripper::Asset| {
+        job_session(
+            asset,
+            options
+                .access
+                .as_ref()
+                .ok_or("missing explicit authentication opt-in")?,
+            manifest.observations.len(),
+        )
     };
     #[cfg(feature = "authenticated-http")]
     let job = if options.access.is_some() {
@@ -611,4 +605,64 @@ fn main() {
         eprintln!("tile-ripper: {e}");
         std::process::exit(1);
     }
+}
+
+#[cfg(all(feature = "native-hdf5", feature = "authenticated-http"))]
+fn job_session(
+    asset: &tile_ripper::Asset,
+    access: &cli::Access,
+    source_count: usize,
+) -> Result<std::sync::Arc<tile_ripper::authenticated_http::AuthenticatedHttp>> {
+    use std::sync::Arc;
+    let session = if access.profile == "earthdata" {
+        tile_ripper::authenticated_http::AuthenticatedHttp::earthdata(
+            &asset.locator,
+            &access.netrc,
+        )?
+    } else {
+        use std::io::Read;
+        let mut bytes = Vec::new();
+        std::fs::File::open(access.policy.as_ref().ok_or("missing job access policy")?)
+            .map_err(|_| "cannot read public job access policy")?
+            .take(256 * 1024 + 1)
+            .read_to_end(&mut bytes)
+            .map_err(|_| "cannot read public job access policy")?;
+        if bytes.len() > 256 * 1024 {
+            return Err("public job access policy exceeds 256 KiB".into());
+        }
+        #[derive(serde::Deserialize)]
+        #[serde(deny_unknown_fields)]
+        struct Policies {
+            sources: Vec<serde_json::Value>,
+        }
+        let policies: Policies = serde_json::from_slice(&bytes).map_err(|_| {
+            "job --auth-policy requires a sources array of public exact-object policies"
+        })?;
+        if policies.sources.len() != source_count {
+            return Err("job access policies must match the explicit source count".into());
+        }
+        let matching: Vec<_> = policies
+            .sources
+            .iter()
+            .filter(|p| p["canonical_url"] == asset.locator)
+            .collect();
+        if matching.len() != 1 {
+            return Err(
+                "each job source requires exactly one matching public access policy".into(),
+            );
+        }
+        let mut config: tile_ripper::authenticated_http::Config =
+            serde_json::from_value(matching[0].clone())
+                .map_err(|_| "invalid public job access policy")?;
+        if let Some(ca) = &access.ca {
+            config.additional_roots.push(
+                reqwest::Certificate::from_pem(
+                    &std::fs::read(ca).map_err(|_| "cannot read trust root")?,
+                )
+                .map_err(|_| "invalid trust root")?,
+            );
+        }
+        tile_ripper::authenticated_http::AuthenticatedHttp::new(config, &access.netrc)?
+    };
+    Ok(Arc::new(session))
 }

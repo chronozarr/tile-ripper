@@ -1,5 +1,12 @@
 # Tile-Ripper
 
+Bounded SWOT Raster D discovery now finds candidates by WGS84 bounding box and
+date through NASA CMR. `discover` reports catalog relevance and exclusions;
+`discover-job` inspects explicitly chosen native windows and writes a version-pinned
+job after admission. See the [scientist workflow](docs/swot-discovery/workflow.md),
+[runnable selection](examples/swot-discovery-selection.json) and
+[discovery decision gate](docs/swot-discovery/report.md).
+
 Explicit one-to-four-observation SWOT Raster D PGD0 jobs now use normal
 `plan` / `fetch` commands to write one scientific Zarr v2 dataset. Each granule
 keeps its native grid, raw variable types, source masks and quality policy.

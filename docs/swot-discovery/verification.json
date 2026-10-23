@@ -1,0 +1,491 @@
+{
+  "date": "2026-10-23",
+  "timezone": "America/New_York",
+  "baseline_commit": "68dc295",
+  "branch": "codex/acquisition-planner",
+  "worktree": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper",
+  "rustc": "rustc 1.92.0 (ded5c06cf 2025-12-08)",
+  "python": "3.10.14 (main, May 14 2024, 18:58:29) [Clang 15.0.0 (clang-1500.3.9.4)]",
+  "platform": "macOS-26.7.1-arm64-arm-64bit",
+  "checks": [
+    {
+      "command": "cargo test --locked --all-features --all-targets",
+      "result": {
+        "passed": 140,
+        "failed": 0,
+        "ignored": 8
+      },
+      "log_sha256": "83bed3efe1c5086d925ea2c3a0a7cb5f8e37345820016b6e7e4cc4e723d27e84",
+      "ignored_tests": [
+        [
+          "checkpoint::tests::crash_child",
+          "subprocess helper for abrupt persistence exits"
+        ],
+        [
+          "checkpoint::tests::foreign_owned_private_directory_is_rejected",
+          "requires externally supplied directory owned by another uid"
+        ],
+        [
+          "hdf5::tests::standalone_physical_probe",
+          "explicit bounded real-product experiment; TILE_RIPPER_HDF5_PROBE supplies URL"
+        ],
+        [
+          "storage::tests::authenticated_concurrent_routes_and_sticky_conflicts",
+          "run by bench/earthdata_auth.py with its private HTTPS fixtures"
+        ],
+        [
+          "convenience_execute_validates_local_source_after_delivery",
+          "requires TILE_RIPPER_NATIVE_REQUEST from the native COG fault harness"
+        ],
+        [
+          "prepared_metadata_is_private_version_bound_and_repeatable",
+          "requires TILE_RIPPER_NATIVE_HTTP_SNAPSHOT_REQUEST from the HTTP gate"
+        ],
+        [
+          "prepared_http_changes_and_cancellation",
+          "run by bench/remote_zarr.py against its controlled HTTP fixture"
+        ],
+        [
+          "prepared_versions_do_not_reuse_another_snapshot_cache",
+          "run by bench/stac_workflow.py with its bounded local HTTP fixture"
+        ]
+      ]
+    },
+    {
+      "command": "cargo clippy --locked --all-features --all-targets -- -D warnings",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo build --locked --release --no-default-features --features native-hdf5,authenticated-http --bin tile-ripper",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo check --locked --no-default-features",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo check --locked --no-default-features --features native-hdf5",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo fmt --all -- --check",
+      "exit_code": 0
+    },
+    {
+      "command": "python -m ruff check bench/swot_discovery.py; python -m ruff format --check bench/swot_discovery.py; python -m py_compile bench/swot_discovery.py",
+      "exit_code": 0
+    },
+    {
+      "command": "python bench/swot_discovery.py offline",
+      "exit_code": 0,
+      "public_provider_requests": 0
+    },
+    {
+      "command": "python bench/swot_discovery.py live --netrc PRIVATE_FILE",
+      "result": "native acquisition, reconstruction and zero-accepted-cell window independently passed; parent summary accounting repaired from existing receipts without provider refetch"
+    },
+    {
+      "command": "python bench/swot_discovery.py additional --netrc PRIVATE_FILE",
+      "exit_code": 0,
+      "candidates_inspected": 3,
+      "scientific_support_expanded": false
+    },
+    {
+      "command": "swot_job.offline() with evidence redirected to prototype-output/swot-discovery/legacy-job-receipts",
+      "exit_code": 0,
+      "fault_restart_cases": 19
+    },
+    {
+      "command": "earthdata_auth.fixtures(); transfer_resume.fixtures() with redirected evidence",
+      "exit_code": 0,
+      "authentication_cases": 38,
+      "checkpoint_cases": 32
+    },
+    {
+      "command": "final release CLI checkpoint reconstruction, both guarded independent references, Zarr-Python and xarray",
+      "exit_code": 0,
+      "binary_sha256": "e389d9e5b68fa9ed85a9f49fa5d53058470e0c6ce12b30a349d4d52c975349ef",
+      "source_body_bytes": 32,
+      "dataset": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/swot-job/discovered-final-acceptance-xx8v_cum/observations.zarr"
+    }
+  ],
+  "fixture_matrices": {
+    "authentication": {
+      "passed": 38,
+      "public_provider_requests": 0,
+      "cases": [
+        {
+          "case": "success",
+          "returncode": 0,
+          "expected_success": true
+        },
+        {
+          "case": "expired-once",
+          "returncode": 0,
+          "expected_success": true
+        },
+        {
+          "case": "expired-after-cache",
+          "returncode": 0,
+          "expected_success": true
+        },
+        {
+          "case": "short-expiry",
+          "returncode": 0,
+          "expected_success": true
+        },
+        {
+          "case": "canonical-429",
+          "returncode": 0,
+          "expected_success": true
+        },
+        {
+          "case": "resource-429",
+          "returncode": 0,
+          "expected_success": true
+        },
+        {
+          "case": "resource-401",
+          "returncode": 1,
+          "expected_success": false
+        },
+        {
+          "case": "login-401",
+          "returncode": 1,
+          "expected_success": false
+        },
+        {
+          "case": "resource-412",
+          "returncode": 1,
+          "expected_success": false
+        },
+        {
+          "case": "refresh-exhausted",
+          "returncode": 1,
+          "expected_success": false
+        },
+        {
+          "case": "downgrade",
+          "returncode": 1,
+          "expected_success": false
+        },
+        {
+          "case": "untrusted",
+          "returncode": 1,
+          "expected_success": false
+        },
+        {
+          "case": "unexpected-path",
+          "returncode": 1,
+          "expected_success": false
+        },
+        {
+          "case": "loop",
+          "returncode": 1,
+          "expected_success": false
+        },
+        {
+          "case": "hop-budget",
+          "returncode": 1,
+          "expected_success": false
+        },
+        {
+          "case": "wrong-method",
+          "returncode": 1,
+          "expected_success": false
+        },
+        {
+          "case": "resource-redirect",
+          "returncode": 1,
+          "expected_success": false
+        },
+        {
+          "case": "missing-etag",
+          "returncode": 1,
+          "expected_success": false
+        },
+        {
+          "case": "weak-etag",
+          "returncode": 1,
+          "expected_success": false
+        },
+        {
+          "case": "missing-get-etag",
+          "returncode": 1,
+          "expected_success": false
+        },
+        {
+          "case": "weak-get-etag",
+          "returncode": 1,
+          "expected_success": false
+        },
+        {
+          "case": "changed-etag",
+          "returncode": 1,
+          "expected_success": false
+        },
+        {
+          "case": "length-head",
+          "returncode": 1,
+          "expected_success": false
+        },
+        {
+          "case": "changed-length",
+          "returncode": 1,
+          "expected_success": false
+        },
+        {
+          "case": "wrong-range",
+          "returncode": 1,
+          "expected_success": false
+        },
+        {
+          "case": "oversized",
+          "returncode": 1,
+          "expected_success": false
+        },
+        {
+          "case": "encoded",
+          "returncode": 1,
+          "expected_success": false
+        },
+        {
+          "case": "corrupt",
+          "returncode": 1,
+          "expected_success": false
+        },
+        {
+          "case": "truncated",
+          "returncode": 1,
+          "expected_success": false
+        },
+        {
+          "case": "ignored-range",
+          "returncode": 1,
+          "expected_success": false
+        },
+        {
+          "case": "mutate-final",
+          "returncode": 1,
+          "expected_success": false
+        },
+        {
+          "case": "pending-range",
+          "returncode": 1,
+          "expected_success": false
+        },
+        {
+          "case": "pending-auth",
+          "returncode": 1,
+          "expected_success": false
+        },
+        {
+          "case": "pending-body",
+          "returncode": 1,
+          "expected_success": false
+        },
+        {
+          "case": "anonymous",
+          "returncode": 1,
+          "expected_success": false
+        },
+        {
+          "case": "unrelated",
+          "returncode": 1,
+          "expected_success": false
+        },
+        {
+          "case": "public-netrc",
+          "returncode": 1,
+          "expected_success": false
+        },
+        {
+          "case": "concurrent-expiration-and-sticky-conflict",
+          "returncode": null,
+          "expected_success": null
+        }
+      ],
+      "receipt_sha256": "b1f00d76472cf09f76f0f6cdc5c3de6931e31a9d29c338c7d694720d2ca05ca4"
+    },
+    "source_checkpoint": {
+      "passed": 32,
+      "public_provider_requests": 0,
+      "cases": [
+        {
+          "case": "anonymous-ignores-credential-environment",
+          "returncode": 1,
+          "expected_success": null
+        },
+        {
+          "case": "uninterrupted",
+          "returncode": 0,
+          "expected_success": null
+        },
+        {
+          "case": "after-metadata-planning",
+          "returncode": 0,
+          "expected_success": null
+        },
+        {
+          "case": "resume-after-metadata",
+          "returncode": 0,
+          "expected_success": null
+        },
+        {
+          "case": "complete-checkpoint-no-auth",
+          "returncode": 1,
+          "expected_success": null
+        },
+        {
+          "case": "complete-checkpoint-success",
+          "returncode": 0,
+          "expected_success": null
+        },
+        {
+          "case": "fresh-signed-route",
+          "returncode": 0,
+          "expected_success": null
+        },
+        {
+          "case": "mutation-after-replay",
+          "returncode": 1,
+          "expected_success": null
+        },
+        {
+          "case": "interrupted-partial",
+          "returncode": 1,
+          "expected_success": null
+        },
+        {
+          "case": "resumed-partial",
+          "returncode": 0,
+          "expected_success": null
+        },
+        {
+          "case": "interrupted-science-gate",
+          "returncode": 1,
+          "expected_success": null
+        },
+        {
+          "case": "resumed-science-gate",
+          "returncode": 0,
+          "expected_success": null
+        },
+        {
+          "case": "interrupted-success",
+          "returncode": 1,
+          "expected_success": null
+        },
+        {
+          "case": "resumed-success",
+          "returncode": 0,
+          "expected_success": null
+        },
+        {
+          "case": "initial-auth-no-ranges",
+          "returncode": 1,
+          "expected_success": null
+        },
+        {
+          "case": "resume-after-auth-failure",
+          "returncode": 0,
+          "expected_success": null
+        },
+        {
+          "case": "changed-selection",
+          "returncode": 1,
+          "expected_success": null
+        },
+        {
+          "case": "changed-stride",
+          "returncode": 1,
+          "expected_success": null
+        },
+        {
+          "case": "changed-coordinates",
+          "returncode": 1,
+          "expected_success": null
+        },
+        {
+          "case": "changed-quality",
+          "returncode": 1,
+          "expected_success": null
+        },
+        {
+          "case": "changed-etag",
+          "returncode": 1,
+          "expected_success": null
+        },
+        {
+          "case": "changed-length",
+          "returncode": 1,
+          "expected_success": null
+        },
+        {
+          "case": "changed-access",
+          "returncode": 1,
+          "expected_success": null
+        },
+        {
+          "case": "truncated",
+          "returncode": 1,
+          "expected_success": null
+        },
+        {
+          "case": "resource-429",
+          "returncode": 0,
+          "expected_success": null
+        },
+        {
+          "case": "refresh-exhausted",
+          "returncode": 1,
+          "expected_success": null
+        },
+        {
+          "case": "limit-entries",
+          "returncode": 1,
+          "expected_success": null
+        },
+        {
+          "case": "retry-exhausted",
+          "returncode": 1,
+          "expected_success": null
+        },
+        {
+          "case": "small-memory",
+          "returncode": 1,
+          "expected_success": null
+        },
+        {
+          "case": "strided-cookbook",
+          "returncode": null,
+          "expected_success": null
+        },
+        {
+          "case": "strided-bitwise",
+          "returncode": null,
+          "expected_success": null
+        },
+        {
+          "case": "execution-tuning",
+          "returncode": 0,
+          "expected_success": null
+        }
+      ],
+      "receipt_sha256": "01b6cc377cbc351f0d9a29032b20ba534a00eed3a207555f440308df5becfcdb"
+    }
+  },
+  "unchanged_owning_sources_sha256": {
+    "src/swot.rs": "04619d7e539eeda03382abc8c3044132f7c13b69530f6009bb32fcbf9d2f0f1c",
+    "src/hdf5.rs": "488226debd2060d76b2c549f7f87df64786415d2c3d5cedcc7fadc10b4dbb6ce",
+    "src/authenticated_http.rs": "90a269d299c0c08e53c8f96e02dc04a8c744593b3aab30aa49bc90c402c2b5d2",
+    "src/checkpoint.rs": "e5b1abb2678c248d239a4ae1acb32ec934d0a85936f255005bf6eb8b8cd3c819",
+    "src/storage.rs": "8a3b37aaf047cc9f0e8d56e29b9b69ea8f8cb502c44c3afcb546c6d75adbfe16",
+    "src/native_cog.rs": "2c564b6ad48e8d3d76c7b9e482639a8c3ad0b7acde3a474542a4704798fa21b8",
+    "src/zarr.rs": "cd1af3e766e9697a157a61b41919b0c97d7a8e22c469c9872eba2d67101715ae",
+    "Cargo.toml": "9357e3bd3484335f71882578ff7d0522765ca35a8bc17cd3b9c3519a8667e8f2",
+    "Cargo.lock": "97f86672b776d1ab262ea5f75597346d08fb069661a79fe08e3ae5036595f337"
+  },
+  "source_scope": "Discovery and catalog identity/provenance only; qualified decoder, transport, checkpoints, COG and Zarr source engines byte-identical to baseline. Optional catalog provenance is checked by the job wrapper and retained by the scientific writer.",
+  "all_passed": true
+}

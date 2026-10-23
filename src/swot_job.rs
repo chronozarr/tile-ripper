@@ -49,6 +49,8 @@ pub struct Observation {
     pub id: String,
     pub request: Request,
     pub quality_policy: swot::Policy,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub catalog: Option<crate::swot_discovery::CatalogProvenance>,
 }
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -136,6 +138,9 @@ impl Manifest {
                 return fail("observation IDs must be unique 1..64 character ASCII letters/digits/underscore/hyphen");
             }
             let asset = entry.asset()?;
+            if let Some(catalog) = &entry.catalog {
+                catalog.validate(asset)?;
+            }
             if !identifier(&asset.id) {
                 return fail("source asset ID must be a bounded ASCII identifier");
             }
@@ -383,7 +388,14 @@ impl<'a> Job<'a> {
             })?;
             let inspection = Self::inspect(&prepared)?;
             let entry = &self.manifest.observations[index];
-            observations.push(json!({"id":entry.id,"output_group":format!("observations/{}",entry.id),"inspection":inspection}));
+            if let Some(catalog) = &entry.catalog {
+                crate::swot_discovery::bridge::validate_source(
+                    catalog,
+                    entry.asset()?,
+                    &inspection,
+                )?;
+            }
+            observations.push(json!({"id":entry.id,"output_group":format!("observations/{}",entry.id),"catalog":entry.catalog,"inspection":inspection}));
         }
         Ok(
             json!({"document_type":"swot_job_inspection","job_schema":1,"profile":self.manifest.profile,"saved_plan_execution_supported":false,
@@ -392,7 +404,7 @@ impl<'a> Job<'a> {
             "output":{"format":"zarr_v2","encoding":"uncompressed raw stored values","chunk_edge":self.manifest.limits.output_chunk_edge,"max_objects":self.manifest.limits.max_output_objects,"aoi_mask":false},
             "completion":"all required observations must finish, then every source is revalidated in a serial sweep before manifest/synchronization/no-replace publication",
             "known_costs":["full bounded legacy HDF5 index traversal remains default","each source uses its own authentication session; final sweep uses fresh sessions and online eight-byte GET proof","checkpoint replay reconstructs all values and rewrites all output","synchronization and no-replace publication are part of fetch"],
-            "unsupported":["catalog/date/geographic discovery","empty index selections","reprojection/resampling/mosaicking","aligned time series","additional processing releases or products","partial output or completed-observation recovery"],
+            "unsupported":["implicit catalog discovery or geographic-to-native selection within a job","empty index selections","reprojection/resampling/mosaicking","aligned time series","additional processing releases or products","partial output or completed-observation recovery"],
             "source_snapshot":"per-object versions; not an atomic snapshot of a changing collection"}),
         )
     }
@@ -452,6 +464,14 @@ impl<'a> Job<'a> {
                 check_cancelled(&cancelled)?;
                 let prepared = self.prepare(index)?;
                 let inspection = Self::inspect(&prepared)?;
+                let entry = &self.manifest.observations[index];
+                if let Some(catalog) = &entry.catalog {
+                    crate::swot_discovery::bridge::validate_source(
+                        catalog,
+                        entry.asset()?,
+                        &inspection,
+                    )?;
+                }
                 let mut receipt = writer.observation(
                     &self.manifest.observations[index],
                     &prepared,

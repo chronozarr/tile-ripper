@@ -1,0 +1,31 @@
+{
+  "known_controls": [
+    {
+      "name": "original",
+      "bbox": [
+        -73,
+        41,
+        -70,
+        44
+      ],
+      "start": "2024-02-16T02:45:00Z",
+      "end": "2024-02-16T03:00:00Z"
+    },
+    {
+      "name": "held",
+      "bbox": [
+        -179,
+        67,
+        -174,
+        70
+      ],
+      "start": "2024-02-17T18:30:00Z",
+      "end": "2024-02-17T18:45:00Z"
+    }
+  ],
+  "additional_rule": "First three previously unqualified 100m PGD0 candidates in (catalog acquisition start, granule UR, concept ID) order from the original-control region, 2024-02-16T00:00:00Z through 2024-02-18T00:00:00Z. Exclude the two named positive controls. Inspect only native rows/columns [0:16,0:16] with stride one and good/suspect policy; no science stream or support expansion. Stop after three; no replacement if incompatible.",
+  "catalog_limits": "Default CmrClient bounds, limit 20, frozen fixtures for larger matrix.",
+  "source_inspection": "At most three additional exact-object Earthdata sessions, 64 MiB per source request cap, 4096 plan nodes; serial existing native job preparation with metadata output bound 256 KiB each; process timeout 120s per generator. Transport bytes and timings retained. No science-variable chunks streamed.",
+  "workflow": "Search both controls, select known windows from examples/swot-job.json, generate inspected/pinned manifest, normal plan, checkpointed fetch then full reconstruction; compare both outputs to guarded original h5py and NetCDF-C references, Zarr-Python and xarray.",
+  "source_body_acceptance_cap_bytes": 16777216
+}

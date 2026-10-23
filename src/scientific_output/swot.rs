@@ -102,6 +102,10 @@ impl Writer {
         attrs["source"] = source.clone();
         attrs["selection"] = json!(entry.request.spatial);
         attrs["quality_policy"] = entry.quality_policy.provenance();
+        if let Some(catalog) = &entry.catalog {
+            attrs["catalog_provenance"] = json!(catalog);
+            attrs["source_datetime_origin"] = json!("catalog granule acquisition_start; native granule and coverage times remain in source_attributes");
+        }
         attrs["native_grid"] = json!({"source_shape":first["shape"],"selected_shape":count,"grid_mapping":first["grid_mapping"],"axes":first["axes"],"index_transform_is_geolocation":false});
         attrs["source_datetime"] = source["datetime"].clone();
         group(
@@ -340,7 +344,7 @@ impl Writer {
             .get_or_insert_with(|| self.started.elapsed().as_secs_f64());
         Ok(
             json!({"id":entry.id,"group":prefix.trim_start_matches('/'),"status":"source_complete_pending_job_validation","pixels_per_variable":delivered,
-            "source":source,"quality_policy":entry.quality_policy.provenance(),"selection":entry.request.spatial,
+            "source":source,"catalog":entry.catalog,"quality_policy":entry.quality_policy.provenance(),"selection":entry.request.spatial,
             "working_memory":inspection["aligned_execution"]["working_memory"],"observed":report,"output_setup_seconds":setup_seconds}),
         )
     }

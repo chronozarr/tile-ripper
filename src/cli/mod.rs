@@ -2,7 +2,13 @@
 use serde_json::{json, Value};
 use std::{collections::BTreeMap, fs};
 use tile_ripper::Result;
+pub mod discovery;
 const HELP: &str = r#"tile-ripper plan|fetch|stream [request.json] [options]
+  tile-ripper discover --collection SWOT_L2_HR_Raster_D --bbox W,S,E,N \
+      --start RFC3339 --end RFC3339 --limit 20 --output candidates.json
+  tile-ripper discover-job selection.json --auth earthdata --netrc PRIVATE_FILE \
+      --output NEW_JOB.json > job-review.json
+  Bounded CMR discovery and explicit native selection: docs/swot-discovery/workflow.md
   --source URL_OR_PATH --format zarr_v2|stac
   --collection NAME                 required for STAC
   --bbox WEST,SOUTH,EAST,NORTH       EPSG:4326; or --aoi polygon.geojson
@@ -94,6 +100,9 @@ pub struct Checkpoint {
     pub entries: usize,
 }
 pub fn parse(args: &[String]) -> Result<Option<Options>> {
+    parse_with_input_limit(args, 16 * 1024 * 1024)
+}
+pub fn parse_with_input_limit(args: &[String], input_limit: usize) -> Result<Option<Options>> {
     if args.is_empty() || args.iter().any(|s| s == "--help" || s == "-h") {
         println!("{HELP}");
         return Ok(None);
@@ -264,11 +273,11 @@ pub fn parse(args: &[String]) -> Result<Option<Options>> {
         let mut bytes = Vec::new();
         fs::File::open(file)
             .map_err(|_| "cannot read request file; check path and permissions")?
-            .take(16 * 1024 * 1024 + 1)
+            .take(input_limit as u64 + 1)
             .read_to_end(&mut bytes)
             .map_err(|_| "cannot read request JSON")?;
-        if bytes.len() > 16 * 1024 * 1024 {
-            return Err("request JSON exceeds 16 MiB input bound".into());
+        if bytes.len() > input_limit {
+            return Err(format!("request JSON exceeds input bound ({input_limit} bytes)").into());
         }
         let input: Value = serde_json::from_slice(&bytes)
             .map_err(|_| "invalid request JSON syntax; see examples/weatherbench2.json")?;
