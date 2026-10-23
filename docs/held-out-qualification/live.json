@@ -1,0 +1,676 @@
+{
+  "passed": true,
+  "bounds": {
+    "invocations": 3,
+    "checkpoint_logical_bytes_per_invocation": 1048576,
+    "expected_combined_new_source_bytes_cap": 2097152,
+    "basis": "already verified native capture and page16k reads; range persistence fails at 1 MiB; no provider reference capture"
+  },
+  "cases": [
+    {
+      "case": "interrupted",
+      "binary_sha256": "39401be62333b5ae5918b1a71e8b15bfb0400ba8863c8a9de2df3ae260f9dd82",
+      "returncode": 1,
+      "elapsed_seconds": 12.848894041962922,
+      "cpu_seconds": 0.08268400000000001,
+      "sampled_peak_rss_bytes": 22495232,
+      "first_chunk_seconds": null,
+      "prepared_seconds": 12.822044209111482,
+      "tiles_received": 0,
+      "completion_emitted": false,
+      "interruption_sent": true,
+      "error": "{\"authenticated_http\":{\"checkpoint_claims\":1,\"peak_in_flight\":1,\"wire_head\":7,\"wire_get\":26,\"redirects\":7,\"login_requests\":1,\"refreshes\":0,\"route_cache_hits\":21,\"response_body_bytes\":330195,\"redirect_body_bytes\":374,\"signing_auth_seconds\":6.245683916,\"statuses\":{\"200\":3,\"206\":22,\"301\":1,\"302\":2,\"303\":4},\"origins\":{\"https://archive.swot.podaac.earthdata.nasa.gov\":7,\"https://d176wrl3f7yqfo.cloudfront.net\":25,\"https://urs.earthdata.nasa.gov\":1}}}\ntile-ripper: acquisition cancelled at configured canonical origin\n",
+      "authentication_traffic": {
+        "checkpoint_claims": 1,
+        "peak_in_flight": 1,
+        "wire_head": 7,
+        "wire_get": 26,
+        "redirects": 7,
+        "login_requests": 1,
+        "refreshes": 0,
+        "route_cache_hits": 21,
+        "response_body_bytes": 330195,
+        "redirect_body_bytes": 374,
+        "signing_auth_seconds": 6.245683916,
+        "statuses": {
+          "200": 3,
+          "206": 22,
+          "301": 1,
+          "302": 2,
+          "303": 4
+        },
+        "origins": {
+          "https://archive.swot.podaac.earthdata.nasa.gov": 7,
+          "https://d176wrl3f7yqfo.cloudfront.net": 25,
+          "https://urs.earthdata.nasa.gov": 1
+        }
+      }
+    },
+    {
+      "case": "resumed",
+      "binary_sha256": "39401be62333b5ae5918b1a71e8b15bfb0400ba8863c8a9de2df3ae260f9dd82",
+      "returncode": 0,
+      "elapsed_seconds": 8.317378625273705,
+      "cpu_seconds": 0.090308,
+      "sampled_peak_rss_bytes": 31752192,
+      "first_chunk_seconds": 7.569095875136554,
+      "prepared_seconds": 4.924461083021015,
+      "tiles_received": 1,
+      "completion_emitted": true,
+      "interruption_sent": false,
+      "error": null,
+      "summary": {
+        "selected_count": 1310,
+        "wse_sum_m": 38869.788248062134,
+        "uncertainty_count": 1310,
+        "uncertainty_sum_m": 1074.1131531000137,
+        "contributing_count": 1310,
+        "contributing_pixel_sum": 13702,
+        "wse_mean_m": 29.671594082490177,
+        "mean_pixel_uncertainty_m": 0.8199337046564991
+      },
+      "transport": {
+        "phases": {
+          "checkpoint_online_authorization": {
+            "GET SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc": {
+              "seconds": 2.321244084,
+              "attempts": 1,
+              "bytes": 8,
+              "retries": 0,
+              "statuses": {
+                "206": 1
+              }
+            }
+          },
+          "hdf5_bitwise_quality_payload": {
+            "GET SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc": {
+              "seconds": 0.395529667,
+              "attempts": 1,
+              "bytes": 20229,
+              "retries": 0,
+              "statuses": {
+                "206": 1
+              }
+            }
+          },
+          "hdf5_pixel_count_payload": {
+            "GET SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc": {
+              "seconds": 0.328796708,
+              "attempts": 1,
+              "bytes": 11207,
+              "retries": 0,
+              "statuses": {
+                "206": 1
+              }
+            }
+          },
+          "hdf5_summary_quality_payload": {
+            "GET SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc": {
+              "seconds": 0.294718375,
+              "attempts": 1,
+              "bytes": 18509,
+              "retries": 0,
+              "statuses": {
+                "206": 1
+              }
+            }
+          },
+          "hdf5_uncertainty_payload": {
+            "GET SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc": {
+              "seconds": 0.369175375,
+              "attempts": 1,
+              "bytes": 37743,
+              "retries": 0,
+              "statuses": {
+                "206": 1
+              }
+            }
+          },
+          "hdf5_wse_payload": {
+            "GET SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc": {
+              "seconds": 0.340840958,
+              "attempts": 1,
+              "bytes": 36388,
+              "retries": 0,
+              "statuses": {
+                "206": 1
+              }
+            }
+          },
+          "metadata_index_discovery": {
+            "HEAD SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc": {
+              "seconds": 0.898085666,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            }
+          },
+          "planning": {
+            "HEAD SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc": {
+              "seconds": 1.677125292,
+              "attempts": 2,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 2
+              }
+            }
+          },
+          "post_execution_validation": {
+            "HEAD SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc": {
+              "seconds": 0.744772667,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            }
+          },
+          "pre_execution_validation": {
+            "HEAD SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc": {
+              "seconds": 0.89603275,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            }
+          }
+        },
+        "requests": 11,
+        "bytes": 124084,
+        "retries": 0,
+        "seconds": 8.266251583,
+        "objects": {
+          "GET SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc": {
+            "seconds": 4.050308166000001,
+            "attempts": 6,
+            "bytes": 124084,
+            "retries": 0,
+            "statuses": {
+              "206": 6
+            }
+          },
+          "HEAD SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc": {
+            "seconds": 4.216021084,
+            "attempts": 5,
+            "bytes": 0,
+            "retries": 0,
+            "statuses": {
+              "200": 5
+            }
+          }
+        },
+        "authenticated_http": {
+          "checkpoint_claims": 1,
+          "peak_in_flight": 1,
+          "wire_head": 10,
+          "wire_get": 10,
+          "redirects": 9,
+          "login_requests": 1,
+          "refreshes": 0,
+          "route_cache_hits": 5,
+          "response_body_bytes": 124458,
+          "redirect_body_bytes": 374,
+          "signing_auth_seconds": 6.537101375999999,
+          "statuses": {
+            "200": 5,
+            "206": 6,
+            "301": 1,
+            "302": 2,
+            "303": 6
+          },
+          "origins": {
+            "https://archive.swot.podaac.earthdata.nasa.gov": 8,
+            "https://d176wrl3f7yqfo.cloudfront.net": 11,
+            "https://urs.earthdata.nasa.gov": 1
+          }
+        },
+        "checkpoint": {
+          "schema_version": 1,
+          "reuse": "exact source ranges; scientific stream restarts; tiles may repeat",
+          "limit_policy": "fail acquisition; no eviction or uncached fallback",
+          "limits": {
+            "logical_disk_bytes": 1048576,
+            "entry_bytes": 8388608,
+            "entries": 2048,
+            "working_reservation_bytes": 2162688,
+            "active_writes": 1,
+            "open_files_max": 5
+          },
+          "disk_bytes": 460835,
+          "entries": 27,
+          "failed": false,
+          "counts": {
+            "reused_ranges": 21,
+            "reused_bytes": 329813,
+            "retained_ranges_reused": 21,
+            "retained_bytes_reused": 329813,
+            "written_ranges": 5,
+            "written_bytes": 124076,
+            "read_seconds": 0.0006102490000000001,
+            "write_seconds": 0.0054469159999999996
+          }
+        },
+        "cached_metadata_bytes": 331776,
+        "range_trace_sha256": "f62e40f50778edd881e00ec748ce0ade33bbb9c2988078738593a2c8ec6cae3d",
+        "range_identities": 6
+      },
+      "scheduler": {
+        "profile": "bounded aligned SWOT tiles",
+        "workers": 1,
+        "queue_capacity": 0,
+        "reserved_bytes_peak": 39351697,
+        "budget_bytes": 67108864,
+        "encoded_cache_cap_bytes": 8388608,
+        "encoded_cache_hits": 0,
+        "tiles": 1,
+        "max_tile_pixels": 219236,
+        "redecoded_intersections": 5
+      },
+      "science": {
+        "all_native_value_bits_equal": true,
+        "all_five_source_masks_equal": true,
+        "exact_logical_coverage": true,
+        "all_coordinates_equal": true,
+        "derived_mask_equal": true,
+        "independent_summaries_equal": true,
+        "pixels_per_variable": 16384,
+        "tiles": 1,
+        "references": [
+          {
+            "reader": "h5py",
+            "versions": {
+              "reader": "3.12.1",
+              "hdf5": "1.12.2"
+            },
+            "access": "local_sparse_reference",
+            "prepare_seconds": 0.0023210826329886913,
+            "completion_seconds": 0.030811541713774204,
+            "api_cpu_seconds": 0.030321999999999988,
+            "peak_rss_bytes": 54132736,
+            "value_sha256": [
+              "d11f636316920d9af1e9813977a657a2e8d3a270a6e0596f5b0a8e5d55f547d6",
+              "cb11cbb78d1316aff71e900d208768e3adb9ecaac543f7744755e06e6b431818",
+              "f4416dc5314ae794942d94b1590ead14fe00cc8e086973361fd328bd0e627faa",
+              "95095335009e74667907264584a8ec34685d352adb0fbdc7e37e41ce133afafc",
+              "502dbc75b4c0bf8d74fd3cd3910474f1bba4f64b8c126219cd37e65b547cc426"
+            ],
+            "axis_sha256": [
+              "4c117689b41b7e3d583827d5e3a777c8d0813caeee6af68bf008d268a31e9578",
+              "a7459240033c04c362112dd4502b6a6da6b7d9a4075467628d7975512d27cb5e"
+            ],
+            "summary": {
+              "selected_count": 1310,
+              "wse_sum_m": 38869.788248062134,
+              "wse_mean_m": 29.671594082490177,
+              "uncertainty_count": 1310,
+              "uncertainty_sum_m": 1074.1131531000137,
+              "mean_pixel_uncertainty_m": 0.8199337046564991,
+              "contributing_count": 1310,
+              "contributing_pixel_sum": 13702
+            },
+            "process_wall_seconds": 0.23503654217347503,
+            "process_cpu_seconds": 0.23058
+          },
+          {
+            "reader": "netcdf4",
+            "versions": {
+              "reader": "1.7.4",
+              "netcdf_c": "4.9.3 of Sep 15 2025 23:01:51 $",
+              "hdf5": "1.14.6"
+            },
+            "access": "local_sparse_reference",
+            "prepare_seconds": 0.009853499941527843,
+            "completion_seconds": 0.051246291026473045,
+            "api_cpu_seconds": 0.03968999999999999,
+            "peak_rss_bytes": 72794112,
+            "value_sha256": [
+              "d11f636316920d9af1e9813977a657a2e8d3a270a6e0596f5b0a8e5d55f547d6",
+              "cb11cbb78d1316aff71e900d208768e3adb9ecaac543f7744755e06e6b431818",
+              "f4416dc5314ae794942d94b1590ead14fe00cc8e086973361fd328bd0e627faa",
+              "95095335009e74667907264584a8ec34685d352adb0fbdc7e37e41ce133afafc",
+              "502dbc75b4c0bf8d74fd3cd3910474f1bba4f64b8c126219cd37e65b547cc426"
+            ],
+            "axis_sha256": [
+              "4c117689b41b7e3d583827d5e3a777c8d0813caeee6af68bf008d268a31e9578",
+              "a7459240033c04c362112dd4502b6a6da6b7d9a4075467628d7975512d27cb5e"
+            ],
+            "summary": {
+              "selected_count": 1310,
+              "wse_sum_m": 38869.788248062134,
+              "wse_mean_m": 29.671594082490177,
+              "uncertainty_count": 1310,
+              "uncertainty_sum_m": 1074.1131531000137,
+              "mean_pixel_uncertainty_m": 0.8199337046564991,
+              "contributing_count": 1310,
+              "contributing_pixel_sum": 13702
+            },
+            "process_wall_seconds": 0.16674045799300075,
+            "process_cpu_seconds": 0.14911000000000005
+          }
+        ],
+        "fresh_consumer_calculation_equal": true,
+        "guarded_file_reads": 366,
+        "capture_misses": 0,
+        "read_trace_sha256": "b663c3a1614b48be0d8315e3b23b23d82b87c358408b2f816edc1f1b5a646ccf"
+      }
+    },
+    {
+      "case": "complete-replay",
+      "binary_sha256": "39401be62333b5ae5918b1a71e8b15bfb0400ba8863c8a9de2df3ae260f9dd82",
+      "returncode": 0,
+      "elapsed_seconds": 7.223230499774218,
+      "cpu_seconds": 0.07234800000000002,
+      "sampled_peak_rss_bytes": 31801344,
+      "first_chunk_seconds": 6.317363916896284,
+      "prepared_seconds": 5.174941542092711,
+      "tiles_received": 1,
+      "completion_emitted": true,
+      "interruption_sent": false,
+      "error": null,
+      "summary": {
+        "selected_count": 1310,
+        "wse_sum_m": 38869.788248062134,
+        "uncertainty_count": 1310,
+        "uncertainty_sum_m": 1074.1131531000137,
+        "contributing_count": 1310,
+        "contributing_pixel_sum": 13702,
+        "wse_mean_m": 29.671594082490177,
+        "mean_pixel_uncertainty_m": 0.8199337046564991
+      },
+      "transport": {
+        "phases": {
+          "checkpoint_online_authorization": {
+            "GET SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc": {
+              "seconds": 2.174412667,
+              "attempts": 1,
+              "bytes": 8,
+              "retries": 0,
+              "statuses": {
+                "206": 1
+              }
+            }
+          },
+          "metadata_index_discovery": {
+            "HEAD SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc": {
+              "seconds": 0.829661541,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            }
+          },
+          "planning": {
+            "HEAD SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc": {
+              "seconds": 2.146311708,
+              "attempts": 2,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 2
+              }
+            }
+          },
+          "post_execution_validation": {
+            "HEAD SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc": {
+              "seconds": 0.905507208,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            }
+          },
+          "pre_execution_validation": {
+            "HEAD SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc": {
+              "seconds": 1.132143125,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            }
+          }
+        },
+        "requests": 6,
+        "bytes": 8,
+        "retries": 0,
+        "seconds": 7.187978417,
+        "objects": {
+          "GET SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc": {
+            "seconds": 2.174413417,
+            "attempts": 1,
+            "bytes": 8,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "HEAD SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc": {
+            "seconds": 5.013626331999999,
+            "attempts": 5,
+            "bytes": 0,
+            "retries": 0,
+            "statuses": {
+              "200": 5
+            }
+          }
+        },
+        "authenticated_http": {
+          "checkpoint_claims": 1,
+          "peak_in_flight": 1,
+          "wire_head": 10,
+          "wire_get": 5,
+          "redirects": 9,
+          "login_requests": 1,
+          "refreshes": 0,
+          "route_cache_hits": 0,
+          "response_body_bytes": 382,
+          "redirect_body_bytes": 374,
+          "signing_auth_seconds": 7.187899042000001,
+          "statuses": {
+            "200": 5,
+            "206": 1,
+            "301": 1,
+            "302": 2,
+            "303": 6
+          },
+          "origins": {
+            "https://archive.swot.podaac.earthdata.nasa.gov": 8,
+            "https://d176wrl3f7yqfo.cloudfront.net": 6,
+            "https://urs.earthdata.nasa.gov": 1
+          }
+        },
+        "checkpoint": {
+          "schema_version": 1,
+          "reuse": "exact source ranges; scientific stream restarts; tiles may repeat",
+          "limit_policy": "fail acquisition; no eviction or uncached fallback",
+          "limits": {
+            "logical_disk_bytes": 1048576,
+            "entry_bytes": 8388608,
+            "entries": 2048,
+            "working_reservation_bytes": 2162688,
+            "active_writes": 1,
+            "open_files_max": 5
+          },
+          "disk_bytes": 460835,
+          "entries": 27,
+          "failed": false,
+          "counts": {
+            "reused_ranges": 26,
+            "reused_bytes": 453889,
+            "retained_ranges_reused": 26,
+            "retained_bytes_reused": 453889,
+            "written_ranges": 0,
+            "written_bytes": 0,
+            "read_seconds": 0.001595541,
+            "write_seconds": 2.5e-07
+          }
+        },
+        "cached_metadata_bytes": 331776,
+        "range_trace_sha256": "2355759c531e96d9d1a7e7520f2601c90f04d7ed0e83833e186e7aa4016130c6",
+        "range_identities": 1
+      },
+      "scheduler": {
+        "profile": "bounded aligned SWOT tiles",
+        "workers": 1,
+        "queue_capacity": 0,
+        "reserved_bytes_peak": 39351697,
+        "budget_bytes": 67108864,
+        "encoded_cache_cap_bytes": 8388608,
+        "encoded_cache_hits": 0,
+        "tiles": 1,
+        "max_tile_pixels": 219236,
+        "redecoded_intersections": 5
+      },
+      "science": {
+        "all_native_value_bits_equal": true,
+        "all_five_source_masks_equal": true,
+        "exact_logical_coverage": true,
+        "all_coordinates_equal": true,
+        "derived_mask_equal": true,
+        "independent_summaries_equal": true,
+        "pixels_per_variable": 16384,
+        "tiles": 1,
+        "references": [
+          {
+            "reader": "h5py",
+            "versions": {
+              "reader": "3.12.1",
+              "hdf5": "1.12.2"
+            },
+            "access": "local_sparse_reference",
+            "prepare_seconds": 0.00184916565194726,
+            "completion_seconds": 0.02930987486615777,
+            "api_cpu_seconds": 0.028999999999999998,
+            "peak_rss_bytes": 52805632,
+            "value_sha256": [
+              "d11f636316920d9af1e9813977a657a2e8d3a270a6e0596f5b0a8e5d55f547d6",
+              "cb11cbb78d1316aff71e900d208768e3adb9ecaac543f7744755e06e6b431818",
+              "f4416dc5314ae794942d94b1590ead14fe00cc8e086973361fd328bd0e627faa",
+              "95095335009e74667907264584a8ec34685d352adb0fbdc7e37e41ce133afafc",
+              "502dbc75b4c0bf8d74fd3cd3910474f1bba4f64b8c126219cd37e65b547cc426"
+            ],
+            "axis_sha256": [
+              "4c117689b41b7e3d583827d5e3a777c8d0813caeee6af68bf008d268a31e9578",
+              "a7459240033c04c362112dd4502b6a6da6b7d9a4075467628d7975512d27cb5e"
+            ],
+            "summary": {
+              "selected_count": 1310,
+              "wse_sum_m": 38869.788248062134,
+              "wse_mean_m": 29.671594082490177,
+              "uncertainty_count": 1310,
+              "uncertainty_sum_m": 1074.1131531000137,
+              "mean_pixel_uncertainty_m": 0.8199337046564991,
+              "contributing_count": 1310,
+              "contributing_pixel_sum": 13702
+            },
+            "process_wall_seconds": 0.23169054090976715,
+            "process_cpu_seconds": 0.22865
+          },
+          {
+            "reader": "netcdf4",
+            "versions": {
+              "reader": "1.7.4",
+              "netcdf_c": "4.9.3 of Sep 15 2025 23:01:51 $",
+              "hdf5": "1.14.6"
+            },
+            "access": "local_sparse_reference",
+            "prepare_seconds": 0.007625834085047245,
+            "completion_seconds": 0.04085312504321337,
+            "api_cpu_seconds": 0.04059599999999999,
+            "peak_rss_bytes": 72941568,
+            "value_sha256": [
+              "d11f636316920d9af1e9813977a657a2e8d3a270a6e0596f5b0a8e5d55f547d6",
+              "cb11cbb78d1316aff71e900d208768e3adb9ecaac543f7744755e06e6b431818",
+              "f4416dc5314ae794942d94b1590ead14fe00cc8e086973361fd328bd0e627faa",
+              "95095335009e74667907264584a8ec34685d352adb0fbdc7e37e41ce133afafc",
+              "502dbc75b4c0bf8d74fd3cd3910474f1bba4f64b8c126219cd37e65b547cc426"
+            ],
+            "axis_sha256": [
+              "4c117689b41b7e3d583827d5e3a777c8d0813caeee6af68bf008d268a31e9578",
+              "a7459240033c04c362112dd4502b6a6da6b7d9a4075467628d7975512d27cb5e"
+            ],
+            "summary": {
+              "selected_count": 1310,
+              "wse_sum_m": 38869.788248062134,
+              "wse_mean_m": 29.671594082490177,
+              "uncertainty_count": 1310,
+              "uncertainty_sum_m": 1074.1131531000137,
+              "mean_pixel_uncertainty_m": 0.8199337046564991,
+              "contributing_count": 1310,
+              "contributing_pixel_sum": 13702
+            },
+            "process_wall_seconds": 0.15221454109996557,
+            "process_cpu_seconds": 0.145772
+          }
+        ],
+        "fresh_consumer_calculation_equal": true,
+        "guarded_file_reads": 366,
+        "capture_misses": 0,
+        "read_trace_sha256": "b663c3a1614b48be0d8315e3b23b23d82b87c358408b2f816edc1f1b5a646ccf"
+      }
+    }
+  ],
+  "retained_ranges_after_interruption": [
+    "range-786432-16384",
+    "range-1064960-16384",
+    "range-4177920-16384",
+    "range-1097728-16384",
+    "range-2867200-32768",
+    "range-9108-1473",
+    "range-1081344-16384",
+    "range-1196032-16384",
+    "range-2965504-16384",
+    "range-802816-16384",
+    "range-3440640-16384",
+    "range-196608-16384",
+    "range-0-16384",
+    "range-16384-16384",
+    "range-0-8",
+    "range-6209536-16384",
+    "range-573440-16384",
+    "range-1179648-16384",
+    "range-2326528-16384",
+    "range-1441792-16384",
+    "range-28583-660",
+    "range-4030464-16384"
+  ],
+  "source": {
+    "url": "https://archive.swot.podaac.earthdata.nasa.gov/podaac-swot-ops-cumulus-protected/SWOT_L2_HR_Raster_D/SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc",
+    "etag": "\"8c583d1085e24a2c438260a206d38131-1\"",
+    "size": 6527265
+  },
+  "traffic": {
+    "interrupted_source_body_bytes": 329821,
+    "combined_source_body_bytes": 453913,
+    "combined_authorization_proof_bytes": 24,
+    "combined_new_source_bytes_excluding_proofs": 453889,
+    "combined_redirect_body_bytes": 1122,
+    "headers_and_tls_bytes_measured": false
+  },
+  "observed_source_versions": [
+    {
+      "case": "resumed",
+      "url": "https://archive.swot.podaac.earthdata.nasa.gov/podaac-swot-ops-cumulus-protected/SWOT_L2_HR_Raster_D/SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc",
+      "etag": "\"8c583d1085e24a2c438260a206d38131-1\"",
+      "size": 6527265
+    },
+    {
+      "case": "complete-replay",
+      "url": "https://archive.swot.podaac.earthdata.nasa.gov/podaac-swot-ops-cumulus-protected/SWOT_L2_HR_Raster_D/SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc",
+      "etag": "\"8c583d1085e24a2c438260a206d38131-1\"",
+      "size": 6527265
+    }
+  ]
+}

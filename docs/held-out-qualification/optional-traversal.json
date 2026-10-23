@@ -1,0 +1,13 @@
+{
+  "operation": "h5py File.visititems (all HDF5 objects, outside the selected reference procedure)",
+  "returncode": 1,
+  "capture_misses": [
+    [
+      4990900,
+      4991412
+    ]
+  ],
+  "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 6, in <module>\n  File \"/Users/jakegearon/.pyenv/versions/3.10.14/lib/python3.10/site-packages/h5py/_hl/group.py\", line 674, in visititems\n    return h5o.visit(self.id, proxy)\n  File \"h5py/_objects.pyx\", line 54, in h5py._objects.with_phil.wrapper\n  File \"h5py/_objects.pyx\", line 55, in h5py._objects.with_phil.wrapper\n  File \"h5py/h5o.pyx\", line 422, in h5py.h5o.visit\nRuntimeError: Object visitation failed (file read failed: time = Fri Oct 23 11:20:21 2026\n, filename = '/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/reference-mirror/source.nc', file descriptor = 4, errno = 5, error message = 'Input/output error', buf = 0x1010dbfb0, total read size = 512, bytes this sub-read = 512, bytes actually read = 18446744073709551615, offset = 0)\n",
+  "new_bytes_fetched": 0,
+  "outcome": "stopped; the capture remains partial; selected guarded h5py and NetCDF-C procedures pass"
+}

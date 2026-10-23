@@ -1,0 +1,121 @@
+{
+  "date": "2026-10-23",
+  "starting_commit": "987e7600586fab04f5a588ff6a68fbd93d7f5a33",
+  "branch": "codex/acquisition-planner",
+  "native_binary_sha256": "39401be62333b5ae5918b1a71e8b15bfb0400ba8863c8a9de2df3ae260f9dd82",
+  "final_rebuild_matches_live_binary": true,
+  "native_dynamic_libraries": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/target/release/tile-ripper:\n\t/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1356.0.0)\n\t/usr/lib/libobjc.A.dylib (compatibility version 1.0.0, current version 228.0.0)\n\t/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation (compatibility version 300.0.0, current version 4201.0.0)\n\t/System/Library/Frameworks/Security.framework/Versions/A/Security (compatibility version 1.0.0, current version 61901.60.40)\n\t/System/Library/Frameworks/SystemConfiguration.framework/Versions/A/SystemConfiguration (compatibility version 1.0.0, current version 1385.60.3)\n\t/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation (compatibility version 150.0.0, current version 4201.0.0)\n\t/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2000.67.0)\n\t/usr/lib/libiconv.2.dylib (compatibility version 7.0.0, current version 7.0.0)\n",
+  "checks": [
+    {
+      "command": "cargo test --locked --no-default-features --features native-hdf5,authenticated-http",
+      "log": "prototype-output/held-out-qualification/rust-native-auth-final.log",
+      "log_sha256": "42b5ae859aa3c6604d9a92d93209ded66d27176274fa099ca7b3ed98011d474c",
+      "passed": true,
+      "passed_tests": 61,
+      "failed_tests": 0,
+      "ignored": 5
+    },
+    {
+      "command": "cargo clippy --locked --all-features --all-targets -- -D warnings",
+      "log": "prototype-output/held-out-qualification/clippy-all-final.log",
+      "log_sha256": "030b615b5c4d8fff75e2c82fd81de8c77e1b9ce86934d82a5e83103256f1dcf5",
+      "passed": true
+    },
+    {
+      "command": "cargo check --locked --no-default-features",
+      "log": "prototype-output/held-out-qualification/check-none.log",
+      "log_sha256": "8ec95cdb1d4c093ea214c1c37645cacce3b6eb3a78251457d92002a9dcf03cef",
+      "passed": true
+    },
+    {
+      "command": "cargo fmt --all -- --check",
+      "log": "prototype-output/held-out-qualification/rustfmt.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "passed": true
+    },
+    {
+      "command": "ruff check bench/swot_held_out.py bench/swot_reference_probe.py",
+      "log": "prototype-output/held-out-qualification/ruff.log",
+      "log_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "passed": true
+    },
+    {
+      "command": "ruff format --check bench/swot_held_out.py bench/swot_reference_probe.py",
+      "log": "prototype-output/held-out-qualification/ruff-format.log",
+      "log_sha256": "3bc53bf3e981a98a34a852e175bf9b77af841edea74fca595d9aedcbaf9a4938",
+      "passed": true
+    },
+    {
+      "command": "python bench/swot_held_out.py reference-regression",
+      "log": "prototype-output/held-out-qualification/reference-regression-final.log",
+      "log_sha256": "18103bc8717e7ebea8ea2e762ef0980820ec141ae4ab0a2c30cf402561e68b78",
+      "passed": true
+    },
+    {
+      "command": "python bench/swot_held_out.py qualify",
+      "log": "prototype-output/held-out-qualification/qualification.log",
+      "log_sha256": "af49a1a26fdbd84ca46daf1eec86657905d5f146019135f404071a3b41de00dd",
+      "passed": true
+    },
+    {
+      "command": "python bench/swot_held_out.py resources",
+      "log": "prototype-output/held-out-qualification/resources.log",
+      "log_sha256": "4879ad55d4663b70346955989224a641e85caf8fdca8f5b13c522712aa4fcc76",
+      "passed": true
+    },
+    {
+      "command": "python bench/swot_held_out.py resume",
+      "log": "prototype-output/held-out-qualification/resume.log",
+      "log_sha256": "a5e4c85b44ee601ccdd58b163cc799d5364f9a4f4c1bbbdb8dd10e510a6b153a",
+      "passed": true
+    },
+    {
+      "command": "python bench/swot_held_out.py faults",
+      "log": "prototype-output/held-out-qualification/fault-regression.log",
+      "log_sha256": "5290057cf473ba3b5dd5231337e892f8b541b8f751e8d853e5dfce9004ef3faf",
+      "passed": true
+    },
+    {
+      "command": "python bench/swot_held_out.py live",
+      "log": "prototype-output/held-out-qualification/live.log",
+      "log_sha256": "321a2423b3b3839efa060e03b72feee235b79c62ce442eb07b93c537cb233637",
+      "passed": true
+    }
+  ],
+  "source_sha256": {
+    "src/acquisition.rs": "909487fb5605b75a07cf7a4a17be69c55e85fa5fa430703d2a597b1621b86ed4",
+    "src/hdf5.rs": "98292191566f959dc75336902cb39ef9ce9d23b4a3a882deda548e2fd8fd7937",
+    "src/swot.rs": "8e80605df8f5a5db8ed333eba42159db80ea07f0dffabb28785c5bd0bf83073c",
+    "src/checkpoint.rs": "34fb187e3420e3843a6ad10b8b83cc6b70a62e58198782b546b67a1a5dffb74c",
+    "tests/swot.rs": "07d4c66e3017104888b84f3a977e15d3dc671ac38f6099b3aa3838bf6971dc1c",
+    "bench/swot_held_out.py": "b6e69b8735b710c91e3f99c6ceaee3ba484e61b73efed1c3d8245476ec25c03b",
+    "bench/swot_reference_probe.py": "2f5a20324c5f01ca670e2f1d1eb802ae1c76604fffdc83de2b5b52b03464827c",
+    "bench/capture_guard.c": "67e410c3e0e457655a224991178df2cce3e5912c9503c01729425e1f4c6851a9",
+    "bench/checkpoint_linux.sh": "762bf6baafc183fa0f3e016bbafe695d487b26fe900d03bb4957724fc3ffe09f",
+    "bench/swot_quality_reference.py": "58d023a20a8d0507eeabe24eb3fcfc4c28e3c4f302e6548f272193c9f215678e",
+    "bench/hdf5_selective_mirror.py": "d04306cdd1a1b5750d9c866f42d5d4eac857263b6b3e14a0fa5401fb7f0f6c2b",
+    "bench/transfer_resume.py": "8ea17b11cda11a68f782481c7fa7fdb0ff753a38cabb59a5884536a664a84d43"
+  },
+  "reference_additional_range_gets": 127,
+  "reference_additional_bytes": 61298,
+  "local_held_out_scenarios": 11,
+  "adversarial_cli_resume_scenarios": 32,
+  "corrected_reference_operations": 22,
+  "redaction_audit": {
+    "files_checked": 62,
+    "password_basic_encoding_signed_url_and_fixture_sentinels_found": false
+  },
+  "release_operations": {
+    "pushed": false,
+    "merged": false,
+    "tagged": false,
+    "published": false,
+    "deployed": false
+  },
+  "c_guard_build": {
+    "command": "clang -Wall -Wextra -Werror -dynamiclib -o prototype-output/held-out-qualification/capture_guard.dylib bench/capture_guard.c",
+    "passed": true,
+    "guard_library_sha256": "954c1d02296edf4076cd2470f30392ef0c2ebace59d73908759e96f74af8b517",
+    "positive_and_negative_read_controls_passed": true
+  }
+}

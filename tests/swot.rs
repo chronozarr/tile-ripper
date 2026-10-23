@@ -63,6 +63,33 @@ fn differing_physical_shapes_align_native_unsigned_values_and_coordinates() -> R
     Ok(())
 }
 #[test]
+fn inspected_sufficient_working_budget_executes_the_same_selection() -> Result<()> {
+    let mut r = request("quality-le");
+    let p = swot::prepare(&r, Policy::cookbook(), &mut LayoutCache::default())?;
+    let explanation = p.explain();
+    let memory = &explanation["aligned_execution"]["working_memory"];
+    r.budget.buffer_bytes = memory["estimated_sufficient_buffer_bytes"]
+        .as_u64()
+        .unwrap() as usize;
+    drop(p);
+    let p = swot::prepare(&r, Policy::cookbook(), &mut LayoutCache::default())?;
+    assert_eq!(
+        p.explain()["aligned_execution"]["working_memory"]["admits_one_pixel"],
+        true
+    );
+    let mut stream = p.into_stream()?;
+    let mut pixels = 0;
+    for tile in stream.by_ref() {
+        pixels += tile?.validity.len();
+    }
+    let report = stream.finish()?;
+    assert_eq!(pixels, 120);
+    assert!(
+        report.scheduler["reserved_bytes_peak"].as_u64().unwrap() <= r.budget.buffer_bytes as u64
+    );
+    Ok(())
+}
+#[test]
 fn policies_reject_unknown_contradictory_and_duplicate_conditions() {
     let r = request("quality-le");
     for policy in [

@@ -1,0 +1,66 @@
+{
+  "source": {
+    "kind": "assets",
+    "assets": [
+      {
+        "id": "science",
+        "locator": "https://archive.swot.podaac.earthdata.nasa.gov/podaac-swot-ops-cumulus-protected/SWOT_L2_HR_Raster_D/SWOT_L2_HR_Raster_100m_UTM01W_N_x_x_x_011_082_016F_20240217T183710_20240217T183712_PGD0_01.nc",
+        "format": "hdf5",
+        "datetime": null
+      }
+    ]
+  },
+  "spatial": {
+    "kind": "array_slice",
+    "start": [
+      0,
+      656
+    ],
+    "count": [
+      128,
+      128
+    ],
+    "step": [
+      1,
+      1
+    ],
+    "axes": [
+      "/y",
+      "/x"
+    ]
+  },
+  "time": null,
+  "variables": [
+    {
+      "kind": "dataset",
+      "path": "/wse"
+    },
+    {
+      "kind": "dataset",
+      "path": "/wse_qual"
+    },
+    {
+      "kind": "dataset",
+      "path": "/wse_qual_bitwise"
+    },
+    {
+      "kind": "dataset",
+      "path": "/wse_uncert"
+    },
+    {
+      "kind": "dataset",
+      "path": "/n_wse_pix"
+    }
+  ],
+  "grid": {
+    "kind": "native"
+  },
+  "sink": {
+    "kind": "callback"
+  },
+  "budget": {
+    "buffer_bytes": 67108864,
+    "max_nodes": 4096,
+    "chunk_edge": 32
+  }
+}

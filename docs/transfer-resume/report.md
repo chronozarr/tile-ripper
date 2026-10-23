@@ -1,5 +1,10 @@
 # Version-bound transfer resume: local decision gate
 
+> Historical milestone at `987e760`. The held-out reference failure and
+> nonempty selection are resolved in the
+> [2026-10-23 held-out qualification report](../held-out-qualification/report.md).
+> The original failing receipts below remain preserved.
+
 The gate is open for the previously qualified SWOT Raster D PGD0 product and
 five-layer policy. The normal CLI and Rust API now resume verified source
 transfers and reconstruct a fresh provisional scientific stream. Work continues

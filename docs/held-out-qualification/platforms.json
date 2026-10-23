@@ -1,0 +1,29 @@
+{
+  "macos": {
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "command": "cargo test --locked --no-default-features --features native-hdf5,authenticated-http --lib checkpoint::tests",
+    "passed": 8,
+    "ignored_direct_helpers": 2,
+    "log_sha256": "96ce41f290d57601f85521e9f17a35368f7abb89c73b43208cfbb2903841f78e"
+  },
+  "linux": {
+    "kernel": "Linux 6f62b2bf47ed 6.12.76-linuxkit #1 SMP Sun Mar  8 14:41:59 UTC 2026 aarch64 GNU/Linux",
+    "rustc": "rustc 1.92.0 (ded5c06cf 2025-12-08)",
+    "architecture": "aarch64",
+    "image": "rust:1.92-slim",
+    "image_id": "sha256:2524356c645558866050e7327090261ea03756cc300047329c28f3298ca27c46",
+    "image_digest": "rust@sha256:bf3368a992915f128293ac76917ab6e561e4dda883273c8f5c9f6f8ea37a378e",
+    "image_identity_observation": "docker image inspect output captured immediately after the successful Linux validation",
+    "command": "docker run --rm -v \"$PWD:/src:ro\" -v \"$HOME/.cargo/registry:/usr/local/cargo/registry:ro\" -w /src rust:1.92-slim sh bench/checkpoint_linux.sh",
+    "ordinary_tests_uid": 1000,
+    "ordinary_tests_passed": 8,
+    "foreign_uid_test_runner": 0,
+    "foreign_directory_uid": 1000,
+    "foreign_uid_test_passed": true,
+    "checkpoint_filesystem": "container /tmp on Linux; not host-mounted source",
+    "log_sha256": "0e0d45cea75049edd480664dbe8d3f1102607051943d8658f0df4ad9f9fcb2e9",
+    "checkpoint_source_sha256": "34fb187e3420e3843a6ad10b8b83cc6b70a62e58198782b546b67a1a5dffb74c"
+  },
+  "power_loss_tested": false,
+  "windows_tested": false
+}

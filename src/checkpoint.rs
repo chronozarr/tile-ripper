@@ -986,6 +986,43 @@ mod tests {
         Ok(())
     }
     #[test]
+    fn atomic_publication_preserves_an_existing_record() -> Result<()> {
+        let _serial = serial();
+        let root = Root::new();
+        let s = root.store();
+        bind(&s)?;
+        s.write(0, b"keep")?;
+        drop(s);
+        let path = root.managed().join("range-0-4");
+        let original = fs::read(&path)?;
+        let directory = private_fs::Directory::open(&root.0)?;
+        assert!(directory
+            .install_entry("range-0-4", &[0; HEADER], b"oops")
+            .is_err());
+        assert_eq!(fs::read(&path)?, original);
+        drop(directory);
+        let s = root.store();
+        bind(&s)?;
+        assert_eq!(s.read(0, 4)?, Some(b"keep".to_vec()));
+        Ok(())
+    }
+    #[test]
+    #[ignore = "requires externally supplied directory owned by another uid"]
+    fn foreign_owned_private_directory_is_rejected() -> Result<()> {
+        let _serial = serial();
+        let path = PathBuf::from(std::env::var_os("TILE_RIPPER_UNIT_FOREIGN_ROOT").unwrap());
+        let metadata = fs::metadata(&path)?;
+        use std::os::unix::fs::MetadataExt;
+        assert_ne!(metadata.uid(), unsafe { libc::geteuid() });
+        assert_eq!(metadata.mode() & 0o077, 0);
+        let error = Store::open(Options::new(&path), json!({}), json!({}))
+            .err()
+            .unwrap();
+        assert!(error.to_string().contains("private owned directories"));
+        assert!(!path.join("tile-ripper-checkpoint-v1").exists());
+        Ok(())
+    }
+    #[test]
     fn limits_and_enospc_are_terminal_and_partial_writes_never_replay() -> Result<()> {
         let _serial = serial();
         let oversized = "x".repeat(1024 * 1024);

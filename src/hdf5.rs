@@ -1189,6 +1189,127 @@ fn payload_phase(path: &str) -> &'static str {
     }
 }
 impl Context {
+    // The same calculation drives inspection and execution admission. The
+    // sufficient estimate leaves room for the largest planned logical tile;
+    // it accounts for the cache growing as buffer_bytes / 8.
+    pub(crate) fn aligned_reservation(
+        &self,
+        asset: &Asset,
+        request: &Request,
+    ) -> Result<(usize, usize, Value)> {
+        let bindings = crate::swot::PATHS
+            .iter()
+            .map(|path| self.binding(&asset.id, path))
+            .collect::<Result<Vec<_>>>()?;
+        let prepared = self.bytes();
+        let cache = request.budget.buffer_bytes / 8;
+        let mut work = 0;
+        let mut limiting = "";
+        let mut chunks = Vec::new();
+        let mut coordinate_peak = 0;
+        let metadata_budget = self
+            .files
+            .lock()
+            .unwrap()
+            .values()
+            .try_fold(0usize, |peak, m| {
+                m.bytes()
+                    .checked_add(64)
+                    .and_then(|n| n.checked_mul(32))
+                    .map(|n| peak.max(n))
+            })
+            .ok_or("SWOT metadata budget estimate overflow")?;
+        let mut preparation_budget = metadata_budget;
+        for b in &bindings {
+            let coordinate_budget = b
+                .coordinates
+                .iter()
+                .try_fold(0usize, |n, axis| {
+                    axis.len().checked_mul(256).and_then(|v| n.checked_add(v))
+                })
+                .ok_or("SWOT coordinate budget estimate overflow")?;
+            preparation_budget = preparation_budget.max(coordinate_budget).max(
+                b.jobs
+                    .len()
+                    .checked_mul(4096)
+                    .ok_or("SWOT chunk plan budget estimate overflow")?,
+            );
+            let native = b.layout.block[0]
+                .checked_mul(b.layout.block[1])
+                .and_then(|n| n.checked_mul(if b.layout.dtype == "|u1" { 1 } else { 4 }))
+                .ok_or("SWOT native chunk overflow")?;
+            let encoded = b
+                .jobs
+                .iter()
+                .filter_map(|j| j.entry.as_ref().map(|e| e.size))
+                .max()
+                .unwrap_or(0);
+            let decoder = native
+                .checked_mul(8)
+                .and_then(|n| n.checked_add(encoded.checked_mul(3)?))
+                .ok_or("SWOT decoder reservation overflow")?;
+            if decoder > work {
+                work = decoder;
+                limiting = &b.path;
+            }
+            for axis in b.description["axes"].as_array().into_iter().flatten() {
+                coordinate_peak = coordinate_peak.max(
+                    axis["storage"]["prepare_reserved_bytes_peak"]
+                        .as_u64()
+                        .unwrap_or(0) as usize,
+                );
+                preparation_budget = preparation_budget.max(
+                    axis["storage"]["chunks"]
+                        .as_array()
+                        .map_or(0, Vec::len)
+                        .checked_mul(4096)
+                        .ok_or("SWOT coordinate plan estimate overflow")?,
+                );
+            }
+            chunks.push(json!({"variable":b.path,"native_chunk_bytes":native,
+                "largest_selected_encoded_chunk_bytes":encoded,"decoder_reservation_bytes":decoder}));
+        }
+        let fixed = prepared
+            .checked_add(work)
+            .and_then(|n| n.checked_add(65536))
+            .ok_or("SWOT reservation overflow")?;
+        let base = fixed
+            .checked_add(cache)
+            .ok_or("SWOT reservation overflow")?;
+        let largest_tile = bindings[0]
+            .jobs
+            .iter()
+            .try_fold(1usize, |peak, j| {
+                j.count[0].checked_mul(j.count[1]).map(|n| peak.max(n))
+            })
+            .ok_or("SWOT logical tile size overflow")?;
+        let sufficient = largest_tile
+            .checked_mul(128)
+            .and_then(|n| fixed.checked_add(n))
+            .and_then(|n| n.checked_mul(8))
+            .map(|n| n.div_ceil(7))
+            .and_then(|n| {
+                prepared
+                    .checked_mul(2)
+                    .map(|p| n.max(p).max(coordinate_peak).max(preparation_budget))
+            })
+            .ok_or("SWOT sufficient budget estimate overflow")?;
+        Ok((
+            base,
+            cache,
+            json!({"scope":"working reservations for this prepared selection and metadata strategy; not a process RSS ceiling",
+            "budget_bytes":request.budget.buffer_bytes,"prepared_total_bytes":prepared,
+            "prepared_metadata_coordinates_plan_bytes":prepared - self.transport.reservation(),
+            "authentication_checkpoint_reservation_bytes":self.transport.reservation(),
+            "coordinate_prepare_reserved_bytes_peak":coordinate_peak,
+            "metadata_preparation_sufficient_buffer_bytes":metadata_budget,
+            "physical_chunks":chunks,"limiting_decoder_variable":limiting,"decoder_scratch_bytes":work,
+            "encoded_range_retention_bytes":cache,"fixed_stream_overhead_bytes":65536,
+            "base_reservation_bytes":base,"assembly_reservation_bytes_per_pixel":128,
+            "largest_logical_tile_pixels":largest_tile,"estimated_sufficient_buffer_bytes":sufficient,
+            "admits_one_pixel":request.budget.buffer_bytes.saturating_sub(base) >= 128}),
+        ))
+    }
     pub fn execute_aligned(
         &self,
         asset: &Asset,
@@ -1204,43 +1325,20 @@ impl Context {
             .map(|path| self.binding(&asset.id, path))
             .collect::<Result<Vec<_>>>()?;
         let wse = &bindings[0];
-        let cache_cap = request.budget.buffer_bytes / 8;
-        let mut work = 0;
-        for b in &bindings {
-            let native = b.layout.block[0]
-                .checked_mul(b.layout.block[1])
-                .and_then(|n| n.checked_mul(if b.layout.dtype == "|u1" { 1 } else { 4 }))
-                .ok_or("SWOT native chunk overflow")?;
-            let encoded = b
-                .jobs
-                .iter()
-                .filter_map(|j| j.entry.as_ref().map(|e| e.size))
-                .max()
-                .unwrap_or(0);
-            work = work.max(
-                native
-                    .checked_mul(8)
-                    .and_then(|n| n.checked_add(encoded.checked_mul(3)?))
-                    .ok_or("SWOT decoder reservation overflow")?,
-            );
-        }
-        let base = self
-            .bytes()
-            .checked_add(cache_cap)
-            .and_then(|n| n.checked_add(work))
-            .and_then(|n| n.checked_add(65536))
-            .ok_or("SWOT reservation overflow")?;
+        let (base, cache_cap, memory) = self.aligned_reservation(asset, request)?;
         let available = request
             .budget
             .buffer_bytes
             .checked_sub(base)
-            .ok_or("SWOT aligned decoder/cache exceeds working budget")?;
+            .filter(|n| *n >= 128)
+            .ok_or_else(|| format!(
+                "SWOT aligned decoder/cache exceeds working budget: requested {} bytes; prepared {} bytes (including authentication/checkpoint), decoder {} bytes limited by {}, encoded cache {} bytes, stream overhead 65536 bytes; estimated sufficient buffer_bytes={} for this prepared selection and metadata strategy (working reservations, not process RSS)",
+                request.budget.buffer_bytes, memory["prepared_total_bytes"], memory["decoder_scratch_bytes"],
+                memory["limiting_decoder_variable"], cache_cap, memory["estimated_sufficient_buffer_bytes"],
+            ))?;
         // 17 bytes of raw values + mask, five copies of coordinates and
         // conservative assembly slack, including narrow one-row/column tiles.
         let max_pixels = available / 128;
-        if max_pixels == 0 {
-            return fail("SWOT aligned output exceeds working budget");
-        }
         let mut cache = RangeCache {
             cap: cache_cap,
             bytes: 0,

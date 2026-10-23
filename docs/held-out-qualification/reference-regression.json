@@ -1,0 +1,643 @@
+{
+  "passed": true,
+  "original_capture_rejected": {
+    "name": "regression-original-open",
+    "command": [
+      "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+      "netcdf4",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc",
+      "open"
+    ],
+    "returncode": -6,
+    "stdout": "{\"phase\": \"environment\", \"reader\": \"1.7.4\", \"netcdf_c\": \"4.9.3 of Sep 15 2025 23:01:51 $\", \"hdf5\": \"1.14.6\", \"extension\": \"/Users/jakegearon/.pyenv/versions/3.10.14/lib/python3.10/site-packages/netCDF4/_netCDF4.cpython-310-darwin.so\"}\n{\"phase\": \"open.begin\"}\n",
+    "stderr": "",
+    "events": [
+      "HIT 0 8",
+      "HIT 0 8",
+      "HIT 0 48",
+      "HIT 48 560",
+      "HIT 560 608",
+      "HIT 806121 806159",
+      "HIT 12483 12629",
+      "HIT 1106396 1106908",
+      "HIT 2337392 2337445",
+      "HIT 1190692 1191204",
+      "HIT 2883317 2883829",
+      "CAPTURE_MISS 4985152 4985664"
+    ],
+    "misses": [
+      [
+        4985152,
+        4985664
+      ]
+    ]
+  },
+  "posix_hole_is_explicit_eio": true,
+  "corrected_operations": [
+    {
+      "name": "regression-netcdf4-open",
+      "command": [
+        "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+        "netcdf4",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/reference-mirror/source.nc",
+        "open"
+      ],
+      "returncode": 0,
+      "signal": null,
+      "phases": [
+        "environment",
+        "open.begin",
+        "open.end"
+      ],
+      "misses": [],
+      "reads": 251,
+      "trace_sha256": "e8d91983e9bb5f646c05ed7bb52c1e32f23575bc1f8732ffd12c912247db618c",
+      "stdout_sha256": "7f0952cee7c57ff3232f6a7c9723c06298a10eab50ab4c325e6a954615abc768",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_excerpt": "",
+      "raw_transcript_prefix": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/regression-netcdf4-open"
+    },
+    {
+      "name": "regression-h5py-open",
+      "command": [
+        "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+        "h5py",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/reference-mirror/source.nc",
+        "open"
+      ],
+      "returncode": 0,
+      "signal": null,
+      "phases": [
+        "environment",
+        "open.begin",
+        "open.end"
+      ],
+      "misses": [],
+      "reads": 3,
+      "trace_sha256": "fff64f094df5679e10e34f5040f4ab691ec6b0849b9b74870a616cfa216c9e28",
+      "stdout_sha256": "6712b8b3c3cb87d4dc7b438295917bbf80bf72d936a857bbdaff04cc435895d5",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_excerpt": "",
+      "raw_transcript_prefix": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/regression-h5py-open"
+    },
+    {
+      "name": "regression-netcdf4-enumerate",
+      "command": [
+        "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+        "netcdf4",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/reference-mirror/source.nc",
+        "enumerate"
+      ],
+      "returncode": 0,
+      "signal": null,
+      "phases": [
+        "environment",
+        "open.begin",
+        "open.end",
+        "enumerate.begin",
+        "enumerate.end",
+        "close.begin",
+        "close.end"
+      ],
+      "misses": [],
+      "reads": 254,
+      "trace_sha256": "52ef0c33321816c7c06c822caf1c527677cc26c672b7674c9834aedc633b48f7",
+      "stdout_sha256": "6ba708d011791d51342267872ee04278498b0f04cb8aefb4662c1adcd6ef7082",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_excerpt": "",
+      "raw_transcript_prefix": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/regression-netcdf4-enumerate"
+    },
+    {
+      "name": "regression-h5py-enumerate",
+      "command": [
+        "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+        "h5py",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/reference-mirror/source.nc",
+        "enumerate"
+      ],
+      "returncode": 0,
+      "signal": null,
+      "phases": [
+        "environment",
+        "open.begin",
+        "open.end",
+        "enumerate.begin",
+        "enumerate.end",
+        "close.begin",
+        "close.end"
+      ],
+      "misses": [],
+      "reads": 22,
+      "trace_sha256": "78ff36a3a05bfbf7d52da98487ef852553ba80bc847a2c8693c966ea3bd5aee5",
+      "stdout_sha256": "583bddfe6f3aca6cbbf3bea04efa2fc1b4526763deb5d41287c65713cbf7c565",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_excerpt": "",
+      "raw_transcript_prefix": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/regression-h5py-enumerate"
+    },
+    {
+      "name": "regression-netcdf4-read-x",
+      "command": [
+        "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+        "netcdf4",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/reference-mirror/source.nc",
+        "read:x"
+      ],
+      "returncode": 0,
+      "signal": null,
+      "phases": [
+        "environment",
+        "open.begin",
+        "open.end",
+        "read:x.begin",
+        "read:x.end",
+        "close.begin",
+        "close.end"
+      ],
+      "misses": [],
+      "reads": 253,
+      "trace_sha256": "54b4a44035258b6c2f1496d4a3dd41b46fdc631ed96fe784cb20322f3c2d742c",
+      "stdout_sha256": "4d07bf21cbfcc5622801ad100a0b72af39ec694053da05652e06b3b7317a4e95",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_excerpt": "",
+      "raw_transcript_prefix": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/regression-netcdf4-read-x"
+    },
+    {
+      "name": "regression-h5py-read-x",
+      "command": [
+        "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+        "h5py",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/reference-mirror/source.nc",
+        "read:x"
+      ],
+      "returncode": 0,
+      "signal": null,
+      "phases": [
+        "environment",
+        "open.begin",
+        "open.end",
+        "read:x.begin",
+        "read:x.end",
+        "close.begin",
+        "close.end"
+      ],
+      "misses": [],
+      "reads": 13,
+      "trace_sha256": "29115a2d4b8261af0e137e6a9d91f541403d635da01c8feda8ed2ed575bcd5b7",
+      "stdout_sha256": "90b1565d82dadff738833678efff267442bd76aaf8917e4f4baee558217649e5",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_excerpt": "",
+      "raw_transcript_prefix": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/regression-h5py-read-x"
+    },
+    {
+      "name": "regression-netcdf4-read-y",
+      "command": [
+        "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+        "netcdf4",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/reference-mirror/source.nc",
+        "read:y"
+      ],
+      "returncode": 0,
+      "signal": null,
+      "phases": [
+        "environment",
+        "open.begin",
+        "open.end",
+        "read:y.begin",
+        "read:y.end",
+        "close.begin",
+        "close.end"
+      ],
+      "misses": [],
+      "reads": 253,
+      "trace_sha256": "9520ee58ba19554ae9e4d5a35521da5f956a528745f54d4116655fa8ca6aef8d",
+      "stdout_sha256": "44ec8e827805a72424fc12a02a4f48253de16a4960e869d66ef899844f11243e",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_excerpt": "",
+      "raw_transcript_prefix": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/regression-netcdf4-read-y"
+    },
+    {
+      "name": "regression-h5py-read-y",
+      "command": [
+        "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+        "h5py",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/reference-mirror/source.nc",
+        "read:y"
+      ],
+      "returncode": 0,
+      "signal": null,
+      "phases": [
+        "environment",
+        "open.begin",
+        "open.end",
+        "read:y.begin",
+        "read:y.end",
+        "close.begin",
+        "close.end"
+      ],
+      "misses": [],
+      "reads": 13,
+      "trace_sha256": "0947c8c869fa61a58cbd229f98772c330a3b79ab16129d0a665bf6377e376a31",
+      "stdout_sha256": "f31f0ebdfc1918d3ddff650dcf8a1bb2da35f12ce3de1da12dbe141d8e452d40",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_excerpt": "",
+      "raw_transcript_prefix": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/regression-h5py-read-y"
+    },
+    {
+      "name": "regression-netcdf4-attributes-wse",
+      "command": [
+        "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+        "netcdf4",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/reference-mirror/source.nc",
+        "attributes:wse"
+      ],
+      "returncode": 0,
+      "signal": null,
+      "phases": [
+        "environment",
+        "open.begin",
+        "open.end",
+        "attributes:wse.begin",
+        "attributes:wse.end",
+        "close.begin",
+        "close.end"
+      ],
+      "misses": [],
+      "reads": 251,
+      "trace_sha256": "e8d91983e9bb5f646c05ed7bb52c1e32f23575bc1f8732ffd12c912247db618c",
+      "stdout_sha256": "200c8d50c55fa238cc375e4913034c52a7ad9ca77e86f30cf74ddf509f7fc1e2",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_excerpt": "",
+      "raw_transcript_prefix": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/regression-netcdf4-attributes-wse"
+    },
+    {
+      "name": "regression-h5py-attributes-wse",
+      "command": [
+        "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+        "h5py",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/reference-mirror/source.nc",
+        "attributes:wse"
+      ],
+      "returncode": 0,
+      "signal": null,
+      "phases": [
+        "environment",
+        "open.begin",
+        "open.end",
+        "attributes:wse.begin",
+        "attributes:wse.end",
+        "close.begin",
+        "close.end"
+      ],
+      "misses": [],
+      "reads": 16,
+      "trace_sha256": "3adb4cee197a7903299f1d6ef5d55e6268a16c3d88b0df83dd4f9068b63715ef",
+      "stdout_sha256": "f2ae1393064a245b1adfd477618325f025af6d1d50c4beb054047d2bc75680f2",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_excerpt": "",
+      "raw_transcript_prefix": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/regression-h5py-attributes-wse"
+    },
+    {
+      "name": "regression-netcdf4-read-wse",
+      "command": [
+        "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+        "netcdf4",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/reference-mirror/source.nc",
+        "read:wse"
+      ],
+      "returncode": 0,
+      "signal": null,
+      "phases": [
+        "environment",
+        "open.begin",
+        "open.end",
+        "read:wse.begin",
+        "read:wse.end",
+        "close.begin",
+        "close.end"
+      ],
+      "misses": [],
+      "reads": 253,
+      "trace_sha256": "9bb7bd4357d8c018443b1591ce17240b96a0e227f07f58f584c6a3865886a707",
+      "stdout_sha256": "4cb89604accfe4a934c95def871499f275981da1038a79098e3ff053409cb489",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_excerpt": "",
+      "raw_transcript_prefix": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/regression-netcdf4-read-wse"
+    },
+    {
+      "name": "regression-h5py-read-wse",
+      "command": [
+        "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+        "h5py",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/reference-mirror/source.nc",
+        "read:wse"
+      ],
+      "returncode": 0,
+      "signal": null,
+      "phases": [
+        "environment",
+        "open.begin",
+        "open.end",
+        "read:wse.begin",
+        "read:wse.end",
+        "close.begin",
+        "close.end"
+      ],
+      "misses": [],
+      "reads": 13,
+      "trace_sha256": "7cb082b125a17bce11f387071ed4dc0273f1958e084496cf62ec1ada56bc4f55",
+      "stdout_sha256": "09f036304bd8efd9da5635c242ec7dc2ddc27d6e137b37e4eb45dc47f3481431",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_excerpt": "",
+      "raw_transcript_prefix": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/regression-h5py-read-wse"
+    },
+    {
+      "name": "regression-netcdf4-read-wse_qual",
+      "command": [
+        "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+        "netcdf4",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/reference-mirror/source.nc",
+        "read:wse_qual"
+      ],
+      "returncode": 0,
+      "signal": null,
+      "phases": [
+        "environment",
+        "open.begin",
+        "open.end",
+        "read:wse_qual.begin",
+        "read:wse_qual.end",
+        "close.begin",
+        "close.end"
+      ],
+      "misses": [],
+      "reads": 253,
+      "trace_sha256": "7258f74719a075d1b9a64cd5991fcf8ae97632d45b331f995f00ed583716517b",
+      "stdout_sha256": "2edb7ac4a3387744300d01732f0c80fbf78d79a72240bd42d046b1ed11ab0e6b",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_excerpt": "",
+      "raw_transcript_prefix": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/regression-netcdf4-read-wse_qual"
+    },
+    {
+      "name": "regression-h5py-read-wse_qual",
+      "command": [
+        "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+        "h5py",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/reference-mirror/source.nc",
+        "read:wse_qual"
+      ],
+      "returncode": 0,
+      "signal": null,
+      "phases": [
+        "environment",
+        "open.begin",
+        "open.end",
+        "read:wse_qual.begin",
+        "read:wse_qual.end",
+        "close.begin",
+        "close.end"
+      ],
+      "misses": [],
+      "reads": 13,
+      "trace_sha256": "aa3794895b88171f6aa9fb6214882404f495db6b367c3d9b0fcc6045061f690b",
+      "stdout_sha256": "d48a0ade7343ee1c9637edb7b5be0c616c1f6d7f3204d89b306f20cf5a26cc7e",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_excerpt": "",
+      "raw_transcript_prefix": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/regression-h5py-read-wse_qual"
+    },
+    {
+      "name": "regression-netcdf4-read-wse_qual_bitwise",
+      "command": [
+        "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+        "netcdf4",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/reference-mirror/source.nc",
+        "read:wse_qual_bitwise"
+      ],
+      "returncode": 0,
+      "signal": null,
+      "phases": [
+        "environment",
+        "open.begin",
+        "open.end",
+        "read:wse_qual_bitwise.begin",
+        "read:wse_qual_bitwise.end",
+        "close.begin",
+        "close.end"
+      ],
+      "misses": [],
+      "reads": 253,
+      "trace_sha256": "f5c8ad912e48bdfd620d28e9127cc56183d63d9bea4175eb07954474bbfc9f13",
+      "stdout_sha256": "4e824a6e91bde2ce046843f43439d93bffab003cef71645a6f72ca8468cdcbfb",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_excerpt": "",
+      "raw_transcript_prefix": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/regression-netcdf4-read-wse_qual_bitwise"
+    },
+    {
+      "name": "regression-h5py-read-wse_qual_bitwise",
+      "command": [
+        "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+        "h5py",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/reference-mirror/source.nc",
+        "read:wse_qual_bitwise"
+      ],
+      "returncode": 0,
+      "signal": null,
+      "phases": [
+        "environment",
+        "open.begin",
+        "open.end",
+        "read:wse_qual_bitwise.begin",
+        "read:wse_qual_bitwise.end",
+        "close.begin",
+        "close.end"
+      ],
+      "misses": [],
+      "reads": 13,
+      "trace_sha256": "0285923ce28ae83ff81f92a6f02ed808d5f3e69a3f57ec9fe9c01944c04c038c",
+      "stdout_sha256": "ccf67a2872e353ec1bbc0a9732eb8313ba1c42a6aa9f49f96ce3d9d8489d64f7",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_excerpt": "",
+      "raw_transcript_prefix": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/regression-h5py-read-wse_qual_bitwise"
+    },
+    {
+      "name": "regression-netcdf4-read-wse_uncert",
+      "command": [
+        "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+        "netcdf4",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/reference-mirror/source.nc",
+        "read:wse_uncert"
+      ],
+      "returncode": 0,
+      "signal": null,
+      "phases": [
+        "environment",
+        "open.begin",
+        "open.end",
+        "read:wse_uncert.begin",
+        "read:wse_uncert.end",
+        "close.begin",
+        "close.end"
+      ],
+      "misses": [],
+      "reads": 253,
+      "trace_sha256": "82592b2a9335b87d2012f5825f5ef54d1e06c45a8c94e5fccb9a7e59153e2f7e",
+      "stdout_sha256": "b36886469fb0096a5bb0240db6afbf7523a3487c9cd37da2464bf109dde11435",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_excerpt": "",
+      "raw_transcript_prefix": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/regression-netcdf4-read-wse_uncert"
+    },
+    {
+      "name": "regression-h5py-read-wse_uncert",
+      "command": [
+        "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+        "h5py",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/reference-mirror/source.nc",
+        "read:wse_uncert"
+      ],
+      "returncode": 0,
+      "signal": null,
+      "phases": [
+        "environment",
+        "open.begin",
+        "open.end",
+        "read:wse_uncert.begin",
+        "read:wse_uncert.end",
+        "close.begin",
+        "close.end"
+      ],
+      "misses": [],
+      "reads": 13,
+      "trace_sha256": "ce48c0a71469e61d29db6b044f3557a0920ee6e5e85f637c399027c79d427407",
+      "stdout_sha256": "dff286f176ea860bce400cab512792fc0e04b4f67347e77212264f0fabce369f",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_excerpt": "",
+      "raw_transcript_prefix": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/regression-h5py-read-wse_uncert"
+    },
+    {
+      "name": "regression-netcdf4-read-n_wse_pix",
+      "command": [
+        "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+        "netcdf4",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/reference-mirror/source.nc",
+        "read:n_wse_pix"
+      ],
+      "returncode": 0,
+      "signal": null,
+      "phases": [
+        "environment",
+        "open.begin",
+        "open.end",
+        "read:n_wse_pix.begin",
+        "read:n_wse_pix.end",
+        "close.begin",
+        "close.end"
+      ],
+      "misses": [],
+      "reads": 253,
+      "trace_sha256": "e972ebb5d5349021d23194c524617ef7487c6b856903d9f29b71b08ad7f7cddb",
+      "stdout_sha256": "d1879aa7d377812becc067fd92dde3983957a5c7bde7a02956e99227c0ea5745",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_excerpt": "",
+      "raw_transcript_prefix": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/regression-netcdf4-read-n_wse_pix"
+    },
+    {
+      "name": "regression-h5py-read-n_wse_pix",
+      "command": [
+        "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+        "h5py",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/reference-mirror/source.nc",
+        "read:n_wse_pix"
+      ],
+      "returncode": 0,
+      "signal": null,
+      "phases": [
+        "environment",
+        "open.begin",
+        "open.end",
+        "read:n_wse_pix.begin",
+        "read:n_wse_pix.end",
+        "close.begin",
+        "close.end"
+      ],
+      "misses": [],
+      "reads": 13,
+      "trace_sha256": "e49f367322512af72efa5005074d9ac942d35cc583797e2088259ac26cddac14",
+      "stdout_sha256": "998ff00adb1270c8f98caf8b3e9438d7da172653805147f23959553818b1ce81",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_excerpt": "",
+      "raw_transcript_prefix": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/regression-h5py-read-n_wse_pix"
+    },
+    {
+      "name": "regression-netcdf4-close",
+      "command": [
+        "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+        "netcdf4",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/reference-mirror/source.nc",
+        "close"
+      ],
+      "returncode": 0,
+      "signal": null,
+      "phases": [
+        "environment",
+        "open.begin",
+        "open.end",
+        "close.begin",
+        "close.end"
+      ],
+      "misses": [],
+      "reads": 251,
+      "trace_sha256": "e8d91983e9bb5f646c05ed7bb52c1e32f23575bc1f8732ffd12c912247db618c",
+      "stdout_sha256": "fa6f8a679748d2b5a4952e12e6404226e50e0304cdc3eedc4ea753dbe6fac162",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_excerpt": "",
+      "raw_transcript_prefix": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/regression-netcdf4-close"
+    },
+    {
+      "name": "regression-h5py-close",
+      "command": [
+        "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+        "h5py",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/reference-mirror/source.nc",
+        "close"
+      ],
+      "returncode": 0,
+      "signal": null,
+      "phases": [
+        "environment",
+        "open.begin",
+        "open.end",
+        "close.begin",
+        "close.end"
+      ],
+      "misses": [],
+      "reads": 3,
+      "trace_sha256": "fff64f094df5679e10e34f5040f4ab691ec6b0849b9b74870a616cfa216c9e28",
+      "stdout_sha256": "c55d09ee2e8d115ac04ca70146ad1c6c9a5946849c223eaf5f777ccf0b6ee83e",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_excerpt": "",
+      "raw_transcript_prefix": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/regression-h5py-close"
+    }
+  ]
+}

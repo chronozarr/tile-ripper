@@ -227,6 +227,19 @@ impl Prepared {
         }
     }
     #[cfg(feature = "native-hdf5")]
+    pub(crate) fn swot_working_memory(&self) -> Result<Value> {
+        let Runtime::Direct {
+            request, sources, ..
+        } = self.runtime.as_ref()
+        else {
+            return fail("SWOT aligned inspection requires direct HDF5 assets");
+        };
+        let Source::Assets { assets } = &request.source else {
+            return fail("missing SWOT source");
+        };
+        Ok(sources.hdf5.aligned_reservation(&assets[0], request)?.2)
+    }
+    #[cfg(feature = "native-hdf5")]
     pub(crate) fn execute_swot_cancellable(
         &self,
         cancelled: &std::sync::atomic::AtomicBool,

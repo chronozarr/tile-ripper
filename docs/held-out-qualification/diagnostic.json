@@ -1,0 +1,1001 @@
+[
+  {
+    "name": "netcdf4-open-original",
+    "command": [
+      "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+      "netcdf4",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc",
+      "open"
+    ],
+    "returncode": -6,
+    "stdout": "{\"phase\": \"environment\", \"reader\": \"1.7.4\", \"netcdf_c\": \"4.9.3 of Sep 15 2025 23:01:51 $\", \"hdf5\": \"1.14.6\", \"extension\": \"/Users/jakegearon/.pyenv/versions/3.10.14/lib/python3.10/site-packages/netCDF4/_netCDF4.cpython-310-darwin.so\"}\n{\"phase\": \"open.begin\"}\n",
+    "stderr": "",
+    "events": [],
+    "misses": []
+  },
+  {
+    "name": "netcdf4-open-strict",
+    "command": [
+      "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+      "netcdf4",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc",
+      "open"
+    ],
+    "returncode": 1,
+    "stdout": "{\"phase\": \"environment\", \"reader\": \"1.7.4\", \"netcdf_c\": \"4.9.3 of Sep 15 2025 23:01:51 $\", \"hdf5\": \"1.14.6\", \"extension\": \"/Users/jakegearon/.pyenv/versions/3.10.14/lib/python3.10/site-packages/netCDF4/_netCDF4.cpython-310-darwin.so\"}\n{\"phase\": \"open.begin\"}\n",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py\", line 69, in <module>\n    main()\n  File \"/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py\", line 35, in main\n    f = open_file()\n  File \"/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py\", line 25, in <lambda>\n    open_file = lambda: netCDF4.Dataset(path, \"r\")\n  File \"src/netCDF4/_netCDF4.pyx\", line 2521, in netCDF4._netCDF4.Dataset.__init__\n  File \"src/netCDF4/_netCDF4.pyx\", line 2158, in netCDF4._netCDF4._ensure_nc_success\nOSError: [Errno -101] NetCDF: HDF error: '/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc'\n",
+    "events": [
+      "HIT 0 8",
+      "HIT 0 8",
+      "HIT 0 48",
+      "HIT 48 560",
+      "HIT 560 608",
+      "HIT 806121 806159",
+      "HIT 12483 12629",
+      "HIT 1106396 1106908",
+      "HIT 2337392 2337445",
+      "HIT 1190692 1191204",
+      "HIT 2883317 2883829",
+      "CAPTURE_MISS 4985152 4985664"
+    ],
+    "misses": [
+      [
+        4985152,
+        4985664
+      ]
+    ]
+  },
+  {
+    "name": "netcdf4-enumerate-original",
+    "command": [
+      "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+      "netcdf4",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc",
+      "enumerate"
+    ],
+    "returncode": -6,
+    "stdout": "{\"phase\": \"environment\", \"reader\": \"1.7.4\", \"netcdf_c\": \"4.9.3 of Sep 15 2025 23:01:51 $\", \"hdf5\": \"1.14.6\", \"extension\": \"/Users/jakegearon/.pyenv/versions/3.10.14/lib/python3.10/site-packages/netCDF4/_netCDF4.cpython-310-darwin.so\"}\n{\"phase\": \"open.begin\"}\n",
+    "stderr": "",
+    "events": [],
+    "misses": []
+  },
+  {
+    "name": "netcdf4-enumerate-strict",
+    "command": [
+      "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+      "netcdf4",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc",
+      "enumerate"
+    ],
+    "returncode": 1,
+    "stdout": "{\"phase\": \"environment\", \"reader\": \"1.7.4\", \"netcdf_c\": \"4.9.3 of Sep 15 2025 23:01:51 $\", \"hdf5\": \"1.14.6\", \"extension\": \"/Users/jakegearon/.pyenv/versions/3.10.14/lib/python3.10/site-packages/netCDF4/_netCDF4.cpython-310-darwin.so\"}\n{\"phase\": \"open.begin\"}\n",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py\", line 69, in <module>\n    main()\n  File \"/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py\", line 35, in main\n    f = open_file()\n  File \"/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py\", line 25, in <lambda>\n    open_file = lambda: netCDF4.Dataset(path, \"r\")\n  File \"src/netCDF4/_netCDF4.pyx\", line 2521, in netCDF4._netCDF4.Dataset.__init__\n  File \"src/netCDF4/_netCDF4.pyx\", line 2158, in netCDF4._netCDF4._ensure_nc_success\nOSError: [Errno -101] NetCDF: HDF error: '/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc'\n",
+    "events": [
+      "HIT 0 8",
+      "HIT 0 8",
+      "HIT 0 48",
+      "HIT 48 560",
+      "HIT 560 608",
+      "HIT 806121 806159",
+      "HIT 12483 12629",
+      "HIT 1106396 1106908",
+      "HIT 2337392 2337445",
+      "HIT 1190692 1191204",
+      "HIT 2883317 2883829",
+      "CAPTURE_MISS 4985152 4985664"
+    ],
+    "misses": [
+      [
+        4985152,
+        4985664
+      ]
+    ]
+  },
+  {
+    "name": "netcdf4-read-x-original",
+    "command": [
+      "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+      "netcdf4",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc",
+      "read:x"
+    ],
+    "returncode": -6,
+    "stdout": "{\"phase\": \"environment\", \"reader\": \"1.7.4\", \"netcdf_c\": \"4.9.3 of Sep 15 2025 23:01:51 $\", \"hdf5\": \"1.14.6\", \"extension\": \"/Users/jakegearon/.pyenv/versions/3.10.14/lib/python3.10/site-packages/netCDF4/_netCDF4.cpython-310-darwin.so\"}\n{\"phase\": \"open.begin\"}\n",
+    "stderr": "",
+    "events": [],
+    "misses": []
+  },
+  {
+    "name": "netcdf4-read-x-strict",
+    "command": [
+      "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+      "netcdf4",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc",
+      "read:x"
+    ],
+    "returncode": -6,
+    "stdout": "{\"phase\": \"environment\", \"reader\": \"1.7.4\", \"netcdf_c\": \"4.9.3 of Sep 15 2025 23:01:51 $\", \"hdf5\": \"1.14.6\", \"extension\": \"/Users/jakegearon/.pyenv/versions/3.10.14/lib/python3.10/site-packages/netCDF4/_netCDF4.cpython-310-darwin.so\"}\n{\"phase\": \"open.begin\"}\n",
+    "stderr": "",
+    "events": [
+      "HIT 0 8",
+      "HIT 0 8",
+      "HIT 0 48",
+      "HIT 48 560",
+      "HIT 560 608",
+      "HIT 806121 806159",
+      "HIT 12483 12629",
+      "HIT 1106396 1106908",
+      "HIT 2337392 2337445",
+      "HIT 1190692 1191204",
+      "HIT 2883317 2883829",
+      "CAPTURE_MISS 4985152 4985664"
+    ],
+    "misses": [
+      [
+        4985152,
+        4985664
+      ]
+    ]
+  },
+  {
+    "name": "netcdf4-read-y-original",
+    "command": [
+      "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+      "netcdf4",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc",
+      "read:y"
+    ],
+    "returncode": 1,
+    "stdout": "{\"phase\": \"environment\", \"reader\": \"1.7.4\", \"netcdf_c\": \"4.9.3 of Sep 15 2025 23:01:51 $\", \"hdf5\": \"1.14.6\", \"extension\": \"/Users/jakegearon/.pyenv/versions/3.10.14/lib/python3.10/site-packages/netCDF4/_netCDF4.cpython-310-darwin.so\"}\n{\"phase\": \"open.begin\"}\n",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py\", line 69, in <module>\n    main()\n  File \"/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py\", line 35, in main\n    f = open_file()\n  File \"/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py\", line 25, in <lambda>\n    open_file = lambda: netCDF4.Dataset(path, \"r\")\n  File \"src/netCDF4/_netCDF4.pyx\", line 2521, in netCDF4._netCDF4.Dataset.__init__\n  File \"src/netCDF4/_netCDF4.pyx\", line 2158, in netCDF4._netCDF4._ensure_nc_success\nOSError: [Errno -101] NetCDF: HDF error: '/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc'\n",
+    "events": [],
+    "misses": []
+  },
+  {
+    "name": "netcdf4-read-y-strict",
+    "command": [
+      "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+      "netcdf4",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc",
+      "read:y"
+    ],
+    "returncode": -6,
+    "stdout": "{\"phase\": \"environment\", \"reader\": \"1.7.4\", \"netcdf_c\": \"4.9.3 of Sep 15 2025 23:01:51 $\", \"hdf5\": \"1.14.6\", \"extension\": \"/Users/jakegearon/.pyenv/versions/3.10.14/lib/python3.10/site-packages/netCDF4/_netCDF4.cpython-310-darwin.so\"}\n{\"phase\": \"open.begin\"}\n",
+    "stderr": "",
+    "events": [
+      "HIT 0 8",
+      "HIT 0 8",
+      "HIT 0 48",
+      "HIT 48 560",
+      "HIT 560 608",
+      "HIT 806121 806159",
+      "HIT 12483 12629",
+      "HIT 1106396 1106908",
+      "HIT 2337392 2337445",
+      "HIT 1190692 1191204",
+      "HIT 2883317 2883829",
+      "CAPTURE_MISS 4985152 4985664"
+    ],
+    "misses": [
+      [
+        4985152,
+        4985664
+      ]
+    ]
+  },
+  {
+    "name": "netcdf4-attributes-wse-original",
+    "command": [
+      "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+      "netcdf4",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc",
+      "attributes:wse"
+    ],
+    "returncode": 1,
+    "stdout": "{\"phase\": \"environment\", \"reader\": \"1.7.4\", \"netcdf_c\": \"4.9.3 of Sep 15 2025 23:01:51 $\", \"hdf5\": \"1.14.6\", \"extension\": \"/Users/jakegearon/.pyenv/versions/3.10.14/lib/python3.10/site-packages/netCDF4/_netCDF4.cpython-310-darwin.so\"}\n{\"phase\": \"open.begin\"}\n",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py\", line 69, in <module>\n    main()\n  File \"/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py\", line 35, in main\n    f = open_file()\n  File \"/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py\", line 25, in <lambda>\n    open_file = lambda: netCDF4.Dataset(path, \"r\")\n  File \"src/netCDF4/_netCDF4.pyx\", line 2521, in netCDF4._netCDF4.Dataset.__init__\n  File \"src/netCDF4/_netCDF4.pyx\", line 2158, in netCDF4._netCDF4._ensure_nc_success\nOSError: [Errno -101] NetCDF: HDF error: '/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc'\n",
+    "events": [],
+    "misses": []
+  },
+  {
+    "name": "netcdf4-attributes-wse-strict",
+    "command": [
+      "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+      "netcdf4",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc",
+      "attributes:wse"
+    ],
+    "returncode": -6,
+    "stdout": "{\"phase\": \"environment\", \"reader\": \"1.7.4\", \"netcdf_c\": \"4.9.3 of Sep 15 2025 23:01:51 $\", \"hdf5\": \"1.14.6\", \"extension\": \"/Users/jakegearon/.pyenv/versions/3.10.14/lib/python3.10/site-packages/netCDF4/_netCDF4.cpython-310-darwin.so\"}\n{\"phase\": \"open.begin\"}\n",
+    "stderr": "",
+    "events": [
+      "HIT 0 8",
+      "HIT 0 8",
+      "HIT 0 48",
+      "HIT 48 560",
+      "HIT 560 608",
+      "HIT 806121 806159",
+      "HIT 12483 12629",
+      "HIT 1106396 1106908",
+      "HIT 2337392 2337445",
+      "HIT 1190692 1191204",
+      "HIT 2883317 2883829",
+      "CAPTURE_MISS 4985152 4985664"
+    ],
+    "misses": [
+      [
+        4985152,
+        4985664
+      ]
+    ]
+  },
+  {
+    "name": "netcdf4-read-wse-original",
+    "command": [
+      "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+      "netcdf4",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc",
+      "read:wse"
+    ],
+    "returncode": -6,
+    "stdout": "{\"phase\": \"environment\", \"reader\": \"1.7.4\", \"netcdf_c\": \"4.9.3 of Sep 15 2025 23:01:51 $\", \"hdf5\": \"1.14.6\", \"extension\": \"/Users/jakegearon/.pyenv/versions/3.10.14/lib/python3.10/site-packages/netCDF4/_netCDF4.cpython-310-darwin.so\"}\n{\"phase\": \"open.begin\"}\n",
+    "stderr": "",
+    "events": [],
+    "misses": []
+  },
+  {
+    "name": "netcdf4-read-wse-strict",
+    "command": [
+      "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+      "netcdf4",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc",
+      "read:wse"
+    ],
+    "returncode": -6,
+    "stdout": "{\"phase\": \"environment\", \"reader\": \"1.7.4\", \"netcdf_c\": \"4.9.3 of Sep 15 2025 23:01:51 $\", \"hdf5\": \"1.14.6\", \"extension\": \"/Users/jakegearon/.pyenv/versions/3.10.14/lib/python3.10/site-packages/netCDF4/_netCDF4.cpython-310-darwin.so\"}\n{\"phase\": \"open.begin\"}\n",
+    "stderr": "",
+    "events": [
+      "HIT 0 8",
+      "HIT 0 8",
+      "HIT 0 48",
+      "HIT 48 560",
+      "HIT 560 608",
+      "HIT 806121 806159",
+      "HIT 12483 12629",
+      "HIT 1106396 1106908",
+      "HIT 2337392 2337445",
+      "HIT 1190692 1191204",
+      "HIT 2883317 2883829",
+      "CAPTURE_MISS 4985152 4985664"
+    ],
+    "misses": [
+      [
+        4985152,
+        4985664
+      ]
+    ]
+  },
+  {
+    "name": "netcdf4-read-wse_qual-original",
+    "command": [
+      "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+      "netcdf4",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc",
+      "read:wse_qual"
+    ],
+    "returncode": -6,
+    "stdout": "{\"phase\": \"environment\", \"reader\": \"1.7.4\", \"netcdf_c\": \"4.9.3 of Sep 15 2025 23:01:51 $\", \"hdf5\": \"1.14.6\", \"extension\": \"/Users/jakegearon/.pyenv/versions/3.10.14/lib/python3.10/site-packages/netCDF4/_netCDF4.cpython-310-darwin.so\"}\n{\"phase\": \"open.begin\"}\n",
+    "stderr": "",
+    "events": [],
+    "misses": []
+  },
+  {
+    "name": "netcdf4-read-wse_qual-strict",
+    "command": [
+      "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+      "netcdf4",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc",
+      "read:wse_qual"
+    ],
+    "returncode": 1,
+    "stdout": "{\"phase\": \"environment\", \"reader\": \"1.7.4\", \"netcdf_c\": \"4.9.3 of Sep 15 2025 23:01:51 $\", \"hdf5\": \"1.14.6\", \"extension\": \"/Users/jakegearon/.pyenv/versions/3.10.14/lib/python3.10/site-packages/netCDF4/_netCDF4.cpython-310-darwin.so\"}\n{\"phase\": \"open.begin\"}\n",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py\", line 69, in <module>\n    main()\n  File \"/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py\", line 35, in main\n    f = open_file()\n  File \"/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py\", line 25, in <lambda>\n    open_file = lambda: netCDF4.Dataset(path, \"r\")\n  File \"src/netCDF4/_netCDF4.pyx\", line 2521, in netCDF4._netCDF4.Dataset.__init__\n  File \"src/netCDF4/_netCDF4.pyx\", line 2158, in netCDF4._netCDF4._ensure_nc_success\nOSError: [Errno -101] NetCDF: HDF error: '/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc'\n",
+    "events": [
+      "HIT 0 8",
+      "HIT 0 8",
+      "HIT 0 48",
+      "HIT 48 560",
+      "HIT 560 608",
+      "HIT 806121 806159",
+      "HIT 12483 12629",
+      "HIT 1106396 1106908",
+      "HIT 2337392 2337445",
+      "HIT 1190692 1191204",
+      "HIT 2883317 2883829",
+      "CAPTURE_MISS 4985152 4985664"
+    ],
+    "misses": [
+      [
+        4985152,
+        4985664
+      ]
+    ]
+  },
+  {
+    "name": "netcdf4-read-wse_qual_bitwise-original",
+    "command": [
+      "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+      "netcdf4",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc",
+      "read:wse_qual_bitwise"
+    ],
+    "returncode": 1,
+    "stdout": "{\"phase\": \"environment\", \"reader\": \"1.7.4\", \"netcdf_c\": \"4.9.3 of Sep 15 2025 23:01:51 $\", \"hdf5\": \"1.14.6\", \"extension\": \"/Users/jakegearon/.pyenv/versions/3.10.14/lib/python3.10/site-packages/netCDF4/_netCDF4.cpython-310-darwin.so\"}\n{\"phase\": \"open.begin\"}\n",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py\", line 69, in <module>\n    main()\n  File \"/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py\", line 35, in main\n    f = open_file()\n  File \"/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py\", line 25, in <lambda>\n    open_file = lambda: netCDF4.Dataset(path, \"r\")\n  File \"src/netCDF4/_netCDF4.pyx\", line 2521, in netCDF4._netCDF4.Dataset.__init__\n  File \"src/netCDF4/_netCDF4.pyx\", line 2158, in netCDF4._netCDF4._ensure_nc_success\nOSError: [Errno -101] NetCDF: HDF error: '/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc'\n",
+    "events": [],
+    "misses": []
+  },
+  {
+    "name": "netcdf4-read-wse_qual_bitwise-strict",
+    "command": [
+      "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+      "netcdf4",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc",
+      "read:wse_qual_bitwise"
+    ],
+    "returncode": -6,
+    "stdout": "{\"phase\": \"environment\", \"reader\": \"1.7.4\", \"netcdf_c\": \"4.9.3 of Sep 15 2025 23:01:51 $\", \"hdf5\": \"1.14.6\", \"extension\": \"/Users/jakegearon/.pyenv/versions/3.10.14/lib/python3.10/site-packages/netCDF4/_netCDF4.cpython-310-darwin.so\"}\n{\"phase\": \"open.begin\"}\n",
+    "stderr": "",
+    "events": [
+      "HIT 0 8",
+      "HIT 0 8",
+      "HIT 0 48",
+      "HIT 48 560",
+      "HIT 560 608",
+      "HIT 806121 806159",
+      "HIT 12483 12629",
+      "HIT 1106396 1106908",
+      "HIT 2337392 2337445",
+      "HIT 1190692 1191204",
+      "HIT 2883317 2883829",
+      "CAPTURE_MISS 4985152 4985664"
+    ],
+    "misses": [
+      [
+        4985152,
+        4985664
+      ]
+    ]
+  },
+  {
+    "name": "netcdf4-read-wse_uncert-original",
+    "command": [
+      "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+      "netcdf4",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc",
+      "read:wse_uncert"
+    ],
+    "returncode": 1,
+    "stdout": "{\"phase\": \"environment\", \"reader\": \"1.7.4\", \"netcdf_c\": \"4.9.3 of Sep 15 2025 23:01:51 $\", \"hdf5\": \"1.14.6\", \"extension\": \"/Users/jakegearon/.pyenv/versions/3.10.14/lib/python3.10/site-packages/netCDF4/_netCDF4.cpython-310-darwin.so\"}\n{\"phase\": \"open.begin\"}\n",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py\", line 69, in <module>\n    main()\n  File \"/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py\", line 35, in main\n    f = open_file()\n  File \"/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py\", line 25, in <lambda>\n    open_file = lambda: netCDF4.Dataset(path, \"r\")\n  File \"src/netCDF4/_netCDF4.pyx\", line 2521, in netCDF4._netCDF4.Dataset.__init__\n  File \"src/netCDF4/_netCDF4.pyx\", line 2158, in netCDF4._netCDF4._ensure_nc_success\nOSError: [Errno -101] NetCDF: HDF error: '/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc'\n",
+    "events": [],
+    "misses": []
+  },
+  {
+    "name": "netcdf4-read-wse_uncert-strict",
+    "command": [
+      "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+      "netcdf4",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc",
+      "read:wse_uncert"
+    ],
+    "returncode": -6,
+    "stdout": "{\"phase\": \"environment\", \"reader\": \"1.7.4\", \"netcdf_c\": \"4.9.3 of Sep 15 2025 23:01:51 $\", \"hdf5\": \"1.14.6\", \"extension\": \"/Users/jakegearon/.pyenv/versions/3.10.14/lib/python3.10/site-packages/netCDF4/_netCDF4.cpython-310-darwin.so\"}\n{\"phase\": \"open.begin\"}\n",
+    "stderr": "",
+    "events": [
+      "HIT 0 8",
+      "HIT 0 8",
+      "HIT 0 48",
+      "HIT 48 560",
+      "HIT 560 608",
+      "HIT 806121 806159",
+      "HIT 12483 12629",
+      "HIT 1106396 1106908",
+      "HIT 2337392 2337445",
+      "HIT 1190692 1191204",
+      "HIT 2883317 2883829",
+      "CAPTURE_MISS 4985152 4985664"
+    ],
+    "misses": [
+      [
+        4985152,
+        4985664
+      ]
+    ]
+  },
+  {
+    "name": "netcdf4-read-n_wse_pix-original",
+    "command": [
+      "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+      "netcdf4",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc",
+      "read:n_wse_pix"
+    ],
+    "returncode": -6,
+    "stdout": "{\"phase\": \"environment\", \"reader\": \"1.7.4\", \"netcdf_c\": \"4.9.3 of Sep 15 2025 23:01:51 $\", \"hdf5\": \"1.14.6\", \"extension\": \"/Users/jakegearon/.pyenv/versions/3.10.14/lib/python3.10/site-packages/netCDF4/_netCDF4.cpython-310-darwin.so\"}\n{\"phase\": \"open.begin\"}\n",
+    "stderr": "",
+    "events": [],
+    "misses": []
+  },
+  {
+    "name": "netcdf4-read-n_wse_pix-strict",
+    "command": [
+      "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+      "netcdf4",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc",
+      "read:n_wse_pix"
+    ],
+    "returncode": 1,
+    "stdout": "{\"phase\": \"environment\", \"reader\": \"1.7.4\", \"netcdf_c\": \"4.9.3 of Sep 15 2025 23:01:51 $\", \"hdf5\": \"1.14.6\", \"extension\": \"/Users/jakegearon/.pyenv/versions/3.10.14/lib/python3.10/site-packages/netCDF4/_netCDF4.cpython-310-darwin.so\"}\n{\"phase\": \"open.begin\"}\n",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py\", line 69, in <module>\n    main()\n  File \"/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py\", line 35, in main\n    f = open_file()\n  File \"/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py\", line 25, in <lambda>\n    open_file = lambda: netCDF4.Dataset(path, \"r\")\n  File \"src/netCDF4/_netCDF4.pyx\", line 2521, in netCDF4._netCDF4.Dataset.__init__\n  File \"src/netCDF4/_netCDF4.pyx\", line 2158, in netCDF4._netCDF4._ensure_nc_success\nOSError: [Errno -101] NetCDF: HDF error: '/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc'\n",
+    "events": [
+      "HIT 0 8",
+      "HIT 0 8",
+      "HIT 0 48",
+      "HIT 48 560",
+      "HIT 560 608",
+      "HIT 806121 806159",
+      "HIT 12483 12629",
+      "HIT 1106396 1106908",
+      "HIT 2337392 2337445",
+      "HIT 1190692 1191204",
+      "HIT 2883317 2883829",
+      "CAPTURE_MISS 4985152 4985664"
+    ],
+    "misses": [
+      [
+        4985152,
+        4985664
+      ]
+    ]
+  },
+  {
+    "name": "netcdf4-close-original",
+    "command": [
+      "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+      "netcdf4",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc",
+      "close"
+    ],
+    "returncode": 1,
+    "stdout": "{\"phase\": \"environment\", \"reader\": \"1.7.4\", \"netcdf_c\": \"4.9.3 of Sep 15 2025 23:01:51 $\", \"hdf5\": \"1.14.6\", \"extension\": \"/Users/jakegearon/.pyenv/versions/3.10.14/lib/python3.10/site-packages/netCDF4/_netCDF4.cpython-310-darwin.so\"}\n{\"phase\": \"open.begin\"}\n",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py\", line 69, in <module>\n    main()\n  File \"/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py\", line 35, in main\n    f = open_file()\n  File \"/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py\", line 25, in <lambda>\n    open_file = lambda: netCDF4.Dataset(path, \"r\")\n  File \"src/netCDF4/_netCDF4.pyx\", line 2521, in netCDF4._netCDF4.Dataset.__init__\n  File \"src/netCDF4/_netCDF4.pyx\", line 2158, in netCDF4._netCDF4._ensure_nc_success\nOSError: [Errno -101] NetCDF: HDF error: '/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc'\n",
+    "events": [],
+    "misses": []
+  },
+  {
+    "name": "netcdf4-close-strict",
+    "command": [
+      "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+      "netcdf4",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc",
+      "close"
+    ],
+    "returncode": -6,
+    "stdout": "{\"phase\": \"environment\", \"reader\": \"1.7.4\", \"netcdf_c\": \"4.9.3 of Sep 15 2025 23:01:51 $\", \"hdf5\": \"1.14.6\", \"extension\": \"/Users/jakegearon/.pyenv/versions/3.10.14/lib/python3.10/site-packages/netCDF4/_netCDF4.cpython-310-darwin.so\"}\n{\"phase\": \"open.begin\"}\n",
+    "stderr": "",
+    "events": [
+      "HIT 0 8",
+      "HIT 0 8",
+      "HIT 0 48",
+      "HIT 48 560",
+      "HIT 560 608",
+      "HIT 806121 806159",
+      "HIT 12483 12629",
+      "HIT 1106396 1106908",
+      "HIT 2337392 2337445",
+      "HIT 1190692 1191204",
+      "HIT 2883317 2883829",
+      "CAPTURE_MISS 4985152 4985664"
+    ],
+    "misses": [
+      [
+        4985152,
+        4985664
+      ]
+    ]
+  },
+  {
+    "name": "h5py-open-original",
+    "command": [
+      "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+      "h5py",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc",
+      "open"
+    ],
+    "returncode": 0,
+    "stdout": "{\"phase\": \"environment\", \"reader\": \"3.12.1\", \"hdf5\": \"1.12.2\", \"extension\": \"/Users/jakegearon/.pyenv/versions/3.10.14/lib/python3.10/site-packages/h5py/h5f.cpython-310-darwin.so\"}\n{\"phase\": \"open.begin\"}\n{\"phase\": \"open.end\"}\n",
+    "stderr": "",
+    "events": [],
+    "misses": []
+  },
+  {
+    "name": "h5py-open-strict",
+    "command": [
+      "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+      "h5py",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc",
+      "open"
+    ],
+    "returncode": 0,
+    "stdout": "{\"phase\": \"environment\", \"reader\": \"3.12.1\", \"hdf5\": \"1.12.2\", \"extension\": \"/Users/jakegearon/.pyenv/versions/3.10.14/lib/python3.10/site-packages/h5py/h5f.cpython-310-darwin.so\"}\n{\"phase\": \"open.begin\"}\n{\"phase\": \"open.end\"}\n",
+    "stderr": "",
+    "events": [
+      "HIT 0 8",
+      "HIT 0 16",
+      "HIT 16 48"
+    ],
+    "misses": []
+  },
+  {
+    "name": "h5py-enumerate-original",
+    "command": [
+      "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+      "h5py",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc",
+      "enumerate"
+    ],
+    "returncode": 1,
+    "stdout": "{\"phase\": \"environment\", \"reader\": \"3.12.1\", \"hdf5\": \"1.12.2\", \"extension\": \"/Users/jakegearon/.pyenv/versions/3.10.14/lib/python3.10/site-packages/h5py/h5f.cpython-310-darwin.so\"}\n{\"phase\": \"open.begin\"}\n{\"phase\": \"open.end\"}\n{\"phase\": \"enumerate.begin\"}\n",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py\", line 69, in <module>\n    main()\n  File \"/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py\", line 50, in main\n    phase(\"enumerate.end\", variables=list(f), attributes=list(f.attrs))\n  File \"/Users/jakegearon/.pyenv/versions/3.10.14/lib/python3.10/site-packages/h5py/_hl/group.py\", line 499, in __iter__\n    for x in self.id.__iter__():\n  File \"h5py/h5g.pyx\", line 138, in h5py.h5g.GroupIter.__next__\n  File \"h5py/_objects.pyx\", line 54, in h5py._objects.with_phil.wrapper\n  File \"h5py/_objects.pyx\", line 55, in h5py._objects.with_phil.wrapper\n  File \"h5py/h5l.pyx\", line 320, in h5py.h5l.LinkProxy.iterate\nRuntimeError: Link iteration failed (incorrect metadata checksum after all read attempts)\n",
+    "events": [],
+    "misses": []
+  },
+  {
+    "name": "h5py-enumerate-strict",
+    "command": [
+      "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+      "h5py",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc",
+      "enumerate"
+    ],
+    "returncode": -6,
+    "stdout": "{\"phase\": \"environment\", \"reader\": \"3.12.1\", \"hdf5\": \"1.12.2\", \"extension\": \"/Users/jakegearon/.pyenv/versions/3.10.14/lib/python3.10/site-packages/h5py/h5f.cpython-310-darwin.so\"}\n{\"phase\": \"open.begin\"}\n{\"phase\": \"open.end\"}\n{\"phase\": \"enumerate.begin\"}\n",
+    "stderr": "",
+    "events": [
+      "HIT 0 8",
+      "HIT 0 16",
+      "HIT 16 48",
+      "HIT 48 560",
+      "HIT 560 608",
+      "HIT 806121 806159",
+      "HIT 12483 12629",
+      "HIT 1106396 1106908",
+      "HIT 2337392 2337445",
+      "HIT 1190692 1191204",
+      "HIT 2883317 2883829",
+      "CAPTURE_MISS 4985152 4985664"
+    ],
+    "misses": [
+      [
+        4985152,
+        4985664
+      ]
+    ]
+  },
+  {
+    "name": "h5py-read-x-original",
+    "command": [
+      "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+      "h5py",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc",
+      "read:x"
+    ],
+    "returncode": 0,
+    "stdout": "{\"phase\": \"environment\", \"reader\": \"3.12.1\", \"hdf5\": \"1.12.2\", \"extension\": \"/Users/jakegearon/.pyenv/versions/3.10.14/lib/python3.10/site-packages/h5py/h5f.cpython-310-darwin.so\"}\n{\"phase\": \"open.begin\"}\n{\"phase\": \"open.end\"}\n{\"phase\": \"read:x.begin\"}\n{\"phase\": \"read:x.end\", \"shape\": [128], \"sha256\": \"3f0732132b96b9bf142d79b7ab53a1c1e98159f5e5eb88276a652738d6b6aa01\"}\n{\"phase\": \"close.begin\"}\n{\"phase\": \"close.end\"}\n",
+    "stderr": "",
+    "events": [],
+    "misses": []
+  },
+  {
+    "name": "h5py-read-x-strict",
+    "command": [
+      "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+      "h5py",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc",
+      "read:x"
+    ],
+    "returncode": 0,
+    "stdout": "{\"phase\": \"environment\", \"reader\": \"3.12.1\", \"hdf5\": \"1.12.2\", \"extension\": \"/Users/jakegearon/.pyenv/versions/3.10.14/lib/python3.10/site-packages/h5py/h5f.cpython-310-darwin.so\"}\n{\"phase\": \"open.begin\"}\n{\"phase\": \"open.end\"}\n{\"phase\": \"read:x.begin\"}\n{\"phase\": \"read:x.end\", \"shape\": [128], \"sha256\": \"3f0732132b96b9bf142d79b7ab53a1c1e98159f5e5eb88276a652738d6b6aa01\"}\n{\"phase\": \"close.begin\"}\n{\"phase\": \"close.end\"}\n",
+    "stderr": "",
+    "events": [
+      "HIT 0 8",
+      "HIT 0 16",
+      "HIT 16 48",
+      "HIT 48 560",
+      "HIT 560 608",
+      "HIT 806121 806159",
+      "HIT 12483 12629",
+      "HIT 1106396 1106908",
+      "HIT 2337392 2337445",
+      "HIT 1190692 1191204",
+      "HIT 3984 4496",
+      "HIT 15846 17942",
+      "HIT 9108 10581"
+    ],
+    "misses": []
+  },
+  {
+    "name": "h5py-read-y-original",
+    "command": [
+      "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+      "h5py",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc",
+      "read:y"
+    ],
+    "returncode": 0,
+    "stdout": "{\"phase\": \"environment\", \"reader\": \"3.12.1\", \"hdf5\": \"1.12.2\", \"extension\": \"/Users/jakegearon/.pyenv/versions/3.10.14/lib/python3.10/site-packages/h5py/h5f.cpython-310-darwin.so\"}\n{\"phase\": \"open.begin\"}\n{\"phase\": \"open.end\"}\n{\"phase\": \"read:y.begin\"}\n{\"phase\": \"read:y.end\", \"shape\": [128], \"sha256\": \"d7f3b5d1e95d69f29c139b21bb0251285d597170d0949da15799f04c73c4fed2\"}\n{\"phase\": \"close.begin\"}\n{\"phase\": \"close.end\"}\n",
+    "stderr": "",
+    "events": [],
+    "misses": []
+  },
+  {
+    "name": "h5py-read-y-strict",
+    "command": [
+      "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+      "h5py",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc",
+      "read:y"
+    ],
+    "returncode": 0,
+    "stdout": "{\"phase\": \"environment\", \"reader\": \"3.12.1\", \"hdf5\": \"1.12.2\", \"extension\": \"/Users/jakegearon/.pyenv/versions/3.10.14/lib/python3.10/site-packages/h5py/h5f.cpython-310-darwin.so\"}\n{\"phase\": \"open.begin\"}\n{\"phase\": \"open.end\"}\n{\"phase\": \"read:y.begin\"}\n{\"phase\": \"read:y.end\", \"shape\": [128], \"sha256\": \"d7f3b5d1e95d69f29c139b21bb0251285d597170d0949da15799f04c73c4fed2\"}\n{\"phase\": \"close.begin\"}\n{\"phase\": \"close.end\"}\n",
+    "stderr": "",
+    "events": [
+      "HIT 0 8",
+      "HIT 0 16",
+      "HIT 16 48",
+      "HIT 48 560",
+      "HIT 560 608",
+      "HIT 806121 806159",
+      "HIT 12483 12629",
+      "HIT 1106396 1106908",
+      "HIT 2337392 2337445",
+      "HIT 1190692 1191204",
+      "HIT 19086 19598",
+      "HIT 20558 22654",
+      "HIT 28583 29243"
+    ],
+    "misses": []
+  },
+  {
+    "name": "h5py-attributes-wse-original",
+    "command": [
+      "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+      "h5py",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc",
+      "attributes:wse"
+    ],
+    "returncode": 0,
+    "stdout": "{\"phase\": \"environment\", \"reader\": \"3.12.1\", \"hdf5\": \"1.12.2\", \"extension\": \"/Users/jakegearon/.pyenv/versions/3.10.14/lib/python3.10/site-packages/h5py/h5f.cpython-310-darwin.so\"}\n{\"phase\": \"open.begin\"}\n{\"phase\": \"open.end\"}\n{\"phase\": \"attributes:wse.begin\"}\n{\"phase\": \"attributes:wse.end\", \"attributes\": [\"_Netcdf4Coordinates\", \"_FillValue\", \"DIMENSION_LIST\", \"long_name\", \"grid_mapping\", \"units\", \"quality_flag\", \"valid_min\", \"valid_max\", \"coordinates\", \"comment\"]}\n{\"phase\": \"close.begin\"}\n{\"phase\": \"close.end\"}\n",
+    "stderr": "",
+    "events": [],
+    "misses": []
+  },
+  {
+    "name": "h5py-attributes-wse-strict",
+    "command": [
+      "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+      "h5py",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc",
+      "attributes:wse"
+    ],
+    "returncode": 0,
+    "stdout": "{\"phase\": \"environment\", \"reader\": \"3.12.1\", \"hdf5\": \"1.12.2\", \"extension\": \"/Users/jakegearon/.pyenv/versions/3.10.14/lib/python3.10/site-packages/h5py/h5f.cpython-310-darwin.so\"}\n{\"phase\": \"open.begin\"}\n{\"phase\": \"open.end\"}\n{\"phase\": \"attributes:wse.begin\"}\n{\"phase\": \"attributes:wse.end\", \"attributes\": [\"_Netcdf4Coordinates\", \"_FillValue\", \"DIMENSION_LIST\", \"long_name\", \"grid_mapping\", \"units\", \"quality_flag\", \"valid_min\", \"valid_max\", \"coordinates\", \"comment\"]}\n{\"phase\": \"close.begin\"}\n{\"phase\": \"close.end\"}\n",
+    "stderr": "",
+    "events": [
+      "HIT 0 8",
+      "HIT 0 16",
+      "HIT 16 48",
+      "HIT 48 560",
+      "HIT 560 608",
+      "HIT 806121 806159",
+      "HIT 12483 12629",
+      "HIT 1106396 1106908",
+      "HIT 2337392 2337445",
+      "HIT 1190692 1191204",
+      "HIT 585427 585939",
+      "HIT 12634 12672",
+      "HIT 204676 204822",
+      "HIT 803665 804177",
+      "HIT 805097 806121",
+      "HIT 24487 28583"
+    ],
+    "misses": []
+  },
+  {
+    "name": "h5py-read-wse-original",
+    "command": [
+      "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+      "h5py",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc",
+      "read:wse"
+    ],
+    "returncode": 0,
+    "stdout": "{\"phase\": \"environment\", \"reader\": \"3.12.1\", \"hdf5\": \"1.12.2\", \"extension\": \"/Users/jakegearon/.pyenv/versions/3.10.14/lib/python3.10/site-packages/h5py/h5f.cpython-310-darwin.so\"}\n{\"phase\": \"open.begin\"}\n{\"phase\": \"open.end\"}\n{\"phase\": \"read:wse.begin\"}\n{\"phase\": \"read:wse.end\", \"shape\": [128, 128], \"sha256\": \"e48f2822960f87fed5a5ddd859235dea3ec39f390b5e3b5fd0e47ac36ad6a7e4\"}\n{\"phase\": \"close.begin\"}\n{\"phase\": \"close.end\"}\n",
+    "stderr": "",
+    "events": [],
+    "misses": []
+  },
+  {
+    "name": "h5py-read-wse-strict",
+    "command": [
+      "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+      "h5py",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc",
+      "read:wse"
+    ],
+    "returncode": 0,
+    "stdout": "{\"phase\": \"environment\", \"reader\": \"3.12.1\", \"hdf5\": \"1.12.2\", \"extension\": \"/Users/jakegearon/.pyenv/versions/3.10.14/lib/python3.10/site-packages/h5py/h5f.cpython-310-darwin.so\"}\n{\"phase\": \"open.begin\"}\n{\"phase\": \"open.end\"}\n{\"phase\": \"read:wse.begin\"}\n{\"phase\": \"read:wse.end\", \"shape\": [128, 128], \"sha256\": \"e48f2822960f87fed5a5ddd859235dea3ec39f390b5e3b5fd0e47ac36ad6a7e4\"}\n{\"phase\": \"close.begin\"}\n{\"phase\": \"close.end\"}\n",
+    "stderr": "",
+    "events": [
+      "HIT 0 8",
+      "HIT 0 16",
+      "HIT 16 48",
+      "HIT 48 560",
+      "HIT 560 608",
+      "HIT 806121 806159",
+      "HIT 12483 12629",
+      "HIT 1106396 1106908",
+      "HIT 2337392 2337445",
+      "HIT 1190692 1191204",
+      "HIT 585427 585939",
+      "HIT 800967 803583",
+      "HIT 807679 844067"
+    ],
+    "misses": []
+  },
+  {
+    "name": "h5py-read-wse_qual-original",
+    "command": [
+      "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+      "h5py",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc",
+      "read:wse_qual"
+    ],
+    "returncode": 0,
+    "stdout": "{\"phase\": \"environment\", \"reader\": \"3.12.1\", \"hdf5\": \"1.12.2\", \"extension\": \"/Users/jakegearon/.pyenv/versions/3.10.14/lib/python3.10/site-packages/h5py/h5f.cpython-310-darwin.so\"}\n{\"phase\": \"open.begin\"}\n{\"phase\": \"open.end\"}\n{\"phase\": \"read:wse_qual.begin\"}\n{\"phase\": \"read:wse_qual.end\", \"shape\": [128, 128], \"sha256\": \"467cc9ea2a7a0e20a11a77ba37179a42ca9de21d8155c14ca5325d56dba1e2c4\"}\n{\"phase\": \"close.begin\"}\n{\"phase\": \"close.end\"}\n",
+    "stderr": "",
+    "events": [],
+    "misses": []
+  },
+  {
+    "name": "h5py-read-wse_qual-strict",
+    "command": [
+      "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+      "h5py",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc",
+      "read:wse_qual"
+    ],
+    "returncode": 0,
+    "stdout": "{\"phase\": \"environment\", \"reader\": \"3.12.1\", \"hdf5\": \"1.12.2\", \"extension\": \"/Users/jakegearon/.pyenv/versions/3.10.14/lib/python3.10/site-packages/h5py/h5f.cpython-310-darwin.so\"}\n{\"phase\": \"open.begin\"}\n{\"phase\": \"open.end\"}\n{\"phase\": \"read:wse_qual.begin\"}\n{\"phase\": \"read:wse_qual.end\", \"shape\": [128, 128], \"sha256\": \"467cc9ea2a7a0e20a11a77ba37179a42ca9de21d8155c14ca5325d56dba1e2c4\"}\n{\"phase\": \"close.begin\"}\n{\"phase\": \"close.end\"}\n",
+    "stderr": "",
+    "events": [
+      "HIT 0 8",
+      "HIT 0 16",
+      "HIT 16 48",
+      "HIT 48 560",
+      "HIT 560 608",
+      "HIT 806121 806159",
+      "HIT 12483 12629",
+      "HIT 1106396 1106908",
+      "HIT 2337392 2337445",
+      "HIT 1190692 1191204",
+      "HIT 804689 805201",
+      "HIT 1079315 1081931",
+      "HIT 1083979 1102488"
+    ],
+    "misses": []
+  },
+  {
+    "name": "h5py-read-wse_qual_bitwise-original",
+    "command": [
+      "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+      "h5py",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc",
+      "read:wse_qual_bitwise"
+    ],
+    "returncode": 0,
+    "stdout": "{\"phase\": \"environment\", \"reader\": \"3.12.1\", \"hdf5\": \"1.12.2\", \"extension\": \"/Users/jakegearon/.pyenv/versions/3.10.14/lib/python3.10/site-packages/h5py/h5f.cpython-310-darwin.so\"}\n{\"phase\": \"open.begin\"}\n{\"phase\": \"open.end\"}\n{\"phase\": \"read:wse_qual_bitwise.begin\"}\n{\"phase\": \"read:wse_qual_bitwise.end\", \"shape\": [128, 128], \"sha256\": \"5c44b6ec7c6751ea8149f4af5b034939cacb411258524d9e2c55c626c6678b21\"}\n{\"phase\": \"close.begin\"}\n{\"phase\": \"close.end\"}\n",
+    "stderr": "",
+    "events": [],
+    "misses": []
+  },
+  {
+    "name": "h5py-read-wse_qual_bitwise-strict",
+    "command": [
+      "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+      "h5py",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc",
+      "read:wse_qual_bitwise"
+    ],
+    "returncode": 0,
+    "stdout": "{\"phase\": \"environment\", \"reader\": \"3.12.1\", \"hdf5\": \"1.12.2\", \"extension\": \"/Users/jakegearon/.pyenv/versions/3.10.14/lib/python3.10/site-packages/h5py/h5f.cpython-310-darwin.so\"}\n{\"phase\": \"open.begin\"}\n{\"phase\": \"open.end\"}\n{\"phase\": \"read:wse_qual_bitwise.begin\"}\n{\"phase\": \"read:wse_qual_bitwise.end\", \"shape\": [128, 128], \"sha256\": \"5c44b6ec7c6751ea8149f4af5b034939cacb411258524d9e2c55c626c6678b21\"}\n{\"phase\": \"close.begin\"}\n{\"phase\": \"close.end\"}\n",
+    "stderr": "",
+    "events": [
+      "HIT 0 8",
+      "HIT 0 16",
+      "HIT 16 48",
+      "HIT 48 560",
+      "HIT 560 608",
+      "HIT 806121 806159",
+      "HIT 12483 12629",
+      "HIT 1106396 1106908",
+      "HIT 2337392 2337445",
+      "HIT 1190692 1191204",
+      "HIT 1081931 1082443",
+      "HIT 1102488 1105104",
+      "HIT 1107420 1127649"
+    ],
+    "misses": []
+  },
+  {
+    "name": "h5py-read-wse_uncert-original",
+    "command": [
+      "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+      "h5py",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc",
+      "read:wse_uncert"
+    ],
+    "returncode": 0,
+    "stdout": "{\"phase\": \"environment\", \"reader\": \"3.12.1\", \"hdf5\": \"1.12.2\", \"extension\": \"/Users/jakegearon/.pyenv/versions/3.10.14/lib/python3.10/site-packages/h5py/h5f.cpython-310-darwin.so\"}\n{\"phase\": \"open.begin\"}\n{\"phase\": \"open.end\"}\n{\"phase\": \"read:wse_uncert.begin\"}\n{\"phase\": \"read:wse_uncert.end\", \"shape\": [128, 128], \"sha256\": \"e48f2822960f87fed5a5ddd859235dea3ec39f390b5e3b5fd0e47ac36ad6a7e4\"}\n{\"phase\": \"close.begin\"}\n{\"phase\": \"close.end\"}\n",
+    "stderr": "",
+    "events": [],
+    "misses": []
+  },
+  {
+    "name": "h5py-read-wse_uncert-strict",
+    "command": [
+      "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+      "h5py",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc",
+      "read:wse_uncert"
+    ],
+    "returncode": 0,
+    "stdout": "{\"phase\": \"environment\", \"reader\": \"3.12.1\", \"hdf5\": \"1.12.2\", \"extension\": \"/Users/jakegearon/.pyenv/versions/3.10.14/lib/python3.10/site-packages/h5py/h5f.cpython-310-darwin.so\"}\n{\"phase\": \"open.begin\"}\n{\"phase\": \"open.end\"}\n{\"phase\": \"read:wse_uncert.begin\"}\n{\"phase\": \"read:wse_uncert.end\", \"shape\": [128, 128], \"sha256\": \"e48f2822960f87fed5a5ddd859235dea3ec39f390b5e3b5fd0e47ac36ad6a7e4\"}\n{\"phase\": \"close.begin\"}\n{\"phase\": \"close.end\"}\n",
+    "stderr": "",
+    "events": [
+      "HIT 0 8",
+      "HIT 0 16",
+      "HIT 16 48",
+      "HIT 48 560",
+      "HIT 560 608",
+      "HIT 806121 806159",
+      "HIT 12483 12629",
+      "HIT 1106396 1106908",
+      "HIT 2337392 2337445",
+      "HIT 1190692 1191204",
+      "HIT 1106128 1106640",
+      "HIT 1194276 1196892",
+      "HIT 1198822 1236565"
+    ],
+    "misses": []
+  },
+  {
+    "name": "h5py-read-n_wse_pix-original",
+    "command": [
+      "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+      "h5py",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc",
+      "read:n_wse_pix"
+    ],
+    "returncode": 0,
+    "stdout": "{\"phase\": \"environment\", \"reader\": \"3.12.1\", \"hdf5\": \"1.12.2\", \"extension\": \"/Users/jakegearon/.pyenv/versions/3.10.14/lib/python3.10/site-packages/h5py/h5f.cpython-310-darwin.so\"}\n{\"phase\": \"open.begin\"}\n{\"phase\": \"open.end\"}\n{\"phase\": \"read:n_wse_pix.begin\"}\n{\"phase\": \"read:n_wse_pix.end\", \"shape\": [128, 128], \"sha256\": \"de2f256064a0af797747c2b97505dc0b9f3df0de4f489eac731c23ae9ca9cc31\"}\n{\"phase\": \"close.begin\"}\n{\"phase\": \"close.end\"}\n",
+    "stderr": "",
+    "events": [],
+    "misses": []
+  },
+  {
+    "name": "h5py-read-n_wse_pix-strict",
+    "command": [
+      "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+      "h5py",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc",
+      "read:n_wse_pix"
+    ],
+    "returncode": 0,
+    "stdout": "{\"phase\": \"environment\", \"reader\": \"3.12.1\", \"hdf5\": \"1.12.2\", \"extension\": \"/Users/jakegearon/.pyenv/versions/3.10.14/lib/python3.10/site-packages/h5py/h5f.cpython-310-darwin.so\"}\n{\"phase\": \"open.begin\"}\n{\"phase\": \"open.end\"}\n{\"phase\": \"read:n_wse_pix.begin\"}\n{\"phase\": \"read:n_wse_pix.end\", \"shape\": [128, 128], \"sha256\": \"de2f256064a0af797747c2b97505dc0b9f3df0de4f489eac731c23ae9ca9cc31\"}\n{\"phase\": \"close.begin\"}\n{\"phase\": \"close.end\"}\n",
+    "stderr": "",
+    "events": [
+      "HIT 0 8",
+      "HIT 0 16",
+      "HIT 16 48",
+      "HIT 48 560",
+      "HIT 560 608",
+      "HIT 806121 806159",
+      "HIT 12483 12629",
+      "HIT 1106396 1106908",
+      "HIT 2337392 2337445",
+      "HIT 2883317 2883829",
+      "HIT 4041318 4041830",
+      "HIT 4179022 4181638",
+      "HIT 4183686 4194893"
+    ],
+    "misses": []
+  },
+  {
+    "name": "h5py-close-original",
+    "command": [
+      "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+      "h5py",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc",
+      "close"
+    ],
+    "returncode": 0,
+    "stdout": "{\"phase\": \"environment\", \"reader\": \"3.12.1\", \"hdf5\": \"1.12.2\", \"extension\": \"/Users/jakegearon/.pyenv/versions/3.10.14/lib/python3.10/site-packages/h5py/h5f.cpython-310-darwin.so\"}\n{\"phase\": \"open.begin\"}\n{\"phase\": \"open.end\"}\n{\"phase\": \"close.begin\"}\n{\"phase\": \"close.end\"}\n",
+    "stderr": "",
+    "events": [],
+    "misses": []
+  },
+  {
+    "name": "h5py-close-strict",
+    "command": [
+      "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/bench/swot_reference_probe.py",
+      "h5py",
+      "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/held-out-qualification/original/prototype-output/transfer-resume/held-out-mirror/source.nc",
+      "close"
+    ],
+    "returncode": 0,
+    "stdout": "{\"phase\": \"environment\", \"reader\": \"3.12.1\", \"hdf5\": \"1.12.2\", \"extension\": \"/Users/jakegearon/.pyenv/versions/3.10.14/lib/python3.10/site-packages/h5py/h5f.cpython-310-darwin.so\"}\n{\"phase\": \"open.begin\"}\n{\"phase\": \"open.end\"}\n{\"phase\": \"close.begin\"}\n{\"phase\": \"close.end\"}\n",
+    "stderr": "",
+    "events": [
+      "HIT 0 8",
+      "HIT 0 16",
+      "HIT 16 48"
+    ],
+    "misses": []
+  }
+]

@@ -226,6 +226,7 @@ pub struct Tile {
 pub struct Prepared {
     base: acquisition::Prepared,
     policy: Policy,
+    working_memory: Value,
 }
 /// Requires one HDF5 asset and exactly the five documented variables. Input
 /// variable order is normalized to PATHS; source windows/strides stay unchanged.
@@ -286,13 +287,19 @@ fn prepare_using(
         .collect();
     let base = prepare(&r)?;
     policy.validate_definitions(&base.explain())?;
-    Ok(Prepared { base, policy })
+    let working_memory = base.swot_working_memory()?;
+    Ok(Prepared {
+        base,
+        policy,
+        working_memory,
+    })
 }
 impl Prepared {
     pub fn explain(&self) -> Value {
         let mut value = self.base.explain();
         value["quality_policy"] = self.policy.provenance();
         value["aligned_execution"] = json!({"ordering":"WSE source-chunk row/column order, then bounded logical subtiles; PATHS order within each tile","queue_capacity":0,"range_cache":"bounded, execution-local, one pinned source identity","output":"five raw arrays, independent source masks and separate derived validity; no file publication"});
+        value["aligned_execution"]["working_memory"] = self.working_memory.clone();
         value
     }
     pub fn into_stream(self) -> Result<Stream> {

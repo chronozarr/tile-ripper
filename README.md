@@ -5,6 +5,9 @@ workflow is available through the normal `plan`/`stream` CLI and Rust APIs.
 See [the tested workflow](docs/transfer-resume/workflow.md) and
 [the local decision gate](docs/transfer-resume/report.md). A resumed scientific
 stream starts at its beginning; results remain provisional until `finish()`.
+The [held-out UTM01W qualification](docs/held-out-qualification/report.md)
+resolves the sparse-reference failure and verifies a nonempty second PGD0
+selection, live recovery and Linux ARM64 checkpoint behavior.
 
 [Private alpha candidate: installation and first scientist trial](ALPHA.md).
 
@@ -108,6 +111,7 @@ version-pinned native acquisitions with a tuned GDAL reader.
 | Archived GOES-19 RRQPE and cloud-top-temperature NetCDF-4 samples | Opt-in `native-hdf5`; exact UInt16/Float32 rank-two array slices, stored one-dimensional axes, conditional compressed-chunk ranges and provisional streaming; [profile and decision gate](docs/native-hdf5/report.md) |
 | Inspected SWOT Raster Version C 100 m UTM19T scene | Native Float32 `/wse` with matching compressed Float64 `/x`,`/y`; exact index slices qualified against h5py/NetCDF-C on an identity-pinned bounded mirror. The Version C live archive profile is not qualified; [product, access and science gate](docs/swot-wse/report.md) |
 | Inspected SWOT Raster Version D PGD0 100 m UTM19T scene | Aligned native WSE, UInt8 summary quality, UInt32 detailed flags/counts and Float32 uncertainty, separate explicit quality policies, exact stored coordinates and bounded streaming; qualified against h5py/NetCDF-C on a pinned mirror and directly from NASA through opt-in authenticated conditional ranges; [live gate](docs/earthdata-auth/report.md), [authentication workflow](docs/earthdata-auth/workflow.md) and [science](docs/swot-quality/report.md) |
+| Held-out SWOT Raster Version D PGD0 100 m UTM01W selection | Same five-layer CLI/reader and Earthdata policy, 1,310 good/suspect accepted cells, both independent references and live source-range resume; [bounded selection, resource diagnostics and platform evidence](docs/held-out-qualification/report.md). This qualifies the documented selection and policy. |
 | Public GFS v3 archive | Native Float32 subset, ordinary/sharded codecs and conditional selective ranges; [exact v3 profile](docs/zarr-v3-input/workflow.md) |
 | Local custom-grid Zarr / direct GeoTIFF | Narrow UInt16 profiles; [advanced lifecycle](docs/unified-workflow.md) and [local Zarr](docs/zarr-workflow.md) |
 
