@@ -1,0 +1,88 @@
+{
+  "schema": "tile-ripper-provider-routing-acceptance-v1",
+  "start_commit": "fef0068",
+  "runtime": {
+    "os": "macOS-26.7.1-arm64-arm-64bit",
+    "rust": "rustc 1.92.0 (ded5c06cf 2025-12-08)",
+    "cargo": "cargo 1.92.0 (344c4567c 2025-10-21)"
+  },
+  "checks": [
+    {
+      "command": "cargo test --locked --all-features --all-targets",
+      "status": "passed",
+      "tests_passed": 187,
+      "tests_ignored": 9,
+      "log_sha256": "a4b0fe702df591c6020a4463f13820f80649d17cc0368a7fbb320201d081cbc0",
+      "warnings": 0,
+      "source_scope": "isolated staged routing tree"
+    },
+    {
+      "command": "cargo test --locked --no-default-features --features native-cog,native-hdf5,authenticated-http",
+      "status": "passed",
+      "tests_passed": 158,
+      "tests_ignored": 8,
+      "log_sha256": "0bfb57afaeb57380bbf6f442f0aa9b7c6b20a22c71bb7dee1e16e9b100c9e4f8",
+      "warnings": 0,
+      "source_scope": "isolated staged routing tree"
+    },
+    {
+      "command": "cargo clippy --locked --all-features --all-targets -- -D warnings",
+      "status": "passed",
+      "tests_passed": null,
+      "tests_ignored": null,
+      "log_sha256": "2bc683fb4e4f4f21ee9ee39e2b8ecce2efe20d3b1be57bda5316aa519ab3d30a",
+      "warnings": 0
+    },
+    {
+      "command": "cargo fmt --all -- --check",
+      "status": "passed",
+      "tests_passed": null,
+      "tests_ignored": null,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "warnings": 0
+    },
+    {
+      "command": "cargo check --locked --no-default-features",
+      "status": "passed",
+      "tests_passed": null,
+      "tests_ignored": null,
+      "log_sha256": "a141eec05a29c63e724fe6edf5c44ff9193d242fb795de4ba86aa9f68bb0eef0",
+      "warnings": 0
+    },
+    {
+      "command": "cargo check --locked --no-default-features --features authenticated-http",
+      "status": "passed",
+      "tests_passed": null,
+      "tests_ignored": null,
+      "log_sha256": "5acdd5989989e6f4784d06d368fc2af826b6c9dfb053d45e200c3a1a2aa37124",
+      "warnings": 3
+    },
+    {
+      "command": "TILE_RIPPER_PRODUCTS_BINARY=target/release/tile-ripper prototype-output/zarr-env/bin/python bench/wave1_products.py offline",
+      "status": "passed",
+      "scientific_cases": 6
+    },
+    {
+      "command": "otool -L target/release/tile-ripper",
+      "status": "passed",
+      "gdal_linked": false
+    }
+  ],
+  "coverage": [
+    "Landsat8/9,HLSL30/S30,OPERA frozen independent scientific outputs",
+    "native COG,v2/v3 scientific/fault suites",
+    "HDF5/SWOT native/geographic/quality/job paths",
+    "explicit auth,secret confinement,source version and terminal failures",
+    "existing source checkpoints/replay",
+    "atomic output publication",
+    "provider ambiguity/false equivalence/mismatched versions/expired signing/explicit override/mixed provider checkpoint refusal"
+  ],
+  "ignored_live_tests": "Explicit ignored tests remain ignored; actual-source qualification receipts are separate and must not be counted as ignored tests executed.",
+  "local_only": true,
+  "scope": "Routing changeset independently tested from staged tree without AlphaEarth sources, storage changes, or decoder changes.",
+  "planning_tool": {
+    "structural_compile": "passed (dry-run)",
+    "dispatch": "not used: execution performed by scoped agents without worktree merging",
+    "configuration_validation": "requires a provider configuration absent from this checkout; no configuration or credential changes made"
+  }
+}

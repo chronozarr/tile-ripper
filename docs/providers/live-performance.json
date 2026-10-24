@@ -1,0 +1,1011 @@
+{
+  "schema": "tile-ripper-provider-performance-v1",
+  "binary_sha256": "09b27f8b3f13e4c9b2ea45caff01c3b434beea8911e92353f5e8811cc0024365",
+  "conditions": {
+    "workers": 1,
+    "per_host": 1,
+    "loopback_latency_ms": 5,
+    "loopback_mbps": 100,
+    "rounds": 1,
+    "live_source_bytes": "native metadata ranges plus selected payload; original-source science capture reported separately",
+    "timing": "wall includes process startup, discovery of supplied selection, signing/auth, metadata inspection, execution and durable output"
+  },
+  "cases": [
+    {
+      "product": "hls-l30",
+      "provider": "planetary_computer",
+      "mode": "live",
+      "round": 0,
+      "wall_seconds": 5.131292208010564,
+      "cpu_seconds": 0.08419299999999999,
+      "peak_rss_bytes": 25493504,
+      "observed": {
+        "source_reads": [],
+        "scheduler": {
+          "workers": 1,
+          "per_host": 1,
+          "buffer_bytes": 33554392,
+          "reserved_bytes_peak": 506878,
+          "reader_state_reserved_bytes": 0,
+          "prepared_native_metadata_bytes": 20970,
+          "authenticated_transport_reserved_bytes": 0,
+          "prepared_v3_metadata_index_bytes": 0,
+          "active_workers_peak": 1,
+          "completed_tasks": 2,
+          "admitted_jobs": 2,
+          "cog_reader_scope": "selection",
+          "seconds": 0.652676625,
+          "order": "plan",
+          "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+          "prepared_hdf5_bytes": 0,
+          "native_buffers": [
+            {
+              "asset_id": "p000_B04",
+              "transport_encoded_capacity_peak_bytes": 88588,
+              "adapter_delivery_capacity_peak_bytes": 3072,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_Fmask",
+              "transport_encoded_capacity_peak_bytes": 2024,
+              "adapter_delivery_capacity_peak_bytes": 2048,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            }
+          ],
+          "native_metadata": {
+            "retained_sources": 2,
+            "retained_bytes": 20970,
+            "physical_metadata_sources": 2,
+            "physical_metadata_bytes": 4586,
+            "cap_bytes": 8388608,
+            "skipped_sources": 0,
+            "scope": "this Prepared only; immutable version-bound parser pages; never a data cache",
+            "authenticated_sources": 0,
+            "authenticated_transport": {}
+          },
+          "native_strategies": [
+            {
+              "asset_id": "p000_B04",
+              "task_reserved_bytes": 485908,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_Fmask",
+              "task_reserved_bytes": 266224,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            }
+          ]
+        },
+        "transport": {},
+        "decoded_source_chunks": 0,
+        "filled_source_chunks": 0,
+        "first_output_seconds": 0.933710958,
+        "assembly_seconds": 0.0,
+        "source_retrieval_seconds": 0.423675417,
+        "allocation_seconds": null,
+        "copying_seconds": null,
+        "output_setup_seconds": 0.00825725,
+        "output_finalize_seconds": 0.001276083,
+        "output_io": {
+          "reads": 0,
+          "writes": 54,
+          "bytes_read": 0,
+          "bytes_written": 107269,
+          "buffered_bytes_peak": 39936,
+          "storage_read_seconds": 0.0,
+          "storage_write_seconds": 0.010382166,
+          "encode_seconds": 0.0002135850000000017,
+          "allocation_seconds": 0.0,
+          "copying_seconds": 0.0
+        },
+        "native_materialized_bytes": null,
+        "source_data_requests": 2,
+        "source_data_bytes": 90612,
+        "chunks": 2,
+        "decoded_bytes": 3072,
+        "non_nodata_pixels": 1680,
+        "planning_seconds": 1.657561833,
+        "source_open_seconds": 0.22759404299999997,
+        "read_decode_seconds": 0.424829708,
+        "sink_seconds": 0.004331584,
+        "masking_seconds": 1.5416000000000003e-05,
+        "remote_requests": null,
+        "remote_bytes": null
+      },
+      "loopback": null,
+      "checks": [
+        {
+          "band": "B04",
+          "shape": [
+            32,
+            32
+          ],
+          "complete_values_equal": true,
+          "masks_equal": true,
+          "quality_equal": null,
+          "coordinates_equal": true,
+          "raw_sha256": "982b0815a4f4d8d4949710683952bdefc54dfc6a76bcc9e6d63bac3a8d96c944"
+        },
+        {
+          "band": "Fmask",
+          "shape": [
+            32,
+            32
+          ],
+          "complete_values_equal": true,
+          "masks_equal": true,
+          "quality_equal": true,
+          "coordinates_equal": true,
+          "raw_sha256": "54ec14c437a2d01402888dffbfab2564d533b1ffd88d9e08dae63acee046598f"
+        }
+      ],
+      "output_bytes": 223060,
+      "output_objects": 53,
+      "routing": {
+        "policy": "qualified-provider-v1",
+        "requested": "planetary_computer",
+        "selected": "planetary_computer",
+        "basis": "explicit_override",
+        "rationale": "Supplied observations and canonical physical locators are preserved; no remote substitution.",
+        "credentials_required": false,
+        "authorization_configured": false,
+        "observations_preserved": true,
+        "routes": [
+          {
+            "provider": "planetary_computer",
+            "catalog": "https://planetarycomputer.microsoft.com/api/stac/v1",
+            "product": "hls-l30",
+            "processing_version": "2.0",
+            "discovery": "bounded complete STAC search; hls2-l30/hls2-s30 only for HLS v2",
+            "access": "accountless memory-only SAS signing; observed container read/list grant; engine requests remain confined to the exact canonical object with conditional byte ranges",
+            "credential_requirement": "none",
+            "access_policy": "pc-exact-object-request-v1",
+            "capabilities": "native COG; physical metadata and ETag validation before/after acquisition",
+            "availability": "queried AOI/date only; catalog coverage is independent of Earthdata; no global coverage claim",
+            "limitations": "requires signing service; HLS cross-provider equivalence is specimen-scoped; no online speed probe or fallback"
+          },
+          {
+            "provider": "earthdata",
+            "catalog": "https://cmr.earthdata.nasa.gov/search",
+            "product": "hls-l30",
+            "processing_version": "2.0",
+            "discovery": "exact CMR collection/version and complete bounded granule search",
+            "access": "qualified product-specific exact-object Earthdata session",
+            "credential_requirement": "explicit private netrc",
+            "access_policy": "earthdata-product-exact-object-v1",
+            "capabilities": "native COG; conditional byte ranges; product-specific redirect confinement",
+            "availability": "queried AOI/date only; missing observations are not substituted",
+            "limitations": "authentication required for protected assets; no demonstrated general speed advantage"
+          }
+        ],
+        "observation_count": 1,
+        "eligibility": {
+          "mode": "explicit_or_pinned",
+          "queried_providers": [],
+          "other_catalogs": "not queried; supplied sources and explicit overrides never trigger substitution"
+        },
+        "equivalence": {
+          "classification": "scientifically_equivalent_selected_samples",
+          "verified_physical_assets": 2,
+          "total_assets": 2,
+          "scope": "see each source's immutable ETag/locator-bound sample evidence; no whole-object byte identity or archive-wide interchangeability claim"
+        },
+        "pinning": "provider, unsigned canonical locator, product/granule/band, access-policy version and inspected object ETag/grid/dtype/metadata are bound to this prepared acquisition; see sources for exact identities",
+        "fallback": "disabled; signature renewal/provider change requires an explicit fresh plan; product checkpoints are unsupported"
+      }
+    },
+    {
+      "product": "hls-l30",
+      "provider": "earthdata",
+      "mode": "live",
+      "round": 0,
+      "wall_seconds": 24.24323079100577,
+      "cpu_seconds": 0.157177,
+      "peak_rss_bytes": 25968640,
+      "observed": {
+        "source_reads": [],
+        "scheduler": {
+          "workers": 1,
+          "per_host": 1,
+          "buffer_bytes": 33554392,
+          "reserved_bytes_peak": 2604030,
+          "reader_state_reserved_bytes": 0,
+          "prepared_native_metadata_bytes": 2118122,
+          "authenticated_transport_reserved_bytes": 2097152,
+          "prepared_v3_metadata_index_bytes": 0,
+          "active_workers_peak": 1,
+          "completed_tasks": 2,
+          "admitted_jobs": 2,
+          "cog_reader_scope": "selection",
+          "seconds": 2.733424125,
+          "order": "plan",
+          "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+          "prepared_hdf5_bytes": 0,
+          "native_buffers": [
+            {
+              "asset_id": "p000_B04",
+              "transport_encoded_capacity_peak_bytes": 88588,
+              "adapter_delivery_capacity_peak_bytes": 3072,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_Fmask",
+              "transport_encoded_capacity_peak_bytes": 2024,
+              "adapter_delivery_capacity_peak_bytes": 2048,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            }
+          ],
+          "native_metadata": {
+            "retained_sources": 2,
+            "retained_bytes": 20970,
+            "physical_metadata_sources": 2,
+            "physical_metadata_bytes": 4586,
+            "cap_bytes": 8388608,
+            "skipped_sources": 0,
+            "scope": "this Prepared only; immutable version-bound parser pages; never a data cache",
+            "authenticated_sources": 2,
+            "authenticated_transport": {
+              "p000_B04": {
+                "checkpoint_claims": 0,
+                "peak_in_flight": 1,
+                "wire_head": 12,
+                "wire_get": 7,
+                "redirects": 10,
+                "login_requests": 1,
+                "refreshes": 0,
+                "route_cache_hits": 2,
+                "response_body_bytes": 97101,
+                "redirect_body_bytes": 321,
+                "signing_auth_seconds": 10.129665626000001,
+                "statuses": {
+                  "200": 6,
+                  "206": 3,
+                  "301": 1,
+                  "302": 2,
+                  "303": 7
+                },
+                "origins": {
+                  "https://d1nklfio7vscoe.cloudfront.net": 9,
+                  "https://data.lpdaac.earthdatacloud.nasa.gov": 9,
+                  "https://urs.earthdata.nasa.gov": 1
+                }
+              },
+              "p000_Fmask": {
+                "checkpoint_claims": 0,
+                "peak_in_flight": 1,
+                "wire_head": 12,
+                "wire_get": 7,
+                "redirects": 10,
+                "login_requests": 1,
+                "refreshes": 0,
+                "route_cache_hits": 2,
+                "response_body_bytes": 10539,
+                "redirect_body_bytes": 323,
+                "signing_auth_seconds": 7.94708254,
+                "statuses": {
+                  "200": 6,
+                  "206": 3,
+                  "301": 1,
+                  "302": 2,
+                  "303": 7
+                },
+                "origins": {
+                  "https://d1nklfio7vscoe.cloudfront.net": 9,
+                  "https://data.lpdaac.earthdatacloud.nasa.gov": 9,
+                  "https://urs.earthdata.nasa.gov": 1
+                }
+              }
+            }
+          },
+          "native_strategies": [
+            {
+              "asset_id": "p000_B04",
+              "task_reserved_bytes": 485908,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_Fmask",
+              "task_reserved_bytes": 266224,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            }
+          ]
+        },
+        "transport": {
+          "native_cog_authenticated": {
+            "p000_B04": {
+              "checkpoint_claims": 0,
+              "peak_in_flight": 1,
+              "wire_head": 16,
+              "wire_get": 7,
+              "redirects": 12,
+              "login_requests": 1,
+              "refreshes": 0,
+              "route_cache_hits": 2,
+              "response_body_bytes": 97101,
+              "redirect_body_bytes": 321,
+              "signing_auth_seconds": 11.921643543,
+              "statuses": {
+                "200": 8,
+                "206": 3,
+                "301": 1,
+                "302": 2,
+                "303": 9
+              },
+              "origins": {
+                "https://d1nklfio7vscoe.cloudfront.net": 11,
+                "https://data.lpdaac.earthdatacloud.nasa.gov": 11,
+                "https://urs.earthdata.nasa.gov": 1
+              }
+            },
+            "p000_Fmask": {
+              "checkpoint_claims": 0,
+              "peak_in_flight": 1,
+              "wire_head": 16,
+              "wire_get": 7,
+              "redirects": 12,
+              "login_requests": 1,
+              "refreshes": 0,
+              "route_cache_hits": 2,
+              "response_body_bytes": 10539,
+              "redirect_body_bytes": 323,
+              "signing_auth_seconds": 11.116039706,
+              "statuses": {
+                "200": 8,
+                "206": 3,
+                "301": 1,
+                "302": 2,
+                "303": 9
+              },
+              "origins": {
+                "https://d1nklfio7vscoe.cloudfront.net": 11,
+                "https://data.lpdaac.earthdatacloud.nasa.gov": 11,
+                "https://urs.earthdata.nasa.gov": 1
+              }
+            }
+          }
+        },
+        "decoded_source_chunks": 0,
+        "filled_source_chunks": 0,
+        "first_output_seconds": 5.096049958,
+        "assembly_seconds": 0.0,
+        "source_retrieval_seconds": 0.627535959,
+        "allocation_seconds": null,
+        "copying_seconds": null,
+        "output_setup_seconds": 0.012642,
+        "output_finalize_seconds": 0.000827958,
+        "output_io": {
+          "reads": 0,
+          "writes": 54,
+          "bytes_read": 0,
+          "bytes_written": 107347,
+          "buffered_bytes_peak": 39936,
+          "storage_read_seconds": 0.0,
+          "storage_write_seconds": 0.011495836,
+          "encode_seconds": 0.0001080829999999999,
+          "allocation_seconds": 0.0,
+          "copying_seconds": 0.0
+        },
+        "native_materialized_bytes": null,
+        "source_data_requests": 2,
+        "source_data_bytes": 90612,
+        "chunks": 2,
+        "decoded_bytes": 3072,
+        "non_nodata_pixels": 1680,
+        "planning_seconds": 12.934541166,
+        "source_open_seconds": 2.104931167,
+        "read_decode_seconds": 0.628287125,
+        "sink_seconds": 0.0020864580000000002,
+        "masking_seconds": 1.2375e-05,
+        "remote_requests": null,
+        "remote_bytes": null
+      },
+      "loopback": null,
+      "checks": [
+        {
+          "band": "B04",
+          "shape": [
+            32,
+            32
+          ],
+          "complete_values_equal": true,
+          "masks_equal": true,
+          "quality_equal": null,
+          "coordinates_equal": true,
+          "raw_sha256": "982b0815a4f4d8d4949710683952bdefc54dfc6a76bcc9e6d63bac3a8d96c944"
+        },
+        {
+          "band": "Fmask",
+          "shape": [
+            32,
+            32
+          ],
+          "complete_values_equal": true,
+          "masks_equal": true,
+          "quality_equal": true,
+          "coordinates_equal": true,
+          "raw_sha256": "54ec14c437a2d01402888dffbfab2564d533b1ffd88d9e08dae63acee046598f"
+        }
+      ],
+      "output_bytes": 227794,
+      "output_objects": 53,
+      "routing": {
+        "policy": "qualified-provider-v1",
+        "requested": "earthdata",
+        "selected": "earthdata",
+        "basis": "explicit_override",
+        "rationale": "Supplied observations and canonical physical locators are preserved; no remote substitution.",
+        "credentials_required": true,
+        "authorization_configured": true,
+        "observations_preserved": true,
+        "routes": [
+          {
+            "provider": "planetary_computer",
+            "catalog": "https://planetarycomputer.microsoft.com/api/stac/v1",
+            "product": "hls-l30",
+            "processing_version": "2.0",
+            "discovery": "bounded complete STAC search; hls2-l30/hls2-s30 only for HLS v2",
+            "access": "accountless memory-only SAS signing; observed container read/list grant; engine requests remain confined to the exact canonical object with conditional byte ranges",
+            "credential_requirement": "none",
+            "access_policy": "pc-exact-object-request-v1",
+            "capabilities": "native COG; physical metadata and ETag validation before/after acquisition",
+            "availability": "queried AOI/date only; catalog coverage is independent of Earthdata; no global coverage claim",
+            "limitations": "requires signing service; HLS cross-provider equivalence is specimen-scoped; no online speed probe or fallback"
+          },
+          {
+            "provider": "earthdata",
+            "catalog": "https://cmr.earthdata.nasa.gov/search",
+            "product": "hls-l30",
+            "processing_version": "2.0",
+            "discovery": "exact CMR collection/version and complete bounded granule search",
+            "access": "qualified product-specific exact-object Earthdata session",
+            "credential_requirement": "explicit private netrc",
+            "access_policy": "earthdata-product-exact-object-v1",
+            "capabilities": "native COG; conditional byte ranges; product-specific redirect confinement",
+            "availability": "queried AOI/date only; missing observations are not substituted",
+            "limitations": "authentication required for protected assets; no demonstrated general speed advantage"
+          }
+        ],
+        "observation_count": 1,
+        "eligibility": {
+          "mode": "explicit_or_pinned",
+          "queried_providers": [],
+          "other_catalogs": "not queried; supplied sources and explicit overrides never trigger substitution"
+        },
+        "equivalence": {
+          "classification": "scientifically_equivalent_selected_samples",
+          "verified_physical_assets": 2,
+          "total_assets": 2,
+          "scope": "see each source's immutable ETag/locator-bound sample evidence; no whole-object byte identity or archive-wide interchangeability claim"
+        },
+        "pinning": "provider, unsigned canonical locator, product/granule/band, access-policy version and inspected object ETag/grid/dtype/metadata are bound to this prepared acquisition; see sources for exact identities",
+        "fallback": "disabled; signature renewal/provider change requires an explicit fresh plan; product checkpoints are unsupported"
+      }
+    },
+    {
+      "product": "hls-s30",
+      "provider": "planetary_computer",
+      "mode": "live",
+      "round": 0,
+      "wall_seconds": 4.623974082991481,
+      "cpu_seconds": 0.077427,
+      "peak_rss_bytes": 25772032,
+      "observed": {
+        "source_reads": [],
+        "scheduler": {
+          "workers": 1,
+          "per_host": 1,
+          "buffer_bytes": 33554392,
+          "reserved_bytes_peak": 526272,
+          "reader_state_reserved_bytes": 0,
+          "prepared_native_metadata_bytes": 30251,
+          "authenticated_transport_reserved_bytes": 0,
+          "prepared_v3_metadata_index_bytes": 0,
+          "active_workers_peak": 1,
+          "completed_tasks": 2,
+          "admitted_jobs": 2,
+          "cog_reader_scope": "selection",
+          "seconds": 0.644045125,
+          "order": "plan",
+          "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+          "prepared_hdf5_bytes": 0,
+          "native_buffers": [
+            {
+              "asset_id": "p000_B04",
+              "transport_encoded_capacity_peak_bytes": 99205,
+              "adapter_delivery_capacity_peak_bytes": 2700,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_Fmask",
+              "transport_encoded_capacity_peak_bytes": 8962,
+              "adapter_delivery_capacity_peak_bytes": 1800,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            }
+          ],
+          "native_metadata": {
+            "retained_sources": 2,
+            "retained_bytes": 30251,
+            "physical_metadata_sources": 2,
+            "physical_metadata_bytes": 5675,
+            "cap_bytes": 8388608,
+            "skipped_sources": 0,
+            "scope": "this Prepared only; immutable version-bound parser pages; never a data cache",
+            "authenticated_sources": 0,
+            "authenticated_transport": {}
+          },
+          "native_strategies": [
+            {
+              "asset_id": "p000_B04",
+              "task_reserved_bytes": 496021,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_Fmask",
+              "task_reserved_bytes": 272906,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            }
+          ]
+        },
+        "transport": {},
+        "decoded_source_chunks": 0,
+        "filled_source_chunks": 0,
+        "first_output_seconds": 1.045422166,
+        "assembly_seconds": 0.0,
+        "source_retrieval_seconds": 0.43191604100000003,
+        "allocation_seconds": null,
+        "copying_seconds": null,
+        "output_setup_seconds": 0.013878208,
+        "output_finalize_seconds": 0.000684459,
+        "output_io": {
+          "reads": 0,
+          "writes": 54,
+          "bytes_read": 0,
+          "bytes_written": 109766,
+          "buffered_bytes_peak": 35100,
+          "storage_read_seconds": 0.0,
+          "storage_write_seconds": 0.012903122000000001,
+          "encode_seconds": 0.0008320810000000018,
+          "allocation_seconds": 0.0,
+          "copying_seconds": 0.0
+        },
+        "native_materialized_bytes": null,
+        "source_data_requests": 2,
+        "source_data_bytes": 108167,
+        "chunks": 2,
+        "decoded_bytes": 2700,
+        "non_nodata_pixels": 1568,
+        "planning_seconds": 2.088200708,
+        "source_open_seconds": 0.210690708,
+        "read_decode_seconds": 0.433109209,
+        "sink_seconds": 0.0023904169999999997,
+        "masking_seconds": 1.5416999999999998e-05,
+        "remote_requests": null,
+        "remote_bytes": null
+      },
+      "loopback": null,
+      "checks": [
+        {
+          "band": "B04",
+          "shape": [
+            30,
+            30
+          ],
+          "complete_values_equal": true,
+          "masks_equal": true,
+          "quality_equal": null,
+          "coordinates_equal": true,
+          "raw_sha256": "2ece5de304781f7252c4df5609daa33efbb4cb97266477a075a96dd344710965"
+        },
+        {
+          "band": "Fmask",
+          "shape": [
+            30,
+            30
+          ],
+          "complete_values_equal": true,
+          "masks_equal": true,
+          "quality_equal": true,
+          "coordinates_equal": true,
+          "raw_sha256": "93a5be1f7df026aab57cf3e25125bd42a9fae6a63b4602a186c066ce2c1aacc9"
+        }
+      ],
+      "output_bytes": 227236,
+      "output_objects": 53,
+      "routing": {
+        "policy": "qualified-provider-v1",
+        "requested": "planetary_computer",
+        "selected": "planetary_computer",
+        "basis": "explicit_override",
+        "rationale": "Supplied observations and canonical physical locators are preserved; no remote substitution.",
+        "credentials_required": false,
+        "authorization_configured": false,
+        "observations_preserved": true,
+        "routes": [
+          {
+            "provider": "planetary_computer",
+            "catalog": "https://planetarycomputer.microsoft.com/api/stac/v1",
+            "product": "hls-s30",
+            "processing_version": "2.0",
+            "discovery": "bounded complete STAC search; hls2-l30/hls2-s30 only for HLS v2",
+            "access": "accountless memory-only SAS signing; observed container read/list grant; engine requests remain confined to the exact canonical object with conditional byte ranges",
+            "credential_requirement": "none",
+            "access_policy": "pc-exact-object-request-v1",
+            "capabilities": "native COG; physical metadata and ETag validation before/after acquisition",
+            "availability": "queried AOI/date only; catalog coverage is independent of Earthdata; no global coverage claim",
+            "limitations": "requires signing service; HLS cross-provider equivalence is specimen-scoped; no online speed probe or fallback"
+          },
+          {
+            "provider": "earthdata",
+            "catalog": "https://cmr.earthdata.nasa.gov/search",
+            "product": "hls-s30",
+            "processing_version": "2.0",
+            "discovery": "exact CMR collection/version and complete bounded granule search",
+            "access": "qualified product-specific exact-object Earthdata session",
+            "credential_requirement": "explicit private netrc",
+            "access_policy": "earthdata-product-exact-object-v1",
+            "capabilities": "native COG; conditional byte ranges; product-specific redirect confinement",
+            "availability": "queried AOI/date only; missing observations are not substituted",
+            "limitations": "authentication required for protected assets; no demonstrated general speed advantage"
+          }
+        ],
+        "observation_count": 1,
+        "eligibility": {
+          "mode": "explicit_or_pinned",
+          "queried_providers": [],
+          "other_catalogs": "not queried; supplied sources and explicit overrides never trigger substitution"
+        },
+        "equivalence": {
+          "classification": "scientifically_equivalent_selected_samples",
+          "verified_physical_assets": 2,
+          "total_assets": 2,
+          "scope": "see each source's immutable ETag/locator-bound sample evidence; no whole-object byte identity or archive-wide interchangeability claim"
+        },
+        "pinning": "provider, unsigned canonical locator, product/granule/band, access-policy version and inspected object ETag/grid/dtype/metadata are bound to this prepared acquisition; see sources for exact identities",
+        "fallback": "disabled; signature renewal/provider change requires an explicit fresh plan; product checkpoints are unsupported"
+      }
+    },
+    {
+      "product": "hls-s30",
+      "provider": "earthdata",
+      "mode": "live",
+      "round": 0,
+      "wall_seconds": 19.869225792004727,
+      "cpu_seconds": 0.122225,
+      "peak_rss_bytes": 26214400,
+      "observed": {
+        "source_reads": [],
+        "scheduler": {
+          "workers": 1,
+          "per_host": 1,
+          "buffer_bytes": 33554392,
+          "reserved_bytes_peak": 2623424,
+          "reader_state_reserved_bytes": 0,
+          "prepared_native_metadata_bytes": 2127403,
+          "authenticated_transport_reserved_bytes": 2097152,
+          "prepared_v3_metadata_index_bytes": 0,
+          "active_workers_peak": 1,
+          "completed_tasks": 2,
+          "admitted_jobs": 2,
+          "cog_reader_scope": "selection",
+          "seconds": 2.368444375,
+          "order": "plan",
+          "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+          "prepared_hdf5_bytes": 0,
+          "native_buffers": [
+            {
+              "asset_id": "p000_B04",
+              "transport_encoded_capacity_peak_bytes": 99205,
+              "adapter_delivery_capacity_peak_bytes": 2700,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_Fmask",
+              "transport_encoded_capacity_peak_bytes": 8962,
+              "adapter_delivery_capacity_peak_bytes": 1800,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            }
+          ],
+          "native_metadata": {
+            "retained_sources": 2,
+            "retained_bytes": 30251,
+            "physical_metadata_sources": 2,
+            "physical_metadata_bytes": 5675,
+            "cap_bytes": 8388608,
+            "skipped_sources": 0,
+            "scope": "this Prepared only; immutable version-bound parser pages; never a data cache",
+            "authenticated_sources": 2,
+            "authenticated_transport": {
+              "p000_B04": {
+                "checkpoint_claims": 0,
+                "peak_in_flight": 1,
+                "wire_head": 12,
+                "wire_get": 8,
+                "redirects": 10,
+                "login_requests": 1,
+                "refreshes": 0,
+                "route_cache_hits": 3,
+                "response_body_bytes": 111814,
+                "redirect_body_bytes": 321,
+                "signing_auth_seconds": 7.419916123999999,
+                "statuses": {
+                  "200": 6,
+                  "206": 4,
+                  "301": 1,
+                  "302": 2,
+                  "303": 7
+                },
+                "origins": {
+                  "https://d1nklfio7vscoe.cloudfront.net": 10,
+                  "https://data.lpdaac.earthdatacloud.nasa.gov": 9,
+                  "https://urs.earthdata.nasa.gov": 1
+                }
+              },
+              "p000_Fmask": {
+                "checkpoint_claims": 0,
+                "peak_in_flight": 1,
+                "wire_head": 12,
+                "wire_get": 8,
+                "redirects": 10,
+                "login_requests": 1,
+                "refreshes": 0,
+                "route_cache_hits": 3,
+                "response_body_bytes": 21573,
+                "redirect_body_bytes": 323,
+                "signing_auth_seconds": 7.597335584,
+                "statuses": {
+                  "200": 6,
+                  "206": 4,
+                  "301": 1,
+                  "302": 2,
+                  "303": 7
+                },
+                "origins": {
+                  "https://d1nklfio7vscoe.cloudfront.net": 10,
+                  "https://data.lpdaac.earthdatacloud.nasa.gov": 9,
+                  "https://urs.earthdata.nasa.gov": 1
+                }
+              }
+            }
+          },
+          "native_strategies": [
+            {
+              "asset_id": "p000_B04",
+              "task_reserved_bytes": 496021,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_Fmask",
+              "task_reserved_bytes": 272906,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            }
+          ]
+        },
+        "transport": {
+          "native_cog_authenticated": {
+            "p000_B04": {
+              "checkpoint_claims": 0,
+              "peak_in_flight": 1,
+              "wire_head": 16,
+              "wire_get": 8,
+              "redirects": 12,
+              "login_requests": 1,
+              "refreshes": 0,
+              "route_cache_hits": 3,
+              "response_body_bytes": 111814,
+              "redirect_body_bytes": 321,
+              "signing_auth_seconds": 8.97006104,
+              "statuses": {
+                "200": 8,
+                "206": 4,
+                "301": 1,
+                "302": 2,
+                "303": 9
+              },
+              "origins": {
+                "https://d1nklfio7vscoe.cloudfront.net": 12,
+                "https://data.lpdaac.earthdatacloud.nasa.gov": 11,
+                "https://urs.earthdata.nasa.gov": 1
+              }
+            },
+            "p000_Fmask": {
+              "checkpoint_claims": 0,
+              "peak_in_flight": 1,
+              "wire_head": 16,
+              "wire_get": 8,
+              "redirects": 12,
+              "login_requests": 1,
+              "refreshes": 0,
+              "route_cache_hits": 3,
+              "response_body_bytes": 21573,
+              "redirect_body_bytes": 323,
+              "signing_auth_seconds": 9.220875417,
+              "statuses": {
+                "200": 8,
+                "206": 4,
+                "301": 1,
+                "302": 2,
+                "303": 9
+              },
+              "origins": {
+                "https://d1nklfio7vscoe.cloudfront.net": 12,
+                "https://data.lpdaac.earthdatacloud.nasa.gov": 11,
+                "https://urs.earthdata.nasa.gov": 1
+              }
+            }
+          }
+        },
+        "decoded_source_chunks": 0,
+        "filled_source_chunks": 0,
+        "first_output_seconds": 4.58672875,
+        "assembly_seconds": 0.0,
+        "source_retrieval_seconds": 0.7159017919999999,
+        "allocation_seconds": null,
+        "copying_seconds": null,
+        "output_setup_seconds": 0.006183334,
+        "output_finalize_seconds": 0.00052675,
+        "output_io": {
+          "reads": 0,
+          "writes": 54,
+          "bytes_read": 0,
+          "bytes_written": 109844,
+          "buffered_bytes_peak": 35100,
+          "storage_read_seconds": 0.0,
+          "storage_write_seconds": 0.007010626000000001,
+          "encode_seconds": 9.396399999999893e-05,
+          "allocation_seconds": 0.0,
+          "copying_seconds": 0.0
+        },
+        "native_materialized_bytes": null,
+        "source_data_requests": 2,
+        "source_data_bytes": 108167,
+        "chunks": 2,
+        "decoded_bytes": 2700,
+        "non_nodata_pixels": 1568,
+        "planning_seconds": 10.992404209,
+        "source_open_seconds": 1.6503532490000001,
+        "read_decode_seconds": 0.717872625,
+        "sink_seconds": 0.0022457500000000004,
+        "masking_seconds": 1.4542e-05,
+        "remote_requests": null,
+        "remote_bytes": null
+      },
+      "loopback": null,
+      "checks": [
+        {
+          "band": "B04",
+          "shape": [
+            30,
+            30
+          ],
+          "complete_values_equal": true,
+          "masks_equal": true,
+          "quality_equal": null,
+          "coordinates_equal": true,
+          "raw_sha256": "2ece5de304781f7252c4df5609daa33efbb4cb97266477a075a96dd344710965"
+        },
+        {
+          "band": "Fmask",
+          "shape": [
+            30,
+            30
+          ],
+          "complete_values_equal": true,
+          "masks_equal": true,
+          "quality_equal": true,
+          "coordinates_equal": true,
+          "raw_sha256": "93a5be1f7df026aab57cf3e25125bd42a9fae6a63b4602a186c066ce2c1aacc9"
+        }
+      ],
+      "output_bytes": 231978,
+      "output_objects": 53,
+      "routing": {
+        "policy": "qualified-provider-v1",
+        "requested": "earthdata",
+        "selected": "earthdata",
+        "basis": "explicit_override",
+        "rationale": "Supplied observations and canonical physical locators are preserved; no remote substitution.",
+        "credentials_required": true,
+        "authorization_configured": true,
+        "observations_preserved": true,
+        "routes": [
+          {
+            "provider": "planetary_computer",
+            "catalog": "https://planetarycomputer.microsoft.com/api/stac/v1",
+            "product": "hls-s30",
+            "processing_version": "2.0",
+            "discovery": "bounded complete STAC search; hls2-l30/hls2-s30 only for HLS v2",
+            "access": "accountless memory-only SAS signing; observed container read/list grant; engine requests remain confined to the exact canonical object with conditional byte ranges",
+            "credential_requirement": "none",
+            "access_policy": "pc-exact-object-request-v1",
+            "capabilities": "native COG; physical metadata and ETag validation before/after acquisition",
+            "availability": "queried AOI/date only; catalog coverage is independent of Earthdata; no global coverage claim",
+            "limitations": "requires signing service; HLS cross-provider equivalence is specimen-scoped; no online speed probe or fallback"
+          },
+          {
+            "provider": "earthdata",
+            "catalog": "https://cmr.earthdata.nasa.gov/search",
+            "product": "hls-s30",
+            "processing_version": "2.0",
+            "discovery": "exact CMR collection/version and complete bounded granule search",
+            "access": "qualified product-specific exact-object Earthdata session",
+            "credential_requirement": "explicit private netrc",
+            "access_policy": "earthdata-product-exact-object-v1",
+            "capabilities": "native COG; conditional byte ranges; product-specific redirect confinement",
+            "availability": "queried AOI/date only; missing observations are not substituted",
+            "limitations": "authentication required for protected assets; no demonstrated general speed advantage"
+          }
+        ],
+        "observation_count": 1,
+        "eligibility": {
+          "mode": "explicit_or_pinned",
+          "queried_providers": [],
+          "other_catalogs": "not queried; supplied sources and explicit overrides never trigger substitution"
+        },
+        "equivalence": {
+          "classification": "scientifically_equivalent_selected_samples",
+          "verified_physical_assets": 2,
+          "total_assets": 2,
+          "scope": "see each source's immutable ETag/locator-bound sample evidence; no whole-object byte identity or archive-wide interchangeability claim"
+        },
+        "pinning": "provider, unsigned canonical locator, product/granule/band, access-policy version and inspected object ETag/grid/dtype/metadata are bound to this prepared acquisition; see sources for exact identities",
+        "fallback": "disabled; signature renewal/provider change requires an explicit fresh plan; product checkpoints are unsupported"
+      }
+    }
+  ]
+}

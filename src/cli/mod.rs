@@ -24,6 +24,7 @@ const HELP: &str = r#"tile-ripper plan|fetch|stream [request.json] [options]
   --workers N --per-host N           concurrent reader operations (1..64)
   --backend native|gdal             COG reader; overrides TILE_RIPPER_COG_BACKEND
   --gdal-free                      require a build without GDAL; native COG if compiled
+  --provider auto|planetary_computer|earthdata|pinned   product route override
   --human | --json                  JSON default, stable for scripts
   --dry-run                        fetch behaves as plan; metadata may download
   --cache FILE --discover-only      discover-only requires plan
@@ -146,6 +147,7 @@ pub fn parse_with_input_limit(args: &[String], input_limit: usize) -> Result<Opt
             | "--per-host"
             | "--backend"
             | "--output-format"
+            | "--provider"
             | "--auth"
             | "--netrc"
             | "--auth-policy"
@@ -208,6 +210,7 @@ pub fn parse_with_input_limit(args: &[String], input_limit: usize) -> Result<Opt
     let per_host = resource("--per-host")?;
     let output = flags.remove("--output");
     let cache_path = flags.remove("--cache");
+    let provider = flags.remove("--provider");
     let profile = flags.remove("--auth");
     let netrc = flags.remove("--netrc");
     let policy = flags.remove("--auth-policy");
@@ -266,7 +269,7 @@ pub fn parse_with_input_limit(args: &[String], input_limit: usize) -> Result<Opt
         }
         None
     };
-    let input = if let Some(file) = file {
+    let mut input = if let Some(file) = file {
         if !flags.is_empty() {
             return Err("do not mix request JSON with source/selection flags; edit JSON or use direct flags".into());
         }
@@ -406,6 +409,15 @@ pub fn parse_with_input_limit(args: &[String], input_limit: usize) -> Result<Opt
         && (command == "fetch" || discover_only)
     {
         return Err("authenticated/quality single-source CLI supports plan and stream; use a SWOT job manifest for scientific Zarr fetch".into());
+    }
+    if let Some(provider) = provider {
+        if input.get("product").is_none() {
+            return Err("--provider applies only to named product requests".into());
+        }
+        let parsed: tile_ripper::products::routing::Provider =
+            serde_json::from_value(Value::String(provider))
+                .map_err(|_| "--provider requires auto, planetary_computer, earthdata or pinned")?;
+        input["provider"] = serde_json::to_value(parsed)?;
     }
     Ok(Some(Options {
         command,

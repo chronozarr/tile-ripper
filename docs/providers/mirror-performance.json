@@ -1,0 +1,1431 @@
+{
+  "schema": "tile-ripper-provider-performance-v1",
+  "binary_sha256": "8ce19d1c01eb6cbad2a8598bb716693be599d1991ff19347af8992656e3c8509",
+  "conditions": {
+    "workers": 1,
+    "per_host": 1,
+    "loopback_latency_ms": 5,
+    "loopback_mbps": 100,
+    "rounds": 2,
+    "live_source_bytes": "native metadata ranges plus selected payload; original-source science capture reported separately",
+    "timing": "wall includes process startup, discovery of supplied selection, signing/auth, metadata inspection, execution and durable output"
+  },
+  "cases": [
+    {
+      "product": "hls-l30",
+      "provider": "planetary_computer",
+      "mode": "controlled_mirror",
+      "round": 0,
+      "wall_seconds": 0.1670840419974411,
+      "cpu_seconds": 0.026388,
+      "peak_rss_bytes": 21430272,
+      "observed": {
+        "source_reads": [],
+        "scheduler": {
+          "workers": 1,
+          "per_host": 1,
+          "buffer_bytes": 33554392,
+          "reserved_bytes_peak": 506878,
+          "reader_state_reserved_bytes": 0,
+          "prepared_native_metadata_bytes": 20970,
+          "authenticated_transport_reserved_bytes": 0,
+          "prepared_v3_metadata_index_bytes": 0,
+          "active_workers_peak": 1,
+          "completed_tasks": 2,
+          "admitted_jobs": 2,
+          "cog_reader_scope": "selection",
+          "seconds": 0.03615775,
+          "order": "plan",
+          "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+          "prepared_hdf5_bytes": 0,
+          "native_buffers": [
+            {
+              "asset_id": "p000_B04",
+              "transport_encoded_capacity_peak_bytes": 88588,
+              "adapter_delivery_capacity_peak_bytes": 3072,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_Fmask",
+              "transport_encoded_capacity_peak_bytes": 2024,
+              "adapter_delivery_capacity_peak_bytes": 2048,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            }
+          ],
+          "native_metadata": {
+            "retained_sources": 2,
+            "retained_bytes": 20970,
+            "physical_metadata_sources": 2,
+            "physical_metadata_bytes": 4586,
+            "cap_bytes": 8388608,
+            "skipped_sources": 0,
+            "scope": "this Prepared only; immutable version-bound parser pages; never a data cache",
+            "authenticated_sources": 0,
+            "authenticated_transport": {}
+          },
+          "native_strategies": [
+            {
+              "asset_id": "p000_B04",
+              "task_reserved_bytes": 485908,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_Fmask",
+              "task_reserved_bytes": 266224,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            }
+          ]
+        },
+        "transport": {},
+        "decoded_source_chunks": 0,
+        "filled_source_chunks": 0,
+        "first_output_seconds": 0.044373709,
+        "assembly_seconds": 0.0,
+        "source_retrieval_seconds": 0.021651209,
+        "allocation_seconds": null,
+        "copying_seconds": null,
+        "output_setup_seconds": 0.0078745,
+        "output_finalize_seconds": 0.000472666,
+        "output_io": {
+          "reads": 0,
+          "writes": 54,
+          "bytes_read": 0,
+          "bytes_written": 102829,
+          "buffered_bytes_peak": 39936,
+          "storage_read_seconds": 0.0,
+          "storage_write_seconds": 0.006499918,
+          "encode_seconds": 0.0001968719999999998,
+          "allocation_seconds": 0.0,
+          "copying_seconds": 0.0
+        },
+        "native_materialized_bytes": null,
+        "source_data_requests": 2,
+        "source_data_bytes": 90612,
+        "chunks": 2,
+        "decoded_bytes": 3072,
+        "non_nodata_pixels": 1680,
+        "planning_seconds": 0.058251791,
+        "source_open_seconds": 0.013552667000000001,
+        "read_decode_seconds": 0.022401917,
+        "sink_seconds": 0.001009624,
+        "masking_seconds": 1.0166e-05,
+        "remote_requests": null,
+        "remote_bytes": null
+      },
+      "loopback": {
+        "head": 10,
+        "get": 6,
+        "range_get": 6,
+        "body_bytes": 106996,
+        "conditional": 10,
+        "errors": 0,
+        "head_active": 0,
+        "head_peak": 1
+      },
+      "checks": [
+        {
+          "band": "B04",
+          "shape": [
+            32,
+            32
+          ],
+          "complete_values_equal": true,
+          "masks_equal": true,
+          "coordinates_equal": true,
+          "raw_sha256": "982b0815a4f4d8d4949710683952bdefc54dfc6a76bcc9e6d63bac3a8d96c944"
+        },
+        {
+          "band": "Fmask",
+          "shape": [
+            32,
+            32
+          ],
+          "complete_values_equal": true,
+          "masks_equal": true,
+          "coordinates_equal": true,
+          "raw_sha256": "54ec14c437a2d01402888dffbfab2564d533b1ffd88d9e08dae63acee046598f"
+        }
+      ],
+      "output_bytes": 215236,
+      "output_objects": 53,
+      "routing": {
+        "policy": "qualified-provider-v1",
+        "requested": "pinned",
+        "selected": "pinned",
+        "basis": "explicit_override",
+        "rationale": "Supplied observations and canonical physical locators are preserved; no remote substitution.",
+        "credentials_required": false,
+        "authorization_configured": false,
+        "observations_preserved": true,
+        "routes": [],
+        "observation_count": 1,
+        "eligibility": {
+          "mode": "explicit_or_pinned",
+          "queried_providers": [],
+          "other_catalogs": "not queried; supplied sources and explicit overrides never trigger substitution"
+        },
+        "equivalence": {
+          "classification": "unknown_or_partial_across_providers",
+          "verified_physical_assets": 0,
+          "total_assets": 2,
+          "scope": "see each source's immutable ETag/locator-bound sample evidence; no whole-object byte identity or archive-wide interchangeability claim"
+        },
+        "pinning": "provider, unsigned canonical locator, product/granule/band, access-policy version and inspected object ETag/grid/dtype/metadata are bound to this prepared acquisition; see sources for exact identities",
+        "fallback": "disabled; signature renewal/provider change requires an explicit fresh plan; product checkpoints are unsupported"
+      }
+    },
+    {
+      "product": "hls-l30",
+      "provider": "earthdata",
+      "mode": "controlled_mirror",
+      "round": 0,
+      "wall_seconds": 0.19089524999435525,
+      "cpu_seconds": 0.028594,
+      "peak_rss_bytes": 21512192,
+      "observed": {
+        "source_reads": [],
+        "scheduler": {
+          "workers": 1,
+          "per_host": 1,
+          "buffer_bytes": 33554392,
+          "reserved_bytes_peak": 506878,
+          "reader_state_reserved_bytes": 0,
+          "prepared_native_metadata_bytes": 20970,
+          "authenticated_transport_reserved_bytes": 0,
+          "prepared_v3_metadata_index_bytes": 0,
+          "active_workers_peak": 1,
+          "completed_tasks": 2,
+          "admitted_jobs": 2,
+          "cog_reader_scope": "selection",
+          "seconds": 0.036861292,
+          "order": "plan",
+          "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+          "prepared_hdf5_bytes": 0,
+          "native_buffers": [
+            {
+              "asset_id": "p000_B04",
+              "transport_encoded_capacity_peak_bytes": 88588,
+              "adapter_delivery_capacity_peak_bytes": 3072,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_Fmask",
+              "transport_encoded_capacity_peak_bytes": 2024,
+              "adapter_delivery_capacity_peak_bytes": 2048,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            }
+          ],
+          "native_metadata": {
+            "retained_sources": 2,
+            "retained_bytes": 20970,
+            "physical_metadata_sources": 2,
+            "physical_metadata_bytes": 4586,
+            "cap_bytes": 8388608,
+            "skipped_sources": 0,
+            "scope": "this Prepared only; immutable version-bound parser pages; never a data cache",
+            "authenticated_sources": 0,
+            "authenticated_transport": {}
+          },
+          "native_strategies": [
+            {
+              "asset_id": "p000_B04",
+              "task_reserved_bytes": 485908,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_Fmask",
+              "task_reserved_bytes": 266224,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            }
+          ]
+        },
+        "transport": {},
+        "decoded_source_chunks": 0,
+        "filled_source_chunks": 0,
+        "first_output_seconds": 0.044980083,
+        "assembly_seconds": 0.0,
+        "source_retrieval_seconds": 0.022128542,
+        "allocation_seconds": null,
+        "copying_seconds": null,
+        "output_setup_seconds": 0.007269708,
+        "output_finalize_seconds": 0.000537,
+        "output_io": {
+          "reads": 0,
+          "writes": 54,
+          "bytes_read": 0,
+          "bytes_written": 102919,
+          "buffered_bytes_peak": 39936,
+          "storage_read_seconds": 0.0,
+          "storage_write_seconds": 0.006926166,
+          "encode_seconds": 7.512500000000042e-05,
+          "allocation_seconds": 0.0,
+          "copying_seconds": 0.0
+        },
+        "native_materialized_bytes": null,
+        "source_data_requests": 2,
+        "source_data_bytes": 90612,
+        "chunks": 2,
+        "decoded_bytes": 3072,
+        "non_nodata_pixels": 1680,
+        "planning_seconds": 0.069139791,
+        "source_open_seconds": 0.013903209,
+        "read_decode_seconds": 0.022797458,
+        "sink_seconds": 0.001035042,
+        "masking_seconds": 1.0542e-05,
+        "remote_requests": null,
+        "remote_bytes": null
+      },
+      "loopback": {
+        "head": 10,
+        "get": 6,
+        "range_get": 6,
+        "body_bytes": 106996,
+        "conditional": 10,
+        "errors": 0,
+        "head_active": 0,
+        "head_peak": 1
+      },
+      "checks": [
+        {
+          "band": "B04",
+          "shape": [
+            32,
+            32
+          ],
+          "complete_values_equal": true,
+          "masks_equal": true,
+          "coordinates_equal": true,
+          "raw_sha256": "982b0815a4f4d8d4949710683952bdefc54dfc6a76bcc9e6d63bac3a8d96c944"
+        },
+        {
+          "band": "Fmask",
+          "shape": [
+            32,
+            32
+          ],
+          "complete_values_equal": true,
+          "masks_equal": true,
+          "coordinates_equal": true,
+          "raw_sha256": "54ec14c437a2d01402888dffbfab2564d533b1ffd88d9e08dae63acee046598f"
+        }
+      ],
+      "output_bytes": 215348,
+      "output_objects": 53,
+      "routing": {
+        "policy": "qualified-provider-v1",
+        "requested": "pinned",
+        "selected": "pinned",
+        "basis": "explicit_override",
+        "rationale": "Supplied observations and canonical physical locators are preserved; no remote substitution.",
+        "credentials_required": false,
+        "authorization_configured": false,
+        "observations_preserved": true,
+        "routes": [],
+        "observation_count": 1,
+        "eligibility": {
+          "mode": "explicit_or_pinned",
+          "queried_providers": [],
+          "other_catalogs": "not queried; supplied sources and explicit overrides never trigger substitution"
+        },
+        "equivalence": {
+          "classification": "unknown_or_partial_across_providers",
+          "verified_physical_assets": 0,
+          "total_assets": 2,
+          "scope": "see each source's immutable ETag/locator-bound sample evidence; no whole-object byte identity or archive-wide interchangeability claim"
+        },
+        "pinning": "provider, unsigned canonical locator, product/granule/band, access-policy version and inspected object ETag/grid/dtype/metadata are bound to this prepared acquisition; see sources for exact identities",
+        "fallback": "disabled; signature renewal/provider change requires an explicit fresh plan; product checkpoints are unsupported"
+      }
+    },
+    {
+      "product": "hls-l30",
+      "provider": "earthdata",
+      "mode": "controlled_mirror",
+      "round": 1,
+      "wall_seconds": 0.1745874170010211,
+      "cpu_seconds": 0.024293,
+      "peak_rss_bytes": 21643264,
+      "observed": {
+        "source_reads": [],
+        "scheduler": {
+          "workers": 1,
+          "per_host": 1,
+          "buffer_bytes": 33554392,
+          "reserved_bytes_peak": 506878,
+          "reader_state_reserved_bytes": 0,
+          "prepared_native_metadata_bytes": 20970,
+          "authenticated_transport_reserved_bytes": 0,
+          "prepared_v3_metadata_index_bytes": 0,
+          "active_workers_peak": 1,
+          "completed_tasks": 2,
+          "admitted_jobs": 2,
+          "cog_reader_scope": "selection",
+          "seconds": 0.037431291,
+          "order": "plan",
+          "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+          "prepared_hdf5_bytes": 0,
+          "native_buffers": [
+            {
+              "asset_id": "p000_B04",
+              "transport_encoded_capacity_peak_bytes": 88588,
+              "adapter_delivery_capacity_peak_bytes": 3072,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_Fmask",
+              "transport_encoded_capacity_peak_bytes": 2024,
+              "adapter_delivery_capacity_peak_bytes": 2048,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            }
+          ],
+          "native_metadata": {
+            "retained_sources": 2,
+            "retained_bytes": 20970,
+            "physical_metadata_sources": 2,
+            "physical_metadata_bytes": 4586,
+            "cap_bytes": 8388608,
+            "skipped_sources": 0,
+            "scope": "this Prepared only; immutable version-bound parser pages; never a data cache",
+            "authenticated_sources": 0,
+            "authenticated_transport": {}
+          },
+          "native_strategies": [
+            {
+              "asset_id": "p000_B04",
+              "task_reserved_bytes": 485908,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_Fmask",
+              "task_reserved_bytes": 266224,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            }
+          ]
+        },
+        "transport": {},
+        "decoded_source_chunks": 0,
+        "filled_source_chunks": 0,
+        "first_output_seconds": 0.045829375,
+        "assembly_seconds": 0.0,
+        "source_retrieval_seconds": 0.022731751,
+        "allocation_seconds": null,
+        "copying_seconds": null,
+        "output_setup_seconds": 0.007686708,
+        "output_finalize_seconds": 0.001720459,
+        "output_io": {
+          "reads": 0,
+          "writes": 54,
+          "bytes_read": 0,
+          "bytes_written": 102919,
+          "buffered_bytes_peak": 39936,
+          "storage_read_seconds": 0.0,
+          "storage_write_seconds": 0.008124084,
+          "encode_seconds": 8.045599999999949e-05,
+          "allocation_seconds": 0.0,
+          "copying_seconds": 0.0
+        },
+        "native_materialized_bytes": null,
+        "source_data_requests": 2,
+        "source_data_bytes": 90612,
+        "chunks": 2,
+        "decoded_bytes": 3072,
+        "non_nodata_pixels": 1680,
+        "planning_seconds": 0.058715917,
+        "source_open_seconds": 0.013885458,
+        "read_decode_seconds": 0.023392916,
+        "sink_seconds": 0.000891668,
+        "masking_seconds": 9.999999999999999e-06,
+        "remote_requests": null,
+        "remote_bytes": null
+      },
+      "loopback": {
+        "head": 10,
+        "get": 6,
+        "range_get": 6,
+        "body_bytes": 106996,
+        "conditional": 10,
+        "errors": 0,
+        "head_active": 0,
+        "head_peak": 1
+      },
+      "checks": [
+        {
+          "band": "B04",
+          "shape": [
+            32,
+            32
+          ],
+          "complete_values_equal": true,
+          "masks_equal": true,
+          "coordinates_equal": true,
+          "raw_sha256": "982b0815a4f4d8d4949710683952bdefc54dfc6a76bcc9e6d63bac3a8d96c944"
+        },
+        {
+          "band": "Fmask",
+          "shape": [
+            32,
+            32
+          ],
+          "complete_values_equal": true,
+          "masks_equal": true,
+          "coordinates_equal": true,
+          "raw_sha256": "54ec14c437a2d01402888dffbfab2564d533b1ffd88d9e08dae63acee046598f"
+        }
+      ],
+      "output_bytes": 215360,
+      "output_objects": 53,
+      "routing": {
+        "policy": "qualified-provider-v1",
+        "requested": "pinned",
+        "selected": "pinned",
+        "basis": "explicit_override",
+        "rationale": "Supplied observations and canonical physical locators are preserved; no remote substitution.",
+        "credentials_required": false,
+        "authorization_configured": false,
+        "observations_preserved": true,
+        "routes": [],
+        "observation_count": 1,
+        "eligibility": {
+          "mode": "explicit_or_pinned",
+          "queried_providers": [],
+          "other_catalogs": "not queried; supplied sources and explicit overrides never trigger substitution"
+        },
+        "equivalence": {
+          "classification": "unknown_or_partial_across_providers",
+          "verified_physical_assets": 0,
+          "total_assets": 2,
+          "scope": "see each source's immutable ETag/locator-bound sample evidence; no whole-object byte identity or archive-wide interchangeability claim"
+        },
+        "pinning": "provider, unsigned canonical locator, product/granule/band, access-policy version and inspected object ETag/grid/dtype/metadata are bound to this prepared acquisition; see sources for exact identities",
+        "fallback": "disabled; signature renewal/provider change requires an explicit fresh plan; product checkpoints are unsupported"
+      }
+    },
+    {
+      "product": "hls-l30",
+      "provider": "planetary_computer",
+      "mode": "controlled_mirror",
+      "round": 1,
+      "wall_seconds": 0.16808845799823757,
+      "cpu_seconds": 0.02631,
+      "peak_rss_bytes": 21610496,
+      "observed": {
+        "source_reads": [],
+        "scheduler": {
+          "workers": 1,
+          "per_host": 1,
+          "buffer_bytes": 33554392,
+          "reserved_bytes_peak": 506878,
+          "reader_state_reserved_bytes": 0,
+          "prepared_native_metadata_bytes": 20970,
+          "authenticated_transport_reserved_bytes": 0,
+          "prepared_v3_metadata_index_bytes": 0,
+          "active_workers_peak": 1,
+          "completed_tasks": 2,
+          "admitted_jobs": 2,
+          "cog_reader_scope": "selection",
+          "seconds": 0.038135625,
+          "order": "plan",
+          "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+          "prepared_hdf5_bytes": 0,
+          "native_buffers": [
+            {
+              "asset_id": "p000_B04",
+              "transport_encoded_capacity_peak_bytes": 88588,
+              "adapter_delivery_capacity_peak_bytes": 3072,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_Fmask",
+              "transport_encoded_capacity_peak_bytes": 2024,
+              "adapter_delivery_capacity_peak_bytes": 2048,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            }
+          ],
+          "native_metadata": {
+            "retained_sources": 2,
+            "retained_bytes": 20970,
+            "physical_metadata_sources": 2,
+            "physical_metadata_bytes": 4586,
+            "cap_bytes": 8388608,
+            "skipped_sources": 0,
+            "scope": "this Prepared only; immutable version-bound parser pages; never a data cache",
+            "authenticated_sources": 0,
+            "authenticated_transport": {}
+          },
+          "native_strategies": [
+            {
+              "asset_id": "p000_B04",
+              "task_reserved_bytes": 485908,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_Fmask",
+              "task_reserved_bytes": 266224,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            }
+          ]
+        },
+        "transport": {},
+        "decoded_source_chunks": 0,
+        "filled_source_chunks": 0,
+        "first_output_seconds": 0.049616542,
+        "assembly_seconds": 0.0,
+        "source_retrieval_seconds": 0.023037749,
+        "allocation_seconds": null,
+        "copying_seconds": null,
+        "output_setup_seconds": 0.008165584,
+        "output_finalize_seconds": 0.000508084,
+        "output_io": {
+          "reads": 0,
+          "writes": 54,
+          "bytes_read": 0,
+          "bytes_written": 102829,
+          "buffered_bytes_peak": 39936,
+          "storage_read_seconds": 0.0,
+          "storage_write_seconds": 0.006890296000000001,
+          "encode_seconds": 7.937300000000167e-05,
+          "allocation_seconds": 0.0,
+          "copying_seconds": 0.0
+        },
+        "native_materialized_bytes": null,
+        "source_data_requests": 2,
+        "source_data_bytes": 90612,
+        "chunks": 2,
+        "decoded_bytes": 3072,
+        "non_nodata_pixels": 1680,
+        "planning_seconds": 0.058959625,
+        "source_open_seconds": 0.014123751,
+        "read_decode_seconds": 0.023731375,
+        "sink_seconds": 0.0009633760000000001,
+        "masking_seconds": 1.1458000000000001e-05,
+        "remote_requests": null,
+        "remote_bytes": null
+      },
+      "loopback": {
+        "head": 10,
+        "get": 6,
+        "range_get": 6,
+        "body_bytes": 106996,
+        "conditional": 10,
+        "errors": 0,
+        "head_active": 0,
+        "head_peak": 1
+      },
+      "checks": [
+        {
+          "band": "B04",
+          "shape": [
+            32,
+            32
+          ],
+          "complete_values_equal": true,
+          "masks_equal": true,
+          "coordinates_equal": true,
+          "raw_sha256": "982b0815a4f4d8d4949710683952bdefc54dfc6a76bcc9e6d63bac3a8d96c944"
+        },
+        {
+          "band": "Fmask",
+          "shape": [
+            32,
+            32
+          ],
+          "complete_values_equal": true,
+          "masks_equal": true,
+          "coordinates_equal": true,
+          "raw_sha256": "54ec14c437a2d01402888dffbfab2564d533b1ffd88d9e08dae63acee046598f"
+        }
+      ],
+      "output_bytes": 215262,
+      "output_objects": 53,
+      "routing": {
+        "policy": "qualified-provider-v1",
+        "requested": "pinned",
+        "selected": "pinned",
+        "basis": "explicit_override",
+        "rationale": "Supplied observations and canonical physical locators are preserved; no remote substitution.",
+        "credentials_required": false,
+        "authorization_configured": false,
+        "observations_preserved": true,
+        "routes": [],
+        "observation_count": 1,
+        "eligibility": {
+          "mode": "explicit_or_pinned",
+          "queried_providers": [],
+          "other_catalogs": "not queried; supplied sources and explicit overrides never trigger substitution"
+        },
+        "equivalence": {
+          "classification": "unknown_or_partial_across_providers",
+          "verified_physical_assets": 0,
+          "total_assets": 2,
+          "scope": "see each source's immutable ETag/locator-bound sample evidence; no whole-object byte identity or archive-wide interchangeability claim"
+        },
+        "pinning": "provider, unsigned canonical locator, product/granule/band, access-policy version and inspected object ETag/grid/dtype/metadata are bound to this prepared acquisition; see sources for exact identities",
+        "fallback": "disabled; signature renewal/provider change requires an explicit fresh plan; product checkpoints are unsupported"
+      }
+    },
+    {
+      "product": "hls-s30",
+      "provider": "planetary_computer",
+      "mode": "controlled_mirror",
+      "round": 0,
+      "wall_seconds": 0.17655799999192823,
+      "cpu_seconds": 0.024267999999999998,
+      "peak_rss_bytes": 21512192,
+      "observed": {
+        "source_reads": [],
+        "scheduler": {
+          "workers": 1,
+          "per_host": 1,
+          "buffer_bytes": 33554392,
+          "reserved_bytes_peak": 526272,
+          "reader_state_reserved_bytes": 0,
+          "prepared_native_metadata_bytes": 30251,
+          "authenticated_transport_reserved_bytes": 0,
+          "prepared_v3_metadata_index_bytes": 0,
+          "active_workers_peak": 1,
+          "completed_tasks": 2,
+          "admitted_jobs": 2,
+          "cog_reader_scope": "selection",
+          "seconds": 0.039549125,
+          "order": "plan",
+          "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+          "prepared_hdf5_bytes": 0,
+          "native_buffers": [
+            {
+              "asset_id": "p000_B04",
+              "transport_encoded_capacity_peak_bytes": 99205,
+              "adapter_delivery_capacity_peak_bytes": 2700,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_Fmask",
+              "transport_encoded_capacity_peak_bytes": 8962,
+              "adapter_delivery_capacity_peak_bytes": 1800,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            }
+          ],
+          "native_metadata": {
+            "retained_sources": 2,
+            "retained_bytes": 30251,
+            "physical_metadata_sources": 2,
+            "physical_metadata_bytes": 5675,
+            "cap_bytes": 8388608,
+            "skipped_sources": 0,
+            "scope": "this Prepared only; immutable version-bound parser pages; never a data cache",
+            "authenticated_sources": 0,
+            "authenticated_transport": {}
+          },
+          "native_strategies": [
+            {
+              "asset_id": "p000_B04",
+              "task_reserved_bytes": 496021,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_Fmask",
+              "task_reserved_bytes": 272906,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            }
+          ]
+        },
+        "transport": {},
+        "decoded_source_chunks": 0,
+        "filled_source_chunks": 0,
+        "first_output_seconds": 0.047473458,
+        "assembly_seconds": 0.0,
+        "source_retrieval_seconds": 0.024659291,
+        "allocation_seconds": null,
+        "copying_seconds": null,
+        "output_setup_seconds": 0.007246167,
+        "output_finalize_seconds": 0.003236666,
+        "output_io": {
+          "reads": 0,
+          "writes": 54,
+          "bytes_read": 0,
+          "bytes_written": 105326,
+          "buffered_bytes_peak": 35100,
+          "storage_read_seconds": 0.0,
+          "storage_write_seconds": 0.010101836000000001,
+          "encode_seconds": 7.162200000000045e-05,
+          "allocation_seconds": 0.0,
+          "copying_seconds": 0.0
+        },
+        "native_materialized_bytes": null,
+        "source_data_requests": 2,
+        "source_data_bytes": 108167,
+        "chunks": 2,
+        "decoded_bytes": 2700,
+        "non_nodata_pixels": 1568,
+        "planning_seconds": 0.071155083,
+        "source_open_seconds": 0.013982209,
+        "read_decode_seconds": 0.025399083,
+        "sink_seconds": 0.001555917,
+        "masking_seconds": 9.667e-06,
+        "remote_requests": null,
+        "remote_bytes": null
+      },
+      "loopback": {
+        "head": 10,
+        "get": 8,
+        "range_get": 8,
+        "body_bytes": 132743,
+        "conditional": 12,
+        "errors": 0,
+        "head_active": 0,
+        "head_peak": 1
+      },
+      "checks": [
+        {
+          "band": "B04",
+          "shape": [
+            30,
+            30
+          ],
+          "complete_values_equal": true,
+          "masks_equal": true,
+          "coordinates_equal": true,
+          "raw_sha256": "2ece5de304781f7252c4df5609daa33efbb4cb97266477a075a96dd344710965"
+        },
+        {
+          "band": "Fmask",
+          "shape": [
+            30,
+            30
+          ],
+          "complete_values_equal": true,
+          "masks_equal": true,
+          "coordinates_equal": true,
+          "raw_sha256": "93a5be1f7df026aab57cf3e25125bd42a9fae6a63b4602a186c066ce2c1aacc9"
+        }
+      ],
+      "output_bytes": 219393,
+      "output_objects": 53,
+      "routing": {
+        "policy": "qualified-provider-v1",
+        "requested": "pinned",
+        "selected": "pinned",
+        "basis": "explicit_override",
+        "rationale": "Supplied observations and canonical physical locators are preserved; no remote substitution.",
+        "credentials_required": false,
+        "authorization_configured": false,
+        "observations_preserved": true,
+        "routes": [],
+        "observation_count": 1,
+        "eligibility": {
+          "mode": "explicit_or_pinned",
+          "queried_providers": [],
+          "other_catalogs": "not queried; supplied sources and explicit overrides never trigger substitution"
+        },
+        "equivalence": {
+          "classification": "unknown_or_partial_across_providers",
+          "verified_physical_assets": 0,
+          "total_assets": 2,
+          "scope": "see each source's immutable ETag/locator-bound sample evidence; no whole-object byte identity or archive-wide interchangeability claim"
+        },
+        "pinning": "provider, unsigned canonical locator, product/granule/band, access-policy version and inspected object ETag/grid/dtype/metadata are bound to this prepared acquisition; see sources for exact identities",
+        "fallback": "disabled; signature renewal/provider change requires an explicit fresh plan; product checkpoints are unsupported"
+      }
+    },
+    {
+      "product": "hls-s30",
+      "provider": "earthdata",
+      "mode": "controlled_mirror",
+      "round": 0,
+      "wall_seconds": 0.16834666700742673,
+      "cpu_seconds": 0.022455999999999997,
+      "peak_rss_bytes": 21577728,
+      "observed": {
+        "source_reads": [],
+        "scheduler": {
+          "workers": 1,
+          "per_host": 1,
+          "buffer_bytes": 33554392,
+          "reserved_bytes_peak": 526272,
+          "reader_state_reserved_bytes": 0,
+          "prepared_native_metadata_bytes": 30251,
+          "authenticated_transport_reserved_bytes": 0,
+          "prepared_v3_metadata_index_bytes": 0,
+          "active_workers_peak": 1,
+          "completed_tasks": 2,
+          "admitted_jobs": 2,
+          "cog_reader_scope": "selection",
+          "seconds": 0.038717625,
+          "order": "plan",
+          "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+          "prepared_hdf5_bytes": 0,
+          "native_buffers": [
+            {
+              "asset_id": "p000_B04",
+              "transport_encoded_capacity_peak_bytes": 99205,
+              "adapter_delivery_capacity_peak_bytes": 2700,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_Fmask",
+              "transport_encoded_capacity_peak_bytes": 8962,
+              "adapter_delivery_capacity_peak_bytes": 1800,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            }
+          ],
+          "native_metadata": {
+            "retained_sources": 2,
+            "retained_bytes": 30251,
+            "physical_metadata_sources": 2,
+            "physical_metadata_bytes": 5675,
+            "cap_bytes": 8388608,
+            "skipped_sources": 0,
+            "scope": "this Prepared only; immutable version-bound parser pages; never a data cache",
+            "authenticated_sources": 0,
+            "authenticated_transport": {}
+          },
+          "native_strategies": [
+            {
+              "asset_id": "p000_B04",
+              "task_reserved_bytes": 496021,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_Fmask",
+              "task_reserved_bytes": 272906,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            }
+          ]
+        },
+        "transport": {},
+        "decoded_source_chunks": 0,
+        "filled_source_chunks": 0,
+        "first_output_seconds": 0.045266916,
+        "assembly_seconds": 0.0,
+        "source_retrieval_seconds": 0.0246715,
+        "allocation_seconds": null,
+        "copying_seconds": null,
+        "output_setup_seconds": 0.006016666,
+        "output_finalize_seconds": 0.000496,
+        "output_io": {
+          "reads": 0,
+          "writes": 54,
+          "bytes_read": 0,
+          "bytes_written": 105416,
+          "buffered_bytes_peak": 35100,
+          "storage_read_seconds": 0.0,
+          "storage_write_seconds": 0.00543621,
+          "encode_seconds": 7.595499999999955e-05,
+          "allocation_seconds": 0.0,
+          "copying_seconds": 0.0
+        },
+        "native_materialized_bytes": null,
+        "source_data_requests": 2,
+        "source_data_bytes": 108167,
+        "chunks": 2,
+        "decoded_bytes": 2700,
+        "non_nodata_pixels": 1568,
+        "planning_seconds": 0.069383125,
+        "source_open_seconds": 0.013118791,
+        "read_decode_seconds": 0.025408083,
+        "sink_seconds": 0.00091075,
+        "masking_seconds": 9.582e-06,
+        "remote_requests": null,
+        "remote_bytes": null
+      },
+      "loopback": {
+        "head": 10,
+        "get": 8,
+        "range_get": 8,
+        "body_bytes": 132743,
+        "conditional": 12,
+        "errors": 0,
+        "head_active": 0,
+        "head_peak": 1
+      },
+      "checks": [
+        {
+          "band": "B04",
+          "shape": [
+            30,
+            30
+          ],
+          "complete_values_equal": true,
+          "masks_equal": true,
+          "coordinates_equal": true,
+          "raw_sha256": "2ece5de304781f7252c4df5609daa33efbb4cb97266477a075a96dd344710965"
+        },
+        {
+          "band": "Fmask",
+          "shape": [
+            30,
+            30
+          ],
+          "complete_values_equal": true,
+          "masks_equal": true,
+          "coordinates_equal": true,
+          "raw_sha256": "93a5be1f7df026aab57cf3e25125bd42a9fae6a63b4602a186c066ce2c1aacc9"
+        }
+      ],
+      "output_bytes": 219497,
+      "output_objects": 53,
+      "routing": {
+        "policy": "qualified-provider-v1",
+        "requested": "pinned",
+        "selected": "pinned",
+        "basis": "explicit_override",
+        "rationale": "Supplied observations and canonical physical locators are preserved; no remote substitution.",
+        "credentials_required": false,
+        "authorization_configured": false,
+        "observations_preserved": true,
+        "routes": [],
+        "observation_count": 1,
+        "eligibility": {
+          "mode": "explicit_or_pinned",
+          "queried_providers": [],
+          "other_catalogs": "not queried; supplied sources and explicit overrides never trigger substitution"
+        },
+        "equivalence": {
+          "classification": "unknown_or_partial_across_providers",
+          "verified_physical_assets": 0,
+          "total_assets": 2,
+          "scope": "see each source's immutable ETag/locator-bound sample evidence; no whole-object byte identity or archive-wide interchangeability claim"
+        },
+        "pinning": "provider, unsigned canonical locator, product/granule/band, access-policy version and inspected object ETag/grid/dtype/metadata are bound to this prepared acquisition; see sources for exact identities",
+        "fallback": "disabled; signature renewal/provider change requires an explicit fresh plan; product checkpoints are unsupported"
+      }
+    },
+    {
+      "product": "hls-s30",
+      "provider": "earthdata",
+      "mode": "controlled_mirror",
+      "round": 1,
+      "wall_seconds": 0.17391591699561104,
+      "cpu_seconds": 0.023763,
+      "peak_rss_bytes": 21495808,
+      "observed": {
+        "source_reads": [],
+        "scheduler": {
+          "workers": 1,
+          "per_host": 1,
+          "buffer_bytes": 33554392,
+          "reserved_bytes_peak": 526272,
+          "reader_state_reserved_bytes": 0,
+          "prepared_native_metadata_bytes": 30251,
+          "authenticated_transport_reserved_bytes": 0,
+          "prepared_v3_metadata_index_bytes": 0,
+          "active_workers_peak": 1,
+          "completed_tasks": 2,
+          "admitted_jobs": 2,
+          "cog_reader_scope": "selection",
+          "seconds": 0.039302833,
+          "order": "plan",
+          "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+          "prepared_hdf5_bytes": 0,
+          "native_buffers": [
+            {
+              "asset_id": "p000_B04",
+              "transport_encoded_capacity_peak_bytes": 99205,
+              "adapter_delivery_capacity_peak_bytes": 2700,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_Fmask",
+              "transport_encoded_capacity_peak_bytes": 8962,
+              "adapter_delivery_capacity_peak_bytes": 1800,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            }
+          ],
+          "native_metadata": {
+            "retained_sources": 2,
+            "retained_bytes": 30251,
+            "physical_metadata_sources": 2,
+            "physical_metadata_bytes": 5675,
+            "cap_bytes": 8388608,
+            "skipped_sources": 0,
+            "scope": "this Prepared only; immutable version-bound parser pages; never a data cache",
+            "authenticated_sources": 0,
+            "authenticated_transport": {}
+          },
+          "native_strategies": [
+            {
+              "asset_id": "p000_B04",
+              "task_reserved_bytes": 496021,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_Fmask",
+              "task_reserved_bytes": 272906,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            }
+          ]
+        },
+        "transport": {},
+        "decoded_source_chunks": 0,
+        "filled_source_chunks": 0,
+        "first_output_seconds": 0.045994875,
+        "assembly_seconds": 0.0,
+        "source_retrieval_seconds": 0.024581583,
+        "allocation_seconds": null,
+        "copying_seconds": null,
+        "output_setup_seconds": 0.006706125,
+        "output_finalize_seconds": 0.00053425,
+        "output_io": {
+          "reads": 0,
+          "writes": 54,
+          "bytes_read": 0,
+          "bytes_written": 105416,
+          "buffered_bytes_peak": 35100,
+          "storage_read_seconds": 0.0,
+          "storage_write_seconds": 0.006293625000000001,
+          "encode_seconds": 7.312400000000005e-05,
+          "allocation_seconds": 0.0,
+          "copying_seconds": 0.0
+        },
+        "native_materialized_bytes": null,
+        "source_data_requests": 2,
+        "source_data_bytes": 108167,
+        "chunks": 2,
+        "decoded_bytes": 2700,
+        "non_nodata_pixels": 1568,
+        "planning_seconds": 0.070813791,
+        "source_open_seconds": 0.013804625000000001,
+        "read_decode_seconds": 0.025323334000000003,
+        "sink_seconds": 0.001026333,
+        "masking_seconds": 1.0624e-05,
+        "remote_requests": null,
+        "remote_bytes": null
+      },
+      "loopback": {
+        "head": 10,
+        "get": 8,
+        "range_get": 8,
+        "body_bytes": 132743,
+        "conditional": 12,
+        "errors": 0,
+        "head_active": 0,
+        "head_peak": 1
+      },
+      "checks": [
+        {
+          "band": "B04",
+          "shape": [
+            30,
+            30
+          ],
+          "complete_values_equal": true,
+          "masks_equal": true,
+          "coordinates_equal": true,
+          "raw_sha256": "2ece5de304781f7252c4df5609daa33efbb4cb97266477a075a96dd344710965"
+        },
+        {
+          "band": "Fmask",
+          "shape": [
+            30,
+            30
+          ],
+          "complete_values_equal": true,
+          "masks_equal": true,
+          "coordinates_equal": true,
+          "raw_sha256": "93a5be1f7df026aab57cf3e25125bd42a9fae6a63b4602a186c066ce2c1aacc9"
+        }
+      ],
+      "output_bytes": 219533,
+      "output_objects": 53,
+      "routing": {
+        "policy": "qualified-provider-v1",
+        "requested": "pinned",
+        "selected": "pinned",
+        "basis": "explicit_override",
+        "rationale": "Supplied observations and canonical physical locators are preserved; no remote substitution.",
+        "credentials_required": false,
+        "authorization_configured": false,
+        "observations_preserved": true,
+        "routes": [],
+        "observation_count": 1,
+        "eligibility": {
+          "mode": "explicit_or_pinned",
+          "queried_providers": [],
+          "other_catalogs": "not queried; supplied sources and explicit overrides never trigger substitution"
+        },
+        "equivalence": {
+          "classification": "unknown_or_partial_across_providers",
+          "verified_physical_assets": 0,
+          "total_assets": 2,
+          "scope": "see each source's immutable ETag/locator-bound sample evidence; no whole-object byte identity or archive-wide interchangeability claim"
+        },
+        "pinning": "provider, unsigned canonical locator, product/granule/band, access-policy version and inspected object ETag/grid/dtype/metadata are bound to this prepared acquisition; see sources for exact identities",
+        "fallback": "disabled; signature renewal/provider change requires an explicit fresh plan; product checkpoints are unsupported"
+      }
+    },
+    {
+      "product": "hls-s30",
+      "provider": "planetary_computer",
+      "mode": "controlled_mirror",
+      "round": 1,
+      "wall_seconds": 0.17109129100572318,
+      "cpu_seconds": 0.022786999999999998,
+      "peak_rss_bytes": 21463040,
+      "observed": {
+        "source_reads": [],
+        "scheduler": {
+          "workers": 1,
+          "per_host": 1,
+          "buffer_bytes": 33554392,
+          "reserved_bytes_peak": 526272,
+          "reader_state_reserved_bytes": 0,
+          "prepared_native_metadata_bytes": 30251,
+          "authenticated_transport_reserved_bytes": 0,
+          "prepared_v3_metadata_index_bytes": 0,
+          "active_workers_peak": 1,
+          "completed_tasks": 2,
+          "admitted_jobs": 2,
+          "cog_reader_scope": "selection",
+          "seconds": 0.03984175,
+          "order": "plan",
+          "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+          "prepared_hdf5_bytes": 0,
+          "native_buffers": [
+            {
+              "asset_id": "p000_B04",
+              "transport_encoded_capacity_peak_bytes": 99205,
+              "adapter_delivery_capacity_peak_bytes": 2700,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_Fmask",
+              "transport_encoded_capacity_peak_bytes": 8962,
+              "adapter_delivery_capacity_peak_bytes": 1800,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            }
+          ],
+          "native_metadata": {
+            "retained_sources": 2,
+            "retained_bytes": 30251,
+            "physical_metadata_sources": 2,
+            "physical_metadata_bytes": 5675,
+            "cap_bytes": 8388608,
+            "skipped_sources": 0,
+            "scope": "this Prepared only; immutable version-bound parser pages; never a data cache",
+            "authenticated_sources": 0,
+            "authenticated_transport": {}
+          },
+          "native_strategies": [
+            {
+              "asset_id": "p000_B04",
+              "task_reserved_bytes": 496021,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_Fmask",
+              "task_reserved_bytes": 272906,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            }
+          ]
+        },
+        "transport": {},
+        "decoded_source_chunks": 0,
+        "filled_source_chunks": 0,
+        "first_output_seconds": 0.0452995,
+        "assembly_seconds": 0.0,
+        "source_retrieval_seconds": 0.024903083,
+        "allocation_seconds": null,
+        "copying_seconds": null,
+        "output_setup_seconds": 0.005882292,
+        "output_finalize_seconds": 0.000577167,
+        "output_io": {
+          "reads": 0,
+          "writes": 54,
+          "bytes_read": 0,
+          "bytes_written": 105326,
+          "buffered_bytes_peak": 35100,
+          "storage_read_seconds": 0.0,
+          "storage_write_seconds": 0.005665123,
+          "encode_seconds": 7.158500000000127e-05,
+          "allocation_seconds": 0.0,
+          "copying_seconds": 0.0
+        },
+        "native_materialized_bytes": null,
+        "source_data_requests": 2,
+        "source_data_bytes": 108167,
+        "chunks": 2,
+        "decoded_bytes": 2700,
+        "non_nodata_pixels": 1568,
+        "planning_seconds": 0.07189625,
+        "source_open_seconds": 0.013975375,
+        "read_decode_seconds": 0.025690792,
+        "sink_seconds": 0.001160043,
+        "masking_seconds": 1.1501e-05,
+        "remote_requests": null,
+        "remote_bytes": null
+      },
+      "loopback": {
+        "head": 10,
+        "get": 8,
+        "range_get": 8,
+        "body_bytes": 132743,
+        "conditional": 12,
+        "errors": 0,
+        "head_active": 0,
+        "head_peak": 1
+      },
+      "checks": [
+        {
+          "band": "B04",
+          "shape": [
+            30,
+            30
+          ],
+          "complete_values_equal": true,
+          "masks_equal": true,
+          "coordinates_equal": true,
+          "raw_sha256": "2ece5de304781f7252c4df5609daa33efbb4cb97266477a075a96dd344710965"
+        },
+        {
+          "band": "Fmask",
+          "shape": [
+            30,
+            30
+          ],
+          "complete_values_equal": true,
+          "masks_equal": true,
+          "coordinates_equal": true,
+          "raw_sha256": "93a5be1f7df026aab57cf3e25125bd42a9fae6a63b4602a186c066ce2c1aacc9"
+        }
+      ],
+      "output_bytes": 219381,
+      "output_objects": 53,
+      "routing": {
+        "policy": "qualified-provider-v1",
+        "requested": "pinned",
+        "selected": "pinned",
+        "basis": "explicit_override",
+        "rationale": "Supplied observations and canonical physical locators are preserved; no remote substitution.",
+        "credentials_required": false,
+        "authorization_configured": false,
+        "observations_preserved": true,
+        "routes": [],
+        "observation_count": 1,
+        "eligibility": {
+          "mode": "explicit_or_pinned",
+          "queried_providers": [],
+          "other_catalogs": "not queried; supplied sources and explicit overrides never trigger substitution"
+        },
+        "equivalence": {
+          "classification": "unknown_or_partial_across_providers",
+          "verified_physical_assets": 0,
+          "total_assets": 2,
+          "scope": "see each source's immutable ETag/locator-bound sample evidence; no whole-object byte identity or archive-wide interchangeability claim"
+        },
+        "pinning": "provider, unsigned canonical locator, product/granule/band, access-policy version and inspected object ETag/grid/dtype/metadata are bound to this prepared acquisition; see sources for exact identities",
+        "fallback": "disabled; signature renewal/provider change requires an explicit fresh plan; product checkpoints are unsupported"
+      }
+    }
+  ]
+}

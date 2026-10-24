@@ -1,0 +1,19 @@
+[tasks.alphaearth]
+summary = "Bounded AlphaEarth physical layout, source contract and native prototype gate"
+role = "worker"
+depends_on = ["tasks/routing.routing"]
+commit_message = "Assess bounded AlphaEarth GeoZarr acquisition"
+files = { create = ["docs/alphaearth/", "bench/alphaearth_probe.py", "src/alphaearth.rs", "tests/alphaearth.rs", "examples/alphaearth_stream.rs"], edit = ["src/lib.rs", "src/storage.rs", "src/zarr_decode.rs"], read = ["src/zarr_v3.rs", "src/storage.rs", "src/pixels.rs", "src/model.rs"] }
+prompt = """
+Orient:
+- Inspect actual Source Cooperative aef-mosaic metadata under a declared byte/request budget.
+Edit:
+1. Check exact source identity and conditional range contract before any payload or coordinates.
+2. Inspect codecs, dimensions, years, shards and affine metadata without whole shards or axes.
+3. If guarantees pass, implement smallest bounded native rank-four Int8 stream and independently compare Python/Zarr values and bounded coordinates; otherwise document exact blocker.
+4. Required routing must finish independently. No ChronoZarr, publishing, push, merge, tags or upstream patches.
+Verify:
+- Run bounded probe and record actual bytes, requests, runtime and dependencies.
+- Run relevant regression matrix for any code changes.
+"""
+test_cmd = "python3 -m py_compile bench/alphaearth_probe.py"

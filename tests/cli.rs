@@ -304,3 +304,61 @@ fn existing_output_is_rejected_before_remote_inspection() {
     assert!(!result.status.success());
     assert!(String::from_utf8_lossy(&result.stderr).contains("choose --output NEW_DIRECTORY"));
 }
+
+#[test]
+fn provider_flag_is_validated_for_product_requests_and_cannot_enable_checkpoints() {
+    let path = std::env::temp_dir().join(format!(
+        "tile-ripper-routing-cli-{}.json",
+        std::process::id()
+    ));
+    std::fs::write(&path,serde_json::to_vec(&serde_json::json!({
+        "product":"hls-l30","aoi":{"kind":"bounds","crs":"EPSG:4326","bbox":[-79.,35.,-78.,36.]},
+        "start":"2024-06-01T00:00:00Z","end":"2024-06-30T23:59:59Z","bands":["B04"],"observations":[]
+    })).unwrap()).unwrap();
+    let name = path.to_str().unwrap();
+    let result = run(&[
+        "plan",
+        name,
+        "--provider",
+        "planetary_computer",
+        "--discover-only",
+    ]);
+    assert!(
+        result.status.success(),
+        "{}",
+        String::from_utf8_lossy(&result.stderr)
+    );
+    let value: serde_json::Value = serde_json::from_slice(&result.stdout).unwrap();
+    assert_eq!(value["routing"]["selected"], "planetary_computer");
+    let bad = run(&[
+        "plan",
+        name,
+        "--provider",
+        "silent-fallback",
+        "--discover-only",
+    ]);
+    assert!(!bad.status.success());
+    assert!(String::from_utf8_lossy(&bad.stderr).contains("--provider requires"));
+    let bad = run(&["plan", "examples/weatherbench2.json", "--provider", "auto"]);
+    assert!(!bad.status.success());
+    assert!(String::from_utf8_lossy(&bad.stderr).contains("only to named product requests"));
+    #[cfg(all(feature = "native-cog", feature = "authenticated-http"))]
+    {
+        let bad = run(&[
+            "plan",
+            name,
+            "--provider",
+            "planetary_computer",
+            "--checkpoint",
+            "/missing-checkpoint",
+            "--auth",
+            "earthdata",
+            "--netrc",
+            "/missing-netrc",
+        ]);
+        assert!(!bad.status.success());
+        assert!(String::from_utf8_lossy(&bad.stderr).contains("product workflow requires"));
+        assert!(!std::path::Path::new("/missing-checkpoint").exists());
+    }
+    std::fs::remove_file(path).unwrap();
+}

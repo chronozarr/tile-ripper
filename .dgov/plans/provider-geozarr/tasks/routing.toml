@@ -1,0 +1,22 @@
+[tasks.routing]
+summary = "Implement and qualify explicit version-bound provider routing"
+role = "worker"
+commit_message = "Add qualified conservative multi-provider acquisition routing"
+files = { create = ["src/products/routing.rs", "src/products/equivalence.json", "docs/providers/", "bench/provider_qualification.py"], edit = ["src/products.rs", "src/cli/mod.rs", "src/cli/products.rs", "src/acquisition.rs", "README.md", "tests/cli.rs", "tests/products.rs"] }
+prompt = """
+Orient:
+- Continue codex/acquisition-planner at fef0068. Follow the full attached user brief.
+- Preserve scientific source identity, source versions, explicit auth, runtime-only signatures and terminal failure.
+Edit:
+1. Qualify HLS v2 L30/S30 Planetary Computer alternatives using actual matched observations and independent reference values.
+2. Add explicit provider routes, conservative auto/no-ambient-credentials policy, override, bounded discovery, human and JSON explanations.
+3. Select route before preparation; pin canonical locator/provider/policy and physical ETag. Never cross providers in a prepared acquisition/checkpoint. No persistent signature.
+4. Measure bounded controlled mirrors and respectful actual-provider observations. Record coverage separately from speed.
+Verify:
+- cargo test --locked --no-default-features --features native-cog,native-hdf5,authenticated-http
+- cargo test --locked --all-features --all-targets
+- cargo clippy --locked --all-features --all-targets -- -D warnings
+- cargo check --locked --no-default-features
+- cargo fmt --all -- --check
+"""
+test_cmd = "cargo test --locked --no-default-features --features native-cog,native-hdf5,authenticated-http"

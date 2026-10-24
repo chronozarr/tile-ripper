@@ -1,6 +1,7 @@
 //! Scientific product selection over the existing bounded acquisition lifecycle.
 //! Profiles describe expectations; the physical reader still inspects every source.
 pub mod profile;
+pub mod routing;
 use crate::{
     acquisition, cog::LayoutCache, fail, Asset, Budget, Format, Grid, Request, Result, Sink,
     Source, Spatial, Time, Variable,
@@ -22,6 +23,8 @@ const CMR: &str = "https://cmr.earthdata.nasa.gov/search";
 #[serde(deny_unknown_fields)]
 pub struct ProductRequest {
     pub product: String,
+    #[serde(default)]
+    pub provider: routing::Provider,
     pub aoi: Spatial,
     pub start: String,
     pub end: String,
@@ -74,7 +77,8 @@ pub struct ProductAsset {
 pub struct Catalog {
     pub schema: &'static str,
     pub product: String,
-    pub provider: &'static str,
+    pub provider: routing::Provider,
+    pub routing: routing::Decision,
     pub complete: bool,
     pub observations: Vec<Observation>,
     /// Retained product metadata charged outside the core reader working budget.
@@ -185,6 +189,17 @@ fn geographic_bounds(aoi: &Spatial) -> Result<[f64; 4]> {
 }
 /// Bounded, credential-free catalog discovery. A cap is an error, never truncation.
 pub fn discover(request: &ProductRequest) -> Result<Catalog> {
+    discover_routed(request, false)
+}
+/// Catalog-only policy with explicit authorization availability. This never
+/// discovers or reads credentials; callers must pass the selected session at preparation.
+pub fn discover_with_authorization(
+    request: &ProductRequest,
+    explicitly_configured: bool,
+) -> Result<Catalog> {
+    discover_routed(request, explicitly_configured)
+}
+fn discover_routed(request: &ProductRequest, authorized: bool) -> Result<Catalog> {
     request.validate()?;
     // Reject attacker-sized explicit metadata before cloning the request or
     // any observation. Remote observations are bounded after parsing.
@@ -201,35 +216,127 @@ pub fn discover(request: &ProductRequest) -> Result<Catalog> {
     };
     let request = canonical.as_ref().unwrap_or(request);
     let started = std::time::Instant::now();
-    let observations = if let Some(obs) = &request.observations {
-        obs.clone()
-    } else if request.product == "landsat-c2-l2-sr" {
-        discover_landsat(request)?
+    let (selected, observations, catalog_comparison) = if request.observations.is_none()
+        && request.provider == routing::Provider::Auto
+        && request.product.starts_with("hls-")
+    {
+        discover_hls_alternatives(request, authorized)?
     } else {
-        discover_cmr(request)?
+        let selected = routing::select(request, authorized)?;
+        let observations = if let Some(obs) = &request.observations {
+            obs.clone()
+        } else if selected == routing::Provider::PlanetaryComputer {
+            discover_planetary(request)?
+        } else {
+            discover_cmr(request)?
+        };
+        let audit = json!({"mode":"explicit_or_pinned","queried_providers":if request.observations.is_none() {vec![selected]} else {vec![]},"other_catalogs":"not queried; supplied sources and explicit overrides never trigger substitution"});
+        (selected, observations, audit)
     };
+    let mut observation_ids = BTreeSet::new();
     for obs in &observations {
+        if !observation_ids.insert(&obs.id) {
+            return fail("duplicate or ambiguous product observation identity");
+        }
         validate_observation(request, obs)?;
+        routing::validate_source(request, selected, obs)?;
     }
+    let mut routing = routing::decision(request, selected, authorized, &observations)?;
+    routing.eligibility = catalog_comparison;
     let metadata_reservation_bytes = metadata_reservation(request, &observations)?;
     Ok(Catalog {
         schema: "tile-ripper-products-v1",
         product: request.product.clone(),
-        provider: if request.product == "landsat-c2-l2-sr" {
-            "planetary_computer"
-        } else {
-            "cmr"
-        },
+        provider: selected,
+        routing,
         complete: true,
         observations,
         metadata_reservation_bytes,
         seconds: started.elapsed().as_secs_f64(),
     })
 }
-fn discover_landsat(r: &ProductRequest) -> Result<Vec<Observation>> {
+/// Compare only bounded catalog metadata. Never fetch science to select a route.
+fn discover_hls_alternatives(
+    r: &ProductRequest,
+    authorized: bool,
+) -> Result<(routing::Provider, Vec<Observation>, Value)> {
+    let mut pc = discover_planetary(r);
+    let mut nasa = discover_cmr(r);
+    // Admit each catalog independently before using its coverage in the policy.
+    for (provider, result) in [
+        (routing::Provider::PlanetaryComputer, &mut pc),
+        (routing::Provider::Earthdata, &mut nasa),
+    ] {
+        if let Ok(observations) = result {
+            let checked = (|| -> Result<()> {
+                metadata_reservation(r, observations)?;
+                let mut ids = BTreeSet::new();
+                for o in observations {
+                    if !ids.insert(o.id.clone()) {
+                        return fail("catalog contains duplicate observation identities");
+                    }
+                    validate_observation(r, o)?;
+                    routing::validate_source(r, provider, o)?;
+                }
+                Ok(())
+            })();
+            if let Err(error) = checked {
+                *result = Err(error);
+            }
+        }
+    }
+    let pc_ids = pc
+        .as_ref()
+        .ok()
+        .map(|obs| obs.iter().map(|o| o.id.clone()).collect::<BTreeSet<_>>());
+    let nasa_ids = nasa
+        .as_ref()
+        .ok()
+        .map(|obs| obs.iter().map(|o| o.id.clone()).collect::<BTreeSet<_>>());
+    let (selected, reason) = routing::choose_coverage(
+        pc_ids.as_ref(),
+        nasa_ids.as_ref(),
+        authorized,
+    )
+    .map_err(|error| -> Box<dyn std::error::Error + Send + Sync> {
+        format!(
+            "{error}; Planetary Computer discovery: {}; Earthdata discovery: {}",
+            pc.as_ref()
+                .map(|observations| format!("complete, {} observations", observations.len()))
+                .unwrap_or_else(|error| error.to_string()),
+            nasa.as_ref()
+                .map(|observations| format!("complete, {} observations", observations.len()))
+                .unwrap_or_else(|error| error.to_string())
+        )
+        .into()
+    })?;
+    let audit = |provider, result: &Result<Vec<Observation>>| match result {
+        Ok(observations) => {
+            json!({"provider":provider,"status":"complete","count":observations.len(),"observation_ids":observations.iter().map(|o|&o.id).collect::<Vec<_>>(),"credentials_required":provider==routing::Provider::Earthdata})
+        }
+        // Library errors contain closed transport/status/validation labels, not bearer URLs.
+        Err(error) => {
+            json!({"provider":provider,"status":"unavailable_or_incomplete","error":error.to_string(),"coverage_known":false})
+        }
+    };
+    let comparison = json!({"mode":"bounded_metadata_only","decision":reason,"catalogs":[audit(routing::Provider::PlanetaryComputer,&pc),audit(routing::Provider::Earthdata,&nasa)],"earthdata_only_ids":nasa_ids.as_ref().map(|n|n.difference(&pc_ids.clone().unwrap_or_default()).cloned().collect::<Vec<_>>()),"planetary_only_ids":pc_ids.as_ref().map(|p|p.difference(&nasa_ids.clone().unwrap_or_default()).cloned().collect::<Vec<_>>()),"equivalence":"coverage comparisons use exact granule identities within the v2 profile; cross-provider sample equivalence remains separately bound to inspected objects","no_science_download_for_routing":true});
+    let observations = if selected == routing::Provider::PlanetaryComputer {
+        pc?
+    } else {
+        nasa?
+    };
+    Ok((selected, observations, comparison))
+}
+fn discover_planetary(r: &ProductRequest) -> Result<Vec<Observation>> {
+    let collection = match r.product.as_str() {
+        "landsat-c2-l2-sr" => "landsat-c2-l2",
+        "hls-l30" => "hls2-l30",
+        "hls-s30" => "hls2-s30",
+        _ => return fail("no qualified Planetary Computer route for this product"),
+    };
     let mut url = Url::parse(&format!("{PC}/search"))?;
     url.query_pairs_mut()
-        .append_pair("collections", "landsat-c2-l2")
+        .append_pair("collections", collection)
         .append_pair(
             "bbox",
             &geographic_bounds(&r.aoi)?
@@ -239,8 +346,11 @@ fn discover_landsat(r: &ProductRequest) -> Result<Vec<Observation>> {
                 .join(","),
         )
         .append_pair("datetime", &format!("{}/{}", r.start, r.end))
-        .append_pair("query", r#"{"platform":{"in":["landsat-8","landsat-9"]}}"#)
         .append_pair("limit", &(r.max_observations + 1).to_string());
+    if r.product == "landsat-c2-l2-sr" {
+        url.query_pairs_mut()
+            .append_pair("query", r#"{"platform":{"in":["landsat-8","landsat-9"]}}"#);
+    }
     let v = read_json(
         client()?
             .get(url)
@@ -259,15 +369,21 @@ fn discover_landsat(r: &ProductRequest) -> Result<Vec<Observation>> {
     let mut out = vec![];
     for item in items {
         // This collection also contains Landsat 4–7, which this profile excludes.
-        if !["landsat-8", "landsat-9"]
-            .contains(&item["properties"]["platform"].as_str().unwrap_or(""))
+        if r.product == "landsat-c2-l2-sr"
+            && !["landsat-8", "landsat-9"]
+                .contains(&item["properties"]["platform"].as_str().unwrap_or(""))
         {
             continue;
         }
         let mut assets = BTreeMap::new();
         for requested in &r.bands {
             let band = p.band(requested)?;
-            let asset = &item["assets"][&band.asset_key];
+            let key = if r.product.starts_with("hls-") {
+                &band.name
+            } else {
+                &band.asset_key
+            };
+            let asset = &item["assets"][key];
             assets.insert(
                 band.name.to_string(),
                 ProductAsset {
@@ -417,7 +533,14 @@ fn validate_observation(r: &ProductRequest, o: &Observation) -> Result<()> {
         let (short, version) = collection(&r.product)?;
         o.collection == short
             || o.collection == format!("{short}_{version}")
-            || (r.product.starts_with("hls-") && o.collection == format!("{short}.020"))
+            || (r.product.starts_with("hls-")
+                && (o.collection == format!("{short}.020")
+                    || o.collection
+                        == if r.product == "hls-l30" {
+                            "hls2-l30"
+                        } else {
+                            "hls2-s30"
+                        }))
     };
     if !collection_ok {
         return fail("observation collection conflicts with product identity");
@@ -731,32 +854,26 @@ fn physical_identity(
     }
     Ok(())
 }
-fn signed_landsat(c: &Client, href: &str) -> Result<String> {
-    let url = Url::parse(href)?;
-    if url.query().is_some() {
-        return fail("Landsat source manifest must contain unsigned canonical URLs; signing stays runtime-only");
-    }
-    if url.scheme() != "https"
-        || !url
-            .host_str()
-            .is_some_and(|h| h.starts_with("landsat") && h.ends_with(".blob.core.windows.net"))
-        || !url.path().starts_with("/landsat-c2/")
-    {
-        return fail("Planetary Computer signer is confined to Landsat C2 Azure blob objects");
-    }
-    let mut signer = Url::parse("https://planetarycomputer.microsoft.com/api/sas/v1/sign")?;
-    signer.query_pairs_mut().append_pair("href", href);
-    let v = read_json(c.get(signer).send().map_err(|_| "Landsat signing failed")?)?;
-    let signed = Url::parse(text(&v, "href")?)?;
-    if signed.scheme() != url.scheme()
-        || signed.host_str() != url.host_str()
-        || signed.path() != url.path()
-        || signed.username() != ""
-        || signed.password().is_some()
-    {
-        return fail("signing changed the canonical source object");
-    }
-    Ok(signed.into())
+fn signed_planetary(c: &Client, product: &str, href: &str) -> Result<String> {
+    routing::validate_planetary_locator(product, href)?;
+    let result = (|| -> Result<String> {
+        let mut signer = Url::parse("https://planetarycomputer.microsoft.com/api/sas/v1/sign")?;
+        signer.query_pairs_mut().append_pair("href", href);
+        let v = read_json(
+            c.get(signer)
+                .send()
+                .map_err(|_| "signing transport failed")?,
+        )?;
+        let signed = text(&v, "href")?;
+        routing::validate_signature(href, signed)?;
+        Ok(signed.into())
+    })();
+    result.map_err(|error| {
+        let alternative = if product.starts_with("hls-") {
+            " For a different qualified route, explicitly create a fresh --provider earthdata plan with --auth earthdata --netrc PRIVATE_FILE; supplied observations must be explicitly rediscovered against that provider."
+        } else { "" };
+        format!("selected planetary_computer source {} could not be signed: {error}; no provider switch occurred. Explicitly create a fresh plan to retry the canonical object.{alternative}",crate::stac_workflow::safe_reference(href)).into()
+    })
 }
 /// Translate product selection to ordinary source assets, inspect, then check
 /// scientific expectations. No descriptor can override a physical format gate.
@@ -785,11 +902,8 @@ pub fn prepare_earthdata_authenticated(
     cache: &mut LayoutCache,
     netrc: &std::path::Path,
 ) -> Result<acquisition::Prepared> {
-    if !["hls-l30", "hls-s30", "opera-dswx-hls", "opera-rtc-s1"]
-        .contains(&profile::profile(&r.product)?.id)
-    {
-        return fail("no qualified Earthdata COG route for this product");
-    }
+    // An explicitly supplied authorization is considered by routing; a free
+    // route must never consult the file simply because it was configured.
     prepare_inner(r, cache, Some(netrc))
 }
 fn prepare_inner(
@@ -813,7 +927,20 @@ fn prepare_inner(
     if !crate::cog::native_selected() {
         return fail("product profiles require native COG selection; build native-cog and select --backend native");
     }
-    let catalog = discover(r)?;
+    let catalog = discover_routed(r, netrc.is_some())?;
+    // Routing is final before source inspection. Never open credentials for a
+    // credential-free selection, even when authorization was supplied.
+    let netrc = if catalog.provider == routing::Provider::Earthdata {
+        netrc
+    } else {
+        None
+    };
+    if catalog.provider == routing::Provider::Earthdata
+        && netrc.is_none()
+        && !catalog.observations.is_empty()
+    {
+        return fail("selected Earthdata route requires explicit --auth earthdata --netrc PRIVATE_FILE; use a fresh --provider planetary_computer plan where qualified coverage exists");
+    }
     let p = profile::profile(&r.product)?;
     let acquisition_buffer_bytes = r
         .buffer_bytes
@@ -832,8 +959,10 @@ fn prepare_inner(
             let b = p.band(requested)?;
             let a = &o.assets[&b.name];
             let id = format!("p{i:03}_{}", b.name);
-            let href = if r.product == "landsat-c2-l2-sr" && a.href.starts_with("https://") {
-                signed_landsat(&c, &a.href)?
+            let href = if catalog.provider == routing::Provider::PlanetaryComputer
+                && a.href.starts_with("https://")
+            {
+                signed_planetary(&c, &r.product, &a.href)?
             } else {
                 a.href.clone()
             };
@@ -844,7 +973,7 @@ fn prepare_inner(
                 datetime: Some(o.datetime.clone()),
                 etag: a.etag.clone(),
             });
-            metadata.push(json!({"asset_id":id,"item_id":o.id,"collection":o.collection,"requested_band":b.name,"product":r.product,"product_version":p.processing_version(&o.id)?,"platform":o.platform,"processing":o.processing,"product_band":b,"acquisition":o.properties,"asset_metadata":a.metadata,"href":crate::stac_workflow::safe_reference(&a.href),"raster_bands":[{"scale":b.scale,"offset":b.offset,"unit":b.unit}],"quality_policies":r.quality_policies.iter().filter(|name|name.parse::<profile::QualityPolicy>().is_ok_and(|q|q.required_bands().contains(&b.name.as_str()))).collect::<Vec<_>>() }));
+            metadata.push(json!({"asset_id":id,"provider":catalog.provider,"canonical_locator":crate::stac_workflow::safe_reference(&a.href),"access_policy":if catalog.provider == routing::Provider::PlanetaryComputer { routing::SIGNING_POLICY } else { routing::POLICY },"item_id":o.id,"collection":o.collection,"requested_band":b.name,"product":r.product,"product_version":p.processing_version(&o.id)?,"platform":o.platform,"processing":o.processing,"product_band":b,"acquisition":o.properties,"asset_metadata":a.metadata,"href":crate::stac_workflow::safe_reference(&a.href),"raster_bands":[{"scale":b.scale,"offset":b.offset,"unit":b.unit}],"quality_policies":r.quality_policies.iter().filter(|name|name.parse::<profile::QualityPolicy>().is_ok_and(|q|q.required_bands().contains(&b.name.as_str()))).collect::<Vec<_>>() }));
         }
     }
     let request = Request {
@@ -987,7 +1116,29 @@ fn prepare_inner(
             return fail("TIFF calibration conflicts with authoritative product profile");
         }
     }
-    Ok(prepared.with_product_metadata(metadata,json!({"profile":p,"quality_policies":r.quality_policies,"mask_scope":"derived masks belong to their raw QA/classification observation; no implicit cross-band alignment","discovery_seconds":catalog.seconds,"metadata_reservation_bytes":catalog.metadata_reservation_bytes,"requested_total_buffer_bytes":r.buffer_bytes,"acquisition_buffer_bytes":acquisition_buffer_bytes})))
+    let mut decision = catalog.routing;
+    let mut verified = 0usize;
+    for source in &mut metadata {
+        let physical = physical_inspection["sources"]
+            .as_array()
+            .and_then(|sources| {
+                sources
+                    .iter()
+                    .find(|candidate| candidate["asset_id"] == source["asset_id"])
+            });
+        source["equivalence"] = routing::attestation(
+            &r.product,
+            source["item_id"].as_str().unwrap_or(""),
+            source["requested_band"].as_str().unwrap_or(""),
+            source["canonical_locator"].as_str().unwrap_or(""),
+            physical.and_then(|p| p["object_version"].as_str()),
+        );
+        if !source["equivalence"]["group"].is_null() {
+            verified += 1;
+        }
+    }
+    decision.equivalence = json!({"classification":if verified == metadata.len() && verified > 0 {"scientifically_equivalent_selected_samples"} else {"unknown_or_partial_across_providers"},"verified_physical_assets":verified,"total_assets":metadata.len(),"scope":"see each source's immutable ETag/locator-bound sample evidence; no whole-object byte identity or archive-wide interchangeability claim"});
+    Ok(prepared.with_product_metadata(metadata,json!({"profile":p,"routing":decision,"quality_policies":r.quality_policies,"mask_scope":"derived masks belong to their raw QA/classification observation; no implicit cross-band alignment","discovery_seconds":catalog.seconds,"metadata_reservation_bytes":catalog.metadata_reservation_bytes,"requested_total_buffer_bytes":r.buffer_bytes,"acquisition_buffer_bytes":acquisition_buffer_bytes})))
 }
 
 /// Evaluate a named policy against its raw layer without mutating the source.

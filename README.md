@@ -2,6 +2,40 @@
 
 Named native product workflows now cover Landsat 8/9 Collection 2 surface reflectance, HLS L30/S30 v2, OPERA DSWx-HLS v1, and the qualified OPERA RTC-S1 Float32 profile. Use `tile-ripper products` and the existing `plan` / `fetch` / `stream` commands with a product request. See [runnable examples and installation](docs/products/workflow.md), [exact real-source qualification and access limits](docs/products/qualification.md), [scientific band/quality definitions](docs/products/specifications.md), and the [25-row coverage roadmap](docs/products/roadmap.md). Stored values, native grids, calibration, classification labels, and independent quality masks are preserved.
 
+Named products accept `--provider auto|planetary_computer|earthdata|pinned`
+(or `"provider"` in product JSON). For example:
+
+```sh
+tile-ripper plan hls-request.json --provider auto --human
+tile-ripper plan hls-request.json --provider earthdata --auth earthdata --netrc /private/path/.netrc --human
+```
+
+Fresh automatic Landsat/HLS discovery prefers credential-free Planetary Computer
+access, including accountless runtime signing. HLS uses `hls2-l30`/`hls2-s30` v2
+collections; legacy HLS v1.4 is excluded. OPERA retains its current Earthdata
+routes. Explicit authorization is considered only when that provider is selected;
+ambient credentials are never searched. No general authenticated-route speed
+advantage is established, so authorization alone does not change the default.
+Supplied observations pin their physical source and are never replaced. An
+explicit override that conflicts with them fails; mixed-provider observations
+require separate preparations.
+
+JSON and human plans expose the provider, policy, credentials, coverage limits,
+and immutable physical source identity. HLS automatic discovery compares both
+bounded catalogs, records actual observation IDs/counts and failures, and
+prioritizes complete coverage. With authorization,
+a strict observation superset wins; incomparable sets require an explicit
+selection. Without authorization, NASA-only identities are disclosed and require
+a fresh authorized plan. Explicit overrides query only their selected catalog.
+Cross-provider scientific evidence is limited to independently compared samples bound to exact canonical URLs and
+ETags; other assets have unknown cross-provider equivalence. A matching name,
+tile or date cannot create an equivalence group. The observed PC signer grants
+container read/list access; the engine confines every request to the selected
+canonical object. Exact read-only blob grants are also accepted; write grants
+are rejected. Signatures stay in memory. Changed objects, expired signatures and unavailable sources fail and require an
+explicit fresh plan. Prepared acquisitions never switch provider, and product
+checkpoints remain unsupported. See the [provider workflow, evidence and limits](docs/providers/qualification.md).
+
 Bounded SWOT Raster D discovery now finds candidates by WGS84 bounding box and
 date through NASA CMR. `discover` reports catalog relevance and exclusions;
 `discover-job` accepts explicit native windows or WGS84 bounding boxes and

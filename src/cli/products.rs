@@ -19,6 +19,7 @@ pub fn discover(args: &[String]) -> Result<()> {
     for pair in &mut pairs {
         if ![
             "--product",
+            "--provider",
             "--bbox",
             "--start",
             "--end",
@@ -51,7 +52,7 @@ pub fn discover(args: &[String]) -> Result<()> {
         .try_into()
         .map_err(|_| "bbox needs four coordinates")?;
     let r: ProductRequest = serde_json::from_value(
-        serde_json::json!({"product":get("--product")?,"aoi":Spatial::Bounds{crs:"EPSG:4326".into(),bbox},"start":get("--start")?,"end":get("--end")?,"bands":get("--bands")?.split(',').collect::<Vec<_>>(),"max_observations":flags.get("--limit").map_or(Ok(8),|v|v.parse::<usize>())?}),
+        serde_json::json!({"product":get("--product")?,"provider":flags.get("--provider").copied().unwrap_or("auto"),"aoi":Spatial::Bounds{crs:"EPSG:4326".into(),bbox},"start":get("--start")?,"end":get("--end")?,"bands":get("--bands")?.split(',').collect::<Vec<_>>(),"max_observations":flags.get("--limit").map_or(Ok(8),|v|v.parse::<usize>())?}),
     )?;
     let catalog = products::discover(&r)?;
     let bytes = serde_json::to_vec_pretty(&catalog)?;
@@ -95,10 +96,18 @@ pub fn run(options: super::Options) -> Result<()> {
     if let Some(path) = options.output {
         r.output = Some(path);
     }
+    if options.access.as_ref().is_some_and(|access| {
+        access.profile != "earthdata" || access.policy.is_some() || access.ca.is_some()
+    }) {
+        return Err("product authentication supports explicit --auth earthdata --netrc PRIVATE_FILE for qualified Earthdata routes".into());
+    }
     if options.discover_only {
         println!(
             "{}",
-            serde_json::to_string_pretty(&products::discover(&r)?)?
+            serde_json::to_string_pretty(&products::discover_with_authorization(
+                &r,
+                options.access.is_some()
+            )?)?
         );
         return Ok(());
     }

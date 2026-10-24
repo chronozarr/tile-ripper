@@ -1,0 +1,548 @@
+[
+  {
+    "product": "hls-l30",
+    "case": "matched",
+    "authorization_configured": false,
+    "seconds": 1.4724012920050882,
+    "exit": 0,
+    "provider": "planetary_computer",
+    "routing": {
+      "policy": "qualified-provider-v1",
+      "requested": "auto",
+      "selected": "planetary_computer",
+      "basis": "bounded_catalog_coverage_then_conservative_default",
+      "rationale": "Complete bounded catalog coverage is compared before the credential-free preference. See eligibility for exact observed IDs, failures and the selected coverage decision.",
+      "credentials_required": false,
+      "authorization_configured": false,
+      "observations_preserved": false,
+      "routes": [
+        {
+          "provider": "planetary_computer",
+          "catalog": "https://planetarycomputer.microsoft.com/api/stac/v1",
+          "product": "hls-l30",
+          "processing_version": "2.0",
+          "discovery": "bounded complete STAC search; hls2-l30/hls2-s30 only for HLS v2",
+          "access": "accountless memory-only SAS signing; observed container read/list grant; engine requests remain confined to the exact canonical object with conditional byte ranges",
+          "credential_requirement": "none",
+          "access_policy": "pc-exact-object-request-v1",
+          "capabilities": "native COG; physical metadata and ETag validation before/after acquisition",
+          "availability": "queried AOI/date only; catalog coverage is independent of Earthdata; no global coverage claim",
+          "limitations": "requires signing service; HLS cross-provider equivalence is specimen-scoped; no online speed probe or fallback"
+        },
+        {
+          "provider": "earthdata",
+          "catalog": "https://cmr.earthdata.nasa.gov/search",
+          "product": "hls-l30",
+          "processing_version": "2.0",
+          "discovery": "exact CMR collection/version and complete bounded granule search",
+          "access": "qualified product-specific exact-object Earthdata session",
+          "credential_requirement": "explicit private netrc",
+          "access_policy": "earthdata-product-exact-object-v1",
+          "capabilities": "native COG; conditional byte ranges; product-specific redirect confinement",
+          "availability": "queried AOI/date only; missing observations are not substituted",
+          "limitations": "authentication required for protected assets; no demonstrated general speed advantage"
+        }
+      ],
+      "observation_count": 2,
+      "eligibility": {
+        "mode": "bounded_metadata_only",
+        "decision": "credential-free complete catalog selected; any Earthdata-only identities are disclosed and require explicit authorization",
+        "catalogs": [
+          {
+            "provider": "planetary_computer",
+            "status": "complete",
+            "count": 2,
+            "observation_ids": [
+              "HLS.L30.T15VUE.2022231T172609.v2.0",
+              "HLS.L30.T14VPK.2022231T172609.v2.0"
+            ],
+            "credentials_required": false
+          },
+          {
+            "provider": "earthdata",
+            "status": "unavailable_or_incomplete",
+            "error": "granule is not the expected HLS V2 product",
+            "coverage_known": false
+          }
+        ],
+        "earthdata_only_ids": null,
+        "planetary_only_ids": [
+          "HLS.L30.T14VPK.2022231T172609.v2.0",
+          "HLS.L30.T15VUE.2022231T172609.v2.0"
+        ],
+        "equivalence": "coverage comparisons use exact granule identities within the v2 profile; cross-provider sample equivalence remains separately bound to inspected objects",
+        "no_science_download_for_routing": true
+      },
+      "equivalence": {
+        "classification": "unknown_across_providers",
+        "group": null,
+        "scope": "Physical product identity is validated for every source. Matching product names or timestamps alone never establish cross-provider equivalence; no observation is replaced."
+      },
+      "pinning": "provider, unsigned canonical locator, product/granule/band, access-policy version and inspected object ETag/grid/dtype/metadata are bound to this prepared acquisition; see sources for exact identities",
+      "fallback": "disabled; signature renewal/provider change requires an explicit fresh plan; product checkpoints are unsupported"
+    },
+    "observations": [
+      {
+        "id": "HLS.L30.T15VUE.2022231T172609.v2.0",
+        "datetime": "2022-08-19T17:26:09.755564Z",
+        "collection": "hls2-l30"
+      },
+      {
+        "id": "HLS.L30.T14VPK.2022231T172609.v2.0",
+        "datetime": "2022-08-19T17:26:09.755564Z",
+        "collection": "hls2-l30"
+      }
+    ]
+  },
+  {
+    "product": "hls-l30",
+    "case": "matched",
+    "authorization_configured": true,
+    "seconds": 0.9370326670032227,
+    "exit": 0,
+    "provider": "planetary_computer",
+    "routing": {
+      "policy": "qualified-provider-v1",
+      "requested": "auto",
+      "selected": "planetary_computer",
+      "basis": "bounded_catalog_coverage_then_conservative_default",
+      "rationale": "Complete bounded catalog coverage is compared before the credential-free preference. See eligibility for exact observed IDs, failures and the selected coverage decision.",
+      "credentials_required": false,
+      "authorization_configured": true,
+      "observations_preserved": false,
+      "routes": [
+        {
+          "provider": "planetary_computer",
+          "catalog": "https://planetarycomputer.microsoft.com/api/stac/v1",
+          "product": "hls-l30",
+          "processing_version": "2.0",
+          "discovery": "bounded complete STAC search; hls2-l30/hls2-s30 only for HLS v2",
+          "access": "accountless memory-only SAS signing; observed container read/list grant; engine requests remain confined to the exact canonical object with conditional byte ranges",
+          "credential_requirement": "none",
+          "access_policy": "pc-exact-object-request-v1",
+          "capabilities": "native COG; physical metadata and ETag validation before/after acquisition",
+          "availability": "queried AOI/date only; catalog coverage is independent of Earthdata; no global coverage claim",
+          "limitations": "requires signing service; HLS cross-provider equivalence is specimen-scoped; no online speed probe or fallback"
+        },
+        {
+          "provider": "earthdata",
+          "catalog": "https://cmr.earthdata.nasa.gov/search",
+          "product": "hls-l30",
+          "processing_version": "2.0",
+          "discovery": "exact CMR collection/version and complete bounded granule search",
+          "access": "qualified product-specific exact-object Earthdata session",
+          "credential_requirement": "explicit private netrc",
+          "access_policy": "earthdata-product-exact-object-v1",
+          "capabilities": "native COG; conditional byte ranges; product-specific redirect confinement",
+          "availability": "queried AOI/date only; missing observations are not substituted",
+          "limitations": "authentication required for protected assets; no demonstrated general speed advantage"
+        }
+      ],
+      "observation_count": 2,
+      "eligibility": {
+        "mode": "bounded_metadata_only",
+        "decision": "only Planetary Computer returned a complete catalog; Earthdata discovery failure is disclosed, coverage comparison remains unknown",
+        "catalogs": [
+          {
+            "provider": "planetary_computer",
+            "status": "complete",
+            "count": 2,
+            "observation_ids": [
+              "HLS.L30.T15VUE.2022231T172609.v2.0",
+              "HLS.L30.T14VPK.2022231T172609.v2.0"
+            ],
+            "credentials_required": false
+          },
+          {
+            "provider": "earthdata",
+            "status": "unavailable_or_incomplete",
+            "error": "granule is not the expected HLS V2 product",
+            "coverage_known": false
+          }
+        ],
+        "earthdata_only_ids": null,
+        "planetary_only_ids": [
+          "HLS.L30.T14VPK.2022231T172609.v2.0",
+          "HLS.L30.T15VUE.2022231T172609.v2.0"
+        ],
+        "equivalence": "coverage comparisons use exact granule identities within the v2 profile; cross-provider sample equivalence remains separately bound to inspected objects",
+        "no_science_download_for_routing": true
+      },
+      "equivalence": {
+        "classification": "unknown_across_providers",
+        "group": null,
+        "scope": "Physical product identity is validated for every source. Matching product names or timestamps alone never establish cross-provider equivalence; no observation is replaced."
+      },
+      "pinning": "provider, unsigned canonical locator, product/granule/band, access-policy version and inspected object ETag/grid/dtype/metadata are bound to this prepared acquisition; see sources for exact identities",
+      "fallback": "disabled; signature renewal/provider change requires an explicit fresh plan; product checkpoints are unsupported"
+    },
+    "observations": [
+      {
+        "id": "HLS.L30.T15VUE.2022231T172609.v2.0",
+        "datetime": "2022-08-19T17:26:09.755564Z",
+        "collection": "hls2-l30"
+      },
+      {
+        "id": "HLS.L30.T14VPK.2022231T172609.v2.0",
+        "datetime": "2022-08-19T17:26:09.755564Z",
+        "collection": "hls2-l30"
+      }
+    ]
+  },
+  {
+    "product": "hls-s30",
+    "case": "matched",
+    "authorization_configured": false,
+    "seconds": 0.7377192080020905,
+    "exit": 0,
+    "provider": "planetary_computer",
+    "routing": {
+      "policy": "qualified-provider-v1",
+      "requested": "auto",
+      "selected": "planetary_computer",
+      "basis": "bounded_catalog_coverage_then_conservative_default",
+      "rationale": "Complete bounded catalog coverage is compared before the credential-free preference. See eligibility for exact observed IDs, failures and the selected coverage decision.",
+      "credentials_required": false,
+      "authorization_configured": false,
+      "observations_preserved": false,
+      "routes": [
+        {
+          "provider": "planetary_computer",
+          "catalog": "https://planetarycomputer.microsoft.com/api/stac/v1",
+          "product": "hls-s30",
+          "processing_version": "2.0",
+          "discovery": "bounded complete STAC search; hls2-l30/hls2-s30 only for HLS v2",
+          "access": "accountless memory-only SAS signing; observed container read/list grant; engine requests remain confined to the exact canonical object with conditional byte ranges",
+          "credential_requirement": "none",
+          "access_policy": "pc-exact-object-request-v1",
+          "capabilities": "native COG; physical metadata and ETag validation before/after acquisition",
+          "availability": "queried AOI/date only; catalog coverage is independent of Earthdata; no global coverage claim",
+          "limitations": "requires signing service; HLS cross-provider equivalence is specimen-scoped; no online speed probe or fallback"
+        },
+        {
+          "provider": "earthdata",
+          "catalog": "https://cmr.earthdata.nasa.gov/search",
+          "product": "hls-s30",
+          "processing_version": "2.0",
+          "discovery": "exact CMR collection/version and complete bounded granule search",
+          "access": "qualified product-specific exact-object Earthdata session",
+          "credential_requirement": "explicit private netrc",
+          "access_policy": "earthdata-product-exact-object-v1",
+          "capabilities": "native COG; conditional byte ranges; product-specific redirect confinement",
+          "availability": "queried AOI/date only; missing observations are not substituted",
+          "limitations": "authentication required for protected assets; no demonstrated general speed advantage"
+        }
+      ],
+      "observation_count": 1,
+      "eligibility": {
+        "mode": "bounded_metadata_only",
+        "decision": "credential-free complete catalog selected; any Earthdata-only identities are disclosed and require explicit authorization",
+        "catalogs": [
+          {
+            "provider": "planetary_computer",
+            "status": "complete",
+            "count": 1,
+            "observation_ids": [
+              "HLS.S30.T59UNU.2026295T235129.v2.0"
+            ],
+            "credentials_required": false
+          },
+          {
+            "provider": "earthdata",
+            "status": "complete",
+            "count": 1,
+            "observation_ids": [
+              "HLS.S30.T59UNU.2026295T235129.v2.0"
+            ],
+            "credentials_required": true
+          }
+        ],
+        "earthdata_only_ids": [],
+        "planetary_only_ids": [],
+        "equivalence": "coverage comparisons use exact granule identities within the v2 profile; cross-provider sample equivalence remains separately bound to inspected objects",
+        "no_science_download_for_routing": true
+      },
+      "equivalence": {
+        "classification": "unknown_across_providers",
+        "group": null,
+        "scope": "Physical product identity is validated for every source. Matching product names or timestamps alone never establish cross-provider equivalence; no observation is replaced."
+      },
+      "pinning": "provider, unsigned canonical locator, product/granule/band, access-policy version and inspected object ETag/grid/dtype/metadata are bound to this prepared acquisition; see sources for exact identities",
+      "fallback": "disabled; signature renewal/provider change requires an explicit fresh plan; product checkpoints are unsupported"
+    },
+    "observations": [
+      {
+        "id": "HLS.S30.T59UNU.2026295T235129.v2.0",
+        "datetime": "2026-10-22T23:51:43.692720Z",
+        "collection": "hls2-s30"
+      }
+    ]
+  },
+  {
+    "product": "hls-s30",
+    "case": "matched",
+    "authorization_configured": true,
+    "seconds": 0.6222178329917369,
+    "exit": 0,
+    "provider": "planetary_computer",
+    "routing": {
+      "policy": "qualified-provider-v1",
+      "requested": "auto",
+      "selected": "planetary_computer",
+      "basis": "bounded_catalog_coverage_then_conservative_default",
+      "rationale": "Complete bounded catalog coverage is compared before the credential-free preference. See eligibility for exact observed IDs, failures and the selected coverage decision.",
+      "credentials_required": false,
+      "authorization_configured": true,
+      "observations_preserved": false,
+      "routes": [
+        {
+          "provider": "planetary_computer",
+          "catalog": "https://planetarycomputer.microsoft.com/api/stac/v1",
+          "product": "hls-s30",
+          "processing_version": "2.0",
+          "discovery": "bounded complete STAC search; hls2-l30/hls2-s30 only for HLS v2",
+          "access": "accountless memory-only SAS signing; observed container read/list grant; engine requests remain confined to the exact canonical object with conditional byte ranges",
+          "credential_requirement": "none",
+          "access_policy": "pc-exact-object-request-v1",
+          "capabilities": "native COG; physical metadata and ETag validation before/after acquisition",
+          "availability": "queried AOI/date only; catalog coverage is independent of Earthdata; no global coverage claim",
+          "limitations": "requires signing service; HLS cross-provider equivalence is specimen-scoped; no online speed probe or fallback"
+        },
+        {
+          "provider": "earthdata",
+          "catalog": "https://cmr.earthdata.nasa.gov/search",
+          "product": "hls-s30",
+          "processing_version": "2.0",
+          "discovery": "exact CMR collection/version and complete bounded granule search",
+          "access": "qualified product-specific exact-object Earthdata session",
+          "credential_requirement": "explicit private netrc",
+          "access_policy": "earthdata-product-exact-object-v1",
+          "capabilities": "native COG; conditional byte ranges; product-specific redirect confinement",
+          "availability": "queried AOI/date only; missing observations are not substituted",
+          "limitations": "authentication required for protected assets; no demonstrated general speed advantage"
+        }
+      ],
+      "observation_count": 1,
+      "eligibility": {
+        "mode": "bounded_metadata_only",
+        "decision": "equal exact observation sets; conservative credential-free preference, no material measured advantage established",
+        "catalogs": [
+          {
+            "provider": "planetary_computer",
+            "status": "complete",
+            "count": 1,
+            "observation_ids": [
+              "HLS.S30.T59UNU.2026295T235129.v2.0"
+            ],
+            "credentials_required": false
+          },
+          {
+            "provider": "earthdata",
+            "status": "complete",
+            "count": 1,
+            "observation_ids": [
+              "HLS.S30.T59UNU.2026295T235129.v2.0"
+            ],
+            "credentials_required": true
+          }
+        ],
+        "earthdata_only_ids": [],
+        "planetary_only_ids": [],
+        "equivalence": "coverage comparisons use exact granule identities within the v2 profile; cross-provider sample equivalence remains separately bound to inspected objects",
+        "no_science_download_for_routing": true
+      },
+      "equivalence": {
+        "classification": "unknown_across_providers",
+        "group": null,
+        "scope": "Physical product identity is validated for every source. Matching product names or timestamps alone never establish cross-provider equivalence; no observation is replaced."
+      },
+      "pinning": "provider, unsigned canonical locator, product/granule/band, access-policy version and inspected object ETag/grid/dtype/metadata are bound to this prepared acquisition; see sources for exact identities",
+      "fallback": "disabled; signature renewal/provider change requires an explicit fresh plan; product checkpoints are unsupported"
+    },
+    "observations": [
+      {
+        "id": "HLS.S30.T59UNU.2026295T235129.v2.0",
+        "datetime": "2026-10-22T23:51:43.692720Z",
+        "collection": "hls2-s30"
+      }
+    ]
+  },
+  {
+    "product": "hls-l30",
+    "case": "coverage-gap",
+    "authorization_configured": false,
+    "seconds": 0.8018105420051143,
+    "exit": 0,
+    "provider": "earthdata",
+    "routing": {
+      "policy": "qualified-provider-v1",
+      "requested": "auto",
+      "selected": "earthdata",
+      "basis": "bounded_catalog_coverage_then_conservative_default",
+      "rationale": "Complete bounded catalog coverage is compared before the credential-free preference. See eligibility for exact observed IDs, failures and the selected coverage decision.",
+      "credentials_required": true,
+      "authorization_configured": false,
+      "observations_preserved": false,
+      "routes": [
+        {
+          "provider": "planetary_computer",
+          "catalog": "https://planetarycomputer.microsoft.com/api/stac/v1",
+          "product": "hls-l30",
+          "processing_version": "2.0",
+          "discovery": "bounded complete STAC search; hls2-l30/hls2-s30 only for HLS v2",
+          "access": "accountless temporary SAS signing; HTTPS conditional byte ranges",
+          "credential_requirement": "none",
+          "access_policy": "pc-exact-read-blob-v1",
+          "capabilities": "native COG; physical metadata and ETag validation before/after acquisition",
+          "availability": "queried AOI/date only; catalog coverage is independent of Earthdata; no global coverage claim",
+          "limitations": "requires signing service; HLS cross-provider equivalence is specimen-scoped; no online speed probe or fallback"
+        },
+        {
+          "provider": "earthdata",
+          "catalog": "https://cmr.earthdata.nasa.gov/search",
+          "product": "hls-l30",
+          "processing_version": "2.0",
+          "discovery": "exact CMR collection/version and complete bounded granule search",
+          "access": "qualified product-specific exact-object Earthdata session",
+          "credential_requirement": "explicit private netrc",
+          "access_policy": "earthdata-product-exact-object-v1",
+          "capabilities": "native COG; conditional byte ranges; product-specific redirect confinement",
+          "availability": "queried AOI/date only; missing observations are not substituted",
+          "limitations": "authentication required for protected assets; no demonstrated general speed advantage"
+        }
+      ],
+      "observation_count": 1,
+      "eligibility": {
+        "mode": "bounded_metadata_only",
+        "decision": "no credential-free observations; Earthdata coverage discovered but explicit authorization is required before preparation",
+        "catalogs": [
+          {
+            "provider": "planetary_computer",
+            "status": "complete",
+            "count": 0,
+            "observation_ids": [],
+            "credentials_required": false
+          },
+          {
+            "provider": "earthdata",
+            "status": "complete",
+            "count": 1,
+            "observation_ids": [
+              "HLS.L30.T17SPU.2026291T154740.v2.0"
+            ],
+            "credentials_required": true
+          }
+        ],
+        "earthdata_only_ids": [
+          "HLS.L30.T17SPU.2026291T154740.v2.0"
+        ],
+        "planetary_only_ids": [],
+        "equivalence": "coverage comparisons use exact granule identities within the v2 profile; cross-provider sample equivalence remains separately bound to inspected objects",
+        "no_science_download_for_routing": true
+      },
+      "equivalence": {
+        "classification": "unknown_across_providers",
+        "group": null,
+        "scope": "Physical product identity is validated for every source. Matching product names or timestamps alone never establish cross-provider equivalence; no observation is replaced."
+      },
+      "pinning": "provider, unsigned canonical locator, product/granule/band, access-policy version and inspected object ETag/grid/dtype/metadata are bound to this prepared acquisition; see sources for exact identities",
+      "fallback": "disabled; signature renewal/provider change requires an explicit fresh plan; product checkpoints are unsupported"
+    },
+    "observations": [
+      {
+        "id": "HLS.L30.T17SPU.2026291T154740.v2.0",
+        "collection": "HLSL30",
+        "datetime": "2026-10-18T15:47:40.202Z"
+      }
+    ]
+  },
+  {
+    "product": "hls-l30",
+    "case": "coverage-gap",
+    "authorization_configured": true,
+    "seconds": 0.7266375000035623,
+    "exit": 0,
+    "provider": "earthdata",
+    "routing": {
+      "policy": "qualified-provider-v1",
+      "requested": "auto",
+      "selected": "earthdata",
+      "basis": "bounded_catalog_coverage_then_conservative_default",
+      "rationale": "Complete bounded catalog coverage is compared before the credential-free preference. See eligibility for exact observed IDs, failures and the selected coverage decision.",
+      "credentials_required": true,
+      "authorization_configured": true,
+      "observations_preserved": false,
+      "routes": [
+        {
+          "provider": "planetary_computer",
+          "catalog": "https://planetarycomputer.microsoft.com/api/stac/v1",
+          "product": "hls-l30",
+          "processing_version": "2.0",
+          "discovery": "bounded complete STAC search; hls2-l30/hls2-s30 only for HLS v2",
+          "access": "accountless temporary SAS signing; HTTPS conditional byte ranges",
+          "credential_requirement": "none",
+          "access_policy": "pc-exact-read-blob-v1",
+          "capabilities": "native COG; physical metadata and ETag validation before/after acquisition",
+          "availability": "queried AOI/date only; catalog coverage is independent of Earthdata; no global coverage claim",
+          "limitations": "requires signing service; HLS cross-provider equivalence is specimen-scoped; no online speed probe or fallback"
+        },
+        {
+          "provider": "earthdata",
+          "catalog": "https://cmr.earthdata.nasa.gov/search",
+          "product": "hls-l30",
+          "processing_version": "2.0",
+          "discovery": "exact CMR collection/version and complete bounded granule search",
+          "access": "qualified product-specific exact-object Earthdata session",
+          "credential_requirement": "explicit private netrc",
+          "access_policy": "earthdata-product-exact-object-v1",
+          "capabilities": "native COG; conditional byte ranges; product-specific redirect confinement",
+          "availability": "queried AOI/date only; missing observations are not substituted",
+          "limitations": "authentication required for protected assets; no demonstrated general speed advantage"
+        }
+      ],
+      "observation_count": 1,
+      "eligibility": {
+        "mode": "bounded_metadata_only",
+        "decision": "Earthdata complete catalog is a strict observation superset; coverage takes precedence over credential-free preference",
+        "catalogs": [
+          {
+            "provider": "planetary_computer",
+            "status": "complete",
+            "count": 0,
+            "observation_ids": [],
+            "credentials_required": false
+          },
+          {
+            "provider": "earthdata",
+            "status": "complete",
+            "count": 1,
+            "observation_ids": [
+              "HLS.L30.T17SPU.2026291T154740.v2.0"
+            ],
+            "credentials_required": true
+          }
+        ],
+        "earthdata_only_ids": [
+          "HLS.L30.T17SPU.2026291T154740.v2.0"
+        ],
+        "planetary_only_ids": [],
+        "equivalence": "coverage comparisons use exact granule identities within the v2 profile; cross-provider sample equivalence remains separately bound to inspected objects",
+        "no_science_download_for_routing": true
+      },
+      "equivalence": {
+        "classification": "unknown_across_providers",
+        "group": null,
+        "scope": "Physical product identity is validated for every source. Matching product names or timestamps alone never establish cross-provider equivalence; no observation is replaced."
+      },
+      "pinning": "provider, unsigned canonical locator, product/granule/band, access-policy version and inspected object ETag/grid/dtype/metadata are bound to this prepared acquisition; see sources for exact identities",
+      "fallback": "disabled; signature renewal/provider change requires an explicit fresh plan; product checkpoints are unsupported"
+    },
+    "observations": [
+      {
+        "id": "HLS.L30.T17SPU.2026291T154740.v2.0",
+        "collection": "HLSL30",
+        "datetime": "2026-10-18T15:47:40.202Z"
+      }
+    ]
+  }
+]

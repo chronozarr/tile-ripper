@@ -117,6 +117,45 @@ impl Prepared {
         } else if let Some(values) = time["values"].as_array() {
             s += &format!("Requested {} explicit timestamp(s)\n", values.len());
         }
+        let routing = &self.inspection["product"]["routing"];
+        if let Some(provider) = routing["selected"].as_str() {
+            s += &format!(
+                "Provider: {provider}; decision: {}; credentials required: {}\n{}\n",
+                routing["basis"].as_str().unwrap_or("unknown"),
+                routing["credentials_required"],
+                routing["rationale"].as_str().unwrap_or("")
+            );
+            s += &format!(
+                "Cross-provider equivalence: {}. {}\n",
+                routing["equivalence"]["classification"]
+                    .as_str()
+                    .unwrap_or("unknown"),
+                routing["fallback"].as_str().unwrap_or("")
+            );
+            if let Some(reason) = routing["eligibility"]["decision"].as_str() {
+                s += &format!("Coverage decision: {reason}\n");
+            }
+            if let Some(catalogs) = routing["eligibility"]["catalogs"].as_array() {
+                for catalog in catalogs {
+                    s += &format!(
+                        "  Catalog {}: {}; count {}\n",
+                        catalog["provider"].as_str().unwrap_or(""),
+                        catalog["status"].as_str().unwrap_or(""),
+                        catalog["count"]
+                    );
+                }
+            }
+            if let Some(routes) = routing["routes"].as_array() {
+                for route in routes {
+                    s += &format!(
+                        "  Route {}: {}; {}\n",
+                        route["provider"].as_str().unwrap_or(""),
+                        route["credential_requirement"].as_str().unwrap_or(""),
+                        route["availability"].as_str().unwrap_or("")
+                    );
+                }
+            }
+        }
         for selection in &self.plan().selected {
             let backend = &selection.capabilities.decoding;
             let variable = selection
@@ -147,6 +186,14 @@ impl Prepared {
                 backend,
                 selection.timestamps.len()
             );
+            if let Some(source) = source.filter(|source| source["provider"].is_string()) {
+                s += &format!(
+                    "    Pinned {} {} ETag {}\n",
+                    source["provider"].as_str().unwrap_or(""),
+                    source["canonical_locator"].as_str().unwrap_or(""),
+                    source["object_version"]
+                );
+            }
             for time in selection.timestamps.iter().take(8) {
                 s += &format!("    {time}\n");
             }
