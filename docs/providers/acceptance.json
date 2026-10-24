@@ -1,5 +1,5 @@
 {
-  "schema": "tile-ripper-provider-routing-acceptance-v1",
+  "schema": "tile-ripper-provider-alphaearth-acceptance-v1",
   "start_commit": "fef0068",
   "runtime": {
     "os": "macOS-26.7.1-arm64-arm-64bit",
@@ -10,20 +10,18 @@
     {
       "command": "cargo test --locked --all-features --all-targets",
       "status": "passed",
-      "tests_passed": 187,
+      "tests_passed": 197,
       "tests_ignored": 9,
-      "log_sha256": "a4b0fe702df591c6020a4463f13820f80649d17cc0368a7fbb320201d081cbc0",
-      "warnings": 0,
-      "source_scope": "isolated staged routing tree"
+      "log_sha256": "eeb947714ee7a1d0220dd1f17d8e36c6e6bd225f587ffad77530b31c9166c9b1",
+      "warnings": 0
     },
     {
       "command": "cargo test --locked --no-default-features --features native-cog,native-hdf5,authenticated-http",
       "status": "passed",
-      "tests_passed": 158,
+      "tests_passed": 168,
       "tests_ignored": 8,
-      "log_sha256": "0bfb57afaeb57380bbf6f442f0aa9b7c6b20a22c71bb7dee1e16e9b100c9e4f8",
-      "warnings": 0,
-      "source_scope": "isolated staged routing tree"
+      "log_sha256": "f8cfdb19c1afad30e493c43bb863389606c7cc514ee75009776201957777826e",
+      "warnings": 0
     },
     {
       "command": "cargo clippy --locked --all-features --all-targets -- -D warnings",
@@ -75,14 +73,39 @@
     "explicit auth,secret confinement,source version and terminal failures",
     "existing source checkpoints/replay",
     "atomic output publication",
-    "provider ambiguity/false equivalence/mismatched versions/expired signing/explicit override/mixed provider checkpoint refusal"
+    "provider ambiguity/false equivalence/mismatched versions/expired signing/explicit override/mixed provider checkpoint refusal",
+    "dedicated AlphaEarth Int8 rank4 native stream and corrupt index/payload/coordinate/source faults"
   ],
   "ignored_live_tests": "Explicit ignored tests remain ignored; actual-source qualification receipts are separate and must not be counted as ignored tests executed.",
   "local_only": true,
-  "scope": "Routing changeset independently tested from staged tree without AlphaEarth sources, storage changes, or decoder changes.",
+  "routing_only_changeset": {
+    "commit": "47a708d4c32e61a4a5ea2a095537e63726a34a96",
+    "independent_tests": [
+      {
+        "command": "cargo test --locked --all-features --all-targets",
+        "status": "passed",
+        "tests_passed": 187,
+        "tests_ignored": 9,
+        "log_sha256": "a4b0fe702df591c6020a4463f13820f80649d17cc0368a7fbb320201d081cbc0",
+        "warnings": 0,
+        "source_scope": "isolated staged routing tree"
+      },
+      {
+        "command": "cargo test --locked --no-default-features --features native-cog,native-hdf5,authenticated-http",
+        "status": "passed",
+        "tests_passed": 158,
+        "tests_ignored": 8,
+        "log_sha256": "0bfb57afaeb57380bbf6f442f0aa9b7c6b20a22c71bb7dee1e16e9b100c9e4f8",
+        "warnings": 0,
+        "source_scope": "isolated staged routing tree"
+      }
+    ],
+    "scope": "Routing changeset independently tested from staged tree without AlphaEarth sources, storage changes, or decoder changes."
+  },
   "planning_tool": {
     "structural_compile": "passed (dry-run)",
     "dispatch": "not used: execution performed by scoped agents without worktree merging",
     "configuration_validation": "requires a provider configuration absent from this checkout; no configuration or credential changes made"
-  }
+  },
+  "source_scope": "integrated routing plus standalone AlphaEarth; 10 AlphaEarth offline tests included in each feature matrix"
 }

@@ -56,3 +56,6 @@ pub mod swot;
 pub mod swot_aoi;
 #[cfg(feature = "native-hdf5")]
 pub mod swot_job;
+
+/// Bounded standalone AlphaEarth GeoZarr native streaming prototype.
+pub mod alphaearth;

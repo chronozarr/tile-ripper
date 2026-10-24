@@ -1,0 +1,1637 @@
+{
+  "status": "passed",
+  "binary_sha256": "6171daabc9ba7f9da398c3382c091f57c1ec7ae4b1c36193c52bc5b99846b5ea",
+  "request": {
+    "locator": "https://s3.us-west-2.amazonaws.com/us-west-2.opendata.source.coop/tge-labs/aef-mosaic/",
+    "time_index": 0,
+    "start": [
+      542672,
+      1124304
+    ],
+    "count": [
+      1,
+      1
+    ],
+    "network_bytes": 33554432,
+    "network_requests": 128,
+    "working_bytes": 67108864
+  },
+  "wall_seconds": 7.563405958993826,
+  "cpu_seconds": 0.06912,
+  "peak_rss_bytes": 29818880,
+  "metadata": {
+    "profile": "alphaearth_geozarr_int8_v1",
+    "root": {
+      "zarr_format": 3,
+      "node_type": "group",
+      "attributes": {
+        "proj:code": "EPSG:4326",
+        "spatial:dimensions": [
+          "y",
+          "x"
+        ],
+        "spatial:transform": [
+          8.983111749910169e-05,
+          0.0,
+          -180.0,
+          0.0,
+          -8.983111749910169e-05,
+          83.68570533713473
+        ],
+        "spatial:transform_type": "affine",
+        "spatial:bbox": [
+          -180.0,
+          -83.36280346631479,
+          180.2213438735178,
+          83.68570533713473
+        ],
+        "spatial:shape": [
+          1859584,
+          4009984
+        ],
+        "spatial:registration": "pixel",
+        "geoemb:type": "pixel",
+        "geoemb:dimensions": 64,
+        "geoemb:model": "https://developers.google.com/earth-engine/datasets/catalog/GOOGLE_SATELLITE_EMBEDDING_V1_ANNUAL",
+        "geoemb:source_data": "https://source.coop/tge-labs/aef/v1/annual/",
+        "geoemb:data_type": "int8",
+        "geoemb:gsd": 8.983111749910169e-05,
+        "geoemb:quantization": {
+          "method": "signed_square",
+          "original_dtype": "float32",
+          "quantized_dtype": "int8",
+          "formula": "(x / 127.5) ** 2 * sign(x)",
+          "valid_range": [
+            -127,
+            127
+          ],
+          "nodata": -128
+        },
+        "zarr_conventions": [
+          {
+            "uuid": "f17cb550-5864-4468-aeb7-f3180cfb622f",
+            "name": "proj:",
+            "description": "Coordinate reference system information for geospatial data",
+            "spec_url": "https://github.com/zarr-experimental/geo-proj/blob/v1/README.md",
+            "schema_url": "https://raw.githubusercontent.com/zarr-experimental/geo-proj/refs/tags/v1/schema.json"
+          },
+          {
+            "uuid": "689b58e2-cf7b-45e0-9fff-9cfc0883d6b4",
+            "name": "spatial:",
+            "description": "Spatial coordinate information",
+            "spec_url": "https://github.com/zarr-conventions/spatial/blob/v1/README.md",
+            "schema_url": "https://raw.githubusercontent.com/zarr-conventions/spatial/refs/tags/v1/schema.json"
+          },
+          {
+            "uuid": "61c12cc5-0e28-4056-999a-480cf3fb7e4c",
+            "name": "geoemb:",
+            "description": "Geo-embeddings metadata for machine learning embeddings stored in Zarr",
+            "spec_url": "https://github.com/geo-embeddings/embeddings-zarr-convention/tree/add-convention"
+          }
+        ]
+      }
+    },
+    "embeddings": {
+      "zarr_format": 3,
+      "node_type": "array",
+      "shape": [
+        9,
+        64,
+        1859584,
+        4009984
+      ],
+      "data_type": "int8",
+      "chunk_grid": {
+        "name": "regular",
+        "configuration": {
+          "chunk_shape": [
+            1,
+            64,
+            4096,
+            4096
+          ]
+        }
+      },
+      "chunk_key_encoding": {
+        "name": "default",
+        "configuration": {
+          "separator": "/"
+        }
+      },
+      "fill_value": -128,
+      "codecs": [
+        {
+          "name": "sharding_indexed",
+          "configuration": {
+            "chunk_shape": [
+              1,
+              64,
+              256,
+              256
+            ],
+            "codecs": [
+              {
+                "name": "bytes",
+                "configuration": {
+                  "endian": "little"
+                }
+              },
+              {
+                "name": "zstd",
+                "configuration": {
+                  "level": 3,
+                  "checksum": false
+                }
+              }
+            ],
+            "index_codecs": [
+              {
+                "name": "bytes",
+                "configuration": {
+                  "endian": "little"
+                }
+              },
+              {
+                "name": "crc32c"
+              }
+            ],
+            "index_location": "end"
+          }
+        }
+      ],
+      "attributes": {
+        "_zarrs": {
+          "description": "This array was created with zarrs",
+          "repository": "https://github.com/zarrs/zarrs",
+          "version": "0.23.0"
+        }
+      },
+      "dimension_names": [
+        "time",
+        "band",
+        "y",
+        "x"
+      ]
+    },
+    "years": [
+      2017,
+      2018,
+      2019,
+      2020,
+      2021,
+      2022,
+      2023,
+      2024,
+      2025
+    ],
+    "coordinate_validation": {
+      "y": [
+        {
+          "index": 0,
+          "stored": 83.68566042157599,
+          "affine": 83.68566042157599
+        },
+        {
+          "index": 255,
+          "stored": 83.66275348661371,
+          "affine": 83.66275348661371
+        },
+        {
+          "index": 256,
+          "stored": 83.66266365549622,
+          "affine": 83.66266365549622
+        },
+        {
+          "index": 4095,
+          "stored": 83.31780199541717,
+          "affine": 83.31780199541717
+        },
+        {
+          "index": 4096,
+          "stored": 83.31771216429966,
+          "affine": 83.31771216429966
+        },
+        {
+          "index": 542672,
+          "stored": 34.93682822610347,
+          "affine": 34.93682822610347
+        },
+        {
+          "index": 542719,
+          "stored": 34.93260616358101,
+          "affine": 34.93260616358101
+        },
+        {
+          "index": 542720,
+          "stored": 34.932516332463514,
+          "affine": 34.932516332463514
+        },
+        {
+          "index": 544767,
+          "stored": 34.74863203494286,
+          "affine": 34.74863203494286
+        },
+        {
+          "index": 544768,
+          "stored": 34.74854220382536,
+          "affine": 34.74854220382536
+        },
+        {
+          "index": 929792,
+          "stored": 0.1614060198512277,
+          "affine": 0.1614060198512277
+        },
+        {
+          "index": 1859583,
+          "stored": -83.36275855075603,
+          "affine": -83.36275855075603
+        }
+      ],
+      "x": [
+        {
+          "index": 0,
+          "stored": -179.99995508444124,
+          "affine": -179.99995508444124
+        },
+        {
+          "index": 255,
+          "stored": -179.97704814947897,
+          "affine": -179.97704814947897
+        },
+        {
+          "index": 256,
+          "stored": -179.97695831836148,
+          "affine": -179.97695831836148
+        },
+        {
+          "index": 4095,
+          "stored": -179.63209665828242,
+          "affine": -179.63209665828242
+        },
+        {
+          "index": 4096,
+          "stored": -179.63200682716493,
+          "affine": -179.63200682716493
+        },
+        {
+          "index": 1124304,
+          "stored": -79.00247035573122,
+          "affine": -79.00247035573122
+        },
+        {
+          "index": 1124351,
+          "stored": -78.99824829320876,
+          "affine": -78.99824829320876
+        },
+        {
+          "index": 1124352,
+          "stored": -78.99815846209127,
+          "affine": -78.99815846209127
+        },
+        {
+          "index": 1126399,
+          "stored": -78.8142741645706,
+          "affine": -78.8142741645706
+        },
+        {
+          "index": 1126400,
+          "stored": -78.81418433345311,
+          "affine": -78.81418433345311
+        },
+        {
+          "index": 2004992,
+          "stored": 0.11071685231763695,
+          "affine": 0.11071685231763695
+        },
+        {
+          "index": 4009983,
+          "stored": 180.22129895795905,
+          "affine": 180.22129895795905
+        }
+      ]
+    },
+    "selection": {
+      "time_index": 0,
+      "year": 2017,
+      "start": [
+        542672,
+        1124304
+      ],
+      "count": [
+        1,
+        1
+      ],
+      "channel_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        63
+      ]
+    },
+    "physical_read_granularity": [
+      1,
+      64,
+      256,
+      256
+    ],
+    "channel_identifiers": "positional; source supplies no labels"
+  },
+  "report": {
+    "profile": "alphaearth_geozarr_int8_v1",
+    "complete": true,
+    "failed": false,
+    "source_shape": [
+      9,
+      64,
+      1859584,
+      4009984
+    ],
+    "years": [
+      2017,
+      2018,
+      2019,
+      2020,
+      2021,
+      2022,
+      2023,
+      2024,
+      2025
+    ],
+    "transform": [
+      8.983111749910169e-05,
+      0.0,
+      -180.0,
+      0.0,
+      -8.983111749910169e-05,
+      83.68570533713473
+    ],
+    "dimension_names": [
+      "time",
+      "band",
+      "y",
+      "x"
+    ],
+    "channel_indices": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59,
+      60,
+      61,
+      62,
+      63
+    ],
+    "logical_chunk_shape": [
+      1,
+      64,
+      256,
+      256
+    ],
+    "physical_shard_shape": [
+      1,
+      64,
+      4096,
+      4096
+    ],
+    "index_bytes": 4100,
+    "selected_compressed_payload_bytes": 2717444,
+    "range_coalescing_overfetch_bytes": 0,
+    "duplicate_payload_ranges": 0,
+    "decoded_logical_bytes": 4194304,
+    "requested_native_bytes": 64,
+    "decoded_selection_overfetch_bytes": 4194240,
+    "physical_shard_uncompressed_bytes": 1073741824,
+    "first_native_chunk_seconds": 6.653231,
+    "seconds": 7.170410958,
+    "working_reservation_bytes": 33554432,
+    "working_budget_bytes": 67108864,
+    "network_budget_bytes": 33554432,
+    "network_budget_requests": 128,
+    "transport": {
+      "alphaearth": {
+        "phases": {
+          "alphaearth_stream": {
+            "GET embeddings/c/0/0/132/274": {
+              "seconds": 0.795260791,
+              "attempts": 1,
+              "bytes": 2717444,
+              "retries": 0,
+              "statuses": {
+                "206": 1
+              }
+            },
+            "HEAD embeddings/c/0/0/132/274": {
+              "seconds": 0.142223375,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "HEAD embeddings/zarr.json": {
+              "seconds": 0.142229083,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "HEAD time/c/0": {
+              "seconds": 0.094044458,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "HEAD time/zarr.json": {
+              "seconds": 0.105217292,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "HEAD x/c/0": {
+              "seconds": 0.094305,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "HEAD x/zarr.json": {
+              "seconds": 0.10275725,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "HEAD y/c/0": {
+              "seconds": 0.093655541,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "HEAD y/zarr.json": {
+              "seconds": 0.097612417,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "HEAD zarr.json": {
+              "seconds": 0.092685375,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            }
+          },
+          "planning": {
+            "GET .zgroup": {
+              "seconds": 0.096177125,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "404": 1
+              }
+            },
+            "GET embeddings/c/0/0/132/274": {
+              "seconds": 0.164922209,
+              "attempts": 1,
+              "bytes": 4100,
+              "retries": 0,
+              "statuses": {
+                "206": 1
+              }
+            },
+            "GET embeddings/zarr.json": {
+              "seconds": 0.11311825,
+              "attempts": 1,
+              "bytes": 1425,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "GET time/c/0": {
+              "seconds": 0.117249458,
+              "attempts": 1,
+              "bytes": 36,
+              "retries": 0,
+              "statuses": {
+                "206": 1
+              }
+            },
+            "GET time/zarr.json": {
+              "seconds": 0.104987042,
+              "attempts": 1,
+              "bytes": 671,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "GET x/c/0": {
+              "seconds": 1.649575832,
+              "attempts": 12,
+              "bytes": 96,
+              "retries": 0,
+              "statuses": {
+                "206": 12
+              }
+            },
+            "GET x/zarr.json": {
+              "seconds": 0.114230583,
+              "attempts": 1,
+              "bytes": 684,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "GET y/c/0": {
+              "seconds": 1.7456612919999999,
+              "attempts": 12,
+              "bytes": 96,
+              "retries": 0,
+              "statuses": {
+                "206": 12
+              }
+            },
+            "GET y/zarr.json": {
+              "seconds": 0.117762458,
+              "attempts": 1,
+              "bytes": 684,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "GET zarr.json": {
+              "seconds": 0.498991667,
+              "attempts": 1,
+              "bytes": 2214,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "HEAD embeddings/c/0/0/132/274": {
+              "seconds": 0.100274375,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "HEAD time/c/0": {
+              "seconds": 0.210779833,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "HEAD x/c/0": {
+              "seconds": 0.098206208,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "HEAD y/c/0": {
+              "seconds": 0.114384709,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            }
+          },
+          "prepare_validation": {
+            "HEAD embeddings/c/0/0/132/274": {
+              "seconds": 0.098555208,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "HEAD embeddings/zarr.json": {
+              "seconds": 0.205802875,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "HEAD time/c/0": {
+              "seconds": 0.17941875,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "HEAD time/zarr.json": {
+              "seconds": 0.0989525,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "HEAD x/c/0": {
+              "seconds": 0.091828208,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "HEAD x/zarr.json": {
+              "seconds": 0.183776916,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "HEAD y/c/0": {
+              "seconds": 0.11879075,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "HEAD y/zarr.json": {
+              "seconds": 0.10491075,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "HEAD zarr.json": {
+              "seconds": 0.092394709,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            }
+          }
+        },
+        "requests": 55,
+        "bytes": 2727450,
+        "retries": 0,
+        "seconds": 8.180522578999998,
+        "objects": {
+          "GET .zgroup": {
+            "seconds": 0.096177583,
+            "attempts": 1,
+            "bytes": 0,
+            "retries": 0,
+            "statuses": {
+              "404": 1
+            }
+          },
+          "GET embeddings/c/0/0/132/274": {
+            "seconds": 0.9601845,
+            "attempts": 2,
+            "bytes": 2721544,
+            "retries": 0,
+            "statuses": {
+              "206": 2
+            }
+          },
+          "GET embeddings/zarr.json": {
+            "seconds": 0.113118667,
+            "attempts": 1,
+            "bytes": 1425,
+            "retries": 0,
+            "statuses": {
+              "200": 1
+            }
+          },
+          "GET time/c/0": {
+            "seconds": 0.117250083,
+            "attempts": 1,
+            "bytes": 36,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "GET time/zarr.json": {
+            "seconds": 0.104987709,
+            "attempts": 1,
+            "bytes": 671,
+            "retries": 0,
+            "statuses": {
+              "200": 1
+            }
+          },
+          "GET x/c/0": {
+            "seconds": 1.649585538,
+            "attempts": 12,
+            "bytes": 96,
+            "retries": 0,
+            "statuses": {
+              "206": 12
+            }
+          },
+          "GET x/zarr.json": {
+            "seconds": 0.114231625,
+            "attempts": 1,
+            "bytes": 684,
+            "retries": 0,
+            "statuses": {
+              "200": 1
+            }
+          },
+          "GET y/c/0": {
+            "seconds": 1.745669375,
+            "attempts": 12,
+            "bytes": 96,
+            "retries": 0,
+            "statuses": {
+              "206": 12
+            }
+          },
+          "GET y/zarr.json": {
+            "seconds": 0.117763333,
+            "attempts": 1,
+            "bytes": 684,
+            "retries": 0,
+            "statuses": {
+              "200": 1
+            }
+          },
+          "GET zarr.json": {
+            "seconds": 0.498992292,
+            "attempts": 1,
+            "bytes": 2214,
+            "retries": 0,
+            "statuses": {
+              "200": 1
+            }
+          },
+          "HEAD embeddings/c/0/0/132/274": {
+            "seconds": 0.341055959,
+            "attempts": 3,
+            "bytes": 0,
+            "retries": 0,
+            "statuses": {
+              "200": 3
+            }
+          },
+          "HEAD embeddings/zarr.json": {
+            "seconds": 0.34803345799999996,
+            "attempts": 2,
+            "bytes": 0,
+            "retries": 0,
+            "statuses": {
+              "200": 2
+            }
+          },
+          "HEAD time/c/0": {
+            "seconds": 0.484245876,
+            "attempts": 3,
+            "bytes": 0,
+            "retries": 0,
+            "statuses": {
+              "200": 3
+            }
+          },
+          "HEAD time/zarr.json": {
+            "seconds": 0.20417183300000002,
+            "attempts": 2,
+            "bytes": 0,
+            "retries": 0,
+            "statuses": {
+              "200": 2
+            }
+          },
+          "HEAD x/c/0": {
+            "seconds": 0.284342541,
+            "attempts": 3,
+            "bytes": 0,
+            "retries": 0,
+            "statuses": {
+              "200": 3
+            }
+          },
+          "HEAD x/zarr.json": {
+            "seconds": 0.286536208,
+            "attempts": 2,
+            "bytes": 0,
+            "retries": 0,
+            "statuses": {
+              "200": 2
+            }
+          },
+          "HEAD y/c/0": {
+            "seconds": 0.32683325,
+            "attempts": 3,
+            "bytes": 0,
+            "retries": 0,
+            "statuses": {
+              "200": 3
+            }
+          },
+          "HEAD y/zarr.json": {
+            "seconds": 0.202525125,
+            "attempts": 2,
+            "bytes": 0,
+            "retries": 0,
+            "statuses": {
+              "200": 2
+            }
+          },
+          "HEAD zarr.json": {
+            "seconds": 0.185082,
+            "attempts": 2,
+            "bytes": 0,
+            "retries": 0,
+            "statuses": {
+              "200": 2
+            }
+          }
+        },
+        "ranges": {
+          "embeddings/c/0/0/132/274 638547475:641264919": {
+            "seconds": 0.795259458,
+            "attempts": 1,
+            "bytes": 2717444,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "embeddings/c/0/0/132/274 700568683:700572783": {
+            "seconds": 0.164919459,
+            "attempts": 1,
+            "bytes": 4100,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "time/c/0 0:36": {
+            "seconds": 0.117247083,
+            "attempts": 1,
+            "bytes": 36,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "x/c/0 0:8": {
+            "seconds": 0.17877475,
+            "attempts": 1,
+            "bytes": 8,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "x/c/0 16039936:16039944": {
+            "seconds": 0.115872833,
+            "attempts": 1,
+            "bytes": 8,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "x/c/0 2040:2048": {
+            "seconds": 0.128794083,
+            "attempts": 1,
+            "bytes": 8,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "x/c/0 2048:2056": {
+            "seconds": 0.112772125,
+            "attempts": 1,
+            "bytes": 8,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "x/c/0 32079864:32079872": {
+            "seconds": 0.179090083,
+            "attempts": 1,
+            "bytes": 8,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "x/c/0 32760:32768": {
+            "seconds": 0.115924667,
+            "attempts": 1,
+            "bytes": 8,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "x/c/0 32768:32776": {
+            "seconds": 0.123398042,
+            "attempts": 1,
+            "bytes": 8,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "x/c/0 8994432:8994440": {
+            "seconds": 0.17126975,
+            "attempts": 1,
+            "bytes": 8,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "x/c/0 8994808:8994816": {
+            "seconds": 0.116674708,
+            "attempts": 1,
+            "bytes": 8,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "x/c/0 8994816:8994824": {
+            "seconds": 0.116406541,
+            "attempts": 1,
+            "bytes": 8,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "x/c/0 9011192:9011200": {
+            "seconds": 0.125308042,
+            "attempts": 1,
+            "bytes": 8,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "x/c/0 9011200:9011208": {
+            "seconds": 0.16523775,
+            "attempts": 1,
+            "bytes": 8,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "y/c/0 0:8": {
+            "seconds": 0.198536333,
+            "attempts": 1,
+            "bytes": 8,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "y/c/0 14876664:14876672": {
+            "seconds": 0.288689875,
+            "attempts": 1,
+            "bytes": 8,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "y/c/0 2040:2048": {
+            "seconds": 0.117655792,
+            "attempts": 1,
+            "bytes": 8,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "y/c/0 2048:2056": {
+            "seconds": 0.12047825,
+            "attempts": 1,
+            "bytes": 8,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "y/c/0 32760:32768": {
+            "seconds": 0.1200715,
+            "attempts": 1,
+            "bytes": 8,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "y/c/0 32768:32776": {
+            "seconds": 0.137494792,
+            "attempts": 1,
+            "bytes": 8,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "y/c/0 4341376:4341384": {
+            "seconds": 0.115542875,
+            "attempts": 1,
+            "bytes": 8,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "y/c/0 4341752:4341760": {
+            "seconds": 0.117070042,
+            "attempts": 1,
+            "bytes": 8,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "y/c/0 4341760:4341768": {
+            "seconds": 0.111071958,
+            "attempts": 1,
+            "bytes": 8,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "y/c/0 4358136:4358144": {
+            "seconds": 0.184178625,
+            "attempts": 1,
+            "bytes": 8,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "y/c/0 4358144:4358152": {
+            "seconds": 0.118669417,
+            "attempts": 1,
+            "bytes": 8,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "y/c/0 7438336:7438344": {
+            "seconds": 0.116177958,
+            "attempts": 1,
+            "bytes": 8,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          }
+        },
+        "cached_metadata_bytes": 5678,
+        "metadata_overlay_bytes": 0,
+        "cache_limit_bytes": 1048576,
+        "object_identities": 9
+      }
+    },
+    "source_identities": {
+      "embeddings/c/0/0/132/274": {
+        "etag": "\"74ed6519f1b9e43b9085d20c6ad2336c\"",
+        "size": 700572783,
+        "metadata": false
+      },
+      "embeddings/zarr.json": {
+        "etag": "\"df0bbb936e3d57235d155b0d101412e9\"",
+        "size": 1425,
+        "metadata": true
+      },
+      "time/c/0": {
+        "etag": "\"9940bf45355f74b3b3cca50ef7066b6f\"",
+        "size": 36,
+        "metadata": false
+      },
+      "time/zarr.json": {
+        "etag": "\"565eebc74fb0d1456f6bb9fc44b2360d\"",
+        "size": 671,
+        "metadata": true
+      },
+      "x/c/0": {
+        "etag": "\"2916738e64a3c7e1d6af028770a46f3e\"",
+        "size": 32079872,
+        "metadata": false
+      },
+      "x/zarr.json": {
+        "etag": "\"8760e6f310caa34087f4b5eaa1bffc92\"",
+        "size": 684,
+        "metadata": true
+      },
+      "y/c/0": {
+        "etag": "\"26172a319a16d822e4e4d721156856ff\"",
+        "size": 14876672,
+        "metadata": false
+      },
+      "y/zarr.json": {
+        "etag": "\"f22bd4b87fb426800bc4473a84cdabf3\"",
+        "size": 684,
+        "metadata": true
+      },
+      "zarr.json": {
+        "etag": "\"a4bbf30e9096cc99a5e35badbc09fba4\"",
+        "size": 2214,
+        "metadata": true
+      }
+    },
+    "output": "standalone_native_stream_only",
+    "channel_identifiers": "positional; source supplies no channel coordinate labels",
+    "version_semantics": "strong per-object versions; not an atomic dataset snapshot"
+  },
+  "complete_independent_int8_equality": true,
+  "values": [
+    [
+      [
+        [
+          -47
+        ]
+      ],
+      [
+        [
+          -16
+        ]
+      ],
+      [
+        [
+          -54
+        ]
+      ],
+      [
+        [
+          44
+        ]
+      ],
+      [
+        [
+          -43
+        ]
+      ],
+      [
+        [
+          -55
+        ]
+      ],
+      [
+        [
+          18
+        ]
+      ],
+      [
+        [
+          41
+        ]
+      ],
+      [
+        [
+          -16
+        ]
+      ],
+      [
+        [
+          -36
+        ]
+      ],
+      [
+        [
+          -40
+        ]
+      ],
+      [
+        [
+          36
+        ]
+      ],
+      [
+        [
+          -33
+        ]
+      ],
+      [
+        [
+          14
+        ]
+      ],
+      [
+        [
+          -38
+        ]
+      ],
+      [
+        [
+          -43
+        ]
+      ],
+      [
+        [
+          -55
+        ]
+      ],
+      [
+        [
+          -21
+        ]
+      ],
+      [
+        [
+          -36
+        ]
+      ],
+      [
+        [
+          46
+        ]
+      ],
+      [
+        [
+          -49
+        ]
+      ],
+      [
+        [
+          24
+        ]
+      ],
+      [
+        [
+          -34
+        ]
+      ],
+      [
+        [
+          -13
+        ]
+      ],
+      [
+        [
+          -26
+        ]
+      ],
+      [
+        [
+          64
+        ]
+      ],
+      [
+        [
+          -27
+        ]
+      ],
+      [
+        [
+          -34
+        ]
+      ],
+      [
+        [
+          31
+        ]
+      ],
+      [
+        [
+          49
+        ]
+      ],
+      [
+        [
+          -27
+        ]
+      ],
+      [
+        [
+          21
+        ]
+      ],
+      [
+        [
+          -28
+        ]
+      ],
+      [
+        [
+          20
+        ]
+      ],
+      [
+        [
+          -40
+        ]
+      ],
+      [
+        [
+          27
+        ]
+      ],
+      [
+        [
+          29
+        ]
+      ],
+      [
+        [
+          -44
+        ]
+      ],
+      [
+        [
+          49
+        ]
+      ],
+      [
+        [
+          -65
+        ]
+      ],
+      [
+        [
+          31
+        ]
+      ],
+      [
+        [
+          57
+        ]
+      ],
+      [
+        [
+          68
+        ]
+      ],
+      [
+        [
+          -5
+        ]
+      ],
+      [
+        [
+          52
+        ]
+      ],
+      [
+        [
+          24
+        ]
+      ],
+      [
+        [
+          38
+        ]
+      ],
+      [
+        [
+          -33
+        ]
+      ],
+      [
+        [
+          65
+        ]
+      ],
+      [
+        [
+          -56
+        ]
+      ],
+      [
+        [
+          -66
+        ]
+      ],
+      [
+        [
+          -36
+        ]
+      ],
+      [
+        [
+          29
+        ]
+      ],
+      [
+        [
+          18
+        ]
+      ],
+      [
+        [
+          45
+        ]
+      ],
+      [
+        [
+          56
+        ]
+      ],
+      [
+        [
+          -49
+        ]
+      ],
+      [
+        [
+          3
+        ]
+      ],
+      [
+        [
+          47
+        ]
+      ],
+      [
+        [
+          -55
+        ]
+      ],
+      [
+        [
+          -26
+        ]
+      ],
+      [
+        [
+          -56
+        ]
+      ],
+      [
+        [
+          28
+        ]
+      ],
+      [
+        [
+          13
+        ]
+      ]
+    ]
+  ]
+}

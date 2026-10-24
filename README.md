@@ -36,6 +36,8 @@ are rejected. Signatures stay in memory. Changed objects, expired signatures and
 explicit fresh plan. Prepared acquisitions never switch provider, and product
 checkpoints remain unsupported. See the [provider workflow, evidence and limits](docs/providers/qualification.md).
 
+The standalone [AlphaEarth GeoZarr prototype](docs/alphaearth/workflow.md) streams bounded rank-four native Int8 embeddings using selective shard ranges and sampled coordinate validation. It preserves the live source’s original `band` dimension and positional channel order. Durable embedding output remains outside this prototype.
+
 Bounded SWOT Raster D discovery now finds candidates by WGS84 bounding box and
 date through NASA CMR. `discover` reports catalog relevance and exclusions;
 `discover-job` accepts explicit native windows or WGS84 bounding boxes and

@@ -26,10 +26,31 @@ pub(crate) struct Checked<T> {
 pub(crate) fn array_v3<T: ReadableStorageTraits + 'static>(
     inner: Arc<T>,
     path: &str,
-    mut metadata: serde_json::Value,
+    metadata: serde_json::Value,
     budget: &Budget,
 ) -> Result<Array<Checked<T>>> {
+    array_v3_profile(inner, path, metadata, budget, false)
+}
+
+/// Separate rank-four Int8 admission for the named AlphaEarth prototype.
+pub(crate) fn array_v3_alphaearth<T: ReadableStorageTraits + 'static>(
+    inner: Arc<T>,
+    path: &str,
+    metadata: serde_json::Value,
+    budget: &Budget,
+) -> Result<Array<Checked<T>>> {
+    array_v3_profile(inner, path, metadata, budget, true)
+}
+
+fn array_v3_profile<T: ReadableStorageTraits + 'static>(
+    inner: Arc<T>,
+    path: &str,
+    mut metadata: serde_json::Value,
+    budget: &Budget,
+    alphaearth: bool,
+) -> Result<Array<Checked<T>>> {
     let element = match metadata["data_type"].as_str() {
+        Some("int8") if alphaearth => 1,
         Some("uint16") => 2,
         Some("float32") => 4,
         Some("float64" | "int64") => 8,
@@ -38,7 +59,9 @@ pub(crate) fn array_v3<T: ReadableStorageTraits + 'static>(
     let chunks = metadata["chunk_grid"]["configuration"]["chunk_shape"]
         .as_array()
         .ok_or("missing regular chunk shape")?;
-    if chunks.is_empty() || chunks.len() > 3 {
+    if (alphaearth && (chunks.len() != 4 || metadata["data_type"] != "int8"))
+        || (!alphaearth && (chunks.is_empty() || chunks.len() > 3))
+    {
         return fail("unsupported v3 chunk rank");
     }
     let expected = chunks.iter().try_fold(element, |n: usize, c| {

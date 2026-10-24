@@ -67,6 +67,18 @@ impl Sources {
         r: &Request,
         transport: crate::http_transport::Transport,
     ) -> Result<Self> {
+        Self::with_range_cap(r, transport, None)
+    }
+    /// Named standalone AlphaEarth profile: metadata GETs keep their existing
+    /// one-MiB cap while selected, version-bound ranges may reach eight MiB.
+    pub(crate) fn alphaearth(r: &Request) -> Result<Self> {
+        Self::with_range_cap(r, Default::default(), Some(8 * 1024 * 1024))
+    }
+    fn with_range_cap(
+        r: &Request,
+        transport: crate::http_transport::Transport,
+        range_cap: Option<usize>,
+    ) -> Result<Self> {
         let mut sources = Self::default();
         #[cfg(feature = "native-hdf5")]
         {
@@ -115,6 +127,9 @@ impl Sources {
                     metadata_budget.clone(),
                 )?;
                 http.validate_data = a.format == Format::ZarrV3;
+                if let Some(cap) = range_cap {
+                    http.range_cap = cap;
+                }
                 let source = Arc::new(Objects::Http(http));
                 let source = if a.format == Format::ZarrV3 {
                     crate::zarr_v3::metadata_view(source, &r.budget)?
@@ -558,6 +573,7 @@ pub(crate) struct Http {
     client: Arc<Client>,
     transport: crate::http_transport::Transport,
     cap: usize,
+    range_cap: usize,
     nodes: usize,
     state: Mutex<State>,
     metadata_budget: Arc<MetadataBudget>,
@@ -604,6 +620,7 @@ impl Http {
             client,
             transport: Default::default(),
             cap: b.buffer_bytes / 2,
+            range_cap: b.buffer_bytes / 2,
             nodes: b.max_nodes,
             state: Mutex::new(State {
                 phase: "planning",
@@ -699,6 +716,11 @@ impl Http {
             Access::Range { start, end } => Some((start, end)),
             _ => None,
         };
+        let body_cap = if range.is_some() {
+            self.range_cap
+        } else {
+            self.cap
+        };
         let key_string = key.as_str();
         let url = self
             .base
@@ -725,7 +747,7 @@ impl Http {
             if !self.validate_data
                 || start >= end
                 || end > expected.size
-                || end - start > self.cap as u64
+                || end - start > body_cap as u64
             {
                 return fail("range exceeds admitted object or buffer bounds");
             }
@@ -809,7 +831,7 @@ impl Http {
                     .get(header::CONTENT_LENGTH)
                     .and_then(|v| v.to_str().ok())
                     .and_then(|v| v.parse::<u64>().ok());
-                if length.is_some_and(|n| n > self.cap as u64)
+                if length.is_some_and(|n| n > body_cap as u64)
                     && !(head
                         && self.validate_data
                         && (data_head
@@ -842,9 +864,9 @@ impl Http {
                     body.reserve_exact((end - start) as usize + 1);
                 }
                 if !head {
-                    response.read_body(range.map_or(self.cap as u64, |(s, e)| e - s), &mut body)?;
-                    if body.len() > self.cap {
-                        return fail("HTTP object exceeds half buffer_bytes");
+                    response.read_body(range.map_or(body_cap as u64, |(s, e)| e - s), &mut body)?;
+                    if body.len() > body_cap {
+                        return fail("HTTP object exceeds admitted body buffer");
                     }
                     if length.is_some_and(|n| n != body.len() as u64) {
                         return fail("retryable interrupted HTTP body");
