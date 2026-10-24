@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "document_type": "bounded_current_opera_rtc_source_inspection",
+  "status": "source_route_qualified_runtime_passed",
+  "inspected_at_utc": "2026-10-24T02:44:22Z",
+  "scope": "One current ASF OPERA RTC-S1 V1 granule, exact VV, VH, and mask objects. The separate authenticated validation receipt records the completed native-to-Zarr equality run.",
+  "cmr": {
+    "collection_concept_id": "C2777436413-ASF",
+    "granule_concept_id": "G4386083295-ASF",
+    "granule_revision_id": 1,
+    "granule_id": "OPERA_L2_RTC-S1_T117-249581-IW3_20261023T171312Z_20261023T230650Z_S1C_30_v1.0",
+    "acquisition_begin": "2026-10-23T17:13:12Z",
+    "acquisition_end": "2026-10-23T17:13:15Z",
+    "production_datetime": "2026-10-23T23:21:27Z",
+    "platform": "Sentinel-1C",
+    "polarizations": ["VV", "VH"]
+  },
+  "route": {
+    "canonical_origin": "https://cumulus.asf.earthdatacloud.nasa.gov",
+    "login_origin": "https://urs.earthdata.nasa.gov",
+    "resource_origin": "https://d1bctmng8vmwga.cloudfront.net",
+    "head_adapter": "/head-b339e3a40716b5999fea2aad1aee9f03/asf-cumulus-prod-opera-products.s3.us-west-2.amazonaws.com/<exact-key>",
+    "get_adapter": "/s3-b339e3a40716b5999fea2aad1aee9f03/asf-cumulus-prod-opera-products.s3.us-west-2.amazonaws.com/<exact-key>",
+    "get_redirects": [
+      {"status": 302, "from": "canonical", "to": "login", "path": "/oauth/authorize"},
+      {"status": 302, "from": "login", "to": "canonical", "path": "/login"},
+      {"status": 301, "from": "canonical login", "to": "exact canonical object"},
+      {"status": 303, "from": "exact canonical object", "to": "exact resource GET adapter"}
+    ],
+    "head_redirects": [
+      {"status": 303, "from": "exact canonical object", "to": "exact resource HEAD adapter"}
+    ],
+    "credential_policy": "Basic authorization only at the exact URS origin; origin-confined in-memory cookies; no credentials, cookies, or signed query strings persisted",
+    "conditional_probe": "If-Match plus bytes=0-0 reapplied only at exact canonical/resource object hops; all three objects returned 206 with exact Content-Range totals"
+  },
+  "assets": [
+    {
+      "layer": "VV",
+      "canonical_url": "https://cumulus.asf.earthdatacloud.nasa.gov/OPERA/OPERA_L2_RTC-S1/OPERA_L2_RTC-S1_T117-249581-IW3_20261023T171312Z_20261023T230650Z_S1C_30_v1.0/OPERA_L2_RTC-S1_T117-249581-IW3_20261023T171312Z_20261023T230650Z_S1C_30_v1.0_VV.tif",
+      "etag": "\"2a3f244bbfc8cc69269e131eaf4731d3-1\"",
+      "size_bytes": 6335822,
+      "dtype": "float32",
+      "shape": [1632, 3098],
+      "block_shape": [512, 512],
+      "crs": "EPSG:32631",
+      "transform": [30.0, 0.0, 489870.0, 0.0, -30.0, 7897650.0],
+      "nodata": "NaN",
+      "compression": "deflate",
+      "scientific_quantity": "linear gamma0 power"
+    },
+    {
+      "layer": "VH",
+      "canonical_url": "https://cumulus.asf.earthdatacloud.nasa.gov/OPERA/OPERA_L2_RTC-S1/OPERA_L2_RTC-S1_T117-249581-IW3_20261023T171312Z_20261023T230650Z_S1C_30_v1.0/OPERA_L2_RTC-S1_T117-249581-IW3_20261023T171312Z_20261023T230650Z_S1C_30_v1.0_VH.tif",
+      "etag": "\"acd8dfa800478954f49a8466356bcd54-1\"",
+      "size_bytes": 6485899,
+      "dtype": "float32",
+      "shape": [1632, 3098],
+      "block_shape": [512, 512],
+      "crs": "EPSG:32631",
+      "transform": [30.0, 0.0, 489870.0, 0.0, -30.0, 7897650.0],
+      "nodata": "NaN",
+      "compression": "deflate",
+      "scientific_quantity": "linear gamma0 power"
+    },
+    {
+      "layer": "mask",
+      "canonical_url": "https://cumulus.asf.earthdatacloud.nasa.gov/OPERA/OPERA_L2_RTC-S1/OPERA_L2_RTC-S1_T117-249581-IW3_20261023T171312Z_20261023T230650Z_S1C_30_v1.0/OPERA_L2_RTC-S1_T117-249581-IW3_20261023T171312Z_20261023T230650Z_S1C_30_v1.0_mask.tif",
+      "etag": "\"df499b7a7ea29cf4d980d6cb980529a0-1\"",
+      "size_bytes": 49713,
+      "dtype": "uint8",
+      "shape": [1632, 3098],
+      "block_shape": [512, 512],
+      "crs": "EPSG:32631",
+      "transform": [30.0, 0.0, 489870.0, 0.0, -30.0, 7897650.0],
+      "nodata": 255,
+      "compression": "deflate",
+      "classes": {"0": "unaffected", "1": "shadow", "2": "layover", "3": "layover and shadow", "255": "invalid/fill"}
+    }
+  ],
+  "co_registration": "VV, VH, and mask have identical shape, CRS, affine transform, and block layout",
+  "runtime_validation": {
+    "status": "passed",
+    "receipt": "docs/products/rtc-auth-validation.json",
+    "request": "docs/products/rtc-authenticated-request.json",
+    "harness": "bench/wave1_rtc_auth.py"
+  }
+}

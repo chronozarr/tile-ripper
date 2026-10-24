@@ -1,0 +1,1088 @@
+{
+  "collection": {
+    "catalog_version": "1.0",
+    "concept_id": "C2617126679-POCLOUD",
+    "short_name": "OPERA_L3_DSWX-HLS_V1"
+  },
+  "findings": {
+    "cloud_8_obstruction": "class 8 alone is not treated as cloud obstruction by PROTEUS v1.0.2",
+    "cloud_bit_3": "aerosol class reassignment in PROTEUS v1.0.2; not the HLS Fmask water bit",
+    "diag_encoding": "UInt16 decimal digits encode five Boolean tests; 65535 is fill",
+    "independent_policy_check": {
+      "mask_receipt": {
+        "true_count": 4791649,
+        "uint8_sha256": "f93012c3855afdb90053bfac9bda0ad9d95037ce152a395e72a51f2f2ab37ec0"
+      },
+      "result": "pixel-exact match to WTR classes 0, 1, and 2 for this granule",
+      "rule": "CLOUD is non-fill and bits 0..2 are clear; bit 3 is retained"
+    },
+    "shadow_nodata": "B08 SHAD has no GDAL_NODATA tag; its domain is 0 shadow and 1 not-shadow"
+  },
+  "generated_at": "2026-10-24T02:54:52.410534+00:00",
+  "granule": {
+    "concept_id": "G4382655954-POCLOUD",
+    "id": "OPERA_L3_DSWx-HLS_T17SPU_20261018T154740Z_20261022T014315Z_L8_30_v1.1",
+    "product_version": "1.1",
+    "sensing_time": "2026-10-18T15:47:40.202Z",
+    "software_version": "1.0.2",
+    "source_hls": "HLS.L30.T17SPU.2026291T154740.v2.0"
+  },
+  "layers": {
+    "B01_WTR": {
+      "authenticated_get_trace": [
+        {
+          "destination": "earthdata_login",
+          "from_origin": "https://archive.podaac.earthdata.nasa.gov",
+          "status": 302,
+          "temporary_query_present": true,
+          "to_origin": "https://urs.earthdata.nasa.gov"
+        },
+        {
+          "destination": "archive_login_callback",
+          "from_origin": "https://urs.earthdata.nasa.gov",
+          "status": 302,
+          "temporary_query_present": true,
+          "to_origin": "https://archive.podaac.earthdata.nasa.gov"
+        },
+        {
+          "destination": "canonical_object",
+          "from_origin": "https://archive.podaac.earthdata.nasa.gov",
+          "status": 301,
+          "temporary_query_present": false,
+          "to_origin": "https://archive.podaac.earthdata.nasa.gov"
+        },
+        {
+          "destination": "exact_resource_object",
+          "from_origin": "https://archive.podaac.earthdata.nasa.gov",
+          "status": 303,
+          "temporary_query_present": true,
+          "to_origin": "https://deotb6e7tfubr.cloudfront.net"
+        }
+      ],
+      "canonical_url": "https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-protected/OPERA_L3_DSWX-HLS_V1/OPERA_L3_DSWx-HLS_T17SPU_20261018T154740Z_20261022T014315Z_L8_30_v1.1_B01_WTR.tif",
+      "etag": "\"4d3dbf6fddde5e1f52a319be735cf4c5-1\"",
+      "raster": {
+        "block_shape": [
+          512,
+          512
+        ],
+        "bounds": [
+          600000.0,
+          3790200.0,
+          709800.0,
+          3900000.0
+        ],
+        "compression": "deflate",
+        "crs": "EPSG:32617",
+        "dtype": "uint8",
+        "mask_receipts": {
+          "science_classes_0_1_2": {
+            "true_count": 4791649,
+            "uint8_sha256": "f93012c3855afdb90053bfac9bda0ad9d95037ce152a395e72a51f2f2ab37ec0"
+          },
+          "source_valid": {
+            "true_count": 4810166,
+            "uint8_sha256": "217f5e4df73825aecc1b2d0b1a20676f4ba2d4435df51a97c78eab66cd2026f1"
+          },
+          "water_classes_1_2": {
+            "true_count": 49893,
+            "uint8_sha256": "87d5efb586ba808b56ed6013f5dd4de39782b219fd21bb7556fdeeb16dbb8a0a"
+          }
+        },
+        "metadata": {
+          "AEROSOL_CLASS_REMAPPING_ENABLED": "TRUE",
+          "AREA_OR_POINT": "Area",
+          "HLS_DATASET": "HLS.L30.T17SPU.2026291T154740.v2.0",
+          "MASK_ADJACENT_TO_CLOUD_MODE": "mask",
+          "OCEAN_MASKING_ENABLED": "FALSE",
+          "PROCESSING_DATETIME": "2026-10-22T01:43:15Z",
+          "PRODUCT_ID": "dswx_hls",
+          "PRODUCT_LEVEL": "3",
+          "PRODUCT_SOURCE": "HLS",
+          "PRODUCT_TYPE": "DSWx-HLS",
+          "PRODUCT_VERSION": "1.1",
+          "SENSING_TIME": "2026-10-18T15:47:40.2028270Z",
+          "SENSOR": "OLI",
+          "SOFTWARE_VERSION": "1.0.2",
+          "SPACECRAFT_NAME": "Landsat-8"
+        },
+        "nodata": 255.0,
+        "overviews": [
+          4,
+          16,
+          63,
+          126
+        ],
+        "sample_window_x3051_y831_w4_h5": [
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ]
+        ],
+        "shape": [
+          3660,
+          3660
+        ],
+        "transform": [
+          30.0,
+          0.0,
+          600000.0,
+          0.0,
+          -30.0,
+          3900000.0
+        ],
+        "unique_counts": {
+          "0": 4741756,
+          "1": 24133,
+          "2": 25760,
+          "253": 18517,
+          "255": 8585434
+        }
+      },
+      "sha256": "b46b519203668a3e648d845868ba608c7104836d4f55bc104bd0fd67923c0794",
+      "size_bytes": 144597,
+      "tiff": {
+        "bigtiff": false,
+        "bits_per_sample": 8,
+        "byte_order": "<",
+        "compression_code": 8,
+        "gdal_nodata": "255",
+        "geo_ascii_params": "WGS 84 / UTM zone 17N|WGS 84|",
+        "geokey_directory": [
+          1,
+          1,
+          0,
+          7,
+          1024,
+          0,
+          1,
+          1,
+          1025,
+          0,
+          1,
+          1,
+          1026,
+          34737,
+          22,
+          0,
+          2049,
+          34737,
+          7,
+          22,
+          2054,
+          0,
+          1,
+          9102,
+          3072,
+          0,
+          1,
+          32617,
+          3076,
+          0,
+          1,
+          9001
+        ],
+        "ifd_count": 5,
+        "model_pixel_scale": [
+          30.0,
+          30.0,
+          0.0
+        ],
+        "model_tiepoint": [
+          0.0,
+          0.0,
+          0.0,
+          600000.0,
+          3900000.0,
+          0.0
+        ],
+        "predictor": 2,
+        "sample_format": 1
+      }
+    },
+    "B04_DIAG": {
+      "authenticated_get_trace": [
+        {
+          "destination": "earthdata_login",
+          "from_origin": "https://archive.podaac.earthdata.nasa.gov",
+          "status": 302,
+          "temporary_query_present": true,
+          "to_origin": "https://urs.earthdata.nasa.gov"
+        },
+        {
+          "destination": "archive_login_callback",
+          "from_origin": "https://urs.earthdata.nasa.gov",
+          "status": 302,
+          "temporary_query_present": true,
+          "to_origin": "https://archive.podaac.earthdata.nasa.gov"
+        },
+        {
+          "destination": "canonical_object",
+          "from_origin": "https://archive.podaac.earthdata.nasa.gov",
+          "status": 301,
+          "temporary_query_present": false,
+          "to_origin": "https://archive.podaac.earthdata.nasa.gov"
+        },
+        {
+          "destination": "exact_resource_object",
+          "from_origin": "https://archive.podaac.earthdata.nasa.gov",
+          "status": 303,
+          "temporary_query_present": true,
+          "to_origin": "https://deotb6e7tfubr.cloudfront.net"
+        }
+      ],
+      "canonical_url": "https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-protected/OPERA_L3_DSWX-HLS_V1/OPERA_L3_DSWx-HLS_T17SPU_20261018T154740Z_20261022T014315Z_L8_30_v1.1_B04_DIAG.tif",
+      "etag": "\"e2f33e8a704c472947421b1be64de69d-1\"",
+      "raster": {
+        "block_shape": [
+          512,
+          512
+        ],
+        "bounds": [
+          600000.0,
+          3790200.0,
+          709800.0,
+          3900000.0
+        ],
+        "compression": "deflate",
+        "crs": "EPSG:32617",
+        "dtype": "uint16",
+        "mask_receipts": {
+          "source_valid": {
+            "true_count": 4810166,
+            "uint8_sha256": "217f5e4df73825aecc1b2d0b1a20676f4ba2d4435df51a97c78eab66cd2026f1"
+          }
+        },
+        "metadata": {
+          "AEROSOL_CLASS_REMAPPING_ENABLED": "TRUE",
+          "AREA_OR_POINT": "Area",
+          "HLS_DATASET": "HLS.L30.T17SPU.2026291T154740.v2.0",
+          "MASK_ADJACENT_TO_CLOUD_MODE": "mask",
+          "OCEAN_MASKING_ENABLED": "FALSE",
+          "PROCESSING_DATETIME": "2026-10-22T01:43:15Z",
+          "PRODUCT_ID": "dswx_hls",
+          "PRODUCT_LEVEL": "3",
+          "PRODUCT_SOURCE": "HLS",
+          "PRODUCT_TYPE": "DSWx-HLS",
+          "PRODUCT_VERSION": "1.1",
+          "SENSING_TIME": "2026-10-18T15:47:40.2028270Z",
+          "SENSOR": "OLI",
+          "SOFTWARE_VERSION": "1.0.2",
+          "SPACECRAFT_NAME": "Landsat-8"
+        },
+        "nodata": 65535.0,
+        "overviews": [
+          4,
+          16,
+          63,
+          126
+        ],
+        "sample_window_x3051_y831_w4_h5": [
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ]
+        ],
+        "shape": [
+          3660,
+          3660
+        ],
+        "transform": [
+          30.0,
+          0.0,
+          600000.0,
+          0.0,
+          -30.0,
+          3900000.0
+        ],
+        "unique_counts": {
+          "0": 4620822,
+          "1": 6,
+          "10": 43,
+          "100": 740,
+          "1000": 1,
+          "10000": 157915,
+          "10001": 53,
+          "10010": 38,
+          "10011": 5,
+          "101": 6,
+          "10100": 14,
+          "10101": 8,
+          "10110": 48,
+          "10111": 68,
+          "11": 10,
+          "110": 1569,
+          "11000": 13667,
+          "11001": 637,
+          "11010": 151,
+          "11011": 28,
+          "111": 146,
+          "11100": 437,
+          "11101": 415,
+          "1111": 128,
+          "11110": 551,
+          "11111": 12660,
+          "65535": 8585434
+        }
+      },
+      "sha256": "b1ebcbe38b7a94101fd62cd869953fbb3ddccf21532998cd9be7049af374e34e",
+      "size_bytes": 370937,
+      "tiff": {
+        "bigtiff": false,
+        "bits_per_sample": 16,
+        "byte_order": "<",
+        "compression_code": 8,
+        "gdal_nodata": "65535",
+        "geo_ascii_params": "WGS 84 / UTM zone 17N|WGS 84|",
+        "geokey_directory": [
+          1,
+          1,
+          0,
+          7,
+          1024,
+          0,
+          1,
+          1,
+          1025,
+          0,
+          1,
+          1,
+          1026,
+          34737,
+          22,
+          0,
+          2049,
+          34737,
+          7,
+          22,
+          2054,
+          0,
+          1,
+          9102,
+          3072,
+          0,
+          1,
+          32617,
+          3076,
+          0,
+          1,
+          9001
+        ],
+        "ifd_count": 5,
+        "model_pixel_scale": [
+          30.0,
+          30.0,
+          0.0
+        ],
+        "model_tiepoint": [
+          0.0,
+          0.0,
+          0.0,
+          600000.0,
+          3900000.0,
+          0.0
+        ],
+        "predictor": 2,
+        "sample_format": 1
+      }
+    },
+    "B08_SHAD": {
+      "authenticated_get_trace": [
+        {
+          "destination": "earthdata_login",
+          "from_origin": "https://archive.podaac.earthdata.nasa.gov",
+          "status": 302,
+          "temporary_query_present": true,
+          "to_origin": "https://urs.earthdata.nasa.gov"
+        },
+        {
+          "destination": "archive_login_callback",
+          "from_origin": "https://urs.earthdata.nasa.gov",
+          "status": 302,
+          "temporary_query_present": true,
+          "to_origin": "https://archive.podaac.earthdata.nasa.gov"
+        },
+        {
+          "destination": "canonical_object",
+          "from_origin": "https://archive.podaac.earthdata.nasa.gov",
+          "status": 301,
+          "temporary_query_present": false,
+          "to_origin": "https://archive.podaac.earthdata.nasa.gov"
+        },
+        {
+          "destination": "exact_resource_object",
+          "from_origin": "https://archive.podaac.earthdata.nasa.gov",
+          "status": 303,
+          "temporary_query_present": true,
+          "to_origin": "https://deotb6e7tfubr.cloudfront.net"
+        }
+      ],
+      "canonical_url": "https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-protected/OPERA_L3_DSWX-HLS_V1/OPERA_L3_DSWx-HLS_T17SPU_20261018T154740Z_20261022T014315Z_L8_30_v1.1_B08_SHAD.tif",
+      "etag": "\"d011fa1fbf02ec9e1aaf8d5ad2969115-1\"",
+      "raster": {
+        "block_shape": [
+          512,
+          512
+        ],
+        "bounds": [
+          600000.0,
+          3790200.0,
+          709800.0,
+          3900000.0
+        ],
+        "compression": "deflate",
+        "crs": "EPSG:32617",
+        "dtype": "uint8",
+        "mask_receipts": {
+          "source_valid": {
+            "true_count": 13395600,
+            "uint8_sha256": "f569b8f57a8048f0d13d307eb1c2c4d3f0dcf9f9f42de1f26d5c09ed2b4116c4"
+          }
+        },
+        "metadata": {
+          "AEROSOL_CLASS_REMAPPING_ENABLED": "TRUE",
+          "AREA_OR_POINT": "Area",
+          "HLS_DATASET": "HLS.L30.T17SPU.2026291T154740.v2.0",
+          "MASK_ADJACENT_TO_CLOUD_MODE": "mask",
+          "OCEAN_MASKING_ENABLED": "FALSE",
+          "PROCESSING_DATETIME": "2026-10-22T01:43:15Z",
+          "PRODUCT_ID": "dswx_hls",
+          "PRODUCT_LEVEL": "3",
+          "PRODUCT_SOURCE": "HLS",
+          "PRODUCT_TYPE": "DSWx-HLS",
+          "PRODUCT_VERSION": "1.1",
+          "SENSING_TIME": "2026-10-18T15:47:40.2028270Z",
+          "SENSOR": "OLI",
+          "SOFTWARE_VERSION": "1.0.2",
+          "SPACECRAFT_NAME": "Landsat-8"
+        },
+        "nodata": null,
+        "overviews": [
+          4,
+          16,
+          63,
+          126
+        ],
+        "sample_window_x3051_y831_w4_h5": [
+          [
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            1
+          ]
+        ],
+        "shape": [
+          3660,
+          3660
+        ],
+        "transform": [
+          30.0,
+          0.0,
+          600000.0,
+          0.0,
+          -30.0,
+          3900000.0
+        ],
+        "unique_counts": {
+          "0": 1029575,
+          "1": 12366025
+        }
+      },
+      "sha256": "190c030166af11dffcef08a430a8a73680ce8c80d81631c45e0263731b4fce1d",
+      "size_bytes": 979399,
+      "tiff": {
+        "bigtiff": false,
+        "bits_per_sample": 8,
+        "byte_order": "<",
+        "compression_code": 8,
+        "gdal_nodata": null,
+        "geo_ascii_params": "WGS 84 / UTM zone 17N|WGS 84|",
+        "geokey_directory": [
+          1,
+          1,
+          0,
+          7,
+          1024,
+          0,
+          1,
+          1,
+          1025,
+          0,
+          1,
+          1,
+          1026,
+          34737,
+          22,
+          0,
+          2049,
+          34737,
+          7,
+          22,
+          2054,
+          0,
+          1,
+          9102,
+          3072,
+          0,
+          1,
+          32617,
+          3076,
+          0,
+          1,
+          9001
+        ],
+        "ifd_count": 5,
+        "model_pixel_scale": [
+          30.0,
+          30.0,
+          0.0
+        ],
+        "model_tiepoint": [
+          0.0,
+          0.0,
+          0.0,
+          600000.0,
+          3900000.0,
+          0.0
+        ],
+        "predictor": 2,
+        "sample_format": 1
+      }
+    },
+    "B09_CLOUD": {
+      "authenticated_get_trace": [
+        {
+          "destination": "earthdata_login",
+          "from_origin": "https://archive.podaac.earthdata.nasa.gov",
+          "status": 302,
+          "temporary_query_present": true,
+          "to_origin": "https://urs.earthdata.nasa.gov"
+        },
+        {
+          "destination": "archive_login_callback",
+          "from_origin": "https://urs.earthdata.nasa.gov",
+          "status": 302,
+          "temporary_query_present": true,
+          "to_origin": "https://archive.podaac.earthdata.nasa.gov"
+        },
+        {
+          "destination": "canonical_object",
+          "from_origin": "https://archive.podaac.earthdata.nasa.gov",
+          "status": 301,
+          "temporary_query_present": false,
+          "to_origin": "https://archive.podaac.earthdata.nasa.gov"
+        },
+        {
+          "destination": "exact_resource_object",
+          "from_origin": "https://archive.podaac.earthdata.nasa.gov",
+          "status": 303,
+          "temporary_query_present": true,
+          "to_origin": "https://deotb6e7tfubr.cloudfront.net"
+        }
+      ],
+      "canonical_url": "https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-protected/OPERA_L3_DSWX-HLS_V1/OPERA_L3_DSWx-HLS_T17SPU_20261018T154740Z_20261022T014315Z_L8_30_v1.1_B09_CLOUD.tif",
+      "etag": "\"de4e730c7efb6427dfeb079da320e0f8-1\"",
+      "raster": {
+        "block_shape": [
+          512,
+          512
+        ],
+        "bounds": [
+          600000.0,
+          3790200.0,
+          709800.0,
+          3900000.0
+        ],
+        "compression": "deflate",
+        "crs": "EPSG:32617",
+        "dtype": "uint8",
+        "mask_receipts": {
+          "low_three_obstruction_bits_clear": {
+            "true_count": 4791649,
+            "uint8_sha256": "f93012c3855afdb90053bfac9bda0ad9d95037ce152a395e72a51f2f2ab37ec0"
+          },
+          "low_three_obstruction_bits_set": {
+            "true_count": 18517,
+            "uint8_sha256": "13cb48d531cfc6c959f23ba3e8769f3308ca9baab473bcd2623afdbd303c3e1d"
+          },
+          "source_valid": {
+            "true_count": 4810166,
+            "uint8_sha256": "217f5e4df73825aecc1b2d0b1a20676f4ba2d4435df51a97c78eab66cd2026f1"
+          }
+        },
+        "metadata": {
+          "AEROSOL_CLASS_REMAPPING_ENABLED": "TRUE",
+          "AREA_OR_POINT": "Area",
+          "HLS_DATASET": "HLS.L30.T17SPU.2026291T154740.v2.0",
+          "MASK_ADJACENT_TO_CLOUD_MODE": "mask",
+          "OCEAN_MASKING_ENABLED": "FALSE",
+          "PROCESSING_DATETIME": "2026-10-22T01:43:15Z",
+          "PRODUCT_ID": "dswx_hls",
+          "PRODUCT_LEVEL": "3",
+          "PRODUCT_SOURCE": "HLS",
+          "PRODUCT_TYPE": "DSWx-HLS",
+          "PRODUCT_VERSION": "1.1",
+          "SENSING_TIME": "2026-10-18T15:47:40.2028270Z",
+          "SENSOR": "OLI",
+          "SOFTWARE_VERSION": "1.0.2",
+          "SPACECRAFT_NAME": "Landsat-8"
+        },
+        "nodata": 255.0,
+        "overviews": [
+          4,
+          16,
+          63,
+          126
+        ],
+        "sample_window_x3051_y831_w4_h5": [
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ]
+        ],
+        "shape": [
+          3660,
+          3660
+        ],
+        "transform": [
+          30.0,
+          0.0,
+          600000.0,
+          0.0,
+          -30.0,
+          3900000.0
+        ],
+        "unique_counts": {
+          "0": 4779762,
+          "1": 16423,
+          "255": 8585434,
+          "4": 1301,
+          "5": 793,
+          "8": 11887
+        }
+      },
+      "sha256": "4885b24eafd951b399afb8e673c0186ccc914a8b5b2eb1c292355e975a4558ee",
+      "size_bytes": 97466,
+      "tiff": {
+        "bigtiff": false,
+        "bits_per_sample": 8,
+        "byte_order": "<",
+        "compression_code": 8,
+        "gdal_nodata": "255",
+        "geo_ascii_params": "WGS 84 / UTM zone 17N|WGS 84|",
+        "geokey_directory": [
+          1,
+          1,
+          0,
+          7,
+          1024,
+          0,
+          1,
+          1,
+          1025,
+          0,
+          1,
+          1,
+          1026,
+          34737,
+          22,
+          0,
+          2049,
+          34737,
+          7,
+          22,
+          2054,
+          0,
+          1,
+          9102,
+          3072,
+          0,
+          1,
+          32617,
+          3076,
+          0,
+          1,
+          9001
+        ],
+        "ifd_count": 5,
+        "model_pixel_scale": [
+          30.0,
+          30.0,
+          0.0
+        ],
+        "model_tiepoint": [
+          0.0,
+          0.0,
+          0.0,
+          600000.0,
+          3900000.0,
+          0.0
+        ],
+        "predictor": 2,
+        "sample_format": 1
+      }
+    }
+  },
+  "native_output_validation": {
+    "binary_sha256": "6ff6c93601cc3287d204560ffff0f322b960a7b48ca3d10425d83cbcca5808c2",
+    "layers": {
+      "B01_WTR": {
+        "aoi_mask_matches_wgs84_pixel_centers": true,
+        "aoi_pixels": 20,
+        "asset_id": "p000_WTR",
+        "coordinates_match_source_pixel_centers": true,
+        "crs": "EPSG:32617",
+        "dtype": "uint8",
+        "etag": "\"4d3dbf6fddde5e1f52a319be735cf4c5-1\"",
+        "group": "observations/000003",
+        "nodata": 255.0,
+        "quality": {
+          "accepted": 3,
+          "dataset": "quality_dswx_wtr_water",
+          "definition": "valid AOI sample with WTR class 1 or 2",
+          "matches_independent_definition": true,
+          "uint8_sha256": "97084602324b15cc33692c644fd17a4a4825be16fc52a5c7368b46c2e785b77b"
+        },
+        "shape": [
+          5,
+          4
+        ],
+        "source_unique_counts": {
+          "0": 2,
+          "1": 2,
+          "2": 1,
+          "253": 15
+        },
+        "source_values_sha256": "d9fe7dfd98f9988dc830f5fc4b094f1e0a3cf1a0fb6b05c02696665fa672cf6e",
+        "stored_values_sha256": "d9fe7dfd98f9988dc830f5fc4b094f1e0a3cf1a0fb6b05c02696665fa672cf6e",
+        "time_matches_request_nanoseconds": true,
+        "unit": "1",
+        "valid_matches_aoi_and_source_fill": true,
+        "valid_pixels": 20,
+        "values_match_independent_rasterio": true,
+        "window": {
+          "height": 5,
+          "width": 4,
+          "x": 2855,
+          "y": 439
+        }
+      },
+      "B04_DIAG": {
+        "aoi_mask_matches_wgs84_pixel_centers": true,
+        "aoi_pixels": 20,
+        "asset_id": "p000_DIAG",
+        "coordinates_match_source_pixel_centers": true,
+        "crs": "EPSG:32617",
+        "dtype": "uint16",
+        "etag": "\"e2f33e8a704c472947421b1be64de69d-1\"",
+        "group": "observations/000001",
+        "nodata": 65535.0,
+        "quality": null,
+        "shape": [
+          5,
+          4
+        ],
+        "source_unique_counts": {
+          "0": 14,
+          "10000": 4,
+          "11111": 2
+        },
+        "source_values_sha256": "cd56e6be45574ffd46b71360116b8b97aaf20a5857ae77064a26612090b1af49",
+        "stored_values_sha256": "cd56e6be45574ffd46b71360116b8b97aaf20a5857ae77064a26612090b1af49",
+        "time_matches_request_nanoseconds": true,
+        "unit": "1",
+        "valid_matches_aoi_and_source_fill": true,
+        "valid_pixels": 20,
+        "values_match_independent_rasterio": true,
+        "window": {
+          "height": 5,
+          "width": 4,
+          "x": 2855,
+          "y": 439
+        }
+      },
+      "B08_SHAD": {
+        "aoi_mask_matches_wgs84_pixel_centers": true,
+        "aoi_pixels": 20,
+        "asset_id": "p000_SHAD",
+        "coordinates_match_source_pixel_centers": true,
+        "crs": "EPSG:32617",
+        "dtype": "uint8",
+        "etag": "\"d011fa1fbf02ec9e1aaf8d5ad2969115-1\"",
+        "group": "observations/000002",
+        "nodata": null,
+        "quality": {
+          "accepted": 16,
+          "dataset": "quality_dswx_shadow_free",
+          "definition": "valid AOI sample with SHAD class 1",
+          "matches_independent_definition": true,
+          "uint8_sha256": "e3979c3a3ea6e17abf31397325dcd9456e922f1430119f9aa9791e64545a4126"
+        },
+        "shape": [
+          5,
+          4
+        ],
+        "source_unique_counts": {
+          "0": 4,
+          "1": 16
+        },
+        "source_values_sha256": "e3979c3a3ea6e17abf31397325dcd9456e922f1430119f9aa9791e64545a4126",
+        "stored_values_sha256": "e3979c3a3ea6e17abf31397325dcd9456e922f1430119f9aa9791e64545a4126",
+        "time_matches_request_nanoseconds": true,
+        "unit": "1",
+        "valid_matches_aoi_and_source_fill": true,
+        "valid_pixels": 20,
+        "values_match_independent_rasterio": true,
+        "window": {
+          "height": 5,
+          "width": 4,
+          "x": 2855,
+          "y": 439
+        }
+      },
+      "B09_CLOUD": {
+        "aoi_mask_matches_wgs84_pixel_centers": true,
+        "aoi_pixels": 20,
+        "asset_id": "p000_CLOUD",
+        "coordinates_match_source_pixel_centers": true,
+        "crs": "EPSG:32617",
+        "dtype": "uint8",
+        "etag": "\"de4e730c7efb6427dfeb079da320e0f8-1\"",
+        "group": "observations/000000",
+        "nodata": 255.0,
+        "quality": {
+          "accepted": 5,
+          "dataset": "quality_dswx_cloud_obstruction_free",
+          "definition": "valid AOI sample with CLOUD bits 0-2 clear; bit 3 is retained",
+          "matches_independent_definition": true,
+          "uint8_sha256": "34ae82b878b73858de4d4a2980823648710ccdefa77a92584effafca94f45443"
+        },
+        "shape": [
+          5,
+          4
+        ],
+        "source_unique_counts": {
+          "0": 4,
+          "1": 15,
+          "8": 1
+        },
+        "source_values_sha256": "af197924d5513156b0739e6e366a122c78a490a8830c990e3036d388326b5918",
+        "stored_values_sha256": "af197924d5513156b0739e6e366a122c78a490a8830c990e3036d388326b5918",
+        "time_matches_request_nanoseconds": true,
+        "unit": "1",
+        "valid_matches_aoi_and_source_fill": true,
+        "valid_pixels": 20,
+        "values_match_independent_rasterio": true,
+        "window": {
+          "height": 5,
+          "width": 4,
+          "x": 2855,
+          "y": 439
+        }
+      }
+    },
+    "manifest_sha256": "eb57e23735590b245737fde6fa37fed1eed79656f63f35e3fac68ca7adf8ea27",
+    "observed": {
+      "authenticated_transport_reserved_bytes": 4194304,
+      "chunks": 4,
+      "decoded_bytes": 100,
+      "non_nodata_pixels": 80,
+      "prepared_native_metadata_bytes": 4266556,
+      "scheduler_buffer_bytes": 33553562,
+      "scheduler_reserved_bytes_peak": 6153386,
+      "source_data_bytes": 61899,
+      "source_data_requests": 4,
+      "transport": {
+        "p000_CLOUD": {
+          "login_requests": 1,
+          "peak_in_flight": 1,
+          "redirect_body_bytes": 332,
+          "redirects": 10,
+          "refreshes": 0,
+          "response_body_bytes": 19551,
+          "route_cache_hits": 4,
+          "wire_get": 9,
+          "wire_head": 12
+        },
+        "p000_DIAG": {
+          "login_requests": 1,
+          "peak_in_flight": 1,
+          "redirect_body_bytes": 331,
+          "redirects": 10,
+          "refreshes": 0,
+          "response_body_bytes": 40521,
+          "route_cache_hits": 2,
+          "wire_get": 7,
+          "wire_head": 12
+        },
+        "p000_SHAD": {
+          "login_requests": 1,
+          "peak_in_flight": 1,
+          "redirect_body_bytes": 331,
+          "redirects": 10,
+          "refreshes": 0,
+          "response_body_bytes": 36419,
+          "route_cache_hits": 4,
+          "wire_get": 9,
+          "wire_head": 12
+        },
+        "p000_WTR": {
+          "login_requests": 1,
+          "peak_in_flight": 1,
+          "redirect_body_bytes": 330,
+          "redirects": 10,
+          "refreshes": 0,
+          "response_body_bytes": 24076,
+          "route_cache_hits": 4,
+          "wire_get": 9,
+          "wire_head": 12
+        }
+      }
+    },
+    "output_path_recorded": false,
+    "processing_contract": [
+      "native stored typed values; calibration is metadata only",
+      "one source asset/band and native grid per observation; chronological order",
+      "no reprojection, resampling, mosaicking or implicit alignment",
+      "valid and aoi_mask distinguish source nodata from excluded AOI centers"
+    ],
+    "request_file": "dswx-authenticated-request.json",
+    "request_sha256": "2cbe4b681dead50744d27e5b73e2c174c76445c5f775a0a1e3b6891b9e2eabd5",
+    "result": "pass"
+  },
+  "primary_references": {
+    "cmr_collection": "https://cmr.earthdata.nasa.gov/search/collections.umm_json?concept_id=C2617126679-POCLOUD",
+    "cmr_granule": "https://cmr.earthdata.nasa.gov/search/granules.umm_json?collection_concept_id=C2617126679-POCLOUD&granule_ur=OPERA_L3_DSWx-HLS_T17SPU_20261018T154740Z_20261022T014315Z_L8_30_v1.1",
+    "product_specification_v1_0_1": "https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-docs/web-misc/opera/OPERA_DSWx-HLS_ProductSpec_v1.0.0_D-107395_RevB.pdf",
+    "proteus_cloud_classes": "https://github.com/nasa/PROTEUS/blob/v1.0.2/src/proteus/dswx_hls.py#L1754-L1777",
+    "proteus_cloud_masking": "https://github.com/nasa/PROTEUS/blob/v1.0.2/src/proteus/dswx_hls.py#L2089-L2125",
+    "proteus_release_v1_0_1": "https://github.com/nasa/PROTEUS/releases/tag/v1.0.1",
+    "proteus_release_v1_0_2": "https://github.com/nasa/PROTEUS/releases/tag/v1.0.2",
+    "proteus_v1_0_1_cloud_classes": "https://github.com/nasa/PROTEUS/blob/v1.0.1/src/proteus/dswx_hls.py#L1604-L1627"
+  },
+  "result": "pass",
+  "schema": "tile-ripper.wave1-dswx-current-inspection.v1",
+  "scope": {
+    "layers_inspected": [
+      "B01_WTR",
+      "B04_DIAG",
+      "B08_SHAD",
+      "B09_CLOUD"
+    ],
+    "object_bytes_read": 1592399,
+    "reader": "independent rasterio MemoryFile plus tifffile"
+  },
+  "security": {
+    "allowed_origins": [
+      "https://archive.podaac.earthdata.nasa.gov",
+      "https://urs.earthdata.nasa.gov",
+      "https://deotb6e7tfubr.cloudfront.net"
+    ],
+    "basic_authorization_origin": "https://urs.earthdata.nasa.gov",
+    "conditional_request": "Range plus strong If-Match",
+    "credentials_source": "explicit private netrc argument",
+    "temporary_provider_queries_persisted": false
+  }
+}
