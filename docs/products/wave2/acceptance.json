@@ -1,0 +1,155 @@
+{
+  "schema": "tile-ripper-wave2-acceptance-v1",
+  "date": "2026-10-24",
+  "branch": "codex/acquisition-planner",
+  "base": "d5ea791",
+  "provider_foundation": "47a708d",
+  "baseline": {
+    "all_feature_passed": 197,
+    "ignored": 9,
+    "log_sha256": "1722a3627fcdfbe9bc1ecb2bd722364fb32a665748bb42f730401479162e0b20",
+    "initial_build_cache_note": "initial stale incremental library artifacts hid existing AlphaEarth export; touching src/lib.rs without content changes forced fresh compilation and baseline passed"
+  },
+  "native_binary_sha256": "922b991e76df77eeb8ed9e4d1710acb461a49760146e7695b64361e1cfd835c0",
+  "checks": [
+    {
+      "command": "cargo test --locked --all-features --all-targets",
+      "passed": true,
+      "log_sha256": "a5909aa82d8850ef1920b53779c5a9bb9534ce98c5ed3eb8fbed7998de77d8d7",
+      "tests": {
+        "passed": 204,
+        "failed": 0,
+        "ignored": 9
+      }
+    },
+    {
+      "command": "cargo test --locked --no-default-features --features native-cog,native-hdf5,authenticated-http",
+      "passed": true,
+      "log_sha256": "43e580c9bf14b2cd3541288dafe1d0256cbc52c5401a6697157de1cb6f8aa47d",
+      "tests": {
+        "passed": 175,
+        "failed": 0,
+        "ignored": 8
+      }
+    },
+    {
+      "command": "cargo clippy --locked --all-features --all-targets -- -D warnings",
+      "passed": true,
+      "log_sha256": "5a84ba4d02017d7125a0f78dfa2ba905932948bc4c37c8f5e159c575666134bc"
+    },
+    {
+      "command": "cargo fmt --all -- --check",
+      "passed": true,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": "cargo check --locked --no-default-features",
+      "passed": true,
+      "log_sha256": "b7f2e0c7f4b2735d59c449907b7631a09476f3834a62b446557f4a35f2445402"
+    },
+    {
+      "command": "cargo check --locked --no-default-features --features authenticated-http",
+      "passed": true,
+      "log_sha256": "92ecd2284fd5cc56a97ffb2361312d3250d9661780ccad37ed0488c0f01e52fb"
+    },
+    {
+      "command": "cargo build --locked --no-default-features --features native-cog,native-hdf5,authenticated-http --target-dir prototype-output/wave2/native-clean-target --bin tile-ripper",
+      "passed": true,
+      "log_sha256": "cefda71028251c2762aade8ecc11a94324de01e71c5ca933452b999952b3c89d"
+    }
+  ],
+  "host": {
+    "platform": "Darwin arm64",
+    "rust": "rustc 1.92.0 (ded5c06cf 2025-12-08)\nbinary: rustc\ncommit-hash: ded5c06cf21d2b93bffd5d884aa6e96934ee4234\ncommit-date: 2025-12-08\nhost: aarch64-apple-darwin\nrelease: 1.92.0\nLLVM version: 21.1.3",
+    "native_dynamic_libraries": [
+      "\t/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1356.0.0)",
+      "\t/usr/lib/libobjc.A.dylib (compatibility version 1.0.0, current version 228.0.0)",
+      "\t/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation (compatibility version 300.0.0, current version 4201.0.0)",
+      "\t/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2000.67.0)",
+      "\t/System/Library/Frameworks/Security.framework/Versions/A/Security (compatibility version 1.0.0, current version 61901.60.40)",
+      "\t/System/Library/Frameworks/SystemConfiguration.framework/Versions/A/SystemConfiguration (compatibility version 1.0.0, current version 1385.60.3)",
+      "\t/usr/lib/libiconv.2.dylib (compatibility version 7.0.0, current version 7.0.0)",
+      "\t/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation (compatibility version 150.0.0, current version 4201.0.0)"
+    ],
+    "cargo_manifest_lock_defaults_unchanged": true,
+    "fresh_linux_windows_msr_version_checks": "not executed; no claim inferred from earlier evidence"
+  },
+  "independent_references": {
+    "historical_radar": {
+      "python": "3.10.14",
+      "rasterio": "1.4.4",
+      "GDAL": "3.10.3",
+      "zarr": "2.18.3",
+      "xarray": "2025.6.1",
+      "numpy": "2.2.6",
+      "requests": "2.32.5"
+    },
+    "dist_inspection": {
+      "rasterio": "1.4.4",
+      "GDAL": "3.10.3",
+      "tifffile": "2024.6.18"
+    },
+    "dist_execution": {
+      "python": "3.10.14",
+      "rasterio": "1.4.4",
+      "GDAL": "3.10.3",
+      "tifffile": "2024.6.18",
+      "zarr": "2.18.3",
+      "xarray": "2025.6.1",
+      "numpy": "2.2.6",
+      "requests": "2.32.5",
+      "temporary_reference_only_tifffile_path": "/tmp/tile-ripper-dist-tifffile",
+      "production_dependency": false
+    }
+  },
+  "preservation": {
+    "six_wave1_frozen_oracles_passed": true,
+    "original_wave1_receipts_restored": true,
+    "log_sha256": "2fe12eeb7f8ad069b7bcd7220baf3d0b87d3504f3a6be26f3fb3007c9bd32b6a",
+    "alphaearth_code_unchanged": true
+  },
+  "rust_example": {
+    "source": "examples/product_stream.rs",
+    "passed": true,
+    "input": "captured DIST range mirrors at original offsets, local exact-version validation",
+    "completion_log_sha256": "b36c1499a7dccdc8f6af3bd541bb2a0024ec11fe96b39de59699327e3b49f769"
+  },
+  "review_fixes": [
+    "exact DIST layer DESCRIPTION and Units; all cross-layer pairings rejected",
+    "OPERA 3660-square MGRS grid zone/hemisphere/corner/northing cycle, including +/-2000 km rejection",
+    "complete per-layer output identity and nonoverlapping stream coverage in independent harnesses"
+  ],
+  "execution_plan": {
+    "path": ".dgov/plans/product-wave2",
+    "structural_compile": "passed",
+    "dispatch": "explicit user-requested native Codex subagents plus root integration; no dgov provider configured"
+  },
+  "receipts": {
+    "access-timing.json": "ec75606e3633e0a050aeb9de1019af1dc89e66d16edee056a3b90e5a7cdee98f",
+    "discovery-timing.json": "41e5af6ecc6de8622ed1154fa5841052c3dc6d1b828dbb85b8f131d4b9757b5a",
+    "dist-alert-inspection.json": "5bcd977d2d3c27242070eee9bf510376c53510a84d900e07819146927d8b69fa",
+    "dist-alert-live-validation.json": "6b630b92f5a954da8639efa783334621ae09cb80633b4e432f73e81bcbad2879",
+    "dist-alert-request.json": "c767ea419d829768b3cc5172e40c39d342bb1f2b7b8c3abf23134319a32ff0a9",
+    "dist-alert-validation-edge.json": "903fcf4bbf712cfb6ef6f3d98a8e34c0025f2fd00f74721c0e34cea5625002ec",
+    "dist-alert-validation.json": "705a4c25d23b1daf41111f2a16d21eb8a96673f13dd9b7a0c7fb6c22e0cd4e29",
+    "dswx-s1-cli-validation.json": "90ab4aa44ec001edc3fe150a8579b94a1d52ad86362769e9cf0db1cc9e60fcfc",
+    "dswx-s1-frozen-validation.json": "c86696d6d1e8432aeae75ec2909131a46af08effbb69f99a543b640da873a0f0",
+    "dswx-s1-native-validation.json": "dc405de5102f557ffcd0fddf308a135622f4ce615aa6bc060f23671f98c5fe1a",
+    "dswx-s1-request.json": "0ca311f0aa577ee91924ce22afcd592706a8c7c28f22e868f1141a68dedadaa6",
+    "dswx-s1-source-inspection.json": "243654875461178a015d98fd3d9b1119a029962ee8fd16d85df68fde26a36a46",
+    "landsat-le07-direct.json": "d201b6d159c1f3e8fb803f957ea327be37708433a7564f83b5ef1a8b7d65d22c",
+    "landsat-le07-discovery.json": "afd155f3407cadadc08aa53408e9be805a77be1c4d1d4f8fc2b1cfcff4e8e76b",
+    "landsat-le07-request.json": "193c2dba74ae6205b75dca4807f2cc2b1450ff37f656c96f08cfc03191059c9d",
+    "landsat-le07-validation.json": "d6c1bb7873cd9a58657b30e31ea3f45a3e9595bd904cc9e4b3c2b509c90982a6",
+    "landsat-lt04-direct.json": "c6596fc8057d6cfcf417e37108f28933de31d6d28fca930fc79a54205a7f4232",
+    "landsat-lt04-discovery.json": "dde13f13edfed27c081c40942c7f47f7eb27e81ad200e13df42f256a5c019f97",
+    "landsat-lt04-request.json": "3626678f9d7605c680a4ec2da394455ef8306e44fc2ac0869837e6759ebeb500",
+    "landsat-lt04-validation.json": "7bd796f9c0ea26d9b99bb5ce04c8c3c783eee5c11840e3a4e13817c18f3aba68",
+    "landsat-lt05-direct.json": "10e1e5ad5340e85908daff6e6f70027959d7d6ca0a18a0d07a35f6c59c7850a1",
+    "landsat-lt05-discovery.json": "3e7379a61d8352e9634c45f584fe4d8935e1b8d01c9a56f2246965f6b4b9032e",
+    "landsat-lt05-faults.json": "d894b25703e23e378dc56fc46dda531b23ac714c16f88dcc7c3b0c14f38b1d41",
+    "landsat-lt05-request.json": "ae876c1fe21f8dc1628af89deae7e9a7d19ac2b1b36b38751a6b4be6e92353e4",
+    "landsat-lt05-validation.json": "4dd32520acdbee8087f956c2150c28b02d2b866383df6820cb078f31c07fb29a",
+    "performance.json": "5d41c11e76d80fb8744ed8479ca58e20f212c101e10ab6990703a56dd81d9b2e"
+  }
+}

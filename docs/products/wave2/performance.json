@@ -1,0 +1,2295 @@
+{
+  "schema": "tile-ripper-wave2-performance-v1",
+  "scope": "single bounded loopback complete scientifically equivalent array workflows; debug native binary, independent Python process startup included; no general performance superiority",
+  "phase_caveats": "native first_output_seconds begins after preparation; externally measured stream first_chunk_seconds begins at process launch; reader and writer reservations are distinct, neither is RSS ceiling; reference metadata serialization differs",
+  "cases": [
+    {
+      "case": "lt04",
+      "product": "landsat-tm-c2-l2-sr",
+      "receipt": "landsat-lt04-validation.json",
+      "binary": {
+        "path": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/wave2/tile-ripper-native",
+        "sha256": "922b991e76df77eeb8ed9e4d1710acb461a49760146e7695b64361e1cfd835c0"
+      },
+      "native_process": {
+        "code": 0,
+        "wall_seconds": 0.9117420829861658,
+        "cpu_seconds": 0.573984,
+        "peak_rss_bytes": 75235328
+      },
+      "native_phases": {
+        "source_reads": [],
+        "scheduler": {
+          "workers": 2,
+          "per_host": 4,
+          "buffer_bytes": 33510683,
+          "reserved_bytes_peak": 1568169,
+          "reader_state_reserved_bytes": 0,
+          "prepared_native_metadata_bytes": 206561,
+          "authenticated_transport_reserved_bytes": 0,
+          "prepared_v3_metadata_index_bytes": 0,
+          "active_workers_peak": 2,
+          "completed_tasks": 10,
+          "admitted_jobs": 10,
+          "cog_reader_scope": "selection",
+          "seconds": 0.073165917,
+          "order": "plan",
+          "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+          "prepared_hdf5_bytes": 0,
+          "native_buffers": [
+            {
+              "asset_id": "p000_SR_B1",
+              "transport_encoded_capacity_peak_bytes": 203558,
+              "adapter_delivery_capacity_peak_bytes": 56544,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_SR_B3",
+              "transport_encoded_capacity_peak_bytes": 180219,
+              "adapter_delivery_capacity_peak_bytes": 56544,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_SR_B5",
+              "transport_encoded_capacity_peak_bytes": 223314,
+              "adapter_delivery_capacity_peak_bytes": 56544,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_QA_PIXEL",
+              "transport_encoded_capacity_peak_bytes": 12732,
+              "adapter_delivery_capacity_peak_bytes": 56544,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_SR_CLOUD_QA",
+              "transport_encoded_capacity_peak_bytes": 13607,
+              "adapter_delivery_capacity_peak_bytes": 37696,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_SR_B2",
+              "transport_encoded_capacity_peak_bytes": 154394,
+              "adapter_delivery_capacity_peak_bytes": 56544,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_SR_B4",
+              "transport_encoded_capacity_peak_bytes": 201046,
+              "adapter_delivery_capacity_peak_bytes": 56544,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_SR_B7",
+              "transport_encoded_capacity_peak_bytes": 179300,
+              "adapter_delivery_capacity_peak_bytes": 56544,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_QA_RADSAT",
+              "transport_encoded_capacity_peak_bytes": 471,
+              "adapter_delivery_capacity_peak_bytes": 56544,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_SR_ATMOS_OPACITY",
+              "transport_encoded_capacity_peak_bytes": 993,
+              "adapter_delivery_capacity_peak_bytes": 56544,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            }
+          ],
+          "native_metadata": {
+            "retained_sources": 10,
+            "retained_bytes": 206561,
+            "physical_metadata_sources": 10,
+            "physical_metadata_bytes": 1761,
+            "cap_bytes": 8388608,
+            "skipped_sources": 0,
+            "scope": "this Prepared only; immutable version-bound parser pages; never a data cache",
+            "authenticated_sources": 0,
+            "authenticated_transport": {}
+          },
+          "native_strategies": [
+            {
+              "asset_id": "p000_SR_B1",
+              "task_reserved_bytes": 672182,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 1,
+                "max_encoded_group_reservation_bytes": 134192,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_SR_B2",
+              "task_reserved_bytes": 623018,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 1,
+                "max_encoded_group_reservation_bytes": 101094,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_SR_B3",
+              "task_reserved_bytes": 648843,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 1,
+                "max_encoded_group_reservation_bytes": 118588,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_SR_B4",
+              "task_reserved_bytes": 669670,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 1,
+                "max_encoded_group_reservation_bytes": 133934,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_SR_B5",
+              "task_reserved_bytes": 691938,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 1,
+                "max_encoded_group_reservation_bytes": 148819,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_SR_B7",
+              "task_reserved_bytes": 647924,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 1,
+                "max_encoded_group_reservation_bytes": 118667,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_QA_PIXEL",
+              "task_reserved_bytes": 481356,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 1,
+                "max_encoded_group_reservation_bytes": 8236,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_QA_RADSAT",
+              "task_reserved_bytes": 469095,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 1,
+                "max_encoded_group_reservation_bytes": 318,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_SR_CLOUD_QA",
+              "task_reserved_bytes": 313463,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 1,
+                "max_encoded_group_reservation_bytes": 8811,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_SR_ATMOS_OPACITY",
+              "task_reserved_bytes": 469617,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 1,
+                "max_encoded_group_reservation_bytes": 580,
+                "codec_working_bytes": 131072
+              }
+            }
+          ]
+        },
+        "transport": {},
+        "decoded_source_chunks": 0,
+        "filled_source_chunks": 0,
+        "first_output_seconds": 0.163742875,
+        "assembly_seconds": 0.0,
+        "source_retrieval_seconds": 0.009016752999999999,
+        "allocation_seconds": null,
+        "copying_seconds": null,
+        "output_setup_seconds": 0.134065542,
+        "output_finalize_seconds": 0.003394916,
+        "output_io": {
+          "reads": 0,
+          "writes": 244,
+          "bytes_read": 0,
+          "bytes_written": 1940703,
+          "buffered_bytes_peak": 735072,
+          "storage_read_seconds": 0.0,
+          "storage_write_seconds": 0.030030630000000003,
+          "encode_seconds": 0.001679672999999999,
+          "allocation_seconds": 0.0,
+          "copying_seconds": 0.0
+        },
+        "native_materialized_bytes": null,
+        "source_data_requests": 10,
+        "source_data_bytes": 773159,
+        "chunks": 10,
+        "decoded_bytes": 358112,
+        "non_nodata_pixels": 181102,
+        "planning_seconds": 0.088119875,
+        "source_open_seconds": 0.07153024999999999,
+        "read_decode_seconds": 0.053490251,
+        "sink_seconds": 0.02204375,
+        "masking_seconds": 0.003707541,
+        "remote_requests": null,
+        "remote_bytes": null
+      },
+      "source_work": {
+        "selected_native_bytes": 358112,
+        "unique_source_blocks": 20,
+        "planned_block_visits": 20,
+        "planned_repeated_block_visits": 0,
+        "source_block_decoded_bytes": 2490368,
+        "decoded_block_to_selected_byte_ratio": 6.954159592529711,
+        "unique_selected_tile_encoded_bytes": 773159,
+        "http_body_bytes": 977959,
+        "http_unique_range_bytes": 977959,
+        "http_duplicate_range_bytes": 0,
+        "http_repeated_identical_ranges": 0,
+        "scope": "blocks from physical plan; HTTP range union includes metadata and data; freezing-page overhead is separate"
+      },
+      "wire": {
+        "head": 50,
+        "get": 60,
+        "range_get": 60,
+        "body_bytes": 977959,
+        "conditional": 80,
+        "errors": 0,
+        "head_active": 0,
+        "head_peak": 2
+      },
+      "output_objects": 243,
+      "output_bytes": 3511201,
+      "reference": {
+        "process": {
+          "code": 0,
+          "wall_seconds": 0.8135786249913508,
+          "cpu_seconds": 0.7452719999999999,
+          "peak_rss_bytes": 144736256
+        },
+        "metrics": {
+          "status": "complete",
+          "format": "zarr_v2",
+          "output": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/wave2/landsat/lt04.zarr.rasterio-reference",
+          "observations": 10,
+          "samples": 188480,
+          "source_read_calls": 10,
+          "source_reads": 10,
+          "source_decoded_bytes": 358112,
+          "source_identity_heads": 20,
+          "http_gets": 30,
+          "http_heads": 10,
+          "http_range_response_bytes": 1425408,
+          "http_range_responses": 30,
+          "output_objects": 243,
+          "output_bytes": 962072,
+          "setup_seconds": 0.015986374986823648,
+          "write_seconds": 0.19878341699950397,
+          "finalize_seconds": 0.015356584000983275,
+          "wall_seconds": 0.26269354099349584,
+          "manifest": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/wave2/landsat/lt04.zarr.rasterio-reference/manifest.json"
+        },
+        "wire": {
+          "head": 30,
+          "get": 30,
+          "range_get": 30,
+          "body_bytes": 1425408,
+          "conditional": 60,
+          "errors": 0,
+          "head_active": 0,
+          "head_peak": 1
+        },
+        "compared": [
+          {
+            "group": "observations/000000",
+            "arrays": [
+              "aoi_mask",
+              "quality_landsat_tm_etm_pixel_clear",
+              "spatial_ref",
+              "time",
+              "valid",
+              "values",
+              "x",
+              "y"
+            ],
+            "equal_bits": true
+          },
+          {
+            "group": "observations/000001",
+            "arrays": [
+              "aoi_mask",
+              "quality_landsat_tm_radiometrically_unsaturated",
+              "spatial_ref",
+              "time",
+              "valid",
+              "values",
+              "x",
+              "y"
+            ],
+            "equal_bits": true
+          },
+          {
+            "group": "observations/000002",
+            "arrays": [
+              "aoi_mask",
+              "spatial_ref",
+              "time",
+              "valid",
+              "values",
+              "x",
+              "y"
+            ],
+            "equal_bits": true
+          },
+          {
+            "group": "observations/000003",
+            "arrays": [
+              "aoi_mask",
+              "spatial_ref",
+              "time",
+              "valid",
+              "values",
+              "x",
+              "y"
+            ],
+            "equal_bits": true
+          },
+          {
+            "group": "observations/000004",
+            "arrays": [
+              "aoi_mask",
+              "spatial_ref",
+              "time",
+              "valid",
+              "values",
+              "x",
+              "y"
+            ],
+            "equal_bits": true
+          },
+          {
+            "group": "observations/000005",
+            "arrays": [
+              "aoi_mask",
+              "spatial_ref",
+              "time",
+              "valid",
+              "values",
+              "x",
+              "y"
+            ],
+            "equal_bits": true
+          },
+          {
+            "group": "observations/000006",
+            "arrays": [
+              "aoi_mask",
+              "spatial_ref",
+              "time",
+              "valid",
+              "values",
+              "x",
+              "y"
+            ],
+            "equal_bits": true
+          },
+          {
+            "group": "observations/000007",
+            "arrays": [
+              "aoi_mask",
+              "spatial_ref",
+              "time",
+              "valid",
+              "values",
+              "x",
+              "y"
+            ],
+            "equal_bits": true
+          },
+          {
+            "group": "observations/000008",
+            "arrays": [
+              "aoi_mask",
+              "spatial_ref",
+              "time",
+              "valid",
+              "values",
+              "x",
+              "y"
+            ],
+            "equal_bits": true
+          },
+          {
+            "group": "observations/000009",
+            "arrays": [
+              "aoi_mask",
+              "quality_landsat_tm_etm_cloud_clear",
+              "spatial_ref",
+              "time",
+              "valid",
+              "values",
+              "x",
+              "y"
+            ],
+            "equal_bits": true
+          }
+        ],
+        "scope": "same approved source windows and groups; discovery excluded from both; independent rasterio/GDAL reader and Zarr-Python writer"
+      }
+    },
+    {
+      "case": "lt05",
+      "product": "landsat-tm-c2-l2-sr",
+      "receipt": "landsat-lt05-validation.json",
+      "binary": {
+        "path": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/wave2/tile-ripper-native",
+        "sha256": "922b991e76df77eeb8ed9e4d1710acb461a49760146e7695b64361e1cfd835c0"
+      },
+      "native_process": {
+        "code": 0,
+        "wall_seconds": 0.4314356249960838,
+        "cpu_seconds": 0.542961,
+        "peak_rss_bytes": 75497472
+      },
+      "native_phases": {
+        "source_reads": [],
+        "scheduler": {
+          "workers": 2,
+          "per_host": 4,
+          "buffer_bytes": 33510683,
+          "reserved_bytes_peak": 1347413,
+          "reader_state_reserved_bytes": 0,
+          "prepared_native_metadata_bytes": 206561,
+          "authenticated_transport_reserved_bytes": 0,
+          "prepared_v3_metadata_index_bytes": 0,
+          "active_workers_peak": 2,
+          "completed_tasks": 10,
+          "admitted_jobs": 10,
+          "cog_reader_scope": "selection",
+          "seconds": 0.070402625,
+          "order": "plan",
+          "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+          "prepared_hdf5_bytes": 0,
+          "native_buffers": [
+            {
+              "asset_id": "p000_SR_B1",
+              "transport_encoded_capacity_peak_bytes": 95061,
+              "adapter_delivery_capacity_peak_bytes": 56544,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_SR_B3",
+              "transport_encoded_capacity_peak_bytes": 88934,
+              "adapter_delivery_capacity_peak_bytes": 56544,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_SR_B5",
+              "transport_encoded_capacity_peak_bytes": 97256,
+              "adapter_delivery_capacity_peak_bytes": 56544,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_QA_PIXEL",
+              "transport_encoded_capacity_peak_bytes": 219,
+              "adapter_delivery_capacity_peak_bytes": 56544,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_SR_CLOUD_QA",
+              "transport_encoded_capacity_peak_bytes": 6627,
+              "adapter_delivery_capacity_peak_bytes": 37696,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_SR_B2",
+              "transport_encoded_capacity_peak_bytes": 83441,
+              "adapter_delivery_capacity_peak_bytes": 56544,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_SR_B4",
+              "transport_encoded_capacity_peak_bytes": 106364,
+              "adapter_delivery_capacity_peak_bytes": 56544,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_SR_B7",
+              "transport_encoded_capacity_peak_bytes": 78699,
+              "adapter_delivery_capacity_peak_bytes": 56544,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_QA_RADSAT",
+              "transport_encoded_capacity_peak_bytes": 157,
+              "adapter_delivery_capacity_peak_bytes": 56544,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_SR_ATMOS_OPACITY",
+              "transport_encoded_capacity_peak_bytes": 10397,
+              "adapter_delivery_capacity_peak_bytes": 56544,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            }
+          ],
+          "native_metadata": {
+            "retained_sources": 10,
+            "retained_bytes": 206561,
+            "physical_metadata_sources": 10,
+            "physical_metadata_bytes": 1761,
+            "cap_bytes": 8388608,
+            "skipped_sources": 0,
+            "scope": "this Prepared only; immutable version-bound parser pages; never a data cache",
+            "authenticated_sources": 0,
+            "authenticated_transport": {}
+          },
+          "native_strategies": [
+            {
+              "asset_id": "p000_SR_B1",
+              "task_reserved_bytes": 563677,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_SR_B2",
+              "task_reserved_bytes": 552057,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_SR_B3",
+              "task_reserved_bytes": 557550,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_SR_B4",
+              "task_reserved_bytes": 574980,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_SR_B5",
+              "task_reserved_bytes": 565872,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_SR_B7",
+              "task_reserved_bytes": 547315,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_QA_PIXEL",
+              "task_reserved_bytes": 468835,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_QA_RADSAT",
+              "task_reserved_bytes": 468773,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_SR_CLOUD_QA",
+              "task_reserved_bytes": 306475,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_SR_ATMOS_OPACITY",
+              "task_reserved_bytes": 479013,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            }
+          ]
+        },
+        "transport": {},
+        "decoded_source_chunks": 0,
+        "filled_source_chunks": 0,
+        "first_output_seconds": 0.175968084,
+        "assembly_seconds": 0.0,
+        "source_retrieval_seconds": 0.006789915,
+        "allocation_seconds": null,
+        "copying_seconds": null,
+        "output_setup_seconds": 0.140555417,
+        "output_finalize_seconds": 0.003520208,
+        "output_io": {
+          "reads": 0,
+          "writes": 244,
+          "bytes_read": 0,
+          "bytes_written": 1942073,
+          "buffered_bytes_peak": 735072,
+          "storage_read_seconds": 0.0,
+          "storage_write_seconds": 0.049390616000000005,
+          "encode_seconds": 0.001611627999999992,
+          "allocation_seconds": 0.0,
+          "copying_seconds": 0.0
+        },
+        "native_materialized_bytes": null,
+        "source_data_requests": 10,
+        "source_data_bytes": 567155,
+        "chunks": 10,
+        "decoded_bytes": 358112,
+        "non_nodata_pixels": 181102,
+        "planning_seconds": 0.088611,
+        "source_open_seconds": 0.070630335,
+        "read_decode_seconds": 0.035032959,
+        "sink_seconds": 0.035807623999999996,
+        "masking_seconds": 0.0037936239999999998,
+        "remote_requests": null,
+        "remote_bytes": null
+      },
+      "source_work": {
+        "selected_native_bytes": 358112,
+        "unique_source_blocks": 10,
+        "planned_block_visits": 10,
+        "planned_repeated_block_visits": 0,
+        "source_block_decoded_bytes": 1245184,
+        "decoded_block_to_selected_byte_ratio": 3.4770797962648556,
+        "unique_selected_tile_encoded_bytes": 567155,
+        "http_body_bytes": 771955,
+        "http_unique_range_bytes": 771955,
+        "http_duplicate_range_bytes": 0,
+        "http_repeated_identical_ranges": 0,
+        "scope": "blocks from physical plan; HTTP range union includes metadata and data; freezing-page overhead is separate"
+      },
+      "wire": {
+        "head": 50,
+        "get": 60,
+        "range_get": 60,
+        "body_bytes": 771955,
+        "conditional": 80,
+        "errors": 0,
+        "head_active": 0,
+        "head_peak": 2
+      },
+      "output_objects": 243,
+      "output_bytes": 3512283,
+      "reference": {
+        "process": {
+          "code": 0,
+          "wall_seconds": 0.6768240000092192,
+          "cpu_seconds": 0.64262,
+          "peak_rss_bytes": 145965056
+        },
+        "metrics": {
+          "status": "complete",
+          "format": "zarr_v2",
+          "output": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/wave2/landsat/lt05.zarr.rasterio-reference",
+          "observations": 10,
+          "samples": 188480,
+          "source_read_calls": 10,
+          "source_reads": 10,
+          "source_decoded_bytes": 358112,
+          "source_identity_heads": 20,
+          "http_gets": 30,
+          "http_heads": 10,
+          "http_range_response_bytes": 1228800,
+          "http_range_responses": 30,
+          "output_objects": 243,
+          "output_bytes": 962071,
+          "setup_seconds": 0.010805583006003872,
+          "write_seconds": 0.15221283299615607,
+          "finalize_seconds": 0.009984083997551352,
+          "wall_seconds": 0.1974272499937797,
+          "manifest": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/wave2/landsat/lt05.zarr.rasterio-reference/manifest.json"
+        },
+        "wire": {
+          "head": 30,
+          "get": 30,
+          "range_get": 30,
+          "body_bytes": 1228800,
+          "conditional": 60,
+          "errors": 0,
+          "head_active": 0,
+          "head_peak": 1
+        },
+        "compared": [
+          {
+            "group": "observations/000000",
+            "arrays": [
+              "aoi_mask",
+              "quality_landsat_tm_etm_pixel_clear",
+              "spatial_ref",
+              "time",
+              "valid",
+              "values",
+              "x",
+              "y"
+            ],
+            "equal_bits": true
+          },
+          {
+            "group": "observations/000001",
+            "arrays": [
+              "aoi_mask",
+              "quality_landsat_tm_radiometrically_unsaturated",
+              "spatial_ref",
+              "time",
+              "valid",
+              "values",
+              "x",
+              "y"
+            ],
+            "equal_bits": true
+          },
+          {
+            "group": "observations/000002",
+            "arrays": [
+              "aoi_mask",
+              "spatial_ref",
+              "time",
+              "valid",
+              "values",
+              "x",
+              "y"
+            ],
+            "equal_bits": true
+          },
+          {
+            "group": "observations/000003",
+            "arrays": [
+              "aoi_mask",
+              "spatial_ref",
+              "time",
+              "valid",
+              "values",
+              "x",
+              "y"
+            ],
+            "equal_bits": true
+          },
+          {
+            "group": "observations/000004",
+            "arrays": [
+              "aoi_mask",
+              "spatial_ref",
+              "time",
+              "valid",
+              "values",
+              "x",
+              "y"
+            ],
+            "equal_bits": true
+          },
+          {
+            "group": "observations/000005",
+            "arrays": [
+              "aoi_mask",
+              "spatial_ref",
+              "time",
+              "valid",
+              "values",
+              "x",
+              "y"
+            ],
+            "equal_bits": true
+          },
+          {
+            "group": "observations/000006",
+            "arrays": [
+              "aoi_mask",
+              "spatial_ref",
+              "time",
+              "valid",
+              "values",
+              "x",
+              "y"
+            ],
+            "equal_bits": true
+          },
+          {
+            "group": "observations/000007",
+            "arrays": [
+              "aoi_mask",
+              "spatial_ref",
+              "time",
+              "valid",
+              "values",
+              "x",
+              "y"
+            ],
+            "equal_bits": true
+          },
+          {
+            "group": "observations/000008",
+            "arrays": [
+              "aoi_mask",
+              "spatial_ref",
+              "time",
+              "valid",
+              "values",
+              "x",
+              "y"
+            ],
+            "equal_bits": true
+          },
+          {
+            "group": "observations/000009",
+            "arrays": [
+              "aoi_mask",
+              "quality_landsat_tm_etm_cloud_clear",
+              "spatial_ref",
+              "time",
+              "valid",
+              "values",
+              "x",
+              "y"
+            ],
+            "equal_bits": true
+          }
+        ],
+        "scope": "same approved source windows and groups; discovery excluded from both; independent rasterio/GDAL reader and Zarr-Python writer"
+      }
+    },
+    {
+      "case": "le07",
+      "product": "landsat-etm-c2-l2-sr",
+      "receipt": "landsat-le07-validation.json",
+      "binary": {
+        "path": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/wave2/tile-ripper-native",
+        "sha256": "922b991e76df77eeb8ed9e4d1710acb461a49760146e7695b64361e1cfd835c0"
+      },
+      "native_process": {
+        "code": 0,
+        "wall_seconds": 0.4292794170032721,
+        "cpu_seconds": 0.546963,
+        "peak_rss_bytes": 74792960
+      },
+      "native_phases": {
+        "source_reads": [],
+        "scheduler": {
+          "workers": 2,
+          "per_host": 4,
+          "buffer_bytes": 33509738,
+          "reserved_bytes_peak": 1287301,
+          "reader_state_reserved_bytes": 0,
+          "prepared_native_metadata_bytes": 206561,
+          "authenticated_transport_reserved_bytes": 0,
+          "prepared_v3_metadata_index_bytes": 0,
+          "active_workers_peak": 2,
+          "completed_tasks": 10,
+          "admitted_jobs": 10,
+          "cog_reader_scope": "selection",
+          "seconds": 0.071522125,
+          "order": "plan",
+          "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+          "prepared_hdf5_bytes": 0,
+          "native_buffers": [
+            {
+              "asset_id": "p000_SR_B1",
+              "transport_encoded_capacity_peak_bytes": 64710,
+              "adapter_delivery_capacity_peak_bytes": 56625,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_SR_B3",
+              "transport_encoded_capacity_peak_bytes": 67663,
+              "adapter_delivery_capacity_peak_bytes": 56625,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_SR_B5",
+              "transport_encoded_capacity_peak_bytes": 69648,
+              "adapter_delivery_capacity_peak_bytes": 56625,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_QA_PIXEL",
+              "transport_encoded_capacity_peak_bytes": 2153,
+              "adapter_delivery_capacity_peak_bytes": 56625,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_SR_CLOUD_QA",
+              "transport_encoded_capacity_peak_bytes": 6866,
+              "adapter_delivery_capacity_peak_bytes": 37750,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_SR_B2",
+              "transport_encoded_capacity_peak_bytes": 64237,
+              "adapter_delivery_capacity_peak_bytes": 56625,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_SR_B4",
+              "transport_encoded_capacity_peak_bytes": 73644,
+              "adapter_delivery_capacity_peak_bytes": 56625,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_SR_B7",
+              "transport_encoded_capacity_peak_bytes": 61187,
+              "adapter_delivery_capacity_peak_bytes": 56625,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_QA_RADSAT",
+              "transport_encoded_capacity_peak_bytes": 265,
+              "adapter_delivery_capacity_peak_bytes": 56625,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_SR_ATMOS_OPACITY",
+              "transport_encoded_capacity_peak_bytes": 8077,
+              "adapter_delivery_capacity_peak_bytes": 56625,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            }
+          ],
+          "native_metadata": {
+            "retained_sources": 10,
+            "retained_bytes": 206561,
+            "physical_metadata_sources": 10,
+            "physical_metadata_bytes": 1761,
+            "cap_bytes": 8388608,
+            "skipped_sources": 0,
+            "scope": "this Prepared only; immutable version-bound parser pages; never a data cache",
+            "authenticated_sources": 0,
+            "authenticated_transport": {}
+          },
+          "native_strategies": [
+            {
+              "asset_id": "p000_SR_B1",
+              "task_reserved_bytes": 533434,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_SR_B2",
+              "task_reserved_bytes": 532961,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_SR_B3",
+              "task_reserved_bytes": 536387,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_SR_B4",
+              "task_reserved_bytes": 542368,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_SR_B5",
+              "task_reserved_bytes": 538372,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_SR_B7",
+              "task_reserved_bytes": 529911,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_QA_PIXEL",
+              "task_reserved_bytes": 470877,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_QA_RADSAT",
+              "task_reserved_bytes": 468989,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_SR_CLOUD_QA",
+              "task_reserved_bytes": 306768,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_SR_ATMOS_OPACITY",
+              "task_reserved_bytes": 476801,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            }
+          ]
+        },
+        "transport": {},
+        "decoded_source_chunks": 0,
+        "filled_source_chunks": 0,
+        "first_output_seconds": 0.159347292,
+        "assembly_seconds": 0.0,
+        "source_retrieval_seconds": 0.01457175,
+        "allocation_seconds": null,
+        "copying_seconds": null,
+        "output_setup_seconds": 0.130971209,
+        "output_finalize_seconds": 0.003739791,
+        "output_io": {
+          "reads": 0,
+          "writes": 244,
+          "bytes_read": 0,
+          "bytes_written": 1945207,
+          "buffered_bytes_peak": 736125,
+          "storage_read_seconds": 0.0,
+          "storage_write_seconds": 0.028512415000000003,
+          "encode_seconds": 0.001470368000000003,
+          "allocation_seconds": 0.0,
+          "copying_seconds": 0.0
+        },
+        "native_materialized_bytes": null,
+        "source_data_requests": 20,
+        "source_data_bytes": 787221,
+        "chunks": 10,
+        "decoded_bytes": 358625,
+        "non_nodata_pixels": 143040,
+        "planning_seconds": 0.08542575,
+        "source_open_seconds": 0.07042899899999999,
+        "read_decode_seconds": 0.053981287999999995,
+        "sink_seconds": 0.021261333000000004,
+        "masking_seconds": 0.0036089169999999997,
+        "remote_requests": null,
+        "remote_bytes": null
+      },
+      "source_work": {
+        "selected_native_bytes": 358625,
+        "unique_source_blocks": 20,
+        "planned_block_visits": 20,
+        "planned_repeated_block_visits": 0,
+        "source_block_decoded_bytes": 2490368,
+        "decoded_block_to_selected_byte_ratio": 6.944211920529801,
+        "unique_selected_tile_encoded_bytes": 787221,
+        "http_body_bytes": 992021,
+        "http_unique_range_bytes": 992021,
+        "http_duplicate_range_bytes": 0,
+        "http_repeated_identical_ranges": 0,
+        "scope": "blocks from physical plan; HTTP range union includes metadata and data; freezing-page overhead is separate"
+      },
+      "wire": {
+        "head": 50,
+        "get": 70,
+        "range_get": 70,
+        "body_bytes": 992021,
+        "conditional": 90,
+        "errors": 0,
+        "head_active": 0,
+        "head_peak": 2
+      },
+      "output_objects": 243,
+      "output_bytes": 3518329,
+      "reference": {
+        "process": {
+          "code": 0,
+          "wall_seconds": 0.6854787920019589,
+          "cpu_seconds": 0.6510549999999999,
+          "peak_rss_bytes": 145932288
+        },
+        "metrics": {
+          "status": "complete",
+          "format": "zarr_v2",
+          "output": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/wave2/landsat/le07.zarr.rasterio-reference",
+          "observations": 10,
+          "samples": 188750,
+          "source_read_calls": 10,
+          "source_reads": 10,
+          "source_decoded_bytes": 358625,
+          "source_identity_heads": 20,
+          "http_gets": 40,
+          "http_heads": 10,
+          "http_range_response_bytes": 1605632,
+          "http_range_responses": 40,
+          "output_objects": 243,
+          "output_bytes": 963963,
+          "setup_seconds": 0.011433167004724964,
+          "write_seconds": 0.15869462500268128,
+          "finalize_seconds": 0.010688333000871353,
+          "wall_seconds": 0.20420212499448098,
+          "manifest": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/wave2/landsat/le07.zarr.rasterio-reference/manifest.json"
+        },
+        "wire": {
+          "head": 30,
+          "get": 40,
+          "range_get": 40,
+          "body_bytes": 1605632,
+          "conditional": 70,
+          "errors": 0,
+          "head_active": 0,
+          "head_peak": 1
+        },
+        "compared": [
+          {
+            "group": "observations/000000",
+            "arrays": [
+              "aoi_mask",
+              "quality_landsat_tm_etm_pixel_clear",
+              "spatial_ref",
+              "time",
+              "valid",
+              "values",
+              "x",
+              "y"
+            ],
+            "equal_bits": true
+          },
+          {
+            "group": "observations/000001",
+            "arrays": [
+              "aoi_mask",
+              "quality_landsat_etm_radiometrically_unsaturated",
+              "spatial_ref",
+              "time",
+              "valid",
+              "values",
+              "x",
+              "y"
+            ],
+            "equal_bits": true
+          },
+          {
+            "group": "observations/000002",
+            "arrays": [
+              "aoi_mask",
+              "spatial_ref",
+              "time",
+              "valid",
+              "values",
+              "x",
+              "y"
+            ],
+            "equal_bits": true
+          },
+          {
+            "group": "observations/000003",
+            "arrays": [
+              "aoi_mask",
+              "spatial_ref",
+              "time",
+              "valid",
+              "values",
+              "x",
+              "y"
+            ],
+            "equal_bits": true
+          },
+          {
+            "group": "observations/000004",
+            "arrays": [
+              "aoi_mask",
+              "spatial_ref",
+              "time",
+              "valid",
+              "values",
+              "x",
+              "y"
+            ],
+            "equal_bits": true
+          },
+          {
+            "group": "observations/000005",
+            "arrays": [
+              "aoi_mask",
+              "spatial_ref",
+              "time",
+              "valid",
+              "values",
+              "x",
+              "y"
+            ],
+            "equal_bits": true
+          },
+          {
+            "group": "observations/000006",
+            "arrays": [
+              "aoi_mask",
+              "spatial_ref",
+              "time",
+              "valid",
+              "values",
+              "x",
+              "y"
+            ],
+            "equal_bits": true
+          },
+          {
+            "group": "observations/000007",
+            "arrays": [
+              "aoi_mask",
+              "spatial_ref",
+              "time",
+              "valid",
+              "values",
+              "x",
+              "y"
+            ],
+            "equal_bits": true
+          },
+          {
+            "group": "observations/000008",
+            "arrays": [
+              "aoi_mask",
+              "spatial_ref",
+              "time",
+              "valid",
+              "values",
+              "x",
+              "y"
+            ],
+            "equal_bits": true
+          },
+          {
+            "group": "observations/000009",
+            "arrays": [
+              "aoi_mask",
+              "quality_landsat_tm_etm_cloud_clear",
+              "spatial_ref",
+              "time",
+              "valid",
+              "values",
+              "x",
+              "y"
+            ],
+            "equal_bits": true
+          }
+        ],
+        "scope": "same approved source windows and groups; discovery excluded from both; independent rasterio/GDAL reader and Zarr-Python writer"
+      }
+    },
+    {
+      "case": "dswx-s1",
+      "product": "opera-dswx-s1",
+      "receipt": "dswx-s1-frozen-validation.json",
+      "binary_sha256": "922b991e76df77eeb8ed9e4d1710acb461a49760146e7695b64361e1cfd835c0",
+      "native_process": {
+        "code": 0,
+        "wall_seconds": 0.35261083400109783,
+        "cpu_seconds": 0.432949,
+        "peak_rss_bytes": 42795008
+      },
+      "native_phases": {
+        "source_reads": [],
+        "scheduler": {
+          "workers": 2,
+          "per_host": 4,
+          "buffer_bytes": 33472229,
+          "reserved_bytes_peak": 2646639,
+          "reader_state_reserved_bytes": 0,
+          "prepared_native_metadata_bytes": 79759,
+          "authenticated_transport_reserved_bytes": 0,
+          "prepared_v3_metadata_index_bytes": 0,
+          "active_workers_peak": 2,
+          "completed_tasks": 100,
+          "admitted_jobs": 4,
+          "cog_reader_scope": "selection",
+          "seconds": 0.108173959,
+          "order": "plan",
+          "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+          "prepared_hdf5_bytes": 0,
+          "native_buffers": [
+            {
+              "asset_id": "p000_BWTR",
+              "transport_encoded_capacity_peak_bytes": 3613,
+              "adapter_delivery_capacity_peak_bytes": 8192,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_DIAG",
+              "transport_encoded_capacity_peak_bytes": 155893,
+              "adapter_delivery_capacity_peak_bytes": 8192,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_WTR",
+              "transport_encoded_capacity_peak_bytes": 3611,
+              "adapter_delivery_capacity_peak_bytes": 8192,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_CONF",
+              "transport_encoded_capacity_peak_bytes": 35307,
+              "adapter_delivery_capacity_peak_bytes": 8192,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            }
+          ],
+          "native_metadata": {
+            "retained_sources": 4,
+            "retained_bytes": 79759,
+            "physical_metadata_sources": 4,
+            "physical_metadata_bytes": 22415,
+            "cap_bytes": 8388608,
+            "skipped_sources": 0,
+            "scope": "this Prepared only; immutable version-bound parser pages; never a data cache",
+            "authenticated_sources": 0,
+            "authenticated_transport": {}
+          },
+          "native_strategies": [
+            {
+              "asset_id": "p000_WTR",
+              "task_reserved_bytes": 1191451,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 524288,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_BWTR",
+              "task_reserved_bytes": 1191453,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 524288,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_CONF",
+              "task_reserved_bytes": 1223147,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 524288,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_DIAG",
+              "task_reserved_bytes": 1343733,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 524288,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            }
+          ]
+        },
+        "transport": {},
+        "decoded_source_chunks": 0,
+        "filled_source_chunks": 0,
+        "first_output_seconds": 0.0806645,
+        "assembly_seconds": 0.0,
+        "source_retrieval_seconds": 0.006650625,
+        "allocation_seconds": null,
+        "copying_seconds": null,
+        "output_setup_seconds": 0.061778292,
+        "output_finalize_seconds": 0.003078375,
+        "output_io": {
+          "reads": 134,
+          "writes": 451,
+          "bytes_read": 0,
+          "bytes_written": 1717039,
+          "buffered_bytes_peak": 155648,
+          "storage_read_seconds": 0.001083839,
+          "storage_write_seconds": 0.045289045,
+          "encode_seconds": 0.005757030999999991,
+          "allocation_seconds": 0.0,
+          "copying_seconds": 0.0
+        },
+        "native_materialized_bytes": null,
+        "source_data_requests": 8,
+        "source_data_bytes": 289341,
+        "chunks": 100,
+        "decoded_bytes": 295936,
+        "non_nodata_pixels": 230292,
+        "planning_seconds": 0.112761,
+        "source_open_seconds": 0.039093749,
+        "read_decode_seconds": 0.03774049799999999,
+        "sink_seconds": 0.07746525399999998,
+        "masking_seconds": 0.022285464999999997,
+        "remote_requests": null,
+        "remote_bytes": null
+      },
+      "source_work": {
+        "selected_native_bytes": 295936,
+        "unique_source_blocks": 8,
+        "planned_block_visits": 120,
+        "planned_repeated_block_visits": 112,
+        "source_block_decoded_bytes": 2097152,
+        "decoded_block_to_selected_byte_ratio": 7.086505190311419,
+        "unique_selected_tile_encoded_bytes": 289277,
+        "http_body_bytes": 346685,
+        "http_unique_range_bytes": 346685,
+        "http_duplicate_range_bytes": 0,
+        "http_repeated_identical_ranges": 0,
+        "scope": "blocks from physical plan; HTTP range union includes metadata and data; freezing-page overhead is separate"
+      },
+      "wire": {
+        "head": 20,
+        "get": 22,
+        "range_get": 22,
+        "body_bytes": 346685,
+        "conditional": 30,
+        "errors": 0,
+        "head_active": 0,
+        "head_peak": 2
+      },
+      "output_objects": 450,
+      "output_bytes": 2123322,
+      "reference_process": {
+        "code": 0,
+        "wall_seconds": 0.6650071250041947,
+        "cpu_seconds": 0.645249,
+        "peak_rss_bytes": 135921664
+      },
+      "reference_wire": {
+        "head": 4,
+        "get": 8,
+        "range_get": 8,
+        "body_bytes": 409600,
+        "conditional": 12,
+        "errors": 0,
+        "head_active": 0,
+        "head_peak": 1
+      },
+      "reference_metrics": {
+        "status": "complete",
+        "source_read_calls": 4,
+        "output_objects": 470,
+        "output_bytes": 2238709
+      }
+    },
+    {
+      "case": "dist-alert",
+      "product": "opera-dist-alert",
+      "receipt": "dist-alert-validation.json",
+      "binary_sha256": "922b991e76df77eeb8ed9e4d1710acb461a49760146e7695b64361e1cfd835c0",
+      "native_process": {
+        "returncode": 0,
+        "stderr": "",
+        "wall_seconds": 0.17420508300710935,
+        "first_chunk_seconds": null,
+        "cpu_seconds": 0.156321,
+        "peak_rss_bytes": 41271296
+      },
+      "native_phases": {
+        "source_reads": [],
+        "scheduler": {
+          "workers": 2,
+          "per_host": 4,
+          "buffer_bytes": 33518408,
+          "reserved_bytes_peak": 2496794,
+          "reader_state_reserved_bytes": 0,
+          "prepared_native_metadata_bytes": 59498,
+          "authenticated_transport_reserved_bytes": 0,
+          "prepared_v3_metadata_index_bytes": 0,
+          "active_workers_peak": 2,
+          "completed_tasks": 9,
+          "admitted_jobs": 9,
+          "cog_reader_scope": "selection",
+          "seconds": 0.025715708,
+          "order": "plan",
+          "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+          "prepared_hdf5_bytes": 0,
+          "native_buffers": [
+            {
+              "asset_id": "p000_VEG-DIST-STATUS",
+              "transport_encoded_capacity_peak_bytes": 18310,
+              "adapter_delivery_capacity_peak_bytes": 2312,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_VEG-DIST-CONF",
+              "transport_encoded_capacity_peak_bytes": 51972,
+              "adapter_delivery_capacity_peak_bytes": 3468,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_VEG-DIST-DATE",
+              "transport_encoded_capacity_peak_bytes": 26952,
+              "adapter_delivery_capacity_peak_bytes": 3468,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_VEG-LAST-DATE",
+              "transport_encoded_capacity_peak_bytes": 874,
+              "adapter_delivery_capacity_peak_bytes": 3468,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_DATA-MASK",
+              "transport_encoded_capacity_peak_bytes": 437,
+              "adapter_delivery_capacity_peak_bytes": 2312,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_GEN-DIST-STATUS",
+              "transport_encoded_capacity_peak_bytes": 7360,
+              "adapter_delivery_capacity_peak_bytes": 2312,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_GEN-DIST-CONF",
+              "transport_encoded_capacity_peak_bytes": 16780,
+              "adapter_delivery_capacity_peak_bytes": 3468,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_GEN-DIST-DATE",
+              "transport_encoded_capacity_peak_bytes": 10202,
+              "adapter_delivery_capacity_peak_bytes": 3468,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_GEN-LAST-DATE",
+              "transport_encoded_capacity_peak_bytes": 893,
+              "adapter_delivery_capacity_peak_bytes": 3468,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            }
+          ],
+          "native_metadata": {
+            "retained_sources": 9,
+            "retained_bytes": 59498,
+            "physical_metadata_sources": 9,
+            "physical_metadata_bytes": 6250,
+            "cap_bytes": 8388608,
+            "skipped_sources": 0,
+            "scope": "this Prepared only; immutable version-bound parser pages; never a data cache",
+            "authenticated_sources": 0,
+            "authenticated_transport": {}
+          },
+          "native_strategies": [
+            {
+              "asset_id": "p000_VEG-DIST-STATUS",
+              "task_reserved_bytes": 675982,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_GEN-DIST-STATUS",
+              "task_reserved_bytes": 665032,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_VEG-DIST-CONF",
+              "task_reserved_bytes": 1236244,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_GEN-DIST-CONF",
+              "task_reserved_bytes": 1201052,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_VEG-DIST-DATE",
+              "task_reserved_bytes": 1211224,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_GEN-DIST-DATE",
+              "task_reserved_bytes": 1194474,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_VEG-LAST-DATE",
+              "task_reserved_bytes": 1185146,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_GEN-LAST-DATE",
+              "task_reserved_bytes": 1185165,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_DATA-MASK",
+              "task_reserved_bytes": 264893,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            }
+          ]
+        },
+        "transport": {},
+        "decoded_source_chunks": 0,
+        "filled_source_chunks": 0,
+        "first_output_seconds": 0.060580833,
+        "assembly_seconds": 0.0,
+        "source_retrieval_seconds": 0.00767146,
+        "allocation_seconds": null,
+        "copying_seconds": null,
+        "output_setup_seconds": 0.047782375,
+        "output_finalize_seconds": 0.003105375,
+        "output_io": {
+          "reads": 0,
+          "writes": 228,
+          "bytes_read": 0,
+          "bytes_written": 392115,
+          "buffered_bytes_peak": 45084,
+          "storage_read_seconds": 0.0,
+          "storage_write_seconds": 0.026872131,
+          "encode_seconds": 0.0010152869999999902,
+          "allocation_seconds": 0.0,
+          "copying_seconds": 0.0
+        },
+        "native_materialized_bytes": null,
+        "source_data_requests": 9,
+        "source_data_bytes": 133780,
+        "chunks": 9,
+        "decoded_bytes": 17340,
+        "non_nodata_pixels": 9412,
+        "planning_seconds": 0.029268875,
+        "source_open_seconds": 0.014384627,
+        "read_decode_seconds": 0.028855169,
+        "sink_seconds": 0.005368876,
+        "masking_seconds": 0.000357917,
+        "remote_requests": null,
+        "remote_bytes": null
+      },
+      "source_work": {
+        "selected_native_bytes": 17340,
+        "unique_source_blocks": 9,
+        "planned_block_visits": 9,
+        "planned_repeated_block_visits": 0,
+        "source_block_decoded_bytes": 3735552,
+        "decoded_block_to_selected_byte_ratio": 215.42975778546713,
+        "unique_selected_tile_encoded_bytes": 133708,
+        "http_body_bytes": 187028,
+        "http_unique_range_bytes": 187028,
+        "http_duplicate_range_bytes": 0,
+        "http_repeated_identical_ranges": 0,
+        "scope": "blocks from physical plan; HTTP range union includes metadata and data; freezing-page overhead is separate"
+      },
+      "wire": [
+        {
+          "method": "HEAD",
+          "source": "VEG-DIST-STATUS",
+          "start": 0,
+          "end": 1030589
+        },
+        {
+          "method": "HEAD",
+          "source": "GEN-DIST-STATUS",
+          "start": 0,
+          "end": 561769
+        },
+        {
+          "method": "HEAD",
+          "source": "VEG-DIST-CONF",
+          "start": 0,
+          "end": 2690955
+        },
+        {
+          "method": "HEAD",
+          "source": "GEN-DIST-CONF",
+          "start": 0,
+          "end": 1328312
+        },
+        {
+          "method": "HEAD",
+          "source": "GEN-DIST-DATE",
+          "start": 0,
+          "end": 862752
+        },
+        {
+          "method": "HEAD",
+          "source": "VEG-DIST-DATE",
+          "start": 0,
+          "end": 1616241
+        },
+        {
+          "method": "HEAD",
+          "source": "VEG-LAST-DATE",
+          "start": 0,
+          "end": 110070
+        },
+        {
+          "method": "HEAD",
+          "source": "GEN-LAST-DATE",
+          "start": 0,
+          "end": 111826
+        },
+        {
+          "method": "HEAD",
+          "source": "DATA-MASK",
+          "start": 0,
+          "end": 154550
+        },
+        {
+          "method": "HEAD",
+          "source": "GEN-DIST-STATUS",
+          "start": 0,
+          "end": 561769
+        },
+        {
+          "method": "HEAD",
+          "source": "VEG-DIST-STATUS",
+          "start": 0,
+          "end": 1030589
+        },
+        {
+          "method": "GET",
+          "source": "GEN-DIST-STATUS",
+          "start": 0,
+          "end": 4095
+        },
+        {
+          "method": "GET",
+          "source": "VEG-DIST-STATUS",
+          "start": 0,
+          "end": 4095
+        },
+        {
+          "method": "GET",
+          "source": "GEN-DIST-STATUS",
+          "start": 4096,
+          "end": 8191
+        },
+        {
+          "method": "GET",
+          "source": "VEG-DIST-STATUS",
+          "start": 4096,
+          "end": 8191
+        },
+        {
+          "method": "GET",
+          "source": "GEN-DIST-STATUS",
+          "start": 8192,
+          "end": 12287
+        },
+        {
+          "method": "GET",
+          "source": "VEG-DIST-STATUS",
+          "start": 8192,
+          "end": 12287
+        },
+        {
+          "method": "HEAD",
+          "source": "VEG-DIST-CONF",
+          "start": 0,
+          "end": 2690955
+        },
+        {
+          "method": "HEAD",
+          "source": "GEN-DIST-CONF",
+          "start": 0,
+          "end": 1328312
+        },
+        {
+          "method": "GET",
+          "source": "VEG-DIST-CONF",
+          "start": 0,
+          "end": 4095
+        },
+        {
+          "method": "GET",
+          "source": "GEN-DIST-CONF",
+          "start": 0,
+          "end": 4095
+        },
+        {
+          "method": "HEAD",
+          "source": "VEG-DIST-DATE",
+          "start": 0,
+          "end": 1616241
+        },
+        {
+          "method": "HEAD",
+          "source": "GEN-DIST-DATE",
+          "start": 0,
+          "end": 862752
+        },
+        {
+          "method": "GET",
+          "source": "VEG-DIST-DATE",
+          "start": 0,
+          "end": 4095
+        },
+        {
+          "method": "GET",
+          "source": "GEN-DIST-DATE",
+          "start": 0,
+          "end": 4095
+        },
+        {
+          "method": "HEAD",
+          "source": "GEN-LAST-DATE",
+          "start": 0,
+          "end": 111826
+        },
+        {
+          "method": "HEAD",
+          "source": "VEG-LAST-DATE",
+          "start": 0,
+          "end": 110070
+        },
+        {
+          "method": "GET",
+          "source": "GEN-LAST-DATE",
+          "start": 0,
+          "end": 4095
+        },
+        {
+          "method": "GET",
+          "source": "VEG-LAST-DATE",
+          "start": 0,
+          "end": 4095
+        },
+        {
+          "method": "HEAD",
+          "source": "DATA-MASK",
+          "start": 0,
+          "end": 154550
+        },
+        {
+          "method": "GET",
+          "source": "DATA-MASK",
+          "start": 0,
+          "end": 4095
+        },
+        {
+          "method": "HEAD",
+          "source": "VEG-DIST-STATUS",
+          "start": 0,
+          "end": 1030589
+        },
+        {
+          "method": "HEAD",
+          "source": "GEN-DIST-STATUS",
+          "start": 0,
+          "end": 561769
+        },
+        {
+          "method": "HEAD",
+          "source": "VEG-DIST-CONF",
+          "start": 0,
+          "end": 2690955
+        },
+        {
+          "method": "HEAD",
+          "source": "GEN-DIST-CONF",
+          "start": 0,
+          "end": 1328312
+        },
+        {
+          "method": "HEAD",
+          "source": "VEG-DIST-DATE",
+          "start": 0,
+          "end": 1616241
+        },
+        {
+          "method": "HEAD",
+          "source": "GEN-DIST-DATE",
+          "start": 0,
+          "end": 862752
+        },
+        {
+          "method": "HEAD",
+          "source": "VEG-LAST-DATE",
+          "start": 0,
+          "end": 110070
+        },
+        {
+          "method": "HEAD",
+          "source": "GEN-LAST-DATE",
+          "start": 0,
+          "end": 111826
+        },
+        {
+          "method": "HEAD",
+          "source": "DATA-MASK",
+          "start": 0,
+          "end": 154550
+        },
+        {
+          "method": "HEAD",
+          "source": "VEG-DIST-STATUS",
+          "start": 0,
+          "end": 1030589
+        },
+        {
+          "method": "HEAD",
+          "source": "GEN-DIST-STATUS",
+          "start": 0,
+          "end": 561769
+        },
+        {
+          "method": "GET",
+          "source": "VEG-DIST-STATUS",
+          "start": 604285,
+          "end": 622594
+        },
+        {
+          "method": "GET",
+          "source": "GEN-DIST-STATUS",
+          "start": 342332,
+          "end": 349691
+        },
+        {
+          "method": "HEAD",
+          "source": "VEG-DIST-CONF",
+          "start": 0,
+          "end": 2690955
+        },
+        {
+          "method": "HEAD",
+          "source": "GEN-DIST-CONF",
+          "start": 0,
+          "end": 1328312
+        },
+        {
+          "method": "GET",
+          "source": "VEG-DIST-CONF",
+          "start": 1510960,
+          "end": 1562931
+        },
+        {
+          "method": "GET",
+          "source": "GEN-DIST-CONF",
+          "start": 768301,
+          "end": 785080
+        },
+        {
+          "method": "HEAD",
+          "source": "VEG-DIST-DATE",
+          "start": 0,
+          "end": 1616241
+        },
+        {
+          "method": "HEAD",
+          "source": "GEN-DIST-DATE",
+          "start": 0,
+          "end": 862752
+        },
+        {
+          "method": "GET",
+          "source": "VEG-DIST-DATE",
+          "start": 947794,
+          "end": 974745
+        },
+        {
+          "method": "GET",
+          "source": "GEN-DIST-DATE",
+          "start": 522323,
+          "end": 532524
+        },
+        {
+          "method": "HEAD",
+          "source": "VEG-LAST-DATE",
+          "start": 0,
+          "end": 110070
+        },
+        {
+          "method": "HEAD",
+          "source": "GEN-LAST-DATE",
+          "start": 0,
+          "end": 111826
+        },
+        {
+          "method": "GET",
+          "source": "VEG-LAST-DATE",
+          "start": 75523,
+          "end": 76396
+        },
+        {
+          "method": "GET",
+          "source": "GEN-LAST-DATE",
+          "start": 76788,
+          "end": 77680
+        },
+        {
+          "method": "HEAD",
+          "source": "DATA-MASK",
+          "start": 0,
+          "end": 154550
+        },
+        {
+          "method": "GET",
+          "source": "DATA-MASK",
+          "start": 115327,
+          "end": 115763
+        },
+        {
+          "method": "HEAD",
+          "source": "VEG-DIST-STATUS",
+          "start": 0,
+          "end": 1030589
+        },
+        {
+          "method": "HEAD",
+          "source": "GEN-DIST-STATUS",
+          "start": 0,
+          "end": 561769
+        },
+        {
+          "method": "HEAD",
+          "source": "VEG-DIST-CONF",
+          "start": 0,
+          "end": 2690955
+        },
+        {
+          "method": "HEAD",
+          "source": "GEN-DIST-CONF",
+          "start": 0,
+          "end": 1328312
+        },
+        {
+          "method": "HEAD",
+          "source": "VEG-DIST-DATE",
+          "start": 0,
+          "end": 1616241
+        },
+        {
+          "method": "HEAD",
+          "source": "GEN-DIST-DATE",
+          "start": 0,
+          "end": 862752
+        },
+        {
+          "method": "HEAD",
+          "source": "GEN-LAST-DATE",
+          "start": 0,
+          "end": 111826
+        },
+        {
+          "method": "HEAD",
+          "source": "VEG-LAST-DATE",
+          "start": 0,
+          "end": 110070
+        },
+        {
+          "method": "HEAD",
+          "source": "DATA-MASK",
+          "start": 0,
+          "end": 154550
+        }
+      ],
+      "output_objects": 227,
+      "output_bytes": 665729,
+      "reference_process": {
+        "returncode": 0,
+        "stderr": "",
+        "wall_seconds": 0.2902692920033587,
+        "first_chunk_seconds": null,
+        "cpu_seconds": 0.280784,
+        "peak_rss_bytes": 83034112
+      },
+      "reference_output": {
+        "writer": "independent rasterio/NumPy/Zarr-Python",
+        "output_objects": 227,
+        "output_bytes": 71584,
+        "arrays": "values,aoi_mask,valid,x,y,time,spatial_ref and each requested relevant policy"
+      }
+    }
+  ]
+}

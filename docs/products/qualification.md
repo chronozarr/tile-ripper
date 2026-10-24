@@ -1,3 +1,7 @@
+# Product qualification milestones
+
+[Wave 2 qualification](wave2/qualification.md) adds separate historical Landsat TM/ETM+ profiles, current OPERA DSWx-S1, and a bounded DIST-ALERT profile. The Wave 1 evidence below remains scoped to its original source specimens and routes. Provider routing and the AlphaEarth prototype retain their separate qualification documents.
+
 # Wave 1 qualification and decision gate
 
 Scope: local `codex/acquisition-planner`, starting at `629538c`, executed on 2026-10-23. No global Cargo default change, push, merge, tag, release, deployment, requester-pays request, or ChronoZarr change is part of this work.

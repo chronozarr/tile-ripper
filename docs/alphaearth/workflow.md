@@ -139,3 +139,15 @@ prototype-output/alphaearth-env/bin/python bench/alphaearth_probe.py --binary ta
 
 Python dependencies are reference tooling only. The native prototype adds no
 Cargo dependency and does not require GDAL or Python at acquisition time.
+
+## Wave 2 follow-up assessment
+
+The prototype remains unchanged. A normal named-product experience needs a dedicated request/CLI adapter that exposes annual observation selection, geographic AOI and positional `band` selection while keeping the actual `(time, band, y, x)` rank-four source. Reusing the rank-three raster profile would lose the 64-channel axis and is not admitted.
+
+Geographic AOI-to-index work must invert the inspected EPSG:4326 affine, define center inclusion and edge ownership, clip against the real latitude extent, handle or explicitly reject antimeridian wrapping, and verify the selected stored x/y samples. It should reuse bounded coordinate probes, rather than materialize the 32 MB x axis or 15 MB y axis.
+
+Durable output needs a rank-four scientific writer preserving annual time coordinates, original name `band`, positional channel identities/order, native Int8 values, fill −128, separate AOI/source-validity masks, CRS/affine and exact source-object versions. The source supplies no A00–A63 labels; none should be invented. Any xarray/Zarr roundtrip must independently verify the channel axis and signed bytes. No model inversion or similarity database is required.
+
+Additional years (actual stored 2017–2025), larger windows and crossings need held-out time/axis/shard tests, memory admission and an explicit expanded selection limit. Current proof covers the recorded bounded windows and channel order only. Archive-wide missingness or snapshot consistency is not inferred from those samples.
+
+Strict physical transfer accounting needs separate per-object metadata, coordinate probes, shard-index ranges, logical compressed payload ranges, retry/duplicate bytes and final validation traffic, plus selected logical values versus decoded logical chunks versus physical shard sizes. The 64×256×256 logical chunk remains indivisible even for one channel/pixel. Reconcile native counters with transport receipts before advertising a total-wire-byte metric; no whole-shard transfer or generic rank-three conversion is justified by this assessment.

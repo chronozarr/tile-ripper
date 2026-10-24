@@ -1,6 +1,6 @@
 # Tile-Ripper
 
-Named native product workflows now cover Landsat 8/9 Collection 2 surface reflectance, HLS L30/S30 v2, OPERA DSWx-HLS v1, and the qualified OPERA RTC-S1 Float32 profile. Use `tile-ripper products` and the existing `plan` / `fetch` / `stream` commands with a product request. See [runnable examples and installation](docs/products/workflow.md), [exact real-source qualification and access limits](docs/products/qualification.md), [scientific band/quality definitions](docs/products/specifications.md), and the [25-row coverage roadmap](docs/products/roadmap.md). Stored values, native grids, calibration, classification labels, and independent quality masks are preserved.
+Named native product workflows now cover sensor-specific Landsat 4/5 TM, Landsat 7 ETM+ and Landsat 8/9 Collection 2 surface reflectance, HLS L30/S30 v2, OPERA DSWx-HLS, current DSWx-S1, DIST-ALERT, and the qualified OPERA RTC-S1 Float32 profile. Use `tile-ripper products` and the existing `plan` / `fetch` / `stream` commands with a product request. See [runnable examples and installation](docs/products/workflow.md), [exact real-source qualification and access limits](docs/products/qualification.md), [scientific band/quality definitions](docs/products/specifications.md), and the [25-row coverage roadmap](docs/products/roadmap.md). Stored values, native grids, calibration, classification labels, and independent quality masks are preserved.
 
 Named products accept `--provider auto|planetary_computer|earthdata|pinned`
 (or `"provider"` in product JSON). For example:
@@ -167,6 +167,9 @@ version-pinned native acquisitions with a tuned GDAL reader.
 | Source | Supported selection and output |
 | --- | --- |
 | Landsat 8/9 C2 Level-2 SR | Native UInt16 SR, UInt16 pixel/saturation QA and UInt8 aerosol QA; bounded Planetary Computer discovery/runtime signing; [product workflow](docs/products/workflow.md) |
+| Landsat 4/5 TM and Landsat 7 ETM+ C2 SR | Separate sensor profiles; six SR bands, pixel/saturation/LEDAPS QA and opacity; raw SLC-off gaps retained; [Wave 2 evidence](docs/products/wave2/landsat.md) |
+| OPERA DSWx-S1 V1.0/SAS1.2 | Four UInt8 layers and separate radar water policies; exact current PO.DAAC route; [source and output evidence](docs/products/wave2/dswx-s1.md) |
+| OPERA DIST-ALERT-HLS V1 | Nine native status/confidence/onset/last-date/current-mask layers; separate accumulated detection and observation quality; [qualification](docs/products/wave2/dist-alert.md) |
 | HLS L30 and S30 v2 | Distinct Int16 reflectance and UInt8 Fmask profiles; public GSFC references and separately qualified explicit Earthdata COG access; 30 m UTM groups |
 | OPERA DSWx-HLS v1 | Exact UInt8 classified water and UInt16 diagnostics, separate named class masks; public reference and current PO.DAAC v1.1 authenticated access |
 | OPERA RTC-S1 v1 | Exact Float32 linear gamma0 VV/VH and UInt8 mask on public references and a current authenticated ASF Cumulus Sentinel-1C burst |
