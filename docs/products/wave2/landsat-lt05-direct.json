@@ -1,0 +1,2255 @@
+{
+  "passed": true,
+  "product": "landsat-tm-c2-l2-sr",
+  "scope": "normal native CLI discover plus five-band catalog discovery and original provider acquisition; every output array exactly matches independently validated replay",
+  "bands": [
+    "SR_B3",
+    "SR_B4",
+    "QA_PIXEL",
+    "QA_RADSAT",
+    "SR_CLOUD_QA"
+  ],
+  "discovery": {
+    "schema": "tile-ripper-products-v1",
+    "product": "landsat-tm-c2-l2-sr",
+    "provider": "planetary_computer",
+    "routing": {
+      "policy": "qualified-provider-v1",
+      "requested": "auto",
+      "selected": "planetary_computer",
+      "basis": "conservative_static_default",
+      "rationale": "Qualified credential-free discovery is preferred; no conclusive material authenticated-route advantage is established.",
+      "credentials_required": false,
+      "authorization_configured": false,
+      "observations_preserved": false,
+      "routes": [
+        {
+          "provider": "planetary_computer",
+          "catalog": "https://planetarycomputer.microsoft.com/api/stac/v1",
+          "product": "landsat-tm-c2-l2-sr",
+          "processing_version": "Collection 2",
+          "discovery": "bounded complete STAC search; hls2-l30/hls2-s30 only for HLS v2",
+          "access": "accountless memory-only SAS signing; observed container read/list grant; engine requests remain confined to the exact canonical object with conditional byte ranges",
+          "credential_requirement": "none",
+          "access_policy": "pc-exact-object-request-v1",
+          "capabilities": "native COG; physical metadata and ETag validation before/after acquisition",
+          "availability": "queried AOI/date only; catalog coverage is independent of Earthdata; no global coverage claim",
+          "limitations": "requires signing service; HLS cross-provider equivalence is specimen-scoped; no online speed probe or fallback"
+        }
+      ],
+      "observation_count": 1,
+      "eligibility": {
+        "mode": "explicit_or_pinned",
+        "queried_providers": [
+          "planetary_computer"
+        ],
+        "other_catalogs": "not queried; supplied sources and explicit overrides never trigger substitution"
+      },
+      "equivalence": {
+        "classification": "unknown_across_providers",
+        "group": null,
+        "scope": "Physical product identity is validated for every source. Matching product names or timestamps alone never establish cross-provider equivalence; no observation is replaced."
+      },
+      "pinning": "provider, unsigned canonical locator, product/granule/band, access-policy version and inspected object ETag/grid/dtype/metadata are bound to this prepared acquisition; see sources for exact identities",
+      "fallback": "disabled; signature renewal/provider change requires an explicit fresh plan; product checkpoints are unsupported"
+    },
+    "complete": true,
+    "observations": [
+      {
+        "id": "LT05_L2SP_016035_20100810_02_T1",
+        "datetime": "2010-08-10T15:43:46.119081Z",
+        "collection": "landsat-c2-l2",
+        "platform": "landsat-5",
+        "processing": "L2SP",
+        "assets": {
+          "QA_PIXEL": {
+            "href": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/tm/2010/016/035/LT05_L2SP_016035_20100810_20200823_02_T1/LT05_L2SP_016035_20100810_20200823_02_T1_QA_PIXEL.TIF",
+            "etag": null,
+            "metadata": {
+              "href": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/tm/2010/016/035/LT05_L2SP_016035_20100810_20200823_02_T1/LT05_L2SP_016035_20100810_20200823_02_T1_QA_PIXEL.TIF",
+              "classification:bitfields": [
+                {
+                  "name": "fill",
+                  "length": 1,
+                  "offset": 0,
+                  "classes": [
+                    {
+                      "name": "not_fill",
+                      "value": 0,
+                      "description": "Image data"
+                    },
+                    {
+                      "name": "fill",
+                      "value": 1,
+                      "description": "Fill data"
+                    }
+                  ],
+                  "description": "Image or fill data"
+                },
+                {
+                  "name": "dilated_cloud",
+                  "length": 1,
+                  "offset": 1,
+                  "classes": [
+                    {
+                      "name": "not_dilated",
+                      "value": 0,
+                      "description": "Cloud is not dilated or no cloud"
+                    },
+                    {
+                      "name": "dilated",
+                      "value": 1,
+                      "description": "Cloud dilation"
+                    }
+                  ],
+                  "description": "Dilated cloud"
+                },
+                {
+                  "name": "cloud",
+                  "length": 1,
+                  "offset": 3,
+                  "classes": [
+                    {
+                      "name": "not_cloud",
+                      "value": 0,
+                      "description": "Cloud confidence is not high"
+                    },
+                    {
+                      "name": "cloud",
+                      "value": 1,
+                      "description": "High confidence cloud"
+                    }
+                  ],
+                  "description": "Cloud mask"
+                },
+                {
+                  "name": "cloud_shadow",
+                  "length": 1,
+                  "offset": 4,
+                  "classes": [
+                    {
+                      "name": "not_shadow",
+                      "value": 0,
+                      "description": "Cloud shadow confidence is not high"
+                    },
+                    {
+                      "name": "shadow",
+                      "value": 1,
+                      "description": "High confidence cloud shadow"
+                    }
+                  ],
+                  "description": "Cloud shadow mask"
+                },
+                {
+                  "name": "snow",
+                  "length": 1,
+                  "offset": 5,
+                  "classes": [
+                    {
+                      "name": "not_snow",
+                      "value": 0,
+                      "description": "Snow/Ice confidence is not high"
+                    },
+                    {
+                      "name": "snow",
+                      "value": 1,
+                      "description": "High confidence snow cover"
+                    }
+                  ],
+                  "description": "Snow/Ice mask"
+                },
+                {
+                  "name": "clear",
+                  "length": 1,
+                  "offset": 6,
+                  "classes": [
+                    {
+                      "name": "not_clear",
+                      "value": 0,
+                      "description": "Cloud or dilated cloud bits are set"
+                    },
+                    {
+                      "name": "clear",
+                      "value": 1,
+                      "description": "Cloud and dilated cloud bits are not set"
+                    }
+                  ],
+                  "description": "Clear mask"
+                },
+                {
+                  "name": "water",
+                  "length": 1,
+                  "offset": 7,
+                  "classes": [
+                    {
+                      "name": "not_water",
+                      "value": 0,
+                      "description": "Land or cloud"
+                    },
+                    {
+                      "name": "water",
+                      "value": 1,
+                      "description": "Water"
+                    }
+                  ],
+                  "description": "Water mask"
+                },
+                {
+                  "name": "cloud_confidence",
+                  "length": 2,
+                  "offset": 8,
+                  "classes": [
+                    {
+                      "name": "not_set",
+                      "value": 0,
+                      "description": "No confidence level set"
+                    },
+                    {
+                      "name": "low",
+                      "value": 1,
+                      "description": "Low confidence cloud"
+                    },
+                    {
+                      "name": "medium",
+                      "value": 2,
+                      "description": "Medium confidence cloud"
+                    },
+                    {
+                      "name": "high",
+                      "value": 3,
+                      "description": "High confidence cloud"
+                    }
+                  ],
+                  "description": "Cloud confidence levels"
+                },
+                {
+                  "name": "cloud_shadow_confidence",
+                  "length": 2,
+                  "offset": 10,
+                  "classes": [
+                    {
+                      "name": "not_set",
+                      "value": 0,
+                      "description": "No confidence level set"
+                    },
+                    {
+                      "name": "low",
+                      "value": 1,
+                      "description": "Low confidence cloud shadow"
+                    },
+                    {
+                      "name": "reserved",
+                      "value": 2,
+                      "description": "Reserved - value not used"
+                    },
+                    {
+                      "name": "high",
+                      "value": 3,
+                      "description": "High confidence cloud shadow"
+                    }
+                  ],
+                  "description": "Cloud shadow confidence levels"
+                },
+                {
+                  "name": "snow_confidence",
+                  "length": 2,
+                  "offset": 12,
+                  "classes": [
+                    {
+                      "name": "not_set",
+                      "value": 0,
+                      "description": "No confidence level set"
+                    },
+                    {
+                      "name": "low",
+                      "value": 1,
+                      "description": "Low confidence snow/ice"
+                    },
+                    {
+                      "name": "reserved",
+                      "value": 2,
+                      "description": "Reserved - value not used"
+                    },
+                    {
+                      "name": "high",
+                      "value": 3,
+                      "description": "High confidence snow/ice"
+                    }
+                  ],
+                  "description": "Snow/Ice confidence levels"
+                }
+              ],
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "cloud",
+                "cloud-shadow",
+                "snow-ice",
+                "water-mask"
+              ],
+              "title": "Pixel Quality Assessment Band",
+              "description": "Collection 2 Level-1 Pixel Quality Assessment Band (QA_PIXEL)",
+              "raster:bands": [
+                {
+                  "unit": "bit index",
+                  "nodata": 1,
+                  "data_type": "uint16",
+                  "spatial_resolution": 30
+                }
+              ]
+            }
+          },
+          "QA_RADSAT": {
+            "href": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/tm/2010/016/035/LT05_L2SP_016035_20100810_20200823_02_T1/LT05_L2SP_016035_20100810_20200823_02_T1_QA_RADSAT.TIF",
+            "etag": null,
+            "metadata": {
+              "href": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/tm/2010/016/035/LT05_L2SP_016035_20100810_20200823_02_T1/LT05_L2SP_016035_20100810_20200823_02_T1_QA_RADSAT.TIF",
+              "title": "Radiometric Saturation and Dropped Pixel Quality Assessment Band",
+              "description": "Collection 2 Level-1 Radiometric Saturation and Dropped Pixel Quality Assessment Band (QA_RADSAT)",
+              "classification:bitfields": [
+                {
+                  "name": "band1",
+                  "length": 1,
+                  "offset": 0,
+                  "classes": [
+                    {
+                      "name": "not_saturated",
+                      "value": 0,
+                      "description": "Band 1 not saturated"
+                    },
+                    {
+                      "name": "saturated",
+                      "value": 1,
+                      "description": "Band 1 saturated"
+                    }
+                  ],
+                  "description": "Band 1 radiometric saturation"
+                },
+                {
+                  "name": "band2",
+                  "length": 1,
+                  "offset": 1,
+                  "classes": [
+                    {
+                      "name": "not_saturated",
+                      "value": 0,
+                      "description": "Band 2 not saturated"
+                    },
+                    {
+                      "name": "saturated",
+                      "value": 1,
+                      "description": "Band 2 saturated"
+                    }
+                  ],
+                  "description": "Band 2 radiometric saturation"
+                },
+                {
+                  "name": "band3",
+                  "length": 1,
+                  "offset": 2,
+                  "classes": [
+                    {
+                      "name": "not_saturated",
+                      "value": 0,
+                      "description": "Band 3 not saturated"
+                    },
+                    {
+                      "name": "saturated",
+                      "value": 1,
+                      "description": "Band 3 saturated"
+                    }
+                  ],
+                  "description": "Band 3 radiometric saturation"
+                },
+                {
+                  "name": "band4",
+                  "length": 1,
+                  "offset": 3,
+                  "classes": [
+                    {
+                      "name": "not_saturated",
+                      "value": 0,
+                      "description": "Band 4 not saturated"
+                    },
+                    {
+                      "name": "saturated",
+                      "value": 1,
+                      "description": "Band 4 saturated"
+                    }
+                  ],
+                  "description": "Band 4 radiometric saturation"
+                },
+                {
+                  "name": "band5",
+                  "length": 1,
+                  "offset": 4,
+                  "classes": [
+                    {
+                      "name": "not_saturated",
+                      "value": 0,
+                      "description": "Band 5 not saturated"
+                    },
+                    {
+                      "name": "saturated",
+                      "value": 1,
+                      "description": "Band 5 saturated"
+                    }
+                  ],
+                  "description": "Band 5 radiometric saturation"
+                },
+                {
+                  "name": "band6",
+                  "length": 1,
+                  "offset": 5,
+                  "classes": [
+                    {
+                      "name": "not_saturated",
+                      "value": 0,
+                      "description": "Band 6 not saturated"
+                    },
+                    {
+                      "name": "saturated",
+                      "value": 1,
+                      "description": "Band 6 saturated"
+                    }
+                  ],
+                  "description": "Band 6 radiometric saturation"
+                },
+                {
+                  "name": "band7",
+                  "length": 1,
+                  "offset": 6,
+                  "classes": [
+                    {
+                      "name": "not_saturated",
+                      "value": 0,
+                      "description": "Band 7 not saturated"
+                    },
+                    {
+                      "name": "saturated",
+                      "value": 1,
+                      "description": "Band 7 saturated"
+                    }
+                  ],
+                  "description": "Band 7 radiometric saturation"
+                },
+                {
+                  "name": "dropped",
+                  "length": 1,
+                  "offset": 9,
+                  "classes": [
+                    {
+                      "name": "not_dropped",
+                      "value": 0,
+                      "description": "Detector has a value - pixel present"
+                    },
+                    {
+                      "name": "dropped",
+                      "value": 1,
+                      "description": "Detector does not have a value - no data"
+                    }
+                  ],
+                  "description": "Dropped pixel"
+                }
+              ],
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "saturation"
+              ],
+              "raster:bands": [
+                {
+                  "unit": "bit index",
+                  "data_type": "uint16",
+                  "spatial_resolution": 30
+                }
+              ]
+            }
+          },
+          "SR_B3": {
+            "href": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/tm/2010/016/035/LT05_L2SP_016035_20100810_20200823_02_T1/LT05_L2SP_016035_20100810_20200823_02_T1_SR_B3.TIF",
+            "etag": null,
+            "metadata": {
+              "href": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/tm/2010/016/035/LT05_L2SP_016035_20100810_20200823_02_T1/LT05_L2SP_016035_20100810_20200823_02_T1_SR_B3.TIF",
+              "eo:bands": [
+                {
+                  "name": "TM_B3",
+                  "center_wavelength": 0.66,
+                  "full_width_half_max": 0.06,
+                  "common_name": "red",
+                  "description": "Visible red"
+                }
+              ],
+              "description": "Collection 2 Level-2 Red Band (SR_B3) Surface Reflectance",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data",
+                "reflectance"
+              ],
+              "title": "Red Band",
+              "raster:bands": [
+                {
+                  "scale": 2.75e-05,
+                  "nodata": 0,
+                  "offset": -0.2,
+                  "data_type": "uint16",
+                  "spatial_resolution": 30
+                }
+              ]
+            }
+          },
+          "SR_B4": {
+            "href": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/tm/2010/016/035/LT05_L2SP_016035_20100810_20200823_02_T1/LT05_L2SP_016035_20100810_20200823_02_T1_SR_B4.TIF",
+            "etag": null,
+            "metadata": {
+              "href": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/tm/2010/016/035/LT05_L2SP_016035_20100810_20200823_02_T1/LT05_L2SP_016035_20100810_20200823_02_T1_SR_B4.TIF",
+              "eo:bands": [
+                {
+                  "name": "TM_B4",
+                  "center_wavelength": 0.83,
+                  "full_width_half_max": 0.14,
+                  "common_name": "nir08",
+                  "description": "Near infrared"
+                }
+              ],
+              "description": "Collection 2 Level-2 Near Infrared Band 0.8 (SR_B4) Surface Reflectance",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data",
+                "reflectance"
+              ],
+              "title": "Near Infrared Band 0.8",
+              "raster:bands": [
+                {
+                  "scale": 2.75e-05,
+                  "nodata": 0,
+                  "offset": -0.2,
+                  "data_type": "uint16",
+                  "spatial_resolution": 30
+                }
+              ]
+            }
+          },
+          "SR_CLOUD_QA": {
+            "href": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/tm/2010/016/035/LT05_L2SP_016035_20100810_20200823_02_T1/LT05_L2SP_016035_20100810_20200823_02_T1_SR_CLOUD_QA.TIF",
+            "etag": null,
+            "metadata": {
+              "href": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/tm/2010/016/035/LT05_L2SP_016035_20100810_20200823_02_T1/LT05_L2SP_016035_20100810_20200823_02_T1_SR_CLOUD_QA.TIF",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "cloud",
+                "cloud-shadow",
+                "snow-ice",
+                "water-mask"
+              ],
+              "title": "Cloud Quality Assessment Band",
+              "description": "Collection 2 Level-2 Cloud Quality Assessment Band (SR_CLOUD_QA) Surface Reflectance Product",
+              "raster:bands": [
+                {
+                  "unit": "bit index",
+                  "data_type": "uint8",
+                  "spatial_resolution": 30
+                }
+              ],
+              "classification:bitfields": [
+                {
+                  "name": "ddv",
+                  "length": 1,
+                  "offset": 0,
+                  "classes": [
+                    {
+                      "name": "not_ddv",
+                      "value": 0,
+                      "description": "Pixel has no DDV"
+                    },
+                    {
+                      "name": "ddv",
+                      "value": 1,
+                      "description": "Pixel has DDV"
+                    }
+                  ],
+                  "description": "Dense Dark Vegetation (DDV)"
+                },
+                {
+                  "name": "cloud",
+                  "length": 1,
+                  "offset": 1,
+                  "classes": [
+                    {
+                      "name": "not_cloud",
+                      "value": 0,
+                      "description": "Pixel has no cloud"
+                    },
+                    {
+                      "name": "cloud",
+                      "value": 1,
+                      "description": "Pixel has cloud"
+                    }
+                  ],
+                  "description": "Cloud mask"
+                },
+                {
+                  "name": "cloud_shadow",
+                  "length": 1,
+                  "offset": 2,
+                  "classes": [
+                    {
+                      "name": "not_shadow",
+                      "value": 0,
+                      "description": "Pixel has no cloud shadow"
+                    },
+                    {
+                      "name": "shadow",
+                      "value": 1,
+                      "description": "Pixel has cloud shadow"
+                    }
+                  ],
+                  "description": "Cloud shadow mask"
+                },
+                {
+                  "name": "cloud_adjacent",
+                  "length": 1,
+                  "offset": 3,
+                  "classes": [
+                    {
+                      "name": "not_adjacent",
+                      "value": 0,
+                      "description": "Pixel is not adjacent to cloud"
+                    },
+                    {
+                      "name": "adjacent",
+                      "value": 1,
+                      "description": "Pixel is adjacent to cloud"
+                    }
+                  ],
+                  "description": "Cloud adjacency"
+                },
+                {
+                  "name": "snow",
+                  "length": 1,
+                  "offset": 4,
+                  "classes": [
+                    {
+                      "name": "not_snow",
+                      "value": 0,
+                      "description": "Pixel is not snow"
+                    },
+                    {
+                      "name": "shadow",
+                      "value": 1,
+                      "description": "Pixel is snow"
+                    }
+                  ],
+                  "description": "Snow mask"
+                },
+                {
+                  "name": "water",
+                  "length": 1,
+                  "offset": 5,
+                  "classes": [
+                    {
+                      "name": "not_water",
+                      "value": 0,
+                      "description": "Pixel is not water"
+                    },
+                    {
+                      "name": "water",
+                      "value": 1,
+                      "description": "Pixel is water"
+                    }
+                  ],
+                  "description": "Water mask"
+                }
+              ]
+            }
+          }
+        },
+        "properties": {
+          "gsd": 30,
+          "created": "2022-05-06T18:07:52.040916Z",
+          "sci:doi": "10.5066/P9IAXOVV",
+          "datetime": "2010-08-10T15:43:46.119081Z",
+          "platform": "landsat-5",
+          "proj:epsg": 32617,
+          "proj:shape": [
+            7031,
+            7921
+          ],
+          "description": "Landsat Collection 2 Level-2",
+          "instruments": [
+            "tm"
+          ],
+          "eo:cloud_cover": 1.0,
+          "proj:transform": [
+            30.0,
+            0.0,
+            535185.0,
+            0.0,
+            -30.0,
+            4095015.0
+          ],
+          "view:off_nadir": 0,
+          "landsat:wrs_row": "035",
+          "landsat:scene_id": "LT50160352010222GNC02",
+          "landsat:wrs_path": "016",
+          "landsat:wrs_type": "2",
+          "view:sun_azimuth": 126.67621769,
+          "landsat:correction": "L2SP",
+          "view:sun_elevation": 59.87655296,
+          "landsat:cloud_cover_land": 1.0,
+          "landsat:collection_number": "02",
+          "landsat:collection_category": "T1"
+        }
+      }
+    ],
+    "metadata_reservation_bytes": 31166,
+    "seconds": 0.522515291
+  },
+  "process": {
+    "code": 0,
+    "wall_seconds": 7.240890250002849,
+    "cpu_seconds": 0.35716299999999995,
+    "peak_rss_bytes": 56836096
+  },
+  "observed": {
+    "source_reads": [],
+    "scheduler": {
+      "workers": 2,
+      "per_host": 4,
+      "buffer_bytes": 33523266,
+      "reserved_bytes_peak": 1235807,
+      "reader_state_reserved_bytes": 0,
+      "prepared_native_metadata_bytes": 103277,
+      "authenticated_transport_reserved_bytes": 0,
+      "prepared_v3_metadata_index_bytes": 0,
+      "active_workers_peak": 2,
+      "completed_tasks": 5,
+      "admitted_jobs": 5,
+      "cog_reader_scope": "selection",
+      "seconds": 0.943952292,
+      "order": "plan",
+      "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+      "native_buffers": [
+        {
+          "asset_id": "p000_SR_B3",
+          "transport_encoded_capacity_peak_bytes": 88934,
+          "adapter_delivery_capacity_peak_bytes": 56544,
+          "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+        },
+        {
+          "asset_id": "p000_QA_PIXEL",
+          "transport_encoded_capacity_peak_bytes": 219,
+          "adapter_delivery_capacity_peak_bytes": 56544,
+          "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+        },
+        {
+          "asset_id": "p000_SR_CLOUD_QA",
+          "transport_encoded_capacity_peak_bytes": 6627,
+          "adapter_delivery_capacity_peak_bytes": 37696,
+          "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+        },
+        {
+          "asset_id": "p000_SR_B4",
+          "transport_encoded_capacity_peak_bytes": 106364,
+          "adapter_delivery_capacity_peak_bytes": 56544,
+          "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+        },
+        {
+          "asset_id": "p000_QA_RADSAT",
+          "transport_encoded_capacity_peak_bytes": 157,
+          "adapter_delivery_capacity_peak_bytes": 56544,
+          "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+        }
+      ],
+      "native_metadata": {
+        "retained_sources": 5,
+        "retained_bytes": 103277,
+        "physical_metadata_sources": 5,
+        "physical_metadata_bytes": 877,
+        "cap_bytes": 8388608,
+        "skipped_sources": 0,
+        "scope": "this Prepared only; immutable version-bound parser pages; never a data cache"
+      },
+      "native_strategies": [
+        {
+          "asset_id": "p000_SR_B3",
+          "task_reserved_bytes": 557550,
+          "strategy": {
+            "read_scope": "planned_windows",
+            "retained_selection_bytes": 0,
+            "decoded_cache_limit_bytes": 0,
+            "coalesced_groups": 0,
+            "max_encoded_group_reservation_bytes": 0,
+            "codec_working_bytes": 131072
+          }
+        },
+        {
+          "asset_id": "p000_SR_B4",
+          "task_reserved_bytes": 574980,
+          "strategy": {
+            "read_scope": "planned_windows",
+            "retained_selection_bytes": 0,
+            "decoded_cache_limit_bytes": 0,
+            "coalesced_groups": 0,
+            "max_encoded_group_reservation_bytes": 0,
+            "codec_working_bytes": 131072
+          }
+        },
+        {
+          "asset_id": "p000_QA_PIXEL",
+          "task_reserved_bytes": 468835,
+          "strategy": {
+            "read_scope": "planned_windows",
+            "retained_selection_bytes": 0,
+            "decoded_cache_limit_bytes": 0,
+            "coalesced_groups": 0,
+            "max_encoded_group_reservation_bytes": 0,
+            "codec_working_bytes": 131072
+          }
+        },
+        {
+          "asset_id": "p000_QA_RADSAT",
+          "task_reserved_bytes": 468773,
+          "strategy": {
+            "read_scope": "planned_windows",
+            "retained_selection_bytes": 0,
+            "decoded_cache_limit_bytes": 0,
+            "coalesced_groups": 0,
+            "max_encoded_group_reservation_bytes": 0,
+            "codec_working_bytes": 131072
+          }
+        },
+        {
+          "asset_id": "p000_SR_CLOUD_QA",
+          "task_reserved_bytes": 306475,
+          "strategy": {
+            "read_scope": "planned_windows",
+            "retained_selection_bytes": 0,
+            "decoded_cache_limit_bytes": 0,
+            "coalesced_groups": 0,
+            "max_encoded_group_reservation_bytes": 0,
+            "codec_working_bytes": 131072
+          }
+        }
+      ]
+    },
+    "transport": {},
+    "decoded_source_chunks": 0,
+    "filled_source_chunks": 0,
+    "first_output_seconds": 1.13044475,
+    "assembly_seconds": 0.0,
+    "source_retrieval_seconds": 0.835187376,
+    "allocation_seconds": null,
+    "copying_seconds": null,
+    "output_setup_seconds": 0.071885625,
+    "output_finalize_seconds": 0.00315425,
+    "output_io": {
+      "reads": 0,
+      "writes": 129,
+      "bytes_read": 0,
+      "bytes_written": 1016013,
+      "buffered_bytes_peak": 735072,
+      "storage_read_seconds": 0.0,
+      "storage_write_seconds": 0.018722376000000002,
+      "encode_seconds": 0.0009410390000000002,
+      "allocation_seconds": 0.0,
+      "copying_seconds": 0.0
+    },
+    "native_materialized_bytes": null,
+    "source_data_requests": 5,
+    "source_data_bytes": 202301,
+    "chunks": 5,
+    "decoded_bytes": 169632,
+    "non_nodata_pixels": 92132,
+    "planning_seconds": 3.458167416,
+    "source_open_seconds": 0.558813376,
+    "read_decode_seconds": 0.8470206259999999,
+    "sink_seconds": 0.011813417,
+    "masking_seconds": 0.001713084,
+    "remote_requests": null,
+    "remote_bytes": null
+  },
+  "compared": [
+    {
+      "group": "observations/000000",
+      "arrays": [
+        "aoi_mask",
+        "quality_landsat_tm_etm_pixel_clear",
+        "spatial_ref",
+        "time",
+        "valid",
+        "values",
+        "x",
+        "y"
+      ],
+      "equal_bits": true
+    },
+    {
+      "group": "observations/000001",
+      "arrays": [
+        "aoi_mask",
+        "quality_landsat_tm_radiometrically_unsaturated",
+        "spatial_ref",
+        "time",
+        "valid",
+        "values",
+        "x",
+        "y"
+      ],
+      "equal_bits": true
+    },
+    {
+      "group": "observations/000002",
+      "arrays": [
+        "aoi_mask",
+        "spatial_ref",
+        "time",
+        "valid",
+        "values",
+        "x",
+        "y"
+      ],
+      "equal_bits": true
+    },
+    {
+      "group": "observations/000003",
+      "arrays": [
+        "aoi_mask",
+        "spatial_ref",
+        "time",
+        "valid",
+        "values",
+        "x",
+        "y"
+      ],
+      "equal_bits": true
+    },
+    {
+      "group": "observations/000004",
+      "arrays": [
+        "aoi_mask",
+        "quality_landsat_tm_etm_cloud_clear",
+        "spatial_ref",
+        "time",
+        "valid",
+        "values",
+        "x",
+        "y"
+      ],
+      "equal_bits": true
+    }
+  ],
+  "sources": [
+    {
+      "asset_id": "p000_SR_B3",
+      "format": "cog",
+      "reference": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/tm/2010/016/035/LT05_L2SP_016035_20100810_20200823_02_T1/LT05_L2SP_016035_20100810_20200823_02_T1_SR_B3.TIF",
+      "datetime": "2010-08-10T15:43:46.119081Z",
+      "object_version": "\"0x8D98AEBF0D00116\"",
+      "local_identity": [],
+      "object_identities": {
+        "native_cog": {
+          "geokey_directory": [
+            1,
+            1,
+            0,
+            7,
+            1024,
+            0,
+            1,
+            1,
+            1025,
+            0,
+            1,
+            2,
+            1026,
+            34737,
+            22,
+            0,
+            2049,
+            34737,
+            7,
+            22,
+            2054,
+            0,
+            1,
+            9102,
+            3072,
+            0,
+            1,
+            32617,
+            3076,
+            0,
+            1,
+            9001
+          ],
+          "geo_double_params": [],
+          "geo_ascii_params": "WGS 84 / UTM zone 17N|WGS 84|",
+          "model_pixel_scale": [
+            30.0,
+            30.0,
+            0.0
+          ],
+          "model_tiepoint": [
+            0.0,
+            0.0,
+            0.0,
+            535200.0,
+            4095000.0,
+            0.0
+          ],
+          "raster_type": "PixelIsPoint",
+          "gdal_metadata_xml": null,
+          "gdal_nodata_text": "0",
+          "normalized_crs": "EPSG:32617",
+          "normalization": null
+        }
+      },
+      "zarr_v3": {},
+      "version_validation": "conditional ETag",
+      "provider": "planetary_computer",
+      "canonical_locator": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/tm/2010/016/035/LT05_L2SP_016035_20100810_20200823_02_T1/LT05_L2SP_016035_20100810_20200823_02_T1_SR_B3.TIF",
+      "access_policy": "pc-exact-object-request-v1",
+      "item_id": "LT05_L2SP_016035_20100810_02_T1",
+      "collection": "landsat-c2-l2",
+      "requested_band": "SR_B3",
+      "product": "landsat-tm-c2-l2-sr",
+      "product_version": "Collection 2",
+      "platform": "landsat-5",
+      "processing": "L2SP",
+      "product_band": {
+        "name": "SR_B3",
+        "asset_key": "red",
+        "aliases": [
+          "red"
+        ],
+        "role": "surface_reflectance",
+        "description": "native stored surface-reflectance code",
+        "dtype": "uint16",
+        "nodata": {
+          "type": "uint16",
+          "value": 0
+        },
+        "scale": 2.75e-05,
+        "offset": -0.2,
+        "unit": "1",
+        "optional": false
+      },
+      "acquisition": {
+        "gsd": 30,
+        "created": "2022-05-06T18:07:52.040916Z",
+        "sci:doi": "10.5066/P9IAXOVV",
+        "datetime": "2010-08-10T15:43:46.119081Z",
+        "platform": "landsat-5",
+        "proj:epsg": 32617,
+        "proj:shape": [
+          7031,
+          7921
+        ],
+        "description": "Landsat Collection 2 Level-2",
+        "instruments": [
+          "tm"
+        ],
+        "eo:cloud_cover": 1.0,
+        "proj:transform": [
+          30.0,
+          0.0,
+          535185.0,
+          0.0,
+          -30.0,
+          4095015.0
+        ],
+        "view:off_nadir": 0,
+        "landsat:wrs_row": "035",
+        "landsat:scene_id": "LT50160352010222GNC02",
+        "landsat:wrs_path": "016",
+        "landsat:wrs_type": "2",
+        "view:sun_azimuth": 126.67621769,
+        "landsat:correction": "L2SP",
+        "view:sun_elevation": 59.87655296,
+        "landsat:cloud_cover_land": 1.0,
+        "landsat:collection_number": "02",
+        "landsat:collection_category": "T1"
+      },
+      "asset_metadata": {
+        "href": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/tm/2010/016/035/LT05_L2SP_016035_20100810_20200823_02_T1/LT05_L2SP_016035_20100810_20200823_02_T1_SR_B3.TIF",
+        "eo:bands": [
+          {
+            "name": "TM_B3",
+            "center_wavelength": 0.66,
+            "full_width_half_max": 0.06,
+            "common_name": "red",
+            "description": "Visible red"
+          }
+        ],
+        "description": "Collection 2 Level-2 Red Band (SR_B3) Surface Reflectance",
+        "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+        "roles": [
+          "data",
+          "reflectance"
+        ],
+        "title": "Red Band",
+        "raster:bands": [
+          {
+            "scale": 2.75e-05,
+            "nodata": 0,
+            "offset": -0.2,
+            "data_type": "uint16",
+            "spatial_resolution": 30
+          }
+        ]
+      },
+      "href": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/tm/2010/016/035/LT05_L2SP_016035_20100810_20200823_02_T1/LT05_L2SP_016035_20100810_20200823_02_T1_SR_B3.TIF",
+      "raster_bands": [
+        {
+          "scale": 2.75e-05,
+          "offset": -0.2,
+          "unit": "1"
+        }
+      ],
+      "quality_policies": [],
+      "equivalence": {
+        "classification": "unknown_across_providers",
+        "group": null,
+        "scope": "No independent immutable-object sample attestation for this source; no substitution permitted."
+      }
+    },
+    {
+      "asset_id": "p000_SR_B4",
+      "format": "cog",
+      "reference": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/tm/2010/016/035/LT05_L2SP_016035_20100810_20200823_02_T1/LT05_L2SP_016035_20100810_20200823_02_T1_SR_B4.TIF",
+      "datetime": "2010-08-10T15:43:46.119081Z",
+      "object_version": "\"0x8D98AEBF143222D\"",
+      "local_identity": [],
+      "object_identities": {
+        "native_cog": {
+          "geokey_directory": [
+            1,
+            1,
+            0,
+            7,
+            1024,
+            0,
+            1,
+            1,
+            1025,
+            0,
+            1,
+            2,
+            1026,
+            34737,
+            22,
+            0,
+            2049,
+            34737,
+            7,
+            22,
+            2054,
+            0,
+            1,
+            9102,
+            3072,
+            0,
+            1,
+            32617,
+            3076,
+            0,
+            1,
+            9001
+          ],
+          "geo_double_params": [],
+          "geo_ascii_params": "WGS 84 / UTM zone 17N|WGS 84|",
+          "model_pixel_scale": [
+            30.0,
+            30.0,
+            0.0
+          ],
+          "model_tiepoint": [
+            0.0,
+            0.0,
+            0.0,
+            535200.0,
+            4095000.0,
+            0.0
+          ],
+          "raster_type": "PixelIsPoint",
+          "gdal_metadata_xml": null,
+          "gdal_nodata_text": "0",
+          "normalized_crs": "EPSG:32617",
+          "normalization": null
+        }
+      },
+      "zarr_v3": {},
+      "version_validation": "conditional ETag",
+      "provider": "planetary_computer",
+      "canonical_locator": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/tm/2010/016/035/LT05_L2SP_016035_20100810_20200823_02_T1/LT05_L2SP_016035_20100810_20200823_02_T1_SR_B4.TIF",
+      "access_policy": "pc-exact-object-request-v1",
+      "item_id": "LT05_L2SP_016035_20100810_02_T1",
+      "collection": "landsat-c2-l2",
+      "requested_band": "SR_B4",
+      "product": "landsat-tm-c2-l2-sr",
+      "product_version": "Collection 2",
+      "platform": "landsat-5",
+      "processing": "L2SP",
+      "product_band": {
+        "name": "SR_B4",
+        "asset_key": "nir08",
+        "aliases": [
+          "nir",
+          "nir08"
+        ],
+        "role": "surface_reflectance",
+        "description": "native stored surface-reflectance code",
+        "dtype": "uint16",
+        "nodata": {
+          "type": "uint16",
+          "value": 0
+        },
+        "scale": 2.75e-05,
+        "offset": -0.2,
+        "unit": "1",
+        "optional": false
+      },
+      "acquisition": {
+        "gsd": 30,
+        "created": "2022-05-06T18:07:52.040916Z",
+        "sci:doi": "10.5066/P9IAXOVV",
+        "datetime": "2010-08-10T15:43:46.119081Z",
+        "platform": "landsat-5",
+        "proj:epsg": 32617,
+        "proj:shape": [
+          7031,
+          7921
+        ],
+        "description": "Landsat Collection 2 Level-2",
+        "instruments": [
+          "tm"
+        ],
+        "eo:cloud_cover": 1.0,
+        "proj:transform": [
+          30.0,
+          0.0,
+          535185.0,
+          0.0,
+          -30.0,
+          4095015.0
+        ],
+        "view:off_nadir": 0,
+        "landsat:wrs_row": "035",
+        "landsat:scene_id": "LT50160352010222GNC02",
+        "landsat:wrs_path": "016",
+        "landsat:wrs_type": "2",
+        "view:sun_azimuth": 126.67621769,
+        "landsat:correction": "L2SP",
+        "view:sun_elevation": 59.87655296,
+        "landsat:cloud_cover_land": 1.0,
+        "landsat:collection_number": "02",
+        "landsat:collection_category": "T1"
+      },
+      "asset_metadata": {
+        "href": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/tm/2010/016/035/LT05_L2SP_016035_20100810_20200823_02_T1/LT05_L2SP_016035_20100810_20200823_02_T1_SR_B4.TIF",
+        "eo:bands": [
+          {
+            "name": "TM_B4",
+            "center_wavelength": 0.83,
+            "full_width_half_max": 0.14,
+            "common_name": "nir08",
+            "description": "Near infrared"
+          }
+        ],
+        "description": "Collection 2 Level-2 Near Infrared Band 0.8 (SR_B4) Surface Reflectance",
+        "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+        "roles": [
+          "data",
+          "reflectance"
+        ],
+        "title": "Near Infrared Band 0.8",
+        "raster:bands": [
+          {
+            "scale": 2.75e-05,
+            "nodata": 0,
+            "offset": -0.2,
+            "data_type": "uint16",
+            "spatial_resolution": 30
+          }
+        ]
+      },
+      "href": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/tm/2010/016/035/LT05_L2SP_016035_20100810_20200823_02_T1/LT05_L2SP_016035_20100810_20200823_02_T1_SR_B4.TIF",
+      "raster_bands": [
+        {
+          "scale": 2.75e-05,
+          "offset": -0.2,
+          "unit": "1"
+        }
+      ],
+      "quality_policies": [],
+      "equivalence": {
+        "classification": "unknown_across_providers",
+        "group": null,
+        "scope": "No independent immutable-object sample attestation for this source; no substitution permitted."
+      }
+    },
+    {
+      "asset_id": "p000_QA_PIXEL",
+      "format": "cog",
+      "reference": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/tm/2010/016/035/LT05_L2SP_016035_20100810_20200823_02_T1/LT05_L2SP_016035_20100810_20200823_02_T1_QA_PIXEL.TIF",
+      "datetime": "2010-08-10T15:43:46.119081Z",
+      "object_version": "\"0x8D98AEBE9F25F48\"",
+      "local_identity": [],
+      "object_identities": {
+        "native_cog": {
+          "geokey_directory": [
+            1,
+            1,
+            0,
+            7,
+            1024,
+            0,
+            1,
+            1,
+            1025,
+            0,
+            1,
+            2,
+            1026,
+            34737,
+            22,
+            0,
+            2049,
+            34737,
+            7,
+            22,
+            2054,
+            0,
+            1,
+            9102,
+            3072,
+            0,
+            1,
+            32617,
+            3076,
+            0,
+            1,
+            9001
+          ],
+          "geo_double_params": [],
+          "geo_ascii_params": "WGS 84 / UTM zone 17N|WGS 84|",
+          "model_pixel_scale": [
+            30.0,
+            30.0,
+            0.0
+          ],
+          "model_tiepoint": [
+            0.0,
+            0.0,
+            0.0,
+            535200.0,
+            4095000.0,
+            0.0
+          ],
+          "raster_type": "PixelIsPoint",
+          "gdal_metadata_xml": null,
+          "gdal_nodata_text": null,
+          "normalized_crs": "EPSG:32617",
+          "normalization": null
+        }
+      },
+      "zarr_v3": {},
+      "version_validation": "conditional ETag",
+      "provider": "planetary_computer",
+      "canonical_locator": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/tm/2010/016/035/LT05_L2SP_016035_20100810_20200823_02_T1/LT05_L2SP_016035_20100810_20200823_02_T1_QA_PIXEL.TIF",
+      "access_policy": "pc-exact-object-request-v1",
+      "item_id": "LT05_L2SP_016035_20100810_02_T1",
+      "collection": "landsat-c2-l2",
+      "requested_band": "QA_PIXEL",
+      "product": "landsat-tm-c2-l2-sr",
+      "product_version": "Collection 2",
+      "platform": "landsat-5",
+      "processing": "L2SP",
+      "product_band": {
+        "name": "QA_PIXEL",
+        "asset_key": "qa_pixel",
+        "aliases": [
+          "pixel_qa"
+        ],
+        "role": "quality",
+        "description": "native quality or condition code",
+        "dtype": "uint16",
+        "nodata": {
+          "type": "uint16",
+          "value": 1
+        },
+        "scale": 1.0,
+        "offset": 0.0,
+        "unit": "1",
+        "optional": false
+      },
+      "acquisition": {
+        "gsd": 30,
+        "created": "2022-05-06T18:07:52.040916Z",
+        "sci:doi": "10.5066/P9IAXOVV",
+        "datetime": "2010-08-10T15:43:46.119081Z",
+        "platform": "landsat-5",
+        "proj:epsg": 32617,
+        "proj:shape": [
+          7031,
+          7921
+        ],
+        "description": "Landsat Collection 2 Level-2",
+        "instruments": [
+          "tm"
+        ],
+        "eo:cloud_cover": 1.0,
+        "proj:transform": [
+          30.0,
+          0.0,
+          535185.0,
+          0.0,
+          -30.0,
+          4095015.0
+        ],
+        "view:off_nadir": 0,
+        "landsat:wrs_row": "035",
+        "landsat:scene_id": "LT50160352010222GNC02",
+        "landsat:wrs_path": "016",
+        "landsat:wrs_type": "2",
+        "view:sun_azimuth": 126.67621769,
+        "landsat:correction": "L2SP",
+        "view:sun_elevation": 59.87655296,
+        "landsat:cloud_cover_land": 1.0,
+        "landsat:collection_number": "02",
+        "landsat:collection_category": "T1"
+      },
+      "asset_metadata": {
+        "href": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/tm/2010/016/035/LT05_L2SP_016035_20100810_20200823_02_T1/LT05_L2SP_016035_20100810_20200823_02_T1_QA_PIXEL.TIF",
+        "classification:bitfields": [
+          {
+            "name": "fill",
+            "length": 1,
+            "offset": 0,
+            "classes": [
+              {
+                "name": "not_fill",
+                "value": 0,
+                "description": "Image data"
+              },
+              {
+                "name": "fill",
+                "value": 1,
+                "description": "Fill data"
+              }
+            ],
+            "description": "Image or fill data"
+          },
+          {
+            "name": "dilated_cloud",
+            "length": 1,
+            "offset": 1,
+            "classes": [
+              {
+                "name": "not_dilated",
+                "value": 0,
+                "description": "Cloud is not dilated or no cloud"
+              },
+              {
+                "name": "dilated",
+                "value": 1,
+                "description": "Cloud dilation"
+              }
+            ],
+            "description": "Dilated cloud"
+          },
+          {
+            "name": "cloud",
+            "length": 1,
+            "offset": 3,
+            "classes": [
+              {
+                "name": "not_cloud",
+                "value": 0,
+                "description": "Cloud confidence is not high"
+              },
+              {
+                "name": "cloud",
+                "value": 1,
+                "description": "High confidence cloud"
+              }
+            ],
+            "description": "Cloud mask"
+          },
+          {
+            "name": "cloud_shadow",
+            "length": 1,
+            "offset": 4,
+            "classes": [
+              {
+                "name": "not_shadow",
+                "value": 0,
+                "description": "Cloud shadow confidence is not high"
+              },
+              {
+                "name": "shadow",
+                "value": 1,
+                "description": "High confidence cloud shadow"
+              }
+            ],
+            "description": "Cloud shadow mask"
+          },
+          {
+            "name": "snow",
+            "length": 1,
+            "offset": 5,
+            "classes": [
+              {
+                "name": "not_snow",
+                "value": 0,
+                "description": "Snow/Ice confidence is not high"
+              },
+              {
+                "name": "snow",
+                "value": 1,
+                "description": "High confidence snow cover"
+              }
+            ],
+            "description": "Snow/Ice mask"
+          },
+          {
+            "name": "clear",
+            "length": 1,
+            "offset": 6,
+            "classes": [
+              {
+                "name": "not_clear",
+                "value": 0,
+                "description": "Cloud or dilated cloud bits are set"
+              },
+              {
+                "name": "clear",
+                "value": 1,
+                "description": "Cloud and dilated cloud bits are not set"
+              }
+            ],
+            "description": "Clear mask"
+          },
+          {
+            "name": "water",
+            "length": 1,
+            "offset": 7,
+            "classes": [
+              {
+                "name": "not_water",
+                "value": 0,
+                "description": "Land or cloud"
+              },
+              {
+                "name": "water",
+                "value": 1,
+                "description": "Water"
+              }
+            ],
+            "description": "Water mask"
+          },
+          {
+            "name": "cloud_confidence",
+            "length": 2,
+            "offset": 8,
+            "classes": [
+              {
+                "name": "not_set",
+                "value": 0,
+                "description": "No confidence level set"
+              },
+              {
+                "name": "low",
+                "value": 1,
+                "description": "Low confidence cloud"
+              },
+              {
+                "name": "medium",
+                "value": 2,
+                "description": "Medium confidence cloud"
+              },
+              {
+                "name": "high",
+                "value": 3,
+                "description": "High confidence cloud"
+              }
+            ],
+            "description": "Cloud confidence levels"
+          },
+          {
+            "name": "cloud_shadow_confidence",
+            "length": 2,
+            "offset": 10,
+            "classes": [
+              {
+                "name": "not_set",
+                "value": 0,
+                "description": "No confidence level set"
+              },
+              {
+                "name": "low",
+                "value": 1,
+                "description": "Low confidence cloud shadow"
+              },
+              {
+                "name": "reserved",
+                "value": 2,
+                "description": "Reserved - value not used"
+              },
+              {
+                "name": "high",
+                "value": 3,
+                "description": "High confidence cloud shadow"
+              }
+            ],
+            "description": "Cloud shadow confidence levels"
+          },
+          {
+            "name": "snow_confidence",
+            "length": 2,
+            "offset": 12,
+            "classes": [
+              {
+                "name": "not_set",
+                "value": 0,
+                "description": "No confidence level set"
+              },
+              {
+                "name": "low",
+                "value": 1,
+                "description": "Low confidence snow/ice"
+              },
+              {
+                "name": "reserved",
+                "value": 2,
+                "description": "Reserved - value not used"
+              },
+              {
+                "name": "high",
+                "value": 3,
+                "description": "High confidence snow/ice"
+              }
+            ],
+            "description": "Snow/Ice confidence levels"
+          }
+        ],
+        "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+        "roles": [
+          "cloud",
+          "cloud-shadow",
+          "snow-ice",
+          "water-mask"
+        ],
+        "title": "Pixel Quality Assessment Band",
+        "description": "Collection 2 Level-1 Pixel Quality Assessment Band (QA_PIXEL)",
+        "raster:bands": [
+          {
+            "unit": "bit index",
+            "nodata": 1,
+            "data_type": "uint16",
+            "spatial_resolution": 30
+          }
+        ]
+      },
+      "href": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/tm/2010/016/035/LT05_L2SP_016035_20100810_20200823_02_T1/LT05_L2SP_016035_20100810_20200823_02_T1_QA_PIXEL.TIF",
+      "raster_bands": [
+        {
+          "scale": 1.0,
+          "offset": 0.0,
+          "unit": "1"
+        }
+      ],
+      "quality_policies": [
+        "landsat_tm_etm_pixel_clear"
+      ],
+      "equivalence": {
+        "classification": "unknown_across_providers",
+        "group": null,
+        "scope": "No independent immutable-object sample attestation for this source; no substitution permitted."
+      }
+    },
+    {
+      "asset_id": "p000_QA_RADSAT",
+      "format": "cog",
+      "reference": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/tm/2010/016/035/LT05_L2SP_016035_20100810_20200823_02_T1/LT05_L2SP_016035_20100810_20200823_02_T1_QA_RADSAT.TIF",
+      "datetime": "2010-08-10T15:43:46.119081Z",
+      "object_version": "\"0x8D98AEBE9EABCD9\"",
+      "local_identity": [],
+      "object_identities": {
+        "native_cog": {
+          "geokey_directory": [
+            1,
+            1,
+            0,
+            7,
+            1024,
+            0,
+            1,
+            1,
+            1025,
+            0,
+            1,
+            2,
+            1026,
+            34737,
+            22,
+            0,
+            2049,
+            34737,
+            7,
+            22,
+            2054,
+            0,
+            1,
+            9102,
+            3072,
+            0,
+            1,
+            32617,
+            3076,
+            0,
+            1,
+            9001
+          ],
+          "geo_double_params": [],
+          "geo_ascii_params": "WGS 84 / UTM zone 17N|WGS 84|",
+          "model_pixel_scale": [
+            30.0,
+            30.0,
+            0.0
+          ],
+          "model_tiepoint": [
+            0.0,
+            0.0,
+            0.0,
+            535200.0,
+            4095000.0,
+            0.0
+          ],
+          "raster_type": "PixelIsPoint",
+          "gdal_metadata_xml": null,
+          "gdal_nodata_text": null,
+          "normalized_crs": "EPSG:32617",
+          "normalization": null
+        }
+      },
+      "zarr_v3": {},
+      "version_validation": "conditional ETag",
+      "provider": "planetary_computer",
+      "canonical_locator": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/tm/2010/016/035/LT05_L2SP_016035_20100810_20200823_02_T1/LT05_L2SP_016035_20100810_20200823_02_T1_QA_RADSAT.TIF",
+      "access_policy": "pc-exact-object-request-v1",
+      "item_id": "LT05_L2SP_016035_20100810_02_T1",
+      "collection": "landsat-c2-l2",
+      "requested_band": "QA_RADSAT",
+      "product": "landsat-tm-c2-l2-sr",
+      "product_version": "Collection 2",
+      "platform": "landsat-5",
+      "processing": "L2SP",
+      "product_band": {
+        "name": "QA_RADSAT",
+        "asset_key": "qa_radsat",
+        "aliases": [
+          "radsat_qa"
+        ],
+        "role": "quality",
+        "description": "native quality or condition code",
+        "dtype": "uint16",
+        "nodata": null,
+        "scale": 1.0,
+        "offset": 0.0,
+        "unit": "1",
+        "optional": false
+      },
+      "acquisition": {
+        "gsd": 30,
+        "created": "2022-05-06T18:07:52.040916Z",
+        "sci:doi": "10.5066/P9IAXOVV",
+        "datetime": "2010-08-10T15:43:46.119081Z",
+        "platform": "landsat-5",
+        "proj:epsg": 32617,
+        "proj:shape": [
+          7031,
+          7921
+        ],
+        "description": "Landsat Collection 2 Level-2",
+        "instruments": [
+          "tm"
+        ],
+        "eo:cloud_cover": 1.0,
+        "proj:transform": [
+          30.0,
+          0.0,
+          535185.0,
+          0.0,
+          -30.0,
+          4095015.0
+        ],
+        "view:off_nadir": 0,
+        "landsat:wrs_row": "035",
+        "landsat:scene_id": "LT50160352010222GNC02",
+        "landsat:wrs_path": "016",
+        "landsat:wrs_type": "2",
+        "view:sun_azimuth": 126.67621769,
+        "landsat:correction": "L2SP",
+        "view:sun_elevation": 59.87655296,
+        "landsat:cloud_cover_land": 1.0,
+        "landsat:collection_number": "02",
+        "landsat:collection_category": "T1"
+      },
+      "asset_metadata": {
+        "href": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/tm/2010/016/035/LT05_L2SP_016035_20100810_20200823_02_T1/LT05_L2SP_016035_20100810_20200823_02_T1_QA_RADSAT.TIF",
+        "title": "Radiometric Saturation and Dropped Pixel Quality Assessment Band",
+        "description": "Collection 2 Level-1 Radiometric Saturation and Dropped Pixel Quality Assessment Band (QA_RADSAT)",
+        "classification:bitfields": [
+          {
+            "name": "band1",
+            "length": 1,
+            "offset": 0,
+            "classes": [
+              {
+                "name": "not_saturated",
+                "value": 0,
+                "description": "Band 1 not saturated"
+              },
+              {
+                "name": "saturated",
+                "value": 1,
+                "description": "Band 1 saturated"
+              }
+            ],
+            "description": "Band 1 radiometric saturation"
+          },
+          {
+            "name": "band2",
+            "length": 1,
+            "offset": 1,
+            "classes": [
+              {
+                "name": "not_saturated",
+                "value": 0,
+                "description": "Band 2 not saturated"
+              },
+              {
+                "name": "saturated",
+                "value": 1,
+                "description": "Band 2 saturated"
+              }
+            ],
+            "description": "Band 2 radiometric saturation"
+          },
+          {
+            "name": "band3",
+            "length": 1,
+            "offset": 2,
+            "classes": [
+              {
+                "name": "not_saturated",
+                "value": 0,
+                "description": "Band 3 not saturated"
+              },
+              {
+                "name": "saturated",
+                "value": 1,
+                "description": "Band 3 saturated"
+              }
+            ],
+            "description": "Band 3 radiometric saturation"
+          },
+          {
+            "name": "band4",
+            "length": 1,
+            "offset": 3,
+            "classes": [
+              {
+                "name": "not_saturated",
+                "value": 0,
+                "description": "Band 4 not saturated"
+              },
+              {
+                "name": "saturated",
+                "value": 1,
+                "description": "Band 4 saturated"
+              }
+            ],
+            "description": "Band 4 radiometric saturation"
+          },
+          {
+            "name": "band5",
+            "length": 1,
+            "offset": 4,
+            "classes": [
+              {
+                "name": "not_saturated",
+                "value": 0,
+                "description": "Band 5 not saturated"
+              },
+              {
+                "name": "saturated",
+                "value": 1,
+                "description": "Band 5 saturated"
+              }
+            ],
+            "description": "Band 5 radiometric saturation"
+          },
+          {
+            "name": "band6",
+            "length": 1,
+            "offset": 5,
+            "classes": [
+              {
+                "name": "not_saturated",
+                "value": 0,
+                "description": "Band 6 not saturated"
+              },
+              {
+                "name": "saturated",
+                "value": 1,
+                "description": "Band 6 saturated"
+              }
+            ],
+            "description": "Band 6 radiometric saturation"
+          },
+          {
+            "name": "band7",
+            "length": 1,
+            "offset": 6,
+            "classes": [
+              {
+                "name": "not_saturated",
+                "value": 0,
+                "description": "Band 7 not saturated"
+              },
+              {
+                "name": "saturated",
+                "value": 1,
+                "description": "Band 7 saturated"
+              }
+            ],
+            "description": "Band 7 radiometric saturation"
+          },
+          {
+            "name": "dropped",
+            "length": 1,
+            "offset": 9,
+            "classes": [
+              {
+                "name": "not_dropped",
+                "value": 0,
+                "description": "Detector has a value - pixel present"
+              },
+              {
+                "name": "dropped",
+                "value": 1,
+                "description": "Detector does not have a value - no data"
+              }
+            ],
+            "description": "Dropped pixel"
+          }
+        ],
+        "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+        "roles": [
+          "saturation"
+        ],
+        "raster:bands": [
+          {
+            "unit": "bit index",
+            "data_type": "uint16",
+            "spatial_resolution": 30
+          }
+        ]
+      },
+      "href": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/tm/2010/016/035/LT05_L2SP_016035_20100810_20200823_02_T1/LT05_L2SP_016035_20100810_20200823_02_T1_QA_RADSAT.TIF",
+      "raster_bands": [
+        {
+          "scale": 1.0,
+          "offset": 0.0,
+          "unit": "1"
+        }
+      ],
+      "quality_policies": [
+        "landsat_tm_radiometrically_unsaturated"
+      ],
+      "equivalence": {
+        "classification": "unknown_across_providers",
+        "group": null,
+        "scope": "No independent immutable-object sample attestation for this source; no substitution permitted."
+      }
+    },
+    {
+      "asset_id": "p000_SR_CLOUD_QA",
+      "format": "cog",
+      "reference": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/tm/2010/016/035/LT05_L2SP_016035_20100810_20200823_02_T1/LT05_L2SP_016035_20100810_20200823_02_T1_SR_CLOUD_QA.TIF",
+      "datetime": "2010-08-10T15:43:46.119081Z",
+      "object_version": "\"0x8D98AEBEE4BCC5F\"",
+      "local_identity": [],
+      "object_identities": {
+        "native_cog": {
+          "geokey_directory": [
+            1,
+            1,
+            0,
+            7,
+            1024,
+            0,
+            1,
+            1,
+            1025,
+            0,
+            1,
+            2,
+            1026,
+            34737,
+            22,
+            0,
+            2049,
+            34737,
+            7,
+            22,
+            2054,
+            0,
+            1,
+            9102,
+            3072,
+            0,
+            1,
+            32617,
+            3076,
+            0,
+            1,
+            9001
+          ],
+          "geo_double_params": [],
+          "geo_ascii_params": "WGS 84 / UTM zone 17N|WGS 84|",
+          "model_pixel_scale": [
+            30.0,
+            30.0,
+            0.0
+          ],
+          "model_tiepoint": [
+            0.0,
+            0.0,
+            0.0,
+            535200.0,
+            4095000.0,
+            0.0
+          ],
+          "raster_type": "PixelIsPoint",
+          "gdal_metadata_xml": null,
+          "gdal_nodata_text": null,
+          "normalized_crs": "EPSG:32617",
+          "normalization": null
+        }
+      },
+      "zarr_v3": {},
+      "version_validation": "conditional ETag",
+      "provider": "planetary_computer",
+      "canonical_locator": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/tm/2010/016/035/LT05_L2SP_016035_20100810_20200823_02_T1/LT05_L2SP_016035_20100810_20200823_02_T1_SR_CLOUD_QA.TIF",
+      "access_policy": "pc-exact-object-request-v1",
+      "item_id": "LT05_L2SP_016035_20100810_02_T1",
+      "collection": "landsat-c2-l2",
+      "requested_band": "SR_CLOUD_QA",
+      "product": "landsat-tm-c2-l2-sr",
+      "product_version": "Collection 2",
+      "platform": "landsat-5",
+      "processing": "L2SP",
+      "product_band": {
+        "name": "SR_CLOUD_QA",
+        "asset_key": "cloud_qa",
+        "aliases": [
+          "cloud_qa"
+        ],
+        "role": "quality",
+        "description": "native quality or condition code",
+        "dtype": "uint8",
+        "nodata": {
+          "type": "uint8",
+          "value": 0
+        },
+        "scale": 1.0,
+        "offset": 0.0,
+        "unit": "1",
+        "optional": false
+      },
+      "acquisition": {
+        "gsd": 30,
+        "created": "2022-05-06T18:07:52.040916Z",
+        "sci:doi": "10.5066/P9IAXOVV",
+        "datetime": "2010-08-10T15:43:46.119081Z",
+        "platform": "landsat-5",
+        "proj:epsg": 32617,
+        "proj:shape": [
+          7031,
+          7921
+        ],
+        "description": "Landsat Collection 2 Level-2",
+        "instruments": [
+          "tm"
+        ],
+        "eo:cloud_cover": 1.0,
+        "proj:transform": [
+          30.0,
+          0.0,
+          535185.0,
+          0.0,
+          -30.0,
+          4095015.0
+        ],
+        "view:off_nadir": 0,
+        "landsat:wrs_row": "035",
+        "landsat:scene_id": "LT50160352010222GNC02",
+        "landsat:wrs_path": "016",
+        "landsat:wrs_type": "2",
+        "view:sun_azimuth": 126.67621769,
+        "landsat:correction": "L2SP",
+        "view:sun_elevation": 59.87655296,
+        "landsat:cloud_cover_land": 1.0,
+        "landsat:collection_number": "02",
+        "landsat:collection_category": "T1"
+      },
+      "asset_metadata": {
+        "href": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/tm/2010/016/035/LT05_L2SP_016035_20100810_20200823_02_T1/LT05_L2SP_016035_20100810_20200823_02_T1_SR_CLOUD_QA.TIF",
+        "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+        "roles": [
+          "cloud",
+          "cloud-shadow",
+          "snow-ice",
+          "water-mask"
+        ],
+        "title": "Cloud Quality Assessment Band",
+        "description": "Collection 2 Level-2 Cloud Quality Assessment Band (SR_CLOUD_QA) Surface Reflectance Product",
+        "raster:bands": [
+          {
+            "unit": "bit index",
+            "data_type": "uint8",
+            "spatial_resolution": 30
+          }
+        ],
+        "classification:bitfields": [
+          {
+            "name": "ddv",
+            "length": 1,
+            "offset": 0,
+            "classes": [
+              {
+                "name": "not_ddv",
+                "value": 0,
+                "description": "Pixel has no DDV"
+              },
+              {
+                "name": "ddv",
+                "value": 1,
+                "description": "Pixel has DDV"
+              }
+            ],
+            "description": "Dense Dark Vegetation (DDV)"
+          },
+          {
+            "name": "cloud",
+            "length": 1,
+            "offset": 1,
+            "classes": [
+              {
+                "name": "not_cloud",
+                "value": 0,
+                "description": "Pixel has no cloud"
+              },
+              {
+                "name": "cloud",
+                "value": 1,
+                "description": "Pixel has cloud"
+              }
+            ],
+            "description": "Cloud mask"
+          },
+          {
+            "name": "cloud_shadow",
+            "length": 1,
+            "offset": 2,
+            "classes": [
+              {
+                "name": "not_shadow",
+                "value": 0,
+                "description": "Pixel has no cloud shadow"
+              },
+              {
+                "name": "shadow",
+                "value": 1,
+                "description": "Pixel has cloud shadow"
+              }
+            ],
+            "description": "Cloud shadow mask"
+          },
+          {
+            "name": "cloud_adjacent",
+            "length": 1,
+            "offset": 3,
+            "classes": [
+              {
+                "name": "not_adjacent",
+                "value": 0,
+                "description": "Pixel is not adjacent to cloud"
+              },
+              {
+                "name": "adjacent",
+                "value": 1,
+                "description": "Pixel is adjacent to cloud"
+              }
+            ],
+            "description": "Cloud adjacency"
+          },
+          {
+            "name": "snow",
+            "length": 1,
+            "offset": 4,
+            "classes": [
+              {
+                "name": "not_snow",
+                "value": 0,
+                "description": "Pixel is not snow"
+              },
+              {
+                "name": "shadow",
+                "value": 1,
+                "description": "Pixel is snow"
+              }
+            ],
+            "description": "Snow mask"
+          },
+          {
+            "name": "water",
+            "length": 1,
+            "offset": 5,
+            "classes": [
+              {
+                "name": "not_water",
+                "value": 0,
+                "description": "Pixel is not water"
+              },
+              {
+                "name": "water",
+                "value": 1,
+                "description": "Pixel is water"
+              }
+            ],
+            "description": "Water mask"
+          }
+        ]
+      },
+      "href": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/tm/2010/016/035/LT05_L2SP_016035_20100810_20200823_02_T1/LT05_L2SP_016035_20100810_20200823_02_T1_SR_CLOUD_QA.TIF",
+      "raster_bands": [
+        {
+          "scale": 1.0,
+          "offset": 0.0,
+          "unit": "1"
+        }
+      ],
+      "quality_policies": [
+        "landsat_tm_etm_cloud_clear"
+      ],
+      "equivalence": {
+        "classification": "unknown_across_providers",
+        "group": null,
+        "scope": "No independent immutable-object sample attestation for this source; no substitution permitted."
+      }
+    }
+  ]
+}

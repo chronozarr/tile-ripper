@@ -1,0 +1,108 @@
+{
+  "passed": true,
+  "binary": {
+    "path": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/wave2/tile-ripper-native",
+    "sha256": "922b991e76df77eeb8ed9e4d1710acb461a49760146e7695b64361e1cfd835c0"
+  },
+  "product": "landsat-tm-c2-l2-sr",
+  "item_id": "LT05_L2SP_016035_20100810_02_T1",
+  "scope": "captured real historical COG bytes; failures deliberately injected on local replay; no live fault traffic",
+  "faults": [
+    {
+      "mode": "fetch_source_mutation",
+      "exit_code": 1,
+      "injected_after_gets": 5,
+      "complete_manifest_published": false,
+      "wire": {
+        "head": 12,
+        "get": 6,
+        "range_get": 6,
+        "body_bytes": 16384,
+        "conditional": 8,
+        "errors": 0,
+        "head_active": 0,
+        "head_peak": 2
+      }
+    },
+    {
+      "mode": "fetch_cancellation",
+      "exit_code": -2,
+      "injected_after_gets": 5,
+      "complete_manifest_published": false,
+      "wire": {
+        "head": 12,
+        "get": 6,
+        "range_get": 6,
+        "body_bytes": 16384,
+        "conditional": 8,
+        "errors": 0,
+        "head_active": 0,
+        "head_peak": 2
+      }
+    },
+    {
+      "mode": "fetch_503",
+      "exit_code": 1,
+      "injected_after_gets": 5,
+      "complete_manifest_published": false,
+      "wire": {
+        "head": 12,
+        "get": 6,
+        "range_get": 6,
+        "body_bytes": 32768,
+        "conditional": 8,
+        "errors": 6,
+        "head_active": 0,
+        "head_peak": 2
+      }
+    },
+    {
+      "mode": "stream_source_mutation_after_chunk",
+      "exit_code": 1,
+      "provisional_chunk_received": true,
+      "complete_event_published": false,
+      "wire": {
+        "head": 34,
+        "get": 52,
+        "range_get": 52,
+        "body_bytes": 383302,
+        "conditional": 66,
+        "errors": 0,
+        "head_active": 2,
+        "head_peak": 2
+      }
+    },
+    {
+      "mode": "stream_cancellation_after_chunk",
+      "exit_code": 1,
+      "provisional_chunk_received": true,
+      "complete_event_published": false,
+      "wire": {
+        "head": 34,
+        "get": 52,
+        "range_get": 52,
+        "body_bytes": 383302,
+        "conditional": 66,
+        "errors": 0,
+        "head_active": 0,
+        "head_peak": 2
+      }
+    },
+    {
+      "mode": "stream_503_after_chunk",
+      "exit_code": 1,
+      "provisional_chunk_received": true,
+      "complete_event_published": false,
+      "wire": {
+        "head": 34,
+        "get": 52,
+        "range_get": 52,
+        "body_bytes": 383302,
+        "conditional": 66,
+        "errors": 6,
+        "head_active": 0,
+        "head_peak": 2
+      }
+    }
+  ]
+}
