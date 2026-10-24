@@ -1,0 +1,294 @@
+{
+  "passed": true,
+  "product": "hls-l30",
+  "scope": "public official reference products, independent native-grid observation groups; production archive access is separately constrained",
+  "sources": [
+    {
+      "id": "B04",
+      "href": "https://hls.gsfc.nasa.gov/data/RSE2.0.data.code/data/HLS.L30.T15VUE.2022231T172609.v2.0/HLS.L30.T15VUE.2022231T172609.v2.0.B04.tif",
+      "canonical_href": "https://hls.gsfc.nasa.gov/data/RSE2.0.data.code/data/HLS.L30.T15VUE.2022231T172609.v2.0/HLS.L30.T15VUE.2022231T172609.v2.0.B04.tif",
+      "bytes": 24519548,
+      "etag": "\"176237c-5f67b3da224c0\"",
+      "datetime": "2022-08-19T17:26:09.755564Z",
+      "metadata": {
+        "raster:bands": [
+          {
+            "scale": 0.0001,
+            "offset": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "Fmask",
+      "href": "https://hls.gsfc.nasa.gov/data/RSE2.0.data.code/data/HLS.L30.T15VUE.2022231T172609.v2.0/HLS.L30.T15VUE.2022231T172609.v2.0.Fmask.tif",
+      "canonical_href": "https://hls.gsfc.nasa.gov/data/RSE2.0.data.code/data/HLS.L30.T15VUE.2022231T172609.v2.0/HLS.L30.T15VUE.2022231T172609.v2.0.Fmask.tif",
+      "bytes": 918102,
+      "etag": "\"e0256-5f67b3dc0a940\"",
+      "datetime": "2022-08-19T17:26:09.755564Z",
+      "metadata": {}
+    }
+  ],
+  "reference": [
+    {
+      "band": "B04",
+      "dtype": "int16",
+      "shape": [
+        36,
+        36
+      ],
+      "source_window": {
+        "x": 1790,
+        "y": 1790,
+        "width": 36,
+        "height": 36
+      },
+      "crs": "EPSG:32615",
+      "normalized_crs": "EPSG:32615",
+      "compression": "deflate",
+      "scale": 0.0001,
+      "offset": 0.0,
+      "source_nodata": -9999.0,
+      "sha256": "abcd574b7cdb6af7f31dc0928e4ee3b30d8f61486102a47d642697ef46a17663",
+      "values_equal_bits": true,
+      "masks_equal": true,
+      "coordinates_equal": true
+    },
+    {
+      "band": "Fmask",
+      "dtype": "uint8",
+      "shape": [
+        36,
+        36
+      ],
+      "source_window": {
+        "x": 1790,
+        "y": 1790,
+        "width": 36,
+        "height": 36
+      },
+      "crs": "EPSG:32615",
+      "normalized_crs": "EPSG:32615",
+      "compression": "deflate",
+      "scale": 1.0,
+      "offset": 0.0,
+      "source_nodata": 255.0,
+      "sha256": "65f23a3363e6a18c838f727bc86451f185eec007ce6ae9559ece14b52c80d123",
+      "values_equal_bits": true,
+      "masks_equal": true,
+      "coordinates_equal": true
+    }
+  ],
+  "native": {
+    "code": 0,
+    "wall_seconds": 0.047698207999928854,
+    "cpu_seconds": 0.028762,
+    "peak_rss_bytes": 21299200
+  },
+  "observed": {
+    "source_reads": [],
+    "scheduler": {
+      "workers": 2,
+      "per_host": 4,
+      "buffer_bytes": 33554272,
+      "reserved_bytes_peak": 777038,
+      "reader_state_reserved_bytes": 0,
+      "prepared_native_metadata_bytes": 20966,
+      "authenticated_transport_reserved_bytes": 0,
+      "prepared_v3_metadata_index_bytes": 0,
+      "active_workers_peak": 2,
+      "completed_tasks": 2,
+      "admitted_jobs": 2,
+      "cog_reader_scope": "selection",
+      "seconds": 0.005566666,
+      "order": "plan",
+      "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+      "native_buffers": [
+        {
+          "asset_id": "p000_B04",
+          "transport_encoded_capacity_peak_bytes": 90839,
+          "adapter_delivery_capacity_peak_bytes": 3888,
+          "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+        },
+        {
+          "asset_id": "p000_Fmask",
+          "transport_encoded_capacity_peak_bytes": 2081,
+          "adapter_delivery_capacity_peak_bytes": 2592,
+          "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+        }
+      ],
+      "native_metadata": {
+        "retained_sources": 2,
+        "retained_bytes": 20966,
+        "physical_metadata_sources": 2,
+        "physical_metadata_bytes": 4582,
+        "cap_bytes": 8388608,
+        "skipped_sources": 0,
+        "scope": "this Prepared only; immutable version-bound parser pages; never a data cache",
+        "authenticated_sources": 0,
+        "authenticated_transport": {}
+      },
+      "native_strategies": [
+        {
+          "asset_id": "p000_B04",
+          "task_reserved_bytes": 489247,
+          "strategy": {
+            "read_scope": "planned_windows",
+            "retained_selection_bytes": 0,
+            "decoded_cache_limit_bytes": 0,
+            "coalesced_groups": 0,
+            "max_encoded_group_reservation_bytes": 0,
+            "codec_working_bytes": 131072
+          }
+        },
+        {
+          "asset_id": "p000_Fmask",
+          "task_reserved_bytes": 266825,
+          "strategy": {
+            "read_scope": "planned_windows",
+            "retained_selection_bytes": 0,
+            "decoded_cache_limit_bytes": 0,
+            "coalesced_groups": 0,
+            "max_encoded_group_reservation_bytes": 0,
+            "codec_working_bytes": 131072
+          }
+        }
+      ]
+    },
+    "transport": {},
+    "decoded_source_chunks": 0,
+    "filled_source_chunks": 0,
+    "first_output_seconds": 0.01464975,
+    "assembly_seconds": 0.0,
+    "source_retrieval_seconds": 0.0036385820000000004,
+    "allocation_seconds": null,
+    "copying_seconds": null,
+    "output_setup_seconds": 0.007942875,
+    "output_finalize_seconds": 0.000296416,
+    "output_io": {
+      "reads": 0,
+      "writes": 54,
+      "bytes_read": 0,
+      "bytes_written": 103013,
+      "buffered_bytes_peak": 50544,
+      "storage_read_seconds": 0.0,
+      "storage_write_seconds": 0.006477246000000001,
+      "encode_seconds": 6.087599999999914e-05,
+      "allocation_seconds": 0.0,
+      "copying_seconds": 0.0
+    },
+    "native_materialized_bytes": null,
+    "source_data_requests": 8,
+    "source_data_bytes": 360373,
+    "chunks": 2,
+    "decoded_bytes": 3888,
+    "non_nodata_pixels": 2176,
+    "planning_seconds": 0.004404875,
+    "source_open_seconds": 0.001222709,
+    "read_decode_seconds": 0.006843541,
+    "sink_seconds": 0.0007567089999999999,
+    "masking_seconds": 1.0167e-05,
+    "remote_requests": null,
+    "remote_bytes": null
+  },
+  "wire": {
+    "head": 10,
+    "get": 12,
+    "range_get": 12,
+    "body_bytes": 376757,
+    "conditional": 16,
+    "errors": 0,
+    "head_active": 0,
+    "head_peak": 2
+  },
+  "source_work": {
+    "selected_native_bytes": 3888,
+    "unique_source_blocks": 8,
+    "planned_block_visits": 8,
+    "planned_repeated_block_visits": 0,
+    "source_block_decoded_bytes": 786432,
+    "decoded_block_to_selected_byte_ratio": 202.2716049382716,
+    "unique_selected_tile_encoded_bytes": 360373,
+    "http_body_bytes": 376757,
+    "http_unique_range_bytes": 376757,
+    "http_duplicate_range_bytes": 0,
+    "http_repeated_identical_ranges": 0,
+    "scope": "blocks from physical plan; HTTP range union includes metadata and data; freezing-page overhead is separate"
+  },
+  "reference_seconds": 0.45474129100330174,
+  "output_objects": 53,
+  "output_bytes": 215634,
+  "upstream_encoded_bytes": 2359296,
+  "upstream_requests": 7,
+  "mirror_digest": "04db3bd7021e785f333012cff08971ee7d1d6d1b021e0571d3f136c08bd2f84c",
+  "established_workflow": {
+    "process": {
+      "code": 0,
+      "wall_seconds": 0.21293012499518227,
+      "cpu_seconds": 0.200492,
+      "peak_rss_bytes": 88244224
+    },
+    "metrics": {
+      "status": "complete",
+      "format": "zarr_v2",
+      "output": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/wave1/hls-l30.zarr.rasterio-reference",
+      "observations": 2,
+      "samples": 2592,
+      "source_read_calls": 2,
+      "source_reads": 2,
+      "source_decoded_bytes": 3888,
+      "source_identity_heads": 4,
+      "http_gets": 10,
+      "http_heads": 2,
+      "http_range_response_bytes": 540672,
+      "http_range_responses": 10,
+      "output_objects": 53,
+      "output_bytes": 37273,
+      "setup_seconds": 0.009075624999240972,
+      "write_seconds": 0.04311979100020835,
+      "finalize_seconds": 0.0023966250009834766,
+      "wall_seconds": 0.05632833299750928,
+      "manifest": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/wave1/hls-l30.zarr.rasterio-reference/manifest.json"
+    },
+    "wire": {
+      "head": 6,
+      "get": 10,
+      "range_get": 10,
+      "body_bytes": 540672,
+      "conditional": 16,
+      "errors": 0,
+      "head_active": 0,
+      "head_peak": 1
+    },
+    "compared": [
+      {
+        "group": "observations/000000",
+        "arrays": [
+          "aoi_mask",
+          "spatial_ref",
+          "time",
+          "valid",
+          "values",
+          "x",
+          "y"
+        ],
+        "equal_bits": true
+      },
+      {
+        "group": "observations/000001",
+        "arrays": [
+          "aoi_mask",
+          "quality_hls_fmask_clear",
+          "spatial_ref",
+          "time",
+          "valid",
+          "values",
+          "x",
+          "y"
+        ],
+        "equal_bits": true
+      }
+    ],
+    "selection": "identical approved source windows; discovery excluded from both replay execution comparisons"
+  }
+}

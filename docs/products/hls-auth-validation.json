@@ -1,0 +1,358 @@
+{
+  "schema_version": 1,
+  "document_type": "bounded_live_hls_authenticated_validation",
+  "status": "passed",
+  "validated_at_utc": "2026-10-24T02:34:44.052548Z",
+  "scope": "Two explicitly pinned, narrow production HLS V2 examples; one L30 and one S30 granule, B04 and Fmask only. This evidence does not claim archive-wide qualification.",
+  "reference": {
+    "reader": "rasterio 1.4.4 / GDAL 3.10.3",
+    "zarr_reader": "xarray 2025.6.1 / zarr-python 2.18.3",
+    "authentication": "ephemeral signed GET URL resolved in memory through exact canonical, URS, canonical-login, canonical-object, and fixed CloudFront-object routes",
+    "credential_confinement": "ambient netrc disabled; Basic authorization supplied only to the exact URS origin; exact-origin cookie sessions; no credentials or signed URLs persisted",
+    "conditional_identity": "If-Match used for resolver probe and mature-reader requests; the harness pins provider strong ETags and Content-Range total sizes, while the manifest stores ETags and canonical unsigned URLs"
+  },
+  "execution": {
+    "mode": "binary",
+    "binary_sha256": "46feb6300460febd148a474ebada2b0d3dbbadbd11f2b5063b077c20534faa6a"
+  },
+  "cases": [
+    {
+      "label": "HLS L30 V2 B04 and Fmask",
+      "product": "hls-l30",
+      "granule_id": "HLS.L30.T17SPU.2026291T154740.v2.0",
+      "cmr_concept_id": "G4382581583-LPCLOUD",
+      "request_file": "hls-l30-authenticated-request.json",
+      "manifest_status": "complete",
+      "manifest_sha256": "ea1828532dd789b78bc5cc77450f67c7947748cf634dac666e8b6321b3809049",
+      "processing_contract_verified": true,
+      "assets": [
+        {
+          "asset_id": "p000_B04",
+          "canonical_url": "https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T17SPU.2026291T154740.v2.0/HLS.L30.T17SPU.2026291T154740.v2.0.B04.tif",
+          "etag": "\"c1eea635b7169a322f1194219709d2c1-1\"",
+          "source_size_bytes": 9495244,
+          "redirect_hops": [
+            {
+              "from_origin": "https://data.lpdaac.earthdatacloud.nasa.gov",
+              "to_origin": "https://urs.earthdata.nasa.gov",
+              "status": 302
+            },
+            {
+              "from_origin": "https://urs.earthdata.nasa.gov",
+              "to_origin": "https://data.lpdaac.earthdatacloud.nasa.gov",
+              "status": 302
+            },
+            {
+              "from_origin": "https://data.lpdaac.earthdatacloud.nasa.gov",
+              "to_origin": "https://data.lpdaac.earthdatacloud.nasa.gov",
+              "status": 301
+            },
+            {
+              "from_origin": "https://data.lpdaac.earthdatacloud.nasa.gov",
+              "to_origin": "https://d1nklfio7vscoe.cloudfront.net",
+              "status": 303
+            }
+          ],
+          "window": {
+            "x": 3051,
+            "y": 831,
+            "width": 4,
+            "height": 5
+          },
+          "shape": [
+            5,
+            4
+          ],
+          "crs": "EPSG:32617",
+          "dtype": "int16",
+          "dtype_bits": 16,
+          "nodata": -9999.0,
+          "scale": 0.0001,
+          "offset": 0.0,
+          "source_values_sha256": "fffde72f0b87ea75f3b65fa1b50546a88b7807394503669a538bff5472d3c4e6",
+          "stored_values_sha256": "8cb8576b49b13fab759a58f0304bf5643b5d8ccf36e83c65ebf25b18db323d59",
+          "stored_values_match_source_after_aoi_fill": true,
+          "coordinates_match_rasterio_pixel_centers": true,
+          "aoi_mask_matches_independent_wgs84_center_test": true,
+          "aoi_pixels": 12,
+          "valid_matches_aoi_and_source_nodata": true,
+          "valid_pixels": 12,
+          "time_matches_request_nanoseconds": true,
+          "request_time": "2026-10-18T15:47:40.202Z",
+          "source_sensing_time": "2026-10-18T15:47:40.2028270Z",
+          "source_processing_time": "2026-10-22T00:56:24Z",
+          "retained_processing_tags_match_rasterio": true,
+          "quality": null
+        },
+        {
+          "asset_id": "p000_Fmask",
+          "canonical_url": "https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T17SPU.2026291T154740.v2.0/HLS.L30.T17SPU.2026291T154740.v2.0.Fmask.tif",
+          "etag": "\"8287e3130a18bd2150f3f5151fda7608-1\"",
+          "source_size_bytes": 376531,
+          "redirect_hops": [
+            {
+              "from_origin": "https://data.lpdaac.earthdatacloud.nasa.gov",
+              "to_origin": "https://urs.earthdata.nasa.gov",
+              "status": 302
+            },
+            {
+              "from_origin": "https://urs.earthdata.nasa.gov",
+              "to_origin": "https://data.lpdaac.earthdatacloud.nasa.gov",
+              "status": 302
+            },
+            {
+              "from_origin": "https://data.lpdaac.earthdatacloud.nasa.gov",
+              "to_origin": "https://data.lpdaac.earthdatacloud.nasa.gov",
+              "status": 301
+            },
+            {
+              "from_origin": "https://data.lpdaac.earthdatacloud.nasa.gov",
+              "to_origin": "https://d1nklfio7vscoe.cloudfront.net",
+              "status": 303
+            }
+          ],
+          "window": {
+            "x": 3051,
+            "y": 831,
+            "width": 4,
+            "height": 5
+          },
+          "shape": [
+            5,
+            4
+          ],
+          "crs": "EPSG:32617",
+          "dtype": "uint8",
+          "dtype_bits": 8,
+          "nodata": 255.0,
+          "scale": 1.0,
+          "offset": 0.0,
+          "source_values_sha256": "d43da9bfbb402d2b17c54ef5746167ae3c1390fbd11d200c3cbc9743b1686c88",
+          "stored_values_sha256": "b4d2e94873d98b568c82e131a586f1a12988e207588cc81ec91abfb040a0ba57",
+          "stored_values_match_source_after_aoi_fill": true,
+          "coordinates_match_rasterio_pixel_centers": true,
+          "aoi_mask_matches_independent_wgs84_center_test": true,
+          "aoi_pixels": 12,
+          "valid_matches_aoi_and_source_nodata": true,
+          "valid_pixels": 12,
+          "time_matches_request_nanoseconds": true,
+          "request_time": "2026-10-18T15:47:40.202Z",
+          "source_sensing_time": "2026-10-18T15:47:40.2028270Z",
+          "source_processing_time": "2026-10-22T00:56:24Z",
+          "retained_processing_tags_match_rasterio": true,
+          "quality": {
+            "policy": "hls_fmask_clear",
+            "definition": "valid AOI sample with Fmask bits 0-4 all zero; water and aerosol do not reject",
+            "accepted": 12,
+            "matches": true
+          }
+        }
+      ],
+      "observed": {
+        "chunks": 2,
+        "decoded_bytes": 60,
+        "non_nodata_pixels": 24,
+        "source_data_requests": 2,
+        "source_data_bytes": 106543,
+        "scheduler_buffer_bytes": 33554248,
+        "scheduler_reserved_bytes_peak": 2879834,
+        "prepared_native_metadata_bytes": 2117811,
+        "authenticated_transport_reserved_bytes": 2097152,
+        "output_buffered_bytes_peak": 780,
+        "transport": {
+          "p000_B04": {
+            "wire_head": 16,
+            "wire_get": 7,
+            "redirects": 12,
+            "login_requests": 1,
+            "refreshes": 0,
+            "route_cache_hits": 2,
+            "response_body_bytes": 108517,
+            "redirect_body_bytes": 321,
+            "peak_in_flight": 1
+          },
+          "p000_Fmask": {
+            "wire_head": 16,
+            "wire_get": 7,
+            "redirects": 12,
+            "login_requests": 1,
+            "refreshes": 0,
+            "route_cache_hits": 2,
+            "response_body_bytes": 15054,
+            "redirect_body_bytes": 323,
+            "peak_in_flight": 1
+          }
+        }
+      }
+    },
+    {
+      "label": "HLS S30 V2 B04 and Fmask",
+      "product": "hls-s30",
+      "granule_id": "HLS.S30.T59UNU.2026295T235129.v2.0",
+      "cmr_concept_id": "G4386229287-LPCLOUD",
+      "request_file": "hls-s30-authenticated-request.json",
+      "manifest_status": "complete",
+      "manifest_sha256": "bd2728c10fd373292fba5313b755cc11305e876037b539413676e15aaa7d9bf6",
+      "processing_contract_verified": true,
+      "assets": [
+        {
+          "asset_id": "p000_B04",
+          "canonical_url": "https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSS30.020/HLS.S30.T59UNU.2026295T235129.v2.0/HLS.S30.T59UNU.2026295T235129.v2.0.B04.tif",
+          "etag": "\"ffeba64feaf023b15e8944517bfde064-1\"",
+          "source_size_bytes": 24793915,
+          "redirect_hops": [
+            {
+              "from_origin": "https://data.lpdaac.earthdatacloud.nasa.gov",
+              "to_origin": "https://urs.earthdata.nasa.gov",
+              "status": 302
+            },
+            {
+              "from_origin": "https://urs.earthdata.nasa.gov",
+              "to_origin": "https://data.lpdaac.earthdatacloud.nasa.gov",
+              "status": 302
+            },
+            {
+              "from_origin": "https://data.lpdaac.earthdatacloud.nasa.gov",
+              "to_origin": "https://data.lpdaac.earthdatacloud.nasa.gov",
+              "status": 301
+            },
+            {
+              "from_origin": "https://data.lpdaac.earthdatacloud.nasa.gov",
+              "to_origin": "https://d1nklfio7vscoe.cloudfront.net",
+              "status": 303
+            }
+          ],
+          "window": {
+            "x": 1124,
+            "y": 1659,
+            "width": 3,
+            "height": 5
+          },
+          "shape": [
+            5,
+            3
+          ],
+          "crs": "EPSG:32659",
+          "dtype": "int16",
+          "dtype_bits": 16,
+          "nodata": -9999.0,
+          "scale": 0.0001,
+          "offset": 0.0,
+          "source_values_sha256": "01e505b10d9ee1cd0f2dac7ca862655699aee250e81cb4b22b6eb3d2b01b51f8",
+          "stored_values_sha256": "e7439430dcd9c202811ababca05dc92a8c70f6b0dfe7b98cdea012be3b7ce1ad",
+          "stored_values_match_source_after_aoi_fill": true,
+          "coordinates_match_rasterio_pixel_centers": true,
+          "aoi_mask_matches_independent_wgs84_center_test": true,
+          "aoi_pixels": 9,
+          "valid_matches_aoi_and_source_nodata": true,
+          "valid_pixels": 9,
+          "time_matches_request_nanoseconds": true,
+          "request_time": "2026-10-22T23:51:43.692Z",
+          "source_sensing_time": "2026-10-22T23:51:43.692726Z",
+          "source_processing_time": "2026-10-24T01:14:38Z",
+          "retained_processing_tags_match_rasterio": true,
+          "quality": null
+        },
+        {
+          "asset_id": "p000_Fmask",
+          "canonical_url": "https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSS30.020/HLS.S30.T59UNU.2026295T235129.v2.0/HLS.S30.T59UNU.2026295T235129.v2.0.Fmask.tif",
+          "etag": "\"488b863361e4da26908ebc4207d7f6df-1\"",
+          "source_size_bytes": 1546961,
+          "redirect_hops": [
+            {
+              "from_origin": "https://data.lpdaac.earthdatacloud.nasa.gov",
+              "to_origin": "https://urs.earthdata.nasa.gov",
+              "status": 302
+            },
+            {
+              "from_origin": "https://urs.earthdata.nasa.gov",
+              "to_origin": "https://data.lpdaac.earthdatacloud.nasa.gov",
+              "status": 302
+            },
+            {
+              "from_origin": "https://data.lpdaac.earthdatacloud.nasa.gov",
+              "to_origin": "https://data.lpdaac.earthdatacloud.nasa.gov",
+              "status": 301
+            },
+            {
+              "from_origin": "https://data.lpdaac.earthdatacloud.nasa.gov",
+              "to_origin": "https://d1nklfio7vscoe.cloudfront.net",
+              "status": 303
+            }
+          ],
+          "window": {
+            "x": 1124,
+            "y": 1659,
+            "width": 3,
+            "height": 5
+          },
+          "shape": [
+            5,
+            3
+          ],
+          "crs": "EPSG:32659",
+          "dtype": "uint8",
+          "dtype_bits": 8,
+          "nodata": 255.0,
+          "scale": 1.0,
+          "offset": 0.0,
+          "source_values_sha256": "10e61f2f36a2e8b0ea159c11de48e927ff1b1c9b056251a5fd9c98fbd107098c",
+          "stored_values_sha256": "efa6410c0fad4cae0df1db8fdcfd1d877d84e1a5a3538220eb6569a8ca0232e1",
+          "stored_values_match_source_after_aoi_fill": true,
+          "coordinates_match_rasterio_pixel_centers": true,
+          "aoi_mask_matches_independent_wgs84_center_test": true,
+          "aoi_pixels": 9,
+          "valid_matches_aoi_and_source_nodata": true,
+          "valid_pixels": 9,
+          "time_matches_request_nanoseconds": true,
+          "request_time": "2026-10-22T23:51:43.692Z",
+          "source_sensing_time": "2026-10-22T23:51:43.692726Z",
+          "source_processing_time": "2026-10-24T01:14:38Z",
+          "retained_processing_tags_match_rasterio": true,
+          "quality": {
+            "policy": "hls_fmask_clear",
+            "definition": "valid AOI sample with Fmask bits 0-4 all zero; water and aerosol do not reject",
+            "accepted": 0,
+            "matches": true
+          }
+        }
+      ],
+      "observed": {
+        "chunks": 2,
+        "decoded_bytes": 45,
+        "non_nodata_pixels": 18,
+        "source_data_requests": 2,
+        "source_data_bytes": 108167,
+        "scheduler_buffer_bytes": 33554248,
+        "scheduler_reserved_bytes_peak": 2891020,
+        "prepared_native_metadata_bytes": 2127403,
+        "authenticated_transport_reserved_bytes": 2097152,
+        "output_buffered_bytes_peak": 585,
+        "transport": {
+          "p000_B04": {
+            "wire_head": 16,
+            "wire_get": 8,
+            "redirects": 12,
+            "login_requests": 1,
+            "refreshes": 0,
+            "route_cache_hits": 3,
+            "response_body_bytes": 111814,
+            "redirect_body_bytes": 321,
+            "peak_in_flight": 1
+          },
+          "p000_Fmask": {
+            "wire_head": 16,
+            "wire_get": 8,
+            "redirects": 12,
+            "login_requests": 1,
+            "refreshes": 0,
+            "route_cache_hits": 3,
+            "response_body_bytes": 21573,
+            "redirect_body_bytes": 323,
+            "peak_in_flight": 1
+          }
+        }
+      }
+    }
+  ]
+}
