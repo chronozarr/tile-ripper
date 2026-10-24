@@ -300,7 +300,8 @@ pub(crate) fn outputs(plan: &Plan) -> Value {
             "nodata":l.and_then(|l|l.nodata),"scale":l.and_then(|l|l.scale),"offset":l.and_then(|l|l.offset),
             "native_grid":l.map(|l|json!({"crs":l.crs,"transform":crate::spatial::window_transform(l,&s.window)})),
             "dimensions":{"names":["time","y","x"],"shape":[1,s.window.height,s.window.width]},
-            "aoi_mask_applied":s.mask_geometry.is_some(),"validity":"valid = aoi_mask AND values != source nodata; 0 invalid, 1 valid"})
+            "aoi_mask_applied":s.mask_geometry.is_some(),
+            "validity":"valid = AOI inclusion AND physical source validity AND product semantic validity when a product profile is attached; 0 invalid, 1 valid"})
     }).collect::<Vec<_>>())
 }
 #[allow(clippy::too_many_arguments)]
@@ -635,7 +636,7 @@ pub(crate) fn fetch_with_options(
                         "dataset":format!("quality_{}", policy.name()),
                         "policy":policy.name(),
                         "description":policy.description(),
-                        "scope":"this raw observation intersected with source validity and AOI inclusion"
+                        "scope":"this raw observation intersected with physical source validity, product semantic validity, and AOI inclusion"
                     }))
                     .collect::<Vec<_>>());
             }
@@ -823,7 +824,9 @@ pub(crate) fn fetch_with_options(
             &chunks,
             "|u1",
             json!(0),
-            mask_attrs("AOI included and not source nodata"),
+            mask_attrs(
+                "AOI included and valid under physical source and product semantic missingness",
+            ),
             encoding,
         )?;
         let aoi = array(
@@ -848,7 +851,7 @@ pub(crate) fn fetch_with_options(
                 json!({"_ARRAY_DIMENSIONS":["time","y","x"],"grid_mapping":"spatial_ref",
                     "long_name":policy.description(),"flag_values":[0,1],
                     "flag_meanings":"rejected accepted","quality_policy":policy.name(),
-                    "derivation":"policy evaluated from this observation's raw stored samples, then intersected with source validity and AOI inclusion; no calibration or cross-band alignment"}),
+                    "derivation":"policy evaluated from this observation's raw stored samples, then intersected with physical source validity, product semantic validity, and AOI inclusion; no calibration or cross-band alignment"}),
                 encoding,
             )?;
             quality.push((policy, mask));

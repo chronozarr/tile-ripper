@@ -55,9 +55,9 @@ class Band:
     unit: str
 
 
-REFLECTANCE_I16 = Band("int16", -9999, 0.0001, 0.0, "reflectance")
+REFLECTANCE_I16 = Band("int16", -9999, 0.0001, 0.0, "1")
 ANGLE_U16 = Band("uint16", 40000, 0.01, 0.0, "degree")
-LANDSAT_SR = Band("uint16", 0, 0.0000275, -0.2, "reflectance")
+LANDSAT_SR = Band("uint16", 0, 0.0000275, -0.2, "1")
 
 
 def product_band(product: str, name: str) -> Band:
@@ -66,18 +66,18 @@ def product_band(product: str, name: str) -> Band:
         if name in {f"SR_B{i}" for i in range(1, 8)}:
             return LANDSAT_SR
         if name == "QA_PIXEL":
-            return Band("uint16", 1, 1.0, 0.0, "bit_field")
+            return Band("uint16", 1, 1.0, 0.0, "1")
         if name == "QA_RADSAT":
-            return Band("uint16", None, 1.0, 0.0, "bit_field")
+            return Band("uint16", None, 1.0, 0.0, "1")
         if name == "SR_QA_AEROSOL":
-            return Band("uint8", 1, 1.0, 0.0, "bit_field")
+            return Band("uint8", 1, 1.0, 0.0, "1")
     if product == "hls-l30":
         if name in {"B01", "B02", "B03", "B04", "B05", "B06", "B07", "B09"}:
             return REFLECTANCE_I16
         if name in {"B10", "B11"}:
-            return Band("int16", -9999, 0.01, 0.0, "degree_celsius")
+            return Band("int16", -9999, 0.01, 0.0, "degree_Celsius")
         if name == "Fmask":
-            return Band("uint8", 255, 1.0, 0.0, "bit_field")
+            return Band("uint8", 255, 1.0, 0.0, "1")
         if name in {"SZA", "SAA", "VZA", "VAA"}:
             return ANGLE_U16
     if product == "hls-s30":
@@ -87,26 +87,26 @@ def product_band(product: str, name: str) -> Band:
         }:
             return REFLECTANCE_I16
         if name == "Fmask":
-            return Band("uint8", 255, 1.0, 0.0, "bit_field")
+            return Band("uint8", 255, 1.0, 0.0, "1")
         if name in {"SZA", "SAA", "VZA", "VAA"}:
             return ANGLE_U16
     if product == "opera-dswx-hls":
         if name in {"WTR", "BWTR", "CONF", "WTR-1", "WTR-2", "LAND", "CLOUD"}:
-            return Band("uint8", 255, 1.0, 0.0, "class")
+            return Band("uint8", 255, 1.0, 0.0, "1")
         if name == "DIAG":
-            return Band("uint16", 65535, 1.0, 0.0, "five_digit_test_code")
+            return Band("uint16", 65535, 1.0, 0.0, "1")
         if name == "SHAD":
-            return Band("uint8", None, 1.0, 0.0, "class")
+            return Band("uint8", None, 1.0, 0.0, "1")
         if name == "DEM":
-            return Band("float32", None, 1.0, 0.0, "meter_above_wgs84_ellipsoid")
+            return Band("float32", None, 1.0, 0.0, "m")
     if product == "opera-rtc-s1":
         if name in {"VV", "VH", "HH", "HV"}:
-            # OPERA specimen TIFFs mark NaN as nodata.  Tile-Ripper preserves
-            # all stored values and treats NaN invalid without inventing a
-            # finite sentinel, so the Zarr fill remains null.
-            return Band("float32", "NaN", 1.0, 0.0, "linear_gamma0_power")
+            # The product specification assigns no finite fill value to the
+            # backscatter layer. Admitted source TIFFs carry a physical
+            # GDAL_NODATA=nan token, which is checked separately below.
+            return Band("float32", None, 1.0, 0.0, "1")
         if name == "mask":
-            return Band("uint8", 255, 1.0, 0.0, "class")
+            return Band("uint8", 255, 1.0, 0.0, "1")
     raise ValueError(f"unsupported independent product band: {product}/{name}")
 
 
@@ -263,7 +263,7 @@ def quality(policy: str, values: np.ndarray) -> np.ndarray:
         return value == 1
     if policy == "dswx_cloud_obstruction_free":
         value = values.astype("uint8", copy=False)
-        require_domain(value, set(range(16)) | {255}, "CLOUD")
+        require_domain(value, set(range(16)) | {254, 255}, "CLOUD")
         return np.isin(value, (0, 8))
     if policy == "opera_rtc_finite":
         if values.dtype.kind != "f":
@@ -656,7 +656,7 @@ def build(request_path: Path, native_path: Path, destination: Path) -> dict:
                         if record.get("dtype") and record["dtype"] != profile.dtype:
                             raise ValueError("native manifest dtype differs from independent definition")
                         source_nodata = normalized_nodata(dataset.nodata)
-                        if profile.nodata == "NaN":
+                        if product == "opera-rtc-s1" and band_name in {"VV", "VH", "HH", "HV"}:
                             if source_nodata not in (None, "NaN"):
                                 raise ValueError("RTC source has an unexpected finite nodata")
                         elif source_nodata is not None and normalized_nodata(profile.nodata) != source_nodata:
@@ -680,8 +680,8 @@ def build(request_path: Path, native_path: Path, destination: Path) -> dict:
                         geometry = request_geometry(request, dataset.crs)
                         approved_nodata = record.get("nodata")
                         if source_nodata == "NaN":
-                            if normalized_nodata(approved_nodata) not in (None, "NaN"):
-                                raise ValueError("native-approved RTC nodata is unexpectedly finite")
+                            if normalized_nodata(approved_nodata) is not None:
+                                raise ValueError("native manifest did not normalize non-finite TIFF nodata")
                         elif not same_number(approved_nodata, source_nodata):
                             raise ValueError("native-approved nodata differs from source raster metadata")
                         source_crs_wkt = dataset.crs.to_wkt()
@@ -792,7 +792,7 @@ def build(request_path: Path, native_path: Path, destination: Path) -> dict:
                                 "quality_policy": policy,
                                 "derivation": (
                                     "independent policy over raw stored samples, intersected with "
-                                    "source validity and AOI inclusion"
+                                    "physical source validity, product semantic validity, and AOI inclusion"
                                 ),
                                 "flag_meanings": "rejected accepted",
                             })

@@ -117,11 +117,11 @@ pub fn run(options: super::Options) -> Result<()> {
     }
     let prepared = if let Some(access) = options.access {
         if access.profile != "earthdata" || access.policy.is_some() || access.ca.is_some() {
-            return Err("product authentication supports only explicit --auth earthdata --netrc PRIVATE_FILE for HLS".into());
+            return Err("product authentication supports explicit --auth earthdata --netrc PRIVATE_FILE for qualified HLS/OPERA routes".into());
         }
         #[cfg(all(feature = "native-cog", feature = "authenticated-http"))]
         {
-            products::prepare_hls_authenticated(
+            products::prepare_earthdata_authenticated(
                 &r,
                 &mut Default::default(),
                 std::path::Path::new(&access.netrc),
@@ -130,7 +130,9 @@ pub fn run(options: super::Options) -> Result<()> {
         #[cfg(not(all(feature = "native-cog", feature = "authenticated-http")))]
         {
             let _ = access;
-            return Err("HLS authentication requires authenticated-http feature".into());
+            return Err(
+                "product authentication requires native-cog and authenticated-http features".into(),
+            );
         }
     } else {
         products::prepare(&r, &mut Default::default())?

@@ -665,7 +665,7 @@ fn physical_identity(
             let sensor = gdal_item(xml, "SENSOR_PRODUCT_ID").unwrap_or_default();
             if gdal_item(xml, "PROJECT") != Some("OPERA")
                 || gdal_item(xml, "PRODUCT_TYPE") != Some("DSWx-HLS")
-                || gdal_item(xml, "PRODUCT_VERSION") != Some("1.0")
+                || gdal_item(xml, "PRODUCT_VERSION") != Some(p.processing_version(&observation.id)?)
                 || gdal_item(xml, "HLS_DATASET") != Some(expected_hls.as_str())
                 || !sensor.starts_with(sensor_prefix)
                 || !gdal_item(xml, "DESCRIPTION").is_some_and(|value| value.contains(&band.name))
@@ -776,6 +776,22 @@ pub fn prepare_hls_authenticated(
     }
     prepare_inner(r, cache, Some(netrc))
 }
+/// Explicit authorization for the separately qualified HLS, current DSWx-HLS,
+/// and current ASF RTC-S1 exact-object COG routes. Each family chooses its own
+/// observed redirect policy; credentials never become request metadata.
+#[cfg(all(feature = "native-cog", feature = "authenticated-http"))]
+pub fn prepare_earthdata_authenticated(
+    r: &ProductRequest,
+    cache: &mut LayoutCache,
+    netrc: &std::path::Path,
+) -> Result<acquisition::Prepared> {
+    if !["hls-l30", "hls-s30", "opera-dswx-hls", "opera-rtc-s1"]
+        .contains(&profile::profile(&r.product)?.id)
+    {
+        return fail("no qualified Earthdata COG route for this product");
+    }
+    prepare_inner(r, cache, Some(netrc))
+}
 fn prepare_inner(
     r: &ProductRequest,
     cache: &mut LayoutCache,
@@ -828,7 +844,7 @@ fn prepare_inner(
                 datetime: Some(o.datetime.clone()),
                 etag: a.etag.clone(),
             });
-            metadata.push(json!({"asset_id":id,"item_id":o.id,"collection":o.collection,"requested_band":b.name,"product":r.product,"product_version":p.version,"platform":o.platform,"processing":o.processing,"product_band":b,"acquisition":o.properties,"asset_metadata":a.metadata,"href":crate::stac_workflow::safe_reference(&a.href),"raster_bands":[{"scale":b.scale,"offset":b.offset,"unit":b.unit}],"quality_policies":r.quality_policies.iter().filter(|name|name.parse::<profile::QualityPolicy>().is_ok_and(|q|q.required_bands().contains(&b.name.as_str()))).collect::<Vec<_>>() }));
+            metadata.push(json!({"asset_id":id,"item_id":o.id,"collection":o.collection,"requested_band":b.name,"product":r.product,"product_version":p.processing_version(&o.id)?,"platform":o.platform,"processing":o.processing,"product_band":b,"acquisition":o.properties,"asset_metadata":a.metadata,"href":crate::stac_workflow::safe_reference(&a.href),"raster_bands":[{"scale":b.scale,"offset":b.offset,"unit":b.unit}],"quality_policies":r.quality_policies.iter().filter(|name|name.parse::<profile::QualityPolicy>().is_ok_and(|q|q.required_bands().contains(&b.name.as_str()))).collect::<Vec<_>>() }));
         }
     }
     let request = Request {
@@ -860,22 +876,25 @@ fn prepare_inner(
             };
             let mut sessions = BTreeMap::new();
             for asset in assets {
-                sessions.insert(
-                    asset.id.clone(),
-                    std::sync::Arc::new(
-                        crate::authenticated_http::AuthenticatedHttp::earthdata_hls(
-                            &asset.locator,
-                            netrc,
-                        )?,
-                    ),
-                );
+                use crate::authenticated_http::AuthenticatedHttp;
+                let session = match r.product.as_str() {
+                    "hls-l30" | "hls-s30" => {
+                        AuthenticatedHttp::earthdata_hls(&asset.locator, netrc)?
+                    }
+                    "opera-dswx-hls" => AuthenticatedHttp::earthdata_dswx(&asset.locator, netrc)?,
+                    "opera-rtc-s1" => AuthenticatedHttp::earthdata_rtc(&asset.locator, netrc)?,
+                    _ => return fail("no qualified authenticated product COG route"),
+                };
+                sessions.insert(asset.id.clone(), std::sync::Arc::new(session));
             }
             acquisition::prepare_authenticated_cogs(&request, cache, sessions)?
         }
         #[cfg(not(all(feature = "native-cog", feature = "authenticated-http")))]
         {
             let _ = netrc;
-            return fail("authenticated HLS COG acquisition requires authenticated-http feature");
+            return fail(
+                "authenticated product COG acquisition requires authenticated-http feature",
+            );
         }
     } else {
         acquisition::prepare(&request, cache)?

@@ -40,6 +40,10 @@ fn five_profiles_are_serializable_declarations_not_capabilities() -> Result<()> 
             .all(|band| band["description"]
                 .as_str()
                 .is_some_and(|description| !description.is_empty())));
+        assert!(profile
+            .bands
+            .iter()
+            .all(|band| ["1", "m", "degree", "degree_Celsius"].contains(&band.unit)));
     }
     Ok(())
 }
@@ -65,6 +69,15 @@ fn aliases_resolve_to_exact_source_bands_and_catalog_assets() -> Result<()> {
 
     let dswx = profile(OPERA_DSWX_HLS_V1)?;
     assert_eq!(dswx.catalog.version, "1.0");
+    assert_eq!(dswx.processing_versions, ["1.0", "1.1"]);
+    let old = "OPERA_L3_DSWx-HLS_T10TCT_20211211T191811Z_20241025T180315Z_S2A_30_v1.0";
+    let current = "OPERA_L3_DSWx-HLS_T17SPU_20261018T154740Z_20261022T014315Z_L8_30_v1.1";
+    assert_eq!(dswx.processing_version(old)?, "1.0");
+    assert_eq!(dswx.processing_version(current)?, "1.1");
+    dswx.validate_datetime(current, "2026-10-18T15:47:40.202Z")?;
+    assert!(dswx
+        .processing_version(&current.replace("v1.1", "v1.2"))
+        .is_err());
 
     let s30 = profile(HLS_S30_V2)?;
     assert_eq!(s30.band("nir")?.name, "B8A");
@@ -127,6 +140,7 @@ fn granule_schemas_and_observation_times_are_bound() -> Result<()> {
     let dswx = profile(OPERA_DSWX_HLS_V1)?;
     let dswx_id = "OPERA_L3_DSWx-HLS_T10TCT_20211211T191811Z_20241025T180315Z_S2A_30_v1.0";
     dswx.validate_datetime(dswx_id, "2021-12-11T19:18:11Z")?;
+    dswx.validate_datetime(dswx_id, "2021-12-11T19:18:11.202827Z")?;
     assert!(dswx
         .validate_datetime(dswx_id, "2021-12-11T19:18:12Z")
         .is_err());
@@ -268,6 +282,15 @@ fn hls_dswx_and_rtc_policies_preserve_separate_source_semantics() -> Result<()> 
         .is_err());
     assert!(QualityPolicy::DswxShadowFree.accepts(QualitySample::UInt8(1))?);
     assert!(!QualityPolicy::DswxShadowFree.accepts(QualitySample::UInt8(0))?);
+    for code in [0, 8] {
+        assert!(QualityPolicy::DswxCloudObstructionFree.accepts(QualitySample::UInt8(code))?);
+    }
+    for code in [1, 4, 10, 254, 255] {
+        assert!(!QualityPolicy::DswxCloudObstructionFree.accepts(QualitySample::UInt8(code))?);
+    }
+    assert!(QualityPolicy::DswxCloudObstructionFree
+        .accepts(QualitySample::UInt8(16))
+        .is_err());
 
     assert!(QualityPolicy::OperaRtcFinite.accepts(QualitySample::Float32(0.0))?);
     assert!(!QualityPolicy::OperaRtcFinite.accepts(QualitySample::Float32(f32::NAN))?);

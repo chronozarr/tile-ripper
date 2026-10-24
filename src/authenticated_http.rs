@@ -132,6 +132,57 @@ fn strong_etag(value: &str) -> bool {
             .bytes()
             .any(|byte| byte < 33 || byte == 127 || byte == b'"')
 }
+fn valid_dswx_v11_filename(filename: &str) -> bool {
+    const LAYERS: [&str; 10] = [
+        "B01_WTR",
+        "B02_BWTR",
+        "B03_CONF",
+        "B04_DIAG",
+        "B05_WTR-1",
+        "B06_WTR-2",
+        "B07_LAND",
+        "B08_SHAD",
+        "B09_CLOUD",
+        "B10_DEM",
+    ];
+    let Some(name) = filename.strip_suffix(".tif") else {
+        return false;
+    };
+    let Some(stem) = LAYERS
+        .iter()
+        .find_map(|layer| name.strip_suffix(&format!("_{layer}")))
+    else {
+        return false;
+    };
+    let fields = stem.split('_').collect::<Vec<_>>();
+    if fields.len() != 9
+        || fields[..3] != ["OPERA", "L3", "DSWx-HLS"]
+        || fields[6] != "L8"
+            && fields[6] != "L9"
+            && fields[6] != "S2A"
+            && fields[6] != "S2B"
+            && fields[6] != "S2C"
+        || fields[7] != "30"
+        || fields[8] != "v1.1"
+    {
+        return false;
+    }
+    let tile = fields[3].as_bytes();
+    let valid_grid_letter = |byte: u8| byte.is_ascii_uppercase() && byte != b'I' && byte != b'O';
+    let valid_tile = tile.len() == 6
+        && tile[0] == b'T'
+        && std::str::from_utf8(&tile[1..3])
+            .ok()
+            .and_then(|zone| zone.parse::<u8>().ok())
+            .is_some_and(|zone| (1..=60).contains(&zone))
+        && matches!(tile[3], b'C'..=b'H' | b'J'..=b'N' | b'P'..=b'X')
+        && valid_grid_letter(tile[4])
+        && valid_grid_letter(tile[5]);
+    let valid_time = |value: &str| {
+        value.len() == 16 && chrono::NaiveDateTime::parse_from_str(value, "%Y%m%dT%H%M%SZ").is_ok()
+    };
+    valid_tile && valid_time(fields[4]) && valid_time(fields[5])
+}
 impl AuthenticatedHttp {
     /// Opt in to the observed PO.DAAC SWOT access contract for one product.
     /// The file path is a credential source, never a credential value.
@@ -215,6 +266,129 @@ impl AuthenticatedHttp {
         let suffix = format!("/lp-prod-protected.s3.us-west-2.amazonaws.com/{key}");
         let head_path = format!("/head-2d2df3a34830d5223d1e9547cd713408{suffix}");
         let get_path = format!("/s3-2d2df3a34830d5223d1e9547cd713408{suffix}");
+        let rule = |from: &str, to: &str, path: &str| RedirectRule {
+            from_origin: from.into(),
+            to_origin: to.into(),
+            destination_path: path.into(),
+        };
+        Self::new(
+            Config {
+                canonical_url: canonical_url.into(),
+                login_origin: login.into(),
+                resource_origin: resource.into(),
+                head_resource_path: head_path.clone(),
+                get_resource_path: get_path.clone(),
+                redirects: vec![
+                    rule(archive, login, "/oauth/authorize"),
+                    rule(login, archive, "/login"),
+                    rule(archive, archive, canonical.path()),
+                    rule(archive, resource, &head_path),
+                    rule(archive, resource, &get_path),
+                ],
+                additional_roots: vec![],
+            },
+            netrc,
+        )
+    }
+    /// Opt in to the observed PO.DAAC OPERA DSWx-HLS V1.1 object contract.
+    ///
+    /// This profile is exact-object scoped and intentionally accepts only the
+    /// ten current DSWx-HLS V1.1 GeoTIFF layer names. A changed producer
+    /// version, collection path, filename grammar, or provider method-adapter
+    /// path fails closed until it is qualified separately.
+    pub fn earthdata_dswx(canonical_url: &str, netrc: impl Into<PathBuf>) -> Result<Self> {
+        let canonical = Url::parse(canonical_url).map_err(|_| "invalid DSWx Earthdata locator")?;
+        let archive = "https://archive.podaac.earthdata.nasa.gov";
+        let login = "https://urs.earthdata.nasa.gov";
+        let resource = "https://deotb6e7tfubr.cloudfront.net";
+        let prefix = "/podaac-ops-cumulus-protected/OPERA_L3_DSWX-HLS_V1/";
+        let path = canonical.path();
+        let filename = path.strip_prefix(prefix).unwrap_or_default();
+        if canonical.origin().ascii_serialization() != archive
+            || canonical.query().is_some()
+            || canonical.fragment().is_some()
+            || filename.contains('/')
+            || !valid_dswx_v11_filename(filename)
+        {
+            return fail(
+                "DSWx Earthdata profile requires an unsigned OPERA DSWx-HLS V1.1 layer TIFF locator",
+            );
+        }
+        let key = path
+            .strip_prefix("/podaac-ops-cumulus-protected/")
+            .ok_or("invalid DSWx protected key")?;
+        let suffix = format!("/podaac-ops-cumulus-protected.s3.us-west-2.amazonaws.com/{key}");
+        let head_path = format!("/head-edaf5da92e0ce48fb61175c28b67e95d{suffix}");
+        let get_path = format!("/s3-edaf5da92e0ce48fb61175c28b67e95d{suffix}");
+        let rule = |from: &str, to: &str, path: &str| RedirectRule {
+            from_origin: from.into(),
+            to_origin: to.into(),
+            destination_path: path.into(),
+        };
+        Self::new(
+            Config {
+                canonical_url: canonical_url.into(),
+                login_origin: login.into(),
+                resource_origin: resource.into(),
+                head_resource_path: head_path.clone(),
+                get_resource_path: get_path.clone(),
+                redirects: vec![
+                    rule(archive, login, "/oauth/authorize"),
+                    rule(login, archive, "/login"),
+                    rule(archive, archive, canonical.path()),
+                    rule(archive, resource, &head_path),
+                    rule(archive, resource, &get_path),
+                ],
+                additional_roots: vec![],
+            },
+            netrc,
+        )
+    }
+    /// Opt in to the observed ASF OPERA RTC-S1 V1 protected-object contract.
+    ///
+    /// Current CMR records expose unsigned Cumulus object URLs directly. This
+    /// profile accepts only a VV/VH/HH/HV or mask GeoTIFF whose containing
+    /// directory and filename identify the same valid RTC-S1 V1 granule. The
+    /// fixed method-adapter paths refer to that exact ASF production S3 key.
+    pub fn earthdata_rtc(canonical_url: &str, netrc: impl Into<PathBuf>) -> Result<Self> {
+        let canonical = Url::parse(canonical_url).map_err(|_| "invalid RTC Earthdata locator")?;
+        let archive = "https://cumulus.asf.earthdatacloud.nasa.gov";
+        let login = "https://urs.earthdata.nasa.gov";
+        let resource = "https://d1bctmng8vmwga.cloudfront.net";
+        let prefix = "/OPERA/OPERA_L2_RTC-S1/";
+        let path = canonical.path();
+        let parts = path
+            .strip_prefix(prefix)
+            .unwrap_or_default()
+            .split('/')
+            .collect::<Vec<_>>();
+        if canonical.origin().ascii_serialization() != archive
+            || canonical.query().is_some()
+            || canonical.fragment().is_some()
+            || parts.len() != 2
+            || parts.iter().any(|part| part.is_empty())
+        {
+            return fail(
+                "RTC Earthdata profile requires an unsigned OPERA RTC-S1 V1 layer TIFF locator",
+            );
+        }
+        let granule = parts[0];
+        let filename = parts[1];
+        let layer = filename
+            .strip_prefix(&format!("{granule}_"))
+            .and_then(|value| value.strip_suffix(".tif"));
+        if !matches!(layer, Some("VV" | "VH" | "HH" | "HV" | "mask")) {
+            return fail("RTC Earthdata profile requires a supported RTC layer filename");
+        }
+        crate::products::profile::profile("opera-rtc-s1")?
+            .validate_identity(granule, None, None)?;
+
+        let key = path
+            .strip_prefix("/OPERA/")
+            .ok_or("invalid RTC protected key")?;
+        let suffix = format!("/asf-cumulus-prod-opera-products.s3.us-west-2.amazonaws.com/{key}");
+        let head_path = format!("/head-b339e3a40716b5999fea2aad1aee9f03{suffix}");
+        let get_path = format!("/s3-b339e3a40716b5999fea2aad1aee9f03{suffix}");
         let rule = |from: &str, to: &str, path: &str| RedirectRule {
             from_origin: from.into(),
             to_origin: to.into(),
@@ -1023,6 +1197,85 @@ mod tests {
                 .is_err()
         );
         assert!(AuthenticatedHttp::earthdata_hls(&format!("{l30}?signed=secret"), &path).is_err());
+        std::fs::remove_file(path)?;
+        Ok(())
+    }
+    #[cfg(unix)]
+    #[test]
+    fn dswx_profile_is_version_layer_and_exact_object_scoped() -> Result<()> {
+        let path = netrc_fixture("dswx-profile")?;
+        let base = "https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-protected/OPERA_L3_DSWX-HLS_V1/OPERA_L3_DSWx-HLS_T17SPU_20261018T154740Z_20261022T014315Z_L8_30_v1.1";
+        let wtr = format!("{base}_B01_WTR.tif");
+        let session = AuthenticatedHttp::earthdata_dswx(&wtr, &path)?;
+        let identity = session.identity();
+        assert_eq!(
+            identity["resource_origin"],
+            "https://deotb6e7tfubr.cloudfront.net"
+        );
+        assert_eq!(
+            identity["head_resource_path"],
+            "/head-edaf5da92e0ce48fb61175c28b67e95d/podaac-ops-cumulus-protected.s3.us-west-2.amazonaws.com/OPERA_L3_DSWX-HLS_V1/OPERA_L3_DSWx-HLS_T17SPU_20261018T154740Z_20261022T014315Z_L8_30_v1.1_B01_WTR.tif"
+        );
+        assert!(session.accepts(&wtr));
+        assert!(AuthenticatedHttp::earthdata_dswx(&format!("{base}_B04_DIAG.tif"), &path).is_ok());
+        assert!(AuthenticatedHttp::earthdata_dswx(&format!("{base}_B10_DEM.tif"), &path).is_ok());
+        for invalid in [
+            format!("{wtr}?signed=secret"),
+            wtr.replace("v1.1", "v1.0"),
+            wtr.replace("podaac-ops-cumulus-protected", "podaac-ops-cumulus-public"),
+            wtr.replace("OPERA_L3_DSWX-HLS_V1", "OPERA_L3_DSWX-HLS_V2"),
+            wtr.replace("B01_WTR", "B11_UNKNOWN"),
+            wtr.replace("T17SPU", "T17SP/I"),
+            wtr.replace("T17SPU", "T00SPU"),
+            wtr.replace("20261018T154740Z", "20261318T154740Z"),
+            wtr.replace("_L8_30_", "_L7_30_"),
+        ] {
+            assert!(AuthenticatedHttp::earthdata_dswx(&invalid, &path).is_err());
+        }
+        std::fs::remove_file(path)?;
+        Ok(())
+    }
+    #[cfg(unix)]
+    #[test]
+    fn rtc_profile_is_version_layer_and_exact_object_scoped() -> Result<()> {
+        let path = netrc_fixture("rtc-profile")?;
+        let granule =
+            "OPERA_L2_RTC-S1_T117-249581-IW3_20261023T171312Z_20261023T230650Z_S1C_30_v1.0";
+        let base = format!(
+            "https://cumulus.asf.earthdatacloud.nasa.gov/OPERA/OPERA_L2_RTC-S1/{granule}/{granule}"
+        );
+        let vv = format!("{base}_VV.tif");
+        let session = AuthenticatedHttp::earthdata_rtc(&vv, &path)?;
+        let identity = session.identity();
+        assert_eq!(
+            identity["resource_origin"],
+            "https://d1bctmng8vmwga.cloudfront.net"
+        );
+        assert_eq!(
+            identity["head_resource_path"],
+            format!(
+                "/head-b339e3a40716b5999fea2aad1aee9f03/asf-cumulus-prod-opera-products.s3.us-west-2.amazonaws.com/OPERA_L2_RTC-S1/{granule}/{granule}_VV.tif"
+            )
+        );
+        assert!(session.accepts(&vv));
+        for layer in ["VH", "HH", "HV", "mask"] {
+            assert!(
+                AuthenticatedHttp::earthdata_rtc(&format!("{base}_{layer}.tif"), &path).is_ok()
+            );
+        }
+        for invalid in [
+            format!("{vv}?signed=secret"),
+            vv.replace("v1.0", "v1.1"),
+            vv.replace("_VV.tif", "_browse.png"),
+            vv.replace(
+                "cumulus.asf.earthdatacloud.nasa.gov",
+                "datapool.asf.alaska.edu",
+            ),
+            vv.replace("OPERA_L2_RTC-S1/", "OPERA_L2_RTC-S1_V2/"),
+            vv.replace(&format!("/{granule}_VV.tif"), "/different_VV.tif"),
+        ] {
+            assert!(AuthenticatedHttp::earthdata_rtc(&invalid, &path).is_err());
+        }
         std::fs::remove_file(path)?;
         Ok(())
     }

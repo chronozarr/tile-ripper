@@ -124,7 +124,9 @@ pub struct ProductProfile {
     pub mission: &'static str,
     pub instrument: &'static str,
     pub title: &'static str,
+    /// Preferred processing release. Each source retains its exact release.
     pub version: &'static str,
+    pub processing_versions: &'static [&'static str],
     pub native_grid: NativeGrid,
     pub catalog: CatalogIdentity,
     pub bands: Vec<BandProfile>,
@@ -133,6 +135,20 @@ pub struct ProductProfile {
 }
 
 impl ProductProfile {
+    /// Resolve the source release, independently of a catalog's collection
+    /// version (which can remain unchanged across processing releases).
+    pub fn processing_version(&self, granule: &str) -> Result<&'static str> {
+        self.validate_identity(granule, None, None)?;
+        if self.family == ProductFamily::OperaDswx {
+            match granule.split('_').nth(8) {
+                Some("v1.0") => Ok("1.0"),
+                Some("v1.1") => Ok("1.1"),
+                _ => fail("unsupported DSWx processing version"),
+            }
+        } else {
+            Ok(self.version)
+        }
+    }
     /// Resolve a canonical layer name, catalog asset key, or documented alias.
     pub fn band(&self, name: &str) -> Result<&BandProfile> {
         let matches = self
@@ -226,7 +242,12 @@ impl ProductProfile {
         };
         let matches = match self.family {
             ProductFamily::Landsat | ProductFamily::Hls => observed.date() == expected.date(),
-            ProductFamily::OperaDswx | ProductFamily::OperaRtc => observed == expected,
+            // OPERA filename timestamps have whole-second resolution. Retain
+            // the catalog's subsecond precision without rejecting that same
+            // acquisition or accepting an adjacent second.
+            ProductFamily::OperaDswx | ProductFamily::OperaRtc => {
+                observed.and_utc().timestamp() == expected.and_utc().timestamp()
+            }
         };
         if matches {
             Ok(())
@@ -347,7 +368,7 @@ impl QualityPolicy {
             Self::DswxWtr2Water => "WTR-2 class is open or partial surface water",
             Self::DswxShadowFree => "SHAD class is not shadow (class 1)",
             Self::DswxCloudObstructionFree => {
-                "CLOUD has no cloud, adjacency, cloud shadow, or snow/ice component; HLS water alone is allowed"
+                "CLOUD low three obstruction bits are zero; bit 3 is retained without exclusion and its interpretation follows the source processor metadata; ocean mask and fill are excluded"
             }
             Self::OperaRtcFinite => "raw linear gamma0 backscatter sample is finite",
             Self::OperaRtcMaskValid => "RTC mask is a valid sample (classes 0 through 3)",
@@ -421,7 +442,7 @@ impl QualityPolicy {
                 Ok(class == 1)
             }
             (Self::DswxCloudObstructionFree, QualitySample::UInt8(class)) => {
-                if !(class <= 15 || class == 255) {
+                if !(class <= 15 || matches!(class, 254 | 255)) {
                     return fail("undefined DSWx CLOUD class");
                 }
                 Ok(matches!(class, 0 | 8))
@@ -495,8 +516,10 @@ fn band(
             BandRole::Quality => "native quality or condition code",
             BandRole::Angle => "native stored observation angle",
             BandRole::Classification => "native categorical classification",
-            BandRole::Diagnostic => "native diagnostic code",
-            BandRole::Elevation => "native elevation sample",
+            BandRole::Diagnostic => {
+                "native five-digit decimal encoding of five binary diagnostic tests"
+            }
+            BandRole::Elevation => "native elevation in metres above the WGS84 ellipsoid",
             BandRole::Backscatter => "native linear gamma0 backscatter sample",
         },
         dtype: data_type,
@@ -523,7 +546,7 @@ fn landsat() -> ProductProfile {
             Some(NoDataValue::UInt16(0)),
             0.0000275,
             -0.2,
-            "reflectance",
+            "1",
         )
     };
     ProductProfile {
@@ -533,6 +556,7 @@ fn landsat() -> ProductProfile {
         instrument: "Operational Land Imager (OLI/OLI-2)",
         title: "Landsat 8/9 Collection 2 Level-2 surface reflectance",
         version: "Collection 2",
+        processing_versions: &["Collection 2"],
         native_grid: NativeGrid {
             posting_m: 30,
             projection:
@@ -565,7 +589,7 @@ fn landsat() -> ProductProfile {
                     Some(NoDataValue::UInt16(1)),
                     1.0,
                     0.0,
-                    "bit_field",
+                    "1",
                 ),
                 "qa_pixel",
             ),
@@ -578,7 +602,7 @@ fn landsat() -> ProductProfile {
                     None,
                     1.0,
                     0.0,
-                    "bit_field",
+                    "1",
                 ),
                 "qa_radsat",
             ),
@@ -591,7 +615,7 @@ fn landsat() -> ProductProfile {
                     Some(NoDataValue::UInt8(1)),
                     1.0,
                     0.0,
-                    "bit_field",
+                    "1",
                 ),
                 "qa_aerosol",
             ),
@@ -669,9 +693,14 @@ fn hls_profile(
         id,
         family: ProductFamily::Hls,
         mission: "Harmonized Landsat Sentinel-2",
-        instrument: "Landsat OLI or Sentinel-2 MSI, identified per observation",
+        instrument: if processing == "L30" {
+            "Landsat 8/9 OLI and TIRS"
+        } else {
+            "Sentinel-2A/B/C MSI"
+        },
         title,
         version: "2.0",
+        processing_versions: &["2.0"],
         native_grid: NativeGrid {
             posting_m: 30,
             projection: "UTM",
@@ -708,13 +737,14 @@ fn hls_reflectance(name: &'static str, aliases: &'static [&'static str]) -> Band
         Some(NoDataValue::Int16(-9999)),
         0.0001,
         0.0,
-        "reflectance",
+        "1",
     )
 }
 
 fn hls_toa(name: &'static str, aliases: &'static [&'static str]) -> BandProfile {
     let mut value = hls_reflectance(name, aliases);
     value.role = BandRole::TopOfAtmosphereReflectance;
+    value.description = "native stored top-of-atmosphere reflectance code";
     value
 }
 
@@ -727,7 +757,7 @@ fn hls_temperature(name: &'static str, aliases: &'static [&'static str]) -> Band
         Some(NoDataValue::Int16(-9999)),
         0.01,
         0.0,
-        "degree_celsius",
+        "degree_Celsius",
     )
 }
 
@@ -753,7 +783,7 @@ fn hls_common_bands() -> Vec<BandProfile> {
             Some(NoDataValue::UInt8(255)),
             1.0,
             0.0,
-            "bit_field",
+            "1",
         ),
         angle("SZA", &["sun_zenith"]),
         angle("SAA", &["sun_azimuth"]),
@@ -772,7 +802,7 @@ fn dswx() -> ProductProfile {
             nodata,
             1.0,
             0.0,
-            "class",
+            "1",
         )
     };
     ProductProfile {
@@ -781,7 +811,8 @@ fn dswx() -> ProductProfile {
         mission: "NASA OPERA",
         instrument: "HLS source OLI or MSI, identified per observation",
         title: "OPERA Level-3 Dynamic Surface Water Extent from HLS V1",
-        version: "1.0",
+        version: "1.1",
+        processing_versions: &["1.0", "1.1"],
         native_grid: NativeGrid {
             posting_m: 30,
             projection: "UTM",
@@ -829,7 +860,7 @@ fn dswx() -> ProductProfile {
                 Some(NoDataValue::UInt16(65_535)),
                 1.0,
                 0.0,
-                "five_digit_test_code",
+                "1",
             ),
             class(
                 "WTR-1",
@@ -864,7 +895,7 @@ fn dswx() -> ProductProfile {
                 None,
                 1.0,
                 0.0,
-                "meter_above_wgs84_ellipsoid",
+                "m",
             ),
         ],
         quality_policies: vec![
@@ -891,7 +922,7 @@ fn rtc() -> ProductProfile {
             None,
             1.0,
             0.0,
-            "linear_gamma0_power",
+            "1",
         );
         value.optional = true;
         value
@@ -903,6 +934,7 @@ fn rtc() -> ProductProfile {
         instrument: "Sentinel-1 C-SAR",
         title: "OPERA Level-2 RTC SAR backscatter from Sentinel-1 V1",
         version: "1.0",
+        processing_versions: &["1.0"],
         native_grid: NativeGrid {
             posting_m: 30,
             projection:
@@ -931,7 +963,7 @@ fn rtc() -> ProductProfile {
                 Some(NoDataValue::UInt8(255)),
                 1.0,
                 0.0,
-                "class",
+                "1",
             ),
         ],
         quality_policies: vec![
@@ -1124,7 +1156,11 @@ fn parse_opera_identity(granule: &str, rtc: bool) -> Result<ParsedIdentity> {
         || parse_timestamp(parts[4]).is_err()
         || parse_timestamp(parts[5]).is_err()
         || parts[7] != "30"
-        || parts[8] != "v1.0"
+        || if rtc {
+            parts[8] != "v1.0"
+        } else {
+            !matches!(parts[8], "v1.0" | "v1.1")
+        }
         || !opera_suffix_valid(&parts[9..], rtc)
     {
         return fail(if rtc {
