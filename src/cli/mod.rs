@@ -3,7 +3,11 @@ use serde_json::{json, Value};
 use std::{collections::BTreeMap, fs};
 use tile_ripper::Result;
 pub mod discovery;
+pub mod products;
 const HELP: &str = r#"tile-ripper plan|fetch|stream [request.json] [options]
+  tile-ripper products
+  tile-ripper discover --product FAMILY --bbox W,S,E,N --start RFC3339 --end RFC3339 --bands NAMES --limit 8
+  Product JSON: docs/products/workflow.md
   tile-ripper discover --collection SWOT_L2_HR_Raster_D --bbox W,S,E,N \
       --start RFC3339 --end RFC3339 --limit 20 --output candidates.json
   tile-ripper discover-job selection.json --auth earthdata --netrc PRIVATE_FILE \
@@ -45,7 +49,7 @@ GDAL-free Sentinel-2: build --no-default-features --features native-cog, then:
   tile-ripper plan --source https://earth-search.aws.element84.com/v1 --format stac \
     --collection sentinel-2-c1-l2a --aoi polygon.geojson \
     --start 2025-07-28T00:00:00Z --end 2025-07-28T23:59:59Z --variables B04,B08 --gdal-free
-Native supports narrow tiled single-band UInt16 COGs; unsupported profiles fail.
+Native supports narrow tiled single-band UInt8/UInt16/Int16/Float32 COGs; unsupported profiles fail.
 GDAL-free fetch writes native scientific values to per-observation Zarr v2 groups.
 Use --output-format zarr_v2 in a GDAL build; GeoTIFF output still needs GDAL.
 Install, supported profiles, Rust examples: docs/native-http/cli.md. No resampling or compositing."#;
@@ -210,8 +214,8 @@ pub fn parse_with_input_limit(args: &[String], input_limit: usize) -> Result<Opt
     let ca = flags.remove("--auth-ca");
     let access = match (profile, netrc) {
         (Some(profile), Some(netrc)) => {
-            if !cfg!(all(feature = "native-hdf5", feature = "authenticated-http")) {
-                return Err("authenticated CLI requires native-hdf5,authenticated-http features".into());
+            if !cfg!(all(any(feature = "native-hdf5", feature = "native-cog"), feature = "authenticated-http")) {
+                return Err("authenticated CLI requires native-cog or native-hdf5 plus authenticated-http features".into());
             }
             if !matches!(profile.as_str(), "earthdata" | "configured")
                 || (profile == "configured") != policy.is_some()
@@ -262,9 +266,6 @@ pub fn parse_with_input_limit(args: &[String], input_limit: usize) -> Result<Opt
         }
         None
     };
-    if values && (command != "stream" || quality_policy.is_none()) {
-        return Err("--values requires stream --quality-policy FILE".into());
-    }
     let input = if let Some(file) = file {
         if !flags.is_empty() {
             return Err("do not mix request JSON with source/selection flags; edit JSON or use direct flags".into());
@@ -392,7 +393,15 @@ pub fn parse_with_input_limit(args: &[String], input_limit: usize) -> Result<Opt
         };
         json!({"source":source,"spatial":spatial,"time":{"kind":"interval","start":start,"end":end},"variables":variables,"grid":{"kind":"native"},"sink":sink,"budget":{"buffer_bytes":bytes,"max_nodes":100000,"chunk_edge":512}})
     };
-    if input.get("job_schema").is_none()
+    let product = input.get("product").is_some();
+    if values && (command != "stream" || (!product && quality_policy.is_none())) {
+        return Err("--values requires stream --quality-policy FILE, or a product stream".into());
+    }
+    if access.is_some() && !product && !cfg!(feature = "native-hdf5") {
+        return Err("ordinary authenticated requests require native-hdf5".into());
+    }
+    if !product
+        && input.get("job_schema").is_none()
         && (access.is_some() || quality_policy.is_some())
         && (command == "fetch" || discover_only)
     {

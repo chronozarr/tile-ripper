@@ -21,6 +21,7 @@ fn main() -> Result<()> {
             Pixels::UInt8(v) => Box::new(v.iter().map(|v| *v as f64)),
             Pixels::UInt32(v) => Box::new(v.iter().map(|v| *v as f64)),
             Pixels::UInt16(v) => Box::new(v.iter().map(|v| *v as f64)),
+            Pixels::Int16(v) => Box::new(v.iter().map(|v| *v as f64)),
             Pixels::Float32(v) => Box::new(v.iter().map(|v| *v as f64)),
         };
         for (v, keep) in values.zip(c.validity()) {
@@ -34,6 +35,7 @@ fn main() -> Result<()> {
                 Pixels::UInt8(v) => adler(v.iter().copied()),
                 Pixels::UInt32(v) => adler(v.iter().flat_map(|v| v.to_le_bytes())),
                 Pixels::UInt16(v) => adler(v.iter().flat_map(|v| v.to_le_bytes())),
+                Pixels::Int16(v) => adler(v.iter().flat_map(|v| v.to_le_bytes())),
                 Pixels::Float32(v) => adler(v.iter().flat_map(|v| v.to_le_bytes())),
             };
             let coordinate_digest = c

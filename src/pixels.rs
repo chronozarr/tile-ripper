@@ -4,6 +4,7 @@ use crate::{fail, Result};
 pub enum Pixels {
     UInt8(Vec<u8>),
     UInt16(Vec<u16>),
+    Int16(Vec<i16>),
     UInt32(Vec<u32>),
     Float32(Vec<f32>),
 }
@@ -22,6 +23,7 @@ impl Pixels {
         match self {
             Self::UInt8(v) => v.len(),
             Self::UInt16(v) => v.len(),
+            Self::Int16(v) => v.len(),
             Self::UInt32(v) => v.len(),
             Self::Float32(v) => v.len(),
         }
@@ -34,6 +36,7 @@ impl Pixels {
             * match self {
                 Self::UInt8(_) => 1,
                 Self::UInt16(_) => 2,
+                Self::Int16(_) => 2,
                 Self::UInt32(_) => 4,
                 Self::Float32(_) => 4,
             }
@@ -59,6 +62,13 @@ impl Pixels {
             None
         }
     }
+    pub fn as_i16(&self) -> Option<&[i16]> {
+        if let Self::Int16(v) = self {
+            Some(v)
+        } else {
+            None
+        }
+    }
     pub fn as_f32(&self) -> Option<&[f32]> {
         if let Self::Float32(v) = self {
             Some(v)
@@ -77,6 +87,7 @@ impl Pixels {
         match self {
             Self::UInt8(v) => v[i] as f64,
             Self::UInt16(v) => v[i] as f64,
+            Self::Int16(v) => v[i] as f64,
             Self::UInt32(v) => v[i] as f64,
             Self::Float32(v) => v[i] as f64,
         }
@@ -94,6 +105,9 @@ impl Pixels {
                 a[dst..dst + len].copy_from_slice(&b[src..src + len])
             }
             (Self::UInt16(a), Self::UInt16(b)) => {
+                a[dst..dst + len].copy_from_slice(&b[src..src + len])
+            }
+            (Self::Int16(a), Self::Int16(b)) => {
                 a[dst..dst + len].copy_from_slice(&b[src..src + len])
             }
             (Self::Float32(a), Self::Float32(b)) => {

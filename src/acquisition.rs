@@ -62,6 +62,23 @@ pub struct Prepared {
     output: Sink,
 }
 impl Prepared {
+    /// Product metadata is attached only after physical inspection and profile checks.
+    pub(crate) fn with_product_metadata(mut self, sources: Vec<Value>, product: Value) -> Self {
+        let mut inspection = self.explain();
+        if let Some(existing) = inspection["sources"].as_array_mut() {
+            for source in existing {
+                if let Some(extra) = sources.iter().find(|v| v["asset_id"] == source["asset_id"]) {
+                    if let (Some(dst), Some(src)) = (source.as_object_mut(), extra.as_object()) {
+                        dst.extend(src.clone());
+                    }
+                }
+            }
+        }
+        inspection["product"] = product;
+        sanitize(&mut inspection);
+        self.inspection = std::sync::Arc::new(inspection);
+        self
+    }
     pub fn plan(&self) -> &Plan {
         match self.runtime.as_ref() {
             Runtime::Direct { plan, .. } => plan,
@@ -181,6 +198,15 @@ impl Prepared {
         options: crate::stream::StreamOptions,
     ) -> Result<crate::stream::ChunkStream> {
         crate::stream::ChunkStream::start(self, options)
+    }
+    /// Share cancellation with a host application's signal or request lifecycle.
+    /// As with every stream, delivered chunks remain provisional until finish.
+    pub fn into_stream_cancellable(
+        self,
+        options: crate::stream::StreamOptions,
+        cancelled: std::sync::Arc<std::sync::atomic::AtomicBool>,
+    ) -> Result<crate::stream::ChunkStream> {
+        crate::stream::ChunkStream::start_cancellable(self, options, cancelled)
     }
     pub fn execute(&self, sink: impl FnMut(Chunk) -> Result<()>) -> Result<ExecutionReport> {
         self.execute_cancellable(&Default::default(), sink)
@@ -477,6 +503,72 @@ pub fn prepare_authenticated(
     )
     .map_err(|e| safe_error(request, "prepare", e))
 }
+/// Prepare a strictly bound set of authenticated remote COG objects.
+///
+/// Every asset must be a remote COG and have exactly one caller-owned session
+/// keyed by its asset ID. Each session remains confined to that asset's
+/// canonical URL; the native COG reader retains the map for planning, reads,
+/// and pre/post source-version validation.
+#[cfg(all(feature = "native-cog", feature = "authenticated-http"))]
+pub fn prepare_authenticated_cogs(
+    request: &Request,
+    cache: &mut LayoutCache,
+    sessions: std::collections::BTreeMap<
+        String,
+        std::sync::Arc<crate::authenticated_http::AuthenticatedHttp>,
+    >,
+) -> Result<Prepared> {
+    if !crate::cog::native_selected() {
+        return fail("authenticated COG preparation requires the native COG backend");
+    }
+    validate_authenticated_cog_sessions(request, &sessions)?;
+    for session in sessions.values() {
+        session.require_fresh()?;
+    }
+    crate::planner::validate(request)?;
+    let sources = crate::storage::Sources::with_cog_sessions(request, sessions)?;
+    let _quiet = crate::diagnostics::QuietNative::enter();
+    prepare_on(request, cache, Default::default(), Some(sources))
+        .map_err(|e| safe_error(request, "prepare", e))
+}
+#[cfg(all(feature = "native-cog", feature = "authenticated-http"))]
+fn validate_authenticated_cog_sessions(
+    request: &Request,
+    sessions: &std::collections::BTreeMap<
+        String,
+        std::sync::Arc<crate::authenticated_http::AuthenticatedHttp>,
+    >,
+) -> Result<usize> {
+    let Source::Assets { assets } = &request.source else {
+        return fail("authenticated COG preparation requires explicit assets");
+    };
+    if assets.is_empty()
+        || assets
+            .iter()
+            .any(|asset| asset.format != Format::Cog || !crate::cog::remote(&asset.locator))
+        || sessions.len() != assets.len()
+        || assets.iter().any(|asset| {
+            sessions
+                .get(&asset.id)
+                .is_none_or(|session| !session.accepts(&asset.locator))
+        })
+        || sessions
+            .keys()
+            .any(|id| !assets.iter().any(|asset| &asset.id == id))
+    {
+        return fail(
+            "authenticated COG preparation requires one exact session for every remote COG asset",
+        );
+    }
+    let reservation = sessions
+        .len()
+        .checked_mul(crate::authenticated_http::WORKING_RESERVATION)
+        .ok_or("authenticated COG transport reservation overflow")?;
+    if reservation > request.budget.buffer_bytes / 2 {
+        return fail("authenticated COG transports exceed half buffer_bytes");
+    }
+    Ok(reservation)
+}
 /// Resume verified source bytes; reconstruct all scientific chunks from the
 /// beginning. The caller owns a fresh online session and must finish the stream
 /// before committing any result. The checkpoint lock lasts as long as Prepared
@@ -614,6 +706,13 @@ fn prepare_on(
                 .iter()
                 .any(|a| a.format == Format::Cog && crate::cog::remote(&a.locator))
             {
+                #[cfg(all(feature = "native-cog", feature = "authenticated-http"))]
+                if let Some(sources) = prepared_sources.as_ref() {
+                    sources.resolve_authenticated_cog_identities(&mut request)?;
+                } else {
+                    stac_workflow::resolve_identities(&mut request, &mut [], &Default::default())?;
+                }
+                #[cfg(not(all(feature = "native-cog", feature = "authenticated-http")))]
                 stac_workflow::resolve_identities(&mut request, &mut [], &Default::default())?;
             }
             let sources = match prepared_sources {
@@ -706,9 +805,10 @@ fn prepare_on(
             1
         };
         let bytes = match layout.dtype.as_str() {
-            "|u1" => 1,
-            "<u4" | "<f4" => 4,
-            _ => 2,
+            "Byte" | "UInt8" | "|u1" => 1,
+            "UInt16" | "Int16" | "<u2" | "<i2" => 2,
+            "Float32" | "UInt32" | "<f4" | "<u4" => 4,
+            _ => return None,
         };
         total.checked_add(
             width
@@ -846,15 +946,15 @@ fn outputs(p: &Plan, mode: OutputStrategy) -> Value {
         let Some(l) = &s.layout else {
             continue;
         };
-        let mut record = json!({"asset_id":s.asset_id,"variable":l.variable,"timestamps":s.timestamps,"window":s.window,"native_grid":{"crs":l.crs,"transform":crate::spatial::window_transform(l,&s.window)},"dtype":match l.dtype.as_str() { "|u1" => "uint8", "<u4" => "uint32", "<f4" => "float32", _ => "uint16" },"native_dtype":l.dtype,"nodata":l.nodata,"scale":l.scale,"offset":l.offset,"aoi_mask_applied":s.mask_geometry.is_some()});
+        let mut record = json!({"asset_id":s.asset_id,"variable":l.variable,"timestamps":s.timestamps,"window":s.window,"native_grid":{"crs":l.crs,"transform":crate::spatial::window_transform(l,&s.window)},"dtype":match l.dtype.as_str() { "Byte" | "UInt8" | "|u1" => "uint8", "UInt16" | "<u2" => "uint16", "Int16" | "<i2" => "int16", "UInt32" | "<u4" => "uint32", "Float32" | "<f4" => "float32", _ => "unsupported" },"native_dtype":l.dtype,"nodata":l.nodata,"scale":l.scale,"offset":l.offset,"aoi_mask_applied":s.mask_geometry.is_some()});
         if zarr {
             record["file"] = json!(format!("{}.zarr", s.asset_id));
-            record["validity"] = json!(if l.dtype == "<f4" {
+            record["validity"] = json!(if matches!(l.dtype.as_str(), "Float32" | "<f4") {
                 "NaN is invalid; raw Float32 preserved"
             } else {
                 "explicit integer fill"
             });
-            record["dimensions"] = json!({"names":if l.dtype=="<f4" {if s.dimensions.as_ref().is_some_and(|d|d.names.iter().any(|v|v=="lat")){vec!["time","lat","lon"]}else{vec!["time","latitude","longitude"]}}else{vec!["time","y","x"]},"shape":[s.timestamps.len(),s.window.height,s.window.width]});
+            record["dimensions"] = json!({"names":if matches!(l.dtype.as_str(), "Float32" | "<f4") {if s.dimensions.as_ref().is_some_and(|d|d.names.iter().any(|v|v=="lat")){vec!["time","lat","lon"]}else{vec!["time","latitude","longitude"]}}else{vec!["time","y","x"]},"shape":[s.timestamps.len(),s.window.height,s.window.width]});
             if let Variable::Dataset { path } = &l.variable {
                 record["dataset"] = json!(path.trim_start_matches('/'));
             }
@@ -892,7 +992,7 @@ fn outputs(p: &Plan, mode: OutputStrategy) -> Value {
 }
 pub(crate) fn sanitize(value: &mut Value) {
     match value {
-        Value::String(s) if s.contains("://") => *s = stac_workflow::safe_reference(s),
+        Value::String(s) if s.contains("://") => *s = sanitize_embedded_urls(s),
         Value::Array(a) => {
             for v in a {
                 sanitize(v);
@@ -905,6 +1005,33 @@ pub(crate) fn sanitize(value: &mut Value) {
         }
         _ => {}
     }
+}
+// Scientific metadata may embed a URL inside XML or a description. Sanitize
+// each locator token, preserving the remaining structured/scientific content.
+fn sanitize_embedded_urls(input: &str) -> String {
+    let mut output = String::with_capacity(input.len());
+    let mut cursor = 0;
+    while let Some(relative) = input[cursor..].find("://") {
+        let separator = cursor + relative;
+        let start = input[..separator]
+            .rfind(|c: char| !c.is_ascii_alphanumeric() && !matches!(c, '+' | '-' | '.'))
+            .map_or(0, |index| {
+                index + input[index..].chars().next().unwrap().len_utf8()
+            });
+        if start < cursor || start == separator {
+            output.push_str(&input[cursor..separator + 3]);
+            cursor = separator + 3;
+            continue;
+        }
+        let end = input[separator + 3..]
+            .find(|c: char| c.is_whitespace() || matches!(c, '\'' | '"' | '<' | '>' | '`'))
+            .map_or(input.len(), |index| separator + 3 + index);
+        output.push_str(&input[cursor..start]);
+        output.push_str(&stac_workflow::safe_reference(&input[start..end]));
+        cursor = end;
+    }
+    output.push_str(&input[cursor..]);
+    output
 }
 pub(crate) fn safe_error(
     r: &Request,
@@ -1126,5 +1253,84 @@ mod tests {
         assert!(!text.contains("SECRET"));
         assert!(!text.contains("password"));
         assert!(text.contains("https://example.org/a"));
+    }
+    #[test]
+    fn embedded_metadata_urls_preserve_following_scientific_fields() {
+        let mut value = serde_json::json!({"xml":"<GDALMetadata><Item name=\"ACCESS\">https://user:password@example.org/a?sig=SECRET#help</Item><Item name=\"ZERO_DOPPLER_START_TIME\">2024-01-10T18:14:05.955189Z</Item></GDALMetadata>"});
+        super::sanitize(&mut value);
+        let xml = value["xml"].as_str().unwrap();
+        assert!(xml.contains("https://example.org/a</Item>"));
+        assert!(xml.contains("2024-01-10T18:14:05.955189Z</Item></GDALMetadata>"));
+        assert!(!xml.contains("SECRET") && !xml.contains("password"));
+        let text = super::sanitize_embedded_urls(
+            "ΔH 🌊https://user:password@example.org/a?sig=SECRET then a field",
+        );
+        assert_eq!(text, "ΔH 🌊https://example.org/a then a field");
+    }
+    #[cfg(all(unix, feature = "native-cog", feature = "authenticated-http"))]
+    #[test]
+    fn authenticated_cog_sessions_require_an_exact_complete_map_and_budget() {
+        use crate::{Asset, Budget, Format, Grid, Request, Sink, Source, Spatial, Variable};
+        use std::{collections::BTreeMap, io::Write, os::unix::fs::OpenOptionsExt, sync::Arc};
+        let netrc = std::env::temp_dir().join(format!(
+            "tile-ripper-cog-map-{}-{}.netrc",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        let mut file = std::fs::OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .mode(0o600)
+            .open(&netrc)
+            .unwrap();
+        file.write_all(b"machine urs.earthdata.nasa.gov login fixture password fixture\n")
+            .unwrap();
+        let url = "https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T10SEG.2026001T000000.v2.0/HLS.L30.T10SEG.2026001T000000.v2.0.B04.tif";
+        let request = Request {
+            source: Source::Assets {
+                assets: vec![Asset {
+                    id: "red".into(),
+                    locator: url.into(),
+                    format: Format::Cog,
+                    datetime: None,
+                    etag: None,
+                }],
+            },
+            spatial: Spatial::Bounds {
+                crs: "EPSG:4326".into(),
+                bbox: [-1., -1., 1., 1.],
+            },
+            time: None,
+            variables: vec![Variable::Band { index: 1 }],
+            quality: vec![],
+            grid: Grid::Native,
+            operations: vec![],
+            sink: Sink::Callback,
+            budget: Budget {
+                buffer_bytes: 4 << 20,
+                max_nodes: 16,
+                chunk_edge: 16,
+            },
+        };
+        let session = || {
+            Arc::new(
+                crate::authenticated_http::AuthenticatedHttp::earthdata_hls(url, &netrc).unwrap(),
+            )
+        };
+        let exact = BTreeMap::from([("red".into(), session())]);
+        assert_eq!(
+            super::validate_authenticated_cog_sessions(&request, &exact).unwrap(),
+            crate::authenticated_http::WORKING_RESERVATION
+        );
+        assert!(super::validate_authenticated_cog_sessions(&request, &BTreeMap::new()).is_err());
+        let extra = BTreeMap::from([("red".into(), session()), ("extra".into(), session())]);
+        assert!(super::validate_authenticated_cog_sessions(&request, &extra).is_err());
+        let mut constrained = request.clone();
+        constrained.budget.buffer_bytes = crate::authenticated_http::WORKING_RESERVATION;
+        assert!(super::validate_authenticated_cog_sessions(&constrained, &exact).is_err());
+        std::fs::remove_file(netrc).unwrap();
     }
 }

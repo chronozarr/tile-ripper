@@ -102,6 +102,178 @@ pub struct ScientificOutputOptions {
     pub encoding: ScientificEncoding,
 }
 
+#[derive(Clone, Copy)]
+enum StorageType {
+    UInt8,
+    UInt16,
+    Int16,
+    Float32,
+}
+impl StorageType {
+    fn from_layout(dtype: &str) -> Option<Self> {
+        match dtype {
+            "Byte" | "|u1" => Some(Self::UInt8),
+            "UInt16" | "<u2" => Some(Self::UInt16),
+            "Int16" | "<i2" => Some(Self::Int16),
+            "Float32" | "<f4" => Some(Self::Float32),
+            _ => None,
+        }
+    }
+    fn zarr(self) -> &'static str {
+        match self {
+            Self::UInt8 => "|u1",
+            Self::UInt16 => "<u2",
+            Self::Int16 => "<i2",
+            Self::Float32 => "<f4",
+        }
+    }
+    fn name(self) -> &'static str {
+        match self {
+            Self::UInt8 => "uint8",
+            Self::UInt16 => "uint16",
+            Self::Int16 => "int16",
+            Self::Float32 => "float32",
+        }
+    }
+    fn bytes(self) -> usize {
+        match self {
+            Self::UInt8 => 1,
+            Self::UInt16 | Self::Int16 => 2,
+            Self::Float32 => 4,
+        }
+    }
+    fn nodata(self, value: f64) -> bool {
+        if !value.is_finite() {
+            return false;
+        }
+        match self {
+            Self::UInt8 => value.fract() == 0. && (0. ..=u8::MAX as f64).contains(&value),
+            Self::UInt16 => value.fract() == 0. && (0. ..=u16::MAX as f64).contains(&value),
+            Self::Int16 => {
+                value.fract() == 0. && (i16::MIN as f64..=i16::MAX as f64).contains(&value)
+            }
+            Self::Float32 => (value as f32) as f64 == value,
+        }
+    }
+    fn fill(self, nodata: Option<f64>) -> Value {
+        match (self, nodata) {
+            // Zarr v2 serializes its non-finite Float32 fill using the string
+            // spelling. This keeps unwritten Float32 cells invalid even when
+            // the source has no finite nodata sentinel (including GDAL NaN).
+            (Self::Float32, None) => json!("NaN"),
+            (_, None) => Value::Null,
+            (Self::UInt8 | Self::UInt16, Some(value)) => json!(value as u64),
+            (Self::Int16, Some(value)) => json!(value as i64),
+            (Self::Float32, Some(value)) => json!(value as f32),
+        }
+    }
+}
+
+fn quality_policies(
+    inspection: &Value,
+    asset_id: &str,
+) -> Result<Vec<crate::products::profile::QualityPolicy>> {
+    let Some(source) = inspection["sources"]
+        .as_array()
+        .and_then(|sources| sources.iter().find(|source| source["asset_id"] == asset_id))
+    else {
+        return Ok(Vec::new());
+    };
+    let Some(values) = source.get("quality_policies") else {
+        return Ok(Vec::new());
+    };
+    let values = values
+        .as_array()
+        .ok_or("source quality_policies must be an array")?;
+    let band = source["product_band"]["name"].as_str();
+    let mut policies = Vec::with_capacity(values.len());
+    for value in values {
+        let name = value
+            .as_str()
+            .ok_or("source quality policy name must be a string")?;
+        let policy: crate::products::profile::QualityPolicy = name.parse()?;
+        if band.is_none_or(|band| !policy.required_bands().contains(&band)) {
+            return Err("quality policy is not bound to this raw product band".into());
+        }
+        if policies.contains(&policy) {
+            return Err("duplicate source quality policy".into());
+        }
+        policies.push(policy);
+    }
+    Ok(policies)
+}
+
+#[derive(Clone)]
+struct ProductValidity {
+    profile: crate::products::profile::ProductProfile,
+    band: crate::products::profile::BandProfile,
+}
+
+fn product_validity(source: &Value) -> Result<Option<ProductValidity>> {
+    let Some(product) = source.get("product").and_then(Value::as_str) else {
+        return Ok(None);
+    };
+    let band = source["product_band"]["name"]
+        .as_str()
+        .ok_or("product source is missing its canonical band name")?;
+    let profile = crate::products::profile::profile(product)?;
+    let band = profile.band(band)?.clone();
+    Ok(Some(ProductValidity { profile, band }))
+}
+
+fn product_missingness(source: &Value, layout: &Layout, product: &ProductValidity) -> Value {
+    let fill_rule = if product.profile.family == crate::products::profile::ProductFamily::Landsat
+        && matches!(product.band.name.as_str(), "QA_PIXEL" | "SR_QA_AEROSOL")
+    {
+        "stored bit 0 set marks product fill; profile nodata is also applied"
+    } else {
+        "the product profile nodata value is applied when present"
+    };
+    json!({
+        "validity":"AOI inclusion AND physical source validity AND product semantic validity",
+        "physical_source":{
+            "layout_nodata":layout.nodata,
+            "gdal_nodata_text":source["object_identities"]["native_cog"]["gdal_nodata_text"],
+            "provenance":"sources[].object_identities.native_cog"
+        },
+        "product":{
+            "profile":product.profile.id,
+            "band":product.band.name,
+            "nodata":product.band.nodata,
+            "fill_rule":fill_rule
+        },
+        "raw_values":"preserved; product missingness does not create a physical source nodata value"
+    })
+}
+fn quality_mask(
+    policy: crate::products::profile::QualityPolicy,
+    pixels: &crate::Pixels,
+) -> Result<Vec<u8>> {
+    use crate::products::profile::QualitySample;
+    let mut mask = Vec::with_capacity(pixels.len());
+    match pixels {
+        crate::Pixels::UInt8(values) => {
+            for value in values {
+                mask.push(u8::from(policy.accepts(QualitySample::UInt8(*value))?));
+            }
+        }
+        crate::Pixels::UInt16(values) => {
+            for value in values {
+                mask.push(u8::from(policy.accepts(QualitySample::UInt16(*value))?));
+            }
+        }
+        crate::Pixels::Float32(values) => {
+            for value in values {
+                mask.push(u8::from(policy.accepts(QualitySample::Float32(*value))?));
+            }
+        }
+        crate::Pixels::Int16(_) | crate::Pixels::UInt32(_) => {
+            return Err("quality policy received an unsupported raw storage type".into());
+        }
+    }
+    Ok(mask)
+}
+
 fn selections(plan: &Plan) -> Vec<&Selected> {
     let mut selected: Vec<_> = plan.selected.iter().collect();
     selected.sort_by_key(|s| {
@@ -121,9 +293,10 @@ fn selections(plan: &Plan) -> Vec<&Selected> {
 pub(crate) fn outputs(plan: &Plan) -> Value {
     json!(selections(plan).iter().enumerate().map(|(i, s)| {
         let l = s.layout.as_ref();
+        let storage = l.and_then(|l| StorageType::from_layout(&l.dtype));
         json!({"file":".","group":format!("observations/{i:06}"),"dataset":"values",
             "asset_id":s.asset_id,"variable":l.map(|l|&l.variable),"datetime":s.datetime,
-            "timestamps":s.timestamps,"window":s.window,"dtype":"uint16","native_dtype":"<u2",
+            "timestamps":s.timestamps,"window":s.window,"dtype":storage.map(StorageType::name),"native_dtype":storage.map(StorageType::zarr),
             "nodata":l.and_then(|l|l.nodata),"scale":l.and_then(|l|l.scale),"offset":l.and_then(|l|l.offset),
             "native_grid":l.map(|l|json!({"crs":l.crs,"transform":crate::spatial::window_transform(l,&s.window)})),
             "dimensions":{"names":["time","y","x"],"shape":[1,s.window.height,s.window.width]},
@@ -159,7 +332,7 @@ fn array(
                 ScientificEncoding::ExperimentalV3ShardedGzip =>
                     inner.push(json!({"name":"gzip","configuration":{"level":1}})),
                 ScientificEncoding::ExperimentalV3ShardedBloscZstd =>
-                    inner.push(json!({"name":"blosc","configuration":{"cname":"zstd","clevel":1,"shuffle":"shuffle","typesize":if dtype=="<u2" {2}else{1},"blocksize":0}})),
+                    inner.push(json!({"name":"blosc","configuration":{"cname":"zstd","clevel":1,"shuffle":"shuffle","typesize":match dtype {"|u1"=>1,"<u2"|"<i2"=>2,"<f4"=>4,_=>1},"blocksize":0}})),
                 ScientificEncoding::ExperimentalV3ShardedZstd =>
                     inner.push(json!({"name":"zstd","configuration":{"level":1,"checksum":true}})),
                 _ => {}
@@ -177,7 +350,7 @@ fn array(
             json!(inner)
         };
         metadata = json!({"zarr_format":3,"node_type":"array","shape":shape,
-            "data_type":match dtype {"<u2"=>"uint16","|u1"=>"uint8","<f8"=>"float64","<i8"=>"int64","<i4"=>"int32",_=>return Err("unsupported output dtype".into())},
+            "data_type":match dtype {"<u2"=>"uint16","<i2"=>"int16","|u1"=>"uint8","<f4"=>"float32","<f8"=>"float64","<i8"=>"int64","<i4"=>"int32",_=>return Err("unsupported output dtype".into())},
             "chunk_grid":{"name":"regular","configuration":{"chunk_shape":outer}},
             "chunk_key_encoding":{"name":"v2","configuration":{"separator":"."}},
             "fill_value":if fill.is_null(){json!(0)}else{fill},"codecs":codecs,
@@ -205,6 +378,14 @@ fn group(store: Arc<Store>, path: &str, attrs: Value, encoding: ScientificEncodi
 fn serial() -> zarrs::array::CodecOptions {
     let mut options = zarrs::array::CodecOptions::default();
     options.set_concurrent_target(1);
+    options
+}
+fn serial_required() -> zarrs::array::CodecOptions {
+    let mut options = serial();
+    // Zarr v2 `fill_value: null` means that absent chunks are uninitialized.
+    // Persist legitimate all-zero source/coordinate/scalar payloads rather
+    // than allowing zarrs' type-default empty-chunk elision to lose them.
+    options.set_store_empty_chunks(true);
     options
 }
 fn encode_call<T, E>(
@@ -271,6 +452,8 @@ struct Observation {
     values: Array<Store>,
     valid: Array<Store>,
     aoi: Array<Store>,
+    quality: Vec<(crate::products::profile::QualityPolicy, Array<Store>)>,
+    product_validity: Option<ProductValidity>,
     geometry: Option<crate::spatial::Geometry>,
 }
 
@@ -306,6 +489,20 @@ pub(crate) fn fetch_with_options(
     let coordinate_edge = options.chunk_edge.min(budget.buffer_bytes / 16);
     let plan = prepared.plan();
     let selected = selections(plan);
+    let mut product_validities = HashMap::new();
+    for selected in &selected {
+        let source = inspection["sources"]
+            .as_array()
+            .and_then(|sources| {
+                sources
+                    .iter()
+                    .find(|source| source["asset_id"] == selected.asset_id)
+            })
+            .unwrap_or(&Value::Null);
+        if let Some(validity) = product_validity(source)? {
+            product_validities.insert(selected.asset_id.clone(), validity);
+        }
+    }
     let mut objects = 5usize; // two groups plus manifest, each group has two objects
     if objects > budget.max_nodes {
         return Err("output object bookkeeping exceeds max_nodes; even empty output needs five metadata objects".into());
@@ -316,11 +513,10 @@ pub(crate) fn fetch_with_options(
             .layout
             .as_ref()
             .ok_or("COG output needs a native layout")?;
-        if s.dimensions.is_some()
-            || !matches!(l.variable, Variable::Band { .. })
-            || !["UInt16", "<u2"].contains(&l.dtype.as_str())
-        {
-            return Err("scientific COG output currently requires UInt16 native bands".into());
+        let storage = StorageType::from_layout(&l.dtype)
+            .ok_or("scientific COG output requires Byte, UInt16, Int16, or Float32 native bands")?;
+        if s.dimensions.is_some() || !matches!(l.variable, Variable::Band { .. }) {
+            return Err("scientific COG output requires a supported native raster band".into());
         }
         if l.transform.iter().any(|v| !v.is_finite())
             || l.transform[2] != 0.
@@ -329,17 +525,15 @@ pub(crate) fn fetch_with_options(
             return Err("rectilinear Zarr output requires an unrotated native grid; no resampling is performed".into());
         }
         if let Some(n) = l.nodata {
-            if !n.is_finite() || n.fract() != 0. || !(0. ..=65535.).contains(&n) {
-                return Err("COG nodata is not representable as UInt16".into());
+            if !storage.nodata(n) {
+                return Err("COG nodata is not exactly representable in its storage type".into());
             }
-        } else if s.mask_geometry.is_some() {
-            return Err("AOI output requires representable source nodata".into());
         }
         let edge_y = options.chunk_edge.min(s.window.height);
         let edge_x = options.chunk_edge.min(s.window.width);
         let bytes = edge_y
             .checked_mul(edge_x)
-            .and_then(|n| n.checked_mul(2))
+            .and_then(|n| n.checked_mul(storage.bytes()))
             .ok_or("output chunk size overflow")?;
         if bytes > budget.buffer_bytes / 4 {
             return Err("destination chunk exceeds one quarter of buffer_bytes; reduce chunk_edge or raise buffer budget".into());
@@ -364,12 +558,14 @@ pub(crate) fn fetch_with_options(
             .div_ceil(edge_x)
             .checked_mul(s.window.height.div_ceil(edge_y))
             .ok_or("output object count overflow")?;
+        let quality_count = quality_policies(&inspection, &s.asset_id)?.len();
         objects = objects
             .checked_add(
                 18 + s.window.width.div_ceil(coordinate_edge)
                     + s.window.height.div_ceil(coordinate_edge),
             )
             .and_then(|n| n.checked_add(tiles.checked_mul(3)?))
+            .and_then(|n| n.checked_add(quality_count.checked_mul(2 + tiles)?))
             .ok_or("output object count overflow")?;
         if objects > budget.max_nodes {
             return Err(
@@ -384,6 +580,16 @@ pub(crate) fn fetch_with_options(
         .map(|(_, w)| w.width * w.height)
         .max()
         .unwrap_or(0);
+    let source_element_bytes = selected
+        .iter()
+        .filter_map(|s| {
+            s.layout
+                .as_ref()
+                .and_then(|l| StorageType::from_layout(&l.dtype))
+                .map(StorageType::bytes)
+        })
+        .max()
+        .unwrap_or(1);
     let output_area = selected
         .iter()
         .map(|s| options.chunk_edge.min(s.window.width) * options.chunk_edge.min(s.window.height))
@@ -391,10 +597,19 @@ pub(crate) fn fetch_with_options(
         .unwrap_or(0);
     let shard_factor = encoding.shard_factor();
     let codec_workspace = encoding.codec_workspace();
+    let has_quality = selected
+        .iter()
+        .try_fold(false, |found, selected| -> Result<_> {
+            Ok(found || !quality_policies(&inspection, &selected.asset_id)?.is_empty())
+        })?;
     let reservation = output_area
         .checked_mul(shard_factor)
         .and_then(|n| n.checked_mul(32))
-        .and_then(|n| n.checked_add(source_area.checked_mul(6)?))
+        .and_then(|n| {
+            n.checked_add(
+                source_area.checked_mul(source_element_bytes + 4 + usize::from(has_quality))?,
+            )
+        })
         .and_then(|n| n.checked_add(codec_workspace))
         .ok_or("output reservation overflow")?;
     if reservation > budget.buffer_bytes {
@@ -409,7 +624,23 @@ pub(crate) fn fetch_with_options(
         filesystem_options,
     )?)));
     let store = Arc::new(Store::new(metrics.clone()));
-    let output_records = outputs(plan);
+    let mut output_records = outputs(plan);
+    if let Some(records) = output_records.as_array_mut() {
+        for (record, selected) in records.iter_mut().zip(&selected) {
+            let policies = quality_policies(&inspection, &selected.asset_id)?;
+            if !policies.is_empty() {
+                record["derived_masks"] = json!(policies
+                    .iter()
+                    .map(|policy| json!({
+                        "dataset":format!("quality_{}", policy.name()),
+                        "policy":policy.name(),
+                        "description":policy.description(),
+                        "scope":"this raw observation intersected with source validity and AOI inclusion"
+                    }))
+                    .collect::<Vec<_>>());
+            }
+        }
+    }
     let root_attrs = json!({"title":"Native source observations","status":"incomplete",
         "layout":"one source asset/band per observation group, chronological order; no aligned cube",
         "observations":output_records,"logical_request":inspection["logical_request"],
@@ -425,12 +656,15 @@ pub(crate) fn fetch_with_options(
     for (i, s) in selected.iter().enumerate() {
         check_cancelled(&cancelled)?;
         let l = s.layout.as_ref().unwrap();
+        let storage = StorageType::from_layout(&l.dtype).unwrap();
         let base = format!("/observations/{i:06}");
         let source = inspection["sources"]
             .as_array()
             .and_then(|a| a.iter().find(|v| v["asset_id"] == s.asset_id))
             .cloned()
             .unwrap_or(Value::Null);
+        let policies = quality_policies(&inspection, &s.asset_id)?;
+        let product_validity = product_validities.get(&s.asset_id).cloned();
         let t = crate::spatial::window_transform(l, &s.window);
         let timestamp = s
             .datetime
@@ -498,7 +732,7 @@ pub(crate) fn fetch_with_options(
                             vec![values.len() as u64],
                         )?,
                         &values,
-                        &serial(),
+                        &serial_required(),
                     )
                 })?;
             }
@@ -514,7 +748,7 @@ pub(crate) fn fetch_with_options(
             encoding,
         )?;
         encode_call(&store, &mut encode_seconds, || {
-            time.store_chunk_opt(&[0], &[time_value], &serial())
+            time.store_chunk_opt(&[0], &[time_value], &serial_required())
         })?;
         let crs = array(
             store.clone(),
@@ -527,7 +761,7 @@ pub(crate) fn fetch_with_options(
             encoding,
         )?;
         encode_call(&store, &mut encode_seconds, || {
-            crs.store_chunk_opt(&[], &[0i32], &serial())
+            crs.store_chunk_opt(&[], &[0i32], &serial_required())
         })?;
         let shape = [1, s.window.height, s.window.width];
         let chunks = [
@@ -535,8 +769,17 @@ pub(crate) fn fetch_with_options(
             options.chunk_edge.min(s.window.height),
             options.chunk_edge.min(s.window.width),
         ];
+        let quality_names = policies
+            .iter()
+            .map(|policy| format!("quality_{}", policy.name()))
+            .collect::<Vec<_>>();
+        let ancillary = std::iter::once("valid".to_owned())
+            .chain(std::iter::once("aoi_mask".to_owned()))
+            .chain(quality_names.iter().cloned())
+            .collect::<Vec<_>>()
+            .join(" ");
         let mut attrs = json!({"_ARRAY_DIMENSIONS":["time","y","x"],"grid_mapping":"spatial_ref",
-            "ancillary_variables":"valid aoi_mask","source_nodata":l.nodata,
+            "ancillary_variables":ancillary,"source_nodata":l.nodata,
             "long_name":source["requested_band"].as_str().unwrap_or("native stored pixel value")});
         let stac = &source["raster_bands"][0];
         let scale = l.scale.or_else(|| stac["scale"].as_f64());
@@ -547,14 +790,28 @@ pub(crate) fn fetch_with_options(
         if let Some(v) = offset {
             attrs["add_offset"] = json!(v);
         }
+        if let Some(unit) = source["product_band"]["unit"]
+            .as_str()
+            .or_else(|| stac["unit"].as_str())
+        {
+            attrs["units"] = json!(unit);
+        }
         attrs["calibration_precedence"] = json!("TIFF metadata, then STAC when absent; original fields retained in source provenance; stored values unmodified");
+        for key in ["product_band", "quality_policies"] {
+            if source.get(key).is_some_and(|value| !value.is_null()) {
+                attrs[key] = source[key].clone();
+            }
+        }
+        if let Some(product) = &product_validity {
+            attrs["missingness"] = product_missingness(&source, l, product);
+        }
         let values = array(
             store.clone(),
             &format!("{base}/values"),
             &shape,
             &chunks,
-            "<u2",
-            json!(l.nodata.map(|n| n as u16)),
+            storage.zarr(),
+            storage.fill(l.nodata),
             attrs,
             encoding,
         )?;
@@ -579,11 +836,30 @@ pub(crate) fn fetch_with_options(
             mask_attrs("AOI pixel center inclusion; source nodata may still be included"),
             encoding,
         )?;
+        let mut quality = Vec::with_capacity(policies.len());
+        for (policy, name) in policies.into_iter().zip(quality_names) {
+            let mask = array(
+                store.clone(),
+                &format!("{base}/{name}"),
+                &shape,
+                &chunks,
+                "|u1",
+                json!(0),
+                json!({"_ARRAY_DIMENSIONS":["time","y","x"],"grid_mapping":"spatial_ref",
+                    "long_name":policy.description(),"flag_values":[0,1],
+                    "flag_meanings":"rejected accepted","quality_policy":policy.name(),
+                    "derivation":"policy evaluated from this observation's raw stored samples, then intersected with source validity and AOI inclusion; no calibration or cross-band alignment"}),
+                encoding,
+            )?;
+            quality.push((policy, mask));
+        }
         observations.push(Observation {
             selected: (*s).clone(),
             values,
             valid,
             aoi,
+            quality,
+            product_validity,
             geometry: s
                 .mask_geometry
                 .as_ref()
@@ -625,8 +901,7 @@ pub(crate) fn fetch_with_options(
         {
             return Err("stream chunk differs from prepared observation metadata".into());
         }
-        let values = c.pixels.as_u16().ok_or("COG output expected UInt16")?;
-        if values.len() != window.width * window.height {
+        if c.pixels.len() != window.width * window.height {
             return Err("invalid COG output buffer dimensions".into());
         }
         let subset = ArraySubset::new_with_start_shape(
@@ -637,13 +912,21 @@ pub(crate) fn fetch_with_options(
             ],
             vec![1, window.height as u64, window.width as u64],
         )?;
-        encode_call(&store, &mut encode_seconds, || {
-            o.values.store_array_subset_opt(&subset, values, &serial())
-        })?;
-        let valid: Vec<u8> = c.validity().map(u8::from).collect();
-        encode_call(&store, &mut encode_seconds, || {
-            o.valid.store_array_subset_opt(&subset, &valid, &serial())
-        })?;
+        macro_rules! write_values {
+            ($values:expr) => {
+                encode_call(&store, &mut encode_seconds, || {
+                    o.values
+                        .store_array_subset_opt(&subset, $values, &serial_required())
+                })?
+            };
+        }
+        match &c.pixels {
+            crate::Pixels::UInt8(values) => write_values!(values),
+            crate::Pixels::UInt16(values) => write_values!(values),
+            crate::Pixels::Int16(values) => write_values!(values),
+            crate::Pixels::Float32(values) => write_values!(values),
+            crate::Pixels::UInt32(_) => return Err("unsupported COG output sample type".into()),
+        }
         let mask = o
             .geometry
             .as_ref()
@@ -652,10 +935,41 @@ pub(crate) fn fetch_with_options(
         let aoi = mask
             .as_ref()
             .map(|m| m.data().to_vec())
-            .unwrap_or_else(|| vec![1; values.len()]);
+            .unwrap_or_else(|| vec![1; c.pixels.len()]);
+        let mut valid = Vec::with_capacity(c.pixels.len());
+        if let Some(product) = &o.product_validity {
+            valid.extend(
+                c.validity()
+                    .zip(&aoi)
+                    .zip(crate::products::source_validity(
+                        &product.profile,
+                        &product.band,
+                        &c.pixels,
+                    ))
+                    .map(|((physical, aoi), semantic)| u8::from(physical && *aoi != 0 && semantic)),
+            );
+        } else {
+            valid.extend(
+                c.validity()
+                    .zip(&aoi)
+                    .map(|(physical, aoi)| u8::from(physical && *aoi != 0)),
+            );
+        }
+        encode_call(&store, &mut encode_seconds, || {
+            o.valid.store_array_subset_opt(&subset, &valid, &serial())
+        })?;
         encode_call(&store, &mut encode_seconds, || {
             o.aoi.store_array_subset_opt(&subset, &aoi, &serial())
         })?;
+        for (policy, output) in &o.quality {
+            let mut derived = quality_mask(*policy, &c.pixels)?;
+            for (accepted, included) in derived.iter_mut().zip(&valid) {
+                *accepted &= *included;
+            }
+            encode_call(&store, &mut encode_seconds, || {
+                output.store_array_subset_opt(&subset, &derived, &serial())
+            })?;
+        }
         // Payload and encode scratch were admitted before creating staging;
         // these temporaries are dropped before accepting the next delivery.
         first_output.get_or_insert_with(|| started.elapsed().as_secs_f64());
@@ -693,7 +1007,7 @@ pub(crate) fn fetch_with_options(
     let mut manifest = json!({"schema_version":3,"document_type":"acquisition_result","status":"complete",
         "format":format!("zarr_v{}",encoding.version()),"writer":"zarrs 0.23.14","sources":inspection["sources"],"outputs":output_records,
         "output_encoding":encoding,"output_chunk_edge":options.chunk_edge,
-        "observed":report,"processing":["native stored UInt16 values; calibration is metadata only","one source asset/band and native grid per observation; chronological order","no reprojection, resampling, mosaicking or implicit alignment","valid and aoi_mask distinguish source nodata from excluded AOI centers"],
+        "observed":report,"processing":["native stored typed values; calibration is metadata only","one source asset/band and native grid per observation; chronological order","no reprojection, resampling, mosaicking or implicit alignment","valid and aoi_mask distinguish source nodata from excluded AOI centers"],
         "completion":{"stream_finish":"successful","publication":"atomic no-replace sibling rename","existing_destination":"refused; replacement is never implicit","scope":"validated provider ETags or local size/mtime, not an atomic multi-object snapshot",
             "synchronization":"file contents and metadata before closing every writer handle; bottom-up directories and pre-publication barrier; rename; parent synchronization and post-publication barrier",
             "memory_scope":"output_io.buffered_bytes_peak is a separate bounded per-encode reservation including delivered payload, masks, output scratch and codec allowance; add scheduler reservations; neither is an RSS ceiling"}});
@@ -892,6 +1206,195 @@ mod tests {
         ));
         fs::create_dir(&p).unwrap();
         p
+    }
+    #[test]
+    fn quality_masks_are_derived_without_mutating_raw_samples() {
+        use crate::products::profile::QualityPolicy;
+        let raw = crate::Pixels::UInt8(vec![0, 2, 255]);
+        assert_eq!(
+            quality_mask(QualityPolicy::HlsFmaskClear, &raw).unwrap(),
+            [1, 0, 0]
+        );
+        assert_eq!(raw.as_u8().unwrap(), [0, 2, 255]);
+
+        let nan = f32::from_bits(0x7fc01234);
+        let radar = crate::Pixels::Float32(vec![0.25, nan]);
+        assert_eq!(
+            quality_mask(QualityPolicy::OperaRtcFinite, &radar).unwrap(),
+            [1, 0]
+        );
+        assert_eq!(radar.as_f32().unwrap()[1].to_bits(), 0x7fc01234);
+
+        let reserved = crate::Pixels::UInt8(vec![1]);
+        assert!(quality_mask(QualityPolicy::HlsFmaskClear, &reserved).is_err());
+    }
+    #[cfg(all(feature = "native-cog", not(feature = "gdal")))]
+    fn typed_product_request(source: &str, output: &Path) -> Request {
+        Request {
+            source: Source::Assets {
+                assets: vec![Asset {
+                    etag: None,
+                    id: "typed-product".into(),
+                    locator: Path::new(env!("CARGO_MANIFEST_DIR"))
+                        .join("tests/data/native_cog")
+                        .join(source)
+                        .to_string_lossy()
+                        .into(),
+                    format: Format::Cog,
+                    datetime: None,
+                }],
+            },
+            spatial: Spatial::Bounds {
+                crs: "EPSG:32617".into(),
+                bbox: [500000., 3999040., 500960., 4000000.],
+            },
+            time: None,
+            variables: vec![Variable::Band { index: 1 }],
+            quality: vec![],
+            grid: Grid::Native,
+            operations: vec![],
+            sink: Sink::ZarrDirectory {
+                path: output.to_string_lossy().into(),
+            },
+            budget: Budget {
+                buffer_bytes: 16 * 1024 * 1024,
+                max_nodes: 4096,
+                chunk_edge: 64,
+            },
+        }
+    }
+    #[cfg(all(feature = "native-cog", not(feature = "gdal")))]
+    #[test]
+    fn typed_product_metadata_and_quality_mask_are_written_independently() {
+        use zarrs::filesystem::FilesystemStore;
+        let r = root();
+        let dest = r.join("radar.zarr");
+        let prepared = crate::acquisition::prepare(
+            &typed_product_request("radar_float32.tif", &dest),
+            &mut crate::cog::LayoutCache::default(),
+        )
+        .unwrap()
+        .with_product_metadata(
+            vec![json!({
+                "asset_id":"typed-product",
+                "product_band":{"name":"VV","unit":"1","scale":1.0,"offset":0.0},
+                "raster_bands":[{"scale":1.0,"offset":0.0,"unit":"1"}],
+                "quality_policies":["opera_rtc_finite"]
+            })],
+            json!({"profile":"test"}),
+        );
+        prepared.fetch().unwrap();
+        let attrs: Value = serde_json::from_slice(
+            &fs::read(dest.join("observations/000000/values/.zattrs")).unwrap(),
+        )
+        .unwrap();
+        assert_eq!(attrs["units"], "1");
+        assert_eq!(attrs["scale_factor"], 1.0);
+        assert_eq!(attrs["add_offset"], 0.0);
+        assert_eq!(attrs["product_band"]["name"], "VV");
+        assert_eq!(attrs["quality_policies"][0], "opera_rtc_finite");
+
+        let store = Arc::new(FilesystemStore::new(&dest).unwrap());
+        let mask = Array::open(store, "/observations/000000/quality_opera_rtc_finite").unwrap();
+        let mask = mask
+            .retrieve_array_subset::<Vec<u8>>(&mask.subset_all())
+            .unwrap();
+        assert_eq!(&mask[..4], &[0, 0, 0, 1]);
+        fs::remove_dir_all(r).unwrap();
+    }
+    #[cfg(all(feature = "native-cog", not(feature = "gdal")))]
+    #[test]
+    fn product_semantic_fill_is_independent_from_physical_nodata_and_raw_values() {
+        use zarrs::filesystem::FilesystemStore;
+        let root = root();
+        let profile = crate::products::profile::profile("landsat-c2-l2-sr").unwrap();
+        for (fixture, band_name) in [
+            ("qa_uint16_no_nodata.tif", "QA_PIXEL"),
+            ("qa_uint16_allzero_no_nodata.tif", "QA_RADSAT"),
+        ] {
+            let destination = root.join(format!("{band_name}.zarr"));
+            let band = profile.band(band_name).unwrap();
+            let prepared = crate::acquisition::prepare(
+                &typed_product_request(fixture, &destination),
+                &mut crate::cog::LayoutCache::default(),
+            )
+            .unwrap();
+            assert_eq!(
+                prepared.plan().selected[0].layout.as_ref().unwrap().nodata,
+                None
+            );
+            let prepared = prepared.with_product_metadata(
+                vec![json!({
+                    "asset_id":"typed-product",
+                    "product":profile.id,
+                    "product_band":band,
+                    "raster_bands":[{"scale":band.scale,"offset":band.offset,"unit":band.unit}],
+                    "quality_policies":[]
+                })],
+                json!({"profile":profile.id}),
+            );
+            prepared.fetch().unwrap();
+
+            let store = Arc::new(FilesystemStore::new(&destination).unwrap());
+            let values = Array::open(store.clone(), "/observations/000000/values").unwrap();
+            let values = values
+                .retrieve_array_subset::<Vec<u16>>(&values.subset_all())
+                .unwrap();
+            let valid = Array::open(store, "/observations/000000/valid").unwrap();
+            let valid = valid
+                .retrieve_array_subset::<Vec<u8>>(&valid.subset_all())
+                .unwrap();
+            let attrs: Value = serde_json::from_slice(
+                &fs::read(destination.join("observations/000000/values/.zattrs")).unwrap(),
+            )
+            .unwrap();
+            assert_eq!(attrs["source_nodata"], Value::Null);
+            assert_eq!(
+                attrs["missingness"]["physical_source"]["layout_nodata"],
+                Value::Null
+            );
+            assert_eq!(attrs["missingness"]["product"]["band"], band_name);
+            if band_name == "QA_PIXEL" {
+                assert_eq!(&values[..4], &[1000, 1001, 1002, 1003]);
+                assert_eq!(&valid[..4], &[1, 0, 1, 0]);
+                assert_eq!(
+                    attrs["missingness"]["product"]["nodata"],
+                    json!({"type":"uint16","value":1})
+                );
+                assert!(attrs["missingness"]["product"]["fill_rule"]
+                    .as_str()
+                    .unwrap()
+                    .contains("bit 0"));
+            } else {
+                assert!(values.iter().all(|value| *value == 0));
+                assert!(valid.iter().all(|value| *value == 1));
+                assert_eq!(attrs["missingness"]["product"]["nodata"], Value::Null);
+            }
+        }
+        fs::remove_dir_all(root).unwrap();
+    }
+    #[cfg(all(feature = "native-cog", not(feature = "gdal")))]
+    #[test]
+    fn undefined_typed_quality_code_aborts_without_publication() {
+        let r = root();
+        let dest = r.join("invalid.zarr");
+        let prepared = crate::acquisition::prepare(
+            &typed_product_request("classification_uint8.tif", &dest),
+            &mut crate::cog::LayoutCache::default(),
+        )
+        .unwrap()
+        .with_product_metadata(
+            vec![json!({
+                "asset_id":"typed-product",
+                "product_band":{"name":"Fmask","unit":"1"},
+                "quality_policies":["hls_fmask_clear"]
+            })],
+            json!({"profile":"test"}),
+        );
+        assert!(prepared.fetch().is_err());
+        assert!(!dest.exists());
+        assert_eq!(fs::read_dir(&r).unwrap().count(), 0);
+        fs::remove_dir_all(r).unwrap();
     }
     #[test]
     fn destination_race_never_replaces_an_existing_directory() {

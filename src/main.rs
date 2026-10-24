@@ -10,6 +10,17 @@ fn run() -> Result<()> {
             _ => {}
         }
     }
+    if args.get(1).is_some_and(|s| s == "products") {
+        if args.len() != 2 {
+            return Err(
+                "products accepts no options; use discover --product or a product request".into(),
+            );
+        }
+        return cli::products::list();
+    }
+    if args.get(1).is_some_and(|s| s == "discover") && args.iter().any(|s| s == "--product") {
+        return cli::products::discover(&args[2..]);
+    }
     if args.get(1).is_some_and(|s| s == "discover") {
         return cli::discovery::run(&args[2..]);
     }
@@ -23,6 +34,9 @@ fn run() -> Result<()> {
     let Some(options) = options else {
         return Ok(());
     };
+    if options.input.get("product").is_some() {
+        return cli::products::run(options);
+    }
     if options.input.get("job_schema").is_some() {
         #[cfg(feature = "native-hdf5")]
         return run_job(options);
@@ -227,7 +241,7 @@ fn run() -> Result<()> {
                     writeln!(
                         out,
                         "{}",
-                        serde_json::json!({"type":"chunk","asset_id":c.asset_id,"node_id":c.node_id,"variable":c.variable,"datetime":c.datetime,"indices":c.indices,"window":c.window,"crs":c.crs,"transform":c.transform,"nodata":c.nodata,"scale":c.scale,"offset":c.offset,"dtype":if c.pixels.as_f32().is_some(){"float32"}else{"uint16"},"bytes":c.pixels.byte_len(),"valid_pixels":c.validity().filter(|v|*v).count(),"seconds":started.elapsed().as_secs_f64()})
+                        serde_json::json!({"type":"chunk","asset_id":c.asset_id,"node_id":c.node_id,"variable":c.variable,"datetime":c.datetime,"indices":c.indices,"window":c.window,"crs":c.crs,"transform":c.transform,"nodata":c.nodata,"scale":c.scale,"offset":c.offset,"dtype":match &c.pixels {tile_ripper::Pixels::UInt8(_)=>"uint8",tile_ripper::Pixels::UInt16(_)=>"uint16",tile_ripper::Pixels::Int16(_)=>"int16",tile_ripper::Pixels::UInt32(_)=>"uint32",tile_ripper::Pixels::Float32(_)=>"float32"},"bytes":c.pixels.byte_len(),"valid_pixels":c.validity().filter(|v|*v).count(),"seconds":started.elapsed().as_secs_f64()})
                     )?;
                 }
                 let report = stream.finish()?;
@@ -418,11 +432,12 @@ fn stream_quality(
                 let bytes: Vec<u8> = match &c.pixels {
                     tile_ripper::Pixels::UInt8(v) => v.clone(),
                     tile_ripper::Pixels::UInt16(v) => v.iter().flat_map(|v| v.to_le_bytes()).collect(),
+                    tile_ripper::Pixels::Int16(v) => v.iter().flat_map(|v| v.to_le_bytes()).collect(),
                     tile_ripper::Pixels::UInt32(v) => v.iter().flat_map(|v| v.to_le_bytes()).collect(),
                     tile_ripper::Pixels::Float32(v) => v.iter().flat_map(|v| v.to_le_bytes()).collect(),
                 };
                 v["encoding"] = "base64-little-endian".into();
-                v["dtype"] = match &c.pixels {tile_ripper::Pixels::UInt8(_)=>"uint8",tile_ripper::Pixels::UInt16(_)=>"uint16",tile_ripper::Pixels::UInt32(_)=>"uint32",tile_ripper::Pixels::Float32(_)=>"float32"}.into();
+                v["dtype"] = match &c.pixels {tile_ripper::Pixels::UInt8(_)=>"uint8",tile_ripper::Pixels::UInt16(_)=>"uint16",tile_ripper::Pixels::Int16(_)=>"int16",tile_ripper::Pixels::UInt32(_)=>"uint32",tile_ripper::Pixels::Float32(_)=>"float32"}.into();
                 v["values"] = base64::engine::general_purpose::STANDARD.encode(bytes).into();
                 v["source_mask"] = base64::engine::general_purpose::STANDARD.encode(c.validity().map(u8::from).collect::<Vec<_>>()).into();
             }

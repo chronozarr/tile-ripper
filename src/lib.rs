@@ -19,6 +19,7 @@ pub mod swot_discovery;
 mod zarr_acquire;
 
 pub mod acquisition;
+pub mod products;
 
 mod diagnostics;
 

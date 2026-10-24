@@ -123,7 +123,7 @@ fn checkpoint_and_authentication_require_explicit_complete_options() {
             "checkpoint limits require --checkpoint",
         ),
         (
-            vec!["stream", "missing.json", "--values"],
+            vec!["stream", "examples/weatherbench2.json", "--values"],
             "--values requires stream --quality-policy",
         ),
     ] {

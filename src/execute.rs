@@ -48,7 +48,9 @@ impl Chunk {
         let t = self.transform;
         Some([t[0] + x * t[1] + y * t[2], t[3] + x * t[4] + y * t[5]])
     }
-    /// Validity of each stored value; COG AOI exclusions already carry nodata.
+    /// Source-value validity only. COG AOI exclusions carry nodata when the
+    /// source defines one; writers preserve no-nodata raw values and combine
+    /// their separate AOI mask with this iterator.
     pub fn validity(&self) -> impl Iterator<Item = bool> + '_ {
         (0..self.pixels.len()).map(|i| self.pixels.valid(i, self.nodata))
     }

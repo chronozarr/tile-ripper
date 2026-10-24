@@ -36,6 +36,10 @@ impl Sources {
         request: &Request,
         limits: &crate::stac_workflow::Limits,
     ) -> Result<()> {
+        #[cfg(all(feature = "native-cog", feature = "authenticated-http"))]
+        if self.native.transport_reservation()? > 0 {
+            return self.native.validate();
+        }
         #[cfg(feature = "native-cog")]
         self.native.validate()?;
         let result = crate::stac_workflow::validate_identities(request, limits);
@@ -125,6 +129,24 @@ impl Sources {
         }
         Ok(sources)
     }
+    #[cfg(all(feature = "native-cog", feature = "authenticated-http"))]
+    pub(crate) fn with_cog_sessions(
+        r: &Request,
+        sessions: BTreeMap<String, Arc<crate::authenticated_http::AuthenticatedHttp>>,
+    ) -> Result<Self> {
+        let mut sources = Self::with_transport(r, Default::default())?;
+        sources.native =
+            crate::native_cog::Snapshots::with_sessions(r.budget.buffer_bytes, sessions)?;
+        Ok(sources)
+    }
+    #[cfg(all(feature = "native-cog", feature = "authenticated-http"))]
+    pub(crate) fn resolve_authenticated_cog_identities(&self, request: &mut Request) -> Result<()> {
+        let Source::Assets { assets } = &mut request.source else {
+            return fail("authenticated COG identity resolution requires explicit assets");
+        };
+        self.native.resolve_authenticated(assets)?;
+        Ok(())
+    }
     pub fn get(&self, a: &Asset) -> Result<Arc<Objects>> {
         if let Some(s) = self.objects.get(&a.id) {
             return Ok(s.clone());
@@ -186,6 +208,10 @@ impl Sources {
         if let Some(value) = self.hdf5.describe(id) {
             return value;
         }
+        #[cfg(feature = "native-cog")]
+        if let Some(value) = self.native.describe(id) {
+            return serde_json::json!({"native_cog":value});
+        }
         self.objects.get(id).map_or(serde_json::Value::Null, |s| {
             s.http().map_or(serde_json::Value::Null, |h| {
                 serde_json::json!(h.state.lock().unwrap().versions)
@@ -205,6 +231,14 @@ impl Sources {
                 })
                 .sum::<usize>()
     }
+    pub(crate) fn transport_reservation(&self) -> Result<usize> {
+        #[cfg(all(feature = "native-cog", feature = "authenticated-http"))]
+        {
+            self.native.transport_reservation()
+        }
+        #[cfg(not(all(feature = "native-cog", feature = "authenticated-http")))]
+        Ok(0)
+    }
     pub fn stats(&self) -> serde_json::Value {
         #[allow(unused_mut)]
         let mut value = serde_json::json!(self
@@ -223,6 +257,10 @@ impl Sources {
             .collect::<BTreeMap<_, _>>());
         #[cfg(feature = "native-hdf5")]
         self.hdf5.add_stats(&mut value);
+        #[cfg(all(feature = "native-cog", feature = "authenticated-http"))]
+        if self.native.transport_reservation().unwrap_or(0) > 0 {
+            value["native_cog_authenticated"] = self.native.transport_stats();
+        }
         value
     }
 }

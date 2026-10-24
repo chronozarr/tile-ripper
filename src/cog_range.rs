@@ -1,9 +1,8 @@
 //! Version-bound exact range transport for the native TIFF decoder. No URL cache.
 use crate::{cog, Asset, Result};
-use reqwest::{blocking::Client, header, StatusCode};
+use reqwest::{blocking::Client, header, Method, StatusCode, Url};
 use std::{
     collections::BTreeMap,
-    io::Read,
     sync::{
         atomic::{AtomicBool, Ordering},
         Arc, Mutex, OnceLock,
@@ -110,10 +109,15 @@ enum Binding {
     Local(FileSource),
     Http {
         client: Client,
-        url: String,
+        url: Url,
         etag: String,
+        transport: crate::http_transport::Transport,
     },
 }
+#[cfg(feature = "authenticated-http")]
+pub(super) type Session = Arc<crate::authenticated_http::AuthenticatedHttp>;
+#[cfg(not(feature = "authenticated-http"))]
+pub(super) type Session = ();
 pub(super) struct RangeSource {
     failed: Arc<AtomicBool>,
     binding: Binding,
@@ -140,6 +144,7 @@ impl RangeSource {
         a: &Asset,
         snapshot: Option<&Snapshot>,
         failed: Arc<AtomicBool>,
+        session: Option<Session>,
     ) -> Result<Arc<Self>> {
         if failed.load(Ordering::Acquire) {
             return Err(
@@ -147,7 +152,7 @@ impl RangeSource {
                     .into(),
             );
         }
-        let result = Self::open_bound(a, snapshot, failed.clone());
+        let result = Self::open_bound(a, snapshot, failed.clone(), session);
         if result.is_err() {
             failed.store(true, Ordering::Release);
         } else if failed.load(Ordering::Acquire) {
@@ -162,6 +167,7 @@ impl RangeSource {
         a: &Asset,
         snapshot: Option<&Snapshot>,
         failed: Arc<AtomicBool>,
+        session: Option<Session>,
     ) -> Result<Arc<Self>> {
         let (binding, size) = if cog::remote(&a.locator) {
             let etag = a
@@ -185,20 +191,27 @@ impl RangeSource {
                 .as_ref()
                 .map_err(|e| *e)?
                 .clone();
+            let url = Url::parse(&a.locator).map_err(|_| "invalid native COG URL")?;
+            #[cfg(feature = "authenticated-http")]
+            let transport = session
+                .map(crate::http_transport::Transport::Authenticated)
+                .unwrap_or_default();
+            #[cfg(not(feature = "authenticated-http"))]
+            let transport = {
+                let _ = session;
+                crate::http_transport::Transport::default()
+            };
             let r = (0..=2)
                 .find_map(|attempt| {
                     if attempt > 0 {
                         std::thread::sleep(Duration::from_millis(100 * attempt));
                     }
-                    match client
-                        .head(&a.locator)
-                        .header(header::IF_MATCH, &etag)
-                        .header(header::ACCEPT_ENCODING, "identity")
-                        .send()
-                    {
+                    let mut headers = header::HeaderMap::new();
+                    headers.insert(header::IF_MATCH, header::HeaderValue::from_str(&etag).ok()?);
+                    match transport.send(&client, Method::HEAD, url.clone(), headers, None) {
                         Ok(r)
-                            if r.status().is_server_error()
-                                || r.status() == StatusCode::TOO_MANY_REQUESTS =>
+                            if r.status() >= 500
+                                || r.status() == StatusCode::TOO_MANY_REQUESTS.as_u16() =>
                         {
                             None
                         }
@@ -207,7 +220,7 @@ impl RangeSource {
                 })
                 .ok_or("native COG HEAD retries exhausted")?
                 .map_err(|_| "native COG HEAD transport failed")?;
-            if r.status() != StatusCode::OK
+            if r.status() != StatusCode::OK.as_u16()
                 || r.headers().get(header::ETAG).and_then(|v| v.to_str().ok())
                     != Some(etag.as_str())
             {
@@ -220,11 +233,13 @@ impl RangeSource {
                 .and_then(|s| s.parse::<u64>().ok())
                 .filter(|s| *s > 0)
                 .ok_or("native COG HEAD missing object size")?;
+            drop(r);
             (
                 Binding::Http {
                     client,
-                    url: a.locator.clone(),
+                    url,
                     etag,
+                    transport,
                 },
                 size,
             )
@@ -278,22 +293,32 @@ impl RangeSource {
             Binding::Local(source) => source
                 .read_exact_at(offset, len)
                 .map_err(|_| error("native COG truncated local read"))?,
-            Binding::Http { client, url, etag } => {
+            Binding::Http {
+                client,
+                url,
+                etag,
+                transport,
+            } => {
                 let mut output = None;
                 for attempt in 0..=2 {
                     if attempt > 0 {
                         std::thread::sleep(Duration::from_millis(100 * attempt));
                     }
-                    let response = client
-                        .get(url)
-                        .header(header::RANGE, format!("bytes={offset}-{}", end - 1))
-                        .header(header::IF_MATCH, etag)
-                        .header(header::ACCEPT_ENCODING, "identity")
-                        .send();
+                    let mut headers = header::HeaderMap::new();
+                    let range = format!("bytes={offset}-{}", end - 1);
+                    let (Ok(range), Ok(etag_header)) = (
+                        header::HeaderValue::from_str(&range),
+                        header::HeaderValue::from_str(etag),
+                    ) else {
+                        return Err(error("native COG invalid conditional range headers"));
+                    };
+                    headers.insert(header::RANGE, range);
+                    headers.insert(header::IF_MATCH, etag_header);
+                    let response = transport.send(client, Method::GET, url.clone(), headers, None);
                     let mut r = match response {
                         Ok(r)
-                            if r.status().is_server_error()
-                                || r.status() == StatusCode::TOO_MANY_REQUESTS =>
+                            if r.status() >= 500
+                                || r.status() == StatusCode::TOO_MANY_REQUESTS.as_u16() =>
                         {
                             continue
                         }
@@ -301,7 +326,7 @@ impl RangeSource {
                         Err(_) => continue,
                     };
                     let expected = format!("bytes {offset}-{}/{}", end - 1, self.size);
-                    if r.status() != StatusCode::PARTIAL_CONTENT
+                    if r.status() != StatusCode::PARTIAL_CONTENT.as_u16()
                         || r.headers().get(header::ETAG).and_then(|v| v.to_str().ok())
                             != Some(etag.as_str())
                         || r.headers()
@@ -321,11 +346,8 @@ impl RangeSource {
                             "native COG invalid range response or source version conflict",
                         ));
                     }
-                    // A len+1 read_to_end probe can double Vec capacity even
-                    // for an exact body. Keep encoded allocation exactly len.
-                    let mut bytes = vec![0; len];
-                    let mut extra = [0u8; 1];
-                    if r.read_exact(&mut bytes).is_err() || !matches!(r.read(&mut extra), Ok(0)) {
+                    let mut bytes = Vec::with_capacity(len);
+                    if r.read_body(len as u64, &mut bytes).is_err() || bytes.len() != len {
                         continue;
                     }
                     output = Some(bytes);
@@ -504,8 +526,8 @@ mod tests {
     fn source_failure_survives_restore_and_invalidates_cached_and_uncached_readers() {
         let f = Fixture::new();
         let failed = Arc::new(AtomicBool::new(false));
-        let first = RangeSource::open(&f.0, None, failed.clone()).unwrap();
-        let second = RangeSource::open(&f.0, None, failed.clone()).unwrap();
+        let first = RangeSource::open(&f.0, None, failed.clone(), None).unwrap();
+        let second = RangeSource::open(&f.0, None, failed.clone(), None).unwrap();
         second.read_exact_at(0, 8).unwrap();
         first.begin_data(Vec::new());
         std::fs::write(&f.0.locator, b"x").unwrap();
@@ -513,8 +535,8 @@ mod tests {
         std::fs::write(&f.0.locator, (0..8192).map(|n| n as u8).collect::<Vec<_>>()).unwrap();
         assert!(first.read_exact_at(0, 8).is_err());
         assert!(second.read_exact_at(0, 8).is_err());
-        assert!(RangeSource::open(&f.0, None, failed).is_err());
-        assert!(RangeSource::open(&f.0, None, Default::default()).is_ok());
+        assert!(RangeSource::open(&f.0, None, failed, None).is_err());
+        assert!(RangeSource::open(&f.0, None, Default::default(), None).is_ok());
     }
     #[test]
     fn coalescing_requires_bounded_adjacent_consecutive_misses() {
@@ -531,7 +553,7 @@ mod tests {
         let f = Fixture::new();
         let original = std::fs::read(&f.0.locator).unwrap();
         for wrapper in [0, 4, 8] {
-            let source = RangeSource::open(&f.0, None, Default::default()).unwrap();
+            let source = RangeSource::open(&f.0, None, Default::default(), None).unwrap();
             source.begin_data(groups(vec![tile(100, 100), tile(208, 100)], 216));
             let shift = if wrapper == 0 { 0 } else { 4 };
             for offset in [100 - shift, 208 - shift] {
@@ -551,11 +573,11 @@ mod tests {
     #[test]
     fn metadata_snapshots_are_identity_bound_and_never_supply_data() {
         let f = Fixture::new();
-        let first = RangeSource::open(&f.0, None, Default::default()).unwrap();
+        let first = RangeSource::open(&f.0, None, Default::default(), None).unwrap();
         first.read_exact_at(0, 16).unwrap();
         let snapshot = first.snapshot(&f.0);
         assert_eq!(snapshot.bytes(), PAGE as usize);
-        let second = RangeSource::open(&f.0, Some(&snapshot), Default::default()).unwrap();
+        let second = RangeSource::open(&f.0, Some(&snapshot), Default::default(), None).unwrap();
         assert_eq!(
             second.read_exact_at(0, 16).unwrap(),
             (0..16).collect::<Vec<u8>>()
@@ -566,8 +588,8 @@ mod tests {
         assert_eq!(second.counters.lock().unwrap().requests, 1);
         let mut changed = f.0.clone();
         changed.etag = Some("\"different\"".into());
-        assert!(RangeSource::open(&changed, Some(&snapshot), Default::default()).is_err());
+        assert!(RangeSource::open(&changed, Some(&snapshot), Default::default(), None).is_err());
         std::fs::write(&f.0.locator, [0; 8193]).unwrap();
-        assert!(RangeSource::open(&f.0, Some(&snapshot), Default::default()).is_err());
+        assert!(RangeSource::open(&f.0, Some(&snapshot), Default::default(), None).is_err());
     }
 }

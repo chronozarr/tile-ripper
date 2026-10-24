@@ -106,6 +106,14 @@ fn host(a: &Asset) -> Result<String> {
         Ok("local".into())
     }
 }
+fn element_bytes(dtype: &str) -> Result<usize> {
+    match dtype {
+        "Byte" | "|u1" => Ok(1),
+        "UInt16" | "Int16" | "<u2" | "<i2" => Ok(2),
+        "Float32" | "UInt32" | "<f4" | "<u4" => Ok(4),
+        _ => Err(format!("unsupported scheduler dtype {dtype}").into()),
+    }
+}
 fn tasks(r: &Request, p: &Plan, sources: &crate::storage::Sources) -> Result<Vec<Task>> {
     use zarrs::storage::{ReadableStorageTraits, StoreKey};
     let Source::Assets { assets } = &r.source else {
@@ -151,7 +159,7 @@ fn tasks(r: &Request, p: &Plan, sources: &crate::storage::Sources) -> Result<Vec
             };
             let prefix = format!("{}/", path.trim_start_matches('/'));
             let dims = selected.dimensions.as_ref().ok_or("missing dimensions")?;
-            let element = if l.dtype == "<f4" { 4usize } else { 2 };
+            let element = element_bytes(&l.dtype)?;
             let native = dims
                 .chunk_shape
                 .iter()
@@ -214,6 +222,7 @@ fn tasks(r: &Request, p: &Plan, sources: &crate::storage::Sources) -> Result<Vec
             // Only one output buffer is live per admitted selection.
             let mut nodes = Vec::new();
             let mut bytes = 0;
+            let element = element_bytes(&l.dtype)?;
             for (ni, node) in p
                 .nodes
                 .iter()
@@ -230,7 +239,7 @@ fn tasks(r: &Request, p: &Plan, sources: &crate::storage::Sources) -> Result<Vec
                     let window_bytes = window
                         .width
                         .checked_mul(window.height)
-                        .and_then(|n| n.checked_mul(2))
+                        .and_then(|n| n.checked_mul(element))
                         .ok_or("window byte overflow")?;
                     bytes = bytes.max(window_bytes);
                     nodes.push(ni);
@@ -248,7 +257,10 @@ fn tasks(r: &Request, p: &Plan, sources: &crate::storage::Sources) -> Result<Vec
                         l,
                         &selected.window,
                         &read_nodes,
-                        r.budget.buffer_bytes.saturating_sub(sources.native.bytes()),
+                        r.budget
+                            .buffer_bytes
+                            .saturating_sub(sources.native.bytes())
+                            .saturating_sub(sources.transport_reservation()?),
                         crate::storage::worker_count()?.min(p.selected.len().max(1)),
                     )?;
                     native = strategy;
@@ -297,7 +309,11 @@ fn coalesce_tasks(
     let mut prepared = sources.v3_prepared_bytes();
     #[cfg(feature = "native-cog")]
     {
-        prepared = prepared.saturating_add(sources.native.bytes());
+        let transport = sources.transport_reservation()?;
+        prepared = prepared
+            .checked_add(sources.native.bytes())
+            .and_then(|bytes| bytes.checked_add(transport))
+            .ok_or("native COG prepared reservation overflow")?;
     }
     // Upper bound for the immutable batch descriptions, held for execution.
     // If even this small planning overhead is unaffordable, retain the old tasks.
@@ -419,7 +435,11 @@ pub(crate) fn execute(
     let mut prepared_bytes = 0usize;
     #[cfg(feature = "native-cog")]
     if crate::cog::native_selected() {
-        prepared_bytes = sources.native.bytes();
+        prepared_bytes = sources
+            .native
+            .bytes()
+            .checked_add(sources.transport_reservation()?)
+            .ok_or("native COG prepared reservation overflow")?;
     }
     #[cfg(feature = "native-hdf5")]
     {
@@ -710,7 +730,7 @@ pub(crate) fn execute(
         .sort_by(|a, b| (&a.asset_id, &a.key).cmp(&(&b.asset_id, &b.key)));
     let range_metrics = result.scheduler.get("zarr_v3_ranges").cloned();
     let native_buffers = result.scheduler.get("native_buffers").cloned();
-    result.scheduler = serde_json::json!({"workers":workers,"per_host":per_host,"buffer_bytes":r.budget.buffer_bytes,"reserved_bytes_peak":state.peak,"reader_state_reserved_bytes":retained,"prepared_native_metadata_bytes":prepared_bytes,"prepared_v3_metadata_index_bytes":sources.v3_prepared_bytes(),"active_workers_peak":state.active_peak,"completed_tasks":tasks.iter().map(|t|t.nodes.len()).sum::<usize>(),"admitted_jobs":tasks.len(),"cog_reader_scope":"selection","seconds":started.elapsed().as_secs_f64(),"order":"plan","memory_scope":"conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention"});
+    result.scheduler = serde_json::json!({"workers":workers,"per_host":per_host,"buffer_bytes":r.budget.buffer_bytes,"reserved_bytes_peak":state.peak,"reader_state_reserved_bytes":retained,"prepared_native_metadata_bytes":prepared_bytes,"authenticated_transport_reserved_bytes":sources.transport_reservation()?,"prepared_v3_metadata_index_bytes":sources.v3_prepared_bytes(),"active_workers_peak":state.active_peak,"completed_tasks":tasks.iter().map(|t|t.nodes.len()).sum::<usize>(),"admitted_jobs":tasks.len(),"cog_reader_scope":"selection","seconds":started.elapsed().as_secs_f64(),"order":"plan","memory_scope":"conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention"});
     #[cfg(feature = "native-hdf5")]
     {
         result.scheduler["prepared_hdf5_bytes"] = serde_json::json!(sources.hdf5.bytes());

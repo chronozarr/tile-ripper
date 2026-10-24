@@ -34,13 +34,13 @@ fn cog_capabilities() -> Capabilities {
         selection: vec!["native_bounds".into(), "integer_band".into()],
         reads: vec!["library_window".into()],
         decoding: if crate::cog::native_selected() {
-            "tiff-reader 0.9 storage-domain UInt16"
+            "tiff-reader 0.9 storage-domain UInt8/UInt16/Int16/Float32"
         } else {
             "GDAL GTiff"
         }
         .into(),
         compression: if crate::cog::native_selected() {
-            "uncompressed/LZW/Deflate; predictor 1/2; bounded decode"
+            "uncompressed/LZW/Deflate; integer predictor 1/2, Float32 predictor 1/3; bounded decode"
         } else {
             "delegated to installed GDAL; UInt16 parity required"
         }
@@ -54,6 +54,18 @@ fn plan_cog_asset(
     p: &mut Plan,
     mut resolve: impl FnMut(usize) -> Result<(Layout, bool)>,
 ) -> Result<()> {
+    let valid_nodata = |dtype: &str, value: f64| {
+        if !value.is_finite() {
+            return false;
+        }
+        match dtype {
+            "Byte" => value.fract() == 0. && (0. ..=u8::MAX as f64).contains(&value),
+            "UInt16" => value.fract() == 0. && (0. ..=u16::MAX as f64).contains(&value),
+            "Int16" => value.fract() == 0. && (i16::MIN as f64..=i16::MAX as f64).contains(&value),
+            "Float32" => (value as f32) as f64 == value,
+            _ => false,
+        }
+    };
     for variable in &request.variables {
         let Variable::Band { index } = variable else {
             return fail("COG requires integer band selectors");
@@ -74,12 +86,14 @@ fn plan_cog_asset(
         let Some(window) = cog::window(&layout, &spatial)? else {
             continue;
         };
-        if mask.is_some()
-            && layout
-                .nodata
-                .is_none_or(|n| !n.is_finite() || n.fract() != 0. || !(0. ..=65535.).contains(&n))
+        if mask.is_some() && !cog::native_selected() && layout.nodata.is_none() {
+            return fail("GDAL AOI masking requires representable UInt16 source nodata; native COG supports distinct no-nodata AOI masks");
+        }
+        if layout
+            .nodata
+            .is_some_and(|n| !valid_nodata(&layout.dtype, n))
         {
-            return fail("AOI masking requires representable UInt16 source nodata in this release");
+            return fail("source nodata must be exactly representable in the storage type");
         }
         let selected_tiles = cog::tiles(&layout, &window);
         let payload = selected_tiles
@@ -411,7 +425,7 @@ pub(crate) fn plan_on(
                         })?;
                     } else {
                         #[cfg(feature = "native-cog")]
-                        if cog::native_selected() && cog::remote(&asset.locator) {
+                        if cog::native_selected() {
                             plan_cog_asset(asset, request, &mut p, |band| {
                                 Ok((sources.native.inspect(asset, band)?, false))
                             })?;
@@ -494,9 +508,20 @@ pub(crate) fn plan_on(
                     .ok_or("native COG working set overflow")?,
             );
         }
-        sources
-            .native
-            .trim(request.budget.buffer_bytes.saturating_sub(mandatory_peak));
+        let transport = sources.transport_reservation()?;
+        if mandatory_peak
+            .checked_add(transport)
+            .is_none_or(|bytes| bytes > request.budget.buffer_bytes)
+        {
+            return fail("native COG working set and transport sessions exceed buffer_bytes");
+        }
+        sources.native.trim(
+            request
+                .budget
+                .buffer_bytes
+                .saturating_sub(mandatory_peak)
+                .saturating_sub(transport),
+        );
     }
     crate::diagnostics::profile_stage(
         "native_planning_with_layout",

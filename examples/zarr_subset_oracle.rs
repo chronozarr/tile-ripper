@@ -49,6 +49,7 @@ fn main() -> Result<()> {
                 Pixels::UInt8(v) => v.clone(),
                 Pixels::UInt32(v) => v.iter().flat_map(|v| v.to_le_bytes()).collect(),
                 Pixels::UInt16(v) => v.iter().flat_map(|v| v.to_le_bytes()).collect(),
+                Pixels::Int16(v) => v.iter().flat_map(|v| v.to_le_bytes()).collect(),
                 Pixels::Float32(v) => v.iter().flat_map(|v| v.to_le_bytes()).collect(),
             };
             match &c.pixels {
@@ -69,6 +70,14 @@ fn main() -> Result<()> {
                     }
                 }
                 Pixels::UInt16(v) => {
+                    for (v, m) in v.iter().zip(&mask) {
+                        if *m != 0 {
+                            sum += *v as f64;
+                            valid += 1;
+                        }
+                    }
+                }
+                Pixels::Int16(v) => {
                     for (v, m) in v.iter().zip(&mask) {
                         if *m != 0 {
                             sum += *v as f64;

@@ -83,6 +83,7 @@ fn main() -> tile_ripper::Result<()> {
             let bytes: Vec<u8> = match &c.pixels {
                 Pixels::UInt8(v) => v.clone(),
                 Pixels::UInt16(v) => v.iter().flat_map(|v| v.to_le_bytes()).collect(),
+                Pixels::Int16(v) => v.iter().flat_map(|v| v.to_le_bytes()).collect(),
                 Pixels::UInt32(v) => v.iter().flat_map(|v| v.to_le_bytes()).collect(),
                 Pixels::Float32(v) => v.iter().flat_map(|v| v.to_le_bytes()).collect(),
             };

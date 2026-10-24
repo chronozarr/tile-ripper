@@ -123,6 +123,15 @@ fn safe_url(u: &Url) -> bool {
         && u.fragment().is_none()
         && u.as_str().len() <= 16384
 }
+fn strong_etag(value: &str) -> bool {
+    value.len() >= 2
+        && value.starts_with('"')
+        && value.ends_with('"')
+        && !value.starts_with("W/")
+        && !value[1..value.len() - 1]
+            .bytes()
+            .any(|byte| byte < 33 || byte == 127 || byte == b'"')
+}
 impl AuthenticatedHttp {
     /// Opt in to the observed PO.DAAC SWOT access contract for one product.
     /// The file path is a credential source, never a credential value.
@@ -147,6 +156,65 @@ impl AuthenticatedHttp {
         let suffix = format!("/podaac-swot-ops-cumulus-protected.s3.us-west-2.amazonaws.com/{key}");
         let head_path = format!("/head-2c0fc4c958b8bc10f4fa177bae3b4543{suffix}");
         let get_path = format!("/s3-2c0fc4c958b8bc10f4fa177bae3b4543{suffix}");
+        let rule = |from: &str, to: &str, path: &str| RedirectRule {
+            from_origin: from.into(),
+            to_origin: to.into(),
+            destination_path: path.into(),
+        };
+        Self::new(
+            Config {
+                canonical_url: canonical_url.into(),
+                login_origin: login.into(),
+                resource_origin: resource.into(),
+                head_resource_path: head_path.clone(),
+                get_resource_path: get_path.clone(),
+                redirects: vec![
+                    rule(archive, login, "/oauth/authorize"),
+                    rule(login, archive, "/login"),
+                    rule(archive, archive, canonical.path()),
+                    rule(archive, resource, &head_path),
+                    rule(archive, resource, &get_path),
+                ],
+                additional_roots: vec![],
+            },
+            netrc,
+        )
+    }
+    /// Opt in to the observed LP DAAC HLS V2 protected-object contract.
+    ///
+    /// This profile remains exact-object scoped. It accepts only unsigned HLS
+    /// L30/S30 V2 TIFF object URLs and derives the provider's method-adapter
+    /// paths for that same protected S3 key.
+    pub fn earthdata_hls(canonical_url: &str, netrc: impl Into<PathBuf>) -> Result<Self> {
+        let canonical = Url::parse(canonical_url).map_err(|_| "invalid HLS Earthdata locator")?;
+        let archive = "https://data.lpdaac.earthdatacloud.nasa.gov";
+        let login = "https://urs.earthdata.nasa.gov";
+        let resource = "https://d1nklfio7vscoe.cloudfront.net";
+        let path = canonical.path();
+        if canonical.origin().ascii_serialization() != archive
+            || canonical.query().is_some()
+            || canonical.fragment().is_some()
+            || !(path.starts_with("/lp-prod-protected/HLSL30.020/")
+                || path.starts_with("/lp-prod-protected/HLSS30.020/"))
+            || !path.ends_with(".tif")
+        {
+            return fail(
+                "HLS Earthdata profile requires an unsigned HLSL30/HLSS30 V2 TIFF locator",
+            );
+        }
+        let key = path
+            .strip_prefix("/lp-prod-protected/")
+            .ok_or("invalid HLS protected key")?;
+        if key.is_empty()
+            || key
+                .split('/')
+                .any(|part| part.is_empty() || part == "." || part == "..")
+        {
+            return fail("invalid HLS protected object path");
+        }
+        let suffix = format!("/lp-prod-protected.s3.us-west-2.amazonaws.com/{key}");
+        let head_path = format!("/head-2d2df3a34830d5223d1e9547cd713408{suffix}");
+        let get_path = format!("/s3-2d2df3a34830d5223d1e9547cd713408{suffix}");
         let rule = |from: &str, to: &str, path: &str| RedirectRule {
             from_origin: from.into(),
             to_origin: to.into(),
@@ -255,6 +323,75 @@ impl AuthenticatedHttp {
     }
     pub(crate) fn accepts(&self, locator: &str) -> bool {
         locator == self.canonical.as_str()
+    }
+    /// Resolve the canonical object's current immutable identity through this
+    /// session's exact redirect policy.
+    pub(crate) fn head_identity(&self, cancelled: Option<&AtomicBool>) -> Result<(String, u64)> {
+        let response = self.send(
+            Method::HEAD,
+            self.canonical.clone(),
+            HeaderMap::new(),
+            cancelled,
+        )?;
+        if response.inner.status().as_u16() != 200 {
+            return fail("authenticated object identity HEAD failed");
+        }
+        let etag = response
+            .inner
+            .headers()
+            .get(header::ETAG)
+            .and_then(|value| value.to_str().ok())
+            .filter(|value| strong_etag(value))
+            .ok_or("authenticated object identity requires a strong ETag")?
+            .to_owned();
+        let bytes = response
+            .inner
+            .headers()
+            .get(header::CONTENT_LENGTH)
+            .and_then(|value| value.to_str().ok())
+            .and_then(|value| value.parse::<u64>().ok())
+            .filter(|value| *value > 0)
+            .ok_or("authenticated object identity HEAD missing content length")?;
+        Ok((etag, bytes))
+    }
+
+    /// Recheck one previously pinned identity. `If-Match` is retained through
+    /// the canonical and signed object hops, and the returned identity must
+    /// still agree independently with both pins.
+    pub(crate) fn validate_identity(
+        &self,
+        expected_etag: &str,
+        expected_bytes: u64,
+        cancelled: Option<&AtomicBool>,
+    ) -> Result<()> {
+        if !strong_etag(expected_etag) || expected_bytes == 0 {
+            return fail("invalid authenticated object identity pin");
+        }
+        let mut headers = HeaderMap::new();
+        headers.insert(
+            header::IF_MATCH,
+            HeaderValue::from_str(expected_etag)
+                .map_err(|_| "invalid authenticated object ETag pin")?,
+        );
+        let response = self.send(Method::HEAD, self.canonical.clone(), headers, cancelled)?;
+        if response.inner.status().as_u16() != 200
+            || response
+                .inner
+                .headers()
+                .get(header::ETAG)
+                .and_then(|value| value.to_str().ok())
+                != Some(expected_etag)
+            || response
+                .inner
+                .headers()
+                .get(header::CONTENT_LENGTH)
+                .and_then(|value| value.to_str().ok())
+                .and_then(|value| value.parse::<u64>().ok())
+                != Some(expected_bytes)
+        {
+            return fail("authenticated object identity changed");
+        }
+        Ok(())
     }
     fn object(&self, url: &Url, method: &Method) -> bool {
         url.origin().ascii_serialization() == self.config.resource_origin
@@ -671,7 +808,6 @@ impl AuthenticatedHttp {
     pub fn statistics(&self) -> serde_json::Value {
         self.stats()
     }
-    #[cfg(feature = "native-hdf5")]
     pub(crate) fn require_fresh(&self) -> Result<()> {
         let counts = self.counts.lock().unwrap();
         if counts.wire_head != 0 || counts.wire_get != 0 || counts.checkpoint_claims != 0 {
@@ -844,6 +980,52 @@ fn tokenize(input: &str) -> Result<Vec<String>> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[cfg(unix)]
+    fn netrc_fixture(label: &str) -> Result<PathBuf> {
+        use std::io::Write;
+        use std::os::unix::fs::OpenOptionsExt;
+        let path = std::env::temp_dir().join(format!(
+            "tile-ripper-{label}-{}-{}.netrc",
+            std::process::id(),
+            SystemTime::now().duration_since(UNIX_EPOCH)?.as_nanos()
+        ));
+        let mut file = std::fs::OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .mode(0o600)
+            .open(&path)?;
+        file.write_all(b"machine urs.earthdata.nasa.gov login fixture password fixture\n")?;
+        Ok(path)
+    }
+    #[cfg(unix)]
+    #[test]
+    fn hls_profile_is_release_and_exact_object_scoped() -> Result<()> {
+        let path = netrc_fixture("hls-profile")?;
+        let l30 = "https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T10SEG.2026001T000000.v2.0/HLS.L30.T10SEG.2026001T000000.v2.0.Fmask.tif";
+        let session = AuthenticatedHttp::earthdata_hls(l30, &path)?;
+        let identity = session.identity();
+        assert_eq!(
+            identity["resource_origin"],
+            "https://d1nklfio7vscoe.cloudfront.net"
+        );
+        assert_eq!(
+            identity["head_resource_path"],
+            "/head-2d2df3a34830d5223d1e9547cd713408/lp-prod-protected.s3.us-west-2.amazonaws.com/HLSL30.020/HLS.L30.T10SEG.2026001T000000.v2.0/HLS.L30.T10SEG.2026001T000000.v2.0.Fmask.tif"
+        );
+        assert!(session.accepts(l30));
+        assert!(!session.accepts(&format!("{l30}?signed=secret")));
+        let s30 = l30
+            .replace("HLSL30.020", "HLSS30.020")
+            .replace("HLS.L30.", "HLS.S30.");
+        assert!(AuthenticatedHttp::earthdata_hls(&s30, &path).is_ok());
+        assert!(
+            AuthenticatedHttp::earthdata_hls(&l30.replace("HLSL30.020", "HLSL30.030"), &path)
+                .is_err()
+        );
+        assert!(AuthenticatedHttp::earthdata_hls(&format!("{l30}?signed=secret"), &path).is_err());
+        std::fs::remove_file(path)?;
+        Ok(())
+    }
     #[cfg(all(unix, feature = "native-hdf5"))]
     #[test]
     fn checkpoint_claim_requires_an_unused_session_and_is_single_use() -> Result<()> {

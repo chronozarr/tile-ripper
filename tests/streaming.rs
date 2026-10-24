@@ -510,3 +510,16 @@ fn cancel_after_all_delivered_chunks_still_invalidates_finish() {
     stream.cancel();
     assert!(stream.finish().is_err());
 }
+
+#[test]
+fn host_cancellation_is_shared_with_the_stream_producer() {
+    let fixture = cog_fixture();
+    let prepared = acquisition::prepare(&fixture.request, &mut LayoutCache::default()).unwrap();
+    let cancelled = Arc::new(std::sync::atomic::AtomicBool::new(true));
+    let mut stream = prepared
+        .into_stream_cancellable(stream::StreamOptions { capacity: 0 }, cancelled)
+        .unwrap();
+    assert!(stream.next().unwrap().is_err());
+    assert!(stream.next().is_none());
+    assert!(stream.finish().is_err());
+}

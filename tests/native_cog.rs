@@ -31,3 +31,464 @@ fn convenience_execute_validates_local_source_after_delivery() {
     let error = result.unwrap_err().to_string();
     assert!(error.contains("changed"), "{error}");
 }
+
+#[cfg(not(feature = "gdal"))]
+mod typed {
+    use std::{
+        path::{Path, PathBuf},
+        sync::{
+            atomic::{AtomicUsize, Ordering},
+            Arc,
+        },
+    };
+    use tile_ripper::{acquisition, cog::LayoutCache, *};
+    use zarrs::{array::Array, filesystem::FilesystemStore};
+
+    static NEXT: AtomicUsize = AtomicUsize::new(0);
+
+    fn source(name: &str) -> PathBuf {
+        Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("tests/data/native_cog")
+            .join(name)
+    }
+    fn request(name: &str, sink: Sink, spatial: Spatial) -> Request {
+        Request {
+            source: Source::Assets {
+                assets: vec![Asset {
+                    etag: None,
+                    id: name.into(),
+                    locator: source(name).to_string_lossy().into(),
+                    format: Format::Cog,
+                    datetime: None,
+                }],
+            },
+            spatial,
+            time: None,
+            variables: vec![Variable::Band { index: 1 }],
+            quality: vec![],
+            grid: Grid::Native,
+            operations: vec![],
+            sink,
+            budget: Budget {
+                buffer_bytes: 16 * 1024 * 1024,
+                max_nodes: 4096,
+                chunk_edge: 64,
+            },
+        }
+    }
+    fn full(name: &str, sink: Sink) -> Request {
+        request(
+            name,
+            sink,
+            Spatial::Bounds {
+                crs: "EPSG:32617".into(),
+                bbox: [500000., 3999040., 500960., 4000000.],
+            },
+        )
+    }
+    fn triangle() -> Spatial {
+        Spatial::Polygon {
+            crs: "EPSG:32617".into(),
+            coordinates: serde_json::json!([[
+                [500000., 4000000.],
+                [500960., 4000000.],
+                [500000., 3999040.],
+                [500000., 4000000.]
+            ]]),
+        }
+    }
+    fn decode(name: &str) -> (Layout, Chunk) {
+        let prepared =
+            acquisition::prepare(&full(name, Sink::Callback), &mut LayoutCache::default()).unwrap();
+        let layout = prepared.plan().selected[0].layout.clone().unwrap();
+        let mut chunks = Vec::new();
+        let report = prepared
+            .execute(|chunk| {
+                chunks.push(chunk);
+                Ok(())
+            })
+            .unwrap();
+        assert_eq!(report.chunks, 1);
+        assert_eq!(chunks.len(), 1);
+        (layout, chunks.pop().unwrap())
+    }
+
+    #[test]
+    fn rasterio_fixtures_decode_typed_storage_values_and_metadata() {
+        let (layout, chunk) = decode("hls_int16.tif");
+        assert_eq!(layout.dtype, "Int16");
+        assert_eq!(layout.nodata, Some(-9999.));
+        assert_eq!(layout.scale, Some(0.0001));
+        assert_eq!(layout.offset, Some(0.));
+        let values = chunk.pixels.as_i16().unwrap();
+        assert_eq!(values[0], -9999);
+        assert_eq!(values[1], -11987);
+        assert_eq!(values[31 * 32 + 31], 10103);
+        assert_eq!(chunk.validity().filter(|v| *v).count(), 1023);
+
+        let (layout, chunk) = decode("classification_uint8.tif");
+        assert_eq!(layout.dtype, "Byte");
+        assert_eq!(layout.nodata, Some(255.));
+        let values = chunk.pixels.as_u8().unwrap();
+        assert_eq!(&values[..5], &[255, 1, 2, 3, 4]);
+        assert_eq!(values[4 * 32 + 7], 7);
+        assert_eq!(chunk.validity().filter(|v| *v).count(), 1023);
+
+        let (layout, chunk) = decode("classification_palette_uint8.tif");
+        assert_eq!(layout.dtype, "Byte");
+        assert_eq!(layout.nodata, Some(255.));
+        let values = chunk.pixels.as_u8().unwrap();
+        assert_eq!(&values[..5], &[255, 1, 2, 3, 4]);
+        assert_eq!(values[4 * 32 + 7], 7);
+        assert_eq!(chunk.validity().filter(|v| *v).count(), 1023);
+
+        let (layout, chunk) = decode("radar_float32.tif");
+        assert_eq!(layout.dtype, "Float32");
+        assert_eq!(layout.nodata, Some(-9999.));
+        let values = chunk.pixels.as_f32().unwrap();
+        assert_eq!(values[0].to_bits(), (-9999f32).to_bits());
+        assert_eq!(values[1].to_bits(), 0x7fc01234);
+        assert_eq!(values[2].to_bits(), 0x7fc0abcd);
+        assert_eq!(values[1023].to_bits(), 0.75f32.to_bits());
+        assert_eq!(chunk.validity().filter(|v| *v).count(), 1021);
+
+        let (layout, chunk) = decode("radar_float32_nan_nodata.tif");
+        assert_eq!(layout.dtype, "Float32");
+        assert_eq!(layout.nodata, None);
+        let values = chunk.pixels.as_f32().unwrap();
+        assert_eq!(values[0].to_bits(), (-9999f32).to_bits());
+        assert_eq!(values[1].to_bits(), 0x7fc01234);
+        assert_eq!(values[2].to_bits(), 0x7fc0abcd);
+        assert_eq!(chunk.validity().filter(|v| *v).count(), 1022);
+    }
+
+    #[test]
+    fn pixel_is_point_tiepoint_matches_rasterio_corner_affine() {
+        let asset = Asset {
+            etag: None,
+            id: "pixel-is-point".into(),
+            locator: source("pixel_is_point_uint16.tif").to_string_lossy().into(),
+            format: Format::Cog,
+            datetime: None,
+        };
+        let layout = tile_ripper::cog::inspect(&asset, 1).unwrap();
+        assert_eq!(layout.crs, "EPSG:32617");
+        assert_eq!([layout.width, layout.height], [4, 3]);
+        assert_eq!(layout.transform, [541485., 30., 0., 4105815., 0., -30.]);
+    }
+
+    #[test]
+    fn opera_dswx_palette_preserves_indices_and_normalizes_its_exact_grid_profile() {
+        let name = "opera_dswx_palette_uint8.tif";
+        let asset = Asset {
+            etag: None,
+            id: "dswx".into(),
+            locator: source(name).to_string_lossy().into(),
+            format: Format::Cog,
+            datetime: None,
+        };
+        let layout = tile_ripper::cog::inspect(&asset, 1).unwrap();
+        assert_eq!(layout.dtype, "Byte");
+        assert_eq!(layout.crs, "EPSG:32610");
+        assert_eq!(layout.transform, [300000., 30., 0., 5300040., 0., -30.]);
+
+        let prepared = acquisition::prepare(
+            &request(
+                name,
+                Sink::Callback,
+                Spatial::Bounds {
+                    crs: "EPSG:32610".into(),
+                    bbox: [300000., 5299080., 300960., 5300040.],
+                },
+            ),
+            &mut LayoutCache::default(),
+        )
+        .unwrap();
+        let mut chunks = Vec::new();
+        prepared
+            .execute(|chunk| {
+                chunks.push(chunk);
+                Ok(())
+            })
+            .unwrap();
+        let values = chunks.pop().unwrap().pixels.as_u8().unwrap().to_vec();
+        assert_eq!(&values[..5], &[255, 1, 2, 3, 4]);
+        assert_eq!(values[4 * 32 + 7], 7);
+    }
+
+    #[test]
+    fn typed_aoi_mask_writes_each_storage_nodata_without_calibration() {
+        let polygon = triangle();
+        for (name, dtype) in [
+            ("classification_uint8.tif", "Byte"),
+            ("hls_int16.tif", "Int16"),
+            ("radar_float32.tif", "Float32"),
+        ] {
+            let prepared = acquisition::prepare(
+                &request(name, Sink::Callback, polygon.clone()),
+                &mut LayoutCache::default(),
+            )
+            .unwrap();
+            assert_eq!(
+                prepared.plan().selected[0].layout.as_ref().unwrap().dtype,
+                dtype
+            );
+            let mut chunks = Vec::new();
+            prepared
+                .execute(|chunk| {
+                    chunks.push(chunk);
+                    Ok(())
+                })
+                .unwrap();
+            let invalid = chunks
+                .iter()
+                .flat_map(Chunk::validity)
+                .filter(|v| !*v)
+                .count();
+            assert!(invalid > 100, "{name} did not receive a material AOI mask");
+            assert!(invalid < 1024, "{name} lost every source pixel");
+        }
+    }
+
+    #[test]
+    fn no_nodata_aoi_preserves_raw_codes_and_writes_independent_masks() {
+        let name = "qa_uint16_no_nodata.tif";
+        let prepared = acquisition::prepare(
+            &request(name, Sink::Callback, triangle()),
+            &mut LayoutCache::default(),
+        )
+        .unwrap();
+        assert_eq!(
+            prepared.plan().selected[0].layout.as_ref().unwrap().nodata,
+            None
+        );
+        let mut chunks = Vec::new();
+        prepared
+            .execute(|chunk| {
+                chunks.push(chunk);
+                Ok(())
+            })
+            .unwrap();
+        let chunk = chunks.pop().unwrap();
+        assert_eq!(chunk.pixels.as_u16().unwrap()[0], 1000);
+        assert_eq!(chunk.pixels.as_u16().unwrap()[1023], 2023);
+        assert_eq!(chunk.validity().filter(|keep| *keep).count(), 1024);
+
+        let out = std::env::temp_dir().join(format!(
+            "tile-ripper-native-no-nodata-{}-{}.zarr",
+            std::process::id(),
+            NEXT.fetch_add(1, Ordering::Relaxed),
+        ));
+        let prepared = acquisition::prepare(
+            &request(
+                name,
+                Sink::ZarrDirectory {
+                    path: out.to_string_lossy().into(),
+                },
+                triangle(),
+            ),
+            &mut LayoutCache::default(),
+        )
+        .unwrap();
+        prepared.fetch().unwrap();
+        let store = Arc::new(FilesystemStore::new(&out).unwrap());
+        let values_array = Array::open(store.clone(), "/observations/000000/values").unwrap();
+        let values = values_array
+            .retrieve_array_subset::<Vec<u16>>(&values_array.subset_all())
+            .unwrap();
+        assert_eq!(values[0], 1000);
+        assert_eq!(values[1023], 2023);
+        let aoi_array = Array::open(store.clone(), "/observations/000000/aoi_mask").unwrap();
+        let aoi = aoi_array
+            .retrieve_array_subset::<Vec<u8>>(&aoi_array.subset_all())
+            .unwrap();
+        let valid_array = Array::open(store, "/observations/000000/valid").unwrap();
+        let valid = valid_array
+            .retrieve_array_subset::<Vec<u8>>(&valid_array.subset_all())
+            .unwrap();
+        assert_eq!(valid, aoi);
+        assert!(valid.iter().filter(|value| **value == 0).count() > 100);
+        assert!(valid.iter().any(|value| *value == 1));
+        std::fs::remove_dir_all(out).unwrap();
+    }
+
+    #[test]
+    fn all_zero_no_nodata_values_are_physically_stored() {
+        let name = "qa_uint16_allzero_no_nodata.tif";
+        let out = std::env::temp_dir().join(format!(
+            "tile-ripper-native-allzero-{}-{}.zarr",
+            std::process::id(),
+            NEXT.fetch_add(1, Ordering::Relaxed),
+        ));
+        let prepared = acquisition::prepare(
+            &full(
+                name,
+                Sink::ZarrDirectory {
+                    path: out.to_string_lossy().into(),
+                },
+            ),
+            &mut LayoutCache::default(),
+        )
+        .unwrap();
+        assert_eq!(
+            prepared.plan().selected[0].layout.as_ref().unwrap().nodata,
+            None
+        );
+        prepared.fetch().unwrap();
+
+        let values_path = out.join("observations/000000/values");
+        let metadata: serde_json::Value =
+            serde_json::from_slice(&std::fs::read(values_path.join(".zarray")).unwrap()).unwrap();
+        assert_eq!(metadata["dtype"], "<u2");
+        assert_eq!(metadata["fill_value"], serde_json::Value::Null);
+        let attrs: serde_json::Value =
+            serde_json::from_slice(&std::fs::read(values_path.join(".zattrs")).unwrap()).unwrap();
+        assert_eq!(attrs["source_nodata"], serde_json::Value::Null);
+
+        // The Rust reader can synthesize a type-default fill for an absent
+        // chunk, so assert physical presence before checking decoded values.
+        let chunk = std::fs::read(values_path.join("0.0.0")).unwrap();
+        assert_eq!(chunk.len(), 32 * 32 * 2);
+        assert!(chunk.iter().all(|byte| *byte == 0));
+        let store = Arc::new(FilesystemStore::new(&out).unwrap());
+        let values = Array::open(store.clone(), "/observations/000000/values").unwrap();
+        assert!(values
+            .retrieve_array_subset::<Vec<u16>>(&values.subset_all())
+            .unwrap()
+            .iter()
+            .all(|value| *value == 0));
+        let valid = Array::open(store, "/observations/000000/valid").unwrap();
+        assert!(valid
+            .retrieve_array_subset::<Vec<u8>>(&valid.subset_all())
+            .unwrap()
+            .iter()
+            .all(|value| *value == 1));
+        std::fs::remove_dir_all(out).unwrap();
+    }
+
+    #[test]
+    fn typed_local_source_mutation_invalidates_prepared_execution() {
+        use std::io::Write;
+        let root = std::env::temp_dir().join(format!(
+            "tile-ripper-native-mutation-{}-{}",
+            std::process::id(),
+            NEXT.fetch_add(1, Ordering::Relaxed),
+        ));
+        std::fs::create_dir(&root).unwrap();
+        let path = root.join("hls_int16.tif");
+        std::fs::copy(source("hls_int16.tif"), &path).unwrap();
+        let mut request = full("hls_int16.tif", Sink::Callback);
+        let Source::Assets { assets } = &mut request.source else {
+            unreachable!()
+        };
+        assets[0].locator = path.to_string_lossy().into();
+        let prepared = acquisition::prepare(&request, &mut LayoutCache::default()).unwrap();
+        let mut delivered = false;
+        let result = prepared.execute(|_| {
+            if !delivered {
+                std::fs::OpenOptions::new()
+                    .append(true)
+                    .open(&path)?
+                    .write_all(&[0])?;
+                delivered = true;
+            }
+            Ok(())
+        });
+        assert!(delivered);
+        assert!(result.unwrap_err().to_string().contains("changed"));
+        std::fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
+    fn scientific_output_preserves_storage_dtype_values_and_validity() {
+        for (name, zarr_dtype) in [
+            ("classification_uint8.tif", "|u1"),
+            ("hls_int16.tif", "<i2"),
+            ("radar_float32.tif", "<f4"),
+            ("radar_float32_nan_nodata.tif", "<f4"),
+        ] {
+            let out = std::env::temp_dir().join(format!(
+                "tile-ripper-native-typed-{}-{}-{}.zarr",
+                std::process::id(),
+                NEXT.fetch_add(1, Ordering::Relaxed),
+                name
+            ));
+            let prepared = acquisition::prepare(
+                &full(
+                    name,
+                    Sink::ZarrDirectory {
+                        path: out.to_string_lossy().into(),
+                    },
+                ),
+                &mut LayoutCache::default(),
+            )
+            .unwrap();
+            let manifest = prepared.fetch().unwrap();
+            assert_eq!(manifest["outputs"][0]["native_dtype"], zarr_dtype);
+            let metadata: serde_json::Value = serde_json::from_slice(
+                &std::fs::read(out.join("observations/000000/values/.zarray")).unwrap(),
+            )
+            .unwrap();
+            assert_eq!(metadata["dtype"], zarr_dtype);
+            if name == "radar_float32_nan_nodata.tif" {
+                assert_eq!(metadata["fill_value"], "NaN");
+            }
+            let store = Arc::new(FilesystemStore::new(&out).unwrap());
+            let values = Array::open(store.clone(), "/observations/000000/values").unwrap();
+            match zarr_dtype {
+                "|u1" => assert_eq!(
+                    values
+                        .retrieve_array_subset::<Vec<u8>>(&values.subset_all())
+                        .unwrap()[..5],
+                    [255, 1, 2, 3, 4]
+                ),
+                "<i2" => assert_eq!(
+                    values
+                        .retrieve_array_subset::<Vec<i16>>(&values.subset_all())
+                        .unwrap()[..2],
+                    [-9999, -11987]
+                ),
+                "<f4" => {
+                    let decoded = values
+                        .retrieve_array_subset::<Vec<f32>>(&values.subset_all())
+                        .unwrap();
+                    assert_eq!(decoded[1].to_bits(), 0x7fc01234);
+                    assert_eq!(decoded[2].to_bits(), 0x7fc0abcd);
+                }
+                _ => unreachable!(),
+            }
+            let valid_array = Array::open(store, "/observations/000000/valid").unwrap();
+            let valid = valid_array
+                .retrieve_array_subset::<Vec<u8>>(&valid_array.subset_all())
+                .unwrap();
+            if name == "radar_float32_nan_nodata.tif" {
+                assert_eq!(&valid[..3], &[1, 0, 0]);
+            } else if name == "radar_float32.tif" {
+                assert_eq!(&valid[..3], &[0, 0, 0]);
+            } else {
+                assert_eq!(valid[0], 0);
+            }
+            std::fs::remove_dir_all(out).unwrap();
+        }
+    }
+
+    #[test]
+    fn unsupported_storage_type_and_float_predictor_are_rejected() {
+        for (name, message) in [
+            ("unsupported_int32.tif", "Byte, UInt16, Int16, and Float32"),
+            (
+                "unsupported_float32_predictor2.tif",
+                "Float32 predictor 1/3",
+            ),
+        ] {
+            let asset = match full(name, Sink::Callback).source {
+                Source::Assets { mut assets } => assets.pop().unwrap(),
+                _ => unreachable!(),
+            };
+            let error = tile_ripper::cog::inspect(&asset, 1)
+                .unwrap_err()
+                .to_string();
+            assert!(error.contains(message), "{name}: {error}");
+        }
+    }
+}
