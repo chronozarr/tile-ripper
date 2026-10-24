@@ -1,0 +1,14 @@
+[tasks.integrate]
+summary = "Shared profiles CLI integration regression and output gate"
+role = "worker"
+files = { touch = ["src/products.rs", "src/products/profile.rs", "src/products/routing.rs", "src/authenticated_http.rs", "tests/product_profiles.rs", "tests/products.rs", "docs/products/roadmap.md", "docs/alphaearth/workflow.md", "README.md", "docs/products/qualification.md", "docs/products/wave2/qualification.md", "docs/products/wave2/acceptance.json", "docs/products/wave2/performance.json", "docs/products/wave2/access-timing.json", "docs/products/wave2/discovery-timing.json", "bench/wave2_access.py", "bench/wave2_discovery.py", "examples/product_stream.rs", "examples/product-landsat-tm.json", "examples/product-landsat-etm.json", "examples/product-opera-dswx-s1.json", "examples/product-opera-dist-alert.json", "tests/wave2_profiles.rs"] }
+prompt = """
+Orient:
+- Read the supplied Wave 2 brief and current qualification docs.
+Edit:
+- Shared profiles CLI integration regression and output gate. Preserve source/version, native values, masks, quality semantics, and bounded acquisition. No push/merge/deploy.
+Verify:
+- cargo test --locked --no-default-features --features native-cog,native-hdf5,authenticated-http; independent mature-reader real-source comparison.
+"""
+commit_message = "Qualify Wave 2 integrate"
+test_cmd = "cargo test --locked --no-default-features --features native-cog,native-hdf5,authenticated-http"

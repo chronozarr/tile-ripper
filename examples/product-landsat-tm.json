@@ -1,0 +1,31 @@
+{
+  "product": "landsat-tm-c2-l2-sr",
+  "provider": "auto",
+  "aoi": {
+    "kind": "bounds",
+    "crs": "EPSG:4326",
+    "bbox": [
+      -78.65,
+      35.95,
+      -78.61,
+      35.99
+    ]
+  },
+  "start": "1988-11-09T00:00:00Z",
+  "end": "1988-11-09T23:59:59Z",
+  "bands": [
+    "red",
+    "nir",
+    "QA_PIXEL",
+    "QA_RADSAT",
+    "SR_CLOUD_QA"
+  ],
+  "quality_policies": [
+    "landsat_tm_etm_pixel_clear",
+    "landsat_tm_radiometrically_unsaturated",
+    "landsat_tm_etm_cloud_clear"
+  ],
+  "max_observations": 8,
+  "buffer_bytes": 33554432,
+  "chunk_edge": 64
+}

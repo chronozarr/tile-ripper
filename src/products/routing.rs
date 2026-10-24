@@ -60,7 +60,10 @@ pub struct Decision {
     pub fallback: &'static str,
 }
 fn supports_pc(product: &str) -> bool {
-    matches!(product, "landsat-c2-l2-sr" | "hls-l30" | "hls-s30")
+    matches!(
+        product,
+        "landsat-c2-l2-sr" | "landsat-tm-c2-l2-sr" | "landsat-etm-c2-l2-sr" | "hls-l30" | "hls-s30"
+    )
 }
 pub fn routes(product: &str) -> Result<Vec<Route>> {
     let p = profile::profile(product)?;
@@ -76,7 +79,7 @@ pub fn routes(product: &str) -> Result<Vec<Route>> {
             availability:"queried AOI/date only; catalog coverage is independent of Earthdata; no global coverage claim",
             limitations:"requires signing service; HLS cross-provider equivalence is specimen-scoped; no online speed probe or fallback" });
     }
-    if p.id != "landsat-c2-l2-sr" {
+    if p.family != profile::ProductFamily::Landsat {
         out.push(Route { provider:Provider::Earthdata, catalog:"https://cmr.earthdata.nasa.gov/search",
             product:p.id.into(), processing_version:p.version, discovery:"exact CMR collection/version and complete bounded granule search",
             access:"qualified product-specific exact-object Earthdata session",
@@ -180,6 +183,45 @@ pub(crate) fn validate_source(
         if selected == Provider::PlanetaryComputer {
             validate_planetary_locator(&r.product, &a.href)?;
         }
+        if selected == Provider::Earthdata
+            && matches!(r.product.as_str(), "opera-dswx-s1" | "opera-dist-alert")
+        {
+            let dist = r.product == "opera-dist-alert";
+            let u = Url::parse(&a.href)?;
+            let layer = if dist {
+                band.clone()
+            } else {
+                format!(
+                    "B{:02}_{band}",
+                    match band.as_str() {
+                        "WTR" => 1,
+                        "BWTR" => 2,
+                        "CONF" => 3,
+                        "DIAG" => 4,
+                        _ => return fail("invalid DSWx-S1 band"),
+                    }
+                )
+            };
+            let expected = if dist {
+                format!(
+                    "/lp-prod-protected/OPERA_L3_DIST-ALERT-HLS_V1/{0}/{0}_{layer}.tif",
+                    o.id
+                )
+            } else {
+                format!(
+                    "/podaac-ops-cumulus-protected/OPERA_L3_DSWX-S1_V1/{}_{layer}.tif",
+                    o.id
+                )
+            };
+            let host = if dist {
+                "data.lpdaac.earthdatacloud.nasa.gov"
+            } else {
+                "archive.podaac.earthdata.nasa.gov"
+            };
+            if u.host_str() != Some(host) || u.path() != expected {
+                return fail("Wave 2 catalog locator conflicts with exact product/granule/layer");
+            }
+        }
         if matches!(selected, Provider::PlanetaryComputer | Provider::Earthdata)
             && r.product.starts_with("hls-")
         {
@@ -194,7 +236,7 @@ pub(crate) fn validate_source(
 pub fn validate_planetary_locator(product: &str, href: &str) -> Result<()> {
     let u = Url::parse(href)?;
     let allowed = match profile::profile(product)?.id {
-        "landsat-c2-l2-sr" => {
+        "landsat-c2-l2-sr" | "landsat-tm-c2-l2-sr" | "landsat-etm-c2-l2-sr" => {
             u.host_str()
                 .is_some_and(|h| ["landsateuwest.blob.core.windows.net"].contains(&h))
                 && u.path().starts_with("/landsat-c2/")

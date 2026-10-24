@@ -329,7 +329,7 @@ fn discover_hls_alternatives(
 }
 fn discover_planetary(r: &ProductRequest) -> Result<Vec<Observation>> {
     let collection = match r.product.as_str() {
-        "landsat-c2-l2-sr" => "landsat-c2-l2",
+        "landsat-c2-l2-sr" | "landsat-tm-c2-l2-sr" | "landsat-etm-c2-l2-sr" => "landsat-c2-l2",
         "hls-l30" => "hls2-l30",
         "hls-s30" => "hls2-s30",
         _ => return fail("no qualified Planetary Computer route for this product"),
@@ -347,9 +347,15 @@ fn discover_planetary(r: &ProductRequest) -> Result<Vec<Observation>> {
         )
         .append_pair("datetime", &format!("{}/{}", r.start, r.end))
         .append_pair("limit", &(r.max_observations + 1).to_string());
-    if r.product == "landsat-c2-l2-sr" {
+    let platforms: &[&str] = match r.product.as_str() {
+        "landsat-c2-l2-sr" => &["landsat-8", "landsat-9"],
+        "landsat-tm-c2-l2-sr" => &["landsat-4", "landsat-5"],
+        "landsat-etm-c2-l2-sr" => &["landsat-7"],
+        _ => &[],
+    };
+    if !platforms.is_empty() {
         url.query_pairs_mut()
-            .append_pair("query", r#"{"platform":{"in":["landsat-8","landsat-9"]}}"#);
+            .append_pair("query", &json!({"platform":{"in":platforms}}).to_string());
     }
     let v = read_json(
         client()?
@@ -368,12 +374,10 @@ fn discover_planetary(r: &ProductRequest) -> Result<Vec<Observation>> {
     let p = profile::profile(&r.product)?;
     let mut out = vec![];
     for item in items {
-        // This collection also contains Landsat 4–7, which this profile excludes.
-        if r.product == "landsat-c2-l2-sr"
-            && !["landsat-8", "landsat-9"]
-                .contains(&item["properties"]["platform"].as_str().unwrap_or(""))
+        if !platforms.is_empty()
+            && !platforms.contains(&item["properties"]["platform"].as_str().unwrap_or(""))
         {
-            continue;
+            return fail("STAC search returned a sensor outside the requested Landsat profile");
         }
         let mut assets = BTreeMap::new();
         for requested in &r.bands {
@@ -413,6 +417,8 @@ fn collection(product: &str) -> Result<(&'static str, &'static str)> {
         "hls-s30" => Ok(("HLSS30", "2.0")),
         "opera-dswx-hls" => Ok(("OPERA_L3_DSWX-HLS_V1", "1.0")),
         "opera-rtc-s1" => Ok(("OPERA_L2_RTC-S1_V1", "1")),
+        "opera-dswx-s1" => Ok(("OPERA_L3_DSWX-S1_V1", "1.0")),
+        "opera-dist-alert" => Ok(("OPERA_L3_DIST-ALERT-HLS_V1", "1")),
         _ => fail("no CMR route for product"),
     }
 }
@@ -527,7 +533,7 @@ fn validate_observation(r: &ProductRequest, o: &Observation) -> Result<()> {
     let p = profile::profile(&r.product)?;
     p.validate_identity(&o.id, o.platform.as_deref(), o.processing.as_deref())?;
     p.validate_datetime(&o.id, &o.datetime)?;
-    let collection_ok = if r.product == "landsat-c2-l2-sr" {
+    let collection_ok = if p.family == profile::ProductFamily::Landsat {
         o.collection == "landsat-c2-l2"
     } else {
         let (short, version) = collection(&r.product)?;
@@ -699,7 +705,7 @@ fn physical_identity(
     source: &Value,
 ) -> Result<()> {
     let p = profile::profile(product)?;
-    if product == "landsat-c2-l2-sr" {
+    if p.family == profile::ProductFamily::Landsat {
         let canonical = if asset.href.starts_with("https://") {
             Some(asset.href.as_str())
         } else {
@@ -736,6 +742,127 @@ fn physical_identity(
         .ok_or("product source lacks retained GDAL metadata")?;
     let id_parts = observation.id.split('_').collect::<Vec<_>>();
     match product {
+        "opera-dswx-s1" | "opera-dist-alert" => {
+            let dist = product == "opera-dist-alert";
+            let canonical = if asset.href.starts_with("https://") {
+                Some(asset.href.as_str())
+            } else {
+                asset.metadata["href"]
+                    .as_str()
+                    .or_else(|| asset.metadata["canonical_href"].as_str())
+            }
+            .ok_or("Wave 2 OPERA requires retained canonical catalog href")?;
+            let url = Url::parse(canonical)?;
+            let expected_prefix = if dist {
+                "/lp-prod-protected/OPERA_L3_DIST-ALERT-HLS_V1/"
+            } else {
+                "/podaac-ops-cumulus-protected/OPERA_L3_DSWX-S1_V1/"
+            };
+            let expected_host = if dist {
+                "data.lpdaac.earthdatacloud.nasa.gov"
+            } else {
+                "archive.podaac.earthdata.nasa.gov"
+            };
+            let suffix = if dist {
+                band.name.clone()
+            } else {
+                format!(
+                    "B{:02}_{}",
+                    match band.name.as_str() {
+                        "WTR" => 1,
+                        "BWTR" => 2,
+                        "CONF" => 3,
+                        "DIAG" => 4,
+                        _ => return fail("invalid DSWx-S1 band"),
+                    },
+                    band.name
+                )
+            };
+            let filename = format!("{}_{}.tif", observation.id, suffix);
+            let expected_path = if dist {
+                format!("{expected_prefix}{}/{}", observation.id, filename)
+            } else {
+                format!("{expected_prefix}{filename}")
+            };
+            if url.scheme() != "https"
+                || url.host_str() != Some(expected_host)
+                || url.port().is_some()
+                || url.query().is_some()
+                || url.fragment().is_some()
+                || url.path() != expected_path
+            {
+                return fail("Wave 2 OPERA canonical asset conflicts with exact granule/layer");
+            }
+            if !dist || band.name != "DATA-MASK" {
+                let observed = chrono::DateTime::parse_from_rfc3339(&observation.datetime)?;
+                let time = gdal_item(
+                    xml,
+                    if dist {
+                        "Update_Date"
+                    } else {
+                        "RTC_SENSING_START_TIME"
+                    },
+                )
+                .and_then(|v| chrono::DateTime::parse_from_rfc3339(v).ok())
+                .ok_or("Wave 2 OPERA physical source lacks sensing timestamp")?;
+                if (time - observed).num_milliseconds().abs() > 1 {
+                    return fail(
+                        "Wave 2 OPERA physical sensing time conflicts with catalog observation",
+                    );
+                }
+            }
+            if dist {
+                let description = match band.name.as_str() {
+                    "VEG-DIST-STATUS" => "Vegetation_disturbance_status",
+                    "GEN-DIST-STATUS" => "Generic_disturbance_status",
+                    "VEG-DIST-CONF" => "Confidence_of_vegetation_disturbance",
+                    "GEN-DIST-CONF" => "Confidence_of_generic_disturbance",
+                    "VEG-DIST-DATE" => "Day_of_vegetation_disturbance",
+                    "GEN-DIST-DATE" => "Day_of_generic_disturbance",
+                    "VEG-LAST-DATE" => {
+                        "Day_of_last_land_observation_for_vegetation_disturbance_detection"
+                    }
+                    "GEN-LAST-DATE" => {
+                        "Day_of_last_land_observation_for_generic_disturbance_detection"
+                    }
+                    "DATA-MASK" => "Data_mask",
+                    _ => return fail("unqualified DIST layer"),
+                };
+                let units = if band.name.ends_with("DATE") {
+                    "days"
+                } else {
+                    "unitless"
+                };
+                if gdal_item(xml, "DESCRIPTION") != Some(description)
+                    || gdal_item(xml, "Units") != Some(units)
+                {
+                    return fail("DIST-ALERT physical layer description/units conflict with requested variable");
+                }
+                if (band.name != "DATA-MASK"
+                    && gdal_item(xml, "Input_DIST-ALERT_granule").is_none_or(str::is_empty))
+                    || (band.name == "DATA-MASK" && gdal_item(xml, "flag_values") != Some("0,1,2"))
+                    || gdal_item(xml, "Units").is_none()
+                    || (band.name.ends_with("STATUS")
+                        && gdal_item(xml, "flag_values") != Some("0,1,2,3,4,5,6,7,8,255"))
+                {
+                    return fail("DIST-ALERT source lacks required status/lineage/unit metadata");
+                }
+            } else if gdal_item(xml, "PROJECT") != Some("OPERA")
+                || gdal_item(xml, "PRODUCT_TYPE") != Some("DSWx-S1")
+                || gdal_item(xml, "DSWX_PRODUCT_VERSION") != Some("1.0")
+                || gdal_item(xml, "SOFTWARE_VERSION") != Some("1.2")
+                || gdal_item(xml, "PRODUCT_SOURCE") != Some("OPERA_RTC_S1")
+                || gdal_item(xml, "RTC_PRODUCT_VERSION") != Some("1.0")
+                || !gdal_item(xml, "RTC_INPUT_LIST").is_some_and(|v| v.contains("OPERA_L2_RTC-S1_"))
+                || gdal_item(xml, "PROCESSING_DATETIME")
+                    .and_then(|v| chrono::DateTime::parse_from_rfc3339(v).ok())
+                    .is_none()
+                || !gdal_item(xml, "DESCRIPTION")
+                    .is_some_and(|v| v.contains(&format!("({})", band.name)))
+            {
+                return fail("DSWx-S1 physical identity/layer/version/lineage conflicts with qualified profile");
+            }
+        }
         "hls-l30" | "hls-s30" => {
             let hls = observation.id.split('.').collect::<Vec<_>>();
             let tile = hls
@@ -854,6 +981,87 @@ fn physical_identity(
     }
     Ok(())
 }
+/// Bind the inspected Wave 2 MGRS raster to its named tile. The current
+/// products are 109.8 km square, with the 100 km tile at the upper left;
+/// DSWx-S1 snaps that corner to its 30 m source grid (within two pixels).
+fn wave2_grid_identity(observation: &Observation, l: &crate::Layout) -> Result<()> {
+    let tile = observation
+        .id
+        .split('_')
+        .nth(3)
+        .ok_or("missing OPERA MGRS tile")?;
+    let bytes = tile.as_bytes();
+    if bytes.len() != 6 || bytes[0] != b'T' || !bytes[1..].iter().all(u8::is_ascii_alphanumeric) {
+        return fail("invalid Wave 2 MGRS tile");
+    }
+    let zone = tile[1..3].parse::<usize>()?;
+    let bands = b"CDEFGHJKLMNPQRSTUVWX";
+    if !(1..=60).contains(&zone) || !bands.contains(&bytes[3]) {
+        return fail("invalid Wave 2 MGRS zone/latitude band");
+    }
+    let epsg = if bytes[3] >= b'N' {
+        32600 + zone
+    } else {
+        32700 + zone
+    };
+    if l.width != 3660 || l.height != 3660 || l.crs != format!("EPSG:{epsg}") {
+        return fail("Wave 2 OPERA source dimensions/UTM zone/hemisphere conflict with MGRS tile");
+    }
+    let columns: &[u8] = [
+        b"ABCDEFGH".as_slice(),
+        b"JKLMNPQR".as_slice(),
+        b"STUVWXYZ".as_slice(),
+    ][(zone - 1) % 3];
+    let column = columns
+        .iter()
+        .position(|x| *x == bytes[4])
+        .ok_or("invalid MGRS column for UTM zone")?
+        + 1;
+    let row = b"ABCDEFGHJKLMNPQRSTUV"
+        .iter()
+        .position(|x| *x == bytes[5])
+        .ok_or("invalid MGRS row")?;
+    let row = (row + 20 - if zone % 2 == 0 { 5 } else { 0 }) % 20;
+    let top = (l.transform[3] / 100_000.).round();
+    // Row letters repeat every 2,000 km. Choose that cycle from the band's
+    // center using the already-qualified UTM projection. Even X's 12 degree
+    // span plus one 100 km square fits within half of that period.
+    #[cfg(feature = "native-cog")]
+    {
+        let index = bands
+            .iter()
+            .position(|b| *b == bytes[3])
+            .ok_or("invalid MGRS latitude band")?;
+        let latitude = if index == 19 {
+            78.
+        } else {
+            -76. + 8. * index as f64
+        };
+        let from = proj4rs::Proj::from_proj_string("+proj=longlat +datum=WGS84 +no_defs")?;
+        let to = proj4rs::Proj::from_proj_string(&format!(
+            "+proj=utm +zone={zone} {} +datum=WGS84 +units=m +no_defs",
+            if bytes[3] < b'N' { "+south" } else { "" }
+        ))?;
+        let mut center = (
+            (zone as f64 * 6. - 183.).to_radians(),
+            latitude.to_radians(),
+            0.,
+        );
+        proj4rs::transform::transform(&from, &to, &mut center)?;
+        if ((top * 100_000. - 50_000.) - center.1).abs() >= 1_000_000. {
+            return fail("Wave 2 OPERA source northing cycle conflicts with MGRS latitude band");
+        }
+    }
+    let actual_row = ((top as i64 - 1).rem_euclid(20)) as usize;
+    if (l.transform[0] - column as f64 * 100_000.).abs() > 60.
+        || (l.transform[3] - top * 100_000.).abs() > 60.
+        || actual_row != row
+    {
+        return fail("Wave 2 OPERA source corner conflicts with MGRS 100 km tile");
+    }
+    Ok(())
+}
+
 fn signed_planetary(c: &Client, product: &str, href: &str) -> Result<String> {
     routing::validate_planetary_locator(product, href)?;
     let result = (|| -> Result<String> {
@@ -1012,6 +1220,10 @@ fn prepare_inner(
                     }
                     "opera-dswx-hls" => AuthenticatedHttp::earthdata_dswx(&asset.locator, netrc)?,
                     "opera-rtc-s1" => AuthenticatedHttp::earthdata_rtc(&asset.locator, netrc)?,
+                    "opera-dswx-s1" => AuthenticatedHttp::earthdata_dswx_s1(&asset.locator, netrc)?,
+                    "opera-dist-alert" => {
+                        AuthenticatedHttp::earthdata_dist_alert(&asset.locator, netrc)?
+                    }
                     _ => return fail("no qualified authenticated product COG route"),
                 };
                 sessions.insert(asset.id.clone(), std::sync::Arc::new(session));
@@ -1106,6 +1318,12 @@ fn prepare_inner(
         {
             return fail("product profile requires actual north-up 30 m WGS84 UTM source grid");
         }
+        if matches!(
+            p.family,
+            profile::ProductFamily::OperaDswxS1 | profile::ProductFamily::OperaDist
+        ) {
+            wave2_grid_identity(observation, l)?;
+        }
         if l.scale
             .zip(band.scale)
             .is_some_and(|(a, b)| (a - b).abs() > 1e-12)
@@ -1153,6 +1371,7 @@ pub fn derive_quality_mask(
             let sample = match pixels {
                 crate::Pixels::UInt8(v) => QualitySample::UInt8(v[i]),
                 crate::Pixels::UInt16(v) => QualitySample::UInt16(v[i]),
+                crate::Pixels::Int16(v) => QualitySample::Int16(v[i]),
                 crate::Pixels::Float32(v) => QualitySample::Float32(v[i]),
                 _ => return fail("quality policy received incompatible source dtype"),
             };
@@ -1184,4 +1403,111 @@ pub fn source_validity<'a>(
             true
         }
     })
+}
+
+#[cfg(test)]
+mod wave2_identity_tests {
+    use super::*;
+
+    #[test]
+    fn dist_physical_metadata_cannot_swap_status_confidence_or_date_layers() -> Result<()> {
+        let request: ProductRequest = serde_json::from_str(include_str!(
+            "../docs/products/wave2/dist-alert-request.json"
+        ))?;
+        let inspection: Value = serde_json::from_str(include_str!(
+            "../docs/products/wave2/dist-alert-inspection.json"
+        ))?;
+        let observation = &request.observations.as_ref().unwrap()[0];
+        let p = profile::profile(&request.product)?;
+        let assets = inspection["assets"].as_array().unwrap();
+        // Real metadata from independently inspected source TIFFs. Dtype/fill
+        // alone cannot distinguish either status family or score from a date.
+        for name in [
+            "VEG-DIST-STATUS",
+            "GEN-DIST-STATUS",
+            "VEG-DIST-CONF",
+            "GEN-DIST-CONF",
+            "VEG-DIST-DATE",
+            "GEN-DIST-DATE",
+            "VEG-LAST-DATE",
+            "GEN-LAST-DATE",
+            "DATA-MASK",
+        ] {
+            let band = p.band(name)?;
+            let asset = &observation.assets[name];
+            let correct = assets.iter().find(|a| a["name"] == name).unwrap();
+            physical_identity(
+                p.id,
+                observation,
+                band,
+                asset,
+                &json!({"physical_metadata":correct["physical"]}),
+            )?;
+            for wrong in assets.iter().filter(|a| a["name"] != name) {
+                assert!(
+                    physical_identity(
+                        p.id,
+                        observation,
+                        band,
+                        asset,
+                        &json!({"physical_metadata":wrong["physical"]})
+                    )
+                    .is_err(),
+                    "{name} must reject {}",
+                    wrong["name"]
+                );
+            }
+        }
+        Ok(())
+    }
+    #[test]
+    fn wave2_actual_shape_zone_hemisphere_and_grid_corner_are_bound_to_tile() -> Result<()> {
+        for (name, origin) in [
+            ("dswx-s1", [699960., 4000020.]),
+            ("dist-alert", [600000., 3900000.]),
+        ] {
+            let request: ProductRequest = serde_json::from_str(if name == "dswx-s1" {
+                include_str!("../docs/products/wave2/dswx-s1-request.json")
+            } else {
+                include_str!("../docs/products/wave2/dist-alert-request.json")
+            })?;
+            let o = &request.observations.as_ref().unwrap()[0];
+            let l = crate::Layout {
+                width: 3660,
+                height: 3660,
+                transform: [origin[0], 30., 0., origin[1], 0., -30.],
+                crs: "EPSG:32617".into(),
+                variable: Variable::Band { index: 1 },
+                block: [512, 512],
+                dtype: "UInt8".into(),
+                nodata: Some(255.),
+                scale: None,
+                offset: None,
+                tiles: vec![],
+            };
+            wave2_grid_identity(o, &l)?;
+            let mut wrong = l.clone();
+            wrong.crs = "EPSG:32618".into();
+            assert!(wave2_grid_identity(o, &wrong).is_err());
+            wrong = l.clone();
+            wrong.crs = "EPSG:32717".into();
+            assert!(wave2_grid_identity(o, &wrong).is_err());
+            wrong = l.clone();
+            wrong.width = 100;
+            assert!(wave2_grid_identity(o, &wrong).is_err());
+            wrong = l.clone();
+            wrong.transform[0] += 100_000.;
+            assert!(wave2_grid_identity(o, &wrong).is_err());
+            wrong = l.clone();
+            wrong.transform[3] += 100_000.;
+            assert!(wave2_grid_identity(o, &wrong).is_err());
+            #[cfg(feature = "native-cog")]
+            for shift in [-2_000_000., 2_000_000.] {
+                wrong = l.clone();
+                wrong.transform[3] += shift;
+                assert!(wave2_grid_identity(o, &wrong).is_err());
+            }
+        }
+        Ok(())
+    }
 }

@@ -1,0 +1,14 @@
+[tasks.dist_alert]
+summary = "DIST-ALERT independent source qualification"
+role = "worker"
+files = { touch = ["bench/wave2_dist_alert.py", "docs/products/wave2/dist-alert*"] }
+prompt = """
+Orient:
+- Read the supplied Wave 2 brief and current qualification docs.
+Edit:
+- DIST-ALERT independent source qualification. Preserve source/version, native values, masks, quality semantics, and bounded acquisition. No push/merge/deploy.
+Verify:
+- cargo test --locked --no-default-features --features native-cog,native-hdf5,authenticated-http; independent mature-reader real-source comparison.
+"""
+commit_message = "Qualify Wave 2 dist_alert"
+test_cmd = "cargo test --locked --no-default-features --features native-cog,native-hdf5,authenticated-http"

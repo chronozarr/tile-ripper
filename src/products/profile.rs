@@ -7,9 +7,13 @@ use crate::{fail, Result};
 use serde::Serialize;
 
 pub const LANDSAT_C2_L2_SR: &str = "landsat-c2-l2-sr";
+pub const LANDSAT_TM_C2_L2_SR: &str = "landsat-tm-c2-l2-sr";
+pub const LANDSAT_ETM_C2_L2_SR: &str = "landsat-etm-c2-l2-sr";
 pub const HLS_L30_V2: &str = "hls-l30";
 pub const HLS_S30_V2: &str = "hls-s30";
 pub const OPERA_DSWX_HLS_V1: &str = "opera-dswx-hls";
+pub const OPERA_DSWX_S1_V1: &str = "opera-dswx-s1";
+pub const OPERA_DIST_ALERT_V1: &str = "opera-dist-alert";
 pub const OPERA_RTC_S1_V1: &str = "opera-rtc-s1";
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
@@ -19,6 +23,8 @@ pub enum ProductFamily {
     Hls,
     OperaDswx,
     OperaRtc,
+    OperaDswxS1,
+    OperaDist,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
@@ -56,6 +62,8 @@ pub enum BandRole {
     Diagnostic,
     Elevation,
     Backscatter,
+    Confidence,
+    Date,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Serialize)]
@@ -210,13 +218,29 @@ impl ProductProfile {
         }
 
         match self.family {
-            ProductFamily::Landsat => validate_landsat_identity(granule, platform, processing),
+            ProductFamily::Landsat => {
+                let identity = parse_landsat_identity(granule)?;
+                let allowed = match self.id {
+                    LANDSAT_TM_C2_L2_SR => matches!(identity.platform, "LANDSAT_4" | "LANDSAT_5"),
+                    LANDSAT_ETM_C2_L2_SR => identity.platform == "LANDSAT_7",
+                    _ => matches!(identity.platform, "LANDSAT_8" | "LANDSAT_9"),
+                };
+                if !allowed {
+                    return fail("Landsat sensor does not belong to this profile");
+                }
+                validate_landsat_identity(granule, platform, processing)
+            }
             ProductFamily::Hls => {
                 let kind = if self.id == HLS_L30_V2 { "L30" } else { "S30" };
                 parse_hls_identity(granule, kind).map(|_| ())
             }
             ProductFamily::OperaDswx => {
                 let identity = parse_opera_identity(granule, false)?;
+                validate_parsed_platform(identity.platform, platform)
+            }
+            ProductFamily::OperaDswxS1 | ProductFamily::OperaDist => {
+                let identity =
+                    parse_wave2_opera_identity(granule, self.family == ProductFamily::OperaDist)?;
                 validate_parsed_platform(identity.platform, platform)
             }
             ProductFamily::OperaRtc => {
@@ -239,9 +263,16 @@ impl ProductProfile {
             }
             ProductFamily::OperaDswx => parse_opera_identity(granule, false)?.acquisition,
             ProductFamily::OperaRtc => parse_opera_identity(granule, true)?.acquisition,
+            ProductFamily::OperaDswxS1 | ProductFamily::OperaDist => {
+                parse_wave2_opera_identity(granule, self.family == ProductFamily::OperaDist)?
+                    .acquisition
+            }
         };
         let matches = match self.family {
-            ProductFamily::Landsat | ProductFamily::Hls => observed.date() == expected.date(),
+            ProductFamily::Landsat
+            | ProductFamily::Hls
+            | ProductFamily::OperaDist
+            | ProductFamily::OperaDswxS1 => observed.date() == expected.date(),
             // OPERA filename timestamps have whole-second resolution. Retain
             // the catalog's subsecond precision without rejecting that same
             // acquisition or accepting an adjacent second.
@@ -262,18 +293,31 @@ impl ProductProfile {
 pub enum QualitySample {
     UInt8(u8),
     UInt16(u16),
+    Int16(i16),
     Float32(f32),
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
 #[serde(rename_all = "snake_case")]
 pub enum QualityPolicy {
+    LandsatTmEtmPixelClear,
+    LandsatTmRadiometricallyUnsaturated,
+    LandsatEtmRadiometricallyUnsaturated,
+    LandsatTmEtmCloudClear,
     LandsatPixelClear,
     LandsatRadiometricallyUnsaturated,
     LandsatAerosolValid,
     LandsatAerosolRecommended,
     HlsFmaskClear,
     HlsFmaskClearLowAerosol,
+    DswxS1WtrWater,
+    DswxS1BwtrWater,
+    DistVegConfirmed,
+    DistGenConfirmed,
+    DistVegConfirmedOngoing,
+    DistGenConfirmedOngoing,
+    DistCurrentLand,
+    DistCurrentAssessed,
     DswxWtrWater,
     DswxBwtrWater,
     DswxConfUnmaskedWater,
@@ -290,12 +334,24 @@ pub enum QualityPolicy {
 impl QualityPolicy {
     pub const fn name(self) -> &'static str {
         match self {
+            Self::LandsatTmEtmPixelClear => "landsat_tm_etm_pixel_clear",
+            Self::LandsatTmRadiometricallyUnsaturated => "landsat_tm_radiometrically_unsaturated",
+            Self::LandsatEtmRadiometricallyUnsaturated => "landsat_etm_radiometrically_unsaturated",
+            Self::LandsatTmEtmCloudClear => "landsat_tm_etm_cloud_clear",
             Self::LandsatPixelClear => "landsat_pixel_clear",
             Self::LandsatRadiometricallyUnsaturated => "landsat_radiometrically_unsaturated",
             Self::LandsatAerosolValid => "landsat_aerosol_valid",
             Self::LandsatAerosolRecommended => "landsat_aerosol_recommended",
             Self::HlsFmaskClear => "hls_fmask_clear",
             Self::HlsFmaskClearLowAerosol => "hls_fmask_clear_low_aerosol",
+            Self::DswxS1WtrWater => "dswx_s1_wtr_water",
+            Self::DswxS1BwtrWater => "dswx_s1_bwtr_water",
+            Self::DistVegConfirmed => "dist_veg_confirmed",
+            Self::DistGenConfirmed => "dist_gen_confirmed",
+            Self::DistVegConfirmedOngoing => "dist_veg_confirmed_ongoing",
+            Self::DistGenConfirmedOngoing => "dist_gen_confirmed_ongoing",
+            Self::DistCurrentLand => "dist_current_land",
+            Self::DistCurrentAssessed => "dist_current_assessed",
             Self::DswxWtrWater => "dswx_wtr_water",
             Self::DswxBwtrWater => "dswx_bwtr_water",
             Self::DswxConfUnmaskedWater => "dswx_conf_unmasked_water",
@@ -314,10 +370,19 @@ impl QualityPolicy {
     /// alternatives for polarization-dependent RTC imagery, not a band stack.
     pub const fn required_bands(self) -> &'static [&'static str] {
         match self {
+            Self::LandsatTmEtmPixelClear => &["QA_PIXEL"],
+            Self::LandsatTmRadiometricallyUnsaturated
+            | Self::LandsatEtmRadiometricallyUnsaturated => &["QA_RADSAT"],
+            Self::LandsatTmEtmCloudClear => &["SR_CLOUD_QA"],
             Self::LandsatPixelClear => &["QA_PIXEL"],
             Self::LandsatRadiometricallyUnsaturated => &["QA_RADSAT"],
             Self::LandsatAerosolValid | Self::LandsatAerosolRecommended => &["SR_QA_AEROSOL"],
             Self::HlsFmaskClear | Self::HlsFmaskClearLowAerosol => &["Fmask"],
+            Self::DswxS1WtrWater => &["WTR"],
+            Self::DswxS1BwtrWater => &["BWTR"],
+            Self::DistVegConfirmed | Self::DistVegConfirmedOngoing => &["VEG-DIST-STATUS"],
+            Self::DistGenConfirmed | Self::DistGenConfirmedOngoing => &["GEN-DIST-STATUS"],
+            Self::DistCurrentLand | Self::DistCurrentAssessed => &["DATA-MASK"],
             Self::DswxWtrWater => &["WTR"],
             Self::DswxBwtrWater => &["BWTR"],
             Self::DswxConfUnmaskedWater | Self::DswxConfAnyWater => &["CONF"],
@@ -338,6 +403,10 @@ impl QualityPolicy {
 
     pub const fn description(self) -> &'static str {
         match self {
+            Self::LandsatTmEtmPixelClear => "TM/ETM+ QA_PIXEL fill, dilated cloud, cloud, cloud shadow and snow bits absent; clear bit 6 is not used because of the documented Landsat 4-7 water issue",
+            Self::LandsatTmRadiometricallyUnsaturated => "TM QA_RADSAT all defined saturation and dropped-pixel bits zero (mask 0x027f)",
+            Self::LandsatEtmRadiometricallyUnsaturated => "ETM+ QA_RADSAT all defined saturation including band 6H and dropped-pixel bits zero (mask 0x037f); scan gaps are never filled",
+            Self::LandsatTmEtmCloudClear => "LEDAPS SR_CLOUD_QA cloud, shadow, adjacent-cloud and snow bits absent; DDV and water bits retained",
             Self::LandsatPixelClear => {
                 "QA_PIXEL is internally defined and fill, dilated cloud, cirrus, cloud, cloud shadow, and snow are all absent"
             }
@@ -356,6 +425,12 @@ impl QualityPolicy {
             Self::HlsFmaskClearLowAerosol => {
                 "HLS clear policy plus climatology or low aerosol"
             }
+            Self::DswxS1WtrWater => "DSWx-S1 WTR open water (1) or inundated vegetation (3); HLS partial-water class 2 is not reused",
+            Self::DswxS1BwtrWater => "DSWx-S1 BWTR water class 1; HAND, layover/shadow and ocean excluded",
+            Self::DistVegConfirmed | Self::DistGenConfirmed => "DIST accumulated confirmed disturbance status classes 3,6,7,8, including finished alerts; not an observation-quality mask",
+            Self::DistVegConfirmedOngoing | Self::DistGenConfirmedOngoing => "DIST accumulated confirmed ongoing disturbance status classes 3 or 6; no history inferred from a single alert",
+            Self::DistCurrentLand => "current input HLS DATA-MASK land class 1; independent of accumulated alert state",
+            Self::DistCurrentAssessed => "current input HLS DATA-MASK land or water classes 1,2; independent of accumulated alert state",
             Self::DswxWtrWater => "WTR class is open water or partial surface water",
             Self::DswxBwtrWater => "BWTR class is water",
             Self::DswxConfUnmaskedWater => {
@@ -381,6 +456,33 @@ impl QualityPolicy {
     /// Evaluate one raw source sample without altering or calibrating it.
     pub fn accepts(self, sample: QualitySample) -> Result<bool> {
         match (self, sample) {
+            (Self::LandsatTmEtmPixelClear, QualitySample::UInt16(word)) => {
+                if word & 0xc004 != 0 || ((word >> 10) & 3) == 2 || ((word >> 12) & 3) == 2 {
+                    return fail("TM/ETM+ QA_PIXEL reserved bits set");
+                }
+                Ok(word & 0x003b == 0)
+            }
+            (
+                Self::LandsatTmRadiometricallyUnsaturated
+                | Self::LandsatEtmRadiometricallyUnsaturated,
+                QualitySample::UInt16(word),
+            ) => {
+                let allowed = if self == Self::LandsatTmRadiometricallyUnsaturated {
+                    0x027f
+                } else {
+                    0x037f
+                };
+                if word & !allowed != 0 {
+                    return fail("TM/ETM+ QA_RADSAT reserved bits set");
+                }
+                Ok(word == 0)
+            }
+            (Self::LandsatTmEtmCloudClear, QualitySample::UInt8(word)) => {
+                if ![0, 1, 2, 4, 8, 9, 12, 16, 20, 24, 32, 34, 36, 40, 48, 52, 56].contains(&word) {
+                    return fail("undocumented LEDAPS SR_CLOUD_QA code");
+                }
+                Ok(word != 0 && word & 0x1e == 0)
+            }
             (Self::LandsatPixelClear, QualitySample::UInt16(word)) => {
                 validate_landsat_pixel(word)?;
                 Ok(word & 0x003f == 0 && word & (1 << 6) != 0)
@@ -416,6 +518,39 @@ impl QualityPolicy {
             (Self::HlsFmaskClearLowAerosol, QualitySample::UInt8(word)) => {
                 validate_hls_fmask(word)?;
                 Ok(word & 0x1e == 0 && ((word >> 6) & 0x03) <= 1)
+            }
+            (Self::DswxS1WtrWater, QualitySample::UInt8(class)) => {
+                validate_class(class, &[0, 1, 3, 250, 251, 254, 255], "DSWx-S1 WTR")?;
+                Ok(matches!(class, 1 | 3))
+            }
+            (Self::DswxS1BwtrWater, QualitySample::UInt8(class)) => {
+                validate_class(class, &[0, 1, 250, 251, 254, 255], "DSWx-S1 BWTR")?;
+                Ok(class == 1)
+            }
+            (
+                Self::DistVegConfirmed
+                | Self::DistGenConfirmed
+                | Self::DistVegConfirmedOngoing
+                | Self::DistGenConfirmedOngoing,
+                QualitySample::UInt8(class),
+            ) => {
+                if class > 8 && class != 255 {
+                    return fail("undefined DIST status class");
+                }
+                Ok(
+                    if matches!(
+                        self,
+                        Self::DistVegConfirmedOngoing | Self::DistGenConfirmedOngoing
+                    ) {
+                        matches!(class, 3 | 6)
+                    } else {
+                        matches!(class, 3 | 6 | 7 | 8)
+                    },
+                )
+            }
+            (Self::DistCurrentLand | Self::DistCurrentAssessed, QualitySample::UInt8(class)) => {
+                validate_class(class, &[0, 1, 2], "DIST DATA-MASK")?;
+                Ok(class == 1 || self == Self::DistCurrentAssessed && class == 2)
             }
             (Self::DswxWtrWater, QualitySample::UInt8(class)) => {
                 validate_class(class, &[0, 1, 2, 252, 253, 254, 255], "WTR")?;
@@ -467,6 +602,8 @@ pub fn profile(id: &str) -> Result<ProductProfile> {
         "hls-s30-v2" => HLS_S30_V2,
         "opera-dswx-hls-v1" => OPERA_DSWX_HLS_V1,
         "opera-rtc-s1-v1" => OPERA_RTC_S1_V1,
+        "opera-dswx-s1-v1" => OPERA_DSWX_S1_V1,
+        "opera-dist-alert-v1" | "opera-dist-alert-hls" => OPERA_DIST_ALERT_V1,
         _ => id,
     };
     profiles()
@@ -476,7 +613,17 @@ pub fn profile(id: &str) -> Result<ProductProfile> {
 }
 
 pub fn profiles() -> Vec<ProductProfile> {
-    vec![landsat(), hls_l30(), hls_s30(), dswx(), rtc()]
+    vec![
+        landsat(),
+        historical_landsat(false),
+        historical_landsat(true),
+        hls_l30(),
+        hls_s30(),
+        dswx(),
+        rtc(),
+        dswx_s1(),
+        dist_alert(),
+    ]
 }
 
 impl std::str::FromStr for QualityPolicy {
@@ -521,6 +668,8 @@ fn band(
             }
             BandRole::Elevation => "native elevation in metres above the WGS84 ellipsoid",
             BandRole::Backscatter => "native linear gamma0 backscatter sample",
+            BandRole::Confidence => "native algorithm confidence code, not a probability",
+            BandRole::Date => "native date code with its source-defined epoch",
         },
         dtype: data_type,
         nodata,
@@ -628,6 +777,100 @@ fn landsat() -> ProductProfile {
         ],
         capability_caveat: capability_caveat(),
     }
+}
+
+fn historical_landsat(etm: bool) -> ProductProfile {
+    let mut p = landsat();
+    p.id = if etm {
+        LANDSAT_ETM_C2_L2_SR
+    } else {
+        LANDSAT_TM_C2_L2_SR
+    };
+    p.mission = if etm { "Landsat 7" } else { "Landsat 4/5" };
+    p.instrument = if etm {
+        "Enhanced Thematic Mapper Plus (ETM+)"
+    } else {
+        "Thematic Mapper (TM)"
+    };
+    p.title = if etm {
+        "Landsat 7 ETM+ Collection 2 Level-2 surface reflectance"
+    } else {
+        "Landsat 4/5 TM Collection 2 Level-2 surface reflectance"
+    };
+    p.catalog.platforms = if etm {
+        &["LANDSAT_7"]
+    } else {
+        &["LANDSAT_4", "LANDSAT_5"]
+    };
+    let sr = |name, aliases, key| {
+        asset_key(
+            band(
+                name,
+                aliases,
+                BandRole::SurfaceReflectance,
+                DataType::UInt16,
+                Some(NoDataValue::UInt16(0)),
+                0.0000275,
+                -0.2,
+                "1",
+            ),
+            key,
+        )
+    };
+    let qa = |name, aliases, key| {
+        asset_key(
+            band(
+                name,
+                aliases,
+                BandRole::Quality,
+                DataType::UInt8,
+                Some(NoDataValue::UInt8(0)),
+                1.,
+                0.,
+                "1",
+            ),
+            key,
+        )
+    };
+    let pixel = p.band("QA_PIXEL").expect("Landsat pixel QA").clone();
+    let radsat = p.band("QA_RADSAT").expect("Landsat saturation QA").clone();
+    let mut opacity = asset_key(
+        band(
+            "SR_ATMOS_OPACITY",
+            &["atmos_opacity"],
+            BandRole::Quality,
+            DataType::Int16,
+            Some(NoDataValue::Int16(-9999)),
+            0.001,
+            0.,
+            "1",
+        ),
+        "atmos_opacity",
+    );
+    opacity.description =
+        "LEDAPS atmospheric opacity code, advisory rather than probability; stored scale 0.001";
+    p.bands = vec![
+        sr("SR_B1", &["blue"], "blue"),
+        sr("SR_B2", &["green"], "green"),
+        sr("SR_B3", &["red"], "red"),
+        sr("SR_B4", &["nir", "nir08"], "nir08"),
+        sr("SR_B5", &["swir1", "swir16"], "swir16"),
+        sr("SR_B7", &["swir2", "swir22"], "swir22"),
+        pixel,
+        radsat,
+        qa("SR_CLOUD_QA", &["cloud_qa"], "cloud_qa"),
+        opacity,
+    ];
+    p.quality_policies = vec![
+        QualityPolicy::LandsatTmEtmPixelClear,
+        if etm {
+            QualityPolicy::LandsatEtmRadiometricallyUnsaturated
+        } else {
+            QualityPolicy::LandsatTmRadiometricallyUnsaturated
+        },
+        QualityPolicy::LandsatTmEtmCloudClear,
+    ];
+    p
 }
 
 fn hls_l30() -> ProductProfile {
@@ -975,6 +1218,135 @@ fn rtc() -> ProductProfile {
     }
 }
 
+fn dswx_s1() -> ProductProfile {
+    let mut p = dswx();
+    p.id = OPERA_DSWX_S1_V1;
+    p.family = ProductFamily::OperaDswxS1;
+    p.mission = "NASA OPERA Sentinel-1";
+    p.instrument = "Sentinel-1 C-SAR RTC-S1 mosaics";
+    p.title = "OPERA Level-3 Dynamic Surface Water Extent from Sentinel-1 V1.0";
+    p.version = "1.0";
+    p.processing_versions = &["1.0"];
+    p.catalog.collection = "OPERA_L3_DSWX-S1_V1";
+    p.catalog.version = "1.0";
+    p.catalog.processing_levels = &["L3", "DSWx-S1"];
+    p.catalog.platforms = &["SENTINEL_1A", "SENTINEL_1B", "SENTINEL_1C", "SENTINEL_1D"];
+    p.bands = [("WTR", 255, BandRole::Classification), ("BWTR", 255, BandRole::Classification),
+        ("CONF", 255, BandRole::Confidence), ("DIAG", 255, BandRole::Diagnostic)].into_iter().map(|(name, fill, role)| {
+        let mut b = band(name, &[], role, DataType::UInt8, Some(NoDataValue::UInt8(fill)), 1., 0., "1");
+        b.description = match name { "WTR" => "DSWx-S1 water classes: 0 not water, 1 open water, 3 inundated vegetation, 250 HAND, 251 layover/shadow, 254 ocean, 255 fill",
+            "BWTR" => "DSWx-S1 binary water and separate HAND/layover-shadow/ocean masking codes",
+            "CONF" => "DSWx-S1 categorical confidence codes 0/1/2/5/6/7, wetland30/31/32/35/36/37, HAND250/layover251/ocean254/fill255; not probability or HLS CONF",
+            _ => "DSWx-S1 fuzzy score 0..100 with HAND250, layover251, ocean254, fill255; distinct from HLS diagnostics" };
+        b
+    }).collect();
+    p.quality_policies = vec![
+        QualityPolicy::DswxS1WtrWater,
+        QualityPolicy::DswxS1BwtrWater,
+    ];
+    p
+}
+
+fn dist_alert() -> ProductProfile {
+    let mut p = dswx();
+    p.id = OPERA_DIST_ALERT_V1;
+    p.family = ProductFamily::OperaDist;
+    p.mission = "NASA OPERA HLS disturbance";
+    p.instrument = "HLS L30/S30 input observations";
+    p.title = "OPERA Level-3 DIST-ALERT-HLS V1 accumulated alert observation";
+    p.version = "1";
+    p.processing_versions = &["1"];
+    p.catalog.provider = "NASA LP DAAC";
+    p.catalog.catalog = "NASA CMR LPCLOUD";
+    p.catalog.collection = "OPERA_L3_DIST-ALERT-HLS_V1";
+    p.catalog.version = "1";
+    p.catalog.processing_levels = &["L3", "DIST-ALERT-HLS"];
+    p.catalog.access = "explicit Earthdata-authenticated LP DAAC HTTPS COG assets";
+    p.catalog.platforms = &[
+        "LANDSAT_8",
+        "LANDSAT_9",
+        "SENTINEL_2A",
+        "SENTINEL_2B",
+        "SENTINEL_2C",
+    ];
+    p.bands = ["VEG-DIST-STATUS", "GEN-DIST-STATUS", "VEG-DIST-CONF", "GEN-DIST-CONF", "VEG-DIST-DATE", "GEN-DIST-DATE", "VEG-LAST-DATE", "GEN-LAST-DATE", "DATA-MASK"].into_iter().map(|name| {
+        let status = name.ends_with("STATUS");
+        let mask = name == "DATA-MASK";
+        let mut b = band(name, &[], if status {BandRole::Classification} else if mask {BandRole::Quality} else if name.ends_with("CONF") {BandRole::Confidence} else {BandRole::Date},
+            if status || mask {DataType::UInt8} else {DataType::Int16},
+            if mask {None} else {Some(if status {NoDataValue::UInt8(255)} else {NoDataValue::Int16(-1)})}, 1., 0., "1");
+        b.description = if status { "Accumulated status: 0 no disturbance; 1/4 first, 2/5 provisional, 3/6 confirmed ongoing, 7/8 confirmed finished; VEG pairs denote below/at-least50% loss, GEN pairs low/high spectral anomaly; 255 missing" }
+            else if mask { "Current HLS scene observation mask: 0 not assessed land, 1 land, 2 water; no source fill; does not mask accumulated status" }
+            else if name.ends_with("CONF") { "Accumulated algorithm confidence score, not a probability; -1 missing" }
+            else if name.ends_with("LAST-DATE") { "Most recent quality-assessed observation with sufficient baseline, days since 2020-12-31; -1 missing; GEN land, VEG land/water" }
+            else { "Stored onset date: days since 2020-12-31; -1 missing, 0 no anomaly; retain native Int16 and epoch" };
+        if name.ends_with("DATE") { b.unit = "days since 2020-12-31"; }
+        b
+    }).collect();
+    p.quality_policies = vec![
+        QualityPolicy::DistVegConfirmed,
+        QualityPolicy::DistGenConfirmed,
+        QualityPolicy::DistVegConfirmedOngoing,
+        QualityPolicy::DistGenConfirmedOngoing,
+        QualityPolicy::DistCurrentLand,
+        QualityPolicy::DistCurrentAssessed,
+    ];
+    p
+}
+
+fn parse_wave2_opera_identity(granule: &str, dist: bool) -> Result<ParsedIdentity> {
+    let parts = granule.split('_').collect::<Vec<_>>();
+    if parts.len() < 9
+        || parts[..3]
+            != [
+                "OPERA",
+                "L3",
+                if dist { "DIST-ALERT-HLS" } else { "DSWx-S1" },
+            ]
+        || !valid_mgrs_tile(parts[3])
+        || parts[7] != "30"
+        || parts[8] != if dist { "v1" } else { "v1.0" }
+        || parse_timestamp(parts[5]).is_err()
+    {
+        return fail("granule is not the exact Wave 2 OPERA product/version");
+    }
+    let p = if dist { dist_alert() } else { dswx_s1() };
+    if parts.len() > 9 {
+        let mut suffix = parts[9..].join("_");
+        if suffix.ends_with(".tif") {
+            suffix.truncate(suffix.len() - 4);
+        }
+        if !dist {
+            let number = match suffix.as_str() {
+                "B01_WTR" => "WTR",
+                "B02_BWTR" => "BWTR",
+                "B03_CONF" => "CONF",
+                "B04_DIAG" => "DIAG",
+                _ => return fail("invalid DSWx-S1 layer suffix"),
+            };
+            p.band(number)?;
+        } else {
+            p.band(&suffix)?;
+        }
+    }
+    let platform = match (dist, parts[6]) {
+        (true, "L8") => "LANDSAT_8",
+        (true, "L9") => "LANDSAT_9",
+        (true, "S2A") => "SENTINEL_2A",
+        (true, "S2B") => "SENTINEL_2B",
+        (true, "S2C") => "SENTINEL_2C",
+        (false, "S1A") => "SENTINEL_1A",
+        (false, "S1B") => "SENTINEL_1B",
+        (false, "S1C") => "SENTINEL_1C",
+        (false, "S1D") => "SENTINEL_1D",
+        _ => return fail("Wave 2 OPERA platform does not belong to product"),
+    };
+    Ok(ParsedIdentity {
+        acquisition: parse_timestamp(parts[4])?,
+        platform,
+    })
+}
+
 const fn capability_caveat() -> &'static str {
     "Declarative metadata only: this profile grants no acquisition, authentication, decoding, alignment, calibration, harmonization, or live-product qualification capability."
 }
@@ -1194,19 +1566,23 @@ fn landsat_suffix_valid(parts: &[&str]) -> bool {
             | "SR_B7"
             | "QA_PIXEL"
             | "QA_RADSAT"
+            | "SR_CLOUD_QA"
+            | "SR_ATMOS_OPACITY"
             | "SR_QA_AEROSOL"
     )
 }
 
 fn parse_landsat_identity(granule: &str) -> Result<LandsatIdentity> {
     let parts = granule.split('_').collect::<Vec<_>>();
-    if parts.len() < 6 || !matches!(parts[0], "LC08" | "LC09") {
+    if parts.len() < 6 || !matches!(parts[0], "LT04" | "LT05" | "LE07" | "LC08" | "LC09") {
         return fail("granule is not a Landsat 8/9 Collection 2 Level-2 SR product");
     }
-    let platform = if parts[0] == "LC08" {
-        "LANDSAT_8"
-    } else {
-        "LANDSAT_9"
+    let platform = match parts[0] {
+        "LT04" => "LANDSAT_4",
+        "LT05" => "LANDSAT_5",
+        "LE07" => "LANDSAT_7",
+        "LC08" => "LANDSAT_8",
+        _ => "LANDSAT_9",
     };
     let processing = parts[1];
     let path_row = parts[2];

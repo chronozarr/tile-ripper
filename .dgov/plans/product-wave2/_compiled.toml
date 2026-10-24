@@ -1,0 +1,65 @@
+[plan]
+name = "product-wave2"
+source_mtime_max = "2026-10-24T18:34:17.654056Z"
+sop_set_hash = ""
+default_max_retries = 3
+
+[tasks."tasks/dist_alert.dist_alert"]
+summary = "DIST-ALERT independent source qualification"
+prompt = """
+Orient:
+- Read the supplied Wave 2 brief and current qualification docs.
+Edit:
+- DIST-ALERT independent source qualification. Preserve source/version, native values, masks, quality semantics, and bounded acquisition. No push/merge/deploy.
+Verify:
+- cargo test --locked --no-default-features --features native-cog,native-hdf5,authenticated-http; independent mature-reader real-source comparison.
+"""
+commit_message = "Qualify Wave 2 dist_alert"
+timeout_s = 0
+test_cmd = "cargo test --locked --no-default-features --features native-cog,native-hdf5,authenticated-http"
+files = ["bench/wave2_dist_alert.py", "docs/products/wave2/dist-alert*"]
+
+[tasks."tasks/dswx_s1.dswx_s1"]
+summary = "DSWx-S1 independent source qualification"
+prompt = """
+Orient:
+- Read the supplied Wave 2 brief and current qualification docs.
+Edit:
+- DSWx-S1 independent source qualification. Preserve source/version, native values, masks, quality semantics, and bounded acquisition. No push/merge/deploy.
+Verify:
+- cargo test --locked --no-default-features --features native-cog,native-hdf5,authenticated-http; independent mature-reader real-source comparison.
+"""
+commit_message = "Qualify Wave 2 dswx_s1"
+timeout_s = 0
+test_cmd = "cargo test --locked --no-default-features --features native-cog,native-hdf5,authenticated-http"
+files = ["bench/wave2_dswx_s1.py", "docs/products/wave2/dswx-s1*"]
+
+[tasks."tasks/integrate.integrate"]
+summary = "Shared profiles CLI integration regression and output gate"
+prompt = """
+Orient:
+- Read the supplied Wave 2 brief and current qualification docs.
+Edit:
+- Shared profiles CLI integration regression and output gate. Preserve source/version, native values, masks, quality semantics, and bounded acquisition. No push/merge/deploy.
+Verify:
+- cargo test --locked --no-default-features --features native-cog,native-hdf5,authenticated-http; independent mature-reader real-source comparison.
+"""
+commit_message = "Qualify Wave 2 integrate"
+timeout_s = 0
+test_cmd = "cargo test --locked --no-default-features --features native-cog,native-hdf5,authenticated-http"
+files = ["src/products.rs", "src/products/profile.rs", "src/products/routing.rs", "src/authenticated_http.rs", "tests/product_profiles.rs", "tests/products.rs", "docs/products/roadmap.md", "docs/alphaearth/workflow.md", "README.md", "docs/products/qualification.md", "docs/products/wave2/qualification.md", "docs/products/wave2/acceptance.json", "docs/products/wave2/performance.json", "docs/products/wave2/access-timing.json", "docs/products/wave2/discovery-timing.json", "bench/wave2_access.py", "bench/wave2_discovery.py", "examples/product_stream.rs", "examples/product-landsat-tm.json", "examples/product-landsat-etm.json", "examples/product-opera-dswx-s1.json", "examples/product-opera-dist-alert.json", "tests/wave2_profiles.rs"]
+
+[tasks."tasks/landsat.landsat"]
+summary = "Historical Landsat independent source qualification"
+prompt = """
+Orient:
+- Read the supplied Wave 2 brief and current qualification docs.
+Edit:
+- Historical Landsat independent source qualification. Preserve source/version, native values, masks, quality semantics, and bounded acquisition. No push/merge/deploy.
+Verify:
+- cargo test --locked --no-default-features --features native-cog,native-hdf5,authenticated-http; independent mature-reader real-source comparison.
+"""
+commit_message = "Qualify Wave 2 landsat"
+timeout_s = 0
+test_cmd = "cargo test --locked --no-default-features --features native-cog,native-hdf5,authenticated-http"
+files = ["bench/wave2_landsat.py", "docs/products/wave2/landsat*"]

@@ -1,0 +1,14 @@
+[tasks.dswx_s1]
+summary = "DSWx-S1 independent source qualification"
+role = "worker"
+files = { touch = ["bench/wave2_dswx_s1.py", "docs/products/wave2/dswx-s1*"] }
+prompt = """
+Orient:
+- Read the supplied Wave 2 brief and current qualification docs.
+Edit:
+- DSWx-S1 independent source qualification. Preserve source/version, native values, masks, quality semantics, and bounded acquisition. No push/merge/deploy.
+Verify:
+- cargo test --locked --no-default-features --features native-cog,native-hdf5,authenticated-http; independent mature-reader real-source comparison.
+"""
+commit_message = "Qualify Wave 2 dswx_s1"
+test_cmd = "cargo test --locked --no-default-features --features native-cog,native-hdf5,authenticated-http"

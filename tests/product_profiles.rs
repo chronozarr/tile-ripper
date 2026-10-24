@@ -10,17 +10,21 @@ use tile_ripper::{
 };
 
 #[test]
-fn five_profiles_are_serializable_declarations_not_capabilities() -> Result<()> {
+fn profiles_are_serializable_declarations_not_capabilities() -> Result<()> {
     let profiles = profiles();
-    assert_eq!(profiles.len(), 5);
+    assert_eq!(profiles.len(), 9);
     assert_eq!(
         profiles.iter().map(|p| p.id).collect::<Vec<_>>(),
         [
             LANDSAT_C2_L2_SR,
+            "landsat-tm-c2-l2-sr",
+            "landsat-etm-c2-l2-sr",
             HLS_L30_V2,
             HLS_S30_V2,
             OPERA_DSWX_HLS_V1,
             OPERA_RTC_S1_V1,
+            "opera-dswx-s1",
+            "opera-dist-alert",
         ]
     );
     for profile in profiles {
@@ -40,10 +44,14 @@ fn five_profiles_are_serializable_declarations_not_capabilities() -> Result<()> 
             .all(|band| band["description"]
                 .as_str()
                 .is_some_and(|description| !description.is_empty())));
-        assert!(profile
-            .bands
-            .iter()
-            .all(|band| ["1", "m", "degree", "degree_Celsius"].contains(&band.unit)));
+        assert!(profile.bands.iter().all(|band| [
+            "1",
+            "m",
+            "degree",
+            "degree_Celsius",
+            "days since 2020-12-31"
+        ]
+        .contains(&band.unit)));
     }
     Ok(())
 }

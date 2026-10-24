@@ -344,6 +344,98 @@ impl AuthenticatedHttp {
             netrc,
         )
     }
+    /// Exact observed PO.DAAC DSWx-S1 V1.0 route, independently qualified
+    /// from DSWx-HLS. The four layer names and source release are closed.
+    pub fn earthdata_dswx_s1(canonical_url: &str, netrc: impl Into<PathBuf>) -> Result<Self> {
+        Self::earthdata_wave2(canonical_url, netrc, false)
+    }
+    /// Exact observed LP DAAC DIST-ALERT-HLS V1 route. No annual DIST product
+    /// or another LP DAAC collection inherits this access policy.
+    pub fn earthdata_dist_alert(canonical_url: &str, netrc: impl Into<PathBuf>) -> Result<Self> {
+        Self::earthdata_wave2(canonical_url, netrc, true)
+    }
+    fn earthdata_wave2(canonical_url: &str, netrc: impl Into<PathBuf>, dist: bool) -> Result<Self> {
+        let canonical =
+            Url::parse(canonical_url).map_err(|_| "invalid Wave 2 Earthdata locator")?;
+        let (product, archive, resource, prefix, gate) = if dist {
+            (
+                "opera-dist-alert",
+                "https://data.lpdaac.earthdatacloud.nasa.gov",
+                "https://d1nklfio7vscoe.cloudfront.net",
+                "/lp-prod-protected/",
+                "2d2df3a34830d5223d1e9547cd713408",
+            )
+        } else {
+            (
+                "opera-dswx-s1",
+                "https://archive.podaac.earthdata.nasa.gov",
+                "https://deotb6e7tfubr.cloudfront.net",
+                "/podaac-ops-cumulus-protected/",
+                "edaf5da92e0ce48fb61175c28b67e95d",
+            )
+        };
+        let collection = if dist {
+            "OPERA_L3_DIST-ALERT-HLS_V1"
+        } else {
+            "OPERA_L3_DSWX-S1_V1"
+        };
+        let key = canonical
+            .path()
+            .strip_prefix(prefix)
+            .ok_or("unqualified Wave 2 archive path")?;
+        let parts = key.split('/').collect::<Vec<_>>();
+        let filename = parts.last().copied().unwrap_or_default();
+        let profile = crate::products::profile::profile(product)?;
+        if canonical.origin().ascii_serialization() != archive
+            || canonical.query().is_some()
+            || canonical.fragment().is_some()
+            || !canonical.username().is_empty()
+            || canonical.password().is_some()
+            || parts.first() != Some(&collection)
+            || !filename.ends_with(".tif")
+            || parts.len() != if dist { 3 } else { 2 }
+        {
+            return fail(
+                "Wave 2 Earthdata locator violates exact product collection/object policy",
+            );
+        }
+        profile.validate_identity(filename, None, None)?;
+        let stem = filename
+            .strip_suffix(".tif")
+            .ok_or("invalid Wave 2 TIFF filename")?;
+        let identity = stem.split('_').take(9).collect::<Vec<_>>().join("_");
+        if dist && parts[1] != identity {
+            return fail("DIST containing granule conflicts with exact object identity");
+        }
+        let bucket = prefix.trim_matches('/');
+        let suffix = format!("/{bucket}.s3.us-west-2.amazonaws.com/{key}");
+        let head_path = format!("/head-{gate}{suffix}");
+        let get_path = format!("/s3-{gate}{suffix}");
+        let login = "https://urs.earthdata.nasa.gov";
+        let rule = |from: &str, to: &str, path: &str| RedirectRule {
+            from_origin: from.into(),
+            to_origin: to.into(),
+            destination_path: path.into(),
+        };
+        Self::new(
+            Config {
+                canonical_url: canonical_url.into(),
+                login_origin: login.into(),
+                resource_origin: resource.into(),
+                head_resource_path: head_path.clone(),
+                get_resource_path: get_path.clone(),
+                redirects: vec![
+                    rule(archive, login, "/oauth/authorize"),
+                    rule(login, archive, "/login"),
+                    rule(archive, archive, canonical.path()),
+                    rule(archive, resource, &head_path),
+                    rule(archive, resource, &get_path),
+                ],
+                additional_roots: vec![],
+            },
+            netrc,
+        )
+    }
     /// Opt in to the observed ASF OPERA RTC-S1 V1 protected-object contract.
     ///
     /// Current CMR records expose unsigned Cumulus object URLs directly. This
@@ -1302,6 +1394,39 @@ mod tests {
         std::fs::remove_file(path)?;
         Ok(())
     }
+    #[test]
+    fn wave2_product_auth_is_exact_object_and_release_scoped() -> Result<()> {
+        let path = netrc_fixture("wave2-profile")?;
+        let radar = "https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-protected/OPERA_L3_DSWX-S1_V1/OPERA_L3_DSWx-S1_T17SQV_20261021T230515Z_20261023T070839Z_S1D_30_v1.0_B01_WTR.tif";
+        let id = "OPERA_L3_DIST-ALERT-HLS_T17SPU_20261021T160701Z_20261023T063220Z_S2A_30_v1";
+        let dist = format!("https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/OPERA_L3_DIST-ALERT-HLS_V1/{id}/{id}_VEG-DIST-STATUS.tif");
+        assert!(AuthenticatedHttp::earthdata_dswx_s1(radar, &path).is_ok());
+        assert!(AuthenticatedHttp::earthdata_dist_alert(&dist, &path).is_ok());
+        assert!(AuthenticatedHttp::earthdata_dswx(radar, &path).is_err());
+        assert!(AuthenticatedHttp::earthdata_hls(&dist, &path).is_err());
+        for invalid in [
+            radar.replace("DSWX-S1_V1", "DSWX-S1_V2"),
+            radar.replace("v1.0", "v1.1"),
+            radar.replace("B01_WTR", "B04_WTR"),
+            format!("{radar}?sig=secret"),
+            format!("{radar}#fragment"),
+            radar.replace("nasa.gov/", "nasa.gov.evil.org/"),
+        ] {
+            assert!(AuthenticatedHttp::earthdata_dswx_s1(&invalid, &path).is_err());
+        }
+        for invalid in [
+            dist.replace("_V1/", "_V2/"),
+            dist.replacen(id, "other", 1),
+            dist.replace("VEG-DIST-STATUS", "VEG-HIST"),
+            dist.replace("DIST-ALERT", "DIST-ANN"),
+            format!("{dist}?sig=secret"),
+        ] {
+            assert!(AuthenticatedHttp::earthdata_dist_alert(&invalid, &path).is_err());
+        }
+        std::fs::remove_file(path)?;
+        Ok(())
+    }
+
     #[test]
     fn netrc_quotes_comments_and_invalid_values() {
         assert_eq!(
