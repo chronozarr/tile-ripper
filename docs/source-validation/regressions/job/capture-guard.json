@@ -1,0 +1,25 @@
+{
+  "cases": [
+    {
+      "reader": "h5py",
+      "returncode": 1,
+      "expected_capture_misses": [
+        "CAPTURE_MISS 0 8"
+      ],
+      "trace_sha256": "dd3a0a6dc08b11950c469396964a59afc0bd116da1eb5d3788761edef0a5063a",
+      "missing_bytes_did_not_become_source_zeros": true
+    },
+    {
+      "reader": "netcdf4",
+      "returncode": 1,
+      "expected_capture_misses": [
+        "CAPTURE_MISS 0 8",
+        "CAPTURE_MISS 0 8"
+      ],
+      "trace_sha256": "92f49b615aaa8ca535b31b1527e73ededea7f9b2d8a0748f98e332610cb2399e",
+      "missing_bytes_did_not_become_source_zeros": true
+    }
+  ],
+  "original_captures_modified": false,
+  "all_passed": true
+}

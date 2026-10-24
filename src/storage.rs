@@ -31,6 +31,24 @@ pub(crate) struct Sources {
 }
 
 impl Sources {
+    pub(crate) fn validate_cog_identities(
+        &self,
+        request: &Request,
+        limits: &crate::stac_workflow::Limits,
+    ) -> Result<()> {
+        #[cfg(feature = "native-cog")]
+        self.native.validate()?;
+        let result = crate::stac_workflow::validate_identities(request, limits);
+        #[cfg(feature = "native-cog")]
+        {
+            if result.is_err() {
+                self.native.invalidate();
+            } else {
+                self.native.validate()?;
+            }
+        }
+        result
+    }
     #[cfg(feature = "native-hdf5")]
     pub(crate) fn from_hdf5(hdf5: crate::hdf5::Context) -> Self {
         Self {
@@ -120,6 +138,8 @@ impl Sources {
         Ok(Arc::new(Objects::Local(FilesystemStore::new(&a.locator)?)))
     }
     pub fn seal(&self) -> Result<()> {
+        #[cfg(feature = "native-cog")]
+        self.native.validate()?;
         #[cfg(feature = "native-hdf5")]
         self.hdf5.validate()?;
         self.v3.validate()?;
@@ -138,6 +158,8 @@ impl Sources {
         &self,
         _cancelled: Option<&std::sync::atomic::AtomicBool>,
     ) -> Result<()> {
+        #[cfg(feature = "native-cog")]
+        self.native.validate()?;
         #[cfg(feature = "native-hdf5")]
         self.hdf5.validate_cancellable(_cancelled)?;
         self.v3.validate()?;
@@ -888,14 +910,17 @@ impl Http {
             match result {
                 Ok(version) => {
                     let mut state = self.state.lock().unwrap();
+                    if state.failed {
+                        return fail(
+                            "HTTP source binding invalidated by an earlier failure; prepare again",
+                        );
+                    }
                     if state
                         .versions
                         .get(key_string)
                         .is_some_and(|current| current != &version)
                     {
-                        if self.transport.authenticated() {
-                            state.failed = true;
-                        }
+                        state.failed = true;
                         return fail("HTTP source version conflict; prepare again");
                     }
                     if !state.versions.contains_key(key_string)
@@ -925,9 +950,7 @@ impl Http {
                     }
                 }
                 Err(e) => {
-                    if self.transport.authenticated() {
-                        self.state.lock().unwrap().failed = true;
-                    }
+                    self.state.lock().unwrap().failed = true;
                     if e.to_string().starts_with("retryable") {
                         return fail(&format!(
                             "HTTP retry budget exhausted after 3 attempts (last status {status}; {e})"
@@ -1114,7 +1137,12 @@ impl ObjectFile {
                     return fail("HDF5 requested ETag differs from source");
                 }
             }
-            http.seal()?;
+            // The live size probe just bound this sole object's strong ETag
+            // and size. No source bytes or cached metadata were consumed in
+            // between: seal that binding without immediately probing it again.
+            // Inspection/preparation, pre/post execution and publication still
+            // validate online. Checkpoints still need their separate GET proof.
+            http.state.lock().unwrap().sealed = true;
             #[cfg(all(feature = "native-hdf5", feature = "authenticated-http"))]
             if let Some(checkpoint) = http.transport.checkpoint() {
                 let version = http

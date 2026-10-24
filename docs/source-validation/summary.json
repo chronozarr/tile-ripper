@@ -1,0 +1,4847 @@
+{
+  "baseline": "157facc",
+  "repetitions": 3,
+  "added_delay_per_wire_request_seconds": [
+    0,
+    0.025,
+    0.1
+  ],
+  "platforms": {
+    "authenticated": "macOS ARM64",
+    "anonymous": "Linux ARM64, native GDAL-free binaries"
+  },
+  "source_body_bytes_exclude": "HTTP/TLS framing and redirect bodies; fixture-observed bytes, reconciled with application phases",
+  "all_scientific_fingerprints_equal": true,
+  "results": [
+    {
+      "source": "authenticated_swot",
+      "delay_seconds": 0,
+      "implementation": "baseline",
+      "repetitions": 3,
+      "wire": {
+        "requests": 40,
+        "canonical_head": 5,
+        "source_head": 5,
+        "conditional_get": 26,
+        "signed_redirects": 6,
+        "redirect_hops": 9,
+        "authentication_requests": 1,
+        "source_body_bytes": 453889
+      },
+      "source_bytes": {
+        "metadata": 329813,
+        "payload": 124076,
+        "authorization_proof": 0
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 0.06947854100144468,
+          "min": 0.06714691700108233,
+          "max": 0.06998004100023536
+        },
+        "prepare_seconds": {
+          "median": 0.049294166,
+          "min": 0.0471715,
+          "max": 0.049572875
+        },
+        "first_chunk_seconds": {
+          "median": 0.059988125,
+          "min": 0.057356125,
+          "max": 0.060190583
+        },
+        "seconds": {
+          "median": 0.061348958,
+          "min": 0.058691459,
+          "max": 0.061595041
+        },
+        "cpu_seconds": {
+          "median": 0.049822,
+          "min": 0.049391,
+          "max": 0.049893999999999994
+        },
+        "peak_rss_bytes": {
+          "median": 30326784,
+          "min": 30130176,
+          "max": 30343168
+        }
+      },
+      "working_memory": {
+        "scope": "working reservations for this prepared selection and metadata strategy; not a process RSS ceiling",
+        "budget_bytes": 67108864,
+        "prepared_total_bytes": 3466472,
+        "prepared_metadata_coordinates_plan_bytes": 2417896,
+        "authentication_checkpoint_reservation_bytes": 1048576,
+        "coordinate_prepare_reserved_bytes_peak": 2613987,
+        "metadata_preparation_sufficient_buffer_bytes": 59338240,
+        "physical_chunks": [
+          {
+            "variable": "/wse",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 36388,
+            "decoder_reservation_bytes": 25456364
+          },
+          {
+            "variable": "/wse_qual",
+            "native_chunk_bytes": 3166620,
+            "largest_selected_encoded_chunk_bytes": 18509,
+            "decoder_reservation_bytes": 25388487
+          },
+          {
+            "variable": "/wse_qual_bitwise",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 20229,
+            "decoder_reservation_bytes": 25407887
+          },
+          {
+            "variable": "/wse_uncert",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 37743,
+            "decoder_reservation_bytes": 25460429
+          },
+          {
+            "variable": "/n_wse_pix",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 11207,
+            "decoder_reservation_bytes": 25380821
+          }
+        ],
+        "limiting_decoder_variable": "/wse_uncert",
+        "decoder_scratch_bytes": 25460429,
+        "encoded_range_retention_bytes": 8388608,
+        "fixed_stream_overhead_bytes": 65536,
+        "base_reservation_bytes": 37381045,
+        "assembly_reservation_bytes_per_pixel": 128,
+        "largest_logical_tile_pixels": 16384,
+        "estimated_sufficient_buffer_bytes": 59338240,
+        "admits_one_pixel": true
+      }
+    },
+    {
+      "source": "authenticated_swot",
+      "delay_seconds": 0,
+      "implementation": "candidate",
+      "repetitions": 3,
+      "wire": {
+        "requests": 38,
+        "canonical_head": 4,
+        "source_head": 4,
+        "conditional_get": 26,
+        "signed_redirects": 5,
+        "redirect_hops": 8,
+        "authentication_requests": 1,
+        "source_body_bytes": 453889
+      },
+      "source_bytes": {
+        "metadata": 329813,
+        "payload": 124076,
+        "authorization_proof": 0
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 0.0698359590023756,
+          "min": 0.06632237499798066,
+          "max": 0.23494779199972982
+        },
+        "prepare_seconds": {
+          "median": 0.048790125,
+          "min": 0.0464435,
+          "max": 0.052948125
+        },
+        "first_chunk_seconds": {
+          "median": 0.05973525,
+          "min": 0.056784459,
+          "max": 0.063989583
+        },
+        "seconds": {
+          "median": 0.061157625,
+          "min": 0.058080625,
+          "max": 0.065559208
+        },
+        "cpu_seconds": {
+          "median": 0.04958799999999999,
+          "min": 0.049153,
+          "max": 0.056138999999999994
+        },
+        "peak_rss_bytes": {
+          "median": 30261248,
+          "min": 30146560,
+          "max": 30310400
+        }
+      },
+      "working_memory": {
+        "scope": "working reservations for this prepared selection and metadata strategy; not a process RSS ceiling",
+        "budget_bytes": 67108864,
+        "prepared_total_bytes": 3466472,
+        "prepared_metadata_coordinates_plan_bytes": 2417896,
+        "authentication_checkpoint_reservation_bytes": 1048576,
+        "coordinate_prepare_reserved_bytes_peak": 2613987,
+        "metadata_preparation_sufficient_buffer_bytes": 59338240,
+        "physical_chunks": [
+          {
+            "variable": "/wse",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 36388,
+            "decoder_reservation_bytes": 25456364
+          },
+          {
+            "variable": "/wse_qual",
+            "native_chunk_bytes": 3166620,
+            "largest_selected_encoded_chunk_bytes": 18509,
+            "decoder_reservation_bytes": 25388487
+          },
+          {
+            "variable": "/wse_qual_bitwise",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 20229,
+            "decoder_reservation_bytes": 25407887
+          },
+          {
+            "variable": "/wse_uncert",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 37743,
+            "decoder_reservation_bytes": 25460429
+          },
+          {
+            "variable": "/n_wse_pix",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 11207,
+            "decoder_reservation_bytes": 25380821
+          }
+        ],
+        "limiting_decoder_variable": "/wse_uncert",
+        "decoder_scratch_bytes": 25460429,
+        "encoded_range_retention_bytes": 8388608,
+        "fixed_stream_overhead_bytes": 65536,
+        "base_reservation_bytes": 37381045,
+        "assembly_reservation_bytes_per_pixel": 128,
+        "largest_logical_tile_pixels": 16384,
+        "estimated_sufficient_buffer_bytes": 59338240,
+        "admits_one_pixel": true
+      }
+    },
+    {
+      "source": "authenticated_swot",
+      "delay_seconds": 0.025,
+      "implementation": "baseline",
+      "repetitions": 3,
+      "wire": {
+        "requests": 40,
+        "canonical_head": 5,
+        "source_head": 5,
+        "conditional_get": 26,
+        "signed_redirects": 6,
+        "redirect_hops": 9,
+        "authentication_requests": 1,
+        "source_body_bytes": 453889
+      },
+      "source_bytes": {
+        "metadata": 329813,
+        "payload": 124076,
+        "authorization_proof": 0
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 1.2449306250018708,
+          "min": 1.2418230839975877,
+          "max": 1.308059000002686
+        },
+        "prepare_seconds": {
+          "median": 0.965012292,
+          "min": 0.954517083,
+          "max": 1.007142333
+        },
+        "first_chunk_seconds": {
+          "median": 1.175449167,
+          "min": 1.173432541,
+          "max": 1.230689458
+        },
+        "seconds": {
+          "median": 1.236438583,
+          "min": 1.232837291,
+          "max": 1.2930332500000001
+        },
+        "cpu_seconds": {
+          "median": 0.058463,
+          "min": 0.055718,
+          "max": 0.095838
+        },
+        "peak_rss_bytes": {
+          "median": 30392320,
+          "min": 30375936,
+          "max": 30605312
+        }
+      },
+      "working_memory": {
+        "scope": "working reservations for this prepared selection and metadata strategy; not a process RSS ceiling",
+        "budget_bytes": 67108864,
+        "prepared_total_bytes": 3466472,
+        "prepared_metadata_coordinates_plan_bytes": 2417896,
+        "authentication_checkpoint_reservation_bytes": 1048576,
+        "coordinate_prepare_reserved_bytes_peak": 2613987,
+        "metadata_preparation_sufficient_buffer_bytes": 59338240,
+        "physical_chunks": [
+          {
+            "variable": "/wse",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 36388,
+            "decoder_reservation_bytes": 25456364
+          },
+          {
+            "variable": "/wse_qual",
+            "native_chunk_bytes": 3166620,
+            "largest_selected_encoded_chunk_bytes": 18509,
+            "decoder_reservation_bytes": 25388487
+          },
+          {
+            "variable": "/wse_qual_bitwise",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 20229,
+            "decoder_reservation_bytes": 25407887
+          },
+          {
+            "variable": "/wse_uncert",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 37743,
+            "decoder_reservation_bytes": 25460429
+          },
+          {
+            "variable": "/n_wse_pix",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 11207,
+            "decoder_reservation_bytes": 25380821
+          }
+        ],
+        "limiting_decoder_variable": "/wse_uncert",
+        "decoder_scratch_bytes": 25460429,
+        "encoded_range_retention_bytes": 8388608,
+        "fixed_stream_overhead_bytes": 65536,
+        "base_reservation_bytes": 37381045,
+        "assembly_reservation_bytes_per_pixel": 128,
+        "largest_logical_tile_pixels": 16384,
+        "estimated_sufficient_buffer_bytes": 59338240,
+        "admits_one_pixel": true
+      }
+    },
+    {
+      "source": "authenticated_swot",
+      "delay_seconds": 0.025,
+      "implementation": "candidate",
+      "repetitions": 3,
+      "wire": {
+        "requests": 38,
+        "canonical_head": 4,
+        "source_head": 4,
+        "conditional_get": 26,
+        "signed_redirects": 5,
+        "redirect_hops": 8,
+        "authentication_requests": 1,
+        "source_body_bytes": 453889
+      },
+      "source_bytes": {
+        "metadata": 329813,
+        "payload": 124076,
+        "authorization_proof": 0
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 1.190499207998073,
+          "min": 1.1839611249997688,
+          "max": 1.2794083330009016
+        },
+        "prepare_seconds": {
+          "median": 0.913288875,
+          "min": 0.903681583,
+          "max": 0.959135792
+        },
+        "first_chunk_seconds": {
+          "median": 1.119408833,
+          "min": 1.117365042,
+          "max": 1.198593375
+        },
+        "seconds": {
+          "median": 1.181448833,
+          "min": 1.174874583,
+          "max": 1.262316709
+        },
+        "cpu_seconds": {
+          "median": 0.05653,
+          "min": 0.056326999999999995,
+          "max": 0.096432
+        },
+        "peak_rss_bytes": {
+          "median": 30162944,
+          "min": 30113792,
+          "max": 30277632
+        }
+      },
+      "working_memory": {
+        "scope": "working reservations for this prepared selection and metadata strategy; not a process RSS ceiling",
+        "budget_bytes": 67108864,
+        "prepared_total_bytes": 3466472,
+        "prepared_metadata_coordinates_plan_bytes": 2417896,
+        "authentication_checkpoint_reservation_bytes": 1048576,
+        "coordinate_prepare_reserved_bytes_peak": 2613987,
+        "metadata_preparation_sufficient_buffer_bytes": 59338240,
+        "physical_chunks": [
+          {
+            "variable": "/wse",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 36388,
+            "decoder_reservation_bytes": 25456364
+          },
+          {
+            "variable": "/wse_qual",
+            "native_chunk_bytes": 3166620,
+            "largest_selected_encoded_chunk_bytes": 18509,
+            "decoder_reservation_bytes": 25388487
+          },
+          {
+            "variable": "/wse_qual_bitwise",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 20229,
+            "decoder_reservation_bytes": 25407887
+          },
+          {
+            "variable": "/wse_uncert",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 37743,
+            "decoder_reservation_bytes": 25460429
+          },
+          {
+            "variable": "/n_wse_pix",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 11207,
+            "decoder_reservation_bytes": 25380821
+          }
+        ],
+        "limiting_decoder_variable": "/wse_uncert",
+        "decoder_scratch_bytes": 25460429,
+        "encoded_range_retention_bytes": 8388608,
+        "fixed_stream_overhead_bytes": 65536,
+        "base_reservation_bytes": 37381045,
+        "assembly_reservation_bytes_per_pixel": 128,
+        "largest_logical_tile_pixels": 16384,
+        "estimated_sufficient_buffer_bytes": 59338240,
+        "admits_one_pixel": true
+      }
+    },
+    {
+      "source": "authenticated_swot",
+      "delay_seconds": 0.1,
+      "implementation": "baseline",
+      "repetitions": 3,
+      "wire": {
+        "requests": 40,
+        "canonical_head": 5,
+        "source_head": 5,
+        "conditional_get": 26,
+        "signed_redirects": 6,
+        "redirect_hops": 9,
+        "authentication_requests": 1,
+        "source_body_bytes": 453889
+      },
+      "source_bytes": {
+        "metadata": 329813,
+        "payload": 124076,
+        "authorization_proof": 0
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 4.352054499999213,
+          "min": 4.248470875001658,
+          "max": 4.42832825000005
+        },
+        "prepare_seconds": {
+          "median": 3.368439417,
+          "min": 3.281096416,
+          "max": 3.408098542
+        },
+        "first_chunk_seconds": {
+          "median": 4.127243959,
+          "min": 4.02203925,
+          "max": 4.180593209
+        },
+        "seconds": {
+          "median": 4.338886542,
+          "min": 4.232149,
+          "max": 4.3990839170000005
+        },
+        "cpu_seconds": {
+          "median": 0.12117499999999999,
+          "min": 0.07080299999999999,
+          "max": 0.139393
+        },
+        "peak_rss_bytes": {
+          "median": 30490624,
+          "min": 30359552,
+          "max": 30654464
+        }
+      },
+      "working_memory": {
+        "scope": "working reservations for this prepared selection and metadata strategy; not a process RSS ceiling",
+        "budget_bytes": 67108864,
+        "prepared_total_bytes": 3466472,
+        "prepared_metadata_coordinates_plan_bytes": 2417896,
+        "authentication_checkpoint_reservation_bytes": 1048576,
+        "coordinate_prepare_reserved_bytes_peak": 2613987,
+        "metadata_preparation_sufficient_buffer_bytes": 59338240,
+        "physical_chunks": [
+          {
+            "variable": "/wse",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 36388,
+            "decoder_reservation_bytes": 25456364
+          },
+          {
+            "variable": "/wse_qual",
+            "native_chunk_bytes": 3166620,
+            "largest_selected_encoded_chunk_bytes": 18509,
+            "decoder_reservation_bytes": 25388487
+          },
+          {
+            "variable": "/wse_qual_bitwise",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 20229,
+            "decoder_reservation_bytes": 25407887
+          },
+          {
+            "variable": "/wse_uncert",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 37743,
+            "decoder_reservation_bytes": 25460429
+          },
+          {
+            "variable": "/n_wse_pix",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 11207,
+            "decoder_reservation_bytes": 25380821
+          }
+        ],
+        "limiting_decoder_variable": "/wse_uncert",
+        "decoder_scratch_bytes": 25460429,
+        "encoded_range_retention_bytes": 8388608,
+        "fixed_stream_overhead_bytes": 65536,
+        "base_reservation_bytes": 37381045,
+        "assembly_reservation_bytes_per_pixel": 128,
+        "largest_logical_tile_pixels": 16384,
+        "estimated_sufficient_buffer_bytes": 59338240,
+        "admits_one_pixel": true
+      }
+    },
+    {
+      "source": "authenticated_swot",
+      "delay_seconds": 0.1,
+      "implementation": "candidate",
+      "repetitions": 3,
+      "wire": {
+        "requests": 38,
+        "canonical_head": 4,
+        "source_head": 4,
+        "conditional_get": 26,
+        "signed_redirects": 5,
+        "redirect_hops": 8,
+        "authentication_requests": 1,
+        "source_body_bytes": 453889
+      },
+      "source_bytes": {
+        "metadata": 329813,
+        "payload": 124076,
+        "authorization_proof": 0
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 4.152648082999804,
+          "min": 4.063620459000958,
+          "max": 4.18745270799991
+        },
+        "prepare_seconds": {
+          "median": 3.145545458,
+          "min": 3.089725375,
+          "max": 3.161332709
+        },
+        "first_chunk_seconds": {
+          "median": 3.91653725,
+          "min": 3.840043792,
+          "max": 3.934852792
+        },
+        "seconds": {
+          "median": 4.132083708,
+          "min": 4.052259959,
+          "max": 4.155138334
+        },
+        "cpu_seconds": {
+          "median": 0.13172699999999998,
+          "min": 0.075937,
+          "max": 0.13741499999999998
+        },
+        "peak_rss_bytes": {
+          "median": 30064640,
+          "min": 30015488,
+          "max": 30097408
+        }
+      },
+      "working_memory": {
+        "scope": "working reservations for this prepared selection and metadata strategy; not a process RSS ceiling",
+        "budget_bytes": 67108864,
+        "prepared_total_bytes": 3466472,
+        "prepared_metadata_coordinates_plan_bytes": 2417896,
+        "authentication_checkpoint_reservation_bytes": 1048576,
+        "coordinate_prepare_reserved_bytes_peak": 2613987,
+        "metadata_preparation_sufficient_buffer_bytes": 59338240,
+        "physical_chunks": [
+          {
+            "variable": "/wse",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 36388,
+            "decoder_reservation_bytes": 25456364
+          },
+          {
+            "variable": "/wse_qual",
+            "native_chunk_bytes": 3166620,
+            "largest_selected_encoded_chunk_bytes": 18509,
+            "decoder_reservation_bytes": 25388487
+          },
+          {
+            "variable": "/wse_qual_bitwise",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 20229,
+            "decoder_reservation_bytes": 25407887
+          },
+          {
+            "variable": "/wse_uncert",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 37743,
+            "decoder_reservation_bytes": 25460429
+          },
+          {
+            "variable": "/n_wse_pix",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 11207,
+            "decoder_reservation_bytes": 25380821
+          }
+        ],
+        "limiting_decoder_variable": "/wse_uncert",
+        "decoder_scratch_bytes": 25460429,
+        "encoded_range_retention_bytes": 8388608,
+        "fixed_stream_overhead_bytes": 65536,
+        "base_reservation_bytes": 37381045,
+        "assembly_reservation_bytes_per_pixel": 128,
+        "largest_logical_tile_pixels": 16384,
+        "estimated_sufficient_buffer_bytes": 59338240,
+        "admits_one_pixel": true
+      }
+    },
+    {
+      "source": "checkpoint_replay",
+      "delay_seconds": 0,
+      "implementation": "baseline",
+      "repetitions": 3,
+      "wire": {
+        "requests": 15,
+        "canonical_head": 5,
+        "source_head": 5,
+        "conditional_get": 1,
+        "signed_redirects": 6,
+        "redirect_hops": 9,
+        "authentication_requests": 1,
+        "source_body_bytes": 8
+      },
+      "source_bytes": {
+        "metadata": 0,
+        "payload": 0,
+        "authorization_proof": 8
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 0.06097891700119362,
+          "min": 0.060959249996813014,
+          "max": 0.06315525000172784
+        },
+        "prepare_seconds": {
+          "median": 0.042864834,
+          "min": 0.042803708,
+          "max": 0.04451925
+        },
+        "first_chunk_seconds": {
+          "median": 0.051357875,
+          "min": 0.051297583,
+          "max": 0.053138916
+        },
+        "seconds": {
+          "median": 0.052882458,
+          "min": 0.052874459,
+          "max": 0.054760541
+        },
+        "cpu_seconds": {
+          "median": 0.047521,
+          "min": 0.04744899999999999,
+          "max": 0.047924999999999995
+        },
+        "peak_rss_bytes": {
+          "median": 29917184,
+          "min": 29802496,
+          "max": 29982720
+        }
+      },
+      "working_memory": {
+        "scope": "working reservations for this prepared selection and metadata strategy; not a process RSS ceiling",
+        "budget_bytes": 67108864,
+        "prepared_total_bytes": 5629160,
+        "prepared_metadata_coordinates_plan_bytes": 2417896,
+        "authentication_checkpoint_reservation_bytes": 3211264,
+        "coordinate_prepare_reserved_bytes_peak": 4776675,
+        "metadata_preparation_sufficient_buffer_bytes": 59338240,
+        "physical_chunks": [
+          {
+            "variable": "/wse",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 36388,
+            "decoder_reservation_bytes": 25456364
+          },
+          {
+            "variable": "/wse_qual",
+            "native_chunk_bytes": 3166620,
+            "largest_selected_encoded_chunk_bytes": 18509,
+            "decoder_reservation_bytes": 25388487
+          },
+          {
+            "variable": "/wse_qual_bitwise",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 20229,
+            "decoder_reservation_bytes": 25407887
+          },
+          {
+            "variable": "/wse_uncert",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 37743,
+            "decoder_reservation_bytes": 25460429
+          },
+          {
+            "variable": "/n_wse_pix",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 11207,
+            "decoder_reservation_bytes": 25380821
+          }
+        ],
+        "limiting_decoder_variable": "/wse_uncert",
+        "decoder_scratch_bytes": 25460429,
+        "encoded_range_retention_bytes": 8388608,
+        "fixed_stream_overhead_bytes": 65536,
+        "base_reservation_bytes": 39543733,
+        "assembly_reservation_bytes_per_pixel": 128,
+        "largest_logical_tile_pixels": 16384,
+        "estimated_sufficient_buffer_bytes": 59338240,
+        "admits_one_pixel": true
+      }
+    },
+    {
+      "source": "checkpoint_replay",
+      "delay_seconds": 0,
+      "implementation": "candidate",
+      "repetitions": 3,
+      "wire": {
+        "requests": 13,
+        "canonical_head": 4,
+        "source_head": 4,
+        "conditional_get": 1,
+        "signed_redirects": 5,
+        "redirect_hops": 8,
+        "authentication_requests": 1,
+        "source_body_bytes": 8
+      },
+      "source_bytes": {
+        "metadata": 0,
+        "payload": 0,
+        "authorization_proof": 8
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 0.06050366699855658,
+          "min": 0.05964158300048439,
+          "max": 0.06307633400138002
+        },
+        "prepare_seconds": {
+          "median": 0.042445917,
+          "min": 0.041707125,
+          "max": 0.044570583
+        },
+        "first_chunk_seconds": {
+          "median": 0.050732,
+          "min": 0.049953833,
+          "max": 0.05292775
+        },
+        "seconds": {
+          "median": 0.052217583,
+          "min": 0.05150775,
+          "max": 0.05434975
+        },
+        "cpu_seconds": {
+          "median": 0.04738099999999999,
+          "min": 0.046814999999999996,
+          "max": 0.049039
+        },
+        "peak_rss_bytes": {
+          "median": 29753344,
+          "min": 29736960,
+          "max": 29933568
+        }
+      },
+      "working_memory": {
+        "scope": "working reservations for this prepared selection and metadata strategy; not a process RSS ceiling",
+        "budget_bytes": 67108864,
+        "prepared_total_bytes": 5629160,
+        "prepared_metadata_coordinates_plan_bytes": 2417896,
+        "authentication_checkpoint_reservation_bytes": 3211264,
+        "coordinate_prepare_reserved_bytes_peak": 4776675,
+        "metadata_preparation_sufficient_buffer_bytes": 59338240,
+        "physical_chunks": [
+          {
+            "variable": "/wse",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 36388,
+            "decoder_reservation_bytes": 25456364
+          },
+          {
+            "variable": "/wse_qual",
+            "native_chunk_bytes": 3166620,
+            "largest_selected_encoded_chunk_bytes": 18509,
+            "decoder_reservation_bytes": 25388487
+          },
+          {
+            "variable": "/wse_qual_bitwise",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 20229,
+            "decoder_reservation_bytes": 25407887
+          },
+          {
+            "variable": "/wse_uncert",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 37743,
+            "decoder_reservation_bytes": 25460429
+          },
+          {
+            "variable": "/n_wse_pix",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 11207,
+            "decoder_reservation_bytes": 25380821
+          }
+        ],
+        "limiting_decoder_variable": "/wse_uncert",
+        "decoder_scratch_bytes": 25460429,
+        "encoded_range_retention_bytes": 8388608,
+        "fixed_stream_overhead_bytes": 65536,
+        "base_reservation_bytes": 39543733,
+        "assembly_reservation_bytes_per_pixel": 128,
+        "largest_logical_tile_pixels": 16384,
+        "estimated_sufficient_buffer_bytes": 59338240,
+        "admits_one_pixel": true
+      }
+    },
+    {
+      "source": "checkpoint_replay",
+      "delay_seconds": 0.025,
+      "implementation": "baseline",
+      "repetitions": 3,
+      "wire": {
+        "requests": 15,
+        "canonical_head": 5,
+        "source_head": 5,
+        "conditional_get": 1,
+        "signed_redirects": 6,
+        "redirect_hops": 9,
+        "authentication_requests": 1,
+        "source_body_bytes": 8
+      },
+      "source_bytes": {
+        "metadata": 0,
+        "payload": 0,
+        "authorization_proof": 8
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 0.5075560000004771,
+          "min": 0.5054748749971623,
+          "max": 0.5551925409999967
+        },
+        "prepare_seconds": {
+          "median": 0.371383,
+          "min": 0.3654865,
+          "max": 0.396675583
+        },
+        "first_chunk_seconds": {
+          "median": 0.440569042,
+          "min": 0.434625708,
+          "max": 0.468933208
+        },
+        "seconds": {
+          "median": 0.499379833,
+          "min": 0.497054917,
+          "max": 0.534963958
+        },
+        "cpu_seconds": {
+          "median": 0.051846,
+          "min": 0.049089,
+          "max": 0.087321
+        },
+        "peak_rss_bytes": {
+          "median": 29949952,
+          "min": 29835264,
+          "max": 30064640
+        }
+      },
+      "working_memory": {
+        "scope": "working reservations for this prepared selection and metadata strategy; not a process RSS ceiling",
+        "budget_bytes": 67108864,
+        "prepared_total_bytes": 5629160,
+        "prepared_metadata_coordinates_plan_bytes": 2417896,
+        "authentication_checkpoint_reservation_bytes": 3211264,
+        "coordinate_prepare_reserved_bytes_peak": 4776675,
+        "metadata_preparation_sufficient_buffer_bytes": 59338240,
+        "physical_chunks": [
+          {
+            "variable": "/wse",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 36388,
+            "decoder_reservation_bytes": 25456364
+          },
+          {
+            "variable": "/wse_qual",
+            "native_chunk_bytes": 3166620,
+            "largest_selected_encoded_chunk_bytes": 18509,
+            "decoder_reservation_bytes": 25388487
+          },
+          {
+            "variable": "/wse_qual_bitwise",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 20229,
+            "decoder_reservation_bytes": 25407887
+          },
+          {
+            "variable": "/wse_uncert",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 37743,
+            "decoder_reservation_bytes": 25460429
+          },
+          {
+            "variable": "/n_wse_pix",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 11207,
+            "decoder_reservation_bytes": 25380821
+          }
+        ],
+        "limiting_decoder_variable": "/wse_uncert",
+        "decoder_scratch_bytes": 25460429,
+        "encoded_range_retention_bytes": 8388608,
+        "fixed_stream_overhead_bytes": 65536,
+        "base_reservation_bytes": 39543733,
+        "assembly_reservation_bytes_per_pixel": 128,
+        "largest_logical_tile_pixels": 16384,
+        "estimated_sufficient_buffer_bytes": 59338240,
+        "admits_one_pixel": true
+      }
+    },
+    {
+      "source": "checkpoint_replay",
+      "delay_seconds": 0.025,
+      "implementation": "candidate",
+      "repetitions": 3,
+      "wire": {
+        "requests": 13,
+        "canonical_head": 4,
+        "source_head": 4,
+        "conditional_get": 1,
+        "signed_redirects": 5,
+        "redirect_hops": 8,
+        "authentication_requests": 1,
+        "source_body_bytes": 8
+      },
+      "source_bytes": {
+        "metadata": 0,
+        "payload": 0,
+        "authorization_proof": 8
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 0.4442639170010807,
+          "min": 0.44271699999808334,
+          "max": 0.48826679199919454
+        },
+        "prepare_seconds": {
+          "median": 0.306762167,
+          "min": 0.302794375,
+          "max": 0.326897167
+        },
+        "first_chunk_seconds": {
+          "median": 0.375238792,
+          "min": 0.371325583,
+          "max": 0.405783125
+        },
+        "seconds": {
+          "median": 0.436244542,
+          "min": 0.433553958,
+          "max": 0.469181167
+        },
+        "cpu_seconds": {
+          "median": 0.050202,
+          "min": 0.048913,
+          "max": 0.082825
+        },
+        "peak_rss_bytes": {
+          "median": 29933568,
+          "min": 29786112,
+          "max": 29933568
+        }
+      },
+      "working_memory": {
+        "scope": "working reservations for this prepared selection and metadata strategy; not a process RSS ceiling",
+        "budget_bytes": 67108864,
+        "prepared_total_bytes": 5629160,
+        "prepared_metadata_coordinates_plan_bytes": 2417896,
+        "authentication_checkpoint_reservation_bytes": 3211264,
+        "coordinate_prepare_reserved_bytes_peak": 4776675,
+        "metadata_preparation_sufficient_buffer_bytes": 59338240,
+        "physical_chunks": [
+          {
+            "variable": "/wse",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 36388,
+            "decoder_reservation_bytes": 25456364
+          },
+          {
+            "variable": "/wse_qual",
+            "native_chunk_bytes": 3166620,
+            "largest_selected_encoded_chunk_bytes": 18509,
+            "decoder_reservation_bytes": 25388487
+          },
+          {
+            "variable": "/wse_qual_bitwise",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 20229,
+            "decoder_reservation_bytes": 25407887
+          },
+          {
+            "variable": "/wse_uncert",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 37743,
+            "decoder_reservation_bytes": 25460429
+          },
+          {
+            "variable": "/n_wse_pix",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 11207,
+            "decoder_reservation_bytes": 25380821
+          }
+        ],
+        "limiting_decoder_variable": "/wse_uncert",
+        "decoder_scratch_bytes": 25460429,
+        "encoded_range_retention_bytes": 8388608,
+        "fixed_stream_overhead_bytes": 65536,
+        "base_reservation_bytes": 39543733,
+        "assembly_reservation_bytes_per_pixel": 128,
+        "largest_logical_tile_pixels": 16384,
+        "estimated_sufficient_buffer_bytes": 59338240,
+        "admits_one_pixel": true
+      }
+    },
+    {
+      "source": "checkpoint_replay",
+      "delay_seconds": 0.1,
+      "implementation": "baseline",
+      "repetitions": 3,
+      "wire": {
+        "requests": 15,
+        "canonical_head": 5,
+        "source_head": 5,
+        "conditional_get": 1,
+        "signed_redirects": 6,
+        "redirect_hops": 9,
+        "authentication_requests": 1,
+        "source_body_bytes": 8
+      },
+      "source_bytes": {
+        "metadata": 0,
+        "payload": 0,
+        "authorization_proof": 8
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 1.6864833340005134,
+          "min": 1.631574625000212,
+          "max": 1.6995262919990637
+        },
+        "prepare_seconds": {
+          "median": 1.231251375,
+          "min": 1.190711292,
+          "max": 1.23349525
+        },
+        "first_chunk_seconds": {
+          "median": 1.460724625,
+          "min": 1.4091099169999999,
+          "max": 1.4678153329999999
+        },
+        "seconds": {
+          "median": 1.6704783330000001,
+          "min": 1.620685,
+          "max": 1.680766916
+        },
+        "cpu_seconds": {
+          "median": 0.090704,
+          "min": 0.057687999999999996,
+          "max": 0.10234499999999999
+        },
+        "peak_rss_bytes": {
+          "median": 30015488,
+          "min": 29933568,
+          "max": 30212096
+        }
+      },
+      "working_memory": {
+        "scope": "working reservations for this prepared selection and metadata strategy; not a process RSS ceiling",
+        "budget_bytes": 67108864,
+        "prepared_total_bytes": 5629148,
+        "prepared_metadata_coordinates_plan_bytes": 2417884,
+        "authentication_checkpoint_reservation_bytes": 3211264,
+        "coordinate_prepare_reserved_bytes_peak": 4776663,
+        "metadata_preparation_sufficient_buffer_bytes": 59337856,
+        "physical_chunks": [
+          {
+            "variable": "/wse",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 36388,
+            "decoder_reservation_bytes": 25456364
+          },
+          {
+            "variable": "/wse_qual",
+            "native_chunk_bytes": 3166620,
+            "largest_selected_encoded_chunk_bytes": 18509,
+            "decoder_reservation_bytes": 25388487
+          },
+          {
+            "variable": "/wse_qual_bitwise",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 20229,
+            "decoder_reservation_bytes": 25407887
+          },
+          {
+            "variable": "/wse_uncert",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 37743,
+            "decoder_reservation_bytes": 25460429
+          },
+          {
+            "variable": "/n_wse_pix",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 11207,
+            "decoder_reservation_bytes": 25380821
+          }
+        ],
+        "limiting_decoder_variable": "/wse_uncert",
+        "decoder_scratch_bytes": 25460429,
+        "encoded_range_retention_bytes": 8388608,
+        "fixed_stream_overhead_bytes": 65536,
+        "base_reservation_bytes": 39543721,
+        "assembly_reservation_bytes_per_pixel": 128,
+        "largest_logical_tile_pixels": 16384,
+        "estimated_sufficient_buffer_bytes": 59337856,
+        "admits_one_pixel": true
+      }
+    },
+    {
+      "source": "checkpoint_replay",
+      "delay_seconds": 0.1,
+      "implementation": "candidate",
+      "repetitions": 3,
+      "wire": {
+        "requests": 13,
+        "canonical_head": 4,
+        "source_head": 4,
+        "conditional_get": 1,
+        "signed_redirects": 5,
+        "redirect_hops": 8,
+        "authentication_requests": 1,
+        "source_body_bytes": 8
+      },
+      "source_bytes": {
+        "metadata": 0,
+        "payload": 0,
+        "authorization_proof": 8
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 1.4469741670000076,
+          "min": 1.4314268750022165,
+          "max": 1.4773872920013673
+        },
+        "prepare_seconds": {
+          "median": 1.003196542,
+          "min": 0.99282025,
+          "max": 1.012669916
+        },
+        "first_chunk_seconds": {
+          "median": 1.221834167,
+          "min": 1.211886,
+          "max": 1.245620833
+        },
+        "seconds": {
+          "median": 1.434315792,
+          "min": 1.422034541,
+          "max": 1.46217325
+        },
+        "cpu_seconds": {
+          "median": 0.062847,
+          "min": 0.059671,
+          "max": 0.084907
+        },
+        "peak_rss_bytes": {
+          "median": 29868032,
+          "min": 29818880,
+          "max": 30048256
+        }
+      },
+      "working_memory": {
+        "scope": "working reservations for this prepared selection and metadata strategy; not a process RSS ceiling",
+        "budget_bytes": 67108864,
+        "prepared_total_bytes": 5629160,
+        "prepared_metadata_coordinates_plan_bytes": 2417896,
+        "authentication_checkpoint_reservation_bytes": 3211264,
+        "coordinate_prepare_reserved_bytes_peak": 4776675,
+        "metadata_preparation_sufficient_buffer_bytes": 59338240,
+        "physical_chunks": [
+          {
+            "variable": "/wse",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 36388,
+            "decoder_reservation_bytes": 25456364
+          },
+          {
+            "variable": "/wse_qual",
+            "native_chunk_bytes": 3166620,
+            "largest_selected_encoded_chunk_bytes": 18509,
+            "decoder_reservation_bytes": 25388487
+          },
+          {
+            "variable": "/wse_qual_bitwise",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 20229,
+            "decoder_reservation_bytes": 25407887
+          },
+          {
+            "variable": "/wse_uncert",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 37743,
+            "decoder_reservation_bytes": 25460429
+          },
+          {
+            "variable": "/n_wse_pix",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 11207,
+            "decoder_reservation_bytes": 25380821
+          }
+        ],
+        "limiting_decoder_variable": "/wse_uncert",
+        "decoder_scratch_bytes": 25460429,
+        "encoded_range_retention_bytes": 8388608,
+        "fixed_stream_overhead_bytes": 65536,
+        "base_reservation_bytes": 39543733,
+        "assembly_reservation_bytes_per_pixel": 128,
+        "largest_logical_tile_pixels": 16384,
+        "estimated_sufficient_buffer_bytes": 59338240,
+        "admits_one_pixel": true
+      }
+    },
+    {
+      "source": "checkpoint_warm",
+      "delay_seconds": 0,
+      "implementation": "baseline",
+      "repetitions": 3,
+      "wire": {
+        "requests": 41,
+        "canonical_head": 5,
+        "source_head": 5,
+        "conditional_get": 27,
+        "signed_redirects": 6,
+        "redirect_hops": 9,
+        "authentication_requests": 1,
+        "source_body_bytes": 453897
+      },
+      "source_bytes": {
+        "metadata": 329813,
+        "payload": 124076,
+        "authorization_proof": 8
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 0.07408750000104192,
+          "min": 0.0722837499997695,
+          "max": 0.07651095799883478
+        },
+        "prepare_seconds": {
+          "median": 0.052922334,
+          "min": 0.051165,
+          "max": 0.054165583
+        },
+        "first_chunk_seconds": {
+          "median": 0.064620792,
+          "min": 0.062600583,
+          "max": 0.06626525
+        },
+        "seconds": {
+          "median": 0.065969792,
+          "min": 0.063966666,
+          "max": 0.06786975
+        },
+        "cpu_seconds": {
+          "median": 0.055282,
+          "min": 0.053654999999999994,
+          "max": 0.055874999999999994
+        },
+        "peak_rss_bytes": {
+          "median": 30457856,
+          "min": 30392320,
+          "max": 30588928
+        }
+      },
+      "working_memory": {
+        "scope": "working reservations for this prepared selection and metadata strategy; not a process RSS ceiling",
+        "budget_bytes": 67108864,
+        "prepared_total_bytes": 5629160,
+        "prepared_metadata_coordinates_plan_bytes": 2417896,
+        "authentication_checkpoint_reservation_bytes": 3211264,
+        "coordinate_prepare_reserved_bytes_peak": 4776675,
+        "metadata_preparation_sufficient_buffer_bytes": 59338240,
+        "physical_chunks": [
+          {
+            "variable": "/wse",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 36388,
+            "decoder_reservation_bytes": 25456364
+          },
+          {
+            "variable": "/wse_qual",
+            "native_chunk_bytes": 3166620,
+            "largest_selected_encoded_chunk_bytes": 18509,
+            "decoder_reservation_bytes": 25388487
+          },
+          {
+            "variable": "/wse_qual_bitwise",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 20229,
+            "decoder_reservation_bytes": 25407887
+          },
+          {
+            "variable": "/wse_uncert",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 37743,
+            "decoder_reservation_bytes": 25460429
+          },
+          {
+            "variable": "/n_wse_pix",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 11207,
+            "decoder_reservation_bytes": 25380821
+          }
+        ],
+        "limiting_decoder_variable": "/wse_uncert",
+        "decoder_scratch_bytes": 25460429,
+        "encoded_range_retention_bytes": 8388608,
+        "fixed_stream_overhead_bytes": 65536,
+        "base_reservation_bytes": 39543733,
+        "assembly_reservation_bytes_per_pixel": 128,
+        "largest_logical_tile_pixels": 16384,
+        "estimated_sufficient_buffer_bytes": 59338240,
+        "admits_one_pixel": true
+      }
+    },
+    {
+      "source": "checkpoint_warm",
+      "delay_seconds": 0,
+      "implementation": "candidate",
+      "repetitions": 3,
+      "wire": {
+        "requests": 39,
+        "canonical_head": 4,
+        "source_head": 4,
+        "conditional_get": 27,
+        "signed_redirects": 5,
+        "redirect_hops": 8,
+        "authentication_requests": 1,
+        "source_body_bytes": 453897
+      },
+      "source_bytes": {
+        "metadata": 329813,
+        "payload": 124076,
+        "authorization_proof": 8
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 0.07597770899883471,
+          "min": 0.07138745799966273,
+          "max": 0.07611587499923189
+        },
+        "prepare_seconds": {
+          "median": 0.054048958,
+          "min": 0.050555792,
+          "max": 0.054576708
+        },
+        "first_chunk_seconds": {
+          "median": 0.065979917,
+          "min": 0.062159,
+          "max": 0.066185417
+        },
+        "seconds": {
+          "median": 0.067344667,
+          "min": 0.063477834,
+          "max": 0.0675205
+        },
+        "cpu_seconds": {
+          "median": 0.054863999999999996,
+          "min": 0.053537999999999995,
+          "max": 0.055892
+        },
+        "peak_rss_bytes": {
+          "median": 30162944,
+          "min": 30162944,
+          "max": 30228480
+        }
+      },
+      "working_memory": {
+        "scope": "working reservations for this prepared selection and metadata strategy; not a process RSS ceiling",
+        "budget_bytes": 67108864,
+        "prepared_total_bytes": 5629152,
+        "prepared_metadata_coordinates_plan_bytes": 2417888,
+        "authentication_checkpoint_reservation_bytes": 3211264,
+        "coordinate_prepare_reserved_bytes_peak": 4776667,
+        "metadata_preparation_sufficient_buffer_bytes": 59337984,
+        "physical_chunks": [
+          {
+            "variable": "/wse",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 36388,
+            "decoder_reservation_bytes": 25456364
+          },
+          {
+            "variable": "/wse_qual",
+            "native_chunk_bytes": 3166620,
+            "largest_selected_encoded_chunk_bytes": 18509,
+            "decoder_reservation_bytes": 25388487
+          },
+          {
+            "variable": "/wse_qual_bitwise",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 20229,
+            "decoder_reservation_bytes": 25407887
+          },
+          {
+            "variable": "/wse_uncert",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 37743,
+            "decoder_reservation_bytes": 25460429
+          },
+          {
+            "variable": "/n_wse_pix",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 11207,
+            "decoder_reservation_bytes": 25380821
+          }
+        ],
+        "limiting_decoder_variable": "/wse_uncert",
+        "decoder_scratch_bytes": 25460429,
+        "encoded_range_retention_bytes": 8388608,
+        "fixed_stream_overhead_bytes": 65536,
+        "base_reservation_bytes": 39543725,
+        "assembly_reservation_bytes_per_pixel": 128,
+        "largest_logical_tile_pixels": 16384,
+        "estimated_sufficient_buffer_bytes": 59337984,
+        "admits_one_pixel": true
+      }
+    },
+    {
+      "source": "checkpoint_warm",
+      "delay_seconds": 0.025,
+      "implementation": "baseline",
+      "repetitions": 3,
+      "wire": {
+        "requests": 41,
+        "canonical_head": 5,
+        "source_head": 5,
+        "conditional_get": 27,
+        "signed_redirects": 6,
+        "redirect_hops": 9,
+        "authentication_requests": 1,
+        "source_body_bytes": 453897
+      },
+      "source_bytes": {
+        "metadata": 329813,
+        "payload": 124076,
+        "authorization_proof": 8
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 1.2959925420000218,
+          "min": 1.292668042002333,
+          "max": 1.4030842920001305
+        },
+        "prepare_seconds": {
+          "median": 1.015031291,
+          "min": 1.014191959,
+          "max": 1.084077791
+        },
+        "first_chunk_seconds": {
+          "median": 1.2271,
+          "min": 1.226123,
+          "max": 1.322643916
+        },
+        "seconds": {
+          "median": 1.284482458,
+          "min": 1.284072584,
+          "max": 1.383697875
+        },
+        "cpu_seconds": {
+          "median": 0.07273,
+          "min": 0.06491999999999999,
+          "max": 0.133563
+        },
+        "peak_rss_bytes": {
+          "median": 30523392,
+          "min": 30507008,
+          "max": 30900224
+        }
+      },
+      "working_memory": {
+        "scope": "working reservations for this prepared selection and metadata strategy; not a process RSS ceiling",
+        "budget_bytes": 67108864,
+        "prepared_total_bytes": 5629160,
+        "prepared_metadata_coordinates_plan_bytes": 2417896,
+        "authentication_checkpoint_reservation_bytes": 3211264,
+        "coordinate_prepare_reserved_bytes_peak": 4776675,
+        "metadata_preparation_sufficient_buffer_bytes": 59338240,
+        "physical_chunks": [
+          {
+            "variable": "/wse",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 36388,
+            "decoder_reservation_bytes": 25456364
+          },
+          {
+            "variable": "/wse_qual",
+            "native_chunk_bytes": 3166620,
+            "largest_selected_encoded_chunk_bytes": 18509,
+            "decoder_reservation_bytes": 25388487
+          },
+          {
+            "variable": "/wse_qual_bitwise",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 20229,
+            "decoder_reservation_bytes": 25407887
+          },
+          {
+            "variable": "/wse_uncert",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 37743,
+            "decoder_reservation_bytes": 25460429
+          },
+          {
+            "variable": "/n_wse_pix",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 11207,
+            "decoder_reservation_bytes": 25380821
+          }
+        ],
+        "limiting_decoder_variable": "/wse_uncert",
+        "decoder_scratch_bytes": 25460429,
+        "encoded_range_retention_bytes": 8388608,
+        "fixed_stream_overhead_bytes": 65536,
+        "base_reservation_bytes": 39543733,
+        "assembly_reservation_bytes_per_pixel": 128,
+        "largest_logical_tile_pixels": 16384,
+        "estimated_sufficient_buffer_bytes": 59338240,
+        "admits_one_pixel": true
+      }
+    },
+    {
+      "source": "checkpoint_warm",
+      "delay_seconds": 0.025,
+      "implementation": "candidate",
+      "repetitions": 3,
+      "wire": {
+        "requests": 39,
+        "canonical_head": 4,
+        "source_head": 4,
+        "conditional_get": 27,
+        "signed_redirects": 5,
+        "redirect_hops": 8,
+        "authentication_requests": 1,
+        "source_body_bytes": 453897
+      },
+      "source_bytes": {
+        "metadata": 329813,
+        "payload": 124076,
+        "authorization_proof": 8
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 1.210030292000738,
+          "min": 1.2072895829987829,
+          "max": 1.5563243750002584
+        },
+        "prepare_seconds": {
+          "median": 0.92951075,
+          "min": 0.923660917,
+          "max": 0.994786458
+        },
+        "first_chunk_seconds": {
+          "median": 1.143335917,
+          "min": 1.139941459,
+          "max": 1.474322375
+        },
+        "seconds": {
+          "median": 1.200876292,
+          "min": 1.197702625,
+          "max": 1.540216333
+        },
+        "cpu_seconds": {
+          "median": 0.067939,
+          "min": 0.06346399999999999,
+          "max": 0.12093699999999999
+        },
+        "peak_rss_bytes": {
+          "median": 30294016,
+          "min": 30179328,
+          "max": 30408704
+        }
+      },
+      "working_memory": {
+        "scope": "working reservations for this prepared selection and metadata strategy; not a process RSS ceiling",
+        "budget_bytes": 67108864,
+        "prepared_total_bytes": 5629160,
+        "prepared_metadata_coordinates_plan_bytes": 2417896,
+        "authentication_checkpoint_reservation_bytes": 3211264,
+        "coordinate_prepare_reserved_bytes_peak": 4776675,
+        "metadata_preparation_sufficient_buffer_bytes": 59338240,
+        "physical_chunks": [
+          {
+            "variable": "/wse",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 36388,
+            "decoder_reservation_bytes": 25456364
+          },
+          {
+            "variable": "/wse_qual",
+            "native_chunk_bytes": 3166620,
+            "largest_selected_encoded_chunk_bytes": 18509,
+            "decoder_reservation_bytes": 25388487
+          },
+          {
+            "variable": "/wse_qual_bitwise",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 20229,
+            "decoder_reservation_bytes": 25407887
+          },
+          {
+            "variable": "/wse_uncert",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 37743,
+            "decoder_reservation_bytes": 25460429
+          },
+          {
+            "variable": "/n_wse_pix",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 11207,
+            "decoder_reservation_bytes": 25380821
+          }
+        ],
+        "limiting_decoder_variable": "/wse_uncert",
+        "decoder_scratch_bytes": 25460429,
+        "encoded_range_retention_bytes": 8388608,
+        "fixed_stream_overhead_bytes": 65536,
+        "base_reservation_bytes": 39543733,
+        "assembly_reservation_bytes_per_pixel": 128,
+        "largest_logical_tile_pixels": 16384,
+        "estimated_sufficient_buffer_bytes": 59338240,
+        "admits_one_pixel": true
+      }
+    },
+    {
+      "source": "checkpoint_warm",
+      "delay_seconds": 0.1,
+      "implementation": "baseline",
+      "repetitions": 3,
+      "wire": {
+        "requests": 41,
+        "canonical_head": 5,
+        "source_head": 5,
+        "conditional_get": 27,
+        "signed_redirects": 6,
+        "redirect_hops": 9,
+        "authentication_requests": 1,
+        "source_body_bytes": 453897
+      },
+      "source_bytes": {
+        "metadata": 329813,
+        "payload": 124076,
+        "authorization_proof": 8
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 4.485266040999704,
+          "min": 4.35054237499935,
+          "max": 4.51179970800149
+        },
+        "prepare_seconds": {
+          "median": 3.486921209,
+          "min": 3.402261292,
+          "max": 3.510958875
+        },
+        "first_chunk_seconds": {
+          "median": 4.254359417,
+          "min": 4.130510375,
+          "max": 4.283853625
+        },
+        "seconds": {
+          "median": 4.470576792,
+          "min": 4.339814667,
+          "max": 4.494829708
+        },
+        "cpu_seconds": {
+          "median": 0.150785,
+          "min": 0.074856,
+          "max": 0.159819
+        },
+        "peak_rss_bytes": {
+          "median": 30621696,
+          "min": 30605312,
+          "max": 30834688
+        }
+      },
+      "working_memory": {
+        "scope": "working reservations for this prepared selection and metadata strategy; not a process RSS ceiling",
+        "budget_bytes": 67108864,
+        "prepared_total_bytes": 5629148,
+        "prepared_metadata_coordinates_plan_bytes": 2417884,
+        "authentication_checkpoint_reservation_bytes": 3211264,
+        "coordinate_prepare_reserved_bytes_peak": 4776663,
+        "metadata_preparation_sufficient_buffer_bytes": 59337856,
+        "physical_chunks": [
+          {
+            "variable": "/wse",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 36388,
+            "decoder_reservation_bytes": 25456364
+          },
+          {
+            "variable": "/wse_qual",
+            "native_chunk_bytes": 3166620,
+            "largest_selected_encoded_chunk_bytes": 18509,
+            "decoder_reservation_bytes": 25388487
+          },
+          {
+            "variable": "/wse_qual_bitwise",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 20229,
+            "decoder_reservation_bytes": 25407887
+          },
+          {
+            "variable": "/wse_uncert",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 37743,
+            "decoder_reservation_bytes": 25460429
+          },
+          {
+            "variable": "/n_wse_pix",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 11207,
+            "decoder_reservation_bytes": 25380821
+          }
+        ],
+        "limiting_decoder_variable": "/wse_uncert",
+        "decoder_scratch_bytes": 25460429,
+        "encoded_range_retention_bytes": 8388608,
+        "fixed_stream_overhead_bytes": 65536,
+        "base_reservation_bytes": 39543721,
+        "assembly_reservation_bytes_per_pixel": 128,
+        "largest_logical_tile_pixels": 16384,
+        "estimated_sufficient_buffer_bytes": 59337856,
+        "admits_one_pixel": true
+      }
+    },
+    {
+      "source": "checkpoint_warm",
+      "delay_seconds": 0.1,
+      "implementation": "candidate",
+      "repetitions": 3,
+      "wire": {
+        "requests": 39,
+        "canonical_head": 4,
+        "source_head": 4,
+        "conditional_get": 27,
+        "signed_redirects": 5,
+        "redirect_hops": 8,
+        "authentication_requests": 1,
+        "source_body_bytes": 453897
+      },
+      "source_bytes": {
+        "metadata": 329813,
+        "payload": 124076,
+        "authorization_proof": 8
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 4.311988707999262,
+          "min": 4.286514667001029,
+          "max": 4.447951999998622
+        },
+        "prepare_seconds": {
+          "median": 3.269135208,
+          "min": 3.222054,
+          "max": 3.286118041
+        },
+        "first_chunk_seconds": {
+          "median": 4.071295875,
+          "min": 4.052896958,
+          "max": 4.226448833
+        },
+        "seconds": {
+          "median": 4.292110791,
+          "min": 4.267984583,
+          "max": 4.4386244999999995
+        },
+        "cpu_seconds": {
+          "median": 0.165927,
+          "min": 0.128351,
+          "max": 0.182738
+        },
+        "peak_rss_bytes": {
+          "median": 30081024,
+          "min": 30064640,
+          "max": 30425088
+        }
+      },
+      "working_memory": {
+        "scope": "working reservations for this prepared selection and metadata strategy; not a process RSS ceiling",
+        "budget_bytes": 67108864,
+        "prepared_total_bytes": 5629160,
+        "prepared_metadata_coordinates_plan_bytes": 2417896,
+        "authentication_checkpoint_reservation_bytes": 3211264,
+        "coordinate_prepare_reserved_bytes_peak": 4776675,
+        "metadata_preparation_sufficient_buffer_bytes": 59338240,
+        "physical_chunks": [
+          {
+            "variable": "/wse",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 36388,
+            "decoder_reservation_bytes": 25456364
+          },
+          {
+            "variable": "/wse_qual",
+            "native_chunk_bytes": 3166620,
+            "largest_selected_encoded_chunk_bytes": 18509,
+            "decoder_reservation_bytes": 25388487
+          },
+          {
+            "variable": "/wse_qual_bitwise",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 20229,
+            "decoder_reservation_bytes": 25407887
+          },
+          {
+            "variable": "/wse_uncert",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 37743,
+            "decoder_reservation_bytes": 25460429
+          },
+          {
+            "variable": "/n_wse_pix",
+            "native_chunk_bytes": 3168400,
+            "largest_selected_encoded_chunk_bytes": 11207,
+            "decoder_reservation_bytes": 25380821
+          }
+        ],
+        "limiting_decoder_variable": "/wse_uncert",
+        "decoder_scratch_bytes": 25460429,
+        "encoded_range_retention_bytes": 8388608,
+        "fixed_stream_overhead_bytes": 65536,
+        "base_reservation_bytes": 39543733,
+        "assembly_reservation_bytes_per_pixel": 128,
+        "largest_logical_tile_pixels": 16384,
+        "estimated_sufficient_buffer_bytes": 59338240,
+        "admits_one_pixel": true
+      }
+    },
+    {
+      "source": "cog",
+      "delay_seconds": 0,
+      "implementation": "baseline",
+      "repetitions": 3,
+      "wire": {
+        "requests": 12,
+        "canonical_head": 5,
+        "source_head": 5,
+        "conditional_get": 7,
+        "signed_redirects": 0,
+        "redirect_hops": 0,
+        "authentication_requests": 0,
+        "source_body_bytes": 6615,
+        "metadata_body_bytes": 3840,
+        "payload_body_bytes": 2775
+      },
+      "source_bytes": {
+        "metadata": 3840,
+        "payload": 2775,
+        "authorization_proof": 0
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 0.5191589590000021,
+          "min": 0.5153128329999959,
+          "max": 0.5419689579999982
+        },
+        "prepare_seconds": {
+          "median": 0.164929209,
+          "min": 0.161522,
+          "max": 0.169071125
+        },
+        "first_chunk_seconds": {
+          "median": 0.25196275,
+          "min": 0.248761291,
+          "max": 0.259591875
+        },
+        "seconds": {
+          "median": 0.511158167,
+          "min": 0.507571875,
+          "max": 0.530067792
+        },
+        "cpu_seconds": {
+          "median": 0.044349,
+          "min": 0.044091,
+          "max": 0.04786699999999999
+        },
+        "peak_rss_bytes": {
+          "median": 47628288,
+          "min": 47628288,
+          "max": 47628288
+        }
+      },
+      "working_memory": {
+        "buffer_bytes": 16777216,
+        "reserved_bytes_peak": 150781,
+        "reader_state_reserved_bytes": 0,
+        "prepared_native_metadata_bytes": 3840,
+        "prepared_v3_metadata_index_bytes": 0,
+        "prepared_hdf5_bytes": 0,
+        "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention"
+      }
+    },
+    {
+      "source": "cog",
+      "delay_seconds": 0,
+      "implementation": "candidate",
+      "repetitions": 3,
+      "wire": {
+        "requests": 12,
+        "canonical_head": 5,
+        "source_head": 5,
+        "conditional_get": 7,
+        "signed_redirects": 0,
+        "redirect_hops": 0,
+        "authentication_requests": 0,
+        "source_body_bytes": 6615,
+        "metadata_body_bytes": 3840,
+        "payload_body_bytes": 2775
+      },
+      "source_bytes": {
+        "metadata": 3840,
+        "payload": 2775,
+        "authorization_proof": 0
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 0.5202687499999996,
+          "min": 0.5145666669999969,
+          "max": 0.5248250839999997
+        },
+        "prepare_seconds": {
+          "median": 0.163509584,
+          "min": 0.162200292,
+          "max": 0.167343958
+        },
+        "first_chunk_seconds": {
+          "median": 0.250360334,
+          "min": 0.247897583,
+          "max": 0.255731542
+        },
+        "seconds": {
+          "median": 0.513574709,
+          "min": 0.507855208,
+          "max": 0.51817425
+        },
+        "cpu_seconds": {
+          "median": 0.042957999999999996,
+          "min": 0.042075,
+          "max": 0.043125
+        },
+        "peak_rss_bytes": {
+          "median": 47628288,
+          "min": 47628288,
+          "max": 47628288
+        }
+      },
+      "working_memory": {
+        "buffer_bytes": 16777216,
+        "reserved_bytes_peak": 150781,
+        "reader_state_reserved_bytes": 0,
+        "prepared_native_metadata_bytes": 3840,
+        "prepared_v3_metadata_index_bytes": 0,
+        "prepared_hdf5_bytes": 0,
+        "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention"
+      }
+    },
+    {
+      "source": "cog",
+      "delay_seconds": 0.025,
+      "implementation": "baseline",
+      "repetitions": 3,
+      "wire": {
+        "requests": 12,
+        "canonical_head": 5,
+        "source_head": 5,
+        "conditional_get": 7,
+        "signed_redirects": 0,
+        "redirect_hops": 0,
+        "authentication_requests": 0,
+        "source_body_bytes": 6615,
+        "metadata_body_bytes": 3840,
+        "payload_body_bytes": 2775
+      },
+      "source_bytes": {
+        "metadata": 3840,
+        "payload": 2775,
+        "authorization_proof": 0
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 0.7480492079999976,
+          "min": 0.7457478740000028,
+          "max": 0.752800458000003
+        },
+        "prepare_seconds": {
+          "median": 0.191419959,
+          "min": 0.190303375,
+          "max": 0.191468
+        },
+        "first_chunk_seconds": {
+          "median": 0.338908541,
+          "min": 0.338848417,
+          "max": 0.341566875
+        },
+        "seconds": {
+          "median": 0.739923708,
+          "min": 0.736364208,
+          "max": 0.744463417
+        },
+        "cpu_seconds": {
+          "median": 0.04896299999999999,
+          "min": 0.047980999999999996,
+          "max": 0.049256
+        },
+        "peak_rss_bytes": {
+          "median": 47628288,
+          "min": 47628288,
+          "max": 47628288
+        }
+      },
+      "working_memory": {
+        "buffer_bytes": 16777216,
+        "reserved_bytes_peak": 150781,
+        "reader_state_reserved_bytes": 0,
+        "prepared_native_metadata_bytes": 3840,
+        "prepared_v3_metadata_index_bytes": 0,
+        "prepared_hdf5_bytes": 0,
+        "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention"
+      }
+    },
+    {
+      "source": "cog",
+      "delay_seconds": 0.025,
+      "implementation": "candidate",
+      "repetitions": 3,
+      "wire": {
+        "requests": 12,
+        "canonical_head": 5,
+        "source_head": 5,
+        "conditional_get": 7,
+        "signed_redirects": 0,
+        "redirect_hops": 0,
+        "authentication_requests": 0,
+        "source_body_bytes": 6615,
+        "metadata_body_bytes": 3840,
+        "payload_body_bytes": 2775
+      },
+      "source_bytes": {
+        "metadata": 3840,
+        "payload": 2775,
+        "authorization_proof": 0
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 0.7495307089999983,
+          "min": 0.7428031670000053,
+          "max": 0.7513068339999975
+        },
+        "prepare_seconds": {
+          "median": 0.193163792,
+          "min": 0.187928625,
+          "max": 0.194256834
+        },
+        "first_chunk_seconds": {
+          "median": 0.341246583,
+          "min": 0.335260417,
+          "max": 0.345601417
+        },
+        "seconds": {
+          "median": 0.73975525,
+          "min": 0.736225334,
+          "max": 0.743223376
+        },
+        "cpu_seconds": {
+          "median": 0.046002,
+          "min": 0.04527,
+          "max": 0.046091999999999994
+        },
+        "peak_rss_bytes": {
+          "median": 47628288,
+          "min": 47628288,
+          "max": 47628288
+        }
+      },
+      "working_memory": {
+        "buffer_bytes": 16777216,
+        "reserved_bytes_peak": 150781,
+        "reader_state_reserved_bytes": 0,
+        "prepared_native_metadata_bytes": 3840,
+        "prepared_v3_metadata_index_bytes": 0,
+        "prepared_hdf5_bytes": 0,
+        "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention"
+      }
+    },
+    {
+      "source": "cog",
+      "delay_seconds": 0.1,
+      "implementation": "baseline",
+      "repetitions": 3,
+      "wire": {
+        "requests": 12,
+        "canonical_head": 5,
+        "source_head": 5,
+        "conditional_get": 7,
+        "signed_redirects": 0,
+        "redirect_hops": 0,
+        "authentication_requests": 0,
+        "source_body_bytes": 6615,
+        "metadata_body_bytes": 3840,
+        "payload_body_bytes": 2775
+      },
+      "source_bytes": {
+        "metadata": 3840,
+        "payload": 2775,
+        "authorization_proof": 0
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 1.6057031259999945,
+          "min": 1.5899201670000025,
+          "max": 1.6119296669999983
+        },
+        "prepare_seconds": {
+          "median": 0.39274575,
+          "min": 0.391269875,
+          "max": 0.39467875
+        },
+        "first_chunk_seconds": {
+          "median": 0.75485175,
+          "min": 0.745681376,
+          "max": 0.758035042
+        },
+        "seconds": {
+          "median": 1.5961155420000002,
+          "min": 1.5810628759999998,
+          "max": 1.604556667
+        },
+        "cpu_seconds": {
+          "median": 0.051907,
+          "min": 0.05021,
+          "max": 0.058381999999999996
+        },
+        "peak_rss_bytes": {
+          "median": 47628288,
+          "min": 47628288,
+          "max": 47759360
+        }
+      },
+      "working_memory": {
+        "buffer_bytes": 16777216,
+        "reserved_bytes_peak": 150781,
+        "reader_state_reserved_bytes": 0,
+        "prepared_native_metadata_bytes": 3840,
+        "prepared_v3_metadata_index_bytes": 0,
+        "prepared_hdf5_bytes": 0,
+        "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention"
+      }
+    },
+    {
+      "source": "cog",
+      "delay_seconds": 0.1,
+      "implementation": "candidate",
+      "repetitions": 3,
+      "wire": {
+        "requests": 12,
+        "canonical_head": 5,
+        "source_head": 5,
+        "conditional_get": 7,
+        "signed_redirects": 0,
+        "redirect_hops": 0,
+        "authentication_requests": 0,
+        "source_body_bytes": 6615,
+        "metadata_body_bytes": 3840,
+        "payload_body_bytes": 2775
+      },
+      "source_bytes": {
+        "metadata": 3840,
+        "payload": 2775,
+        "authorization_proof": 0
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 1.6051064179999983,
+          "min": 1.6039356679999912,
+          "max": 1.609169958999999
+        },
+        "prepare_seconds": {
+          "median": 0.394892667,
+          "min": 0.394510792,
+          "max": 0.397955375
+        },
+        "first_chunk_seconds": {
+          "median": 0.756009667,
+          "min": 0.755476417,
+          "max": 0.7598605
+        },
+        "seconds": {
+          "median": 1.596046209,
+          "min": 1.593659959,
+          "max": 1.601228334
+        },
+        "cpu_seconds": {
+          "median": 0.05741099999999999,
+          "min": 0.053436,
+          "max": 0.05812099999999999
+        },
+        "peak_rss_bytes": {
+          "median": 47628288,
+          "min": 47628288,
+          "max": 47759360
+        }
+      },
+      "working_memory": {
+        "buffer_bytes": 16777216,
+        "reserved_bytes_peak": 150781,
+        "reader_state_reserved_bytes": 0,
+        "prepared_native_metadata_bytes": 3840,
+        "prepared_v3_metadata_index_bytes": 0,
+        "prepared_hdf5_bytes": 0,
+        "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention"
+      }
+    },
+    {
+      "source": "hdf5",
+      "delay_seconds": 0,
+      "implementation": "baseline",
+      "repetitions": 3,
+      "wire": {
+        "requests": 31,
+        "canonical_head": 5,
+        "source_head": 5,
+        "conditional_get": 26,
+        "signed_redirects": 0,
+        "redirect_hops": 0,
+        "authentication_requests": 0,
+        "source_body_bytes": 71210,
+        "metadata_body_bytes": 69650,
+        "payload_body_bytes": 1560
+      },
+      "source_bytes": {
+        "metadata": 69650,
+        "payload": 1560,
+        "authorization_proof": 0
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 0.9610077920000002,
+          "min": 0.9602067920000001,
+          "max": 0.9610079590000002
+        },
+        "prepare_seconds": {
+          "median": 0.597297917,
+          "min": 0.593146251,
+          "max": 0.601620417
+        },
+        "first_chunk_seconds": {
+          "median": 0.642016833,
+          "min": 0.638738834,
+          "max": 0.646981
+        },
+        "seconds": {
+          "median": 0.946352876,
+          "min": 0.945077792,
+          "max": 0.949196292
+        },
+        "cpu_seconds": {
+          "median": 0.055382,
+          "min": 0.05399999999999999,
+          "max": 0.05845499999999999
+        },
+        "peak_rss_bytes": {
+          "median": 47366144,
+          "min": 23367680,
+          "max": 47366144
+        }
+      },
+      "working_memory": {
+        "buffer_bytes": 33554432,
+        "reserved_bytes_peak": 1185477,
+        "reader_state_reserved_bytes": 0,
+        "prepared_native_metadata_bytes": 546492,
+        "prepared_v3_metadata_index_bytes": 0,
+        "prepared_hdf5_bytes": 546492,
+        "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention"
+      }
+    },
+    {
+      "source": "hdf5",
+      "delay_seconds": 0,
+      "implementation": "candidate",
+      "repetitions": 3,
+      "wire": {
+        "requests": 30,
+        "canonical_head": 4,
+        "source_head": 4,
+        "conditional_get": 26,
+        "signed_redirects": 0,
+        "redirect_hops": 0,
+        "authentication_requests": 0,
+        "source_body_bytes": 71210,
+        "metadata_body_bytes": 69650,
+        "payload_body_bytes": 1560
+      },
+      "source_bytes": {
+        "metadata": 69650,
+        "payload": 1560,
+        "authorization_proof": 0
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 0.9563007920000004,
+          "min": 0.9486400829999999,
+          "max": 0.9753064579999995
+        },
+        "prepare_seconds": {
+          "median": 0.596614334,
+          "min": 0.585355542,
+          "max": 0.610070083
+        },
+        "first_chunk_seconds": {
+          "median": 0.640148167,
+          "min": 0.629324,
+          "max": 0.653502208
+        },
+        "seconds": {
+          "median": 0.944856001,
+          "min": 0.936368708,
+          "max": 0.956983
+        },
+        "cpu_seconds": {
+          "median": 0.055696999999999997,
+          "min": 0.055635000000000004,
+          "max": 0.056135
+        },
+        "peak_rss_bytes": {
+          "median": 47124480,
+          "min": 46465024,
+          "max": 47366144
+        }
+      },
+      "working_memory": {
+        "buffer_bytes": 33554432,
+        "reserved_bytes_peak": 1185477,
+        "reader_state_reserved_bytes": 0,
+        "prepared_native_metadata_bytes": 546492,
+        "prepared_v3_metadata_index_bytes": 0,
+        "prepared_hdf5_bytes": 546492,
+        "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention"
+      }
+    },
+    {
+      "source": "hdf5",
+      "delay_seconds": 0.025,
+      "implementation": "baseline",
+      "repetitions": 3,
+      "wire": {
+        "requests": 31,
+        "canonical_head": 5,
+        "source_head": 5,
+        "conditional_get": 26,
+        "signed_redirects": 0,
+        "redirect_hops": 0,
+        "authentication_requests": 0,
+        "source_body_bytes": 71210,
+        "metadata_body_bytes": 69650,
+        "payload_body_bytes": 1560
+      },
+      "source_bytes": {
+        "metadata": 69650,
+        "payload": 1560,
+        "authorization_proof": 0
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 1.6294235429999997,
+          "min": 1.6270004590000005,
+          "max": 1.6390264170000002
+        },
+        "prepare_seconds": {
+          "median": 0.995410917,
+          "min": 0.993611,
+          "max": 0.998879626
+        },
+        "first_chunk_seconds": {
+          "median": 1.096264417,
+          "min": 1.094399501,
+          "max": 1.099090418
+        },
+        "seconds": {
+          "median": 1.618346168,
+          "min": 1.614630375,
+          "max": 1.626702668
+        },
+        "cpu_seconds": {
+          "median": 0.064632,
+          "min": 0.056937999999999996,
+          "max": 0.069241
+        },
+        "peak_rss_bytes": {
+          "median": 47366144,
+          "min": 47366144,
+          "max": 47366144
+        }
+      },
+      "working_memory": {
+        "buffer_bytes": 33554432,
+        "reserved_bytes_peak": 1185473,
+        "reader_state_reserved_bytes": 0,
+        "prepared_native_metadata_bytes": 546488,
+        "prepared_v3_metadata_index_bytes": 0,
+        "prepared_hdf5_bytes": 546488,
+        "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention"
+      }
+    },
+    {
+      "source": "hdf5",
+      "delay_seconds": 0.025,
+      "implementation": "candidate",
+      "repetitions": 3,
+      "wire": {
+        "requests": 30,
+        "canonical_head": 4,
+        "source_head": 4,
+        "conditional_get": 26,
+        "signed_redirects": 0,
+        "redirect_hops": 0,
+        "authentication_requests": 0,
+        "source_body_bytes": 71210,
+        "metadata_body_bytes": 69650,
+        "payload_body_bytes": 1560
+      },
+      "source_bytes": {
+        "metadata": 69650,
+        "payload": 1560,
+        "authorization_proof": 0
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 1.6205312920000008,
+          "min": 1.6050893339999988,
+          "max": 2.2009663760000002
+        },
+        "prepare_seconds": {
+          "median": 0.977466167,
+          "min": 0.969334751,
+          "max": 0.978981168
+        },
+        "first_chunk_seconds": {
+          "median": 1.074542793,
+          "min": 1.070219334,
+          "max": 1.079093167
+        },
+        "seconds": {
+          "median": 1.5943045009999999,
+          "min": 1.591330835,
+          "max": 1.6057366260000001
+        },
+        "cpu_seconds": {
+          "median": 0.066097,
+          "min": 0.064612,
+          "max": 0.07072099999999999
+        },
+        "peak_rss_bytes": {
+          "median": 47366144,
+          "min": 47366144,
+          "max": 47366144
+        }
+      },
+      "working_memory": {
+        "buffer_bytes": 33554432,
+        "reserved_bytes_peak": 1185477,
+        "reader_state_reserved_bytes": 0,
+        "prepared_native_metadata_bytes": 546492,
+        "prepared_v3_metadata_index_bytes": 0,
+        "prepared_hdf5_bytes": 546492,
+        "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention"
+      }
+    },
+    {
+      "source": "hdf5",
+      "delay_seconds": 0.1,
+      "implementation": "baseline",
+      "repetitions": 3,
+      "wire": {
+        "requests": 31,
+        "canonical_head": 5,
+        "source_head": 5,
+        "conditional_get": 26,
+        "signed_redirects": 0,
+        "redirect_hops": 0,
+        "authentication_requests": 0,
+        "source_body_bytes": 71210,
+        "metadata_body_bytes": 69650,
+        "payload_body_bytes": 1560
+      },
+      "source_bytes": {
+        "metadata": 69650,
+        "payload": 1560,
+        "authorization_proof": 0
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 3.499264127,
+          "min": 3.497599584999996,
+          "max": 3.5125678339999986
+        },
+        "prepare_seconds": {
+          "median": 2.110046376,
+          "min": 2.107249834,
+          "max": 2.116770041
+        },
+        "first_chunk_seconds": {
+          "median": 2.361482626,
+          "min": 2.356221834,
+          "max": 2.367119792
+        },
+        "seconds": {
+          "median": 3.48574421,
+          "min": 3.485603835,
+          "max": 3.498788959
+        },
+        "cpu_seconds": {
+          "median": 0.074933,
+          "min": 0.06615499999999999,
+          "max": 0.07843
+        },
+        "peak_rss_bytes": {
+          "median": 47366144,
+          "min": 47366144,
+          "max": 47366144
+        }
+      },
+      "working_memory": {
+        "buffer_bytes": 33554432,
+        "reserved_bytes_peak": 1185473,
+        "reader_state_reserved_bytes": 0,
+        "prepared_native_metadata_bytes": 546488,
+        "prepared_v3_metadata_index_bytes": 0,
+        "prepared_hdf5_bytes": 546488,
+        "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention"
+      }
+    },
+    {
+      "source": "hdf5",
+      "delay_seconds": 0.1,
+      "implementation": "candidate",
+      "repetitions": 3,
+      "wire": {
+        "requests": 30,
+        "canonical_head": 4,
+        "source_head": 4,
+        "conditional_get": 26,
+        "signed_redirects": 0,
+        "redirect_hops": 0,
+        "authentication_requests": 0,
+        "source_body_bytes": 71210,
+        "metadata_body_bytes": 69650,
+        "payload_body_bytes": 1560
+      },
+      "source_bytes": {
+        "metadata": 69650,
+        "payload": 1560,
+        "authorization_proof": 0
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 3.3948671270000013,
+          "min": 3.3907285430000016,
+          "max": 3.408840168000001
+        },
+        "prepare_seconds": {
+          "median": 2.002346959,
+          "min": 1.999357501,
+          "max": 2.007236793
+        },
+        "first_chunk_seconds": {
+          "median": 2.256126792,
+          "min": 2.25397371,
+          "max": 2.261068918
+        },
+        "seconds": {
+          "median": 3.383490252,
+          "min": 3.380115043,
+          "max": 3.395895459
+        },
+        "cpu_seconds": {
+          "median": 0.071655,
+          "min": 0.066399,
+          "max": 0.074736
+        },
+        "peak_rss_bytes": {
+          "median": 47366144,
+          "min": 47366144,
+          "max": 47366144
+        }
+      },
+      "working_memory": {
+        "buffer_bytes": 33554432,
+        "reserved_bytes_peak": 1185469,
+        "reader_state_reserved_bytes": 0,
+        "prepared_native_metadata_bytes": 546484,
+        "prepared_v3_metadata_index_bytes": 0,
+        "prepared_hdf5_bytes": 546484,
+        "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention"
+      }
+    },
+    {
+      "source": "three_source_complete_workflow",
+      "delay_seconds": 0,
+      "implementation": "baseline",
+      "repetitions": 3,
+      "wire": {
+        "requests": 352,
+        "canonical_head": 48,
+        "source_head": 48,
+        "conditional_get": 208,
+        "signed_redirects": 60,
+        "redirect_hops": 96,
+        "authentication_requests": 12,
+        "source_body_bytes": 9469345
+      },
+      "source_bytes": {
+        "metadata": 3064185,
+        "payload": 6405136,
+        "authorization_proof": 24
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 1.8376632920044358,
+          "min": 1.8334828350016323,
+          "max": 1.9342411249999714
+        },
+        "cpu_seconds": {
+          "median": 1.6709360000000009,
+          "min": 1.6618029999999993,
+          "max": 1.688365
+        },
+        "peak_rss_bytes": {
+          "median": 45514752,
+          "min": 44810240,
+          "max": 45596672
+        }
+      },
+      "working_memory": null
+    },
+    {
+      "source": "three_source_complete_workflow",
+      "delay_seconds": 0,
+      "implementation": "candidate",
+      "repetitions": 3,
+      "wire": {
+        "requests": 328,
+        "canonical_head": 36,
+        "source_head": 36,
+        "conditional_get": 208,
+        "signed_redirects": 48,
+        "redirect_hops": 84,
+        "authentication_requests": 12,
+        "source_body_bytes": 9469345
+      },
+      "source_bytes": {
+        "metadata": 3064185,
+        "payload": 6405136,
+        "authorization_proof": 24
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 1.8441327090004052,
+          "min": 1.8362740430056874,
+          "max": 2.1904429999995045
+        },
+        "cpu_seconds": {
+          "median": 1.6633350000000002,
+          "min": 1.6583400000000013,
+          "max": 1.6711429999999998
+        },
+        "peak_rss_bytes": {
+          "median": 44564480,
+          "min": 44531712,
+          "max": 45039616
+        }
+      },
+      "working_memory": null
+    },
+    {
+      "source": "three_source_complete_workflow",
+      "delay_seconds": 0.025,
+      "implementation": "baseline",
+      "repetitions": 3,
+      "wire": {
+        "requests": 352,
+        "canonical_head": 48,
+        "source_head": 48,
+        "conditional_get": 208,
+        "signed_redirects": 60,
+        "redirect_hops": 96,
+        "authentication_requests": 12,
+        "source_body_bytes": 9469345
+      },
+      "source_bytes": {
+        "metadata": 3064185,
+        "payload": 6405136,
+        "authorization_proof": 24
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 12.585180375001073,
+          "min": 12.060420832996897,
+          "max": 12.660944124996604
+        },
+        "cpu_seconds": {
+          "median": 1.9955210000000005,
+          "min": 1.7193749999999985,
+          "max": 2.0415909999999995
+        },
+        "peak_rss_bytes": {
+          "median": 45596672,
+          "min": 44875776,
+          "max": 46120960
+        }
+      },
+      "working_memory": null
+    },
+    {
+      "source": "three_source_complete_workflow",
+      "delay_seconds": 0.025,
+      "implementation": "candidate",
+      "repetitions": 3,
+      "wire": {
+        "requests": 328,
+        "canonical_head": 36,
+        "source_head": 36,
+        "conditional_get": 208,
+        "signed_redirects": 48,
+        "redirect_hops": 84,
+        "authentication_requests": 12,
+        "source_body_bytes": 9469345
+      },
+      "source_bytes": {
+        "metadata": 3064185,
+        "payload": 6405136,
+        "authorization_proof": 24
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 11.39094200099862,
+          "min": 11.355271249994985,
+          "max": 11.8603557489987
+        },
+        "cpu_seconds": {
+          "median": 1.7413610000000015,
+          "min": 1.7143140000000012,
+          "max": 1.933697000000005
+        },
+        "peak_rss_bytes": {
+          "median": 48660480,
+          "min": 45006848,
+          "max": 48873472
+        }
+      },
+      "working_memory": null
+    },
+    {
+      "source": "three_source_complete_workflow",
+      "delay_seconds": 0.1,
+      "implementation": "baseline",
+      "repetitions": 3,
+      "wire": {
+        "requests": 352,
+        "canonical_head": 48,
+        "source_head": 48,
+        "conditional_get": 208,
+        "signed_redirects": 60,
+        "redirect_hops": 96,
+        "authentication_requests": 12,
+        "source_body_bytes": 9469345
+      },
+      "source_bytes": {
+        "metadata": 3064185,
+        "payload": 6405136,
+        "authorization_proof": 24
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 39.31130549900263,
+          "min": 39.10201604100075,
+          "max": 39.44420983400414
+        },
+        "cpu_seconds": {
+          "median": 2.211393999999993,
+          "min": 2.1272160000000033,
+          "max": 2.2941659999999993
+        },
+        "peak_rss_bytes": {
+          "median": 46809088,
+          "min": 46055424,
+          "max": 50954240
+        }
+      },
+      "working_memory": null
+    },
+    {
+      "source": "three_source_complete_workflow",
+      "delay_seconds": 0.1,
+      "implementation": "candidate",
+      "repetitions": 3,
+      "wire": {
+        "requests": 328,
+        "canonical_head": 36,
+        "source_head": 36,
+        "conditional_get": 208,
+        "signed_redirects": 48,
+        "redirect_hops": 84,
+        "authentication_requests": 12,
+        "source_body_bytes": 9469345
+      },
+      "source_bytes": {
+        "metadata": 3064185,
+        "payload": 6405136,
+        "authorization_proof": 24
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 36.32979633300056,
+          "min": 35.950149666998186,
+          "max": 36.80915783299861
+        },
+        "cpu_seconds": {
+          "median": 1.952250000000002,
+          "min": 1.7746299999999984,
+          "max": 2.177577999999997
+        },
+        "peak_rss_bytes": {
+          "median": 50069504,
+          "min": 49512448,
+          "max": 51478528
+        }
+      },
+      "working_memory": null
+    },
+    {
+      "source": "three_source_fetch",
+      "delay_seconds": 0,
+      "implementation": "baseline",
+      "repetitions": 3,
+      "wire": {
+        "requests": 156,
+        "canonical_head": 24,
+        "source_head": 24,
+        "conditional_get": 84,
+        "signed_redirects": 30,
+        "redirect_hops": 48,
+        "authentication_requests": 6,
+        "source_body_bytes": 7426555
+      },
+      "source_bytes": {
+        "metadata": 1021395,
+        "payload": 6405136,
+        "authorization_proof": 24
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 0.26162699999986216,
+          "min": 0.23349070900076185,
+          "max": 0.29903508300049
+        },
+        "cpu_seconds": {
+          "median": 0.17487200000000014,
+          "min": 0.17253500000000027,
+          "max": 0.191688
+        },
+        "peak_rss_bytes": {
+          "median": 45514752,
+          "min": 44810240,
+          "max": 45596672
+        },
+        "first_observation_seconds": {
+          "median": 0.072020708,
+          "min": 0.069060666,
+          "max": 0.075975583
+        },
+        "final_source_sweep_seconds": {
+          "median": 0.0295835,
+          "min": 0.024221542,
+          "max": 0.041375792
+        },
+        "working_reservation_peak_bytes": {
+          "median": 71834549,
+          "min": 71834545,
+          "max": 71834549
+        }
+      },
+      "working_memory": null
+    },
+    {
+      "source": "three_source_fetch",
+      "delay_seconds": 0,
+      "implementation": "candidate",
+      "repetitions": 3,
+      "wire": {
+        "requests": 144,
+        "canonical_head": 18,
+        "source_head": 18,
+        "conditional_get": 84,
+        "signed_redirects": 24,
+        "redirect_hops": 42,
+        "authentication_requests": 6,
+        "source_body_bytes": 7426555
+      },
+      "source_bytes": {
+        "metadata": 1021395,
+        "payload": 6405136,
+        "authorization_proof": 24
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 0.27013649999935296,
+          "min": 0.26485729200067,
+          "max": 0.27476575000036974
+        },
+        "cpu_seconds": {
+          "median": 0.17760200000000043,
+          "min": 0.1755360000000009,
+          "max": 0.17830799999999963
+        },
+        "peak_rss_bytes": {
+          "median": 44564480,
+          "min": 44531712,
+          "max": 45039616
+        },
+        "first_observation_seconds": {
+          "median": 0.074320792,
+          "min": 0.073757458,
+          "max": 0.07623475
+        },
+        "final_source_sweep_seconds": {
+          "median": 0.028796292,
+          "min": 0.028396666,
+          "max": 0.031733834
+        },
+        "working_reservation_peak_bytes": {
+          "median": 71834549,
+          "min": 71834533,
+          "max": 71834549
+        }
+      },
+      "working_memory": null
+    },
+    {
+      "source": "three_source_fetch",
+      "delay_seconds": 0.025,
+      "implementation": "baseline",
+      "repetitions": 3,
+      "wire": {
+        "requests": 156,
+        "canonical_head": 24,
+        "source_head": 24,
+        "conditional_get": 84,
+        "signed_redirects": 30,
+        "redirect_hops": 48,
+        "authentication_requests": 6,
+        "source_body_bytes": 7426555
+      },
+      "source_bytes": {
+        "metadata": 1021395,
+        "payload": 6405136,
+        "authorization_proof": 24
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 5.070739750000939,
+          "min": 4.762973124998098,
+          "max": 5.184850417001144
+        },
+        "cpu_seconds": {
+          "median": 0.35188399999999853,
+          "min": 0.20397199999999804,
+          "max": 0.4209550000000015
+        },
+        "peak_rss_bytes": {
+          "median": 45596672,
+          "min": 44875776,
+          "max": 46120960
+        },
+        "first_observation_seconds": {
+          "median": 1.272809375,
+          "min": 1.226314458,
+          "max": 1.339007083
+        },
+        "final_source_sweep_seconds": {
+          "median": 1.049731958,
+          "min": 0.964322708,
+          "max": 1.082047458
+        },
+        "working_reservation_peak_bytes": {
+          "median": 71834549,
+          "min": 71834545,
+          "max": 71834549
+        }
+      },
+      "working_memory": null
+    },
+    {
+      "source": "three_source_fetch",
+      "delay_seconds": 0.025,
+      "implementation": "candidate",
+      "repetitions": 3,
+      "wire": {
+        "requests": 144,
+        "canonical_head": 18,
+        "source_head": 18,
+        "conditional_get": 84,
+        "signed_redirects": 24,
+        "redirect_hops": 42,
+        "authentication_requests": 6,
+        "source_body_bytes": 7426555
+      },
+      "source_bytes": {
+        "metadata": 1021395,
+        "payload": 6405136,
+        "authorization_proof": 24
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 4.427046208998945,
+          "min": 4.426265292000608,
+          "max": 4.6200327499973355
+        },
+        "cpu_seconds": {
+          "median": 0.20980399999999944,
+          "min": 0.20291100000000084,
+          "max": 0.25510300000000297
+        },
+        "peak_rss_bytes": {
+          "median": 48660480,
+          "min": 45006848,
+          "max": 48873472
+        },
+        "first_observation_seconds": {
+          "median": 1.165278958,
+          "min": 1.15789575,
+          "max": 1.210466333
+        },
+        "final_source_sweep_seconds": {
+          "median": 0.821523833,
+          "min": 0.81809475,
+          "max": 0.881584458
+        },
+        "working_reservation_peak_bytes": {
+          "median": 71834549,
+          "min": 71834549,
+          "max": 71834549
+        }
+      },
+      "working_memory": null
+    },
+    {
+      "source": "three_source_fetch",
+      "delay_seconds": 0.1,
+      "implementation": "baseline",
+      "repetitions": 3,
+      "wire": {
+        "requests": 156,
+        "canonical_head": 24,
+        "source_head": 24,
+        "conditional_get": 84,
+        "signed_redirects": 30,
+        "redirect_hops": 48,
+        "authentication_requests": 6,
+        "source_body_bytes": 7426555
+      },
+      "source_bytes": {
+        "metadata": 1021395,
+        "payload": 6405136,
+        "authorization_proof": 24
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 16.991621791999933,
+          "min": 16.827342374999716,
+          "max": 17.042836458000238
+        },
+        "cpu_seconds": {
+          "median": 0.5192290000000006,
+          "min": 0.4212830000000003,
+          "max": 0.5320009999999984
+        },
+        "peak_rss_bytes": {
+          "median": 46809088,
+          "min": 46055424,
+          "max": 50954240
+        },
+        "first_observation_seconds": {
+          "median": 4.319854375,
+          "min": 4.295468291,
+          "max": 4.344356292
+        },
+        "final_source_sweep_seconds": {
+          "median": 3.536207417,
+          "min": 3.5308859999999997,
+          "max": 3.564422333
+        },
+        "working_reservation_peak_bytes": {
+          "median": 71834549,
+          "min": 71834537,
+          "max": 71834549
+        }
+      },
+      "working_memory": null
+    },
+    {
+      "source": "three_source_fetch",
+      "delay_seconds": 0.1,
+      "implementation": "candidate",
+      "repetitions": 3,
+      "wire": {
+        "requests": 144,
+        "canonical_head": 18,
+        "source_head": 18,
+        "conditional_get": 84,
+        "signed_redirects": 24,
+        "redirect_hops": 42,
+        "authentication_requests": 6,
+        "source_body_bytes": 7426555
+      },
+      "source_bytes": {
+        "metadata": 1021395,
+        "payload": 6405136,
+        "authorization_proof": 24
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 15.449556750001648,
+          "min": 15.18264383299902,
+          "max": 15.493020041001728
+        },
+        "cpu_seconds": {
+          "median": 0.3287740000000001,
+          "min": 0.22004800000000468,
+          "max": 0.368941999999997
+        },
+        "peak_rss_bytes": {
+          "median": 50069504,
+          "min": 49512448,
+          "max": 51478528
+        },
+        "first_observation_seconds": {
+          "median": 4.08859175,
+          "min": 4.021075083,
+          "max": 4.089043791
+        },
+        "final_source_sweep_seconds": {
+          "median": 2.857686208,
+          "min": 2.799362667,
+          "max": 2.858596416
+        },
+        "working_reservation_peak_bytes": {
+          "median": 71834533,
+          "min": 71834533,
+          "max": 71834545
+        }
+      },
+      "working_memory": null
+    },
+    {
+      "source": "three_source_generation",
+      "delay_seconds": 0,
+      "implementation": "baseline",
+      "repetitions": 3,
+      "wire": {
+        "requests": 104,
+        "canonical_head": 15,
+        "source_head": 15,
+        "conditional_get": 62,
+        "signed_redirects": 18,
+        "redirect_hops": 27,
+        "authentication_requests": 3,
+        "source_body_bytes": 1021395
+      },
+      "source_bytes": {
+        "metadata": 1021395,
+        "payload": 0,
+        "authorization_proof": 0
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 1.4695504590017663,
+          "min": 1.458835083001759,
+          "max": 1.4887456670003303
+        },
+        "generation_seconds": {
+          "median": 1.45714175,
+          "min": 1.4502315000000001,
+          "max": 1.469719291
+        },
+        "cpu_seconds": {
+          "median": 1.415223,
+          "min": 1.413791,
+          "max": 1.424487
+        },
+        "peak_rss_bytes": {
+          "median": 28016640,
+          "min": 27852800,
+          "max": 28065792
+        }
+      },
+      "working_memory": null
+    },
+    {
+      "source": "three_source_generation",
+      "delay_seconds": 0,
+      "implementation": "candidate",
+      "repetitions": 3,
+      "wire": {
+        "requests": 98,
+        "canonical_head": 12,
+        "source_head": 12,
+        "conditional_get": 62,
+        "signed_redirects": 15,
+        "redirect_hops": 24,
+        "authentication_requests": 3,
+        "source_body_bytes": 1021395
+      },
+      "source_bytes": {
+        "metadata": 1021395,
+        "payload": 0,
+        "authorization_proof": 0
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 1.4570434170018416,
+          "min": 1.4509990420010581,
+          "max": 1.618411333001859
+        },
+        "generation_seconds": {
+          "median": 1.4483515,
+          "min": 1.442382209,
+          "max": 1.451806709
+        },
+        "cpu_seconds": {
+          "median": 1.414188,
+          "min": 1.4103459999999999,
+          "max": 1.415902
+        },
+        "peak_rss_bytes": {
+          "median": 27623424,
+          "min": 27607040,
+          "max": 27918336
+        }
+      },
+      "working_memory": null
+    },
+    {
+      "source": "three_source_generation",
+      "delay_seconds": 0.025,
+      "implementation": "baseline",
+      "repetitions": 3,
+      "wire": {
+        "requests": 104,
+        "canonical_head": 15,
+        "source_head": 15,
+        "conditional_get": 62,
+        "signed_redirects": 18,
+        "redirect_hops": 27,
+        "authentication_requests": 3,
+        "source_body_bytes": 1021395
+      },
+      "source_bytes": {
+        "metadata": 1021395,
+        "payload": 0,
+        "authorization_proof": 0
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 4.538204957996641,
+          "min": 4.528236082998774,
+          "max": 4.596228750000591
+        },
+        "generation_seconds": {
+          "median": 4.526808375,
+          "min": 4.51994375,
+          "max": 4.579580583
+        },
+        "cpu_seconds": {
+          "median": 1.447414,
+          "min": 1.424962,
+          "max": 1.485055
+        },
+        "peak_rss_bytes": {
+          "median": 27934720,
+          "min": 27721728,
+          "max": 28000256
+        }
+      },
+      "working_memory": null
+    },
+    {
+      "source": "three_source_generation",
+      "delay_seconds": 0.025,
+      "implementation": "candidate",
+      "repetitions": 3,
+      "wire": {
+        "requests": 98,
+        "canonical_head": 12,
+        "source_head": 12,
+        "conditional_get": 62,
+        "signed_redirects": 15,
+        "redirect_hops": 24,
+        "authentication_requests": 3,
+        "source_body_bytes": 1021395
+      },
+      "source_bytes": {
+        "metadata": 1021395,
+        "payload": 0,
+        "authorization_proof": 0
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 4.356236999999965,
+          "min": 4.337238999996771,
+          "max": 4.473461833000329
+        },
+        "generation_seconds": {
+          "median": 4.347508958,
+          "min": 4.328204292,
+          "max": 4.4589089170000005
+        },
+        "cpu_seconds": {
+          "median": 1.443326,
+          "min": 1.42495,
+          "max": 1.509313
+        },
+        "peak_rss_bytes": {
+          "median": 28180480,
+          "min": 27918336,
+          "max": 28295168
+        }
+      },
+      "working_memory": null
+    },
+    {
+      "source": "three_source_generation",
+      "delay_seconds": 0.1,
+      "implementation": "baseline",
+      "repetitions": 3,
+      "wire": {
+        "requests": 104,
+        "canonical_head": 15,
+        "source_head": 15,
+        "conditional_get": 62,
+        "signed_redirects": 18,
+        "redirect_hops": 27,
+        "authentication_requests": 3,
+        "source_body_bytes": 1021395
+      },
+      "source_bytes": {
+        "metadata": 1021395,
+        "payload": 0,
+        "authorization_proof": 0
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 12.528090417003114,
+          "min": 12.40107849999913,
+          "max": 12.545502541001042
+        },
+        "generation_seconds": {
+          "median": 12.509148083,
+          "min": 12.375123042,
+          "max": 12.530418708
+        },
+        "cpu_seconds": {
+          "median": 1.547774,
+          "min": 1.5054979999999998,
+          "max": 1.572258
+        },
+        "peak_rss_bytes": {
+          "median": 28147712,
+          "min": 27836416,
+          "max": 28246016
+        }
+      },
+      "working_memory": null
+    },
+    {
+      "source": "three_source_generation",
+      "delay_seconds": 0.1,
+      "implementation": "candidate",
+      "repetitions": 3,
+      "wire": {
+        "requests": 98,
+        "canonical_head": 12,
+        "source_head": 12,
+        "conditional_get": 62,
+        "signed_redirects": 15,
+        "redirect_hops": 24,
+        "authentication_requests": 3,
+        "source_body_bytes": 1021395
+      },
+      "source_bytes": {
+        "metadata": 1021395,
+        "payload": 0,
+        "authorization_proof": 0
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 11.741990916998475,
+          "min": 11.732942708000337,
+          "max": 11.984767958998418
+        },
+        "generation_seconds": {
+          "median": 11.73173125,
+          "min": 11.723041875,
+          "max": 11.950665792
+        },
+        "cpu_seconds": {
+          "median": 1.472051,
+          "min": 1.4516,
+          "max": 1.595394
+        },
+        "peak_rss_bytes": {
+          "median": 28246016,
+          "min": 28213248,
+          "max": 28409856
+        }
+      },
+      "working_memory": null
+    },
+    {
+      "source": "three_source_plan",
+      "delay_seconds": 0,
+      "implementation": "baseline",
+      "repetitions": 3,
+      "wire": {
+        "requests": 92,
+        "canonical_head": 9,
+        "source_head": 9,
+        "conditional_get": 62,
+        "signed_redirects": 12,
+        "redirect_hops": 21,
+        "authentication_requests": 3,
+        "source_body_bytes": 1021395
+      },
+      "source_bytes": {
+        "metadata": 1021395,
+        "payload": 0,
+        "authorization_proof": 0
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 0.1304416669991042,
+          "min": 0.11720120900281472,
+          "max": 0.1464603749991511
+        },
+        "cpu_seconds": {
+          "median": 0.07391400000000048,
+          "min": 0.0731399999999991,
+          "max": 0.08145399999999996
+        },
+        "peak_rss_bytes": {
+          "median": 25460736,
+          "min": 24723456,
+          "max": 26378240
+        }
+      },
+      "working_memory": null
+    },
+    {
+      "source": "three_source_plan",
+      "delay_seconds": 0,
+      "implementation": "candidate",
+      "repetitions": 3,
+      "wire": {
+        "requests": 86,
+        "canonical_head": 6,
+        "source_head": 6,
+        "conditional_get": 62,
+        "signed_redirects": 9,
+        "redirect_hops": 18,
+        "authentication_requests": 3,
+        "source_body_bytes": 1021395
+      },
+      "source_bytes": {
+        "metadata": 1021395,
+        "payload": 0,
+        "authorization_proof": 0
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 0.11836791699897731,
+          "min": 0.11437333400317584,
+          "max": 0.30189516699829255
+        },
+        "cpu_seconds": {
+          "median": 0.07245800000000058,
+          "min": 0.07154499999999975,
+          "max": 0.07693300000000022
+        },
+        "peak_rss_bytes": {
+          "median": 25575424,
+          "min": 24723456,
+          "max": 25640960
+        }
+      },
+      "working_memory": null
+    },
+    {
+      "source": "three_source_plan",
+      "delay_seconds": 0.025,
+      "implementation": "baseline",
+      "repetitions": 3,
+      "wire": {
+        "requests": 92,
+        "canonical_head": 9,
+        "source_head": 9,
+        "conditional_get": 62,
+        "signed_redirects": 12,
+        "redirect_hops": 21,
+        "authentication_requests": 3,
+        "source_body_bytes": 1021395
+      },
+      "source_bytes": {
+        "metadata": 1021395,
+        "payload": 0,
+        "authorization_proof": 0
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 2.9182118749995425,
+          "min": 2.7692116250000254,
+          "max": 2.9378887499988195
+        },
+        "cpu_seconds": {
+          "median": 0.158582000000002,
+          "min": 0.09044100000000055,
+          "max": 0.17322199999999777
+        },
+        "peak_rss_bytes": {
+          "median": 26181632,
+          "min": 25411584,
+          "max": 26394624
+        }
+      },
+      "working_memory": null
+    },
+    {
+      "source": "three_source_plan",
+      "delay_seconds": 0.025,
+      "implementation": "candidate",
+      "repetitions": 3,
+      "wire": {
+        "requests": 86,
+        "canonical_head": 6,
+        "source_head": 6,
+        "conditional_get": 62,
+        "signed_redirects": 9,
+        "redirect_hops": 18,
+        "authentication_requests": 3,
+        "source_body_bytes": 1021395
+      },
+      "source_bytes": {
+        "metadata": 1021395,
+        "payload": 0,
+        "authorization_proof": 0
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 2.607658791999711,
+          "min": 2.5917669579976064,
+          "max": 2.7668611660010356
+        },
+        "cpu_seconds": {
+          "median": 0.08823100000000195,
+          "min": 0.08645300000000034,
+          "max": 0.16928100000000224
+        },
+        "peak_rss_bytes": {
+          "median": 25706496,
+          "min": 25493504,
+          "max": 26394624
+        }
+      },
+      "working_memory": null
+    },
+    {
+      "source": "three_source_plan",
+      "delay_seconds": 0.1,
+      "implementation": "baseline",
+      "repetitions": 3,
+      "wire": {
+        "requests": 92,
+        "canonical_head": 9,
+        "source_head": 9,
+        "conditional_get": 62,
+        "signed_redirects": 12,
+        "redirect_hops": 21,
+        "authentication_requests": 3,
+        "source_body_bytes": 1021395
+      },
+      "source_bytes": {
+        "metadata": 1021395,
+        "payload": 0,
+        "authorization_proof": 0
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 9.873595166001905,
+          "min": 9.722966500001348,
+          "max": 9.924497625001095
+        },
+        "cpu_seconds": {
+          "median": 0.20043500000000325,
+          "min": 0.1071349999999951,
+          "max": 0.22716299999999867
+        },
+        "peak_rss_bytes": {
+          "median": 26001408,
+          "min": 24920064,
+          "max": 26574848
+        }
+      },
+      "working_memory": null
+    },
+    {
+      "source": "three_source_plan",
+      "delay_seconds": 0.1,
+      "implementation": "candidate",
+      "repetitions": 3,
+      "wire": {
+        "requests": 86,
+        "canonical_head": 6,
+        "source_head": 6,
+        "conditional_get": 62,
+        "signed_redirects": 9,
+        "redirect_hops": 18,
+        "authentication_requests": 3,
+        "source_body_bytes": 1021395
+      },
+      "source_bytes": {
+        "metadata": 1021395,
+        "payload": 0,
+        "authorization_proof": 0
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 9.147296874998574,
+          "min": 9.025514917000692,
+          "max": 9.331369832998462
+        },
+        "cpu_seconds": {
+          "median": 0.15142500000000192,
+          "min": 0.10298199999999369,
+          "max": 0.2132419999999997
+        },
+        "peak_rss_bytes": {
+          "median": 25083904,
+          "min": 25034752,
+          "max": 26017792
+        }
+      },
+      "working_memory": null
+    },
+    {
+      "source": "zarr_v2",
+      "delay_seconds": 0,
+      "implementation": "baseline",
+      "repetitions": 3,
+      "wire": {
+        "requests": 78,
+        "canonical_head": 52,
+        "source_head": 52,
+        "conditional_get": 4,
+        "signed_redirects": 0,
+        "redirect_hops": 0,
+        "authentication_requests": 0,
+        "source_body_bytes": 15744,
+        "metadata_body_bytes": 4584,
+        "payload_body_bytes": 11160
+      },
+      "source_bytes": {
+        "metadata": 4584,
+        "payload": 11160,
+        "authorization_proof": 0
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 0.8451830420000022,
+          "min": 0.8298301239999972,
+          "max": 0.8461447090000007
+        },
+        "prepare_seconds": {
+          "median": 0.737852626,
+          "min": 0.723911583,
+          "max": 0.743782501
+        },
+        "first_chunk_seconds": {
+          "median": 0.787276376,
+          "min": 0.769620708,
+          "max": 0.789385417
+        },
+        "seconds": {
+          "median": 0.836786792,
+          "min": 0.817777666,
+          "max": 0.838379459
+        },
+        "cpu_seconds": {
+          "median": 0.058447,
+          "min": 0.057136,
+          "max": 0.060830999999999996
+        },
+        "peak_rss_bytes": {
+          "median": 47759360,
+          "min": 47759360,
+          "max": 47759360
+        }
+      },
+      "working_memory": {
+        "buffer_bytes": 1048576,
+        "reserved_bytes_peak": 60776,
+        "reader_state_reserved_bytes": 14016,
+        "prepared_native_metadata_bytes": 0,
+        "prepared_v3_metadata_index_bytes": 0,
+        "prepared_hdf5_bytes": 0,
+        "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention"
+      }
+    },
+    {
+      "source": "zarr_v2",
+      "delay_seconds": 0,
+      "implementation": "candidate",
+      "repetitions": 3,
+      "wire": {
+        "requests": 78,
+        "canonical_head": 52,
+        "source_head": 52,
+        "conditional_get": 4,
+        "signed_redirects": 0,
+        "redirect_hops": 0,
+        "authentication_requests": 0,
+        "source_body_bytes": 15744,
+        "metadata_body_bytes": 4584,
+        "payload_body_bytes": 11160
+      },
+      "source_bytes": {
+        "metadata": 4584,
+        "payload": 11160,
+        "authorization_proof": 0
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 0.8322655839999982,
+          "min": 0.8282040419999959,
+          "max": 0.8472170839999933
+        },
+        "prepare_seconds": {
+          "median": 0.728890708,
+          "min": 0.725118209,
+          "max": 0.739101167
+        },
+        "first_chunk_seconds": {
+          "median": 0.774897334,
+          "min": 0.771068542,
+          "max": 0.787216292
+        },
+        "seconds": {
+          "median": 0.824879,
+          "min": 0.819758792,
+          "max": 0.838499833
+        },
+        "cpu_seconds": {
+          "median": 0.059017999999999994,
+          "min": 0.057752,
+          "max": 0.06254599999999999
+        },
+        "peak_rss_bytes": {
+          "median": 47759360,
+          "min": 47759360,
+          "max": 47759360
+        }
+      },
+      "working_memory": {
+        "buffer_bytes": 1048576,
+        "reserved_bytes_peak": 60776,
+        "reader_state_reserved_bytes": 14016,
+        "prepared_native_metadata_bytes": 0,
+        "prepared_v3_metadata_index_bytes": 0,
+        "prepared_hdf5_bytes": 0,
+        "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention"
+      }
+    },
+    {
+      "source": "zarr_v2",
+      "delay_seconds": 0.025,
+      "implementation": "baseline",
+      "repetitions": 3,
+      "wire": {
+        "requests": 78,
+        "canonical_head": 52,
+        "source_head": 52,
+        "conditional_get": 4,
+        "signed_redirects": 0,
+        "redirect_hops": 0,
+        "authentication_requests": 0,
+        "source_body_bytes": 15744,
+        "metadata_body_bytes": 4584,
+        "payload_body_bytes": 11160
+      },
+      "source_bytes": {
+        "metadata": 4584,
+        "payload": 11160,
+        "authorization_proof": 0
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 2.251025376000001,
+          "min": 2.208865584999998,
+          "max": 2.2519443349999904
+        },
+        "prepare_seconds": {
+          "median": 1.621726709,
+          "min": 1.607090292,
+          "max": 1.628747334
+        },
+        "first_chunk_seconds": {
+          "median": 1.926138168,
+          "min": 1.9002139169999999,
+          "max": 1.935814959
+        },
+        "seconds": {
+          "median": 2.237952251,
+          "min": 2.199488293,
+          "max": 2.241837251
+        },
+        "cpu_seconds": {
+          "median": 0.076989,
+          "min": 0.075775,
+          "max": 0.082355
+        },
+        "peak_rss_bytes": {
+          "median": 47759360,
+          "min": 47759360,
+          "max": 47759360
+        }
+      },
+      "working_memory": {
+        "buffer_bytes": 1048576,
+        "reserved_bytes_peak": 60776,
+        "reader_state_reserved_bytes": 14016,
+        "prepared_native_metadata_bytes": 0,
+        "prepared_v3_metadata_index_bytes": 0,
+        "prepared_hdf5_bytes": 0,
+        "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention"
+      }
+    },
+    {
+      "source": "zarr_v2",
+      "delay_seconds": 0.025,
+      "implementation": "candidate",
+      "repetitions": 3,
+      "wire": {
+        "requests": 78,
+        "canonical_head": 52,
+        "source_head": 52,
+        "conditional_get": 4,
+        "signed_redirects": 0,
+        "redirect_hops": 0,
+        "authentication_requests": 0,
+        "source_body_bytes": 15744,
+        "metadata_body_bytes": 4584,
+        "payload_body_bytes": 11160
+      },
+      "source_bytes": {
+        "metadata": 4584,
+        "payload": 11160,
+        "authorization_proof": 0
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 2.238653959000004,
+          "min": 2.2359288760000027,
+          "max": 2.2536525419999975
+        },
+        "prepare_seconds": {
+          "median": 1.629726376,
+          "min": 1.6235790429999999,
+          "max": 1.641477917
+        },
+        "first_chunk_seconds": {
+          "median": 1.931934126,
+          "min": 1.926740626,
+          "max": 1.9369276260000001
+        },
+        "seconds": {
+          "median": 2.230174585,
+          "min": 2.227323335,
+          "max": 2.241555584
+        },
+        "cpu_seconds": {
+          "median": 0.073806,
+          "min": 0.068499,
+          "max": 0.074963
+        },
+        "peak_rss_bytes": {
+          "median": 47759360,
+          "min": 47759360,
+          "max": 47759360
+        }
+      },
+      "working_memory": {
+        "buffer_bytes": 1048576,
+        "reserved_bytes_peak": 60776,
+        "reader_state_reserved_bytes": 14016,
+        "prepared_native_metadata_bytes": 0,
+        "prepared_v3_metadata_index_bytes": 0,
+        "prepared_hdf5_bytes": 0,
+        "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention"
+      }
+    },
+    {
+      "source": "zarr_v2",
+      "delay_seconds": 0.1,
+      "implementation": "baseline",
+      "repetitions": 3,
+      "wire": {
+        "requests": 78,
+        "canonical_head": 52,
+        "source_head": 52,
+        "conditional_get": 4,
+        "signed_redirects": 0,
+        "redirect_hops": 0,
+        "authentication_requests": 0,
+        "source_body_bytes": 15744,
+        "metadata_body_bytes": 4584,
+        "payload_body_bytes": 11160
+      },
+      "source_bytes": {
+        "metadata": 4584,
+        "payload": 11160,
+        "authorization_proof": 0
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 5.9606035030000015,
+          "min": 5.950452503000008,
+          "max": 5.970639961000018
+        },
+        "prepare_seconds": {
+          "median": 3.990535627,
+          "min": 3.987430544,
+          "max": 4.000638169
+        },
+        "first_chunk_seconds": {
+          "median": 4.975030669,
+          "min": 4.962912044,
+          "max": 4.977282919
+        },
+        "seconds": {
+          "median": 5.953161252,
+          "min": 5.942257045,
+          "max": 5.958836628
+        },
+        "cpu_seconds": {
+          "median": 0.072474,
+          "min": 0.07198199999999999,
+          "max": 0.072645
+        },
+        "peak_rss_bytes": {
+          "median": 47759360,
+          "min": 47759360,
+          "max": 47759360
+        }
+      },
+      "working_memory": {
+        "buffer_bytes": 1048576,
+        "reserved_bytes_peak": 60776,
+        "reader_state_reserved_bytes": 14016,
+        "prepared_native_metadata_bytes": 0,
+        "prepared_v3_metadata_index_bytes": 0,
+        "prepared_hdf5_bytes": 0,
+        "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention"
+      }
+    },
+    {
+      "source": "zarr_v2",
+      "delay_seconds": 0.1,
+      "implementation": "candidate",
+      "repetitions": 3,
+      "wire": {
+        "requests": 78,
+        "canonical_head": 52,
+        "source_head": 52,
+        "conditional_get": 4,
+        "signed_redirects": 0,
+        "redirect_hops": 0,
+        "authentication_requests": 0,
+        "source_body_bytes": 15744,
+        "metadata_body_bytes": 4584,
+        "payload_body_bytes": 11160
+      },
+      "source_bytes": {
+        "metadata": 4584,
+        "payload": 11160,
+        "authorization_proof": 0
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 5.968125919000002,
+          "min": 5.948885752999999,
+          "max": 5.976453837000008
+        },
+        "prepare_seconds": {
+          "median": 3.999490544,
+          "min": 3.980776335,
+          "max": 4.005189919
+        },
+        "first_chunk_seconds": {
+          "median": 4.978708086,
+          "min": 4.960667044,
+          "max": 4.985065002
+        },
+        "seconds": {
+          "median": 5.958460836,
+          "min": 5.938940086,
+          "max": 5.96742517
+        },
+        "cpu_seconds": {
+          "median": 0.072241,
+          "min": 0.06987399999999999,
+          "max": 0.078379
+        },
+        "peak_rss_bytes": {
+          "median": 47759360,
+          "min": 47759360,
+          "max": 47759360
+        }
+      },
+      "working_memory": {
+        "buffer_bytes": 1048576,
+        "reserved_bytes_peak": 60776,
+        "reader_state_reserved_bytes": 14016,
+        "prepared_native_metadata_bytes": 0,
+        "prepared_v3_metadata_index_bytes": 0,
+        "prepared_hdf5_bytes": 0,
+        "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention"
+      }
+    },
+    {
+      "source": "zarr_v3",
+      "delay_seconds": 0,
+      "implementation": "baseline",
+      "repetitions": 3,
+      "wire": {
+        "requests": 223,
+        "canonical_head": 177,
+        "source_head": 177,
+        "conditional_get": 34,
+        "signed_redirects": 0,
+        "redirect_hops": 0,
+        "authentication_requests": 0,
+        "source_body_bytes": 7414,
+        "metadata_body_bytes": 5441,
+        "payload_body_bytes": 1973
+      },
+      "source_bytes": {
+        "metadata": 5441,
+        "payload": 1973,
+        "authorization_proof": 0
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 1.3761265839999908,
+          "min": 1.3747900840000113,
+          "max": 1.3956712089999996
+        },
+        "prepare_seconds": {
+          "median": 0.599517459,
+          "min": 0.553546042,
+          "max": 0.599609417
+        },
+        "first_chunk_seconds": {
+          "median": 0.608176251,
+          "min": 0.562063751,
+          "max": 0.608465709
+        },
+        "seconds": {
+          "median": 1.364835209,
+          "min": 1.362963668,
+          "max": 1.374000543
+        },
+        "cpu_seconds": {
+          "median": 0.12473599999999999,
+          "min": 0.114017,
+          "max": 0.135813
+        },
+        "peak_rss_bytes": {
+          "median": 49463296,
+          "min": 48676864,
+          "max": 49463296
+        }
+      },
+      "working_memory": {
+        "buffer_bytes": 67108864,
+        "reserved_bytes_peak": 42393,
+        "reader_state_reserved_bytes": 0,
+        "prepared_native_metadata_bytes": 41345,
+        "prepared_v3_metadata_index_bytes": 41345,
+        "prepared_hdf5_bytes": 0,
+        "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention"
+      }
+    },
+    {
+      "source": "zarr_v3",
+      "delay_seconds": 0,
+      "implementation": "candidate",
+      "repetitions": 3,
+      "wire": {
+        "requests": 223,
+        "canonical_head": 177,
+        "source_head": 177,
+        "conditional_get": 34,
+        "signed_redirects": 0,
+        "redirect_hops": 0,
+        "authentication_requests": 0,
+        "source_body_bytes": 7414,
+        "metadata_body_bytes": 5441,
+        "payload_body_bytes": 1973
+      },
+      "source_bytes": {
+        "metadata": 5441,
+        "payload": 1973,
+        "authorization_proof": 0
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 1.3852880839999955,
+          "min": 1.3196958759999973,
+          "max": 1.4266215419999924
+        },
+        "prepare_seconds": {
+          "median": 0.59716925,
+          "min": 0.544068083,
+          "max": 0.599844458
+        },
+        "first_chunk_seconds": {
+          "median": 0.6054415,
+          "min": 0.552741167,
+          "max": 0.608544625
+        },
+        "seconds": {
+          "median": 1.371276334,
+          "min": 1.3062582090000001,
+          "max": 1.414452292
+        },
+        "cpu_seconds": {
+          "median": 0.130174,
+          "min": 0.121195,
+          "max": 0.132212
+        },
+        "peak_rss_bytes": {
+          "median": 49332224,
+          "min": 48939008,
+          "max": 49463296
+        }
+      },
+      "working_memory": {
+        "buffer_bytes": 67108864,
+        "reserved_bytes_peak": 42393,
+        "reader_state_reserved_bytes": 0,
+        "prepared_native_metadata_bytes": 41345,
+        "prepared_v3_metadata_index_bytes": 41345,
+        "prepared_hdf5_bytes": 0,
+        "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention"
+      }
+    },
+    {
+      "source": "zarr_v3",
+      "delay_seconds": 0.025,
+      "implementation": "baseline",
+      "repetitions": 3,
+      "wire": {
+        "requests": 223,
+        "canonical_head": 177,
+        "source_head": 177,
+        "conditional_get": 34,
+        "signed_redirects": 0,
+        "redirect_hops": 0,
+        "authentication_requests": 0,
+        "source_body_bytes": 7414,
+        "metadata_body_bytes": 5441,
+        "payload_body_bytes": 1973
+      },
+      "source_bytes": {
+        "metadata": 5441,
+        "payload": 1973,
+        "authorization_proof": 0
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 4.738497085999995,
+          "min": 4.7217201269999975,
+          "max": 4.738625544000001
+        },
+        "prepare_seconds": {
+          "median": 2.059512584,
+          "min": 2.057224918,
+          "max": 2.079648126
+        },
+        "first_chunk_seconds": {
+          "median": 2.76843396,
+          "min": 2.7427237509999998,
+          "max": 2.782047585
+        },
+        "seconds": {
+          "median": 4.720662252,
+          "min": 4.707620919,
+          "max": 4.721363586
+        },
+        "cpu_seconds": {
+          "median": 0.207858,
+          "min": 0.197706,
+          "max": 0.221599
+        },
+        "peak_rss_bytes": {
+          "median": 49725440,
+          "min": 49463296,
+          "max": 49725440
+        }
+      },
+      "working_memory": {
+        "buffer_bytes": 67108864,
+        "reserved_bytes_peak": 42393,
+        "reader_state_reserved_bytes": 0,
+        "prepared_native_metadata_bytes": 41345,
+        "prepared_v3_metadata_index_bytes": 41345,
+        "prepared_hdf5_bytes": 0,
+        "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention"
+      }
+    },
+    {
+      "source": "zarr_v3",
+      "delay_seconds": 0.025,
+      "implementation": "candidate",
+      "repetitions": 3,
+      "wire": {
+        "requests": 223,
+        "canonical_head": 177,
+        "source_head": 177,
+        "conditional_get": 34,
+        "signed_redirects": 0,
+        "redirect_hops": 0,
+        "authentication_requests": 0,
+        "source_body_bytes": 7414,
+        "metadata_body_bytes": 5441,
+        "payload_body_bytes": 1973
+      },
+      "source_bytes": {
+        "metadata": 5441,
+        "payload": 1973,
+        "authorization_proof": 0
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 4.7506679600000155,
+          "min": 4.730789835999985,
+          "max": 4.750833585000009
+        },
+        "prepare_seconds": {
+          "median": 2.080330085,
+          "min": 2.064011584,
+          "max": 2.081238168
+        },
+        "first_chunk_seconds": {
+          "median": 2.774215043,
+          "min": 2.761487792,
+          "max": 2.783613168
+        },
+        "seconds": {
+          "median": 4.731616503,
+          "min": 4.713449336,
+          "max": 4.731944502
+        },
+        "cpu_seconds": {
+          "median": 0.222134,
+          "min": 0.211492,
+          "max": 0.247193
+        },
+        "peak_rss_bytes": {
+          "median": 49463296,
+          "min": 49463296,
+          "max": 49725440
+        }
+      },
+      "working_memory": {
+        "buffer_bytes": 67108864,
+        "reserved_bytes_peak": 42393,
+        "reader_state_reserved_bytes": 0,
+        "prepared_native_metadata_bytes": 41345,
+        "prepared_v3_metadata_index_bytes": 41345,
+        "prepared_hdf5_bytes": 0,
+        "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention"
+      }
+    },
+    {
+      "source": "zarr_v3",
+      "delay_seconds": 0.1,
+      "implementation": "baseline",
+      "repetitions": 3,
+      "wire": {
+        "requests": 223,
+        "canonical_head": 177,
+        "source_head": 177,
+        "conditional_get": 34,
+        "signed_redirects": 0,
+        "redirect_hops": 0,
+        "authentication_requests": 0,
+        "source_body_bytes": 7414,
+        "metadata_body_bytes": 5441,
+        "payload_body_bytes": 1973
+      },
+      "source_bytes": {
+        "metadata": 5441,
+        "payload": 1973,
+        "authorization_proof": 0
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 13.831100756000012,
+          "min": 13.829924005999999,
+          "max": 13.831178005000027
+        },
+        "prepare_seconds": {
+          "median": 6.134814711,
+          "min": 6.129651878,
+          "max": 6.146527253
+        },
+        "first_chunk_seconds": {
+          "median": 8.64815067,
+          "min": 8.645604754,
+          "max": 8.660253462
+        },
+        "seconds": {
+          "median": 13.811777589,
+          "min": 13.810315381,
+          "max": 13.812429548
+        },
+        "cpu_seconds": {
+          "median": 0.24317,
+          "min": 0.22009099999999998,
+          "max": 0.247212
+        },
+        "peak_rss_bytes": {
+          "median": 49725440,
+          "min": 49725440,
+          "max": 49725440
+        }
+      },
+      "working_memory": {
+        "buffer_bytes": 67108864,
+        "reserved_bytes_peak": 42393,
+        "reader_state_reserved_bytes": 0,
+        "prepared_native_metadata_bytes": 41345,
+        "prepared_v3_metadata_index_bytes": 41345,
+        "prepared_hdf5_bytes": 0,
+        "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention"
+      }
+    },
+    {
+      "source": "zarr_v3",
+      "delay_seconds": 0.1,
+      "implementation": "candidate",
+      "repetitions": 3,
+      "wire": {
+        "requests": 223,
+        "canonical_head": 177,
+        "source_head": 177,
+        "conditional_get": 34,
+        "signed_redirects": 0,
+        "redirect_hops": 0,
+        "authentication_requests": 0,
+        "source_body_bytes": 7414,
+        "metadata_body_bytes": 5441,
+        "payload_body_bytes": 1973
+      },
+      "source_bytes": {
+        "metadata": 5441,
+        "payload": 1973,
+        "authorization_proof": 0
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 13.836788131999981,
+          "min": 13.792844840000015,
+          "max": 13.861359590000006
+        },
+        "prepare_seconds": {
+          "median": 6.149348294,
+          "min": 6.13937067,
+          "max": 6.155478919
+        },
+        "first_chunk_seconds": {
+          "median": 8.671981879,
+          "min": 8.665779004000001,
+          "max": 8.694094962
+        },
+        "seconds": {
+          "median": 13.819481881,
+          "min": 13.776502798,
+          "max": 13.843117298
+        },
+        "cpu_seconds": {
+          "median": 0.248723,
+          "min": 0.23931799999999998,
+          "max": 0.25378
+        },
+        "peak_rss_bytes": {
+          "median": 49725440,
+          "min": 49725440,
+          "max": 49725440
+        }
+      },
+      "working_memory": {
+        "buffer_bytes": 67108864,
+        "reserved_bytes_peak": 42393,
+        "reader_state_reserved_bytes": 0,
+        "prepared_native_metadata_bytes": 41345,
+        "prepared_v3_metadata_index_bytes": 41345,
+        "prepared_hdf5_bytes": 0,
+        "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention"
+      }
+    },
+    {
+      "source": "zarr_v3_sharded",
+      "delay_seconds": 0,
+      "implementation": "baseline",
+      "repetitions": 3,
+      "wire": {
+        "requests": 81,
+        "canonical_head": 57,
+        "source_head": 57,
+        "conditional_get": 12,
+        "signed_redirects": 0,
+        "redirect_hops": 0,
+        "authentication_requests": 0,
+        "source_body_bytes": 9736,
+        "metadata_body_bytes": 7763,
+        "payload_body_bytes": 1973
+      },
+      "source_bytes": {
+        "metadata": 7763,
+        "payload": 1973,
+        "authorization_proof": 0
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 0.9082396259999541,
+          "min": 0.8516242919999968,
+          "max": 0.9136074589999907
+        },
+        "prepare_seconds": {
+          "median": 0.660658292,
+          "min": 0.645006333,
+          "max": 0.665883042
+        },
+        "first_chunk_seconds": {
+          "median": 0.665219126,
+          "min": 0.651657208,
+          "max": 0.671339709
+        },
+        "seconds": {
+          "median": 0.897475209,
+          "min": 0.841331167,
+          "max": 0.898132918
+        },
+        "cpu_seconds": {
+          "median": 0.079355,
+          "min": 0.074247,
+          "max": 0.082023
+        },
+        "peak_rss_bytes": {
+          "median": 49987584,
+          "min": 49987584,
+          "max": 49987584
+        }
+      },
+      "working_memory": {
+        "buffer_bytes": 67108864,
+        "reserved_bytes_peak": 64035,
+        "reader_state_reserved_bytes": 0,
+        "prepared_native_metadata_bytes": 60053,
+        "prepared_v3_metadata_index_bytes": 55163,
+        "prepared_hdf5_bytes": 0,
+        "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention"
+      }
+    },
+    {
+      "source": "zarr_v3_sharded",
+      "delay_seconds": 0,
+      "implementation": "candidate",
+      "repetitions": 3,
+      "wire": {
+        "requests": 81,
+        "canonical_head": 57,
+        "source_head": 57,
+        "conditional_get": 12,
+        "signed_redirects": 0,
+        "redirect_hops": 0,
+        "authentication_requests": 0,
+        "source_body_bytes": 9736,
+        "metadata_body_bytes": 7763,
+        "payload_body_bytes": 1973
+      },
+      "source_bytes": {
+        "metadata": 7763,
+        "payload": 1973,
+        "authorization_proof": 0
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 0.911054541999988,
+          "min": 0.9026227079999671,
+          "max": 0.9356246670000132
+        },
+        "prepare_seconds": {
+          "median": 0.668944626,
+          "min": 0.655392209,
+          "max": 0.679202459
+        },
+        "first_chunk_seconds": {
+          "median": 0.673863209,
+          "min": 0.660839459,
+          "max": 0.685753667
+        },
+        "seconds": {
+          "median": 0.900552584,
+          "min": 0.891422375,
+          "max": 0.924477334
+        },
+        "cpu_seconds": {
+          "median": 0.080868,
+          "min": 0.08058599999999999,
+          "max": 0.096963
+        },
+        "peak_rss_bytes": {
+          "median": 49987584,
+          "min": 49987584,
+          "max": 49987584
+        }
+      },
+      "working_memory": {
+        "buffer_bytes": 67108864,
+        "reserved_bytes_peak": 64035,
+        "reader_state_reserved_bytes": 0,
+        "prepared_native_metadata_bytes": 60053,
+        "prepared_v3_metadata_index_bytes": 55163,
+        "prepared_hdf5_bytes": 0,
+        "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention"
+      }
+    },
+    {
+      "source": "zarr_v3_sharded",
+      "delay_seconds": 0.025,
+      "implementation": "baseline",
+      "repetitions": 3,
+      "wire": {
+        "requests": 81,
+        "canonical_head": 57,
+        "source_head": 57,
+        "conditional_get": 12,
+        "signed_redirects": 0,
+        "redirect_hops": 0,
+        "authentication_requests": 0,
+        "source_body_bytes": 9736,
+        "metadata_body_bytes": 7763,
+        "payload_body_bytes": 1973
+      },
+      "source_bytes": {
+        "metadata": 7763,
+        "payload": 1973,
+        "authorization_proof": 0
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 2.3339905839999915,
+          "min": 2.3291442090000487,
+          "max": 2.367479043000003
+        },
+        "prepare_seconds": {
+          "median": 1.427912501,
+          "min": 1.421642501,
+          "max": 1.456378126
+        },
+        "first_chunk_seconds": {
+          "median": 1.693220543,
+          "min": 1.681924667,
+          "max": 1.719332834
+        },
+        "seconds": {
+          "median": 2.32031871,
+          "min": 2.310720168,
+          "max": 2.350128876
+        },
+        "cpu_seconds": {
+          "median": 0.132066,
+          "min": 0.12004599999999999,
+          "max": 0.145805
+        },
+        "peak_rss_bytes": {
+          "median": 49987584,
+          "min": 49987584,
+          "max": 49987584
+        }
+      },
+      "working_memory": {
+        "buffer_bytes": 67108864,
+        "reserved_bytes_peak": 64035,
+        "reader_state_reserved_bytes": 0,
+        "prepared_native_metadata_bytes": 60053,
+        "prepared_v3_metadata_index_bytes": 55163,
+        "prepared_hdf5_bytes": 0,
+        "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention"
+      }
+    },
+    {
+      "source": "zarr_v3_sharded",
+      "delay_seconds": 0.025,
+      "implementation": "candidate",
+      "repetitions": 3,
+      "wire": {
+        "requests": 81,
+        "canonical_head": 57,
+        "source_head": 57,
+        "conditional_get": 12,
+        "signed_redirects": 0,
+        "redirect_hops": 0,
+        "authentication_requests": 0,
+        "source_body_bytes": 9736,
+        "metadata_body_bytes": 7763,
+        "payload_body_bytes": 1973
+      },
+      "source_bytes": {
+        "metadata": 7763,
+        "payload": 1973,
+        "authorization_proof": 0
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 2.3504205010000305,
+          "min": 2.3421025849999637,
+          "max": 2.3514611680000144
+        },
+        "prepare_seconds": {
+          "median": 1.438556209,
+          "min": 1.435291626,
+          "max": 1.4432089590000001
+        },
+        "first_chunk_seconds": {
+          "median": 1.703348501,
+          "min": 1.696482251,
+          "max": 1.708442751
+        },
+        "seconds": {
+          "median": 2.332223668,
+          "min": 2.322878709,
+          "max": 2.33237971
+        },
+        "cpu_seconds": {
+          "median": 0.135151,
+          "min": 0.130767,
+          "max": 0.142733
+        },
+        "peak_rss_bytes": {
+          "median": 49987584,
+          "min": 49987584,
+          "max": 49987584
+        }
+      },
+      "working_memory": {
+        "buffer_bytes": 67108864,
+        "reserved_bytes_peak": 64035,
+        "reader_state_reserved_bytes": 0,
+        "prepared_native_metadata_bytes": 60053,
+        "prepared_v3_metadata_index_bytes": 55163,
+        "prepared_hdf5_bytes": 0,
+        "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention"
+      }
+    },
+    {
+      "source": "zarr_v3_sharded",
+      "delay_seconds": 0.1,
+      "implementation": "baseline",
+      "repetitions": 3,
+      "wire": {
+        "requests": 81,
+        "canonical_head": 57,
+        "source_head": 57,
+        "conditional_get": 12,
+        "signed_redirects": 0,
+        "redirect_hops": 0,
+        "authentication_requests": 0,
+        "source_body_bytes": 9736,
+        "metadata_body_bytes": 7763,
+        "payload_body_bytes": 1973
+      },
+      "source_bytes": {
+        "metadata": 7763,
+        "payload": 1973,
+        "authorization_proof": 0
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 6.117407836999973,
+          "min": 6.099469252999995,
+          "max": 6.119162501999995
+        },
+        "prepare_seconds": {
+          "median": 3.461485668,
+          "min": 3.440289669,
+          "max": 3.4630766680000002
+        },
+        "first_chunk_seconds": {
+          "median": 4.408438127,
+          "min": 4.378244502,
+          "max": 4.4098423350000004
+        },
+        "seconds": {
+          "median": 6.099810086,
+          "min": 6.086230962,
+          "max": 6.102439378
+        },
+        "cpu_seconds": {
+          "median": 0.142317,
+          "min": 0.14171,
+          "max": 0.14504499999999998
+        },
+        "peak_rss_bytes": {
+          "median": 49987584,
+          "min": 49987584,
+          "max": 49987584
+        }
+      },
+      "working_memory": {
+        "buffer_bytes": 67108864,
+        "reserved_bytes_peak": 64035,
+        "reader_state_reserved_bytes": 0,
+        "prepared_native_metadata_bytes": 60053,
+        "prepared_v3_metadata_index_bytes": 55163,
+        "prepared_hdf5_bytes": 0,
+        "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention"
+      }
+    },
+    {
+      "source": "zarr_v3_sharded",
+      "delay_seconds": 0.1,
+      "implementation": "candidate",
+      "repetitions": 3,
+      "wire": {
+        "requests": 81,
+        "canonical_head": 57,
+        "source_head": 57,
+        "conditional_get": 12,
+        "signed_redirects": 0,
+        "redirect_hops": 0,
+        "authentication_requests": 0,
+        "source_body_bytes": 9736,
+        "metadata_body_bytes": 7763,
+        "payload_body_bytes": 1973
+      },
+      "source_bytes": {
+        "metadata": 7763,
+        "payload": 1973,
+        "authorization_proof": 0
+      },
+      "measurements": {
+        "wall_seconds": {
+          "median": 6.11503925300002,
+          "min": 6.108096544999967,
+          "max": 6.129734752000047
+        },
+        "prepare_seconds": {
+          "median": 3.451990709,
+          "min": 3.45192421,
+          "max": 3.4553625009999998
+        },
+        "first_chunk_seconds": {
+          "median": 4.403859544,
+          "min": 4.391938001,
+          "max": 4.410771585
+        },
+        "seconds": {
+          "median": 6.099454211,
+          "min": 6.091651711,
+          "max": 6.103356794
+        },
+        "cpu_seconds": {
+          "median": 0.14993099999999998,
+          "min": 0.12625899999999998,
+          "max": 0.15112699999999998
+        },
+        "peak_rss_bytes": {
+          "median": 49987584,
+          "min": 49987584,
+          "max": 49987584
+        }
+      },
+      "working_memory": {
+        "buffer_bytes": 67108864,
+        "reserved_bytes_peak": 64035,
+        "reader_state_reserved_bytes": 0,
+        "prepared_native_metadata_bytes": 60053,
+        "prepared_v3_metadata_index_bytes": 55163,
+        "prepared_hdf5_bytes": 0,
+        "memory_scope": "conservative reader working reservations; includes prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention"
+      }
+    }
+  ]
+}

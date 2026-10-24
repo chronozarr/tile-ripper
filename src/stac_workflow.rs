@@ -199,7 +199,8 @@ impl Prepared {
         sink: impl FnMut(crate::Chunk) -> Result<()>,
     ) -> Result<ExecutionReport> {
         configure(&self.discovered.request.limits)?;
-        validate_identities(&self.discovered.core, &self.discovered.request.limits)?;
+        self.sources
+            .validate_cog_identities(&self.discovered.core, &self.discovered.request.limits)?;
         let report = crate::scheduler::execute(
             &self.discovered.core,
             &self.plan,
@@ -208,7 +209,8 @@ impl Prepared {
             cancelled,
             sink,
         )?;
-        validate_identities(&self.discovered.core, &self.discovered.request.limits)?;
+        self.sources
+            .validate_cog_identities(&self.discovered.core, &self.discovered.request.limits)?;
         if cancelled.load(std::sync::atomic::Ordering::Acquire) {
             return fail("acquisition cancelled");
         }

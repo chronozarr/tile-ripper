@@ -1,0 +1,218 @@
+[
+  {
+    "case": "retry-503",
+    "passed": true,
+    "expected_success": true,
+    "error": null,
+    "get_attempts": 3,
+    "body_bytes": 12524
+  },
+  {
+    "case": "retry-429",
+    "passed": true,
+    "expected_success": true,
+    "error": null,
+    "get_attempts": 3,
+    "body_bytes": 12524
+  },
+  {
+    "case": "interrupted-retry",
+    "passed": true,
+    "expected_success": true,
+    "error": null,
+    "get_attempts": 3,
+    "body_bytes": 12590
+  },
+  {
+    "case": "retry-exhausted",
+    "passed": true,
+    "expected_success": false,
+    "error": "Error: \"prepare: HTTP retry budget exhausted after 3 attempts (last status 503; retryable HTTP status)\"\n",
+    "get_attempts": 3,
+    "body_bytes": 4745
+  },
+  {
+    "case": "range-ignored",
+    "passed": true,
+    "expected_success": false,
+    "error": "Error: \"prepare: HTTP object request rejected (unsupported status or redirect)\"\n",
+    "get_attempts": 1,
+    "body_bytes": 5082
+  },
+  {
+    "case": "bad-content-range",
+    "passed": true,
+    "expected_success": false,
+    "error": "Error: \"prepare: invalid HTTP range framing\"\n",
+    "get_attempts": 1,
+    "body_bytes": 4613
+  },
+  {
+    "case": "weak-etag",
+    "passed": true,
+    "expected_success": false,
+    "error": "Error: \"prepare: HTTP source requires strong ETags\"\n",
+    "get_attempts": 1,
+    "body_bytes": 4613
+  },
+  {
+    "case": "encoded-range",
+    "passed": true,
+    "expected_success": false,
+    "error": "Error: \"prepare: encoded HTTP range responses are unsupported\"\n",
+    "get_attempts": 1,
+    "body_bytes": 4613
+  },
+  {
+    "case": "payload-range-ignored",
+    "passed": true,
+    "expected_success": false,
+    "error": "Error: \"execution: HTTP object request rejected (unsupported status or redirect)\"\n",
+    "get_attempts": 2,
+    "body_bytes": 9865
+  },
+  {
+    "case": "payload-interrupted-retry",
+    "passed": true,
+    "expected_success": true,
+    "error": null,
+    "get_attempts": 3,
+    "body_bytes": 12724
+  },
+  {
+    "case": "payload-retry-exhausted",
+    "passed": true,
+    "expected_success": false,
+    "error": "Error: \"execution: HTTP retry budget exhausted after 3 attempts (last status 503; retryable HTTP status)\"\n",
+    "get_attempts": 4,
+    "body_bytes": 9264
+  },
+  {
+    "case": "cancel-after-delivery",
+    "passed": true,
+    "expected_success": false,
+    "error": "Error: \"acquisition cancelled\"\n",
+    "get_attempts": 2,
+    "body_bytes": 9665
+  },
+  {
+    "case": "mutate-before-data",
+    "passed": true,
+    "expected_success": false,
+    "error": "Error: \"HTTP source version conflict; prepare again\"\n",
+    "get_attempts": 1,
+    "body_bytes": 8609
+  },
+  {
+    "case": "mutate-during-data",
+    "passed": true,
+    "expected_success": false,
+    "error": "Error: \"HTTP source version conflict; prepare again\"\n",
+    "get_attempts": 2,
+    "body_bytes": 12524
+  },
+  {
+    "case": "mutate-before-zarr.json",
+    "passed": true,
+    "expected_success": false,
+    "error": "Error: \"HTTP source version conflict; prepare again\"\n",
+    "get_attempts": 1,
+    "body_bytes": 8609
+  },
+  {
+    "case": "mutate-during-zarr.json",
+    "passed": true,
+    "expected_success": false,
+    "error": "Error: \"HTTP source version conflict; prepare again\"\n",
+    "get_attempts": 2,
+    "body_bytes": 12524
+  },
+  {
+    "case": "mutate-before-x_c_0",
+    "passed": true,
+    "expected_success": false,
+    "error": "Error: \"HTTP source version conflict; prepare again\"\n",
+    "get_attempts": 1,
+    "body_bytes": 8609
+  },
+  {
+    "case": "mutate-during-x_c_0",
+    "passed": true,
+    "expected_success": false,
+    "error": "Error: \"HTTP source version conflict; prepare again\"\n",
+    "get_attempts": 2,
+    "body_bytes": 12524
+  },
+  {
+    "case": "offset-overflow",
+    "passed": true,
+    "expected_success": false,
+    "error": "Error: \"prepare: shard offset/length overflow\"\n",
+    "get_attempts": 1,
+    "body_bytes": 4877
+  },
+  {
+    "case": "offset-outside",
+    "passed": true,
+    "expected_success": false,
+    "error": "Error: \"prepare: shard payload offset/length exceeds object or overlaps index\"\n",
+    "get_attempts": 1,
+    "body_bytes": 4877
+  },
+  {
+    "case": "overlap-index",
+    "passed": true,
+    "expected_success": false,
+    "error": "Error: \"prepare: shard payload offset/length exceeds object or overlaps index\"\n",
+    "get_attempts": 1,
+    "body_bytes": 4877
+  },
+  {
+    "case": "mixed-missing",
+    "passed": true,
+    "expected_success": false,
+    "error": "Error: \"prepare: invalid mixed missing-chunk sentinel\"\n",
+    "get_attempts": 1,
+    "body_bytes": 4877
+  },
+  {
+    "case": "zero-length",
+    "passed": true,
+    "expected_success": false,
+    "error": "Error: \"prepare: shard payload offset/length exceeds object or overlaps index\"\n",
+    "get_attempts": 1,
+    "body_bytes": 4877
+  },
+  {
+    "case": "overlap-payload",
+    "passed": true,
+    "expected_success": false,
+    "error": "Error: \"prepare: overlapping shard payload ranges are not admitted\"\n",
+    "get_attempts": 1,
+    "body_bytes": 4877
+  },
+  {
+    "case": "bad-index-crc",
+    "passed": true,
+    "expected_success": false,
+    "error": "Error: \"prepare: the checksum is invalid\"\n",
+    "get_attempts": 1,
+    "body_bytes": 4877
+  },
+  {
+    "case": "truncated-index",
+    "passed": true,
+    "expected_success": false,
+    "error": "Error: \"prepare: truncated shard index\"\n",
+    "get_attempts": 0,
+    "body_bytes": 4745
+  },
+  {
+    "case": "gzip-expansion-limit",
+    "passed": true,
+    "expected_success": false,
+    "error": "Error: \"execution: gzip decoded size exceeds validated chunk size\"\n",
+    "get_attempts": 2,
+    "body_bytes": 155726
+  }
+]

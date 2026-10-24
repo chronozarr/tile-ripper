@@ -7,7 +7,7 @@ use geotiff_core::{CrsInfo, GeoKeyDirectory, GeoTransform, RasterType};
 use std::{
     collections::{BTreeMap, BTreeSet, VecDeque},
     sync::{
-        atomic::{AtomicUsize, Ordering},
+        atomic::{AtomicBool, AtomicUsize, Ordering},
         Arc, Mutex,
     },
     time::Instant,
@@ -25,6 +25,8 @@ pub(crate) struct Snapshots {
     cap: usize,
     entries: Mutex<BTreeMap<String, Arc<range::Snapshot>>>,
     skipped: AtomicUsize,
+    // Shared by this preparation's readers, including the no-page-cache path.
+    failed: Arc<AtomicBool>,
 }
 impl Snapshots {
     pub(crate) fn new(buffer_bytes: usize) -> Self {
@@ -53,7 +55,7 @@ impl Snapshots {
         }
     }
     pub(crate) fn inspect(&self, a: &Asset, band: usize) -> Result<Layout> {
-        let (tiff, source) = open(a, 0, None)?;
+        let (tiff, source) = open(a, 0, None, self.failed.clone())?;
         let layout = layout(&tiff, band)?;
         if self.cap > 0 && crate::cog::remote(&a.locator) {
             let snapshot = Arc::new(source.snapshot(a));
@@ -77,6 +79,17 @@ impl Snapshots {
     }
     fn get(&self, a: &Asset) -> Option<Arc<range::Snapshot>> {
         self.entries.lock().unwrap().get(&a.id).cloned()
+    }
+    pub(crate) fn validate(&self) -> Result<()> {
+        if self.failed.load(Ordering::Acquire) {
+            return fail(
+                "native COG preparation invalidated by an earlier source failure; prepare again",
+            );
+        }
+        Ok(())
+    }
+    pub(crate) fn invalidate(&self) {
+        self.failed.store(true, Ordering::Release);
     }
     pub(crate) fn summary(&self) -> serde_json::Value {
         let entries = self.entries.lock().unwrap();
@@ -326,8 +339,9 @@ fn open(
     a: &Asset,
     cache: usize,
     snapshot: Option<&range::Snapshot>,
+    failed: Arc<AtomicBool>,
 ) -> Result<(TiffFile, Arc<RangeSource>)> {
-    let source = RangeSource::open(a, snapshot)?;
+    let source = RangeSource::open(a, snapshot, failed)?;
     let tiff = TiffFile::from_source_with_options(
         source.clone(),
         OpenOptions {
@@ -561,7 +575,7 @@ fn calibration(i: &Ifd) -> Result<(Option<f64>, Option<f64>)> {
     Ok((scale, offset))
 }
 pub(crate) fn inspect(a: &Asset, band: usize) -> Result<Layout> {
-    let (t, _) = open(a, 0, None)?;
+    let (t, _) = open(a, 0, None, Default::default())?;
     layout(&t, band)
 }
 pub(crate) struct SelectedReader {
@@ -623,9 +637,15 @@ impl SelectedReader {
     ) -> Result<Self> {
         let expected = s.layout.as_ref().ok_or("missing native COG layout")?;
         let snapshot = snapshots.get(asset);
-        let (tiff, source) = open(asset, strategy.cache_bytes, snapshot.as_deref())?;
+        let (tiff, source) = open(
+            asset,
+            strategy.cache_bytes,
+            snapshot.as_deref(),
+            snapshots.failed.clone(),
+        )?;
         let layout = layout(&tiff, 1)?;
         if serde_json::to_value(&layout)? != serde_json::to_value(expected)? {
+            snapshots.invalidate();
             return fail("native COG metadata changed since planning");
         }
         let mask = s

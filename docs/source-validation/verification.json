@@ -1,0 +1,372 @@
+{
+  "baseline_commit": "157facc1cd63c6afd3545083f1e0ce7825f00db0",
+  "branch": "codex/acquisition-planner",
+  "date": "2026-10-23",
+  "rust": {
+    "passed": 151,
+    "failed": 0,
+    "ignored": 9,
+    "log": "prototype-output/source-validation/all-tests.log",
+    "sha256": "4b75d674af3049494eb930f0e64c8cf02b9f25b69d7a57dc5cb655cc2c660a12",
+    "ignored_tests": [
+      {
+        "test": "checkpoint::tests::crash_child",
+        "reason": "subprocess helper for abrupt persistence exits"
+      },
+      {
+        "test": "checkpoint::tests::foreign_owned_private_directory_is_rejected",
+        "reason": "requires externally supplied directory owned by another uid"
+      },
+      {
+        "test": "hdf5::tests::standalone_physical_probe",
+        "reason": "explicit bounded real-product experiment; TILE_RIPPER_HDF5_PROBE supplies URL"
+      },
+      {
+        "test": "storage::tests::authenticated_concurrent_routes_and_sticky_conflicts",
+        "reason": "run by bench/earthdata_auth.py with its private HTTPS fixtures"
+      },
+      {
+        "test": "authenticated_changed_coordinates_etag_and_concurrent_preparations",
+        "reason": "run by bench/grid_inspection.py faults with its private HTTPS fixture"
+      },
+      {
+        "test": "convenience_execute_validates_local_source_after_delivery",
+        "reason": "requires TILE_RIPPER_NATIVE_REQUEST from the native COG fault harness"
+      },
+      {
+        "test": "prepared_metadata_is_private_version_bound_and_repeatable",
+        "reason": "requires TILE_RIPPER_NATIVE_HTTP_SNAPSHOT_REQUEST from the HTTP gate"
+      },
+      {
+        "test": "prepared_http_changes_and_cancellation",
+        "reason": "run by bench/remote_zarr.py against its controlled HTTP fixture"
+      },
+      {
+        "test": "prepared_versions_do_not_reuse_another_snapshot_cache",
+        "reason": "run by bench/stac_workflow.py with its bounded local HTTP fixture"
+      }
+    ],
+    "command": "cargo test --locked --all-features --all-targets -- --test-threads=1"
+  },
+  "linux": {
+    "passed": 80,
+    "failed": 0,
+    "ignored": 6,
+    "log": "prototype-output/source-validation/linux-final.log",
+    "sha256": "cff6e2477f4d17b7d5b01e69a97c4290c01a98f38cda08c0ecd112db4bae4be3",
+    "ignored_tests": [
+      {
+        "test": "checkpoint::tests::crash_child",
+        "reason": "subprocess helper for abrupt persistence exits"
+      },
+      {
+        "test": "checkpoint::tests::foreign_owned_private_directory_is_rejected",
+        "reason": "requires externally supplied directory owned by another uid"
+      },
+      {
+        "test": "hdf5::tests::standalone_physical_probe",
+        "reason": "explicit bounded real-product experiment; TILE_RIPPER_HDF5_PROBE supplies URL"
+      },
+      {
+        "test": "storage::tests::authenticated_concurrent_routes_and_sticky_conflicts",
+        "reason": "run by bench/earthdata_auth.py with its private HTTPS fixtures"
+      },
+      {
+        "test": "authenticated_changed_coordinates_etag_and_concurrent_preparations",
+        "reason": "run by bench/grid_inspection.py faults with its private HTTPS fixture"
+      },
+      {
+        "test": "convenience_execute_validates_local_source_after_delivery",
+        "reason": "requires TILE_RIPPER_NATIVE_REQUEST from the native COG fault harness"
+      }
+    ],
+    "command": "cargo test --release -j 1 --locked --offline --no-default-features --features native-hdf5,native-cog,authenticated-http,experimental-output --lib --test native_cog --test hdf5 --test grid_inspection --test swot_aoi --test swot_job --test swot_discovery -- --test-threads=1",
+    "architecture": "Linux ARM64, rust:1.92-slim",
+    "separate_fresh_targets": true,
+    "ordinary_user_tests": true,
+    "completion_marker": true,
+    "shared_libraries": [
+      "libstdc++.so.6 => /lib/aarch64-linux-gnu/libstdc++.so.6 (0x0000ffff8a840000)",
+      "libgcc_s.so.1 => /lib/aarch64-linux-gnu/libgcc_s.so.1 (0x0000ffff8a800000)",
+      "libm.so.6 => /lib/aarch64-linux-gnu/libm.so.6 (0x0000ffff8a750000)",
+      "libc.so.6 => /lib/aarch64-linux-gnu/libc.so.6 (0x0000ffff8a590000)",
+      "libstdc++.so.6 => /lib/aarch64-linux-gnu/libstdc++.so.6 (0x0000ffff97eb0000)",
+      "libgcc_s.so.1 => /lib/aarch64-linux-gnu/libgcc_s.so.1 (0x0000ffff97e70000)",
+      "libm.so.6 => /lib/aarch64-linux-gnu/libm.so.6 (0x0000ffff97dc0000)",
+      "libc.so.6 => /lib/aarch64-linux-gnu/libc.so.6 (0x0000ffff97c00000)"
+    ]
+  },
+  "feature_combinations": 16,
+  "feature_matrix_passed": true,
+  "host_rustc": "rustc 1.92.0 (ded5c06cf 2025-12-08)",
+  "source_sha256": {
+    "Cargo.toml": "016c0fc58d973fa84706a8eac521ee09bc6947f1784c96f6826c9ccfe015240e",
+    "Cargo.lock": "97f86672b776d1ab262ea5f75597346d08fb069661a79fe08e3ae5036595f337",
+    "src/storage.rs": "edd6670f79e1268651c84bbc21c2d79bd806fe1b40a09e3ac05fbcad70fef92a",
+    "src/hdf5.rs": "73de719bbd434c9e02066d42423328b67835f9c4321c7dad0c2ec17ccbb385cf",
+    "src/authenticated_http.rs": "90a269d299c0c08e53c8f96e02dc04a8c744593b3aab30aa49bc90c402c2b5d2",
+    "src/http_transport.rs": "24c7e352c66fe061dc3eb395f40e4d39e55903a9eacdd522ffa915ec49095459",
+    "src/checkpoint.rs": "e5b1abb2678c248d239a4ae1acb32ec934d0a85936f255005bf6eb8b8cd3c819",
+    "src/native_cog.rs": "e2e56457baad054fedc38bb447dd224a2d89a41275c165e16861d5136fcdd44b",
+    "src/cog_range.rs": "9a66fd31e888b5980920c6cd93476f8e1dab5fdeaa300c01379d1ebf556896e9",
+    "src/zarr_acquire.rs": "59891944c14ea2c0340f656b37ecafa87758f0be983991058e76d31d21170d42",
+    "src/zarr_v3.rs": "edf49345742f51961f67523da4765fa2a772b718eefdd8e266a145eca27af164",
+    "src/swot.rs": "ac107d66a5cf50570a5e38a0c7b8f0f2376332d23e5e95b217a7f2bde8cae1ee",
+    "src/swot_aoi.rs": "70f487e6da25ecc44c5e91ade1705ea399785d2fb1cbc7ead2a0b9ebbe8ed18f",
+    "src/swot_job.rs": "e3537f8d42ade71df8137ee1d4484b3b202bb1339c6833f6977ca62d075f0589",
+    "src/scientific_output/swot.rs": "70efe33a8b41c3c0d4b121e0d46999536dc454e9b411d45c799dd7e59a825fee",
+    "examples/source_validation_bench.rs": "5ad954dac41078333a2f15753632022387932e3ca0f82eed37a57389498c0b3f",
+    "bench/earthdata_auth.py": "d57abb6f79bbb04b058be632d3acafaaedd3579612e24868fa94717870a38eba",
+    "bench/transfer_resume.py": "967b296e77d5ee7c36956ba6c5e10190ebb0805465145b21f3515da0114d554c",
+    "bench/source_validation.py": "2b24e78ac2c41a97f0e33dbdd9ef5aefddd91525be2d4e86e9be1d45b347bbec",
+    "bench/source_validation_wire.py": "bc42fc04409cda648f7d584d35af07e75631d6a492b6085708dfa68b71705644",
+    "bench/source_validation_regressions.py": "c99707355ebca6618b986a276b2a31853d7a37dc500b9973ba7506d4569d94a5",
+    "bench/source_validation_receipts.py": "b69facdd9c2377860f8a5640778eaffaedd664752954b6bdc918042732c525b3",
+    "bench/source_validation_linux.sh": "649ed16f2205b1759db47e5f01621a01c1e584a42c442b4bb31288499b5c1af0",
+    "src/acquisition.rs": "46715a68aca3f49724a1d41c1e8dab86cbaa459da954de5527ff8b2c9285a03f",
+    "src/stac_workflow.rs": "180e9022d05c40a72637dd58a73ef009d5fbb3b5d731b603fa0340d2f1cfc0eb"
+  },
+  "producer_binary_sha256": {
+    "prototype-output/source-validation/baseline/grid_inspection_bench": "0502fefc34b55facde272f276ff3068ec8dd14b5ac09921da8835f4f371536c9",
+    "prototype-output/source-validation/baseline/source_validation_bench": "1bd40b4e181fdfbb920b7e3bfd42daf57e240629620a167fb140254400268727",
+    "prototype-output/source-validation/baseline/swot_quality": "29aa3c6d266d453460b129e474bb4fe39753af26adddc4a9b25e6988b5e31953",
+    "prototype-output/source-validation/baseline/tile-ripper": "504a34cd18e162178481337591298e853dc837ef34a9c8209f5234e811f2cf50",
+    "prototype-output/source-validation/baseline/zarr_subset_oracle": "2df9bc4a17fcf07a66deeaa01c7d4b8dddaa32fe3df2f0eba7797d9d81d495dc",
+    "prototype-output/source-validation/candidate/grid_inspection_bench": "a7d8101e43c8175d07e4eb87b899fb4780ca2e6ef724c74793a55378977fe875",
+    "prototype-output/source-validation/candidate/source_validation_bench": "8547486fcdd80168219e69aea175dff55fbb19dd377feeaee8086b4ca6c8af28",
+    "prototype-output/source-validation/candidate/tile-ripper": "c8f55ecebb46dae8601fd3a32b8e61bdd0d7fcbbb10b1e3915ef7c4f37770695",
+    "prototype-output/source-validation/linux/baseline/source_validation_bench": "7adebf111892b0f7a1432dddf88d0647207968b97316ccc95e83dad49c1addd7",
+    "prototype-output/source-validation/linux/baseline/tile-ripper": "250e15f40774be976c50316dea6ae4a3b5efca69beddc22c0914503b51a2698e",
+    "prototype-output/source-validation/linux/candidate/source_validation_bench": "d26dc0bc0233f88084a83f8401dd1e1296727e5b47f1dd02b5baa4da4a2b7721",
+    "prototype-output/source-validation/linux/candidate/tile-ripper": "17f3891bd78f65abbb236ed6088c9a0e653c138e254e7b521bdbd41f9769f5d5"
+  },
+  "log_sha256": {
+    "all-tests": {
+      "path": "prototype-output/source-validation/all-tests.log",
+      "sha256": "4b75d674af3049494eb930f0e64c8cf02b9f25b69d7a57dc5cb655cc2c660a12"
+    },
+    "linux-final": {
+      "path": "prototype-output/source-validation/linux-final.log",
+      "sha256": "cff6e2477f4d17b7d5b01e69a97c4290c01a98f38cda08c0ecd112db4bae4be3"
+    },
+    "linux-first-serial-targets": {
+      "path": "prototype-output/source-validation/linux-first-serial-targets.log",
+      "sha256": "3c871a6441f0387e7e376cffd1f1eec9272c86b9f0049ad612414e8ad8d86c2a"
+    },
+    "linux-root-permission-failure": {
+      "path": "prototype-output/source-validation/linux-root-permission-failure.log",
+      "sha256": "e745f2ecee0b9e3851de721060f048f409b9029ad68f5d72a99990dbfed6529e"
+    },
+    "auth-regressions": {
+      "path": "prototype-output/source-validation/auth-regressions.log",
+      "sha256": "ada5fdb1155a5c63c33940f7d7c295edc343bae3f69375da19e6b8054a307188"
+    },
+    "checkpoint-regressions": {
+      "path": "prototype-output/source-validation/checkpoint-regressions.log",
+      "sha256": "5290057cf473ba3b5dd5231337e892f8b541b8f751e8d853e5dfce9004ef3faf"
+    },
+    "hdf5-regressions": {
+      "path": "prototype-output/source-validation/hdf5-regressions.log",
+      "sha256": "a60b5b70204734bf65ab4a89311e3d4be0b66c9949d86b8fb7effaa33996f314"
+    },
+    "job-regressions": {
+      "path": "prototype-output/source-validation/job-regressions.log",
+      "sha256": "7b55490eb5dcf1af1c97fbbdeafbb97b00b0d64f7feb9e6b266f02a0550213f9"
+    },
+    "geography-regressions": {
+      "path": "prototype-output/source-validation/geography-regressions.log",
+      "sha256": "14c3ccdc11126762a2947ebe0d4f505d38664ae113837feed4b66dcbea4078ed"
+    },
+    "quality-regressions": {
+      "path": "prototype-output/source-validation/quality-regressions.log",
+      "sha256": "09cecfce4ab3db9e457c04d08386054fae757f33d55eb8450e09e12568d1533f"
+    },
+    "inspection-regressions": {
+      "path": "prototype-output/source-validation/inspection-regressions.log",
+      "sha256": "d86c89581cf44b7126e148c3f97320965af69546704ee5ee299002a9832d658a"
+    },
+    "cog-regressions": {
+      "path": "prototype-output/source-validation/cog-regressions.log",
+      "sha256": "5ce32c4333b740b31ca4a2d165c0845f36995af72038b520a13c06892275a30c"
+    },
+    "v2-regressions": {
+      "path": "prototype-output/source-validation/v2-regressions.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "cf-regressions": {
+      "path": "prototype-output/source-validation/cf-regressions.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "output-regressions": {
+      "path": "prototype-output/source-validation/output-regressions.log",
+      "sha256": "d0fbd47a29569fb841dfd521e0d222a803fbaecccb7d005dd5971e9038e1dc07"
+    },
+    "output-faults": {
+      "path": "prototype-output/source-validation/output-faults.log",
+      "sha256": "41a903ddd3aa862f3f5f0d58d484a8f65efd992f6412d0afc8246f484d822306"
+    },
+    "v3-science": {
+      "path": "prototype-output/source-validation/v3-science.log",
+      "sha256": "ec9b4490351f2277d59e6f1cd1fd696372bf18ce8474749cdfc3941178010514"
+    },
+    "v3-faults": {
+      "path": "prototype-output/source-validation/v3-faults.log",
+      "sha256": "44af96421f74eeaa8e0d40a6a0c13d1ef9da1b2066567cbda26cc95ee90acd2b"
+    },
+    "auth-benchmarks-final": {
+      "path": "prototype-output/source-validation/auth-benchmarks-final.log",
+      "sha256": "f6bfbb5d84b74e22953079120ad7449a8fd434401f584b8e6a62781aa90edab8"
+    },
+    "anonymous-benchmarks-final": {
+      "path": "prototype-output/source-validation/anonymous-benchmarks-final.log",
+      "sha256": "ebfd59750cbee46b0ccb8afc38aebf935888f50e3ad070fa31ad8a37d4aa298c"
+    },
+    "clippy": {
+      "path": "prototype-output/source-validation/clippy.log",
+      "sha256": "30948a059ddbcfba6f825de9ba089ba8dd7dc20c6332a6c41161cf4331866cc0"
+    },
+    "fmt": {
+      "path": "prototype-output/source-validation/fmt.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "receipt-summary": {
+      "path": "prototype-output/source-validation/receipt-summary.log",
+      "sha256": "7d8159ff8104e402e218c07086830221bc5f1fc673d8f033c078fb89dac3f71f"
+    },
+    "cog-sticky-faults": {
+      "path": "prototype-output/source-validation/cog-sticky-faults.log",
+      "sha256": "9614f0e19f1f3d548cd38afa6955e1e1f57ef90648ab6dd390509966df16a31f"
+    },
+    "output-existing-destination-refusal": {
+      "path": "prototype-output/source-validation/output-existing-destination-refusal.log",
+      "sha256": "a623fe8424768ca1bd6f68a694b900928feda36ae4f0cef6f6e66b62f85c7704"
+    }
+  },
+  "benchmarks": {
+    "authenticated_records": 108,
+    "anonymous_records": 90,
+    "derived_workflow_sums": 18,
+    "repetitions": 3,
+    "interleaved": true,
+    "added_delay_per_wire_request_seconds": [
+      0,
+      0.025,
+      0.1
+    ],
+    "scientific_fingerprints_equal": true,
+    "metadata_payload_proof_bytes_reconciled": true,
+    "matched_provider_requests": 0
+  },
+  "regressions": {
+    "authentication_cases": 38,
+    "checkpoint_cases": 32,
+    "hdf5_science": 64,
+    "hdf5_faults": 33,
+    "quality_science": 38,
+    "quality_faults": 31,
+    "geometry_cases": 108,
+    "geometry_centers": 181548,
+    "multi_source_cases": 19,
+    "native_cog_cases": 61,
+    "v3_science": 40,
+    "v3_faults": 27,
+    "authenticated_comparison_cases": 20,
+    "anonymous_fault_restore_records": 55,
+    "new_successful_invalid_fault_paths": 0
+  },
+  "checks": {
+    "clippy": "cargo clippy --locked --all-features --all-targets -- -D warnings",
+    "format": "cargo fmt --all -- --check",
+    "new_python": "ruff check on four new Python harnesses; Ruff format check; py_compile",
+    "existing_python": "Ruff E4,E7,E9,F on the two modified existing fixtures; broader pre-existing style findings are not described as clean"
+  },
+  "notes": [
+    "A shared-root Cargo artifact comparison was discarded; final baseline/candidate builds use separate clean target directories.",
+    "A parallel Linux debug linker was killed for memory; final serial release tests pass.",
+    "A root Linux permission-denial test failed and poisoned its subsequent test lock; the complete final suite passes as an ordinary user.",
+    "Ignored manual/external-ownership and opt-in runtime helpers remain explicitly listed; ignored tests are not aggregate passes. Named authentication/grid/remote-Zarr fixture gates execute their opt-in cases separately.",
+    "No new live NASA source/latency qualification is claimed.",
+    "Diagnostics were compacted for versioning; full originals and content hashes remain in receipt-index.json.",
+    "Final invariant audit extended preparation-scoped failure latching to native COG identity and range failures, including cache-free readers; ordinary cancellation retries remain valid.",
+    "An inherited durable-output rerun safely refused an existing test destination; the final gate used a fresh private work directory."
+  ],
+  "scope": {
+    "local_commit_requested": true,
+    "push": false,
+    "merge": false,
+    "tag": false,
+    "publish": false,
+    "deploy": false,
+    "chronozarr_modified": false,
+    "new_formats": false,
+    "new_cache": false,
+    "new_dependencies": false,
+    "public_api_changed": false,
+    "geometric_inclusion_changed": false,
+    "quality_policy_changed": false,
+    "full_index_default_changed": false,
+    "gdal_default_changed": false
+  },
+  "receipt_sha256": {
+    "receipt-index.json": "09d1408ac90cdc9a9a1ce9fe4543a973437a31a9041a6e04ee8410ef2d46cb28",
+    "summary.json": "5f13e16b7e7b4cd10eb79e5e8ebcf81ca67a72ee398110de50dba844c144082a",
+    "trace-hdf5-baseline.json": "22f8320f06ba7f71ccbbc4012415e1428b77cf06af6a8e0b285e73ade1f769e7",
+    "feature-matrix.json": "9796671e43f90b9504f899b37b445c8320dd71dcf2a3c505b109aba9502aacdb",
+    "lifecycle-authenticated-swot-baseline.json": "11226754b4d9cda8051045380825fc9d31facc45f8d4b6396d50e05a45d0bc0a",
+    "lifecycle-anonymous-cog-baseline.json": "eaab9376c59bc06169ea596ec569317e9d30b9b4fd1270c5c1eaf1e9ede19ea6",
+    "trace-authenticated-swot-candidate.json": "39f421106b415987250d5512a3d6c79b2a0962e5a178cf59b036a04c76042263",
+    "trace-zarr_v3_sharded-candidate.json": "c1713ea5407e66017f00fc207d6d58143b1556eec048fdf442207442d0c9d4c1",
+    "trace-checkpoint-replay-baseline.json": "494141da155b86a52a8aa0fd387c5f843d6cbb340580e66e272cf1cc795d8185",
+    "trace-checkpoint-warm-candidate.json": "800a34d475f257833f1932af0e5f443bfa772879b5c288b370485f70e33bf478",
+    "trace-cog-candidate.json": "15dc7032b2eff71e4c391dd7caa038795188f4c3eb9aafdce88628888bce2f52",
+    "anonymous-faults.json": "eb25e068d5701e1933667fa47d6b24066fd62f83758d24578d344bbfcafd1b9e",
+    "authenticated-fixtures.json": "62287ec0b193d687fa1773aba3fdee826034c917146ce26c0b8ea7d87c92d1d0",
+    "trace-authenticated-swot-baseline.json": "2f550653c8b2bca43ac7ecb75e335f413b3e4e34c21dc0a66b3f1ecaeeecb202",
+    "trace-zarr_v3-baseline.json": "3e41bb0848c07a16da196aa92d1f713b34f8c479660ebe9727d00dac366cfeae",
+    "trace-cog-baseline.json": "15dc7032b2eff71e4c391dd7caa038795188f4c3eb9aafdce88628888bce2f52",
+    "three-source-science.json": "10fc276691cc22c75be053b8c237e334a26d773d1615997348978e713a55c4a0",
+    "anonymous-benchmarks.json": "9dae13dcd3489652723e2476b1805fca190e8b770ad03d2036e10da49c5674c7",
+    "trace-zarr_v2-baseline.json": "28eb3c8c63462cd8e0711e94282240bca27aae03957640657d3b0ba048ffab68",
+    "lifecycle-authenticated-swot-candidate.json": "631778dd324e39d5f3120d8427b2f13dff490fc99d7c951683a972b7086a226e",
+    "trace-checkpoint-warm-baseline.json": "edcc8d6b93ae63c9a77171ed8ae2fef6640a0f9b2c2e25c6fd29873988676a82",
+    "authenticated-benchmarks.json": "849b91ecfb44d71fabed022b798881d105cd5b1c4e22b599ec49b3dcfee599df",
+    "trace-hdf5-candidate.json": "6fe2eb941cec0cd2c7172b34c37ac558873c93140561dac7569b4c371044294a",
+    "trace-zarr_v2-candidate.json": "cc8c8ea2213c3530333d4462f8acb29b60dcb752afb0bf8cfe6ba49eb5922f18",
+    "fixtures.json": "ab3c63cdba006872f799706e520a2ee311af2c15b1e16fc61a3825998d23791c",
+    "authenticated-faults.json": "0eed90b5bbc60e1da3ba6ffac9467ef0440a97fda8b0061a668a0c05ad5dbdf1",
+    "trace-checkpoint-replay-candidate.json": "0f9b2f6f4173ee3bab36cc9667b0ff070aecb24116d824757dd6f479b6996e7d",
+    "trace-zarr_v3_sharded-baseline.json": "10a80f421c0730d3b972c93cc1e1e487b05f3aab6b4d932220db0e31538ab6c7",
+    "trace-zarr_v3-candidate.json": "47bb3c4366f14b199dfbc752095538c7fcf8bdc364862ce1374949337f47c719",
+    "lifecycle-anonymous-cog-candidate.json": "eaab9376c59bc06169ea596ec569317e9d30b9b4fd1270c5c1eaf1e9ede19ea6",
+    "regressions/checkpoint/fixtures.json": "05fa2e5e7244c55703ae064c5bd360a08965e5294b597b659db2e7e3b00b70e0",
+    "regressions/formats/candidates.json": "39f4f6e4343fb31dd4f57bbc6b6815cc269a4ef5f2e134c6fbd8d7fd8a4b272a",
+    "regressions/formats/cf-zarr-checks.json": "fd22f65dccad10cddb6cd6ec87f47c067eb26c3ec3348359edadbcaf9b92b894",
+    "regressions/formats/cog-stream.json": "7feeabe74b40ea09a9f22f0416db08a9735c0b09488a1d1f668ffe67397ac5d6",
+    "regressions/formats/remote-zarr-checks.json": "d36d8158de3d839154db982284765ac03e02ccc0cadcde3f6022c96dad668512",
+    "regressions/formats/faults.json": "82e6594b596fe3a977258aa34e5f09dc890872bb62b16e06fda20425cdddc118",
+    "regressions/formats/inherited/validation.json": "2dc83307a7ba2f4db31f4d356a56644ab6914c9cd91ccf2b923b6db2ba1f21fc",
+    "regressions/quality/faults.json": "d4047999539c5d4c246802629202403b080f9be14ce4a46854ab9668414b4696",
+    "regressions/quality/science.json": "d8b4755b4943303ada122747259f7690d13a3019166957d37fe10b75a6c1f1bf",
+    "regressions/hdf5/faults.json": "640c9b45651cb53a45b84cf0c0d294c24398a38dd57bc3be3655669a90176640",
+    "regressions/hdf5/science.json": "f7603e151cde1286f65dc789331b1e3d41814ebc22cf05f605e7e8b355f743bf",
+    "regressions/auth/fixtures.json": "8d2e92c313c1fba438ac05f5bbe95ffca3fb18cdaa06e4d66779cd8c67a33c94",
+    "regressions/inspection/inspection-faults.json": "27291e1038b1b0ccade9f8cb79d28943308fc71a6d53e7e23d4ce54853e56bb7",
+    "regressions/v3/correctness.json": "2e9b856598b13ffdff5f2bba3d593d39e593ebd5bbaa46d34ae9795fe30763c3",
+    "regressions/v3/faults.json": "bf72bf4ff1580f489ca43b7cdb0d460684ad2e3377d78eca677e2261cecef90c",
+    "regressions/job/qualification.json": "67bd11a52cf4b4b4ec0f38cf549e11166a4eee3e7636c747674ea15e8b128ea7",
+    "regressions/job/boundaries.json": "418ca231812e6b69e4a2b111d8d01c93a4535642ab186d8b1d8d49e13f3bb049",
+    "regressions/job/plan.json": "9d95143697b1eef8fdbea724dd2b56a795e08e1b89b483c64e4534d48d60a25e",
+    "regressions/job/measurements.json": "032db04641058c46c7ab87bcdc98ce612df1fd5e3aa6579e63efb27d3b8a92ce",
+    "regressions/job/capture-guard.json": "b946d8a000fc1c77f3662b661ea33079a94ca2566de6e9f599338f24f17f55bb",
+    "regressions/job/faults-restart.json": "b3c44d12446c7c32a027b4fe41dc9989af510376f8b62d6de96125b2b7c50cad",
+    "regressions/geography/geometry-oracles.json": "8f46e2ac13813824cd3c235cdceb45cae0341ec5a2d24b9516881032b68ecfb2",
+    "regressions/geography/resolved-controls.json": "ddb8854cdee0f6d128644ca612e0c5d4c6112266307a4d18b30c9a32827c3a34",
+    "regressions/geography/discrepancies.json": "d0ada3c0b84dc382745ca0d1d50e08f00093130cfa5599b37fcaca8960ba82be",
+    "regressions/geography/frozen-workflow.json": "622b8dd0d952a8143824707e9b85d6b8653a134d42a0afa6fbe6aafd2290b7fc"
+  },
+  "document_sha256": {
+    "lifecycle.md": "24b59257b09f2fb10cb6bf5bd0c89092fc40a3bd369106cee7121e4b0c67461e",
+    "report.md": "554fdda43db06d09b49ef890925a0ad4c86047551b0f2b1a396e1fa8bd8359d7",
+    "brief.md": "7dc9beabd722bad9e2e365d48a6dedf65d521f9eaa12561f3192dde0fb17983b"
+  }
+}

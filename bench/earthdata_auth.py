@@ -62,6 +62,8 @@ class Fixture:
     def __init__(self, hook=None, directory=None):
         fixture_work = Path(directory) if directory else WORK
         self.events = []
+        # Lifecycle offsets, also set to two for preserved baseline binaries.
+        self.binding_heads = 1
         self.case = ""
         self.counts = Counter()
         self.route_generation = 0
@@ -134,6 +136,11 @@ class Fixture:
                             "authorization_present": bool(auth),
                             "cookie_present": bool(cookies),
                             "body_bytes": len(body) if self.command != "HEAD" else 0,
+                            "path": path,
+                            "range": self.headers.get("Range"),
+                            "if_match": self.headers.get("If-Match"),
+                            "content_range": (headers or {}).get("Content-Range"),
+                            "content_length": (headers or {}).get("Content-Length"),
                         }
                     )
                     self.send_response(status)
@@ -213,7 +220,8 @@ class Fixture:
                         not cookies
                         or (
                             case == "pending-auth"
-                            and fixture.counts[("resource", "HEAD")] >= 4
+                            and fixture.counts[("resource", "HEAD")]
+                            >= fixture.binding_heads + 2
                         )
                     ):
                         redirect(fixture.login + "/oauth/authorize?state=FIXTURE_CODE")
@@ -275,7 +283,8 @@ class Fixture:
                     if (
                         self.command == "GET"
                         and case in ["pending-range", "pending-auth"]
-                        and fixture.counts[("resource", "HEAD")] >= 4
+                        and fixture.counts[("resource", "HEAD")]
+                        >= fixture.binding_heads + 2
                     ):
                         if case == "pending-auth":
                             respond(403)
@@ -300,7 +309,8 @@ class Fixture:
                         etag = '"different-version"'
                     elif (
                         case == "mutate-final"
-                        and fixture.counts[("resource", "HEAD")] >= 5
+                        and fixture.counts[("resource", "HEAD")]
+                        >= fixture.binding_heads + 3
                     ):
                         etag = '"different-version"'
                     elif (
@@ -349,7 +359,8 @@ class Fixture:
                         self.close_connection = True
                     if (
                         case == "pending-body"
-                        and fixture.counts[("resource", "HEAD")] >= 4
+                        and fixture.counts[("resource", "HEAD")]
+                        >= fixture.binding_heads + 2
                     ):
                         self.send_response(206)
                         for k, v in h.items():

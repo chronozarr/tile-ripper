@@ -201,7 +201,7 @@ impl Prepared {
             } => {
                 sources.phase("pre_execution_validation");
                 versions.validate()?;
-                stac_workflow::validate_identities(request, &Default::default())?;
+                sources.validate_cog_identities(request, &Default::default())?;
                 sources.validate_cancellable(Some(cancelled))?;
                 sources.phase("execution");
                 let mut report = crate::scheduler::execute(
@@ -215,7 +215,7 @@ impl Prepared {
                 .map_err(|e| safe_error(request, "execution", e))?;
                 sources.phase("post_execution_validation");
                 versions.validate()?;
-                stac_workflow::validate_identities(request, &Default::default())?;
+                sources.validate_cog_identities(request, &Default::default())?;
                 sources.validate_cancellable(Some(cancelled))?;
                 if cancelled.load(std::sync::atomic::Ordering::Acquire) {
                     return Err("acquisition cancelled".into());
@@ -277,7 +277,7 @@ impl Prepared {
         };
         sources.phase("pre_execution_validation");
         versions.validate()?;
-        stac_workflow::validate_identities(request, &Default::default())?;
+        sources.validate_cog_identities(request, &Default::default())?;
         sources.validate_cancellable(Some(cancelled))?;
         let mut report = sources
             .hdf5
@@ -285,7 +285,7 @@ impl Prepared {
             .map_err(|e| safe_error(request, "execution", e))?;
         sources.phase("post_execution_validation");
         versions.validate()?;
-        stac_workflow::validate_identities(request, &Default::default())?;
+        sources.validate_cog_identities(request, &Default::default())?;
         sources.validate_cancellable(Some(cancelled))?;
         if cancelled.load(std::sync::atomic::Ordering::Acquire) {
             return fail("acquisition cancelled");
@@ -311,7 +311,7 @@ impl Prepared {
             } => {
                 sources.phase("pre_execution_validation");
                 versions.validate()?;
-                stac_workflow::validate_identities(request, &Default::default())?;
+                sources.validate_cog_identities(request, &Default::default())?;
                 sources.validate()?;
                 sources.phase("execution");
                 let root = destination(&request.sink)?;
@@ -331,7 +331,7 @@ impl Prepared {
                 sources.phase("post_execution_validation");
                 if let Err(e) = versions
                     .validate()
-                    .and_then(|_| stac_workflow::validate_identities(request, &Default::default()))
+                    .and_then(|_| sources.validate_cog_identities(request, &Default::default()))
                     .and_then(|_| sources.validate())
                 {
                     let _ = fs::remove_dir_all(root);

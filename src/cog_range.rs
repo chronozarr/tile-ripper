@@ -115,6 +115,7 @@ enum Binding {
     },
 }
 pub(super) struct RangeSource {
+    failed: Arc<AtomicBool>,
     binding: Binding,
     size: u64,
     metadata: AtomicBool,
@@ -135,7 +136,33 @@ fn strong(etag: &str) -> bool {
             .any(|b| b < 33 || b == 127 || b == b'"')
 }
 impl RangeSource {
-    pub fn open(a: &Asset, snapshot: Option<&Snapshot>) -> Result<Arc<Self>> {
+    pub fn open(
+        a: &Asset,
+        snapshot: Option<&Snapshot>,
+        failed: Arc<AtomicBool>,
+    ) -> Result<Arc<Self>> {
+        if failed.load(Ordering::Acquire) {
+            return Err(
+                "native COG preparation invalidated by an earlier source failure; prepare again"
+                    .into(),
+            );
+        }
+        let result = Self::open_bound(a, snapshot, failed.clone());
+        if result.is_err() {
+            failed.store(true, Ordering::Release);
+        } else if failed.load(Ordering::Acquire) {
+            return Err(
+                "native COG preparation invalidated by an earlier source failure; prepare again"
+                    .into(),
+            );
+        }
+        result
+    }
+    fn open_bound(
+        a: &Asset,
+        snapshot: Option<&Snapshot>,
+        failed: Arc<AtomicBool>,
+    ) -> Result<Arc<Self>> {
         let (binding, size) = if cog::remote(&a.locator) {
             let etag = a
                 .etag
@@ -211,6 +238,7 @@ impl RangeSource {
             return Err("native COG prepared metadata identity/size conflict".into());
         }
         Ok(Arc::new(Self {
+            failed,
             binding,
             size,
             metadata: AtomicBool::new(true),
@@ -319,6 +347,24 @@ impl TiffSource for RangeSource {
         self.size
     }
     fn read_exact_at(&self, offset: u64, len: usize) -> tiff_reader::error::Result<Vec<u8>> {
+        if self.failed.load(Ordering::Acquire) {
+            return Err(error(
+                "native COG preparation invalidated by an earlier source failure; prepare again",
+            ));
+        }
+        let result = self.read_bound(offset, len);
+        if result.is_err() {
+            self.failed.store(true, Ordering::Release);
+        } else if self.failed.load(Ordering::Acquire) {
+            return Err(error(
+                "native COG preparation invalidated by an earlier source failure; prepare again",
+            ));
+        }
+        result
+    }
+}
+impl RangeSource {
+    fn read_bound(&self, offset: u64, len: usize) -> tiff_reader::error::Result<Vec<u8>> {
         let end = offset
             .checked_add(len as u64)
             .filter(|end| *end <= self.size)
@@ -453,6 +499,23 @@ mod tests {
             let _ = std::fs::remove_file(&self.0.locator);
         }
     }
+
+    #[test]
+    fn source_failure_survives_restore_and_invalidates_cached_and_uncached_readers() {
+        let f = Fixture::new();
+        let failed = Arc::new(AtomicBool::new(false));
+        let first = RangeSource::open(&f.0, None, failed.clone()).unwrap();
+        let second = RangeSource::open(&f.0, None, failed.clone()).unwrap();
+        second.read_exact_at(0, 8).unwrap();
+        first.begin_data(Vec::new());
+        std::fs::write(&f.0.locator, b"x").unwrap();
+        assert!(first.read_exact_at(0, 8).is_err());
+        std::fs::write(&f.0.locator, (0..8192).map(|n| n as u8).collect::<Vec<_>>()).unwrap();
+        assert!(first.read_exact_at(0, 8).is_err());
+        assert!(second.read_exact_at(0, 8).is_err());
+        assert!(RangeSource::open(&f.0, None, failed).is_err());
+        assert!(RangeSource::open(&f.0, None, Default::default()).is_ok());
+    }
     #[test]
     fn coalescing_requires_bounded_adjacent_consecutive_misses() {
         let a = tile(100, 100);
@@ -468,7 +531,7 @@ mod tests {
         let f = Fixture::new();
         let original = std::fs::read(&f.0.locator).unwrap();
         for wrapper in [0, 4, 8] {
-            let source = RangeSource::open(&f.0, None).unwrap();
+            let source = RangeSource::open(&f.0, None, Default::default()).unwrap();
             source.begin_data(groups(vec![tile(100, 100), tile(208, 100)], 216));
             let shift = if wrapper == 0 { 0 } else { 4 };
             for offset in [100 - shift, 208 - shift] {
@@ -488,11 +551,11 @@ mod tests {
     #[test]
     fn metadata_snapshots_are_identity_bound_and_never_supply_data() {
         let f = Fixture::new();
-        let first = RangeSource::open(&f.0, None).unwrap();
+        let first = RangeSource::open(&f.0, None, Default::default()).unwrap();
         first.read_exact_at(0, 16).unwrap();
         let snapshot = first.snapshot(&f.0);
         assert_eq!(snapshot.bytes(), PAGE as usize);
-        let second = RangeSource::open(&f.0, Some(&snapshot)).unwrap();
+        let second = RangeSource::open(&f.0, Some(&snapshot), Default::default()).unwrap();
         assert_eq!(
             second.read_exact_at(0, 16).unwrap(),
             (0..16).collect::<Vec<u8>>()
@@ -503,8 +566,8 @@ mod tests {
         assert_eq!(second.counters.lock().unwrap().requests, 1);
         let mut changed = f.0.clone();
         changed.etag = Some("\"different\"".into());
-        assert!(RangeSource::open(&changed, Some(&snapshot)).is_err());
+        assert!(RangeSource::open(&changed, Some(&snapshot), Default::default()).is_err());
         std::fs::write(&f.0.locator, [0; 8193]).unwrap();
-        assert!(RangeSource::open(&f.0, Some(&snapshot)).is_err());
+        assert!(RangeSource::open(&f.0, Some(&snapshot), Default::default()).is_err());
     }
 }

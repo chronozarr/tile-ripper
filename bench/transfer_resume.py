@@ -86,7 +86,7 @@ class Archive:
         if (
             self.mode == "mutate-final"
             and handler.command == "HEAD"
-            and f.counts[(role, "HEAD")] >= 5
+            and f.counts[(role, "HEAD")] >= f.binding_heads + 3
         ):
             respond(
                 200, {"ETag": '"new-generation"', "Content-Length": str(len(f.bytes))}
@@ -98,7 +98,7 @@ class Archive:
             respond(503, {"Retry-After": "0"})
             return True
         a, b = map(int, handler.headers["Range"].removeprefix("bytes=").split("-"))
-        science = f.counts[(role, "HEAD")] >= 4
+        science = f.counts[(role, "HEAD")] >= f.binding_heads + 2
         if science:
             self.payload_requests += 1
         self.ranges.append({"start": a, "length": b - a + 1, "science": science})
