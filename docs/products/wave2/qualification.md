@@ -62,6 +62,16 @@ Use that environment's Python for each dedicated harness. Native acquisition its
 
 [Performance summary](performance.json) consolidates the per-case complete-output process wall/CPU/RSS, source blocks/encoded bytes/overfetch, first-output and writer phases, memory reservations and final object sizes. Native and independently implemented rasterio→Zarr workflows produce identical scientific arrays. Reference startup is included. Metadata serialization, codecs and provenance object sizes differ, so these are scientifically equivalent small-window correctness/resource comparisons, not interchangeable byte-level encodings or a performance-superiority claim. Frozen loopback timings exclude original-provider latency and authorization.
 
+| Source case | Native / reference wall (s) | First native output (s) | Native CPU (s) / RSS (MiB) | Native GETs / body bytes | Output objects / bytes |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| lt04 | 0.912 / 0.814 | 0.164 | 0.574 / 71.8 | 60 / 977,959 | 243 / 3,511,201 |
+| lt05 | 0.431 / 0.677 | 0.176 | 0.543 / 72.0 | 60 / 771,955 | 243 / 3,512,283 |
+| le07 | 0.429 / 0.685 | 0.159 | 0.547 / 71.3 | 70 / 992,021 | 243 / 3,518,329 |
+| dswx-s1 | 0.353 / 0.665 | 0.081 | 0.433 / 40.8 | 22 / 346,685 | 450 / 2,123,322 |
+| dist-alert | 0.174 / 0.290 | 0.061 | 0.156 / 39.4 | 67 / 187,028 | 227 / 665,729 |
+
+These execution-phase first-output counters exclude preparation; external full-process wall includes it. All five rows use the same final debug binary. CPU and RSS are process measurements; reader/writer reservations and decoded-tile overfetch are separately retained in `performance.json`.
+
 [Timed normal catalog commands](discovery-timing.json) measure all five source cases. [Accountless signing and source HEAD](access-timing.json) isolate one actual PC control-plane sample; its temporary SAS is never persisted. Direct production receipts retain Earthdata authentication seconds, redirect/request counts and full execution phases; auth timers are cumulative session time and can overlap, not a serial component to add to wall time. Native first-output counters begin in execution after preparation, while external stream first-chunk timers begin at process launch; the receipts name these scopes. Selected tile encoded bytes, decoded tile overfetch, metadata-inclusive HTTP bytes and initial capture page bytes are distinct metrics.
 
 Captured original upstream bytes total 6,003,528 (LT04), 5,242,880 (LT05), 7,981,505 (LE07), and 729,426 for DIST; DSWx's four small compressed original files have per-object sizes/hashes in its inspection receipt and an 8 MiB per-object ceiling. Repeated gates use frozen original offsets and reject uncaptured ranges. No repeated science qualification requires a live bulk download. Raw mirrors, intermediate stores and process logs remain ignored under `prototype-output`; receipts retain immutable identities/range hashes and mature-reader equality.
