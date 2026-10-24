@@ -1,0 +1,397 @@
+{
+  "status": "passed",
+  "discovery": {
+    "complete": true,
+    "bounded_limit": 8,
+    "observation_count": 4,
+    "ids": [
+      "OPERA_L3_DSWx-S1_T17SQV_20261021T230515Z_20261023T070839Z_S1D_30_v1.0",
+      "OPERA_L3_DSWx-S1_T18STE_20261021T230515Z_20261023T070918Z_S1D_30_v1.0",
+      "OPERA_L3_DSWx-S1_T17SQV_20261021T230515Z_20261023T070918Z_S1D_30_v1.0",
+      "OPERA_L3_DSWx-S1_T18STE_20261021T230515Z_20261023T070839Z_S1D_30_v1.0"
+    ],
+    "time": "2026-10-21T23:05:34Z",
+    "selection": "Explicit pinned granule used for acquisition; overlapping tiles/reprocessing stamps not substituted."
+  },
+  "plan": {
+    "status": "passed",
+    "source_count": 4
+  },
+  "authenticated_fetch": {
+    "status": "passed",
+    "output": "prototype-output/wave2-dswx-s1/native-both-policies.zarr",
+    "layers": [
+      "BWTR",
+      "CONF",
+      "DIAG",
+      "WTR"
+    ],
+    "policies": [
+      "dswx_s1_wtr_water",
+      "dswx_s1_bwtr_water"
+    ],
+    "independent_arrays_equal": true,
+    "observed": {
+      "source_reads": [],
+      "scheduler": {
+        "workers": 2,
+        "per_host": 4,
+        "buffer_bytes": 33474530,
+        "reserved_bytes_peak": 6840943,
+        "reader_state_reserved_bytes": 0,
+        "prepared_native_metadata_bytes": 4274063,
+        "authenticated_transport_reserved_bytes": 4194304,
+        "prepared_v3_metadata_index_bytes": 0,
+        "active_workers_peak": 2,
+        "completed_tasks": 100,
+        "admitted_jobs": 4,
+        "cog_reader_scope": "selection",
+        "seconds": 3.34654725,
+        "order": "plan",
+        "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+        "prepared_hdf5_bytes": 0,
+        "native_buffers": [
+          {
+            "asset_id": "p000_WTR",
+            "transport_encoded_capacity_peak_bytes": 3611,
+            "adapter_delivery_capacity_peak_bytes": 8192,
+            "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+          },
+          {
+            "asset_id": "p000_CONF",
+            "transport_encoded_capacity_peak_bytes": 35307,
+            "adapter_delivery_capacity_peak_bytes": 8192,
+            "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+          },
+          {
+            "asset_id": "p000_BWTR",
+            "transport_encoded_capacity_peak_bytes": 3613,
+            "adapter_delivery_capacity_peak_bytes": 8192,
+            "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+          },
+          {
+            "asset_id": "p000_DIAG",
+            "transport_encoded_capacity_peak_bytes": 155893,
+            "adapter_delivery_capacity_peak_bytes": 8192,
+            "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+          }
+        ],
+        "native_metadata": {
+          "retained_sources": 4,
+          "retained_bytes": 79759,
+          "physical_metadata_sources": 4,
+          "physical_metadata_bytes": 22415,
+          "cap_bytes": 8388608,
+          "skipped_sources": 0,
+          "scope": "this Prepared only; immutable version-bound parser pages; never a data cache",
+          "authenticated_sources": 4,
+          "authenticated_transport": {
+            "p000_BWTR": {
+              "checkpoint_claims": 0,
+              "peak_in_flight": 1,
+              "wire_head": 12,
+              "wire_get": 10,
+              "redirects": 10,
+              "login_requests": 1,
+              "refreshes": 0,
+              "route_cache_hits": 5,
+              "response_body_bytes": 22929,
+              "redirect_body_bytes": 330,
+              "signing_auth_seconds": 7.187582539999999,
+              "statuses": {
+                "200": 6,
+                "206": 6,
+                "301": 1,
+                "302": 2,
+                "303": 7
+              },
+              "origins": {
+                "https://archive.podaac.earthdata.nasa.gov": 9,
+                "https://deotb6e7tfubr.cloudfront.net": 12,
+                "https://urs.earthdata.nasa.gov": 1
+              }
+            },
+            "p000_CONF": {
+              "checkpoint_claims": 0,
+              "peak_in_flight": 1,
+              "wire_head": 12,
+              "wire_get": 10,
+              "redirects": 10,
+              "login_requests": 1,
+              "refreshes": 0,
+              "route_cache_hits": 5,
+              "response_body_bytes": 68648,
+              "redirect_body_bytes": 330,
+              "signing_auth_seconds": 7.232621168000001,
+              "statuses": {
+                "200": 6,
+                "206": 6,
+                "301": 1,
+                "302": 2,
+                "303": 7
+              },
+              "origins": {
+                "https://archive.podaac.earthdata.nasa.gov": 9,
+                "https://deotb6e7tfubr.cloudfront.net": 12,
+                "https://urs.earthdata.nasa.gov": 1
+              }
+            },
+            "p000_DIAG": {
+              "checkpoint_claims": 0,
+              "peak_in_flight": 1,
+              "wire_head": 12,
+              "wire_get": 8,
+              "redirects": 10,
+              "login_requests": 1,
+              "refreshes": 0,
+              "route_cache_hits": 3,
+              "response_body_bytes": 233406,
+              "redirect_body_bytes": 330,
+              "signing_auth_seconds": 7.417422539999999,
+              "statuses": {
+                "200": 6,
+                "206": 4,
+                "301": 1,
+                "302": 2,
+                "303": 7
+              },
+              "origins": {
+                "https://archive.podaac.earthdata.nasa.gov": 9,
+                "https://deotb6e7tfubr.cloudfront.net": 10,
+                "https://urs.earthdata.nasa.gov": 1
+              }
+            },
+            "p000_WTR": {
+              "checkpoint_claims": 0,
+              "peak_in_flight": 1,
+              "wire_head": 12,
+              "wire_get": 10,
+              "redirects": 10,
+              "login_requests": 1,
+              "refreshes": 0,
+              "route_cache_hits": 5,
+              "response_body_bytes": 23021,
+              "redirect_body_bytes": 329,
+              "signing_auth_seconds": 7.348835081999999,
+              "statuses": {
+                "200": 6,
+                "206": 6,
+                "301": 1,
+                "302": 2,
+                "303": 7
+              },
+              "origins": {
+                "https://archive.podaac.earthdata.nasa.gov": 9,
+                "https://deotb6e7tfubr.cloudfront.net": 12,
+                "https://urs.earthdata.nasa.gov": 1
+              }
+            }
+          }
+        },
+        "native_strategies": [
+          {
+            "asset_id": "p000_WTR",
+            "task_reserved_bytes": 1191451,
+            "strategy": {
+              "read_scope": "planned_windows",
+              "retained_selection_bytes": 0,
+              "decoded_cache_limit_bytes": 524288,
+              "coalesced_groups": 0,
+              "max_encoded_group_reservation_bytes": 0,
+              "codec_working_bytes": 131072
+            }
+          },
+          {
+            "asset_id": "p000_BWTR",
+            "task_reserved_bytes": 1191453,
+            "strategy": {
+              "read_scope": "planned_windows",
+              "retained_selection_bytes": 0,
+              "decoded_cache_limit_bytes": 524288,
+              "coalesced_groups": 0,
+              "max_encoded_group_reservation_bytes": 0,
+              "codec_working_bytes": 131072
+            }
+          },
+          {
+            "asset_id": "p000_CONF",
+            "task_reserved_bytes": 1223147,
+            "strategy": {
+              "read_scope": "planned_windows",
+              "retained_selection_bytes": 0,
+              "decoded_cache_limit_bytes": 524288,
+              "coalesced_groups": 0,
+              "max_encoded_group_reservation_bytes": 0,
+              "codec_working_bytes": 131072
+            }
+          },
+          {
+            "asset_id": "p000_DIAG",
+            "task_reserved_bytes": 1343733,
+            "strategy": {
+              "read_scope": "planned_windows",
+              "retained_selection_bytes": 0,
+              "decoded_cache_limit_bytes": 524288,
+              "coalesced_groups": 0,
+              "max_encoded_group_reservation_bytes": 0,
+              "codec_working_bytes": 131072
+            }
+          }
+        ]
+      },
+      "transport": {
+        "native_cog_authenticated": {
+          "p000_BWTR": {
+            "checkpoint_claims": 0,
+            "peak_in_flight": 1,
+            "wire_head": 16,
+            "wire_get": 10,
+            "redirects": 12,
+            "login_requests": 1,
+            "refreshes": 0,
+            "route_cache_hits": 5,
+            "response_body_bytes": 22929,
+            "redirect_body_bytes": 330,
+            "signing_auth_seconds": 8.811838249,
+            "statuses": {
+              "200": 8,
+              "206": 6,
+              "301": 1,
+              "302": 2,
+              "303": 9
+            },
+            "origins": {
+              "https://archive.podaac.earthdata.nasa.gov": 11,
+              "https://deotb6e7tfubr.cloudfront.net": 14,
+              "https://urs.earthdata.nasa.gov": 1
+            }
+          },
+          "p000_CONF": {
+            "checkpoint_claims": 0,
+            "peak_in_flight": 1,
+            "wire_head": 16,
+            "wire_get": 10,
+            "redirects": 12,
+            "login_requests": 1,
+            "refreshes": 0,
+            "route_cache_hits": 5,
+            "response_body_bytes": 68648,
+            "redirect_body_bytes": 330,
+            "signing_auth_seconds": 8.958090501000001,
+            "statuses": {
+              "200": 8,
+              "206": 6,
+              "301": 1,
+              "302": 2,
+              "303": 9
+            },
+            "origins": {
+              "https://archive.podaac.earthdata.nasa.gov": 11,
+              "https://deotb6e7tfubr.cloudfront.net": 14,
+              "https://urs.earthdata.nasa.gov": 1
+            }
+          },
+          "p000_DIAG": {
+            "checkpoint_claims": 0,
+            "peak_in_flight": 1,
+            "wire_head": 16,
+            "wire_get": 8,
+            "redirects": 12,
+            "login_requests": 1,
+            "refreshes": 0,
+            "route_cache_hits": 3,
+            "response_body_bytes": 233406,
+            "redirect_body_bytes": 330,
+            "signing_auth_seconds": 8.776664164999998,
+            "statuses": {
+              "200": 8,
+              "206": 4,
+              "301": 1,
+              "302": 2,
+              "303": 9
+            },
+            "origins": {
+              "https://archive.podaac.earthdata.nasa.gov": 11,
+              "https://deotb6e7tfubr.cloudfront.net": 12,
+              "https://urs.earthdata.nasa.gov": 1
+            }
+          },
+          "p000_WTR": {
+            "checkpoint_claims": 0,
+            "peak_in_flight": 1,
+            "wire_head": 16,
+            "wire_get": 10,
+            "redirects": 12,
+            "login_requests": 1,
+            "refreshes": 0,
+            "route_cache_hits": 5,
+            "response_body_bytes": 23021,
+            "redirect_body_bytes": 329,
+            "signing_auth_seconds": 9.011319832,
+            "statuses": {
+              "200": 8,
+              "206": 6,
+              "301": 1,
+              "302": 2,
+              "303": 9
+            },
+            "origins": {
+              "https://archive.podaac.earthdata.nasa.gov": 11,
+              "https://deotb6e7tfubr.cloudfront.net": 14,
+              "https://urs.earthdata.nasa.gov": 1
+            }
+          }
+        }
+      },
+      "decoded_source_chunks": 0,
+      "filled_source_chunks": 0,
+      "first_output_seconds": 7.447810167,
+      "assembly_seconds": 0.0,
+      "source_retrieval_seconds": 2.3468497929999996,
+      "allocation_seconds": null,
+      "copying_seconds": null,
+      "output_setup_seconds": 0.071460292,
+      "output_finalize_seconds": 0.009385875,
+      "output_io": {
+        "reads": 134,
+        "writes": 451,
+        "bytes_read": 0,
+        "bytes_written": 1719421,
+        "buffered_bytes_peak": 155648,
+        "storage_read_seconds": 0.00119629,
+        "storage_write_seconds": 0.04970312,
+        "encode_seconds": 0.006735968999999992,
+        "allocation_seconds": 0.0,
+        "copying_seconds": 0.0
+      },
+      "native_materialized_bytes": null,
+      "source_data_requests": 8,
+      "source_data_bytes": 289341,
+      "chunks": 100,
+      "decoded_bytes": 295936,
+      "non_nodata_pixels": 230292,
+      "planning_seconds": 15.204422875,
+      "source_open_seconds": 3.385236833,
+      "read_decode_seconds": 2.4071669580000004,
+      "sink_seconds": 0.08590125499999998,
+      "masking_seconds": 0.02453894899999999,
+      "remote_requests": null,
+      "remote_bytes": null
+    },
+    "completion": {
+      "stream_finish": "successful",
+      "publication": "atomic no-replace sibling rename",
+      "existing_destination": "refused; replacement is never implicit",
+      "scope": "validated provider ETags or local size/mtime, not an atomic multi-object snapshot",
+      "synchronization": "file contents and metadata before closing every writer handle; bottom-up directories and pre-publication barrier; rename; parent synchronization and post-publication barrier",
+      "memory_scope": "output_io.buffered_bytes_peak is a separate bounded per-encode reservation including delivered payload, masks, output scratch and codec allowance; add scheduler reservations; neither is an RSS ceiling"
+    }
+  },
+  "authenticated_stream": {
+    "complete_event": "complete",
+    "source_versions_validated": true,
+    "provisional_chunks": 100,
+    "values_payload": "See independent frozen stream --values receipt for exhaustive payload equality."
+  },
+  "frozen_exhaustive_validation": "dswx-s1-frozen-validation.json"
+}
