@@ -1,0 +1,30 @@
+[plan]
+name = "product-wave1"
+source_mtime_max = "2026-10-24T02:21:09.006043Z"
+sop_set_hash = ""
+
+[tasks."tasks/integrate.integrate"]
+summary = "Implement profiles, live product paths, typed COG science and independent acceptance"
+prompt = """
+Orient:
+- Continue codex/acquisition-planner from 629538c; use the user supplied Wave 1 brief.
+Edit:
+1. Inspect actual products and authoritative specifications before admission.
+2. Reuse the existing planner/readers/stream/writer; keep family and access boundaries explicit.
+3. Implement Landsat 8/9 C2 SR, HLS L30/S30 v2, DSWx-HLS and contained RTC-S1 Float32 if safe.
+4. Preserve raw scientific values, source quality, native grids, calibration, masks and provenance.
+5. Independently qualify real sources, output and limits; document measured performance and roadmap.
+6. Commit successful stages locally. No push/merge/tag/deploy/ChronoZarr changes.
+Verify:
+- cargo test --locked --no-default-features --features native-cog,native-hdf5,authenticated-http
+- cargo test --locked --all-features --all-targets
+- cargo clippy --locked --all-features --all-targets -- -D warnings
+- cargo check --locked --no-default-features
+- cargo fmt --all -- --check
+- prototype-output/zarr-env/bin/python bench/wave1_products.py offline
+"""
+commit_message = "Add qualified native remote sensing product workflows"
+timeout_s = 0
+test_cmd = "cargo test --locked --no-default-features --features native-cog,native-hdf5,authenticated-http"
+files.create = ["src/products.rs", "src/products/", "src/cli/products.rs", "tests/product_profiles.rs", "tests/products.rs", "docs/products/", "bench/wave1_products.py", "bench/wave1_nasa_probe.py", "bench/wave1_reference.py", "bench/wave1_hls_auth.py", "tests/data/native_cog/"]
+files.edit = ["src/lib.rs", "src/main.rs", "src/acquisition.rs", "src/native_cog.rs", "src/pixels.rs", "src/scientific_output.rs", "src/planner.rs", "src/scheduler.rs", "src/storage.rs", "src/execute.rs", "src/authenticated_http.rs", "src/cog_range.rs", "tests/cli.rs", "tests/streaming.rs", "docs/installation.md", "README.md"]

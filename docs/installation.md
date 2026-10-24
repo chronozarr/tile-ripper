@@ -215,3 +215,16 @@ The [v3 source profile](zarr-v3-input/workflow.md) uses the same native or
 Zarr-only build, with zarrs 0.23.14 sharding and Zstd included for reading.
 It needs no Python runtime. Experimental v3 **output** still requires the
 separate feature and explicit encoding; uncompressed v2 output remains default.
+
+
+## Wave 1 named scientific products
+
+For Landsat 8/9 SR, public HLS/OPERA references and qualified native scientific COGs:
+
+```sh
+cargo build --release --locked --no-default-features --features native-cog
+./target/release/tile-ripper products
+./target/release/tile-ripper fetch examples/product-landsat.json --gdal-free --output NEW.zarr
+```
+
+For explicitly authenticated production HLS and current OPERA COGs, add `authenticated-http` and supply a private netrc file with `--auth earthdata --netrc PRIVATE_FILE`. The product helper selects the separately qualified HLS L30/S30 v2, PO.DAAC DSWx-HLS v1.1 or ASF Cumulus RTC-S1 v1.0 exact-object policy; none inherits the SWOT host policy. Older ASF datapool routes remain unqualified by this authentication policy. Source type/codec/grid gates remain mandatory and Cargo defaults are unchanged. The qualified native COG sample types are UInt8 class/palette indices, UInt16, Int16, and Float32; see [exact capabilities, limits, and evidence](products/qualification.md) and [workflow](products/workflow.md).

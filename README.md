@@ -1,5 +1,7 @@
 # Tile-Ripper
 
+Named native product workflows now cover Landsat 8/9 Collection 2 surface reflectance, HLS L30/S30 v2, OPERA DSWx-HLS v1, and the qualified OPERA RTC-S1 Float32 profile. Use `tile-ripper products` and the existing `plan` / `fetch` / `stream` commands with a product request. See [runnable examples and installation](docs/products/workflow.md), [exact real-source qualification and access limits](docs/products/qualification.md), [scientific band/quality definitions](docs/products/specifications.md), and the [25-row coverage roadmap](docs/products/roadmap.md). Stored values, native grids, calibration, classification labels, and independent quality masks are preserved.
+
 Bounded SWOT Raster D discovery now finds candidates by WGS84 bounding box and
 date through NASA CMR. `discover` reports catalog relevance and exclusions;
 `discover-job` accepts explicit native windows or WGS84 bounding boxes and
@@ -128,6 +130,10 @@ version-pinned native acquisitions with a tuned GDAL reader.
 
 | Source | Supported selection and output |
 | --- | --- |
+| Landsat 8/9 C2 Level-2 SR | Native UInt16 SR, UInt16 pixel/saturation QA and UInt8 aerosol QA; bounded Planetary Computer discovery/runtime signing; [product workflow](docs/products/workflow.md) |
+| HLS L30 and S30 v2 | Distinct Int16 reflectance and UInt8 Fmask profiles; public GSFC references and separately qualified explicit Earthdata COG access; 30 m UTM groups |
+| OPERA DSWx-HLS v1 | Exact UInt8 classified water and UInt16 diagnostics, separate named class masks; public reference and current PO.DAAC v1.1 authenticated access |
+| OPERA RTC-S1 v1 | Exact Float32 linear gamma0 VV/VH and UInt8 mask on public references and a current authenticated ASF Cumulus Sentinel-1C burst |
 | Earth Search Sentinel-2 C1 L2A | STAC dates, geographic bounds/Polygon, named native UInt16 bands; GDAL-free per-observation Zarr v2 or masked native stream, optional GDAL GeoTIFF output |
 | WeatherBench2 ERA5 64×32 product above | Anonymous HTTP Zarr v2, Float32/NaN, `(time,longitude,latitude)`; native Zarr subset |
 | NASA POWER IMERG daily spatial | Anonymous HTTP Zarr v2, Float32/NaN, `(time,lat,lon)`, verified daily time and storage filter; native Zarr subset |
@@ -229,7 +235,7 @@ fn fetch(request: &Request) -> Result<()> {
 cargo run --release --locked --example acquire -- examples/weatherbench2.json --fetch
 ```
 
-`Prepared::execute` also delivers owned native `Pixels::UInt16` or `Pixels::Float32`
+`Prepared::execute` also delivers owned native `Pixels::UInt8`, `Pixels::UInt16`, `Pixels::Int16`, `Pixels::UInt32`, or `Pixels::Float32`
 buffers synchronously, with backpressure, coordinates, validity and provenance.
 Use `.pixels.len()`, `.as_u16()` or `.as_f32()`; callback consumers must not retain
 unbounded buffers. Results are provisional until execution returns success.

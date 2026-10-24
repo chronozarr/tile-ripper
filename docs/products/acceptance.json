@@ -1,0 +1,114 @@
+{
+  "checked_at_utc": "2026-10-24T02:56:07.015697+00:00",
+  "source_commit": "15e4319166ce689924a1494eb7a3a888bdda5c05",
+  "starting_commit": "629538c",
+  "status": "pass",
+  "build": {
+    "features": [
+      "native-cog",
+      "authenticated-http"
+    ],
+    "default_features": false,
+    "profile": "release",
+    "executable_sha256": "6ff6c93601cc3287d204560ffff0f322b960a7b48ca3d10425d83cbcca5808c2",
+    "gdal_linkage": false,
+    "linkage": [
+      "\t/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1356.0.0)",
+      "\t/usr/lib/libobjc.A.dylib (compatibility version 1.0.0, current version 228.0.0)",
+      "\t/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation (compatibility version 300.0.0, current version 4201.0.0)",
+      "\t/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2000.67.0)",
+      "\t/System/Library/Frameworks/Security.framework/Versions/A/Security (compatibility version 1.0.0, current version 61901.60.40)",
+      "\t/System/Library/Frameworks/SystemConfiguration.framework/Versions/A/SystemConfiguration (compatibility version 1.0.0, current version 1385.60.3)",
+      "\t/usr/lib/libiconv.2.dylib (compatibility version 7.0.0, current version 7.0.0)",
+      "\t/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation (compatibility version 150.0.0, current version 4201.0.0)"
+    ]
+  },
+  "checks": [
+    {
+      "command": "cargo test --locked --all-features --all-targets",
+      "passed": 174,
+      "explicitly_ignored": 9,
+      "status": "pass",
+      "log_sha256": "792e2ebd1c88b0123e9ae38c238fc0e1e3e59134283d89e21f6e7a6662d45005"
+    },
+    {
+      "command": "cargo test --locked --no-default-features --features native-cog,native-hdf5,authenticated-http",
+      "passed": 145,
+      "explicitly_ignored": 8,
+      "status": "pass",
+      "log_sha256": "55908419336e41febebc815fabfea578e952d1eb64b7f3fff2d440d7e582d31a"
+    },
+    {
+      "command": "cargo test --locked --all-features --lib authenticated_http::tests",
+      "passed": 5,
+      "explicitly_ignored": 0,
+      "status": "pass",
+      "log_sha256": "484ae47291124f8401c162a1cec3b0356d189c1e276e6fb5d9ab754586c70a0c"
+    },
+    {
+      "command": "cargo clippy --locked --all-features --all-targets -- -D warnings",
+      "status": "pass"
+    },
+    {
+      "command": "cargo check --locked --no-default-features",
+      "status": "pass"
+    },
+    {
+      "command": "cargo check --locked --no-default-features --features authenticated-http",
+      "status": "pass"
+    },
+    {
+      "command": "cargo fmt --all -- --check",
+      "status": "pass"
+    },
+    {
+      "command": "git diff --check",
+      "status": "pass"
+    }
+  ],
+  "scientific_receipts": [
+    {
+      "file": "landsat-validation.json",
+      "sha256": "59abf137fdc8eae41477a31d29609ca213af440f4f2f020e6e98a15ec1371337"
+    },
+    {
+      "file": "landsat9-validation.json",
+      "sha256": "5adcbacc22397bd50c4c072936a3b10bea81d04539461b75a7b0838145a439fd"
+    },
+    {
+      "file": "hls-l30-validation.json",
+      "sha256": "ead8a9685de3262cd018f5422f054ad1dfc171067af3fcc400b70e81db9b301b"
+    },
+    {
+      "file": "hls-s30-validation.json",
+      "sha256": "c5d1c9cc3eee7e12fdc6c86ec5616fdc483fd43f724b656b63e3c53af14f1093"
+    },
+    {
+      "file": "opera-dswx-hls-validation.json",
+      "sha256": "8f215e18d4932f3c87137bbc22a9c60abff83e04801572250740c01741837a25"
+    },
+    {
+      "file": "opera-rtc-s1-validation.json",
+      "sha256": "0faf7d1c1a5c10ff74e6513ce87c6e496ca22dbf5df147b47ce411c69ae476b6"
+    },
+    {
+      "file": "hls-auth-validation.json",
+      "sha256": "cf4a1845f32aa983ff346948fdd71c7963c00ea4aadf14239fe691cd53d06718"
+    },
+    {
+      "file": "dswx-auth-validation.json",
+      "sha256": "638e3a4fe816abec941212a2281ee809bf9fe4f69c8703d1ce2702c09cf671f8"
+    },
+    {
+      "file": "rtc-auth-validation.json",
+      "sha256": "bd1224a8fe29fce42143f17a89c09aee6df209b3bedaff0c0ab4c2f72e2b06e9"
+    },
+    {
+      "file": "discovery-validation.json",
+      "sha256": "e0083836a7ba7de4862ad5190f1bcf7cc6beaa9191c16190d00c6a62765380a8"
+    }
+  ],
+  "coverage_scope": "Five exact product profiles; native source and complete portable outputs independently checked for the selected bands/grids/dates/routes in each receipt. Descriptor tables and roadmap rows do not expand real-source admission.",
+  "final_binary_change": "The final hardened binary adds rejection of invalid DSWx filename zones/calendar dates to the earlier b5487b2383fca0264f4b59804aa9f3157dd2b81a40d9bd416af9c0840a1d1640 live-tested binary. Targeted authentication tests and the held-out current DSWx live receipt exercise this final build; admitted-source decode/output behavior is unchanged.",
+  "boundary_semantics": "AOI boundary ties follow the existing GDAL-compatible raster scanline rule. The RTC receipt documents exact-center boundary diagnosis and a validity-edge selection avoiding ambiguous ties."
+}

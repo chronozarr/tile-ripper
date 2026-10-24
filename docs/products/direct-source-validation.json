@@ -1,0 +1,761 @@
+{
+  "passed": true,
+  "rows": [
+    {
+      "label": "landsat",
+      "product": "landsat-c2-l2-sr",
+      "passed": true,
+      "scope": "native CLI direct original-provider acquisition; exact array agreement with independently checked frozen selections",
+      "process": {
+        "code": 0,
+        "wall_seconds": 7.041712707999977,
+        "cpu_seconds": 0.100256,
+        "peak_rss_bytes": 43991040
+      },
+      "observed": {
+        "source_reads": [],
+        "scheduler": {
+          "workers": 2,
+          "per_host": 4,
+          "buffer_bytes": 33520638,
+          "reserved_bytes_peak": 1147333,
+          "reader_state_reserved_bytes": 0,
+          "prepared_native_metadata_bytes": 103277,
+          "authenticated_transport_reserved_bytes": 0,
+          "prepared_v3_metadata_index_bytes": 0,
+          "active_workers_peak": 2,
+          "completed_tasks": 5,
+          "admitted_jobs": 5,
+          "cog_reader_scope": "selection",
+          "seconds": 0.854849958,
+          "order": "plan",
+          "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+          "native_buffers": [
+            {
+              "asset_id": "p000_SR_B4",
+              "transport_encoded_capacity_peak_bytes": 122370,
+              "adapter_delivery_capacity_peak_bytes": 3744,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_QA_PIXEL",
+              "transport_encoded_capacity_peak_bytes": 9432,
+              "adapter_delivery_capacity_peak_bytes": 3744,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_SR_QA_AEROSOL",
+              "transport_encoded_capacity_peak_bytes": 7597,
+              "adapter_delivery_capacity_peak_bytes": 2496,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_SR_B5",
+              "transport_encoded_capacity_peak_bytes": 125254,
+              "adapter_delivery_capacity_peak_bytes": 3744,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_QA_RADSAT",
+              "transport_encoded_capacity_peak_bytes": 149,
+              "adapter_delivery_capacity_peak_bytes": 3744,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            }
+          ],
+          "native_metadata": {
+            "retained_sources": 5,
+            "retained_bytes": 103277,
+            "physical_metadata_sources": 5,
+            "physical_metadata_bytes": 877,
+            "cap_bytes": 8388608,
+            "skipped_sources": 0,
+            "scope": "this Prepared only; immutable version-bound parser pages; never a data cache",
+            "authenticated_sources": 0,
+            "authenticated_transport": {}
+          },
+          "native_strategies": [
+            {
+              "asset_id": "p000_SR_B4",
+              "task_reserved_bytes": 520586,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_SR_B5",
+              "task_reserved_bytes": 523470,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_QA_PIXEL",
+              "task_reserved_bytes": 407648,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_QA_RADSAT",
+              "task_reserved_bytes": 398365,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_SR_QA_AEROSOL",
+              "task_reserved_bytes": 272245,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            }
+          ]
+        },
+        "transport": {},
+        "decoded_source_chunks": 0,
+        "filled_source_chunks": 0,
+        "first_output_seconds": 0.934910375,
+        "assembly_seconds": 0.0,
+        "source_retrieval_seconds": 0.882687456,
+        "allocation_seconds": null,
+        "copying_seconds": null,
+        "output_setup_seconds": 0.018054583,
+        "output_finalize_seconds": 0.001107167,
+        "output_io": {
+          "reads": 0,
+          "writes": 122,
+          "bytes_read": 0,
+          "bytes_written": 642954,
+          "buffered_bytes_peak": 48672,
+          "storage_read_seconds": 0.0,
+          "storage_write_seconds": 0.013404288,
+          "encode_seconds": 0.00013483600000000468,
+          "allocation_seconds": 0.0,
+          "copying_seconds": 0.0
+        },
+        "native_materialized_bytes": null,
+        "source_data_requests": 5,
+        "source_data_bytes": 264802,
+        "chunks": 5,
+        "decoded_bytes": 11232,
+        "non_nodata_pixels": 5972,
+        "planning_seconds": 3.406599292,
+        "source_open_seconds": 0.514393334,
+        "read_decode_seconds": 0.883709959,
+        "sink_seconds": 0.002423082,
+        "masking_seconds": 2.3166e-05,
+        "remote_requests": null,
+        "remote_bytes": null
+      },
+      "sources": [
+        {
+          "asset_id": "p000_SR_B4",
+          "datetime": "2024-06-29T15:52:43.011876Z",
+          "object_version": "\"0x8DCA021EC4FC4DB\"",
+          "item_id": "LC08_L2SP_016035_20240629_02_T1",
+          "collection": "landsat-c2-l2",
+          "requested_band": "SR_B4",
+          "product_version": "Collection 2",
+          "href": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/oli-tirs/2024/016/035/LC08_L2SP_016035_20240629_20240709_02_T1/LC08_L2SP_016035_20240629_20240709_02_T1_SR_B4.TIF"
+        },
+        {
+          "asset_id": "p000_SR_B5",
+          "datetime": "2024-06-29T15:52:43.011876Z",
+          "object_version": "\"0x8DCA021ECD7E3C5\"",
+          "item_id": "LC08_L2SP_016035_20240629_02_T1",
+          "collection": "landsat-c2-l2",
+          "requested_band": "SR_B5",
+          "product_version": "Collection 2",
+          "href": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/oli-tirs/2024/016/035/LC08_L2SP_016035_20240629_20240709_02_T1/LC08_L2SP_016035_20240629_20240709_02_T1_SR_B5.TIF"
+        },
+        {
+          "asset_id": "p000_QA_PIXEL",
+          "datetime": "2024-06-29T15:52:43.011876Z",
+          "object_version": "\"0x8DCA021E9FBC91A\"",
+          "item_id": "LC08_L2SP_016035_20240629_02_T1",
+          "collection": "landsat-c2-l2",
+          "requested_band": "QA_PIXEL",
+          "product_version": "Collection 2",
+          "href": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/oli-tirs/2024/016/035/LC08_L2SP_016035_20240629_20240709_02_T1/LC08_L2SP_016035_20240629_20240709_02_T1_QA_PIXEL.TIF"
+        },
+        {
+          "asset_id": "p000_QA_RADSAT",
+          "datetime": "2024-06-29T15:52:43.011876Z",
+          "object_version": "\"0x8DCA021EA997A8B\"",
+          "item_id": "LC08_L2SP_016035_20240629_02_T1",
+          "collection": "landsat-c2-l2",
+          "requested_band": "QA_RADSAT",
+          "product_version": "Collection 2",
+          "href": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/oli-tirs/2024/016/035/LC08_L2SP_016035_20240629_20240709_02_T1/LC08_L2SP_016035_20240629_20240709_02_T1_QA_RADSAT.TIF"
+        },
+        {
+          "asset_id": "p000_SR_QA_AEROSOL",
+          "datetime": "2024-06-29T15:52:43.011876Z",
+          "object_version": "\"0x8DCA021EAC2586C\"",
+          "item_id": "LC08_L2SP_016035_20240629_02_T1",
+          "collection": "landsat-c2-l2",
+          "requested_band": "SR_QA_AEROSOL",
+          "product_version": "Collection 2",
+          "href": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/oli-tirs/2024/016/035/LC08_L2SP_016035_20240629_20240709_02_T1/LC08_L2SP_016035_20240629_20240709_02_T1_SR_QA_AEROSOL.TIF"
+        }
+      ]
+    },
+    {
+      "label": "landsat9",
+      "product": "landsat-c2-l2-sr",
+      "passed": true,
+      "scope": "native CLI direct original-provider acquisition; exact array agreement with independently checked frozen selections",
+      "process": {
+        "code": 0,
+        "wall_seconds": 6.874075665997225,
+        "cpu_seconds": 0.12414099999999999,
+        "peak_rss_bytes": 43892736
+      },
+      "observed": {
+        "source_reads": [],
+        "scheduler": {
+          "workers": 2,
+          "per_host": 4,
+          "buffer_bytes": 33520652,
+          "reserved_bytes_peak": 1142594,
+          "reader_state_reserved_bytes": 0,
+          "prepared_native_metadata_bytes": 103277,
+          "authenticated_transport_reserved_bytes": 0,
+          "prepared_v3_metadata_index_bytes": 0,
+          "active_workers_peak": 2,
+          "completed_tasks": 5,
+          "admitted_jobs": 5,
+          "cog_reader_scope": "selection",
+          "seconds": 0.949630875,
+          "order": "plan",
+          "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+          "native_buffers": [
+            {
+              "asset_id": "p000_SR_B4",
+              "transport_encoded_capacity_peak_bytes": 118314,
+              "adapter_delivery_capacity_peak_bytes": 3744,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_QA_PIXEL",
+              "transport_encoded_capacity_peak_bytes": 6139,
+              "adapter_delivery_capacity_peak_bytes": 3744,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_SR_QA_AEROSOL",
+              "transport_encoded_capacity_peak_bytes": 11259,
+              "adapter_delivery_capacity_peak_bytes": 2496,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_SR_B5",
+              "transport_encoded_capacity_peak_bytes": 124571,
+              "adapter_delivery_capacity_peak_bytes": 3744,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_QA_RADSAT",
+              "transport_encoded_capacity_peak_bytes": 149,
+              "adapter_delivery_capacity_peak_bytes": 3744,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            }
+          ],
+          "native_metadata": {
+            "retained_sources": 5,
+            "retained_bytes": 103277,
+            "physical_metadata_sources": 5,
+            "physical_metadata_bytes": 877,
+            "cap_bytes": 8388608,
+            "skipped_sources": 0,
+            "scope": "this Prepared only; immutable version-bound parser pages; never a data cache",
+            "authenticated_sources": 0,
+            "authenticated_transport": {}
+          },
+          "native_strategies": [
+            {
+              "asset_id": "p000_SR_B4",
+              "task_reserved_bytes": 516530,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_SR_B5",
+              "task_reserved_bytes": 522787,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_QA_PIXEL",
+              "task_reserved_bytes": 404355,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_QA_RADSAT",
+              "task_reserved_bytes": 398365,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_SR_QA_AEROSOL",
+              "task_reserved_bytes": 275907,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            }
+          ]
+        },
+        "transport": {},
+        "decoded_source_chunks": 0,
+        "filled_source_chunks": 0,
+        "first_output_seconds": 1.1398385,
+        "assembly_seconds": 0.0,
+        "source_retrieval_seconds": 1.0509058759999999,
+        "allocation_seconds": null,
+        "copying_seconds": null,
+        "output_setup_seconds": 0.047846291,
+        "output_finalize_seconds": 0.001498875,
+        "output_io": {
+          "reads": 0,
+          "writes": 123,
+          "bytes_read": 0,
+          "bytes_written": 643925,
+          "buffered_bytes_peak": 48672,
+          "storage_read_seconds": 0.0,
+          "storage_write_seconds": 0.031978084000000004,
+          "encode_seconds": 0.0016919989999999961,
+          "allocation_seconds": 0.0,
+          "copying_seconds": 0.0
+        },
+        "native_materialized_bytes": null,
+        "source_data_requests": 5,
+        "source_data_bytes": 260432,
+        "chunks": 5,
+        "decoded_bytes": 11232,
+        "non_nodata_pixels": 5972,
+        "planning_seconds": 3.15053525,
+        "source_open_seconds": 0.527940376,
+        "read_decode_seconds": 1.052403334,
+        "sink_seconds": 0.004651915,
+        "masking_seconds": 2.6708999999999998e-05,
+        "remote_requests": null,
+        "remote_bytes": null
+      },
+      "sources": [
+        {
+          "asset_id": "p000_SR_B4",
+          "datetime": "2024-06-21T15:52:29.360031Z",
+          "object_version": "\"0x8DC92B0792F9B04\"",
+          "item_id": "LC09_L2SP_016035_20240621_02_T1",
+          "collection": "landsat-c2-l2",
+          "requested_band": "SR_B4",
+          "product_version": "Collection 2",
+          "href": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/oli-tirs/2024/016/035/LC09_L2SP_016035_20240621_20240622_02_T1/LC09_L2SP_016035_20240621_20240622_02_T1_SR_B4.TIF"
+        },
+        {
+          "asset_id": "p000_SR_B5",
+          "datetime": "2024-06-21T15:52:29.360031Z",
+          "object_version": "\"0x8DC92B079EF0693\"",
+          "item_id": "LC09_L2SP_016035_20240621_02_T1",
+          "collection": "landsat-c2-l2",
+          "requested_band": "SR_B5",
+          "product_version": "Collection 2",
+          "href": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/oli-tirs/2024/016/035/LC09_L2SP_016035_20240621_20240622_02_T1/LC09_L2SP_016035_20240621_20240622_02_T1_SR_B5.TIF"
+        },
+        {
+          "asset_id": "p000_QA_PIXEL",
+          "datetime": "2024-06-21T15:52:29.360031Z",
+          "object_version": "\"0x8DC92B076389BF6\"",
+          "item_id": "LC09_L2SP_016035_20240621_02_T1",
+          "collection": "landsat-c2-l2",
+          "requested_band": "QA_PIXEL",
+          "product_version": "Collection 2",
+          "href": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/oli-tirs/2024/016/035/LC09_L2SP_016035_20240621_20240622_02_T1/LC09_L2SP_016035_20240621_20240622_02_T1_QA_PIXEL.TIF"
+        },
+        {
+          "asset_id": "p000_QA_RADSAT",
+          "datetime": "2024-06-21T15:52:29.360031Z",
+          "object_version": "\"0x8DC92B0766766A4\"",
+          "item_id": "LC09_L2SP_016035_20240621_02_T1",
+          "collection": "landsat-c2-l2",
+          "requested_band": "QA_RADSAT",
+          "product_version": "Collection 2",
+          "href": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/oli-tirs/2024/016/035/LC09_L2SP_016035_20240621_20240622_02_T1/LC09_L2SP_016035_20240621_20240622_02_T1_QA_RADSAT.TIF"
+        },
+        {
+          "asset_id": "p000_SR_QA_AEROSOL",
+          "datetime": "2024-06-21T15:52:29.360031Z",
+          "object_version": "\"0x8DC92B0766435E9\"",
+          "item_id": "LC09_L2SP_016035_20240621_02_T1",
+          "collection": "landsat-c2-l2",
+          "requested_band": "SR_QA_AEROSOL",
+          "product_version": "Collection 2",
+          "href": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/oli-tirs/2024/016/035/LC09_L2SP_016035_20240621_20240622_02_T1/LC09_L2SP_016035_20240621_20240622_02_T1_SR_QA_AEROSOL.TIF"
+        }
+      ]
+    },
+    {
+      "label": "opera-dswx-hls",
+      "product": "opera-dswx-hls",
+      "passed": true,
+      "scope": "native CLI direct original-provider acquisition; exact array agreement with independently checked frozen selections",
+      "process": {
+        "code": 0,
+        "wall_seconds": 3.069823833000555,
+        "cpu_seconds": 0.07897399999999999,
+        "peak_rss_bytes": 23478272
+      },
+      "observed": {
+        "source_reads": [],
+        "scheduler": {
+          "workers": 2,
+          "per_host": 4,
+          "buffer_bytes": 33554404,
+          "reserved_bytes_peak": 1940660,
+          "reader_state_reserved_bytes": 0,
+          "prepared_native_metadata_bytes": 31017,
+          "authenticated_transport_reserved_bytes": 0,
+          "prepared_v3_metadata_index_bytes": 0,
+          "active_workers_peak": 2,
+          "completed_tasks": 2,
+          "admitted_jobs": 2,
+          "cog_reader_scope": "selection",
+          "seconds": 0.524755667,
+          "order": "plan",
+          "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+          "native_buffers": [
+            {
+              "asset_id": "p000_WTR",
+              "transport_encoded_capacity_peak_bytes": 6102,
+              "adapter_delivery_capacity_peak_bytes": 2312,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_DIAG",
+              "transport_encoded_capacity_peak_bytes": 61597,
+              "adapter_delivery_capacity_peak_bytes": 3468,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            }
+          ],
+          "native_metadata": {
+            "retained_sources": 2,
+            "retained_bytes": 31017,
+            "physical_metadata_sources": 2,
+            "physical_metadata_bytes": 6441,
+            "cap_bytes": 8388608,
+            "skipped_sources": 0,
+            "scope": "this Prepared only; immutable version-bound parser pages; never a data cache",
+            "authenticated_sources": 0,
+            "authenticated_transport": {}
+          },
+          "native_strategies": [
+            {
+              "asset_id": "p000_WTR",
+              "task_reserved_bytes": 663774,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_DIAG",
+              "task_reserved_bytes": 1245869,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            }
+          ]
+        },
+        "transport": {},
+        "decoded_source_chunks": 0,
+        "filled_source_chunks": 0,
+        "first_output_seconds": 0.939913083,
+        "assembly_seconds": 0.0,
+        "source_retrieval_seconds": 0.7372212920000001,
+        "allocation_seconds": null,
+        "copying_seconds": null,
+        "output_setup_seconds": 0.01028175,
+        "output_finalize_seconds": 0.000898458,
+        "output_io": {
+          "reads": 0,
+          "writes": 53,
+          "bytes_read": 0,
+          "bytes_written": 79686,
+          "buffered_bytes_peak": 45084,
+          "storage_read_seconds": 0.0,
+          "storage_write_seconds": 0.010237079000000001,
+          "encode_seconds": 0.00012595699999999932,
+          "allocation_seconds": 0.0,
+          "copying_seconds": 0.0
+        },
+        "native_materialized_bytes": null,
+        "source_data_requests": 4,
+        "source_data_bytes": 120737,
+        "chunks": 2,
+        "decoded_bytes": 3468,
+        "non_nodata_pixels": 2104,
+        "planning_seconds": 1.539158,
+        "source_open_seconds": 0.203378417,
+        "read_decode_seconds": 0.7402387500000001,
+        "sink_seconds": 0.001184917,
+        "masking_seconds": 1.2875000000000001e-05,
+        "remote_requests": null,
+        "remote_bytes": null
+      },
+      "sources": [
+        {
+          "asset_id": "p000_WTR",
+          "datetime": "2021-12-11T19:18:11Z",
+          "object_version": "\"bb7699fcb8072344e4d4732dc3f96bd8\"",
+          "item_id": "OPERA_L3_DSWx-HLS_T10TCT_20211211T191811Z_20241025T180315Z_S2A_30_v1.0",
+          "collection": "OPERA_L3_DSWX-HLS_V1",
+          "requested_band": "WTR",
+          "product_version": "1.0",
+          "href": "https://opera-pst-rs-pop1.s3.us-west-2.amazonaws.com/products/DSWx_HLS/OPERA_L3_DSWx-HLS_T10TCT_20211211T191811Z_20241025T180315Z_S2A_30_v1.0/OPERA_L3_DSWx-HLS_T10TCT_20211211T191811Z_20241025T180315Z_S2A_30_v1.0_B01_WTR.tif"
+        },
+        {
+          "asset_id": "p000_DIAG",
+          "datetime": "2021-12-11T19:18:11Z",
+          "object_version": "\"6fcdd39e9879aa3b224b36a12f4af6f6\"",
+          "item_id": "OPERA_L3_DSWx-HLS_T10TCT_20211211T191811Z_20241025T180315Z_S2A_30_v1.0",
+          "collection": "OPERA_L3_DSWX-HLS_V1",
+          "requested_band": "DIAG",
+          "product_version": "1.0",
+          "href": "https://opera-pst-rs-pop1.s3.us-west-2.amazonaws.com/products/DSWx_HLS/OPERA_L3_DSWx-HLS_T10TCT_20211211T191811Z_20241025T180315Z_S2A_30_v1.0/OPERA_L3_DSWx-HLS_T10TCT_20211211T191811Z_20241025T180315Z_S2A_30_v1.0_B04_DIAG.tif"
+        }
+      ]
+    },
+    {
+      "label": "opera-rtc-s1",
+      "product": "opera-rtc-s1",
+      "passed": true,
+      "scope": "native CLI direct original-provider acquisition; exact array agreement with independently checked frozen selections",
+      "process": {
+        "code": 0,
+        "wall_seconds": 4.555871166994621,
+        "cpu_seconds": 0.131236,
+        "peak_rss_bytes": 34209792
+      },
+      "observed": {
+        "source_reads": [],
+        "scheduler": {
+          "workers": 2,
+          "per_host": 4,
+          "buffer_bytes": 33554394,
+          "reserved_bytes_peak": 9631833,
+          "reader_state_reserved_bytes": 0,
+          "prepared_native_metadata_bytes": 73412,
+          "authenticated_transport_reserved_bytes": 0,
+          "prepared_v3_metadata_index_bytes": 0,
+          "active_workers_peak": 2,
+          "completed_tasks": 3,
+          "admitted_jobs": 3,
+          "cog_reader_scope": "selection",
+          "seconds": 1.059003291,
+          "order": "plan",
+          "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+          "native_buffers": [
+            {
+              "asset_id": "p000_VV",
+              "transport_encoded_capacity_peak_bytes": 2491767,
+              "adapter_delivery_capacity_peak_bytes": 5780,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_mask",
+              "transport_encoded_capacity_peak_bytes": 958,
+              "adapter_delivery_capacity_peak_bytes": 2312,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            },
+            {
+              "asset_id": "p000_VH",
+              "transport_encoded_capacity_peak_bytes": 2591710,
+              "adapter_delivery_capacity_peak_bytes": 5780,
+              "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+            }
+          ],
+          "native_metadata": {
+            "retained_sources": 3,
+            "retained_bytes": 73412,
+            "physical_metadata_sources": 3,
+            "physical_metadata_bytes": 28356,
+            "cap_bytes": 8388608,
+            "skipped_sources": 0,
+            "scope": "this Prepared only; immutable version-bound parser pages; never a data cache",
+            "authenticated_sources": 0,
+            "authenticated_transport": {}
+          },
+          "native_strategies": [
+            {
+              "asset_id": "p000_VV",
+              "task_reserved_bytes": 4729239,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 1,
+                "max_encoded_group_reservation_bytes": 1658850,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_VH",
+              "task_reserved_bytes": 4829182,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 1,
+                "max_encoded_group_reservation_bytes": 1724826,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "p000_mask",
+              "task_reserved_bytes": 658630,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 1,
+                "max_encoded_group_reservation_bytes": 621,
+                "codec_working_bytes": 131072
+              }
+            }
+          ]
+        },
+        "transport": {},
+        "decoded_source_chunks": 0,
+        "filled_source_chunks": 0,
+        "first_output_seconds": 1.511430625,
+        "assembly_seconds": 0.0,
+        "source_retrieval_seconds": 1.541018583,
+        "allocation_seconds": null,
+        "copying_seconds": null,
+        "output_setup_seconds": 0.023611375,
+        "output_finalize_seconds": 0.002248542,
+        "output_io": {
+          "reads": 0,
+          "writes": 83,
+          "bytes_read": 0,
+          "bytes_written": 167040,
+          "buffered_bytes_peak": 47396,
+          "storage_read_seconds": 0.0,
+          "storage_write_seconds": 0.027146747000000002,
+          "encode_seconds": 0.00014503499999999597,
+          "allocation_seconds": 0.0,
+          "copying_seconds": 0.0
+        },
+        "native_materialized_bytes": null,
+        "source_data_requests": 3,
+        "source_data_bytes": 3384297,
+        "chunks": 3,
+        "decoded_bytes": 10404,
+        "non_nodata_pixels": 3352,
+        "planning_seconds": 2.272560167,
+        "source_open_seconds": 0.31588733300000005,
+        "read_decode_seconds": 1.57611425,
+        "sink_seconds": 0.003776376,
+        "masking_seconds": 2.5708e-05,
+        "remote_requests": null,
+        "remote_bytes": null
+      },
+      "sources": [
+        {
+          "asset_id": "p000_VV",
+          "datetime": "2024-01-10T18:14:05Z",
+          "object_version": "\"f635843d25090993e2c13b8870d4f837\"",
+          "item_id": "OPERA_L2_RTC-S1_T001-000288-IW3_20240110T181405Z_20240410T013737Z_S1A_30_v1.0",
+          "collection": "OPERA_L2_RTC-S1_V1",
+          "requested_band": "VV",
+          "product_version": "1.0",
+          "href": "https://opera-pst-rs-pop1.s3.us-west-2.amazonaws.com/products/RTC_S1/OPERA_L2_RTC-S1_T001-000288-IW3_20240110T181405Z_20240410T013737Z_S1A_30_v1.0/OPERA_L2_RTC-S1_T001-000288-IW3_20240110T181405Z_20240410T013737Z_S1A_30_v1.0_VV.tif"
+        },
+        {
+          "asset_id": "p000_VH",
+          "datetime": "2024-01-10T18:14:05Z",
+          "object_version": "\"99706aff792ef99359e31778d7210434\"",
+          "item_id": "OPERA_L2_RTC-S1_T001-000288-IW3_20240110T181405Z_20240410T013737Z_S1A_30_v1.0",
+          "collection": "OPERA_L2_RTC-S1_V1",
+          "requested_band": "VH",
+          "product_version": "1.0",
+          "href": "https://opera-pst-rs-pop1.s3.us-west-2.amazonaws.com/products/RTC_S1/OPERA_L2_RTC-S1_T001-000288-IW3_20240110T181405Z_20240410T013737Z_S1A_30_v1.0/OPERA_L2_RTC-S1_T001-000288-IW3_20240110T181405Z_20240410T013737Z_S1A_30_v1.0_VH.tif"
+        },
+        {
+          "asset_id": "p000_mask",
+          "datetime": "2024-01-10T18:14:05Z",
+          "object_version": "\"378f67e458d82fc604fe1b04e96aa0f5\"",
+          "item_id": "OPERA_L2_RTC-S1_T001-000288-IW3_20240110T181405Z_20240410T013737Z_S1A_30_v1.0",
+          "collection": "OPERA_L2_RTC-S1_V1",
+          "requested_band": "mask",
+          "product_version": "1.0",
+          "href": "https://opera-pst-rs-pop1.s3.us-west-2.amazonaws.com/products/RTC_S1/OPERA_L2_RTC-S1_T001-000288-IW3_20240110T181405Z_20240410T013737Z_S1A_30_v1.0/OPERA_L2_RTC-S1_T001-000288-IW3_20240110T181405Z_20240410T013737Z_S1A_30_v1.0_mask.tif"
+        }
+      ]
+    }
+  ]
+}
