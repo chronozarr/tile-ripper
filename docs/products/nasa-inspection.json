@@ -1,0 +1,243 @@
+{
+  "schema": "tile-ripper-wave1-nasa-inspection-v1",
+  "inspected_at": "2026-10-23",
+  "scope": "HLS v2.0 L30/S30, OPERA DSWx-HLS v1, and OPERA RTC-S1 v1",
+  "capture": {
+    "script": "bench/wave1_nasa_probe.py",
+    "manifest": "prototype-output/wave1/nasa/manifest.json",
+    "reference_reader": "rasterio 1.4.3",
+    "default_action": "network-free verification of frozen sparse, full-offset TIFF mirrors",
+    "live_action": "HEAD identity check plus If-Match bounded GETs from free public HTTPS endpoints",
+    "total_live_cog_body_bytes": 2272125,
+    "requester_pays": false,
+    "notes": [
+      "Each mirror has the source object's full logical length, but only the exact header/directory/tile ranges used by the 32x32 rasterio reference read contain source bytes.",
+      "The mirror HTTP server used by an integration test must reject any uncaptured range; zero-filled holes are not source data.",
+      "The raw reference array is stored base64-encoded with an exact SHA-256 digest; decoded/scaled values are not substituted for source samples."
+    ]
+  },
+  "route_findings": {
+    "opera-pst-rs-open": {
+      "result": "HTTP 404 during inspection",
+      "conclusion": "not a currently usable public sample bucket endpoint"
+    },
+    "opera-pst-rs-pop1": {
+      "result": "public anonymous S3 listing, HEAD, and range GET succeeded in us-west-2",
+      "conclusion": "usable OPERA Cal/Val specimen source; not the operational archive",
+      "bucket": "s3://opera-pst-rs-pop1",
+      "official_pointer": "https://github.com/opera-adt/OPERA-Cal-Val/blob/main/README.md"
+    },
+    "hls-gsfc-samples": {
+      "result": "public anonymous HTTPS HEAD and range GET succeeded",
+      "conclusion": "real NASA HLS v2.0 COG specimens from the GSFC reference/sample tree; not the LP DAAC operational archive"
+    },
+    "hls-production": {
+      "result": "current granules and exact COG URLs discovered anonymously through CMR; COG body route requires Earthdata authorization",
+      "conclusion": "archive access is auth-blocked in this session, while the physical COG format is independently qualified with the public GSFC specimens",
+      "credential_presence_only": {
+        "earthdata_token_environment": false,
+        "earthdata_user_password_environment": false,
+        "netrc": true,
+        "urs_cookie_jar": true,
+        "aws_environment": false,
+        "aws_credentials_file": false
+      },
+      "security_note": "No credential value, cookie, OAuth code, or protected response body is retained. Existing trusted-host authentication was not broadened."
+    }
+  },
+  "collections": [
+    {
+      "concept_id": "C2021957657-LPCLOUD",
+      "short_name": "HLSL30",
+      "version": "2.0",
+      "operational_prefix": "https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/",
+      "cmr": "https://cmr.earthdata.nasa.gov/search/collections.umm_json?concept_id=C2021957657-LPCLOUD"
+    },
+    {
+      "concept_id": "C2021957295-LPCLOUD",
+      "short_name": "HLSS30",
+      "version": "2.0",
+      "operational_prefix": "https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSS30.020/",
+      "cmr": "https://cmr.earthdata.nasa.gov/search/collections.umm_json?concept_id=C2021957295-LPCLOUD"
+    },
+    {
+      "concept_id": "C2617126679-POCLOUD",
+      "short_name": "OPERA_L3_DSWX-HLS_V1",
+      "version": "1.0",
+      "operational_s3_prefix": "s3://podaac-ops-cumulus-protected/OPERA_L3_DSWX-HLS_V1/",
+      "cmr": "https://cmr.earthdata.nasa.gov/search/collections.umm_json?concept_id=C2617126679-POCLOUD"
+    },
+    {
+      "concept_id": "C2777436413-ASF",
+      "short_name": "OPERA_L2_RTC-S1_V1",
+      "version": "1",
+      "operational_s3_prefix": "s3://asf-cumulus-prod-opera-products/OPERA_L2_RTC-S1/",
+      "cmr": "https://cmr.earthdata.nasa.gov/search/collections.umm_json?concept_id=C2777436413-ASF"
+    }
+  ],
+  "products": {
+    "HLSL30_2.0": {
+      "sample_granule": "HLS.L30.T15VUE.2022231T172609.v2.0",
+      "source_status": "public official GSFC reference/sample output",
+      "acquisition_extent": ["2022-08-19T17:26:09.755564Z", "2022-08-19T17:26:33.638108Z"],
+      "platform": "LANDSAT-9",
+      "sensor": "OLI",
+      "grid": {
+        "shape": [3660, 3660],
+        "crs": "EPSG:32615",
+        "transform": [30.0, 0.0, 300000.0, 0.0, -30.0, 6500040.0],
+        "tile_size": [256, 256]
+      },
+      "red": {
+        "asset": "HLS.L30.T15VUE.2022231T172609.v2.0.B04.tif",
+        "dtype": "Int16",
+        "compression": "DEFLATE",
+        "nodata": -9999,
+        "scale": 0.0001,
+        "offset": 0.0,
+        "unit": "unitless surface reflectance",
+        "saturation_raw": 12000
+      },
+      "quality": {
+        "asset": "HLS.L30.T15VUE.2022231T172609.v2.0.Fmask.tif",
+        "dtype": "Byte",
+        "nodata": 255,
+        "bits_msb_to_lsb": "7-6 aerosol (00 climatology, 01 low, 10 average, 11 high); 5 water; 4 snow/ice; 3 cloud shadow; 2 adjacent cloud; 1 cloud; 0 cirrus"
+      },
+      "source_metadata": "prototype-output/wave1/nasa/metadata/HLS.L30.T15VUE.2022231T172609.v2.0.cmr.xml"
+    },
+    "HLSS30_2.0": {
+      "sample_granule": "HLS.S30.T17SPV.2022023T160551.v2.0",
+      "source_status": "public official GSFC reference/sample output",
+      "granule_id_time": "2022-01-23T16:05:51Z",
+      "tile_sensing_time": "2022-01-23T16:13:26.247240Z",
+      "time_note": "The granule ID uses datatake time; CMR SensingTime is retained separately and is authoritative for the tile observation.",
+      "platform": "Sentinel-2A",
+      "sensor": "Sentinel-2 MSI",
+      "grid": {
+        "shape": [3660, 3660],
+        "crs": "EPSG:32617",
+        "transform": [30.0, 0.0, 600000.0, 0.0, -30.0, 4000020.0],
+        "tile_size": [256, 256]
+      },
+      "red": {
+        "asset": "HLS.S30.T17SPV.2022023T160551.v2.0.B04.tif",
+        "dtype": "Int16",
+        "compression": "DEFLATE",
+        "nodata": -9999,
+        "scale": 0.0001,
+        "offset": 0.0,
+        "unit": "unitless surface reflectance",
+        "saturation_raw": 12000,
+        "harmonization": "30 m NBAR; common bands bandpass-adjusted to the Landsat-8 reference"
+      },
+      "quality": {
+        "asset": "HLS.S30.T17SPV.2022023T160551.v2.0.Fmask.tif",
+        "dtype": "Byte",
+        "nodata": 255,
+        "bits_msb_to_lsb": "7-6 aerosol (00 climatology, 01 low, 10 average, 11 high); 5 water; 4 snow/ice; 3 cloud shadow; 2 adjacent cloud; 1 cloud; 0 cirrus"
+      },
+      "source_metadata": "prototype-output/wave1/nasa/metadata/HLS.S30.T17SPV.2022023T160551.v2.0.cmr.xml"
+    },
+    "OPERA_DSWx-HLS_1": {
+      "sample_granule": "OPERA_L3_DSWx-HLS_T10TCT_20211211T191811Z_20241025T180315Z_S2A_30_v1.0",
+      "source_status": "public OPERA Cal/Val specimen",
+      "acquisition_time_from_filename": "2021-12-11T19:18:11Z",
+      "tile_sensing_time": "2021-12-11T19:21:30.65522Z",
+      "processing_time": "2024-10-25T18:03:15Z",
+      "grid": {
+        "shape": [3660, 3660],
+        "crs": "UTM Zone 10 Northern Hemisphere on WGS84 ellipsoid",
+        "transform": [30.0, 0.0, 300000.0, 0.0, -30.0, 5300040.0],
+        "tile_size": [512, 512]
+      },
+      "WTR": {
+        "dtype": "UInt8",
+        "compression": "DEFLATE",
+        "nodata": 255,
+        "classes": {
+          "0": "not water",
+          "1": "open water",
+          "2": "partial surface water (at least 20% and less than 100% open water)",
+          "252": "snow/ice",
+          "253": "cloud, cloud shadow, or adjacent to cloud",
+          "254": "ocean mask",
+          "255": "fill"
+        }
+      },
+      "DIAG": {
+        "dtype": "UInt16",
+        "compression": "DEFLATE",
+        "nodata": 65535,
+        "encoding": "decimal representation of five binary test results (00000 through 11111); these are decimal digits, not a packed integer 0 through 31"
+      },
+      "source_metadata": "prototype-output/wave1/nasa/metadata/OPERA_L3_DSWx-HLS_T10TCT_20211211T191811Z_20241025T180315Z_S2A_30_v1.0.met.json"
+    },
+    "OPERA_RTC-S1_1": {
+      "sample_granule": "OPERA_L2_RTC-S1_T001-000288-IW3_20240110T181405Z_20240410T013737Z_S1A_30_v1.0",
+      "source_status": "public OPERA Cal/Val specimen",
+      "acquisition_time": "2024-01-10T18:14:05Z",
+      "zero_doppler_extent": ["2024-01-10T18:14:05.955189Z", "2024-01-10T18:14:09.069357Z"],
+      "processing_time": "2024-04-10T01:43:55.472509Z",
+      "grid": {
+        "shape": [1442, 3085],
+        "crs": "EPSG:32630",
+        "transform": [30.0, 0.0, 335220.0, 0.0, -30.0, 5455260.0],
+        "tile_size": [512, 512]
+      },
+      "VV_VH": {
+        "dtype": "Float32",
+        "compression": "DEFLATE",
+        "nodata": "NaN",
+        "quantity": "radiometrically terrain-corrected gamma0 backscatter intensity",
+        "expression": "linear power; convert to dB as 10*log10(value)",
+        "speckle_filtering": false
+      },
+      "mask": {
+        "dtype": "UInt8",
+        "compression": "DEFLATE",
+        "nodata": 255,
+        "classes": {
+          "0": "valid, neither layover nor shadow",
+          "1": "shadow",
+          "2": "layover",
+          "3": "layover and shadow",
+          "255": "invalid/fill"
+        }
+      },
+      "hdf5_role": "metadata companion; raster image samples are in the polarization COGs",
+      "source_metadata": [
+        "prototype-output/wave1/nasa/metadata/OPERA_L2_RTC-S1_T001-000288-IW3_20240110T181405Z_20240410T013737Z_S1A_30_v1.0.met.json",
+        "prototype-output/wave1/nasa/metadata/OPERA_L2_RTC-S1_T001-000288-IW3_20240110T181405Z_20240410T013737Z_S1A_30_v1.0.h5"
+      ]
+    }
+  },
+  "current_operational_examples_from_cmr": {
+    "queried_at": "2026-10-23",
+    "HLSL30": {
+      "granule": "HLS.L30.T56JKT.2026294T235958.v2.0",
+      "datetime": "2026-10-21T23:59:58.581Z",
+      "red": "https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T56JKT.2026294T235958.v2.0/HLS.L30.T56JKT.2026294T235958.v2.0.B04.tif",
+      "quality": "https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T56JKT.2026294T235958.v2.0/HLS.L30.T56JKT.2026294T235958.v2.0.Fmask.tif"
+    },
+    "HLSS30": {
+      "granule": "HLS.S30.T59UNU.2026295T235129.v2.0",
+      "datetime": "2026-10-22T23:51:43.692Z",
+      "red": "https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSS30.020/HLS.S30.T59UNU.2026295T235129.v2.0/HLS.S30.T59UNU.2026295T235129.v2.0.B04.tif",
+      "quality": "https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSS30.020/HLS.S30.T59UNU.2026295T235129.v2.0/HLS.S30.T59UNU.2026295T235129.v2.0.Fmask.tif"
+    }
+  },
+  "official_primary_references": {
+    "HLS_L30_description": "https://hls.gsfc.nasa.gov/products-description/l30/",
+    "HLS_S30_description": "https://hls.gsfc.nasa.gov/products-description/s30/",
+    "HLS_data_access": "https://hls.gsfc.nasa.gov/data-access/",
+    "HLS_user_guide_2026": "https://lpdaac.usgs.gov/documents/1698/HLS_User_Guide_V2.pdf",
+    "DSWx_product_page": "https://www.jpl.nasa.gov/go/opera/products/dswx-product-suite/",
+    "DSWx_product_specification": "https://d2pn8kiwq2w21t.cloudfront.net/documents/OPERA_DSWx-HLS_ProductSpec_v1.0.0_D-107395_RevB.pdf",
+    "DSWx_archive_landing": "https://podaac.jpl.nasa.gov/dataset/OPERA_L3_DSWX-HLS_V1",
+    "DSWx_DOI": "10.5067/OPDSW-PL3V1",
+    "RTC_product_page": "https://www.jpl.nasa.gov/go/opera/products/rtc-product/",
+    "RTC_product_specification": "https://d2pn8kiwq2w21t.cloudfront.net/documents/ProductSpec_RTC-S1.pdf",
+    "RTC_ASF_product_guide": "https://hyp3-docs.asf.alaska.edu/guides/opera_rtc_product_guide/"
+  }
+}

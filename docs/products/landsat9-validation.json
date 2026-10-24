@@ -1,0 +1,1108 @@
+{
+  "passed": true,
+  "product": "landsat-c2-l2-sr",
+  "scope": "one landsat-9 observation, two SR and three QA bands; 30m geographic subset; frozen mirror plus independent rasterio/Zarr-Python/xarray reads",
+  "sources": [
+    {
+      "id": "SR_B4",
+      "href": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/oli-tirs/2024/016/035/LC09_L2SP_016035_20240621_20240622_02_T1/LC09_L2SP_016035_20240621_20240622_02_T1_SR_B4.TIF",
+      "canonical_href": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/oli-tirs/2024/016/035/LC09_L2SP_016035_20240621_20240622_02_T1/LC09_L2SP_016035_20240621_20240622_02_T1_SR_B4.TIF",
+      "bytes": 93227304,
+      "etag": "\"0x8DC92B0792F9B04\"",
+      "datetime": "2024-06-21T15:52:29.360031Z",
+      "metadata": {
+        "href": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/oli-tirs/2024/016/035/LC09_L2SP_016035_20240621_20240622_02_T1/LC09_L2SP_016035_20240621_20240622_02_T1_SR_B4.TIF",
+        "eo:bands": [
+          {
+            "name": "OLI_B4",
+            "center_wavelength": 0.65,
+            "full_width_half_max": 0.04,
+            "common_name": "red",
+            "description": "Visible red"
+          }
+        ],
+        "description": "Collection 2 Level-2 Red Band (SR_B4) Surface Reflectance",
+        "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+        "roles": [
+          "data",
+          "reflectance"
+        ],
+        "title": "Red Band",
+        "raster:bands": [
+          {
+            "scale": 2.75e-05,
+            "nodata": 0,
+            "offset": -0.2,
+            "data_type": "uint16",
+            "spatial_resolution": 30
+          }
+        ]
+      }
+    },
+    {
+      "id": "SR_B5",
+      "href": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/oli-tirs/2024/016/035/LC09_L2SP_016035_20240621_20240622_02_T1/LC09_L2SP_016035_20240621_20240622_02_T1_SR_B5.TIF",
+      "canonical_href": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/oli-tirs/2024/016/035/LC09_L2SP_016035_20240621_20240622_02_T1/LC09_L2SP_016035_20240621_20240622_02_T1_SR_B5.TIF",
+      "bytes": 100460369,
+      "etag": "\"0x8DC92B079EF0693\"",
+      "datetime": "2024-06-21T15:52:29.360031Z",
+      "metadata": {
+        "href": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/oli-tirs/2024/016/035/LC09_L2SP_016035_20240621_20240622_02_T1/LC09_L2SP_016035_20240621_20240622_02_T1_SR_B5.TIF",
+        "eo:bands": [
+          {
+            "name": "OLI_B5",
+            "center_wavelength": 0.87,
+            "full_width_half_max": 0.03,
+            "common_name": "nir08",
+            "description": "Near infrared"
+          }
+        ],
+        "description": "Collection 2 Level-2 Near Infrared Band 0.8 (SR_B5) Surface Reflectance",
+        "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+        "roles": [
+          "data",
+          "reflectance"
+        ],
+        "title": "Near Infrared Band 0.8",
+        "raster:bands": [
+          {
+            "scale": 2.75e-05,
+            "nodata": 0,
+            "offset": -0.2,
+            "data_type": "uint16",
+            "spatial_resolution": 30
+          }
+        ]
+      }
+    },
+    {
+      "id": "QA_PIXEL",
+      "href": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/oli-tirs/2024/016/035/LC09_L2SP_016035_20240621_20240622_02_T1/LC09_L2SP_016035_20240621_20240622_02_T1_QA_PIXEL.TIF",
+      "canonical_href": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/oli-tirs/2024/016/035/LC09_L2SP_016035_20240621_20240622_02_T1/LC09_L2SP_016035_20240621_20240622_02_T1_QA_PIXEL.TIF",
+      "bytes": 3865023,
+      "etag": "\"0x8DC92B076389BF6\"",
+      "datetime": "2024-06-21T15:52:29.360031Z",
+      "metadata": {
+        "href": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/oli-tirs/2024/016/035/LC09_L2SP_016035_20240621_20240622_02_T1/LC09_L2SP_016035_20240621_20240622_02_T1_QA_PIXEL.TIF",
+        "classification:bitfields": [
+          {
+            "name": "fill",
+            "length": 1,
+            "offset": 0,
+            "classes": [
+              {
+                "name": "not_fill",
+                "value": 0,
+                "description": "Image data"
+              },
+              {
+                "name": "fill",
+                "value": 1,
+                "description": "Fill data"
+              }
+            ],
+            "description": "Image or fill data"
+          },
+          {
+            "name": "dilated_cloud",
+            "length": 1,
+            "offset": 1,
+            "classes": [
+              {
+                "name": "not_dilated",
+                "value": 0,
+                "description": "Cloud is not dilated or no cloud"
+              },
+              {
+                "name": "dilated",
+                "value": 1,
+                "description": "Cloud dilation"
+              }
+            ],
+            "description": "Dilated cloud"
+          },
+          {
+            "name": "cirrus",
+            "length": 1,
+            "offset": 2,
+            "classes": [
+              {
+                "name": "not_cirrus",
+                "value": 0,
+                "description": "Cirrus confidence is not high"
+              },
+              {
+                "name": "cirrus",
+                "value": 1,
+                "description": "High confidence cirrus"
+              }
+            ],
+            "description": "Cirrus mask"
+          },
+          {
+            "name": "cloud",
+            "length": 1,
+            "offset": 3,
+            "classes": [
+              {
+                "name": "not_cloud",
+                "value": 0,
+                "description": "Cloud confidence is not high"
+              },
+              {
+                "name": "cloud",
+                "value": 1,
+                "description": "High confidence cloud"
+              }
+            ],
+            "description": "Cloud mask"
+          },
+          {
+            "name": "cloud_shadow",
+            "length": 1,
+            "offset": 4,
+            "classes": [
+              {
+                "name": "not_shadow",
+                "value": 0,
+                "description": "Cloud shadow confidence is not high"
+              },
+              {
+                "name": "shadow",
+                "value": 1,
+                "description": "High confidence cloud shadow"
+              }
+            ],
+            "description": "Cloud shadow mask"
+          },
+          {
+            "name": "snow",
+            "length": 1,
+            "offset": 5,
+            "classes": [
+              {
+                "name": "not_snow",
+                "value": 0,
+                "description": "Snow/Ice confidence is not high"
+              },
+              {
+                "name": "snow",
+                "value": 1,
+                "description": "High confidence snow cover"
+              }
+            ],
+            "description": "Snow/Ice mask"
+          },
+          {
+            "name": "clear",
+            "length": 1,
+            "offset": 6,
+            "classes": [
+              {
+                "name": "not_clear",
+                "value": 0,
+                "description": "Cloud or dilated cloud bits are set"
+              },
+              {
+                "name": "clear",
+                "value": 1,
+                "description": "Cloud and dilated cloud bits are not set"
+              }
+            ],
+            "description": "Clear mask"
+          },
+          {
+            "name": "water",
+            "length": 1,
+            "offset": 7,
+            "classes": [
+              {
+                "name": "not_water",
+                "value": 0,
+                "description": "Land or cloud"
+              },
+              {
+                "name": "water",
+                "value": 1,
+                "description": "Water"
+              }
+            ],
+            "description": "Water mask"
+          },
+          {
+            "name": "cloud_confidence",
+            "length": 2,
+            "offset": 8,
+            "classes": [
+              {
+                "name": "not_set",
+                "value": 0,
+                "description": "No confidence level set"
+              },
+              {
+                "name": "low",
+                "value": 1,
+                "description": "Low confidence cloud"
+              },
+              {
+                "name": "medium",
+                "value": 2,
+                "description": "Medium confidence cloud"
+              },
+              {
+                "name": "high",
+                "value": 3,
+                "description": "High confidence cloud"
+              }
+            ],
+            "description": "Cloud confidence levels"
+          },
+          {
+            "name": "cloud_shadow_confidence",
+            "length": 2,
+            "offset": 10,
+            "classes": [
+              {
+                "name": "not_set",
+                "value": 0,
+                "description": "No confidence level set"
+              },
+              {
+                "name": "low",
+                "value": 1,
+                "description": "Low confidence cloud shadow"
+              },
+              {
+                "name": "reserved",
+                "value": 2,
+                "description": "Reserved - value not used"
+              },
+              {
+                "name": "high",
+                "value": 3,
+                "description": "High confidence cloud shadow"
+              }
+            ],
+            "description": "Cloud shadow confidence levels"
+          },
+          {
+            "name": "snow_confidence",
+            "length": 2,
+            "offset": 12,
+            "classes": [
+              {
+                "name": "not_set",
+                "value": 0,
+                "description": "No confidence level set"
+              },
+              {
+                "name": "low",
+                "value": 1,
+                "description": "Low confidence snow/ice"
+              },
+              {
+                "name": "reserved",
+                "value": 2,
+                "description": "Reserved - value not used"
+              },
+              {
+                "name": "high",
+                "value": 3,
+                "description": "High confidence snow/ice"
+              }
+            ],
+            "description": "Snow/Ice confidence levels"
+          },
+          {
+            "name": "cirrus_confidence",
+            "length": 2,
+            "offset": 14,
+            "classes": [
+              {
+                "name": "not_set",
+                "value": 0,
+                "description": "No confidence level set"
+              },
+              {
+                "name": "low",
+                "value": 1,
+                "description": "Low confidence cirrus"
+              },
+              {
+                "name": "reserved",
+                "value": 2,
+                "description": "Reserved - value not used"
+              },
+              {
+                "name": "high",
+                "value": 3,
+                "description": "High confidence cirrus"
+              }
+            ],
+            "description": "Cirrus confidence levels"
+          }
+        ],
+        "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+        "roles": [
+          "cloud",
+          "cloud-shadow",
+          "snow-ice",
+          "water-mask"
+        ],
+        "title": "Pixel Quality Assessment Band",
+        "description": "Collection 2 Level-1 Pixel Quality Assessment Band (QA_PIXEL)",
+        "raster:bands": [
+          {
+            "unit": "bit index",
+            "nodata": 1,
+            "data_type": "uint16",
+            "spatial_resolution": 30
+          }
+        ]
+      }
+    },
+    {
+      "id": "QA_RADSAT",
+      "href": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/oli-tirs/2024/016/035/LC09_L2SP_016035_20240621_20240622_02_T1/LC09_L2SP_016035_20240621_20240622_02_T1_QA_RADSAT.TIF",
+      "canonical_href": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/oli-tirs/2024/016/035/LC09_L2SP_016035_20240621_20240622_02_T1/LC09_L2SP_016035_20240621_20240622_02_T1_QA_RADSAT.TIF",
+      "bytes": 224365,
+      "etag": "\"0x8DC92B0766766A4\"",
+      "datetime": "2024-06-21T15:52:29.360031Z",
+      "metadata": {
+        "href": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/oli-tirs/2024/016/035/LC09_L2SP_016035_20240621_20240622_02_T1/LC09_L2SP_016035_20240621_20240622_02_T1_QA_RADSAT.TIF",
+        "title": "Radiometric Saturation and Terrain Occlusion Quality Assessment Band",
+        "description": "Collection 2 Level-1 Radiometric Saturation and Terrain Occlusion Quality Assessment Band (QA_RADSAT)",
+        "classification:bitfields": [
+          {
+            "name": "band1",
+            "length": 1,
+            "offset": 0,
+            "classes": [
+              {
+                "name": "not_saturated",
+                "value": 0,
+                "description": "Band 1 not saturated"
+              },
+              {
+                "name": "saturated",
+                "value": 1,
+                "description": "Band 1 saturated"
+              }
+            ],
+            "description": "Band 1 radiometric saturation"
+          },
+          {
+            "name": "band2",
+            "length": 1,
+            "offset": 1,
+            "classes": [
+              {
+                "name": "not_saturated",
+                "value": 0,
+                "description": "Band 2 not saturated"
+              },
+              {
+                "name": "saturated",
+                "value": 1,
+                "description": "Band 2 saturated"
+              }
+            ],
+            "description": "Band 2 radiometric saturation"
+          },
+          {
+            "name": "band3",
+            "length": 1,
+            "offset": 2,
+            "classes": [
+              {
+                "name": "not_saturated",
+                "value": 0,
+                "description": "Band 3 not saturated"
+              },
+              {
+                "name": "saturated",
+                "value": 1,
+                "description": "Band 3 saturated"
+              }
+            ],
+            "description": "Band 3 radiometric saturation"
+          },
+          {
+            "name": "band4",
+            "length": 1,
+            "offset": 3,
+            "classes": [
+              {
+                "name": "not_saturated",
+                "value": 0,
+                "description": "Band 4 not saturated"
+              },
+              {
+                "name": "saturated",
+                "value": 1,
+                "description": "Band 4 saturated"
+              }
+            ],
+            "description": "Band 4 radiometric saturation"
+          },
+          {
+            "name": "band5",
+            "length": 1,
+            "offset": 4,
+            "classes": [
+              {
+                "name": "not_saturated",
+                "value": 0,
+                "description": "Band 5 not saturated"
+              },
+              {
+                "name": "saturated",
+                "value": 1,
+                "description": "Band 5 saturated"
+              }
+            ],
+            "description": "Band 5 radiometric saturation"
+          },
+          {
+            "name": "band6",
+            "length": 1,
+            "offset": 5,
+            "classes": [
+              {
+                "name": "not_saturated",
+                "value": 0,
+                "description": "Band 6 not saturated"
+              },
+              {
+                "name": "saturated",
+                "value": 1,
+                "description": "Band 6 saturated"
+              }
+            ],
+            "description": "Band 6 radiometric saturation"
+          },
+          {
+            "name": "band7",
+            "length": 1,
+            "offset": 6,
+            "classes": [
+              {
+                "name": "not_saturated",
+                "value": 0,
+                "description": "Band 7 not saturated"
+              },
+              {
+                "name": "saturated",
+                "value": 1,
+                "description": "Band 7 saturated"
+              }
+            ],
+            "description": "Band 7 radiometric saturation"
+          },
+          {
+            "name": "band9",
+            "length": 1,
+            "offset": 8,
+            "classes": [
+              {
+                "name": "not_saturated",
+                "value": 0,
+                "description": "Band 9 not saturated"
+              },
+              {
+                "name": "saturated",
+                "value": 1,
+                "description": "Band 9 saturated"
+              }
+            ],
+            "description": "Band 9 radiometric saturation"
+          },
+          {
+            "name": "occlusion",
+            "length": 1,
+            "offset": 11,
+            "classes": [
+              {
+                "name": "not_occluded",
+                "value": 0,
+                "description": "Terrain is not occluded"
+              },
+              {
+                "name": "occluded",
+                "value": 1,
+                "description": "Terrain is occluded"
+              }
+            ],
+            "description": "Terrain not visible from sensor due to intervening terrain"
+          }
+        ],
+        "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+        "roles": [
+          "saturation"
+        ],
+        "raster:bands": [
+          {
+            "unit": "bit index",
+            "data_type": "uint16",
+            "spatial_resolution": 30
+          }
+        ]
+      }
+    },
+    {
+      "id": "SR_QA_AEROSOL",
+      "href": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/oli-tirs/2024/016/035/LC09_L2SP_016035_20240621_20240622_02_T1/LC09_L2SP_016035_20240621_20240622_02_T1_SR_QA_AEROSOL.TIF",
+      "canonical_href": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/oli-tirs/2024/016/035/LC09_L2SP_016035_20240621_20240622_02_T1/LC09_L2SP_016035_20240621_20240622_02_T1_SR_QA_AEROSOL.TIF",
+      "bytes": 6207974,
+      "etag": "\"0x8DC92B0766435E9\"",
+      "datetime": "2024-06-21T15:52:29.360031Z",
+      "metadata": {
+        "href": "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/oli-tirs/2024/016/035/LC09_L2SP_016035_20240621_20240622_02_T1/LC09_L2SP_016035_20240621_20240622_02_T1_SR_QA_AEROSOL.TIF",
+        "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+        "roles": [
+          "data-mask",
+          "water-mask"
+        ],
+        "title": "Aerosol Quality Assessment Band",
+        "description": "Collection 2 Level-2 Aerosol Quality Assessment Band (SR_QA_AEROSOL) Surface Reflectance Product",
+        "raster:bands": [
+          {
+            "unit": "bit index",
+            "nodata": 1,
+            "data_type": "uint8",
+            "spatial_resolution": 30
+          }
+        ],
+        "classification:bitfields": [
+          {
+            "name": "fill",
+            "length": 1,
+            "offset": 0,
+            "classes": [
+              {
+                "name": "not_fill",
+                "value": 0,
+                "description": "Pixel is not fill"
+              },
+              {
+                "name": "fill",
+                "value": 1,
+                "description": "Pixel is fill"
+              }
+            ],
+            "description": "Image or fill data"
+          },
+          {
+            "name": "retrieval",
+            "length": 1,
+            "offset": 1,
+            "classes": [
+              {
+                "name": "not_valid",
+                "value": 0,
+                "description": "Pixel retrieval is not valid"
+              },
+              {
+                "name": "valid",
+                "value": 1,
+                "description": "Pixel retrieval is valid"
+              }
+            ],
+            "description": "Valid aerosol retrieval"
+          },
+          {
+            "name": "water",
+            "length": 1,
+            "offset": 2,
+            "classes": [
+              {
+                "name": "not_water",
+                "value": 0,
+                "description": "Pixel is not water"
+              },
+              {
+                "name": "water",
+                "value": 1,
+                "description": "Pixel is water"
+              }
+            ],
+            "description": "Water mask"
+          },
+          {
+            "name": "interpolated",
+            "length": 1,
+            "offset": 5,
+            "classes": [
+              {
+                "name": "not_interpolated",
+                "value": 0,
+                "description": "Pixel is not interpolated aerosol"
+              },
+              {
+                "name": "interpolated",
+                "value": 1,
+                "description": "Pixel is interpolated aerosol"
+              }
+            ],
+            "description": "Aerosol interpolation"
+          },
+          {
+            "name": "level",
+            "length": 2,
+            "offset": 6,
+            "classes": [
+              {
+                "name": "climatology",
+                "value": 0,
+                "description": "No aerosol correction applied"
+              },
+              {
+                "name": "low",
+                "value": 1,
+                "description": "Low aerosol level"
+              },
+              {
+                "name": "medium",
+                "value": 2,
+                "description": "Medium aerosol level"
+              },
+              {
+                "name": "high",
+                "value": 3,
+                "description": "High aerosol level"
+              }
+            ],
+            "description": "Aerosol level"
+          }
+        ]
+      }
+    }
+  ],
+  "reference": [
+    {
+      "band": "QA_PIXEL",
+      "dtype": "uint16",
+      "shape": [
+        39,
+        32
+      ],
+      "source_window": {
+        "x": 4819,
+        "y": 4144,
+        "width": 32,
+        "height": 39
+      },
+      "crs": "EPSG:32617",
+      "normalized_crs": "EPSG:32617",
+      "compression": "deflate",
+      "scale": 1.0,
+      "offset": 0.0,
+      "source_nodata": null,
+      "sha256": "8cff01f521e4117ffcafc1b9678b7bf2ee168db721e34406903acacd8ef670ff",
+      "values_equal_bits": true,
+      "masks_equal": true,
+      "coordinates_equal": true
+    },
+    {
+      "band": "QA_RADSAT",
+      "dtype": "uint16",
+      "shape": [
+        39,
+        32
+      ],
+      "source_window": {
+        "x": 4819,
+        "y": 4144,
+        "width": 32,
+        "height": 39
+      },
+      "crs": "EPSG:32617",
+      "normalized_crs": "EPSG:32617",
+      "compression": "deflate",
+      "scale": 1.0,
+      "offset": 0.0,
+      "source_nodata": null,
+      "sha256": "89f71694141dedff4a8c78b5db40be02ac451aa869ecc708ff8313e5525dd433",
+      "values_equal_bits": true,
+      "masks_equal": true,
+      "coordinates_equal": true
+    },
+    {
+      "band": "SR_B4",
+      "dtype": "uint16",
+      "shape": [
+        39,
+        32
+      ],
+      "source_window": {
+        "x": 4819,
+        "y": 4144,
+        "width": 32,
+        "height": 39
+      },
+      "crs": "EPSG:32617",
+      "normalized_crs": "EPSG:32617",
+      "compression": "deflate",
+      "scale": 2.75e-05,
+      "offset": -0.2,
+      "source_nodata": 0.0,
+      "sha256": "d7f5845ad57a87878540b2173806e8dc2658a847a5f12467c64dd4c9c92d8a15",
+      "values_equal_bits": true,
+      "masks_equal": true,
+      "coordinates_equal": true
+    },
+    {
+      "band": "SR_B5",
+      "dtype": "uint16",
+      "shape": [
+        39,
+        32
+      ],
+      "source_window": {
+        "x": 4819,
+        "y": 4144,
+        "width": 32,
+        "height": 39
+      },
+      "crs": "EPSG:32617",
+      "normalized_crs": "EPSG:32617",
+      "compression": "deflate",
+      "scale": 2.75e-05,
+      "offset": -0.2,
+      "source_nodata": 0.0,
+      "sha256": "812ae45c5bab230c9c8cee77a2e3015779d3937ad3b31f03565363b7b82a66b2",
+      "values_equal_bits": true,
+      "masks_equal": true,
+      "coordinates_equal": true
+    },
+    {
+      "band": "SR_QA_AEROSOL",
+      "dtype": "uint8",
+      "shape": [
+        39,
+        32
+      ],
+      "source_window": {
+        "x": 4819,
+        "y": 4144,
+        "width": 32,
+        "height": 39
+      },
+      "crs": "EPSG:32617",
+      "normalized_crs": "EPSG:32617",
+      "compression": "deflate",
+      "scale": 1.0,
+      "offset": 0.0,
+      "source_nodata": null,
+      "sha256": "5f1c95533524fa5b28ee761690c6d17670ef416f595cb5fb74b81ce62b57c0f8",
+      "values_equal_bits": true,
+      "masks_equal": true,
+      "coordinates_equal": true
+    }
+  ],
+  "native": {
+    "code": 0,
+    "wall_seconds": 0.08346941699710442,
+    "cpu_seconds": 0.050935,
+    "peak_rss_bytes": 40026112
+  },
+  "observed": {
+    "source_reads": [],
+    "scheduler": {
+      "workers": 2,
+      "per_host": 4,
+      "buffer_bytes": 33520652,
+      "reserved_bytes_peak": 1142594,
+      "reader_state_reserved_bytes": 0,
+      "prepared_native_metadata_bytes": 103277,
+      "authenticated_transport_reserved_bytes": 0,
+      "prepared_v3_metadata_index_bytes": 0,
+      "active_workers_peak": 2,
+      "completed_tasks": 5,
+      "admitted_jobs": 5,
+      "cog_reader_scope": "selection",
+      "seconds": 0.004339708,
+      "order": "plan",
+      "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+      "native_buffers": [
+        {
+          "asset_id": "p000_SR_B4",
+          "transport_encoded_capacity_peak_bytes": 118314,
+          "adapter_delivery_capacity_peak_bytes": 3744,
+          "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+        },
+        {
+          "asset_id": "p000_QA_PIXEL",
+          "transport_encoded_capacity_peak_bytes": 6139,
+          "adapter_delivery_capacity_peak_bytes": 3744,
+          "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+        },
+        {
+          "asset_id": "p000_SR_QA_AEROSOL",
+          "transport_encoded_capacity_peak_bytes": 11259,
+          "adapter_delivery_capacity_peak_bytes": 2496,
+          "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+        },
+        {
+          "asset_id": "p000_SR_B5",
+          "transport_encoded_capacity_peak_bytes": 124571,
+          "adapter_delivery_capacity_peak_bytes": 3744,
+          "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+        },
+        {
+          "asset_id": "p000_QA_RADSAT",
+          "transport_encoded_capacity_peak_bytes": 149,
+          "adapter_delivery_capacity_peak_bytes": 3744,
+          "scope": "observed transport and adapter Vec capacities; upstream codec/window allocations are covered by the declared reservation"
+        }
+      ],
+      "native_metadata": {
+        "retained_sources": 5,
+        "retained_bytes": 103277,
+        "physical_metadata_sources": 5,
+        "physical_metadata_bytes": 877,
+        "cap_bytes": 8388608,
+        "skipped_sources": 0,
+        "scope": "this Prepared only; immutable version-bound parser pages; never a data cache",
+        "authenticated_sources": 0,
+        "authenticated_transport": {}
+      },
+      "native_strategies": [
+        {
+          "asset_id": "p000_SR_B4",
+          "task_reserved_bytes": 516530,
+          "strategy": {
+            "read_scope": "planned_windows",
+            "retained_selection_bytes": 0,
+            "decoded_cache_limit_bytes": 0,
+            "coalesced_groups": 0,
+            "max_encoded_group_reservation_bytes": 0,
+            "codec_working_bytes": 131072
+          }
+        },
+        {
+          "asset_id": "p000_SR_B5",
+          "task_reserved_bytes": 522787,
+          "strategy": {
+            "read_scope": "planned_windows",
+            "retained_selection_bytes": 0,
+            "decoded_cache_limit_bytes": 0,
+            "coalesced_groups": 0,
+            "max_encoded_group_reservation_bytes": 0,
+            "codec_working_bytes": 131072
+          }
+        },
+        {
+          "asset_id": "p000_QA_PIXEL",
+          "task_reserved_bytes": 404355,
+          "strategy": {
+            "read_scope": "planned_windows",
+            "retained_selection_bytes": 0,
+            "decoded_cache_limit_bytes": 0,
+            "coalesced_groups": 0,
+            "max_encoded_group_reservation_bytes": 0,
+            "codec_working_bytes": 131072
+          }
+        },
+        {
+          "asset_id": "p000_QA_RADSAT",
+          "task_reserved_bytes": 398365,
+          "strategy": {
+            "read_scope": "planned_windows",
+            "retained_selection_bytes": 0,
+            "decoded_cache_limit_bytes": 0,
+            "coalesced_groups": 0,
+            "max_encoded_group_reservation_bytes": 0,
+            "codec_working_bytes": 131072
+          }
+        },
+        {
+          "asset_id": "p000_SR_QA_AEROSOL",
+          "task_reserved_bytes": 275907,
+          "strategy": {
+            "read_scope": "planned_windows",
+            "retained_selection_bytes": 0,
+            "decoded_cache_limit_bytes": 0,
+            "coalesced_groups": 0,
+            "max_encoded_group_reservation_bytes": 0,
+            "codec_working_bytes": 131072
+          }
+        }
+      ]
+    },
+    "transport": {},
+    "decoded_source_chunks": 0,
+    "filled_source_chunks": 0,
+    "first_output_seconds": 0.0247385,
+    "assembly_seconds": 0.0,
+    "source_retrieval_seconds": 0.002051792,
+    "allocation_seconds": null,
+    "copying_seconds": null,
+    "output_setup_seconds": 0.019430167,
+    "output_finalize_seconds": 0.000551791,
+    "output_io": {
+      "reads": 0,
+      "writes": 123,
+      "bytes_read": 0,
+      "bytes_written": 639125,
+      "buffered_bytes_peak": 48672,
+      "storage_read_seconds": 0.0,
+      "storage_write_seconds": 0.013096670000000001,
+      "encode_seconds": 0.00010025199999999793,
+      "allocation_seconds": 0.0,
+      "copying_seconds": 0.0
+    },
+    "native_materialized_bytes": null,
+    "source_data_requests": 5,
+    "source_data_bytes": 260432,
+    "chunks": 5,
+    "decoded_bytes": 11232,
+    "non_nodata_pixels": 5972,
+    "planning_seconds": 0.012933292,
+    "source_open_seconds": 0.004174543,
+    "read_decode_seconds": 0.003097917,
+    "sink_seconds": 0.001623293,
+    "masking_seconds": 1.9708000000000002e-05,
+    "remote_requests": null,
+    "remote_bytes": null
+  },
+  "wire": {
+    "head": 25,
+    "get": 30,
+    "range_get": 30,
+    "body_bytes": 362832,
+    "conditional": 40,
+    "errors": 0,
+    "head_active": 0,
+    "head_peak": 2
+  },
+  "source_work": {
+    "selected_native_bytes": 11232,
+    "unique_source_blocks": 5,
+    "planned_block_visits": 5,
+    "planned_repeated_block_visits": 0,
+    "source_block_decoded_bytes": 589824,
+    "decoded_block_to_selected_byte_ratio": 52.51282051282051,
+    "unique_selected_tile_encoded_bytes": 260432,
+    "http_body_bytes": 362832,
+    "http_unique_range_bytes": 362832,
+    "http_duplicate_range_bytes": 0,
+    "http_repeated_identical_ranges": 0,
+    "scope": "blocks from physical plan; HTTP range union includes metadata and data; freezing-page overhead is separate"
+  },
+  "reference_seconds": 0.4812282499988214,
+  "output_objects": 122,
+  "output_bytes": 1424148,
+  "upstream_encoded_bytes": 3107949,
+  "upstream_requests": 9,
+  "mirror_digest": "a8ca1ad599b3e8152c00383cbadeed23ef6d2d13a136721626ab553e15c4bf90",
+  "established_workflow": {
+    "process": {
+      "code": 0,
+      "wall_seconds": 0.24371412500477163,
+      "cpu_seconds": 0.22747599999999998,
+      "peak_rss_bytes": 90357760
+    },
+    "metrics": {
+      "status": "complete",
+      "format": "zarr_v2",
+      "output": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/wave1/landsat9.zarr.rasterio-reference",
+      "observations": 5,
+      "samples": 6240,
+      "source_read_calls": 5,
+      "source_reads": 5,
+      "source_decoded_bytes": 11232,
+      "source_identity_heads": 10,
+      "http_gets": 15,
+      "http_heads": 5,
+      "http_range_response_bytes": 589824,
+      "http_range_responses": 15,
+      "output_objects": 122,
+      "output_bytes": 113100,
+      "setup_seconds": 0.009518624996417202,
+      "write_seconds": 0.06817658300133189,
+      "finalize_seconds": 0.005107165998197161,
+      "wall_seconds": 0.08759641600045143,
+      "manifest": "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/wave1/landsat9.zarr.rasterio-reference/manifest.json"
+    },
+    "wire": {
+      "head": 15,
+      "get": 15,
+      "range_get": 15,
+      "body_bytes": 589824,
+      "conditional": 30,
+      "errors": 0,
+      "head_active": 0,
+      "head_peak": 1
+    },
+    "compared": [
+      {
+        "group": "observations/000000",
+        "arrays": [
+          "aoi_mask",
+          "quality_landsat_pixel_clear",
+          "spatial_ref",
+          "time",
+          "valid",
+          "values",
+          "x",
+          "y"
+        ],
+        "equal_bits": true
+      },
+      {
+        "group": "observations/000001",
+        "arrays": [
+          "aoi_mask",
+          "spatial_ref",
+          "time",
+          "valid",
+          "values",
+          "x",
+          "y"
+        ],
+        "equal_bits": true
+      },
+      {
+        "group": "observations/000002",
+        "arrays": [
+          "aoi_mask",
+          "spatial_ref",
+          "time",
+          "valid",
+          "values",
+          "x",
+          "y"
+        ],
+        "equal_bits": true
+      },
+      {
+        "group": "observations/000003",
+        "arrays": [
+          "aoi_mask",
+          "spatial_ref",
+          "time",
+          "valid",
+          "values",
+          "x",
+          "y"
+        ],
+        "equal_bits": true
+      },
+      {
+        "group": "observations/000004",
+        "arrays": [
+          "aoi_mask",
+          "spatial_ref",
+          "time",
+          "valid",
+          "values",
+          "x",
+          "y"
+        ],
+        "equal_bits": true
+      }
+    ],
+    "selection": "identical approved source windows; discovery excluded from both replay execution comparisons"
+  }
+}
