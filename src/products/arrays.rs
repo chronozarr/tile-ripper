@@ -19,24 +19,37 @@ mod nisar;
 mod smap;
 const RESERVATION: usize = 8 * 1024 * 1024;
 pub fn supports(id: &str) -> bool {
-    matches!(id, "goes19-abi-cmipc-c13" | "goes19-abi-cmipc-c01")
-        || smap::supports(id)
+    matches!(
+        id,
+        "goes19-abi-cmipc-c13" | "goes19-abi-cmipc-c01" | "goes19-abi-cmipm1-c02"
+    ) || smap::supports(id)
         || nisar::supports(id)
 }
 pub fn profiles() -> Value {
     json!([
      {"id":"goes19-abi-cmipc-c13","family":"GOES ABI CMIPC","spectral_band":13,"bands":["CMI","DQF"],"coordinate_model":"geostationary scanning angles","stored_dtype":["int16","int8"],"science":"brightness temperature; raw packed codes and CF unsigned annotations retained","provider":"noaa","qualification":"only inspected GOES-19 Mode 6 CONUS profile"},
      {"id":"goes19-abi-cmipc-c01","family":"GOES ABI CMIPC","spectral_band":1,"bands":["CMI","DQF"],"coordinate_model":"geostationary scanning angles","stored_dtype":["int16","int8"],"science":"reflectance factor; raw packed codes and CF unsigned annotations retained","provider":"noaa","qualification":"separate 1 km source specimen"},
+     {"id":"goes19-abi-cmipm1-c02","family":"GOES ABI CMIPM1","spectral_band":2,"bands":["CMI","DQF"],"coordinate_model":"geostationary scanning angles","stored_dtype":["int16","int8"],"science":"reflectance factor; original raw codes and calibration","provider":"noaa","qualification":"independently inspected Mode 6 mesoscale-1 0.5km grid"},
      {"id":"smap-spl3smp-e-v6-am","family":"SMAP SPL3SMP_E v006/R19240","pass":"descending AM","bands":["soil_moisture","retrieval_qual_flag","surface_flag","freeze_thaw_fraction"],"coordinate_model":"EPSG:6933 EASE2 M09 native centers","provider":"earthdata","qualification":"global grid only; polar grids excluded"},
      {"id":"smap-spl3smp-e-v6-pm","family":"SMAP SPL3SMP_E v006/R19240","pass":"ascending PM","bands":["soil_moisture","retrieval_qual_flag","surface_flag","freeze_thaw_fraction"],"coordinate_model":"EPSG:6933 EASE2 M09 native centers","provider":"earthdata","qualification":"separate PM source fields; no averaging"},
-     {"id":"nisar-gcov-p1-fa-hhhh","family":"NISAR provisional GCOV v1","frequency":"A","bands":["HHHH"],"science":"already calibrated RTC gamma0 linear power","coordinate_model":"source Float64 UTM16N centers","selection":"native indices only","qualification":"inspected P05023/productVersion1.0.11; no other covariance terms"}
+     {"id":"smap-spl3smp-e-v6-north-am","family":"SMAP SPL3SMP_E v006/R19240","pass":"descending AM","bands":["soil_moisture","retrieval_qual_flag","surface_flag","freeze_thaw_fraction"],"coordinate_model":"EPSG:6931 EASE2 N09 northern native centers","provider":"earthdata","qualification":"distinct 2000x2000 polar source group"},
+     {"id":"smap-spl3smp-e-v6-north-pm","family":"SMAP SPL3SMP_E v006/R19240","pass":"ascending PM","bands":["soil_moisture","retrieval_qual_flag","surface_flag","freeze_thaw_fraction"],"coordinate_model":"EPSG:6931 EASE2 N09 northern native centers","provider":"earthdata","qualification":"separate polar PM fields; no averaging"},
+     {"id":"nisar-gcov-p1-fa-hhhh","family":"NISAR provisional GCOV v1","frequency":"A","bands":["HHHH"],"science":"already calibrated RTC gamma0 linear power","coordinate_model":"source Float64 UTM16N centers","selection":"WGS84 AOI or native indices","qualification":"inspected P05023/productVersion1.0.11; no other covariance terms"}
     ])
 }
 fn band_token(id: &str) -> Result<&'static str> {
     match id {
         "goes19-abi-cmipc-c13" => Ok("C13"),
         "goes19-abi-cmipc-c01" => Ok("C01"),
+        "goes19-abi-cmipm1-c02" => Ok("C02"),
         _ => fail("unknown native scientific array product"),
+    }
+}
+fn goes_scene(id: &str) -> (&'static str, &'static str, &'static str) {
+    if id == "goes19-abi-cmipm1-c02" {
+        ("ABI-L2-CMIPM1", "ABI-L2-CMIPM", "Mesoscale")
+    } else {
+        ("ABI-L2-CMIPC", "ABI-L2-CMIPC", "CONUS")
     }
 }
 fn validate(r: &ProductRequest) -> Result<()> {
@@ -109,9 +122,9 @@ fn validate_observation(r: &ProductRequest, o: &Observation) -> Result<()> {
         return fail("unsafe GOES observation identifier");
     }
     let filename = format!("{}.nc", o.id);
-    if !filename.starts_with(&format!("OR_ABI-L2-CMIPC-M6{token}_G19_s"))
+    if !filename.starts_with(&format!("OR_{}-M6{token}_G19_s", goes_scene(&r.product).0))
         || filename_time(&filename)? != o.datetime
-        || o.collection != "ABI-L2-CMIPC"
+        || o.collection != goes_scene(&r.product).1
     {
         return fail("GOES collection, scene/band or acquisition identity mismatch");
     }
@@ -186,10 +199,13 @@ pub fn discover(r: &ProductRequest) -> Result<Value> {
         let mut out = Vec::new();
         while hour <= end {
             let prefix = format!(
-                "ABI-L2-CMIPC/{}/{:03}/{:02}/",
+                "{}/{}/{:03}/{:02}/OR_{}-M6{}",
+                goes_scene(&r.product).1,
                 hour.year(),
                 hour.ordinal(),
-                hour.hour()
+                hour.hour(),
+                goes_scene(&r.product).0,
+                band_token(&r.product)?
             );
             let response = client
                 .get("https://noaa-goes19.s3.amazonaws.com/")
@@ -236,7 +252,7 @@ pub fn discover(r: &ProductRequest) -> Result<Value> {
                 out.push(Observation {
                     id: name.trim_end_matches(".nc").into(),
                     datetime,
-                    collection: "ABI-L2-CMIPC".into(),
+                    collection: goes_scene(&r.product).1.into(),
                     platform: Some("G19".into()),
                     processing: Some("L2 M6".into()),
                     assets: r.bands.iter().map(|b| (b.clone(), a.clone())).collect(),
@@ -293,6 +309,7 @@ pub struct PreparedObservation {
     pub observation: Observation,
     pub preparation_timings: PreparationTimings,
     pub native_selection: Spatial,
+    pub selection: array_grid::ResolvedSelection,
     pub grid: NativeGrid,
     pub definitions: Vec<Value>,
     pub coordinates: [Vec<f64>; 2],
@@ -306,12 +323,13 @@ pub struct Prepared {
 }
 impl Prepared {
     pub fn explain(&self) -> Value {
-        json!({"schema":"tile-ripper-array-products-v1","product":self.request.product,"catalog":self.catalog,"observations":self.observations.iter().map(|o|json!({"id":o.observation.id,"grid":o.grid.describe(),"native_selection":o.native_selection,"preparation_timings":o.preparation_timings,"physical":o.base.explain()})).collect::<Vec<_>>(),"working_memory":{"requested_bytes":self.request.buffer_bytes,"consumer_and_output_reservation_bytes":RESERVATION,"scope":"reserved in addition to native reader; caller retention and process runtime outside budget"},"quality_policies":self.request.quality_policies,"numeric_semantics":"raw native values and dtype; no unsigned reinterpretation, scale/offset application, reprojection or resampling"})
+        json!({"schema":"tile-ripper-array-products-v1","product":self.request.product,"catalog":self.catalog,"observations":self.observations.iter().map(|o|json!({"id":o.observation.id,"grid":o.grid.describe(),"native_selection":o.native_selection,"selection":o.selection,"preparation_timings":o.preparation_timings,"physical":o.base.explain()})).collect::<Vec<_>>(),"working_memory":{"requested_bytes":self.request.buffer_bytes,"consumer_and_output_reservation_bytes":RESERVATION,"scope":"reserved in addition to native reader; caller retention and process runtime outside budget"},"quality_policies":self.request.quality_policies,"numeric_semantics":"raw native values and dtype; no unsigned reinterpretation, scale/offset application, reprojection or resampling"})
     }
     pub fn human(&self) -> String {
         let mut out=format!("Tile-Ripper native scientific product: {}\nProvider: {}\nWorking-memory budget: {} bytes (includes {} reserved for product/output work)\n",self.request.product,self.catalog["provider"].as_str().unwrap_or("unknown"),self.request.buffer_bytes,RESERVATION);
         for o in &self.observations {
             out+=&format!("\nObservation: {}\nNative coordinate model: {}\nSelection: {}\nSource identity: {}\nQuality policies: {}\n",o.observation.id,serde_json::to_string(&o.grid).unwrap_or_default(),serde_json::to_string(&o.native_selection).unwrap_or_default(),o.base.explain()["sources"][0]["object_identities"]["identity"],self.request.quality_policies.join(", "));
+            out += &format!("Requested AOI: {}\nIncluded native centers: {}\nMembership: {}\nPhysical plan and resource admission: {}\n", serde_json::to_string(&o.selection.requested_aoi).unwrap_or_default(), o.selection.included_centers, o.selection.membership, o.base.human());
             out += &format!(
                 "Unsupported operations: {}\n",
                 o.grid.describe()["unsupported"]
@@ -397,7 +415,7 @@ pub fn prepare(r: &ProductRequest) -> Result<Prepared> {
         let root = &first["root_attributes"];
         if root["dataset_name"]["value"] != format!("{}.nc", o.id)
             || root["platform_ID"]["value"] != "G19"
-            || root["scene_id"]["value"] != "CONUS"
+            || root["scene_id"]["value"] != goes_scene(&r.product).2
             || root["title"]["value"] != "ABI L2 Cloud and Moisture Imagery"
             || root["time_coverage_start"]["value"] != o.datetime
         {
@@ -408,11 +426,7 @@ pub fn prepare(r: &ProductRequest) -> Result<Prepared> {
                 return fail("GOES source axes must retain original Int16 packing");
             }
         }
-        let spectral = if band_token(&r.product)? == "C13" {
-            13
-        } else {
-            1
-        };
+        let spectral = band_token(&r.product)?[1..].parse::<u32>()?;
         if first["ancillary"]["/band_id"]["value"] != spectral {
             return fail("physical ABI band identity conflicts with profile");
         }
@@ -429,13 +443,14 @@ pub fn prepare(r: &ProductRequest) -> Result<Prepared> {
             }
         }
         let selection_started = Instant::now();
-        request.spatial = array_grid::resolve(
+        let selection = array_grid::resolve(
             &grid,
             &inspection.coordinates[0],
             &inspection.coordinates[1],
             &r.aoi,
             axes,
         )?;
+        request.spatial = selection.native_selection.clone();
         let selection_seconds = selection_started.elapsed().as_secs_f64();
         crate::planner::validate(&request)?;
         let Spatial::ArraySlice {
@@ -466,6 +481,7 @@ pub fn prepare(r: &ProductRequest) -> Result<Prepared> {
                 physical_plan_seconds,
             },
             native_selection: request.spatial,
+            selection,
             grid,
             definitions: inspection.definitions.clone(),
             coordinates,

@@ -7,6 +7,9 @@ use serde_json::Value;
 #[serde(tag = "coordinate_model", rename_all = "snake_case")]
 pub enum NativeGrid {
     NisarUtm16North,
+    EaseGridNorth {
+        epsg: u32,
+    },
     EaseGridGlobal {
         epsg: u32,
     },
@@ -83,6 +86,8 @@ impl NativeGrid {
                 proj4rs::transform::transform(&native, &geographic, &mut p).ok()?;
                 (p.0.is_finite() && p.1.is_finite()).then_some([p.0.to_degrees(), p.1.to_degrees()])
             }
+            Self::EaseGridNorth { epsg: 6931 } => ease_north_inverse(y, x),
+            Self::EaseGridNorth { .. } => None,
             Self::EaseGridGlobal { epsg: 6933 } => ease_inverse(y, x),
             Self::EaseGridGlobal { .. } => None,
             Self::Geostationary {
@@ -119,7 +124,10 @@ impl NativeGrid {
     }
     pub fn describe(&self) -> Value {
         if matches!(self, Self::NisarUtm16North) {
-            return serde_json::json!({"model":self,"crs":"EPSG:32616","axis_units":"metres","dimension_order":["y","x"],"registration":"original Float64 source pixel centers","geographic_navigation":"qualified UTM inverse of selected native centers","selection":"explicit native indices only","unsupported":["geographic AOI translation for this large NISAR grid","other NISAR CRS/grids","complex/off-diagonal covariance","decibel conversion","reprojection"]});
+            return serde_json::json!({"model":self,"crs":"EPSG:32616","axis_units":"metres","dimension_order":["y","x"],"registration":"original Float64 source pixel centers","geographic_navigation":"qualified UTM inverse of actual stored centers","selection":"WGS84 bounds/simple polygons or explicit native indices","geographic_limits":"existing UTM AOI limits: <=5 degrees per axis, latitude [-80,80], native zone vicinity and hemisphere; inspected 10m/20m axes within easting [300000,800000], northing [3000000,5000000]","unsupported":["other NISAR CRS/grids","complex/off-diagonal covariance","decibel conversion","reprojection"]});
+        }
+        if matches!(self, Self::EaseGridNorth { .. }) {
+            return serde_json::json!({"model":self,"dimension_order":["y","x"],"registration":"native pixel centers","axis_units":"metres","native_coordinates":{"edge_origin":[-9000000.,9000000.],"spacing":9000.,"shape":[2000,2000],"formula":"x=-9000000+(column+0.5)*9000; y=9000000-(row+0.5)*9000","authority":"https://github.com/nsidc/mapxmaps/blob/main/EASE2_N09km.gpd"},"geographic_selection":"inverse ellipsoidal LAEA at actual centers; WGS84 closed polygons; northern hemisphere AOIs; no longitude wrapping","validity":"projection position does not imply source missingness or quality; square-grid corners may navigate south of equator","unsupported":["southern polar product","antimeridian-wrapping AOIs","resampling","AM/PM averaging"]});
         }
         if matches!(self, Self::EaseGridGlobal { .. }) {
             return serde_json::json!({"model":self,"dimension_order":["y","x"],"registration":"native pixel centers","axis_units":"metres","directions":["northing decreases with row","easting increases with column"],"native_coordinates":{"edge_origin":[-17367530.4451615,7314540.8306386],"spacing":9008.055210146,"formula":"x=edge_x+(column+0.5)*spacing; y=edge_y-(row+0.5)*spacing","authority":"https://github.com/nsidc/mapxmaps/blob/main/EASE2_M09km.gpd"},"geographic_selection":"inverse EPSG:6933 at original centers; closed WGS84 polygon","unsupported":["EPSG:6931 polar SMAP grids","resampling","reprojection","AM/PM averaging"]});
@@ -159,7 +167,42 @@ fn ease_inverse(y: f64, x: f64) -> Option<[f64; 2]> {
     let lon = (x / (a * k0)).to_degrees();
     (lon.abs() <= 180.000000001 && lat.is_finite()).then_some([lon, lat.to_degrees()])
 }
-pub(crate) fn ease_mapping() -> Value {
+/// EPSG:6931 polar ellipsoidal LAEA. Authalic latitude is inverted on WGS84;
+/// the mathematical projection domain is distinct from product missingness.
+fn ease_north_inverse(y: f64, x: f64) -> Option<[f64; 2]> {
+    let a = 6378137.;
+    let e2: f64 = 0.0066943799901413165;
+    let e = e2.sqrt();
+    let q = |lat: f64| {
+        let s = lat.sin();
+        (1. - e2) * (s / (1. - e2 * s * s) - ((1. - e * s) / (1. + e * s)).ln() / (2. * e))
+    };
+    let pole = q(std::f64::consts::FRAC_PI_2);
+    let target = pole - (x * x + y * y) / (a * a);
+    if !x.is_finite() || !y.is_finite() || target.abs() > pole {
+        return None;
+    }
+    let mut lat = (target / pole).asin();
+    for _ in 0..12 {
+        let s = lat.sin();
+        let derivative = 2. * (1. - e2) * lat.cos() / (1. - e2 * s * s).powi(2);
+        if derivative.abs() < 1e-15 {
+            break;
+        }
+        let delta = (q(lat) - target) / derivative;
+        lat -= delta;
+        if delta.abs() < 1e-14 {
+            break;
+        }
+    }
+    let lon = if x == 0. && y == 0. {
+        0.
+    } else {
+        x.atan2(-y).to_degrees()
+    };
+    lat.is_finite().then_some([lon, lat.to_degrees()])
+}
+pub(crate) fn ease_mapping(north: bool) -> Value {
     let mut attrs = serde_json::json!({});
     for (k, v) in [
         (
@@ -176,8 +219,19 @@ pub(crate) fn ease_mapping() -> Value {
     ] {
         attrs[k] = serde_json::json!({"value":v});
     }
-    attrs["crs_wkt"] = serde_json::json!({"value":include_str!("ease6933.wkt").trim()});
-    serde_json::json!({"path":"official_EASE2_M09_definition","origin":"NSIDC official grid specification; not an HDF5 mapping dataset","attributes":attrs})
+    if north {
+        attrs["grid_mapping_name"] = serde_json::json!({"value":"lambert_azimuthal_equal_area"});
+        attrs.as_object_mut().unwrap().remove("standard_parallel");
+        attrs
+            .as_object_mut()
+            .unwrap()
+            .remove("longitude_of_central_meridian");
+        attrs["latitude_of_projection_origin"] = serde_json::json!({"value":90.});
+        attrs["longitude_of_projection_origin"] = serde_json::json!({"value":0.});
+        attrs["epsg_code"] = serde_json::json!({"value":"EPSG:6931"});
+    }
+    attrs["crs_wkt"] = serde_json::json!({"value":if north {include_str!("ease6931.wkt").trim()}else{include_str!("ease6933.wkt").trim()}});
+    serde_json::json!({"path":if north {"official_EASE2_N09_definition"}else{"official_EASE2_M09_definition"},"origin":"NSIDC official grid specification; not an HDF5 mapping dataset","attributes":attrs})
 }
 fn polygon(coordinates: &Value) -> Result<geo::Polygon<f64>> {
     use geo::Validation;
@@ -225,8 +279,14 @@ fn polygon(coordinates: &Value) -> Result<geo::Polygon<f64>> {
 }
 pub(crate) struct Inclusion {
     geometry: Option<geo::Polygon<f64>>,
+    utm: Option<crate::swot_aoi::Evaluator>,
+    tolerance: f64,
 }
 impl Inclusion {
+    pub(crate) fn geometry_bounds(&self) -> Option<geo::Rect<f64>> {
+        use geo::BoundingRect;
+        self.geometry.as_ref().and_then(|g| g.bounding_rect())
+    }
     pub(crate) fn new(aoi: &Spatial) -> Result<Self> {
         let geometry = match aoi {
             Spatial::ArraySlice {
@@ -273,23 +333,75 @@ impl Inclusion {
                 )
             }
         };
-        Ok(Self { geometry })
+        Ok(Self {
+            geometry,
+            utm: None,
+            tolerance: 0.,
+        })
+    }
+    pub(crate) fn for_grid(aoi: &Spatial, grid: &NativeGrid) -> Result<Self> {
+        let mut inclusion = Self::new(aoi)?;
+        if matches!(grid, NativeGrid::EaseGridNorth { epsg: 6931 }) {
+            inclusion.tolerance = crate::swot_aoi::COORDINATE_TOLERANCE_DEGREES;
+        }
+        if matches!(grid, NativeGrid::NisarUtm16North) && inclusion.geometry.is_some() {
+            inclusion.utm = Some(crate::swot_aoi::Evaluator::new(aoi, "EPSG:32616")?);
+        }
+        Ok(inclusion)
+    }
+    pub(crate) fn native_accepts(&self, grid: &NativeGrid, y: f64, x: f64) -> Result<bool> {
+        if let Some(utm) = &self.utm {
+            Ok(utm.contains(x, y)? != 0)
+        } else {
+            Ok(self.accepts(grid.longitude_latitude(y, x)))
+        }
     }
     pub(crate) fn accepts(&self, xy: Option<[f64; 2]>) -> bool {
         use geo::Intersects;
         match &self.geometry {
             None => true,
-            Some(g) => xy.is_some_and(|[x, y]| g.intersects(&geo::Point::new(x, y))),
+            Some(g) => xy.is_some_and(|[x, y]| {
+                g.intersects(&geo::Point::new(x, y))
+                    || (self.tolerance > 0.
+                        && std::iter::once(g.exterior()).chain(g.interiors()).any(|r| {
+                            r.0.windows(2).any(|e| {
+                                crate::swot_aoi::distance_squared(geo::Coord { x, y }, e[0], e[1])
+                                    <= self.tolerance.powi(2)
+                            })
+                        }))
+            }),
         }
     }
 }
-pub(crate) fn resolve(
+/// A descriptive selection is not source authorization. Product preparation
+/// must validate actual metadata, axes and version before executing this window.
+#[derive(Clone, Debug, Serialize)]
+pub struct ResolvedSelection {
+    pub requested_aoi: Spatial,
+    pub native_selection: Spatial,
+    pub included_centers: usize,
+    pub membership: &'static str,
+}
+pub fn resolve(
     grid: &NativeGrid,
     ys: &[f64],
     xs: &[f64],
     aoi: &Spatial,
     axes: [String; 2],
-) -> Result<Spatial> {
+) -> Result<ResolvedSelection> {
+    let finish = |native_selection, included_centers| ResolvedSelection {
+        requested_aoi: aoi.clone(),
+        native_selection,
+        included_centers,
+        membership: if matches!(
+            grid,
+            NativeGrid::NisarUtm16North | NativeGrid::EaseGridNorth { epsg: 6931 }
+        ) {
+            "source-global centers in original WGS84 polygon; closed outer/hole boundaries; 1e-10 degree roundoff tolerance"
+        } else {
+            "source-global visible centers in original closed WGS84 polygon"
+        },
+    };
     if let Spatial::ArraySlice {
         axes: requested, ..
     } = aoi
@@ -297,12 +409,22 @@ pub(crate) fn resolve(
         if requested != &axes {
             return fail("native selection axes conflict with product");
         }
-        return Ok(aoi.clone());
+        Inclusion::new(aoi)?;
+        let Spatial::ArraySlice {
+            start, count, step, ..
+        } = aoi
+        else {
+            unreachable!()
+        };
+        if (0..2).any(|i| start[i] + (count[i] - 1) * step[i] >= [ys.len(), xs.len()][i]) {
+            return fail("native selection outside actual source axes");
+        }
+        return Ok(finish(aoi.clone(), count[0] * count[1]));
     }
     if matches!(grid, NativeGrid::NisarUtm16North) {
-        return fail("NISAR profile currently requires explicit native-index selection");
+        return resolve_nisar(ys, xs, aoi, axes);
     }
-    let inclusion = Inclusion::new(aoi)?;
+    let inclusion = Inclusion::for_grid(aoi, grid)?;
     let vertices = inclusion.geometry.as_ref().map_or(0, |g| {
         g.exterior().0.len() + g.interiors().iter().map(|r| r.0.len()).sum::<usize>()
     });
@@ -330,6 +452,7 @@ pub(crate) fn resolve(
     };
     let mut min = [usize::MAX; 2];
     let mut max = [0; 2];
+    let mut included = 0;
     for (r, y) in ys.iter().enumerate() {
         for (c, x) in xs.iter().enumerate() {
             let xy = if let Some((lat, lon)) = &separable {
@@ -338,6 +461,7 @@ pub(crate) fn resolve(
                 grid.longitude_latitude(*y, *x)
             };
             if inclusion.accepts(xy) {
+                included += 1;
                 min[0] = min[0].min(r);
                 min[1] = min[1].min(c);
                 max[0] = max[0].max(r);
@@ -348,11 +472,121 @@ pub(crate) fn resolve(
     if min[0] == usize::MAX {
         return fail("geographic AOI includes no visible native centers");
     }
-    Ok(Spatial::ArraySlice {
-        start: min,
-        count: [max[0] - min[0] + 1, max[1] - min[1] + 1],
-        step: [1, 1],
-        axes,
+    Ok(finish(
+        Spatial::ArraySlice {
+            start: min,
+            count: [max[0] - min[0] + 1, max[1] - min[1] + 1],
+            step: [1, 1],
+            axes,
+        },
+        included,
+    ))
+}
+
+/// Concrete UTM16N accelerator. On each constant-northing row in this
+/// qualified central-zone envelope, inverse longitude increases with easting;
+/// latitude is maximal at the central meridian and minimal at an endpoint.
+/// These extrema conservatively reject rows. Binary search bounds longitude
+/// on ACTUAL centers. No forward polygon approximation prunes source centers.
+/// Every remaining center is tested by the existing UTM polygon evaluator.
+fn resolve_nisar(
+    ys: &[f64],
+    xs: &[f64],
+    aoi: &Spatial,
+    axes: [String; 2],
+) -> Result<ResolvedSelection> {
+    use geo::BoundingRect;
+    if ys.len() < 2
+        || xs.len() < 2
+        || ys.len() > 65536
+        || xs.len() > 65536
+        || ys
+            .iter()
+            .any(|v| !v.is_finite() || !(3_000_000. ..=5_000_000.).contains(v))
+        || xs
+            .iter()
+            .any(|v| !v.is_finite() || !(300_000. ..=800_000.).contains(v))
+        || ![10., 20.].contains(&(xs[1] - xs[0]))
+        || ys.windows(2).any(|w| w[1] - w[0] != -(xs[1] - xs[0]))
+        || xs.windows(2).any(|w| w[1] - w[0] != xs[1] - xs[0])
+    {
+        return fail("NISAR geographic selection requires inspected descending/ascending 10m or 20m center axes in qualified UTM16N envelope");
+    }
+    let inclusion = Inclusion::for_grid(aoi, &NativeGrid::NisarUtm16North)?;
+    let geometry = inclusion
+        .geometry
+        .as_ref()
+        .ok_or("geographic geometry missing")?;
+    let bbox = geometry.bounding_rect().ok_or("empty AOI")?;
+    let vertices = geometry.exterior().0.len()
+        + geometry
+            .interiors()
+            .iter()
+            .map(|r| r.0.len())
+            .sum::<usize>();
+    let evaluator = inclusion.utm.as_ref().ok_or("missing UTM evaluator")?;
+    let tolerance = crate::swot_aoi::COORDINATE_TOLERANCE_DEGREES;
+    let west = bbox.min().x - tolerance;
+    let east = bbox.max().x + tolerance;
+    let south = bbox.min().y - tolerance;
+    let north = bbox.max().y + tolerance;
+    let mut first = [usize::MAX; 2];
+    let mut last = [0; 2];
+    let mut included = 0usize;
+    let mut tests = 0usize;
+    let mut rows = Vec::new(); // <=65536 intervals, within product geometry reservation
+    for (row, y) in ys.iter().copied().enumerate() {
+        let left = evaluator.longitude_latitude(xs[0], y)?;
+        let right = evaluator.longitude_latitude(xs[xs.len() - 1], y)?;
+        let peak = evaluator.longitude_latitude(500_000f64.clamp(xs[0], xs[xs.len() - 1]), y)?;
+        if left[1].min(right[1]) > north || peak[1] < south || right[0] < west || left[0] > east {
+            continue;
+        }
+        let bound = |longitude: f64, inclusive: bool| -> Result<usize> {
+            let (mut lo, mut hi) = (0, xs.len());
+            while lo < hi {
+                let mid = lo + (hi - lo) / 2;
+                let lon = evaluator.longitude_latitude(xs[mid], y)?[0];
+                if lon < longitude || (inclusive && lon == longitude) {
+                    lo = mid + 1;
+                } else {
+                    hi = mid;
+                }
+            }
+            Ok(lo)
+        };
+        let begin = bound(west, false)?;
+        let end = bound(east, true)?;
+        tests = tests
+            .checked_add((end - begin) * vertices)
+            .ok_or("NISAR geographic work overflow")?;
+        if tests > 256_000_000 {
+            return fail("geographic selection exceeds 256 million native-center/vertex tests; narrow or simplify AOI");
+        }
+        rows.push((row, begin, end));
+    }
+    for (row, begin, end) in rows {
+        let y = ys[row];
+        for (col, x) in xs.iter().enumerate().take(end).skip(begin) {
+            if evaluator.contains(*x, y)? != 0 {
+                included += 1;
+                first[0] = first[0].min(row);
+                first[1] = first[1].min(col);
+                last[0] = last[0].max(row);
+                last[1] = last[1].max(col);
+            }
+        }
+    }
+    if included == 0 {
+        return fail(
+            "geographic AOI includes zero native centers (science availability not evaluated)",
+        );
+    }
+    Ok(ResolvedSelection {
+        requested_aoi: aoi.clone(),
+        native_selection: Spatial::ArraySlice { start: first, count: [last[0]-first[0]+1,last[1]-first[1]+1], step: [1,1], axes },
+        included_centers: included,
+        membership: "source-global centers in original WGS84 polygon; closed outer/hole boundaries; 1e-10 degree roundoff tolerance",
     })
 }
 
@@ -363,7 +597,7 @@ pub fn native_aoi_mask(
     ys: &[f64],
     xs: &[f64],
 ) -> Result<Vec<u8>> {
-    let inclusion = Inclusion::new(aoi)?;
+    let inclusion = Inclusion::for_grid(aoi, grid)?;
     let count = ys
         .len()
         .checked_mul(xs.len())
@@ -375,7 +609,7 @@ pub fn native_aoi_mask(
     let mut mask = Vec::with_capacity(count);
     for y in ys {
         for x in xs {
-            mask.push(u8::from(inclusion.accepts(grid.longitude_latitude(*y, *x))));
+            mask.push(u8::from(inclusion.native_accepts(grid, *y, *x)?));
         }
     }
     Ok(mask)

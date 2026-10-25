@@ -313,15 +313,11 @@ impl Evaluator {
         Ok([p.0, p.1])
     }
     pub fn contains(&self, x: f64, y: f64) -> Result<u8> {
-        let mut p = (x, y, 0.);
-        proj4rs::transform::transform(&self.native, &self.geographic, &mut p)?;
+        let [longitude, latitude] = self.longitude_latitude(x, y)?;
         let p = Coord {
-            x: p.0.to_degrees(),
-            y: p.1.to_degrees(),
+            x: longitude,
+            y: latitude,
         };
-        if !p.x.is_finite() || !p.y.is_finite() {
-            return fail("nonfinite inverse native center transformation");
-        }
         if self.polygon.intersects(&Point(p)) {
             return Ok(1);
         }
@@ -335,6 +331,19 @@ impl Evaluator {
             }
         }
         Ok(0)
+    }
+    /// Reuse the inspected UTM transform without reconstructing it per center.
+    pub fn longitude_latitude(&self, x: f64, y: f64) -> Result<[f64; 2]> {
+        let mut p = (x, y, 0.);
+        proj4rs::transform::transform(&self.native, &self.geographic, &mut p)?;
+        let p = Coord {
+            x: p.0.to_degrees(),
+            y: p.1.to_degrees(),
+        };
+        if !p.x.is_finite() || !p.y.is_finite() {
+            return fail("nonfinite inverse native center transformation");
+        }
+        Ok([p.x, p.y])
     }
     fn projected_polygon(&self) -> Result<Polygon<f64>> {
         let mut total = 0;
@@ -394,7 +403,7 @@ impl Evaluator {
         Ok(())
     }
 }
-fn distance_squared(p: Coord<f64>, a: Coord<f64>, b: Coord<f64>) -> f64 {
+pub(crate) fn distance_squared(p: Coord<f64>, a: Coord<f64>, b: Coord<f64>) -> f64 {
     let dx = b.x - a.x;
     let dy = b.y - a.y;
     let d = dx * dx + dy * dy;

@@ -30,7 +30,7 @@ fn validate(r: &ProductRequest) -> Result<()> {
     {
         return fail("NISAR profile requires HHHH only, raw quality, <=31 days, 1..32 observations, 64..1024 MiB and chunk_edge 1..256");
     }
-    Inclusion::new(&r.aoi)?;
+    Inclusion::for_grid(&r.aoi, &NativeGrid::NisarUtm16North)?;
     if let Some(o) = &r.observations {
         if o.len() > r.max_observations || serde_json::to_vec(o)?.len() > 1024 * 1024 {
             return fail("NISAR observation metadata/count cap exceeded");
@@ -204,15 +204,6 @@ pub(super) fn prepare(r: &ProductRequest, netrc: Option<&std::path::Path>) -> Re
     if entries.len() != 1 {
         return fail("NISAR acquisition requires exactly one selected observation");
     }
-    let Spatial::ArraySlice {
-        axes: requested, ..
-    } = &r.aoi
-    else {
-        return fail("NISAR currently requires explicit native-index selection; geographic navigation is provided for selected centers");
-    };
-    if requested != &axes() {
-        return fail("NISAR native axes conflict with qualified source");
-    }
     let mut prepared = Vec::new();
     for o in entries {
         let source = &o.assets["HHHH"];
@@ -235,7 +226,7 @@ pub(super) fn prepare(r: &ProductRequest, netrc: Option<&std::path::Path>) -> Re
             }
             Default::default()
         };
-        let request = Request {
+        let mut request = Request {
             source: Source::Assets {
                 assets: vec![Asset {
                     id: o.id.clone(),
@@ -245,7 +236,12 @@ pub(super) fn prepare(r: &ProductRequest, netrc: Option<&std::path::Path>) -> Re
                     etag: source.etag.clone(),
                 }],
             },
-            spatial: r.aoi.clone(),
+            spatial: Spatial::ArraySlice {
+                start: [0, 0],
+                count: [1, 1],
+                step: [1, 1],
+                axes: axes(),
+            },
             time: None,
             variables: vec![Variable::Dataset {
                 path: format!("{ROOT}/HHHH"),
@@ -328,16 +324,34 @@ pub(super) fn prepare(r: &ProductRequest, netrc: Option<&std::path::Path>) -> Re
             if a["stored_dtype"] != "<f8"
                 || a["attributes"]["units"]["value"] != "meters"
                 || a["attributes"]["pixel_coordinate_convention"]["value"] != "center"
-                || inspected.coordinates[i]
-                    .windows(2)
-                    .any(|w| w[1] - w[0] != if i == 0 { -10. } else { 10. })
+                || inspected.coordinates[i].iter().any(|v| !v.is_finite())
+                || inspected.coordinates[i].windows(2).any(|w| {
+                    w[1] - w[0]
+                        != (if i == 0 { -1. } else { 1. })
+                            * if d["shape"] == json!([34776, 35352]) {
+                                10.
+                            } else {
+                                20.
+                            }
+                })
             {
-                return fail("NISAR requires source Float64 10m pixel-center axes");
+                return fail("NISAR requires inspected source Float64 10m/20m pixel-center axes");
             }
         }
+        let t = Instant::now();
+        let selection = array_grid::resolve(
+            &NativeGrid::NisarUtm16North,
+            &inspected.coordinates[0],
+            &inspected.coordinates[1],
+            &r.aoi,
+            axes(),
+        )?;
+        request.spatial = selection.native_selection.clone();
+        let selection_seconds = t.elapsed().as_secs_f64();
+        crate::planner::validate(&request)?;
         let Spatial::ArraySlice {
             start, count, step, ..
-        } = &r.aoi
+        } = &request.spatial
         else {
             unreachable!()
         };
@@ -359,10 +373,11 @@ pub(super) fn prepare(r: &ProductRequest, netrc: Option<&std::path::Path>) -> Re
             observation: o,
             preparation_timings: PreparationTimings {
                 inspection_seconds,
-                selection_seconds: 0.,
+                selection_seconds,
                 physical_plan_seconds,
             },
-            native_selection: r.aoi.clone(),
+            native_selection: request.spatial,
+            selection,
             grid: NativeGrid::NisarUtm16North,
             definitions: inspected.definitions.clone(),
             coordinates,

@@ -102,6 +102,11 @@ impl Prepared {
                 "Requested bounds {} in {}\n",
                 spatial["bbox"], spatial["crs"]
             );
+        } else if spatial["kind"] == "array_slice" {
+            s += &format!(
+                "Resolved source-global indices: start {}, count {}, step {}\n",
+                spatial["start"], spatial["count"], spatial["step"]
+            );
         } else {
             s += &format!(
                 "Requested Polygon in {} (geometry in --json)\n",

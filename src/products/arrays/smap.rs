@@ -1,25 +1,38 @@
-//! Exact SMAP SPL3SMP_E v006/R19240 global AM/PM profile. Polar grids are excluded.
+//! Exact SMAP SPL3SMP_E v006/R19240 global and northern polar AM/PM profiles.
 use super::*;
 pub(super) const AM: &str = "smap-spl3smp-e-v6-am";
 pub(super) const PM: &str = "smap-spl3smp-e-v6-pm";
+pub(super) const NORTH_AM: &str = "smap-spl3smp-e-v6-north-am";
+pub(super) const NORTH_PM: &str = "smap-spl3smp-e-v6-north-pm";
 const COLLECTION: &str = "SPL3SMP_E";
 const CONCEPT: &str = "C2938664763-NSIDC_CPRD";
 const ARCHIVE: &str = "data.nsidc.earthdatacloud.nasa.gov";
 pub(super) fn supports(id: &str) -> bool {
-    [AM, PM].contains(&id)
+    [AM, PM, NORTH_AM, NORTH_PM].contains(&id)
+}
+fn north(id: &str) -> bool {
+    [NORTH_AM, NORTH_PM].contains(&id)
+}
+fn pm(id: &str) -> bool {
+    [PM, NORTH_PM].contains(&id)
 }
 fn group(id: &str) -> &'static str {
-    if id == PM {
-        "Soil_Moisture_Retrieval_Data_PM"
-    } else {
-        "Soil_Moisture_Retrieval_Data_AM"
+    match (north(id), pm(id)) {
+        (true, true) => "Soil_Moisture_Retrieval_Data_Polar_PM",
+        (true, false) => "Soil_Moisture_Retrieval_Data_Polar_AM",
+        (false, true) => "Soil_Moisture_Retrieval_Data_PM",
+        (false, false) => "Soil_Moisture_Retrieval_Data_AM",
     }
 }
 fn layer(id: &str, name: &str) -> String {
-    format!("{name}{}", if id == PM { "_pm" } else { "" })
+    format!("{name}{}", if pm(id) { "_pm" } else { "" })
 }
-fn axes() -> [String; 2] {
-    ["/@smap_ease2_m09/y".into(), "/@smap_ease2_m09/x".into()]
+fn axes(id: &str) -> [String; 2] {
+    let grid = if north(id) { "n09" } else { "m09" };
+    [
+        format!("/@smap_ease2_{grid}/y"),
+        format!("/@smap_ease2_{grid}/x"),
+    ]
 }
 fn validate(r: &ProductRequest) -> Result<()> {
     if !supports(&r.product) {
@@ -68,6 +81,12 @@ fn validate(r: &ProductRequest) -> Result<()> {
         );
     }
     Inclusion::new(&r.aoi)?;
+    if north(&r.product) && !matches!(r.aoi, Spatial::ArraySlice { .. }) {
+        let inclusion = Inclusion::new(&r.aoi)?;
+        if inclusion.geometry_bounds().is_some_and(|b| b.min().y < 0.) {
+            return fail("SMAP northern product requires northern-hemisphere AOIs; longitude wrapping unsupported");
+        }
+    }
     if let Some(o) = &r.observations {
         if o.len() > r.max_observations || serde_json::to_vec(o)?.len() > 1024 * 1024 {
             return fail("SMAP observation count/metadata cap exceeded");
@@ -231,7 +250,7 @@ pub(super) fn discover(r: &ProductRequest) -> Result<Value> {
                 etag: None,
                 metadata: json!({"collection_concept":CONCEPT,"collection_version":"006","cmr_granule_id":e["id"]}),
             };
-            out.push(Observation{id:id.into(),datetime:e["time_start"].as_str().ok_or("SMAP acquisition time absent")?.into(),collection:COLLECTION.into(),platform:Some("SMAP".into()),processing:Some("006/R19240".into()),assets:r.bands.iter().map(|b|(b.clone(),asset.clone())).collect(),properties:json!({"cmr":e,"pass":if r.product==PM{"ascending PM"}else{"descending AM"}})});
+            out.push(Observation{id:id.into(),datetime:e["time_start"].as_str().ok_or("SMAP acquisition time absent")?.into(),collection:COLLECTION.into(),platform:Some("SMAP".into()),processing:Some("006/R19240".into()),assets:r.bands.iter().map(|b|(b.clone(),asset.clone())).collect(),properties:json!({"cmr":e,"pass":if pm(&r.product){"ascending PM"}else{"descending AM"}})});
         }
         out
     };
@@ -293,7 +312,7 @@ pub(super) fn prepare(r: &ProductRequest, netrc: Option<&std::path::Path>) -> Re
                 start: [0, 0],
                 count: [1, 1],
                 step: [1, 1],
-                axes: axes(),
+                axes: axes(&r.product),
             },
             time: None,
             quality: vec![],
@@ -331,7 +350,12 @@ pub(super) fn prepare(r: &ProductRequest, netrc: Option<&std::path::Path>) -> Re
             } else {
                 ("<f4", -9999.)
             };
-            if d["shape"] != json!([1624, 3856])
+            if d["shape"]
+                != if north(&r.product) {
+                    json!([2000, 2000])
+                } else {
+                    json!([1624, 3856])
+                }
                 || d["stored_dtype"] != dtype
                 || a["_FillValue"]["value"] != fill
                 || a.get("scale_factor").is_some()
@@ -344,15 +368,20 @@ pub(super) fn prepare(r: &ProductRequest, netrc: Option<&std::path::Path>) -> Re
             }
             if b=="retrieval_qual_flag"&&(a["flag_masks"]["value"]!="1s, 2s, 4s, 8s"||a["flag_meanings"]["value"]!="Retrieval_recommended Retrieval_attempted Retrieval_success FT_retrieval_success"){return fail("unqualified SMAP retrieval flag definitions");}
         }
-        let grid = NativeGrid::EaseGridGlobal { epsg: 6933 };
+        let grid = if north(&r.product) {
+            NativeGrid::EaseGridNorth { epsg: 6931 }
+        } else {
+            NativeGrid::EaseGridGlobal { epsg: 6933 }
+        };
         let t = Instant::now();
-        request.spatial = array_grid::resolve(
+        let selection = array_grid::resolve(
             &grid,
             &inspection.coordinates[0],
             &inspection.coordinates[1],
             &r.aoi,
-            axes(),
+            axes(&r.product),
         )?;
+        request.spatial = selection.native_selection.clone();
         let selection_seconds = t.elapsed().as_secs_f64();
         crate::planner::validate(&request)?;
         let Spatial::ArraySlice {
@@ -383,6 +412,7 @@ pub(super) fn prepare(r: &ProductRequest, netrc: Option<&std::path::Path>) -> Re
                 physical_plan_seconds,
             },
             native_selection: request.spatial,
+            selection,
             grid,
             definitions: inspection.definitions.clone(),
             coordinates,

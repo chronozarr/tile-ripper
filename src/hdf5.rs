@@ -964,10 +964,24 @@ impl InspectedFile {
             return fail("immutable HDF5 inspection lacks requested coordinate coverage; inspect a fresh source");
         }
         let started = Instant::now();
-        if ["/@smap_ease2_m09/y", "/@smap_ease2_m09/x"].contains(&path) {
+        if [
+            "/@smap_ease2_m09/y",
+            "/@smap_ease2_m09/x",
+            "/@smap_ease2_n09/y",
+            "/@smap_ease2_n09/x",
+        ]
+        .contains(&path)
+        {
+            let north = path.starts_with("/@smap_ease2_n09/");
             let metadata = self.smap_metadata()?;
             let row = path.ends_with("/y");
-            let expected = if row { 1624 } else { 3856 };
+            let expected = if north {
+                2000
+            } else if row {
+                1624
+            } else {
+                3856
+            };
             if shape != expected {
                 return fail("SMAP dataset shape conflicts with official EASE2 M09 grid");
             }
@@ -975,13 +989,25 @@ impl InspectedFile {
                 .map(|i| {
                     let index = start + i * step;
                     if row {
-                        7314540.8306386 - (index as f64 + 0.5) * 9008.055210146
+                        if north {
+                            9000000. - (index as f64 + 0.5) * 9000.
+                        } else {
+                            7314540.8306386 - (index as f64 + 0.5) * 9008.055210146
+                        }
+                    } else if north {
+                        -9000000. + (index as f64 + 0.5) * 9000.
                     } else {
                         -17367530.4451615 + (index as f64 + 0.5) * 9008.055210146
                     }
                 })
                 .collect::<Vec<_>>();
-            let description = json!({"path":path,"dtype":"FloatingPoint64","storage":{"layout":"derived official EASE2 M09 center formula; source has no rank-one x/y arrays"},"derivation":{"authority":"https://github.com/nsidc/mapxmaps/blob/main/EASE2_M09km.gpd","epsg":6933,"spacing_m":9008.055210146,"edge_origin":[-17367530.4451615,7314540.8306386],"registration":"pixel center = edge origin plus half cell; rows decrease northing"},"attributes":{"units":{"value":"m"},"standard_name":{"value":if row{"projection_y_coordinate"}else{"projection_x_coordinate"}}},"product_metadata":metadata});
+            let mut description = json!({"path":path,"dtype":"FloatingPoint64","storage":{"layout":"derived official EASE2 M09 center formula; source has no rank-one x/y arrays"},"derivation":{"authority":"https://github.com/nsidc/mapxmaps/blob/main/EASE2_M09km.gpd","epsg":6933,"spacing_m":9008.055210146,"edge_origin":[-17367530.4451615,7314540.8306386],"registration":"pixel center = edge origin plus half cell; rows decrease northing"},"attributes":{"units":{"value":"m"},"standard_name":{"value":if row{"projection_y_coordinate"}else{"projection_x_coordinate"}}},"product_metadata":metadata});
+            if north {
+                description["storage"]["layout"] = json!(
+                    "derived official EASE2 N09 center formula; source has no rank-one x/y arrays"
+                );
+                description["derivation"] = json!({"authority":"https://github.com/nsidc/mapxmaps/blob/main/EASE2_N09km.gpd","epsg":6931,"spacing_m":9000.,"edge_origin":[-9000000.,9000000.],"registration":"pixel center = edge origin plus half cell; rows decrease northing"});
+            }
             let result = CachedAxis {
                 values: values.into(),
                 description,
@@ -1256,7 +1282,7 @@ impl ArrayInspection {
             let profile = file.profile(path, axes)?;
             let nisar = path == "/science/LSAR/GCOV/grids/frequencyA/HHHH";
             let permitted = if nisar {
-                profile.shape == [34776, 35352]
+                [[34776, 35352], [17424, 17676]].contains(&profile.shape)
             } else {
                 profile.shape.iter().all(|n| *n > 0 && *n <= 16384)
                     && profile.shape[0]
@@ -1292,9 +1318,10 @@ impl ArrayInspection {
                 descriptions.push(axis.description);
             }
             definition["axes"] = json!(descriptions);
-            if axes[0] == "/@smap_ease2_m09/y" {
+            if ["/@smap_ease2_m09/y", "/@smap_ease2_n09/y"].contains(&axes[0].as_str()) {
                 definition["product_metadata"] = file.smap_metadata()?;
-                definition["grid_mapping"] = crate::products::array_grid::ease_mapping();
+                definition["grid_mapping"] =
+                    crate::products::array_grid::ease_mapping(axes[0] == "/@smap_ease2_n09/y");
             }
             if nisar {
                 definition["product_metadata"] = file.nisar_metadata()?;

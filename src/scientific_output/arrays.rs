@@ -42,11 +42,11 @@ pub(crate) fn fetch(p: &Prepared, path: &str, cancelled: Arc<AtomicBool>) -> Res
         json!({"layout":"separate native observations"}),
         encoding,
     )?;
-    let inclusion = Inclusion::new(&p.request.aoi)?;
     let mut reports = Vec::new();
     let mut objects = 5usize;
     let mut encode_seconds = 0.;
     for o in &p.observations {
+        let inclusion = Inclusion::for_grid(&p.request.aoi, &o.grid)?;
         check_cancelled(&cancelled)?;
         let Spatial::ArraySlice {
             start, count, step, ..
@@ -78,6 +78,7 @@ pub(crate) fn fetch(p: &Prepared, path: &str, cancelled: Arc<AtomicBool>) -> Res
         a["source"] = o.base.explain();
         a["native_grid"] = o.grid.describe();
         a["native_selection"] = json!(o.native_selection);
+        a["geographic_selection"] = json!(o.selection);
         a["catalog_observation"] = json!(o.observation);
         a["product_metadata"] = first["product_metadata"].clone();
         group(store.clone(), &prefix, a, encoding)?;
@@ -200,7 +201,11 @@ pub(crate) fn fetch(p: &Prepared, path: &str, cancelled: Arc<AtomicBool>) -> Res
                         longs.push(xy.map_or(f64::NAN, |v| v[0]));
                         lats.push(xy.map_or(f64::NAN, |v| v[1]));
                         earth.push(u8::from(xy.is_some()));
-                        masks.push(u8::from(inclusion.accepts(xy)));
+                        masks.push(u8::from(inclusion.native_accepts(
+                            &o.grid,
+                            o.coordinates[0][y],
+                            o.coordinates[1][x],
+                        )?));
                     }
                 }
                 for (array, values) in [(&aoi, &masks), (&visible, &earth)] {
