@@ -714,6 +714,20 @@ pub(crate) fn prepare_inspected(
     )
     .map_err(|e| safe_error(request, "prepare", e))
 }
+#[cfg(feature = "native-hdf5")]
+pub(crate) fn prepare_array_inspected(
+    request: &Request,
+    grid: &crate::hdf5::ArrayInspection,
+) -> Result<Prepared> {
+    let sources = crate::storage::Sources::from_hdf5(grid.context(request)?);
+    prepare_on(
+        request,
+        &mut LayoutCache::default(),
+        Default::default(),
+        Some(sources),
+    )
+    .map_err(|e| safe_error(request, "prepare array", e))
+}
 fn prepare_on(
     request: &Request,
     cache: &mut LayoutCache,

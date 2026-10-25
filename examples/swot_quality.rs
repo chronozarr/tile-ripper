@@ -81,6 +81,7 @@ fn main() -> tile_ripper::Result<()> {
         let mut descriptions = Vec::new();
         for (j, c) in tile.layers.iter().enumerate() {
             let bytes: Vec<u8> = match &c.pixels {
+                Pixels::Int8(v) => v.iter().map(|v| *v as u8).collect(),
                 Pixels::UInt8(v) => v.clone(),
                 Pixels::UInt16(v) => v.iter().flat_map(|v| v.to_le_bytes()).collect(),
                 Pixels::Int16(v) => v.iter().flat_map(|v| v.to_le_bytes()).collect(),

@@ -5,10 +5,14 @@ use tile_ripper::{
     Result, Spatial,
 };
 pub fn list() -> Result<()> {
+    #[cfg(feature = "native-hdf5")]
+    let arrays = products::arrays::profiles();
+    #[cfg(not(feature = "native-hdf5"))]
+    let arrays = serde_json::json!({"requires":"native-hdf5"});
     println!(
         "{}",
         serde_json::to_string_pretty(
-            &serde_json::json!({"schema":"tile-ripper-products-v1","profiles":products::profile::profiles(),"capability":"descriptors require physical native COG inspection; see docs/products/qualification.md for real-source qualification and access boundaries","build":"--no-default-features --features native-cog; Cargo defaults unchanged"})
+            &serde_json::json!({"schema":"tile-ripper-products-v1","profiles":products::profile::profiles(),"array_profiles":arrays,"capability":"descriptors require physical native COG inspection; see docs/products/qualification.md for real-source qualification and access boundaries","build":"--no-default-features --features native-cog; Cargo defaults unchanged"})
         )?
     );
     Ok(())
@@ -54,6 +58,13 @@ pub fn discover(args: &[String]) -> Result<()> {
     let r: ProductRequest = serde_json::from_value(
         serde_json::json!({"product":get("--product")?,"provider":flags.get("--provider").copied().unwrap_or("auto"),"aoi":Spatial::Bounds{crs:"EPSG:4326".into(),bbox},"start":get("--start")?,"end":get("--end")?,"bands":get("--bands")?.split(',').collect::<Vec<_>>(),"max_observations":flags.get("--limit").map_or(Ok(8),|v|v.parse::<usize>())?}),
     )?;
+    #[cfg(feature = "native-hdf5")]
+    let catalog = if products::arrays::supports(&r.product) {
+        products::arrays::discover(&r)?
+    } else {
+        serde_json::to_value(products::discover(&r)?)?
+    };
+    #[cfg(not(feature = "native-hdf5"))]
     let catalog = products::discover(&r)?;
     let bytes = serde_json::to_vec_pretty(&catalog)?;
     if let Some(path) = flags.get("--output") {
@@ -70,6 +81,13 @@ pub fn discover(args: &[String]) -> Result<()> {
     Ok(())
 }
 pub fn run(options: super::Options) -> Result<()> {
+    #[cfg(feature = "native-hdf5")]
+    if options.input["product"]
+        .as_str()
+        .is_some_and(products::arrays::supports)
+    {
+        return run_array(options);
+    }
     if options.checkpoint.is_some()
         || options.quality_policy.is_some()
         || options.cache_path.is_some()
@@ -247,6 +265,9 @@ pub fn run(options: super::Options) -> Result<()> {
                 row["quality"] = serde_json::Value::Object(quality);
                 if options.values {
                     let (dtype, bytes) = match &c.pixels {
+                        tile_ripper::Pixels::Int8(_) => {
+                            return Err("COG product stream does not admit Int8".into())
+                        }
                         tile_ripper::Pixels::UInt8(v) => ("uint8", v.clone()),
                         tile_ripper::Pixels::UInt16(v) => {
                             ("uint16", v.iter().flat_map(|v| v.to_le_bytes()).collect())
@@ -293,6 +314,79 @@ pub fn run(options: super::Options) -> Result<()> {
             );
         }
         _ => return Err("unknown product command".into()),
+    }
+    Ok(())
+}
+
+#[cfg(feature = "native-hdf5")]
+fn run_array(options: super::Options) -> Result<()> {
+    use base64::Engine;
+    use std::sync::{
+        atomic::{AtomicBool, Ordering},
+        Arc,
+    };
+    use tile_ripper::Pixels;
+    if options.checkpoint.is_some()
+        || options.quality_policy.is_some()
+        || options.cache_path.is_some()
+        || options.access.is_some()
+        || options
+            .output_format
+            .as_ref()
+            .is_some_and(|s| s != "zarr_v2")
+        || options.backend == Some(super::Backend::Gdal)
+    {
+        return Err("array products require native HDF5/scientific Zarr; policies belong in JSON; GOES is anonymous".into());
+    }
+    let mut r: ProductRequest = serde_json::from_value(options.input)?;
+    if let Some(path) = options.output {
+        r.output = Some(path);
+    }
+    if options.discover_only {
+        println!(
+            "{}",
+            serde_json::to_string_pretty(&products::arrays::discover(&r)?)?
+        );
+        return Ok(());
+    }
+    let p = products::arrays::prepare(&r)?;
+    let cancelled = Arc::new(AtomicBool::new(false));
+    if options.command == "fetch" || options.command == "stream" {
+        let c = cancelled.clone();
+        ctrlc::set_handler(move || c.store(true, Ordering::Release))?;
+    }
+    match options.command.as_str() {
+        "plan" => println!("{}", serde_json::to_string_pretty(&p.explain())?),
+        "fetch" => {
+            let path = r
+                .output
+                .as_ref()
+                .ok_or("array fetch requires output or --output NEW.zarr")?;
+            println!(
+                "{}",
+                serde_json::to_string_pretty(&p.fetch(path, cancelled)?)?
+            );
+        }
+        "stream" => {
+            println!(
+                "{}",
+                serde_json::json!({"event":"prepared","provenance":p.explain()})
+            );
+            let reports=p.execute(&cancelled,|o,c|{
+                let mut row=serde_json::json!({"event":"chunk","asset_id":c.asset_id,"variable":c.variable,"window":c.window,"coordinates":c.coordinates,"provisional":true,"coordinate_model":o.grid});
+                if options.values {
+                    let(dtype,bytes):(&str,Vec<u8>)=match &c.pixels {Pixels::Int8(v)=>("int8",v.iter().map(|v|*v as u8).collect()),Pixels::UInt8(v)=>("uint8",v.clone()),Pixels::Int16(v)=>("int16",v.iter().flat_map(|v|v.to_le_bytes()).collect()),Pixels::UInt16(v)=>("uint16",v.iter().flat_map(|v|v.to_le_bytes()).collect()),Pixels::UInt32(v)=>("uint32",v.iter().flat_map(|v|v.to_le_bytes()).collect()),Pixels::Float32(v)=>("float32",v.iter().flat_map(|v|v.to_le_bytes()).collect())};
+                    row["dtype"]=dtype.into();row["values_le_base64"]=base64::engine::general_purpose::STANDARD.encode(bytes).into();
+                    row["source_valid_mask_base64"]=base64::engine::general_purpose::STANDARD.encode(c.validity().map(u8::from).collect::<Vec<_>>()).into();
+                }
+                println!("{}",serde_json::to_string(&row)?);Ok(())
+            })?;
+            println!(
+                "{}",
+                serde_json::json!({"event":"complete","source_versions_validated":true,"observed":reports})
+            );
+        }
+        _ => return Err("unknown array command".into()),
     }
     Ok(())
 }

@@ -1,5 +1,9 @@
 //! Scientific product selection over the existing bounded acquisition lifecycle.
 //! Profiles describe expectations; the physical reader still inspects every source.
+#[cfg(feature = "native-hdf5")]
+pub mod array_grid;
+#[cfg(feature = "native-hdf5")]
+pub mod arrays;
 pub mod profile;
 pub mod routing;
 use crate::{

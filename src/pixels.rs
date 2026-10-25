@@ -3,6 +3,7 @@ use crate::{fail, Result};
 #[derive(Debug)]
 pub enum Pixels {
     UInt8(Vec<u8>),
+    Int8(Vec<i8>),
     UInt16(Vec<u16>),
     Int16(Vec<i16>),
     UInt32(Vec<u32>),
@@ -22,6 +23,7 @@ impl Pixels {
     pub fn len(&self) -> usize {
         match self {
             Self::UInt8(v) => v.len(),
+            Self::Int8(v) => v.len(),
             Self::UInt16(v) => v.len(),
             Self::Int16(v) => v.len(),
             Self::UInt32(v) => v.len(),
@@ -34,7 +36,7 @@ impl Pixels {
     pub fn byte_len(&self) -> usize {
         self.len()
             * match self {
-                Self::UInt8(_) => 1,
+                Self::UInt8(_) | Self::Int8(_) => 1,
                 Self::UInt16(_) => 2,
                 Self::Int16(_) => 2,
                 Self::UInt32(_) => 4,
@@ -43,6 +45,13 @@ impl Pixels {
     }
     pub fn as_u8(&self) -> Option<&[u8]> {
         if let Self::UInt8(v) = self {
+            Some(v)
+        } else {
+            None
+        }
+    }
+    pub fn as_i8(&self) -> Option<&[i8]> {
+        if let Self::Int8(v) = self {
             Some(v)
         } else {
             None
@@ -86,6 +95,7 @@ impl Pixels {
     pub(crate) fn value(&self, i: usize) -> f64 {
         match self {
             Self::UInt8(v) => v[i] as f64,
+            Self::Int8(v) => v[i] as f64,
             Self::UInt16(v) => v[i] as f64,
             Self::Int16(v) => v[i] as f64,
             Self::UInt32(v) => v[i] as f64,
@@ -101,6 +111,7 @@ impl Pixels {
             (Self::UInt8(a), Self::UInt8(b)) => {
                 a[dst..dst + len].copy_from_slice(&b[src..src + len])
             }
+            (Self::Int8(a), Self::Int8(b)) => a[dst..dst + len].copy_from_slice(&b[src..src + len]),
             (Self::UInt32(a), Self::UInt32(b)) => {
                 a[dst..dst + len].copy_from_slice(&b[src..src + len])
             }

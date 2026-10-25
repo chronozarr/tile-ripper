@@ -26,6 +26,8 @@ type Metrics = PerformanceMetricsStorageAdapter<FilesystemStore>;
 type Store = crate::zarr_io::Timed<Metrics>;
 
 #[cfg(feature = "native-hdf5")]
+pub(crate) mod arrays;
+#[cfg(feature = "native-hdf5")]
 pub(crate) mod swot;
 
 /// Lossless scientific-output candidates. The ordinary fetch stays Zarr v2,
@@ -267,7 +269,7 @@ fn quality_mask(
                 mask.push(u8::from(policy.accepts(QualitySample::Float32(*value))?));
             }
         }
-        crate::Pixels::Int16(_) | crate::Pixels::UInt32(_) => {
+        crate::Pixels::Int8(_) | crate::Pixels::Int16(_) | crate::Pixels::UInt32(_) => {
             return Err("quality policy received an unsupported raw storage type".into());
         }
     }
@@ -928,7 +930,9 @@ pub(crate) fn fetch_with_options(
             crate::Pixels::UInt16(values) => write_values!(values),
             crate::Pixels::Int16(values) => write_values!(values),
             crate::Pixels::Float32(values) => write_values!(values),
-            crate::Pixels::UInt32(_) => return Err("unsupported COG output sample type".into()),
+            crate::Pixels::Int8(_) | crate::Pixels::UInt32(_) => {
+                return Err("unsupported COG output sample type".into())
+            }
         }
         let mask = o
             .geometry

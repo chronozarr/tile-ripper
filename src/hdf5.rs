@@ -227,6 +227,18 @@ fn stored_attrs(attributes: Vec<hdf5_reader::Attribute>) -> Result<Value> {
                 }
             }
             Datatype::FixedPoint {
+                signed: true,
+                size: 1 | 2,
+                ..
+            } if ["flag_values", "valid_range"].contains(&attr.name.as_str())
+                && attr.num_elements()? <= 16 =>
+            {
+                value["value"] = match &attr.datatype {
+                    Datatype::FixedPoint { size: 1, .. } => json!(attr.read_1d::<i8>()?),
+                    _ => json!(attr.read_1d::<i16>()?),
+                };
+            }
+            Datatype::FixedPoint {
                 signed: false,
                 size: 1 | 2 | 4,
                 ..
@@ -254,7 +266,17 @@ fn marker(dataset: &Dataset, name: &str, dtype: &str) -> Result<Option<f64>> {
         return fail("HDF5 missing markers must be numeric scalars");
     }
     let value = attribute.read_as_f64()?;
-    if ["|u1", "<u2", "<u4"].contains(&dtype) {
+    if ["|i1", "<i2"].contains(&dtype) {
+        let (min, max) = if dtype == "|i1" {
+            (i8::MIN as f64, i8::MAX as f64)
+        } else {
+            (i16::MIN as f64, i16::MAX as f64)
+        };
+        if !value.is_finite() || value.fract() != 0. || value < min || value > max {
+            return fail("HDF5 missing marker is not representable in stored signed type");
+        }
+        Ok(Some(value))
+    } else if ["|u1", "<u2", "<u4"].contains(&dtype) {
         let max = match dtype {
             "|u1" => u8::MAX as f64,
             "<u2" => u16::MAX as f64,
@@ -297,8 +319,10 @@ fn dtype(dataset: &Dataset) -> Result<&'static str> {
             signed: false,
             ..
         } => Ok("<u2"),
+        Datatype::FixedPoint { size: 1, signed: true, .. } => Ok("|i1"),
+        Datatype::FixedPoint { size: 2, signed: true, .. } => Ok("<i2"),
         Datatype::FloatingPoint { size: 4, .. } => Ok("<f4"),
-        _ => fail("native HDF5 supports only stored UInt8, UInt16, UInt32 or IEEE Float32 data"),
+        _ => fail("native HDF5 supports only stored Int8, Int16, UInt8, UInt16, UInt32 or IEEE Float32 data"),
     }
 }
 #[derive(Clone, Debug)]
@@ -435,6 +459,18 @@ fn selection(start: &[usize; 2], count: &[usize; 2], step: &[usize; 2]) -> Resul
 }
 fn decode(dataset: &Dataset, selected: &SliceInfo) -> Result<Pixels> {
     Ok(match dtype(dataset)? {
+        "|i1" => Pixels::Int8(
+            dataset
+                .read_slice_selective_v1::<i8>(selected)?
+                .into_raw_vec_and_offset()
+                .0,
+        ),
+        "<i2" => Pixels::Int16(
+            dataset
+                .read_slice_selective_v1::<i16>(selected)?
+                .into_raw_vec_and_offset()
+                .0,
+        ),
         "|u1" => Pixels::UInt8(
             dataset
                 .read_slice_selective_v1::<u8>(selected)?
@@ -662,6 +698,8 @@ impl InspectedFile {
         let number = |name: &str| attributes[name]["value"].as_f64();
         let storage_fill = if let Some(fill) = ds.fill_value().and_then(|f| f.value.as_ref()) {
             Some(match dt {
+                "|i1" => <i8 as hdf5_reader::H5Type>::from_bytes(fill, ds.dtype())? as f64,
+                "<i2" => <i16 as hdf5_reader::H5Type>::from_bytes(fill, ds.dtype())? as f64,
                 "|u1" => <u8 as hdf5_reader::H5Type>::from_bytes(fill, ds.dtype())? as f64,
                 "<u2" => <u16 as hdf5_reader::H5Type>::from_bytes(fill, ds.dtype())? as f64,
                 "<u4" => <u32 as hdf5_reader::H5Type>::from_bytes(fill, ds.dtype())? as f64,
@@ -1016,6 +1054,189 @@ impl GridInspection {
             return fail("retained inspection exceeds requested memory budget");
         }
         self.file.metadata.file.phase("inspection_reuse_validation");
+        self.file.metadata.file.validate_cancellable(None)?;
+        let context = Context {
+            transport: self.transport.clone(),
+            ..Default::default()
+        };
+        context
+            .files
+            .lock()
+            .unwrap()
+            .insert(self.asset.id.clone(), self.file.clone());
+        Ok(context)
+    }
+}
+
+fn is_goes_root(root: &Value) -> bool {
+    root["title"]["value"] == "ABI L2 Cloud and Moisture Imagery"
+}
+/// A concrete rank-two product inspection; independent of the SWOT CRS contract.
+/// It retains actual full axes and source-version-bound indexes, never science arrays.
+#[derive(Clone)]
+pub(crate) struct ArrayInspection {
+    asset: Asset,
+    budget: Budget,
+    transport: crate::http_transport::Transport,
+    file: Arc<InspectedFile>,
+    pub definitions: Vec<Value>,
+    pub coordinates: [Vec<f64>; 2],
+    axes: [String; 2],
+}
+impl ArrayInspection {
+    pub(crate) fn inspect(
+        r: &Request,
+        transport: crate::http_transport::Transport,
+    ) -> Result<Self> {
+        crate::planner::validate(r)?;
+        let Source::Assets { assets } = &r.source else {
+            return fail("array inspection requires one HDF5 object");
+        };
+        let Spatial::ArraySlice { axes, .. } = &r.spatial else {
+            return fail("array inspection requires named native axes");
+        };
+        if assets.len() != 1
+            || assets[0].format != Format::Hdf5
+            || !matches!(r.sink, Sink::Callback)
+            || r.time.is_some()
+            || index_policy()? != "full"
+        {
+            return fail("array inspection requires one native HDF5 source, callback sink and full index validation");
+        }
+        let file = Arc::new(InspectedFile::new(&assets[0], r, transport.clone())?);
+        let mut definitions = Vec::new();
+        let mut coordinates = [Vec::new(), Vec::new()];
+        let mut expected = None;
+        for variable in &r.variables {
+            let Variable::Dataset { path } = variable else {
+                return fail("array product requires dataset paths");
+            };
+            let profile = file.profile(path, axes)?;
+            if profile.shape.iter().any(|n| *n == 0 || *n > 16384)
+                || profile.shape[0]
+                    .checked_mul(profile.shape[1])
+                    .is_none_or(|n| n > 32_000_000)
+            {
+                return fail("array inspection grid exceeds 16384 per axis / 32 million centers");
+            }
+            if expected.is_some_and(|s| s != profile.shape) {
+                return fail("array product layers have different native grids");
+            }
+            expected = Some(profile.shape);
+            let mut definition = profile.description.clone();
+            let mut descriptions = Vec::new();
+            for i in 0..2 {
+                let working = file.bytes()
+                    + transport.reservation()
+                    + profile.shape.iter().sum::<usize>() * 32;
+                if working > r.budget.buffer_bytes / 2 {
+                    return fail("array coordinates exceed working budget");
+                }
+                let axis = file.axis(
+                    &axes[i],
+                    profile.shape[i],
+                    [0, profile.shape[i], 1],
+                    &r.budget,
+                    working,
+                )?;
+                if definitions.is_empty() {
+                    coordinates[i] = axis.values.to_vec();
+                }
+                descriptions.push(axis.description);
+            }
+            definition["axes"] = json!(descriptions);
+            if self::is_goes_root(&file.root_attributes) {
+                let mut ancillary = json!({});
+                for path in ["/band_id", "/band_wavelength"] {
+                    let ds = file.parser.dataset(path)?;
+                    if ds.num_elements()? != 1 {
+                        return fail("GOES band metadata must have one element");
+                    }
+                    let (dtype, value) = match ds.dtype() {
+                        Datatype::FixedPoint {
+                            signed: true,
+                            size: 1,
+                            ..
+                        } => (
+                            "|i1",
+                            json!(ds
+                                .read_array::<i8>()?
+                                .iter()
+                                .next()
+                                .copied()
+                                .ok_or("missing band id")?),
+                        ),
+                        Datatype::FixedPoint {
+                            signed: true,
+                            size: 4,
+                            ..
+                        } => (
+                            "<i4",
+                            json!(ds
+                                .read_array::<i32>()?
+                                .iter()
+                                .next()
+                                .copied()
+                                .ok_or("missing band id")?),
+                        ),
+                        Datatype::FloatingPoint { size: 4, .. } => (
+                            "<f4",
+                            json!(ds
+                                .read_array::<f32>()?
+                                .iter()
+                                .next()
+                                .copied()
+                                .ok_or("missing band wavelength")?),
+                        ),
+                        _ => return fail("unqualified GOES band metadata type"),
+                    };
+                    ancillary[path] =
+                        json!({"dtype":dtype,"value":value,"attributes":attrs(&ds,&file.parser)?});
+                }
+                definition["ancillary"] = ancillary;
+            }
+            definitions.push(definition);
+            file.entries(path, &profile.dataset, &[0, 0], &[u64::MAX; 2], &r.budget)?;
+            if file.bytes() + transport.reservation() > r.budget.buffer_bytes / 2 {
+                return fail("retained array inspection exceeds half buffer_bytes");
+            }
+        }
+        file.metadata.state.lock().unwrap().sealed = true;
+        file.metadata.file.validate_cancellable(None)?;
+        Ok(Self {
+            asset: assets[0].clone(),
+            budget: r.budget.clone(),
+            transport,
+            file,
+            definitions,
+            coordinates,
+            axes: axes.clone(),
+        })
+    }
+
+    pub(crate) fn context(&self, r: &Request) -> Result<Context> {
+        crate::planner::validate(r)?;
+        let Source::Assets { assets } = &r.source else {
+            return fail("array inspection source mismatch");
+        };
+        if assets.len() != 1
+            || assets[0].id != self.asset.id
+            || assets[0].locator != self.asset.locator
+            || assets[0].datetime != self.asset.datetime
+            || assets[0].format != Format::Hdf5
+            || r.budget.buffer_bytes != self.budget.buffer_bytes
+            || r.budget.max_nodes != self.budget.max_nodes
+            || index_policy()? != self.file.index_policy
+            || metadata_page()? != self.file.metadata.page
+            || !matches!(&r.spatial,Spatial::ArraySlice{axes,..} if axes==&self.axes)
+        {
+            return fail("array inspection source, axes, budget or policy mismatch");
+        }
+        if assets[0].etag.as_ref().is_some_and(|e| {
+            self.file.metadata.file.identity()["version"]["etag"].as_str() != Some(e)
+        }) {
+            return fail("array inspection ETag mismatch");
+        }
         self.file.metadata.file.validate_cancellable(None)?;
         let context = Context {
             transport: self.transport.clone(),

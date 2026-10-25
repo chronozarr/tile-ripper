@@ -1,0 +1,21 @@
+[plan]
+name = "product-wave3"
+source_mtime_max = "2026-10-25T17:35:04.193383Z"
+sop_set_hash = ""
+
+[tasks."tasks/work.work"]
+summary = "Qualify array products through bounded native HDF5 and scientific output"
+prompt = """
+Orient:
+- Read the complete supplied Wave3 brief and existing product/HDF5/provider contracts.
+Edit:
+- Qualify GOES ABI then SMAP using independently inspected real sources; admit NISAR diagonal only after storage-fill ambiguity is resolved. Preserve source values, coordinate model, quality, explicit authentication and atomic output. No push, merge, tag, publish, deploy or upstream submission.
+Verify:
+- cargo test --locked --all-features --all-targets
+- cargo test --locked --no-default-features --features native-cog,native-hdf5,authenticated-http
+- Independent h5py/netCDF4, pyproj and Zarr/xarray references and bounded resource/fault gates.
+"""
+commit_message = "Qualify Wave3 bounded scientific array products"
+timeout_s = 0
+test_cmd = "cargo test --locked --no-default-features --features native-cog,native-hdf5,authenticated-http"
+files = ["src/hdf5.rs", "src/acquisition.rs", "src/products.rs", "src/products/arrays.rs", "src/products/array_grid.rs", "src/cli/products.rs", "src/scientific_output/arrays.rs", "src/scientific_output.rs", "tests/wave3_arrays.rs", "bench/wave3_arrays.py", "docs/products/wave3/*", "docs/products/roadmap.md", "docs/products/qualification.md", "examples/array_product.rs", "examples/product-goes-abi.json", "examples/product-smap.json", "vendor/hdf5-reader/src/dataset.rs", "vendor/hdf5-reader/TILE_RIPPER_PATCH.md"]

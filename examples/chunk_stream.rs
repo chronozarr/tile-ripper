@@ -18,6 +18,7 @@ fn main() -> Result<()> {
         first.get_or_insert_with(|| started.elapsed().as_secs_f64());
         // Consume the original native dtype and explicit missingness policy.
         let values: Box<dyn Iterator<Item = f64>> = match &c.pixels {
+            Pixels::Int8(v) => Box::new(v.iter().map(|v| *v as f64)),
             Pixels::UInt8(v) => Box::new(v.iter().map(|v| *v as f64)),
             Pixels::UInt32(v) => Box::new(v.iter().map(|v| *v as f64)),
             Pixels::UInt16(v) => Box::new(v.iter().map(|v| *v as f64)),
@@ -32,6 +33,7 @@ fn main() -> Result<()> {
         }
         if with_digests {
             let digest = match &c.pixels {
+                Pixels::Int8(v) => adler(v.iter().map(|v| *v as u8)),
                 Pixels::UInt8(v) => adler(v.iter().copied()),
                 Pixels::UInt32(v) => adler(v.iter().flat_map(|v| v.to_le_bytes())),
                 Pixels::UInt16(v) => adler(v.iter().flat_map(|v| v.to_le_bytes())),
