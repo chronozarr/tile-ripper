@@ -1,0 +1,4237 @@
+{
+  "status": "passed",
+  "scope": "one native canonical live fetch per new geographic path; inherited exact source/version/authentication contracts, final validation before publication",
+  "cases": [
+    {
+      "family": "nisar",
+      "process": {
+        "code": 0,
+        "wall_seconds": 25.226794124988373,
+        "cpu_seconds": 0.12424299999999999,
+        "peak_rss_bytes": 33128448
+      },
+      "verification": {
+        "native_selection": {
+          "kind": "array_slice",
+          "start": [
+            17388,
+            17676
+          ],
+          "count": [
+            8,
+            8
+          ],
+          "step": [
+            1,
+            1
+          ],
+          "axes": [
+            "/science/LSAR/GCOV/grids/frequencyA/yCoordinates",
+            "/science/LSAR/GCOV/grids/frequencyA/xCoordinates"
+          ]
+        },
+        "samples": 64,
+        "included_centers": 64,
+        "source_valid_centers": 64,
+        "usable_centers": 64,
+        "raw_bits_sha256": "232713f7f03ec926306cd7ff037657c311e8b249ce86ca7e3d95d3178946e1e1",
+        "coordinate_max_error_degrees": 1.4210854715202004e-14,
+        "xarray_reopened": true
+      },
+      "preparation_timings": {
+        "inspection_seconds": 20.560029083,
+        "selection_seconds": 0.012119375,
+        "physical_plan_seconds": 2.159592708
+      },
+      "execution": {
+        "source_reads": [],
+        "scheduler": {
+          "workers": 1,
+          "per_host": 4,
+          "buffer_bytes": 58720256,
+          "reserved_bytes_peak": 26815740,
+          "reader_state_reserved_bytes": 0,
+          "prepared_native_metadata_bytes": 9597080,
+          "authenticated_transport_reserved_bytes": 0,
+          "prepared_v3_metadata_index_bytes": 0,
+          "active_workers_peak": 1,
+          "completed_tasks": 1,
+          "admitted_jobs": 1,
+          "cog_reader_scope": "selection",
+          "seconds": 0.639451333,
+          "order": "plan",
+          "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+          "prepared_hdf5_bytes": 9597080,
+          "native_metadata": {
+            "retained_sources": 0,
+            "retained_bytes": 0,
+            "physical_metadata_sources": 0,
+            "physical_metadata_bytes": 0,
+            "cap_bytes": 0,
+            "skipped_sources": 0,
+            "scope": "this Prepared only; immutable version-bound parser pages; never a data cache",
+            "authenticated_sources": 0,
+            "authenticated_transport": {}
+          },
+          "native_strategies": [
+            {
+              "asset_id": "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001",
+              "task_reserved_bytes": 17218660,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            }
+          ]
+        },
+        "transport": {
+          "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001": {
+            "phases": {
+              "hdf5_science_payload": {
+                "GET NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5": {
+                  "seconds": 0.636479042,
+                  "attempts": 1,
+                  "bytes": 659148,
+                  "retries": 0,
+                  "statuses": {
+                    "206": 1
+                  }
+                }
+              },
+              "hdf5_version_validation": {
+                "HEAD NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5": {
+                  "seconds": 2.7631451670000002,
+                  "attempts": 3,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 3
+                  }
+                }
+              },
+              "metadata_index_discovery": {
+                "GET NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5": {
+                  "seconds": 18.785650792,
+                  "attempts": 54,
+                  "bytes": 1687552,
+                  "retries": 0,
+                  "statuses": {
+                    "206": 54
+                  }
+                },
+                "HEAD NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5": {
+                  "seconds": 2.0205265,
+                  "attempts": 2,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 2
+                  }
+                }
+              },
+              "planning": {
+                "HEAD NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5": {
+                  "seconds": 0.944693667,
+                  "attempts": 1,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 1
+                  }
+                }
+              }
+            },
+            "requests": 61,
+            "bytes": 2346700,
+            "retries": 0,
+            "seconds": 25.150428498,
+            "objects": {
+              "GET NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5": {
+                "seconds": 19.422156542,
+                "attempts": 55,
+                "bytes": 2346700,
+                "retries": 0,
+                "statuses": {
+                  "206": 55
+                }
+              },
+              "HEAD NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5": {
+                "seconds": 5.728372874000001,
+                "attempts": 6,
+                "bytes": 0,
+                "retries": 0,
+                "statuses": {
+                  "200": 6
+                }
+              }
+            },
+            "ranges": {
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 0:16384": {
+                "seconds": 2.623737334,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 114688:131072": {
+                "seconds": 0.237524666,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 114688:147456": {
+                "seconds": 0.386182958,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 1294336:1310720": {
+                "seconds": 0.292273959,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 131072:147456": {
+                "seconds": 0.255977083,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 131072:163840": {
+                "seconds": 0.307672042,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 147456:180224": {
+                "seconds": 0.357656875,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 1622016:1638400": {
+                "seconds": 0.26054775,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 163840:196608": {
+                "seconds": 0.334493167,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 16384:32768": {
+                "seconds": 0.274789792,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 16384:49152": {
+                "seconds": 0.390998792,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 180224:196608": {
+                "seconds": 0.270385708,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 180224:212992": {
+                "seconds": 0.33158875,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 196608:212992": {
+                "seconds": 0.367503417,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 196608:229376": {
+                "seconds": 0.327974667,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 212992:229376": {
+                "seconds": 0.254871708,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 212992:245760": {
+                "seconds": 0.309261083,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 245760:262144": {
+                "seconds": 0.345972792,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 245760:278528": {
+                "seconds": 0.332793583,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 262144:278528": {
+                "seconds": 0.266765125,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 262144:294912": {
+                "seconds": 0.353669375,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 278528:294912": {
+                "seconds": 0.254738125,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 278528:311296": {
+                "seconds": 0.309642042,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 294912:311296": {
+                "seconds": 0.292037291,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 311296:327680": {
+                "seconds": 0.28969375,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 311296:344064": {
+                "seconds": 0.3118155,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 327680:344064": {
+                "seconds": 0.312674292,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 32768:49152": {
+                "seconds": 0.254340167,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 4194304:4489216": {
+                "seconds": 0.456975667,
+                "attempts": 1,
+                "bytes": 294912,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 427802624:427819008": {
+                "seconds": 0.362854,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 4472832:4767744": {
+                "seconds": 0.462995791,
+                "attempts": 1,
+                "bytes": 294912,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 49152:65536": {
+                "seconds": 0.254548625,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 65536:81920": {
+                "seconds": 0.280910417,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 65536:98304": {
+                "seconds": 0.306986417,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 671744:688128": {
+                "seconds": 0.301567042,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 7000293376:7000309760": {
+                "seconds": 0.2717465,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 7000588288:7000604672": {
+                "seconds": 0.260062917,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 7000883200:7000899584": {
+                "seconds": 0.275043291,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 7000915968:7000932352": {
+                "seconds": 0.269316709,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 7000932352:7000948736": {
+                "seconds": 0.284112167,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 7000981504:7000997888": {
+                "seconds": 0.277579334,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 7000997888:7001014272": {
+                "seconds": 0.255625583,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 7000997888:7001030656": {
+                "seconds": 0.312225916,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 7001014272:7001030656": {
+                "seconds": 0.263491,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 7001030656:7001047040": {
+                "seconds": 0.335962167,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 7001063424:7001079808": {
+                "seconds": 0.253622625,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 7001079808:7001096192": {
+                "seconds": 0.263694708,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 7001096192:7001112576": {
+                "seconds": 0.31431275,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 7004487680:7004504064": {
+                "seconds": 0.254792042,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 7007125504:7007141888": {
+                "seconds": 0.417962042,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 7008583680:7008600064": {
+                "seconds": 0.248944875,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 7008616448:7008632832": {
+                "seconds": 0.298422917,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 81920:114688": {
+                "seconds": 0.305581708,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 961155243:961814391": {
+                "seconds": 0.6364765,
+                "attempts": 1,
+                "bytes": 659148,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 98304:114688": {
+                "seconds": 0.288665458,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              }
+            },
+            "authenticated_http": {
+              "checkpoint_claims": 0,
+              "peak_in_flight": 1,
+              "wire_head": 12,
+              "wire_get": 59,
+              "redirects": 10,
+              "login_requests": 1,
+              "refreshes": 0,
+              "route_cache_hits": 54,
+              "response_body_bytes": 2347132,
+              "redirect_body_bytes": 432,
+              "signing_auth_seconds": 8.351978418,
+              "statuses": {
+                "200": 6,
+                "206": 55,
+                "301": 1,
+                "302": 2,
+                "303": 7
+              },
+              "origins": {
+                "https://d1mv8zhcvry6x4.cloudfront.net": 61,
+                "https://nisar.asf.earthdatacloud.nasa.gov": 9,
+                "https://urs.earthdata.nasa.gov": 1
+              }
+            },
+            "cached_metadata_bytes": 1704896,
+            "inspection_reuse": {
+              "source_inspections": 1,
+              "metadata_parser_opens": 1,
+              "profile_discoveries": 1,
+              "profile_cache_hits": 1,
+              "full_index_scans": 1,
+              "index_cache_hits": 1,
+              "coordinate_axis_reads": 2,
+              "coordinate_cache_hits": 2,
+              "coordinate_index_traversals": 0,
+              "coordinate_decoder_opens": 0,
+              "science_decoder_opens": 1,
+              "metadata_range_hits": 2057,
+              "metadata_range_misses": 54,
+              "profile_seconds": 0.886183,
+              "index_seconds": 8.856163708,
+              "coordinate_seconds": 1.733384875,
+              "retention_reservation_bytes": 8500840,
+              "interpretation": "native-hdf5-stored-v1",
+              "index_policy": "full",
+              "sealed": true,
+              "opening": {
+                "source_identity_and_transport_seconds": 0.947953125,
+                "superblock_parser_open_seconds": 2.6237807909999997,
+                "root_group_time_metadata_seconds": 0.336013542
+              }
+            }
+          }
+        },
+        "decoded_source_chunks": 1,
+        "filled_source_chunks": 0,
+        "first_output_seconds": 0.6393895,
+        "assembly_seconds": 0.0,
+        "source_retrieval_seconds": null,
+        "allocation_seconds": null,
+        "copying_seconds": null,
+        "output_setup_seconds": 0.0,
+        "output_finalize_seconds": 0.0,
+        "output_io": null,
+        "native_materialized_bytes": null,
+        "source_data_requests": 1,
+        "source_data_bytes": 659148,
+        "chunks": 1,
+        "decoded_bytes": 256,
+        "non_nodata_pixels": 64,
+        "planning_seconds": 0.961536292,
+        "source_open_seconds": 0.636541709,
+        "read_decode_seconds": 0.001904666,
+        "sink_seconds": 0.000803,
+        "masking_seconds": 0.0,
+        "remote_requests": null,
+        "remote_bytes": null
+      },
+      "output_io": {
+        "writes": 39,
+        "bytes_written": 107786,
+        "encode_seconds": 4.9373999999999246e-05,
+        "storage_write_seconds": 0.005264751000000001,
+        "object_bookkeeping_bound": 48,
+        "consumer_reservation_bytes": 8388608
+      }
+    },
+    {
+      "family": "nisar20",
+      "process": {
+        "code": 0,
+        "wall_seconds": 18.63783629098907,
+        "cpu_seconds": 0.103155,
+        "peak_rss_bytes": 30982144
+      },
+      "verification": {
+        "native_selection": {
+          "kind": "array_slice",
+          "start": [
+            8712,
+            8838
+          ],
+          "count": [
+            8,
+            8
+          ],
+          "step": [
+            1,
+            1
+          ],
+          "axes": [
+            "/science/LSAR/GCOV/grids/frequencyA/yCoordinates",
+            "/science/LSAR/GCOV/grids/frequencyA/xCoordinates"
+          ]
+        },
+        "samples": 64,
+        "included_centers": 64,
+        "source_valid_centers": 64,
+        "usable_centers": 64,
+        "raw_bits_sha256": "66bce4dfd99431432ed84e9c3540c04809fb640c1eb620fa9492322061eddeee",
+        "coordinate_max_error_degrees": 1.4210854715202004e-14,
+        "xarray_reopened": true
+      },
+      "preparation_timings": {
+        "inspection_seconds": 14.307774,
+        "selection_seconds": 0.005844208,
+        "physical_plan_seconds": 1.8734962080000002
+      },
+      "execution": {
+        "source_reads": [],
+        "scheduler": {
+          "workers": 1,
+          "per_host": 4,
+          "buffer_bytes": 58720256,
+          "reserved_bytes_peak": 19117603,
+          "reader_state_reserved_bytes": 0,
+          "prepared_native_metadata_bytes": 5216476,
+          "authenticated_transport_reserved_bytes": 0,
+          "prepared_v3_metadata_index_bytes": 0,
+          "active_workers_peak": 1,
+          "completed_tasks": 1,
+          "admitted_jobs": 1,
+          "cog_reader_scope": "selection",
+          "seconds": 0.615172292,
+          "order": "plan",
+          "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+          "prepared_hdf5_bytes": 5216476,
+          "native_metadata": {
+            "retained_sources": 0,
+            "retained_bytes": 0,
+            "physical_metadata_sources": 0,
+            "physical_metadata_bytes": 0,
+            "cap_bytes": 0,
+            "skipped_sources": 0,
+            "scope": "this Prepared only; immutable version-bound parser pages; never a data cache",
+            "authenticated_sources": 0,
+            "authenticated_transport": {}
+          },
+          "native_strategies": [
+            {
+              "asset_id": "NISAR_L2_PR_GCOV_033_148_A_021_2005_DHDH_M_20261022T105619_20261022T105654_P05023_N_F_J_001",
+              "task_reserved_bytes": 13901127,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            }
+          ]
+        },
+        "transport": {
+          "NISAR_L2_PR_GCOV_033_148_A_021_2005_DHDH_M_20261022T105619_20261022T105654_P05023_N_F_J_001": {
+            "phases": {
+              "hdf5_science_payload": {
+                "GET NISAR_L2_PR_GCOV_033_148_A_021_2005_DHDH_M_20261022T105619_20261022T105654_P05023_N_F_J_001.h5": {
+                  "seconds": 0.612812125,
+                  "attempts": 1,
+                  "bytes": 657901,
+                  "retries": 0,
+                  "statuses": {
+                    "206": 1
+                  }
+                }
+              },
+              "hdf5_version_validation": {
+                "HEAD NISAR_L2_PR_GCOV_033_148_A_021_2005_DHDH_M_20261022T105619_20261022T105654_P05023_N_F_J_001.h5": {
+                  "seconds": 2.820670249,
+                  "attempts": 3,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 3
+                  }
+                }
+              },
+              "metadata_index_discovery": {
+                "GET NISAR_L2_PR_GCOV_033_148_A_021_2005_DHDH_M_20261022T105619_20261022T105654_P05023_N_F_J_001.h5": {
+                  "seconds": 12.380783,
+                  "attempts": 33,
+                  "bytes": 868352,
+                  "retries": 0,
+                  "statuses": {
+                    "206": 33
+                  }
+                },
+                "HEAD NISAR_L2_PR_GCOV_033_148_A_021_2005_DHDH_M_20261022T105619_20261022T105654_P05023_N_F_J_001.h5": {
+                  "seconds": 1.839478166,
+                  "attempts": 2,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 2
+                  }
+                }
+              },
+              "planning": {
+                "HEAD NISAR_L2_PR_GCOV_033_148_A_021_2005_DHDH_M_20261022T105619_20261022T105654_P05023_N_F_J_001.h5": {
+                  "seconds": 0.895148542,
+                  "attempts": 1,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 1
+                  }
+                }
+              }
+            },
+            "requests": 40,
+            "bytes": 1526253,
+            "retries": 0,
+            "seconds": 18.548846206,
+            "objects": {
+              "GET NISAR_L2_PR_GCOV_033_148_A_021_2005_DHDH_M_20261022T105619_20261022T105654_P05023_N_F_J_001.h5": {
+                "seconds": 12.993608917000001,
+                "attempts": 34,
+                "bytes": 1526253,
+                "retries": 0,
+                "statuses": {
+                  "206": 34
+                }
+              },
+              "HEAD NISAR_L2_PR_GCOV_033_148_A_021_2005_DHDH_M_20261022T105619_20261022T105654_P05023_N_F_J_001.h5": {
+                "seconds": 5.555299916,
+                "attempts": 6,
+                "bytes": 0,
+                "retries": 0,
+                "statuses": {
+                  "200": 6
+                }
+              }
+            },
+            "ranges": {
+              "NISAR_L2_PR_GCOV_033_148_A_021_2005_DHDH_M_20261022T105619_20261022T105654_P05023_N_F_J_001.h5 0:16384": {
+                "seconds": 3.143193292,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_021_2005_DHDH_M_20261022T105619_20261022T105654_P05023_N_F_J_001.h5 163840:180224": {
+                "seconds": 0.265914167,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_021_2005_DHDH_M_20261022T105619_20261022T105654_P05023_N_F_J_001.h5 163840:196608": {
+                "seconds": 0.317294667,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_021_2005_DHDH_M_20261022T105619_20261022T105654_P05023_N_F_J_001.h5 16384:32768": {
+                "seconds": 0.251495209,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_021_2005_DHDH_M_20261022T105619_20261022T105654_P05023_N_F_J_001.h5 16384:49152": {
+                "seconds": 0.39285275,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_021_2005_DHDH_M_20261022T105619_20261022T105654_P05023_N_F_J_001.h5 180224:196608": {
+                "seconds": 0.293100917,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_021_2005_DHDH_M_20261022T105619_20261022T105654_P05023_N_F_J_001.h5 1983905792:1983922176": {
+                "seconds": 0.287599459,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_021_2005_DHDH_M_20261022T105619_20261022T105654_P05023_N_F_J_001.h5 1983971328:1983987712": {
+                "seconds": 0.114942458,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_021_2005_DHDH_M_20261022T105619_20261022T105654_P05023_N_F_J_001.h5 1984020480:1984036864": {
+                "seconds": 0.265913167,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_021_2005_DHDH_M_20261022T105619_20261022T105654_P05023_N_F_J_001.h5 1984053248:1984069632": {
+                "seconds": 0.285227209,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_021_2005_DHDH_M_20261022T105619_20261022T105654_P05023_N_F_J_001.h5 1984069632:1984086016": {
+                "seconds": 0.255399875,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_021_2005_DHDH_M_20261022T105619_20261022T105654_P05023_N_F_J_001.h5 1984118784:1984135168": {
+                "seconds": 0.257908459,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_021_2005_DHDH_M_20261022T105619_20261022T105654_P05023_N_F_J_001.h5 1984135168:1984151552": {
+                "seconds": 0.261900583,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_021_2005_DHDH_M_20261022T105619_20261022T105654_P05023_N_F_J_001.h5 1984151552:1984167936": {
+                "seconds": 0.287396833,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_021_2005_DHDH_M_20261022T105619_20261022T105654_P05023_N_F_J_001.h5 1984167936:1984184320": {
+                "seconds": 0.267852333,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_021_2005_DHDH_M_20261022T105619_20261022T105654_P05023_N_F_J_001.h5 1984184320:1984200704": {
+                "seconds": 0.260982334,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_021_2005_DHDH_M_20261022T105619_20261022T105654_P05023_N_F_J_001.h5 1984217088:1984233472": {
+                "seconds": 0.240499375,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_021_2005_DHDH_M_20261022T105619_20261022T105654_P05023_N_F_J_001.h5 1984233472:1984249856": {
+                "seconds": 0.248525375,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_021_2005_DHDH_M_20261022T105619_20261022T105654_P05023_N_F_J_001.h5 1988100096:1988116480": {
+                "seconds": 0.280495833,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_021_2005_DHDH_M_20261022T105619_20261022T105654_P05023_N_F_J_001.h5 1988771840:1988788224": {
+                "seconds": 0.253919583,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_021_2005_DHDH_M_20261022T105619_20261022T105654_P05023_N_F_J_001.h5 1991049216:1991065600": {
+                "seconds": 0.24968,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_021_2005_DHDH_M_20261022T105619_20261022T105654_P05023_N_F_J_001.h5 1991737344:1991753728": {
+                "seconds": 0.276538291,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_021_2005_DHDH_M_20261022T105619_20261022T105654_P05023_N_F_J_001.h5 1991753728:1991770112": {
+                "seconds": 0.257333625,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_021_2005_DHDH_M_20261022T105619_20261022T105654_P05023_N_F_J_001.h5 284013319:284671220": {
+                "seconds": 0.612810459,
+                "attempts": 1,
+                "bytes": 657901,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_021_2005_DHDH_M_20261022T105619_20261022T105654_P05023_N_F_J_001.h5 310362112:310378496": {
+                "seconds": 0.305920708,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_021_2005_DHDH_M_20261022T105619_20261022T105654_P05023_N_F_J_001.h5 311296:327680": {
+                "seconds": 0.354411917,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_021_2005_DHDH_M_20261022T105619_20261022T105654_P05023_N_F_J_001.h5 32768:49152": {
+                "seconds": 0.280098292,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_021_2005_DHDH_M_20261022T105619_20261022T105654_P05023_N_F_J_001.h5 393216:409600": {
+                "seconds": 0.497392458,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_021_2005_DHDH_M_20261022T105619_20261022T105654_P05023_N_F_J_001.h5 4194304:4341760": {
+                "seconds": 0.416488167,
+                "attempts": 1,
+                "bytes": 147456,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_021_2005_DHDH_M_20261022T105619_20261022T105654_P05023_N_F_J_001.h5 4325376:4489216": {
+                "seconds": 0.385759458,
+                "attempts": 1,
+                "bytes": 163840,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_021_2005_DHDH_M_20261022T105619_20261022T105654_P05023_N_F_J_001.h5 49152:65536": {
+                "seconds": 0.255363833,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_021_2005_DHDH_M_20261022T105619_20261022T105654_P05023_N_F_J_001.h5 65536:81920": {
+                "seconds": 0.287653875,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_021_2005_DHDH_M_20261022T105619_20261022T105654_P05023_N_F_J_001.h5 65536:98304": {
+                "seconds": 0.305498083,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_021_2005_DHDH_M_20261022T105619_20261022T105654_P05023_N_F_J_001.h5 81920:98304": {
+                "seconds": 0.276179166,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              }
+            },
+            "authenticated_http": {
+              "checkpoint_claims": 0,
+              "peak_in_flight": 1,
+              "wire_head": 12,
+              "wire_get": 38,
+              "redirects": 10,
+              "login_requests": 1,
+              "refreshes": 0,
+              "route_cache_hits": 33,
+              "response_body_bytes": 1526685,
+              "redirect_body_bytes": 432,
+              "signing_auth_seconds": 8.698386375,
+              "statuses": {
+                "200": 6,
+                "206": 34,
+                "301": 1,
+                "302": 2,
+                "303": 7
+              },
+              "origins": {
+                "https://d1mv8zhcvry6x4.cloudfront.net": 40,
+                "https://nisar.asf.earthdatacloud.nasa.gov": 9,
+                "https://urs.earthdata.nasa.gov": 1
+              }
+            },
+            "cached_metadata_bytes": 876448,
+            "inspection_reuse": {
+              "source_inspections": 1,
+              "metadata_parser_opens": 1,
+              "profile_discoveries": 1,
+              "profile_cache_hits": 1,
+              "full_index_scans": 1,
+              "index_cache_hits": 1,
+              "coordinate_axis_reads": 2,
+              "coordinate_cache_hits": 2,
+              "coordinate_index_traversals": 0,
+              "coordinate_decoder_opens": 0,
+              "science_decoder_opens": 1,
+              "metadata_range_hits": 1886,
+              "metadata_range_misses": 33,
+              "profile_seconds": 1.118082625,
+              "index_seconds": 1.773227292,
+              "coordinate_seconds": 1.769380209,
+              "retention_reservation_bytes": 4120304,
+              "interpretation": "native-hdf5-stored-v1",
+              "index_policy": "full",
+              "sealed": true,
+              "opening": {
+                "source_identity_and_transport_seconds": 0.924075625,
+                "superblock_parser_open_seconds": 3.143234584,
+                "root_group_time_metadata_seconds": 0.267937541
+              }
+            }
+          }
+        },
+        "decoded_source_chunks": 1,
+        "filled_source_chunks": 0,
+        "first_output_seconds": 0.615105458,
+        "assembly_seconds": 0.0,
+        "source_retrieval_seconds": null,
+        "allocation_seconds": null,
+        "copying_seconds": null,
+        "output_setup_seconds": 0.0,
+        "output_finalize_seconds": 0.0,
+        "output_io": null,
+        "native_materialized_bytes": null,
+        "source_data_requests": 1,
+        "source_data_bytes": 657901,
+        "chunks": 1,
+        "decoded_bytes": 256,
+        "non_nodata_pixels": 64,
+        "planning_seconds": 1.034078959,
+        "source_open_seconds": 0.612897083,
+        "read_decode_seconds": 0.001591708,
+        "sink_seconds": 0.00047475,
+        "masking_seconds": 0.0,
+        "remote_requests": null,
+        "remote_bytes": null
+      },
+      "output_io": {
+        "writes": 39,
+        "bytes_written": 101064,
+        "encode_seconds": 4.4040999999999655e-05,
+        "storage_write_seconds": 0.004403419,
+        "object_bookkeeping_bound": 48,
+        "consumer_reservation_bytes": 8388608
+      }
+    },
+    {
+      "family": "goes",
+      "process": {
+        "code": 0,
+        "wall_seconds": 0.8540842920192517,
+        "cpu_seconds": 0.203346,
+        "peak_rss_bytes": 25772032
+      },
+      "verification": {
+        "native_selection": {
+          "kind": "array_slice",
+          "start": [
+            995,
+            995
+          ],
+          "count": [
+            10,
+            10
+          ],
+          "step": [
+            1,
+            1
+          ],
+          "axes": [
+            "/y",
+            "/x"
+          ]
+        },
+        "variables": [
+          {
+            "name": "CMI",
+            "dtype": "int16",
+            "samples": 100,
+            "sha256": "1043e32b9307fe5ac45a3917e86533585d9084c61b6a890b615ba767a9c40d2c",
+            "valid_centers": 100,
+            "source_fill": -1
+          },
+          {
+            "name": "DQF",
+            "dtype": "int8",
+            "samples": 100,
+            "sha256": "cd00e292c5970d3c5e2f0ffa5171e555bc46bfc4faddfb4a418b6840b86e79a3",
+            "valid_centers": 100,
+            "source_fill": -1
+          }
+        ],
+        "coordinate_max_error_degrees": 4.767741756950272e-12,
+        "visible_centers": 100,
+        "included_centers": 100,
+        "netcdf4_raw_equal": true,
+        "xarray_reopen": true,
+        "output_objects": 58,
+        "output_bytes": 311724
+      },
+      "preparation_timings": {
+        "inspection_seconds": 0.457062625,
+        "selection_seconds": 0.152052834,
+        "physical_plan_seconds": 0.076664
+      },
+      "execution": {
+        "source_reads": [],
+        "scheduler": {
+          "workers": 1,
+          "per_host": 4,
+          "buffer_bytes": 25165824,
+          "reserved_bytes_peak": 3964137,
+          "reader_state_reserved_bytes": 0,
+          "prepared_native_metadata_bytes": 871856,
+          "authenticated_transport_reserved_bytes": 0,
+          "prepared_v3_metadata_index_bytes": 0,
+          "active_workers_peak": 1,
+          "completed_tasks": 2,
+          "admitted_jobs": 2,
+          "cog_reader_scope": "selection",
+          "seconds": 0.090389583,
+          "order": "plan",
+          "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+          "prepared_hdf5_bytes": 871856,
+          "native_metadata": {
+            "retained_sources": 0,
+            "retained_bytes": 0,
+            "physical_metadata_sources": 0,
+            "physical_metadata_bytes": 0,
+            "cap_bytes": 0,
+            "skipped_sources": 0,
+            "scope": "this Prepared only; immutable version-bound parser pages; never a data cache",
+            "authenticated_sources": 0,
+            "authenticated_transport": {}
+          },
+          "native_strategies": [
+            {
+              "asset_id": "OR_ABI-L2-CMIPM1-M6C02_G19_s20262971600289_e20262971600347_c20262971600379",
+              "task_reserved_bytes": 3092281,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "OR_ABI-L2-CMIPM1-M6C02_G19_s20262971600289_e20262971600347_c20262971600379",
+              "task_reserved_bytes": 2642903,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            }
+          ]
+        },
+        "transport": {
+          "OR_ABI-L2-CMIPM1-M6C02_G19_s20262971600289_e20262971600347_c20262971600379": {
+            "phases": {
+              "hdf5_science_payload": {
+                "GET OR_ABI-L2-CMIPM1-M6C02_G19_s20262971600289_e20262971600347_c20262971600379.nc": {
+                  "seconds": 0.088387042,
+                  "attempts": 2,
+                  "bytes": 155680,
+                  "retries": 0,
+                  "statuses": {
+                    "206": 2
+                  }
+                }
+              },
+              "hdf5_version_validation": {
+                "HEAD OR_ABI-L2-CMIPM1-M6C02_G19_s20262971600289_e20262971600347_c20262971600379.nc": {
+                  "seconds": 0.065740875,
+                  "attempts": 3,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 3
+                  }
+                }
+              },
+              "metadata_index_discovery": {
+                "GET OR_ABI-L2-CMIPM1-M6C02_G19_s20262971600289_e20262971600347_c20262971600379.nc": {
+                  "seconds": 0.229085584,
+                  "attempts": 6,
+                  "bytes": 127062,
+                  "retries": 0,
+                  "statuses": {
+                    "206": 6
+                  }
+                },
+                "HEAD OR_ABI-L2-CMIPM1-M6C02_G19_s20262971600289_e20262971600347_c20262971600379.nc": {
+                  "seconds": 0.07755991599999999,
+                  "attempts": 2,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 2
+                  }
+                }
+              },
+              "planning": {
+                "HEAD OR_ABI-L2-CMIPM1-M6C02_G19_s20262971600289_e20262971600347_c20262971600379.nc": {
+                  "seconds": 0.199121667,
+                  "attempts": 1,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 1
+                  }
+                }
+              }
+            },
+            "requests": 14,
+            "bytes": 282742,
+            "retries": 0,
+            "seconds": 0.6598736690000001,
+            "objects": {
+              "GET OR_ABI-L2-CMIPM1-M6C02_G19_s20262971600289_e20262971600347_c20262971600379.nc": {
+                "seconds": 0.317476208,
+                "attempts": 8,
+                "bytes": 282742,
+                "retries": 0,
+                "statuses": {
+                  "206": 8
+                }
+              },
+              "HEAD OR_ABI-L2-CMIPM1-M6C02_G19_s20262971600289_e20262971600347_c20262971600379.nc": {
+                "seconds": 0.34242625,
+                "attempts": 6,
+                "bytes": 0,
+                "retries": 0,
+                "statuses": {
+                  "200": 6
+                }
+              }
+            },
+            "ranges": {
+              "OR_ABI-L2-CMIPM1-M6C02_G19_s20262971600289_e20262971600347_c20262971600379.nc 0:16384": {
+                "seconds": 0.034476,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "OR_ABI-L2-CMIPM1-M6C02_G19_s20262971600289_e20262971600347_c20262971600379.nc 16384:32768": {
+                "seconds": 0.037728292,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "OR_ABI-L2-CMIPM1-M6C02_G19_s20262971600289_e20262971600347_c20262971600379.nc 2063804:2219207": {
+                "seconds": 0.050773416,
+                "attempts": 1,
+                "bytes": 155403,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "OR_ABI-L2-CMIPM1-M6C02_G19_s20262971600289_e20262971600347_c20262971600379.nc 32768:65536": {
+                "seconds": 0.040913792,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "OR_ABI-L2-CMIPM1-M6C02_G19_s20262971600289_e20262971600347_c20262971600379.nc 4554752:4567126": {
+                "seconds": 0.037011041,
+                "attempts": 1,
+                "bytes": 12374,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "OR_ABI-L2-CMIPM1-M6C02_G19_s20262971600289_e20262971600347_c20262971600379.nc 4562060:4562337": {
+                "seconds": 0.0376105,
+                "attempts": 1,
+                "bytes": 277,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "OR_ABI-L2-CMIPM1-M6C02_G19_s20262971600289_e20262971600347_c20262971600379.nc 49152:65536": {
+                "seconds": 0.038420125,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "OR_ABI-L2-CMIPM1-M6C02_G19_s20262971600289_e20262971600347_c20262971600379.nc 49152:81920": {
+                "seconds": 0.040526791,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              }
+            },
+            "authenticated_http": null,
+            "cached_metadata_bytes": 128246,
+            "inspection_reuse": {
+              "source_inspections": 1,
+              "metadata_parser_opens": 1,
+              "profile_discoveries": 2,
+              "profile_cache_hits": 2,
+              "full_index_scans": 2,
+              "index_cache_hits": 2,
+              "coordinate_axis_reads": 2,
+              "coordinate_cache_hits": 6,
+              "coordinate_index_traversals": 0,
+              "coordinate_decoder_opens": 0,
+              "science_decoder_opens": 2,
+              "metadata_range_hits": 481,
+              "metadata_range_misses": 6,
+              "profile_seconds": 0.038003708,
+              "index_seconds": 2.1125e-05,
+              "coordinate_seconds": 0.040693792000000006,
+              "retention_reservation_bytes": 725024,
+              "interpretation": "native-hdf5-stored-v1",
+              "index_policy": "full",
+              "sealed": true,
+              "opening": {
+                "source_identity_and_transport_seconds": 0.2030195,
+                "superblock_parser_open_seconds": 0.034511333,
+                "root_group_time_metadata_seconds": 0.075652792
+              }
+            }
+          }
+        },
+        "decoded_source_chunks": 2,
+        "filled_source_chunks": 0,
+        "first_output_seconds": 0.052061833,
+        "assembly_seconds": 0.0,
+        "source_retrieval_seconds": null,
+        "allocation_seconds": null,
+        "copying_seconds": null,
+        "output_setup_seconds": 0.0,
+        "output_finalize_seconds": 0.0,
+        "output_io": null,
+        "native_materialized_bytes": null,
+        "source_data_requests": 2,
+        "source_data_bytes": 155680,
+        "chunks": 2,
+        "decoded_bytes": 300,
+        "non_nodata_pixels": 200,
+        "planning_seconds": 0.021795375,
+        "source_open_seconds": 0.088436916,
+        "read_decode_seconds": 0.00081475,
+        "sink_seconds": 0.000856291,
+        "masking_seconds": 0.0,
+        "remote_requests": null,
+        "remote_bytes": null
+      },
+      "output_io": {
+        "writes": 57,
+        "bytes_written": 121937,
+        "encode_seconds": 6.316899999999983e-05,
+        "storage_write_seconds": 0.005999497,
+        "object_bookkeeping_bound": 57,
+        "consumer_reservation_bytes": 8388608
+      }
+    },
+    {
+      "family": "smap",
+      "process": {
+        "code": 0,
+        "wall_seconds": 78.65367116700509,
+        "cpu_seconds": 0.803652,
+        "peak_rss_bytes": 37257216
+      },
+      "verification": {
+        "all_arrays_bit_equal_to_independently_checked_frozen_polar_output": true
+      },
+      "preparation_timings": {
+        "inspection_seconds": 72.269401125,
+        "selection_seconds": 0.571121542,
+        "physical_plan_seconds": 3.130713042
+      },
+      "execution": {
+        "source_reads": [],
+        "scheduler": {
+          "workers": 1,
+          "per_host": 4,
+          "buffer_bytes": 58720256,
+          "reserved_bytes_peak": 14811232,
+          "reader_state_reserved_bytes": 0,
+          "prepared_native_metadata_bytes": 8866568,
+          "authenticated_transport_reserved_bytes": 0,
+          "prepared_v3_metadata_index_bytes": 0,
+          "active_workers_peak": 1,
+          "completed_tasks": 12,
+          "admitted_jobs": 4,
+          "cog_reader_scope": "selection",
+          "seconds": 1.040414875,
+          "order": "plan",
+          "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+          "prepared_hdf5_bytes": 8866568,
+          "native_metadata": {
+            "retained_sources": 0,
+            "retained_bytes": 0,
+            "physical_metadata_sources": 0,
+            "physical_metadata_bytes": 0,
+            "cap_bytes": 0,
+            "skipped_sources": 0,
+            "scope": "this Prepared only; immutable version-bound parser pages; never a data cache",
+            "authenticated_sources": 0,
+            "authenticated_transport": {}
+          },
+          "native_strategies": [
+            {
+              "asset_id": "SMAP_L3_SM_P_E_20261023_R19240_001",
+              "task_reserved_bytes": 5944664,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "SMAP_L3_SM_P_E_20261023_R19240_001",
+              "task_reserved_bytes": 5900850,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "SMAP_L3_SM_P_E_20261023_R19240_001",
+              "task_reserved_bytes": 5903052,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "SMAP_L3_SM_P_E_20261023_R19240_001",
+              "task_reserved_bytes": 5931908,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            }
+          ]
+        },
+        "transport": {
+          "SMAP_L3_SM_P_E_20261023_R19240_001": {
+            "phases": {
+              "hdf5_science_payload": {
+                "GET SMAP_L3_SM_P_E_20261023_R19240_001.h5": {
+                  "seconds": 1.0343695,
+                  "attempts": 4,
+                  "bytes": 7198,
+                  "retries": 0,
+                  "statuses": {
+                    "206": 4
+                  }
+                }
+              },
+              "hdf5_version_validation": {
+                "HEAD SMAP_L3_SM_P_E_20261023_R19240_001.h5": {
+                  "seconds": 2.614469542,
+                  "attempts": 3,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 3
+                  }
+                }
+              },
+              "metadata_index_discovery": {
+                "GET SMAP_L3_SM_P_E_20261023_R19240_001.h5": {
+                  "seconds": 70.51067817,
+                  "attempts": 253,
+                  "bytes": 1409024,
+                  "retries": 0,
+                  "statuses": {
+                    "206": 253
+                  }
+                },
+                "HEAD SMAP_L3_SM_P_E_20261023_R19240_001.h5": {
+                  "seconds": 2.8524874159999998,
+                  "attempts": 2,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 2
+                  }
+                }
+              },
+              "planning": {
+                "HEAD SMAP_L3_SM_P_E_20261023_R19240_001.h5": {
+                  "seconds": 1.006647084,
+                  "attempts": 1,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 1
+                  }
+                }
+              }
+            },
+            "requests": 263,
+            "bytes": 1416222,
+            "retries": 0,
+            "seconds": 78.01844186300004,
+            "objects": {
+              "GET SMAP_L3_SM_P_E_20261023_R19240_001.h5": {
+                "seconds": 71.54514484,
+                "attempts": 257,
+                "bytes": 1416222,
+                "retries": 0,
+                "statuses": {
+                  "206": 257
+                }
+              },
+              "HEAD SMAP_L3_SM_P_E_20261023_R19240_001.h5": {
+                "seconds": 6.473607708,
+                "attempts": 6,
+                "bytes": 0,
+                "retries": 0,
+                "statuses": {
+                  "200": 6
+                }
+              }
+            },
+            "ranges": {
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 0:4096": {
+                "seconds": 2.864360041,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 12288:16384": {
+                "seconds": 0.257173167,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 12288:20480": {
+                "seconds": 0.338089375,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 130199552:130203648": {
+                "seconds": 0.284506,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 16384:20480": {
+                "seconds": 0.30000275,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 16384:24576": {
+                "seconds": 0.250856458,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 176840704:176844800": {
+                "seconds": 0.254973667,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 178089984:178094080": {
+                "seconds": 0.270932042,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 20480:24576": {
+                "seconds": 0.274669,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 20480:28672": {
+                "seconds": 0.272243708,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 24576:28672": {
+                "seconds": 0.379953958,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 337653760:337657856": {
+                "seconds": 0.283764541,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 354488320:354492416": {
+                "seconds": 0.272084833,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355266560:355270656": {
+                "seconds": 0.288790875,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355270656:355274752": {
+                "seconds": 0.277004959,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355270656:355278848": {
+                "seconds": 0.273173083,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355274752:355278848": {
+                "seconds": 0.2682645,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355274752:355282944": {
+                "seconds": 0.253113875,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355278848:355287040": {
+                "seconds": 0.269768666,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355287040:355291136": {
+                "seconds": 0.229062209,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355287040:355295232": {
+                "seconds": 0.242874959,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355295232:355299328": {
+                "seconds": 0.264947,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355299328:355303424": {
+                "seconds": 0.269465917,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355299328:355307520": {
+                "seconds": 0.269713208,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355307520:355311616": {
+                "seconds": 0.230538292,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355311616:355315712": {
+                "seconds": 0.263563667,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355311616:355319808": {
+                "seconds": 0.274995959,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355319808:355323904": {
+                "seconds": 0.269754708,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355319808:355328000": {
+                "seconds": 0.252694292,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355328000:355332096": {
+                "seconds": 0.253621041,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355336192:355340288": {
+                "seconds": 0.270299292,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355344384:355348480": {
+                "seconds": 0.260081416,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355344384:355352576": {
+                "seconds": 0.247039,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355356672:355360768": {
+                "seconds": 0.256899667,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355356672:355364864": {
+                "seconds": 0.270129125,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355373056:355377152": {
+                "seconds": 0.249173625,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355373056:355381248": {
+                "seconds": 0.293535417,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355385344:355389440": {
+                "seconds": 0.275009875,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355385344:355393536": {
+                "seconds": 0.30253625,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355401728:355405824": {
+                "seconds": 0.284395542,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355418112:355422208": {
+                "seconds": 0.285638625,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355418112:355426304": {
+                "seconds": 0.349965667,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355438592:355442688": {
+                "seconds": 0.257866833,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355438592:355446784": {
+                "seconds": 0.273755084,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355459072:355463168": {
+                "seconds": 0.271944709,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355463647:355464357": {
+                "seconds": 0.25554725,
+                "attempts": 1,
+                "bytes": 710,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355475456:355479552": {
+                "seconds": 0.271132042,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355475456:355483648": {
+                "seconds": 0.328328417,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355491840:355495936": {
+                "seconds": 0.258732542,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355491840:355500032": {
+                "seconds": 0.260592375,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355508224:355512320": {
+                "seconds": 0.269114083,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355524608:355528704": {
+                "seconds": 0.228965458,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355536896:355540992": {
+                "seconds": 0.263556375,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355536896:355545088": {
+                "seconds": 0.266651583,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355549184:355553280": {
+                "seconds": 0.256486584,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355561472:355565568": {
+                "seconds": 0.297623625,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355569664:355573760": {
+                "seconds": 0.267935916,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355569664:355577856": {
+                "seconds": 0.25370525,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355581952:355586048": {
+                "seconds": 0.261682625,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355581952:355590144": {
+                "seconds": 0.265083291,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355594240:355598336": {
+                "seconds": 0.266283916,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355602432:355606528": {
+                "seconds": 0.287059084,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355602432:355610624": {
+                "seconds": 0.247941125,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355610624:355614720": {
+                "seconds": 0.271969042,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355610624:355618816": {
+                "seconds": 0.270801209,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355614720:355618816": {
+                "seconds": 0.287932041,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355618816:355622912": {
+                "seconds": 0.332580208,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355622912:355627008": {
+                "seconds": 0.27052075,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355627008:355631104": {
+                "seconds": 0.287568625,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355627008:355635200": {
+                "seconds": 0.255085042,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355635200:355639296": {
+                "seconds": 0.252473834,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355635200:355643392": {
+                "seconds": 0.254850833,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355643392:355647488": {
+                "seconds": 0.278071541,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355643392:355651584": {
+                "seconds": 0.258062292,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355651584:355655680": {
+                "seconds": 0.250756958,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355655680:355659776": {
+                "seconds": 0.259065083,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355655680:355663872": {
+                "seconds": 0.275156542,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355659776:355663872": {
+                "seconds": 0.241572583,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355659776:355667968": {
+                "seconds": 0.39903075,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355667968:355672064": {
+                "seconds": 0.266195208,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355672064:355676160": {
+                "seconds": 0.250286083,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355672064:355680256": {
+                "seconds": 0.271320292,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355680256:355684352": {
+                "seconds": 0.27181925,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355688448:355692544": {
+                "seconds": 0.289959708,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355692544:355696640": {
+                "seconds": 0.255885625,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355692544:355700736": {
+                "seconds": 0.231648458,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355700736:355704832": {
+                "seconds": 0.290898625,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355708928:355713024": {
+                "seconds": 0.294818625,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355713024:355717120": {
+                "seconds": 0.265772917,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355713024:355721216": {
+                "seconds": 0.24947825,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355725312:355729408": {
+                "seconds": 0.269108083,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355737600:355741696": {
+                "seconds": 0.24735625,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355758080:355762176": {
+                "seconds": 0.25943625,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355782656:355786752": {
+                "seconds": 0.257549875,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355803136:355807232": {
+                "seconds": 0.268052458,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355803136:355811328": {
+                "seconds": 0.253443875,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355827712:355831808": {
+                "seconds": 0.246116792,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355827712:355835904": {
+                "seconds": 0.261801917,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355856384:355860480": {
+                "seconds": 0.265654541,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355885056:355889152": {
+                "seconds": 0.289727334,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355885056:355893248": {
+                "seconds": 0.261455167,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355917824:355921920": {
+                "seconds": 0.246659583,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355917824:355926016": {
+                "seconds": 0.280455167,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355925796:355927240": {
+                "seconds": 0.243731416,
+                "attempts": 1,
+                "bytes": 1444,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355946496:355950592": {
+                "seconds": 0.262755833,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355946496:355954688": {
+                "seconds": 0.250606709,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355975168:355979264": {
+                "seconds": 0.300438083,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 355995648:355999744": {
+                "seconds": 0.266029333,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 356020224:356024320": {
+                "seconds": 0.293322541,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 356036608:356040704": {
+                "seconds": 0.247761958,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 356036608:356044800": {
+                "seconds": 0.259456792,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 356048896:356052992": {
+                "seconds": 0.302452209,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 356048896:356057088": {
+                "seconds": 0.27190525,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 356061184:356065280": {
+                "seconds": 0.340716333,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 356061184:356069376": {
+                "seconds": 0.2812955,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 356077568:356081664": {
+                "seconds": 0.406096667,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 356089856:356093952": {
+                "seconds": 0.249257125,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 356089856:356098048": {
+                "seconds": 0.248994542,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 356102144:356106240": {
+                "seconds": 0.25145975,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 356102144:356110336": {
+                "seconds": 0.251180709,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 356110336:356114432": {
+                "seconds": 0.261887042,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 356110336:356118528": {
+                "seconds": 0.26559025,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 356118528:356122624": {
+                "seconds": 0.279237792,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 356118528:356126720": {
+                "seconds": 0.248842209,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 356126720:356130816": {
+                "seconds": 0.268192,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 356126720:356134912": {
+                "seconds": 0.271487417,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 356134912:356139008": {
+                "seconds": 0.253262834,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 356139008:356143104": {
+                "seconds": 0.256370875,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 356139008:356147200": {
+                "seconds": 0.258762041,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 356147200:356151296": {
+                "seconds": 0.2527575,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 356147200:356155392": {
+                "seconds": 0.277647166,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 358838272:358842368": {
+                "seconds": 0.267790833,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 4096:8192": {
+                "seconds": 0.238371375,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 414232576:414236672": {
+                "seconds": 0.256802959,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 414240768:414244864": {
+                "seconds": 0.269519541,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 414240768:414248960": {
+                "seconds": 0.260884792,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 414248960:414253056": {
+                "seconds": 0.270615291,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 414248960:414257152": {
+                "seconds": 0.255870958,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 414257152:414261248": {
+                "seconds": 0.232644917,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 414261248:414265344": {
+                "seconds": 0.272844333,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 414261248:414269440": {
+                "seconds": 0.244165083,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 414269440:414273536": {
+                "seconds": 0.249561417,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 414273536:414277632": {
+                "seconds": 0.252493041,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 414273536:414281728": {
+                "seconds": 0.249472541,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 414281728:414285824": {
+                "seconds": 0.266865334,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 414281728:414289920": {
+                "seconds": 0.258877458,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 414289920:414294016": {
+                "seconds": 0.265719375,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 414294016:414298112": {
+                "seconds": 0.257511625,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 414294016:414302208": {
+                "seconds": 0.238246917,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 414314496:414318592": {
+                "seconds": 0.270060625,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 414314496:414322688": {
+                "seconds": 0.255339667,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 414343168:414347264": {
+                "seconds": 0.261472333,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 414425088:414429184": {
+                "seconds": 0.243836292,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 414531584:414535680": {
+                "seconds": 0.268821,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 414531584:414539776": {
+                "seconds": 0.248934208,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 414609408:414613504": {
+                "seconds": 0.273362875,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 414699520:414703616": {
+                "seconds": 0.273504792,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 414834688:414838784": {
+                "seconds": 0.26054575,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 414949376:414953472": {
+                "seconds": 0.258798917,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 415051776:415055872": {
+                "seconds": 0.265924042,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 415051776:415059968": {
+                "seconds": 0.244998833,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 415063503:415068151": {
+                "seconds": 0.254002208,
+                "attempts": 1,
+                "bytes": 4648,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 415154176:415158272": {
+                "seconds": 0.265637541,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 415154176:415162368": {
+                "seconds": 0.271523125,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 415252480:415256576": {
+                "seconds": 0.274365209,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 415252480:415260672": {
+                "seconds": 0.262058292,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 415354880:415358976": {
+                "seconds": 0.267241834,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 415354880:415363072": {
+                "seconds": 0.270647583,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 415449088:415453184": {
+                "seconds": 0.2882455,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 415510528:415514624": {
+                "seconds": 0.273808542,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 415510528:415518720": {
+                "seconds": 0.249505292,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 415563776:415567872": {
+                "seconds": 0.276695417,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 415608832:415612928": {
+                "seconds": 0.270412583,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 415608832:415617024": {
+                "seconds": 0.2513295,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 415666176:415670272": {
+                "seconds": 0.262712167,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 415666176:415674368": {
+                "seconds": 0.277420084,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 415731712:415735808": {
+                "seconds": 0.257151,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 415768576:415772672": {
+                "seconds": 0.294857042,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 415821824:415825920": {
+                "seconds": 0.370495792,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 415821824:415830016": {
+                "seconds": 0.307305041,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 415887360:415891456": {
+                "seconds": 0.265952042,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 415944704:415948800": {
+                "seconds": 0.255544125,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 415944704:415952896": {
+                "seconds": 0.255523125,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 416006144:416010240": {
+                "seconds": 0.284416417,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 416006144:416014336": {
+                "seconds": 0.253215791,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 416051200:416055296": {
+                "seconds": 0.246257167,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 416075776:416079872": {
+                "seconds": 0.288118458,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 416124928:416129024": {
+                "seconds": 0.248409583,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 416124928:416133120": {
+                "seconds": 0.275451,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 418811904:418816000": {
+                "seconds": 0.263020458,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 418811904:418820096": {
+                "seconds": 0.264721583,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 418820096:418824192": {
+                "seconds": 0.261796625,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 418820096:418828288": {
+                "seconds": 0.253756208,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 418824192:418828288": {
+                "seconds": 0.25970325,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 418828288:418832384": {
+                "seconds": 0.122961667,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 418828288:418836480": {
+                "seconds": 0.2715845,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 418836480:418840576": {
+                "seconds": 0.303598292,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 418840576:418844672": {
+                "seconds": 0.233284208,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 418840576:418848768": {
+                "seconds": 0.285100458,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 418848768:418852864": {
+                "seconds": 0.265923042,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 418848768:418856960": {
+                "seconds": 0.268446333,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 418856960:418861056": {
+                "seconds": 0.237562209,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 418861056:418865152": {
+                "seconds": 0.273827916,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 418861056:418869248": {
+                "seconds": 0.288322,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 418869248:418873344": {
+                "seconds": 0.108376375,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 418873344:418877440": {
+                "seconds": 0.259344,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 418873344:418881536": {
+                "seconds": 0.289449792,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 418881536:418885632": {
+                "seconds": 0.333131875,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 418885632:418889728": {
+                "seconds": 0.252114917,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 418885632:418893824": {
+                "seconds": 0.292406375,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 418893824:418897920": {
+                "seconds": 0.262858667,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 418893824:418902016": {
+                "seconds": 0.2937665,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 418902016:418906112": {
+                "seconds": 0.252419625,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 418902016:418910208": {
+                "seconds": 0.2824095,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 418914304:418918400": {
+                "seconds": 0.250360792,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 418922496:418926592": {
+                "seconds": 0.284239584,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 418922496:418930688": {
+                "seconds": 0.246812666,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 418934784:418938880": {
+                "seconds": 0.287919,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 418947072:418951168": {
+                "seconds": 0.245296,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 418955264:418959360": {
+                "seconds": 0.275545625,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 418955264:418963456": {
+                "seconds": 0.238617083,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 418961498:418961894": {
+                "seconds": 0.281084792,
+                "attempts": 1,
+                "bytes": 396,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 418967552:418971648": {
+                "seconds": 0.275381666,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 418975744:418979840": {
+                "seconds": 0.325119375,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 418975744:418983936": {
+                "seconds": 0.270944125,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 418983936:418988032": {
+                "seconds": 0.267088709,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 418983936:418992128": {
+                "seconds": 0.251650958,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 418992128:418996224": {
+                "seconds": 0.247911958,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 418992128:419000320": {
+                "seconds": 0.276042042,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 419000320:419004416": {
+                "seconds": 0.248403792,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 419004416:419008512": {
+                "seconds": 0.2872735,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 419004416:419012608": {
+                "seconds": 0.253327084,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 419012608:419016704": {
+                "seconds": 0.329686125,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 419012608:419020800": {
+                "seconds": 0.319221666,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 419020800:419024896": {
+                "seconds": 0.248822333,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 419024896:419028992": {
+                "seconds": 0.277875667,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 419024896:419033088": {
+                "seconds": 0.272307958,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 419033088:419037184": {
+                "seconds": 0.264143791,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 419037184:419041280": {
+                "seconds": 0.261661625,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 419037184:419045376": {
+                "seconds": 0.285515209,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 419045376:419049472": {
+                "seconds": 0.123249917,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 419049472:419053568": {
+                "seconds": 0.232218125,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 419049472:419057664": {
+                "seconds": 0.25385175,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 419057664:419061760": {
+                "seconds": 0.2539355,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 419057664:419065856": {
+                "seconds": 0.306928959,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 419065856:419069952": {
+                "seconds": 0.364529833,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 419069952:419074048": {
+                "seconds": 0.282741916,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 419069952:419078144": {
+                "seconds": 0.271257375,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 428920832:428924928": {
+                "seconds": 0.288631292,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 467017728:467021824": {
+                "seconds": 0.288376042,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 478687232:478691328": {
+                "seconds": 0.278954583,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 8192:12288": {
+                "seconds": 0.260063542,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 8192:16384": {
+                "seconds": 0.28697075,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 97095680:97103872": {
+                "seconds": 0.263841833,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 97153024:97161216": {
+                "seconds": 0.259444667,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 97157120:97161216": {
+                "seconds": 0.27138225,
+                "attempts": 1,
+                "bytes": 4096,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "SMAP_L3_SM_P_E_20261023_R19240_001.h5 97185792:97193984": {
+                "seconds": 0.232578459,
+                "attempts": 1,
+                "bytes": 8192,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              }
+            },
+            "authenticated_http": {
+              "checkpoint_claims": 0,
+              "peak_in_flight": 1,
+              "wire_head": 12,
+              "wire_get": 261,
+              "redirects": 10,
+              "login_requests": 1,
+              "refreshes": 0,
+              "route_cache_hits": 256,
+              "response_body_bytes": 1416544,
+              "redirect_body_bytes": 322,
+              "signing_auth_seconds": 9.337840041999998,
+              "statuses": {
+                "200": 6,
+                "206": 257,
+                "301": 1,
+                "302": 2,
+                "303": 7
+              },
+              "origins": {
+                "https://d3h5e2j7riftk6.cloudfront.net": 263,
+                "https://data.nsidc.earthdatacloud.nasa.gov": 9,
+                "https://urs.earthdata.nasa.gov": 1
+              }
+            },
+            "cached_metadata_bytes": 1458464,
+            "inspection_reuse": {
+              "source_inspections": 1,
+              "metadata_parser_opens": 1,
+              "profile_discoveries": 4,
+              "profile_cache_hits": 4,
+              "full_index_scans": 4,
+              "index_cache_hits": 12,
+              "coordinate_axis_reads": 0,
+              "coordinate_cache_hits": 14,
+              "coordinate_index_traversals": 0,
+              "coordinate_decoder_opens": 0,
+              "science_decoder_opens": 4,
+              "metadata_range_hits": 2458,
+              "metadata_range_misses": 253,
+              "profile_seconds": 3.3164919589999995,
+              "index_seconds": 60.150298542,
+              "coordinate_seconds": 0.0,
+              "retention_reservation_bytes": 7127732,
+              "interpretation": "native-hdf5-stored-v1",
+              "index_policy": "full",
+              "sealed": true,
+              "opening": {
+                "source_identity_and_transport_seconds": 1.009676917,
+                "superblock_parser_open_seconds": 2.864402958,
+                "root_group_time_metadata_seconds": 0.558489917
+              }
+            }
+          }
+        },
+        "decoded_source_chunks": 12,
+        "filled_source_chunks": 0,
+        "first_output_seconds": 0.254963459,
+        "assembly_seconds": 0.0,
+        "source_retrieval_seconds": null,
+        "allocation_seconds": null,
+        "copying_seconds": null,
+        "output_setup_seconds": 0.0,
+        "output_finalize_seconds": 0.0,
+        "output_io": null,
+        "native_materialized_bytes": null,
+        "source_data_requests": 4,
+        "source_data_bytes": 7198,
+        "chunks": 12,
+        "decoded_bytes": 108,
+        "non_nodata_pixels": 27,
+        "planning_seconds": 1.016247125,
+        "source_open_seconds": 1.0344272079999999,
+        "read_decode_seconds": 0.0006045000000000001,
+        "sink_seconds": 0.004809043000000001,
+        "masking_seconds": 0.0,
+        "remote_requests": null,
+        "remote_bytes": null
+      },
+      "output_io": {
+        "writes": 78,
+        "bytes_written": 404732,
+        "encode_seconds": 0.00022283299999999965,
+        "storage_write_seconds": 0.010081709000000001,
+        "object_bookkeeping_bound": 69,
+        "consumer_reservation_bytes": 8388608
+      }
+    }
+  ]
+}

@@ -1,0 +1,541 @@
+{
+  "url": "https://noaa-goes19.s3.amazonaws.com/ABI-L2-CMIPM/2026/297/16/OR_ABI-L2-CMIPM1-M6C02_G19_s20262971600289_e20262971600347_c20262971600379.nc",
+  "etag": "\"dabd2f44c800a9855aa3724806317072\"",
+  "size": 4567126,
+  "root_attrs": {
+    "_NCProperties": "version=2,netcdf=4.9.3,hdf5=1.14.6",
+    "naming_authority": "gov.nesdis.noaa",
+    "Conventions": "CF-1.7",
+    "Metadata_Conventions": "Unidata Dataset Discovery v1.0",
+    "standard_name_vocabulary": "CF Standard Name Table (v35, 20 July 2016)",
+    "institution": "DOC/NOAA/NESDIS > U.S. Department of Commerce, National Oceanic and Atmospheric Administration, National Environmental Satellite, Data, and Information Services",
+    "project": "GOES",
+    "production_site": "GCCS",
+    "production_environment": "OE",
+    "spatial_resolution": "0.5km at nadir",
+    "orbital_slot": "GOES-East",
+    "platform_ID": "G19",
+    "instrument_type": "GOES-R Series Advanced Baseline Imager (ABI)",
+    "scene_id": "Mesoscale",
+    "instrument_ID": "FM4",
+    "dataset_name": "OR_ABI-L2-CMIPM1-M6C02_G19_s20262971600289_e20262971600347_c20262971600379.nc",
+    "iso_series_metadata_id": "8c9e8150-3692-11e3-aa6e-0800200c9a66",
+    "title": "ABI L2 Cloud and Moisture Imagery",
+    "summary": "Single reflective band Cloud and Moisture Imagery Products are digital maps of clouds, moisture, and atmospheric windows at visible and near-IR bands.",
+    "keywords": "ATMOSPHERE > ATMOSPHERIC RADIATION > REFLECTANCE, SPECTRAL/ENGINEERING > VISIBLE WAVELENGTHS > REFLECTANCE",
+    "keywords_vocabulary": "NASA Global Change Master Directory (GCMD) Earth Science Keywords, Version 7.0.0.0.0",
+    "license": "Unclassified data.  Access is restricted to approved users only.",
+    "processing_level": "National Aeronautics and Space Administration (NASA) L2",
+    "date_created": "2026-10-24T16:00:37.9Z",
+    "cdm_data_type": "Image",
+    "time_coverage_start": "2026-10-24T16:00:28.9Z",
+    "time_coverage_end": "2026-10-24T16:00:34.7Z",
+    "timeline_id": "ABI Mode 6",
+    "production_data_source": "Realtime",
+    "id": "0b75b4a6-f23a-4139-9a30-bccdd0940b0e",
+    "production_cluster": "L2 Blue"
+  },
+  "datasets": {
+    "CMI": {
+      "shape": [
+        2000,
+        2000
+      ],
+      "dtype": "int16",
+      "chunks": [
+        65,
+        2000
+      ],
+      "filters": [
+        [
+          2,
+          1,
+          [
+            2
+          ],
+          "shuffle"
+        ],
+        [
+          1,
+          1,
+          [
+            5
+          ],
+          "deflate"
+        ]
+      ],
+      "storage_initialization": -1,
+      "fill_value_defined": 2,
+      "fill_time": 2,
+      "attributes": {
+        "_Netcdf4Coordinates": [
+          0,
+          1
+        ],
+        "_FillValue": [
+          -1
+        ],
+        "sensor_band_bit_depth": [
+          12
+        ],
+        "valid_range": [
+          0,
+          4095
+        ],
+        "scale_factor": [
+          0.00031746001332066953
+        ],
+        "add_offset": [
+          0.0
+        ],
+        "long_name": "ABI L2+ Cloud and Moisture Imagery reflectance factor",
+        "standard_name": "toa_lambertian_equivalent_albedo_multiplied_by_cosine_solar_zenith_angle",
+        "_Unsigned": "true",
+        "units": "1",
+        "resolution": "y: 0.000014 rad x: 0.000014 rad",
+        "coordinates": "band_id band_wavelength t y x",
+        "grid_mapping": "goes_imager_projection",
+        "cell_methods": "t: point area: point",
+        "ancillary_variables": "DQF"
+      },
+      "chunk_index_enum": 0,
+      "allocated_chunks": 31
+    },
+    "DQF": {
+      "shape": [
+        2000,
+        2000
+      ],
+      "dtype": "int8",
+      "chunks": [
+        131,
+        2000
+      ],
+      "filters": [
+        [
+          2,
+          1,
+          [
+            1
+          ],
+          "shuffle"
+        ],
+        [
+          1,
+          1,
+          [
+            5
+          ],
+          "deflate"
+        ]
+      ],
+      "storage_initialization": -1,
+      "fill_value_defined": 2,
+      "fill_time": 2,
+      "attributes": {
+        "_Netcdf4Coordinates": [
+          0,
+          1
+        ],
+        "_FillValue": [
+          -1
+        ],
+        "valid_range": [
+          0,
+          4
+        ],
+        "flag_values": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "number_of_qf_values": [
+          5
+        ],
+        "percent_good_pixel_qf": [
+          0.9999982118606567
+        ],
+        "percent_conditionally_usable_pixel_qf": [
+          0.0
+        ],
+        "percent_out_of_range_pixel_qf": [
+          1.6999999843392288e-06
+        ],
+        "percent_no_value_pixel_qf": [
+          0.0
+        ],
+        "percent_focal_plane_temperature_threshold_exceeded_qf": [
+          0.0
+        ],
+        "long_name": "ABI L2+ Cloud and Moisture Imagery reflectance factor data quality flags",
+        "standard_name": "status_flag",
+        "_Unsigned": "true",
+        "units": "1",
+        "coordinates": "band_id band_wavelength t y x",
+        "grid_mapping": "goes_imager_projection",
+        "flag_meanings": "good_pixel_qf conditionally_usable_pixel_qf out_of_range_pixel_qf no_value_pixel_qf focal_plane_temperature_threshold_exceeded_qf"
+      },
+      "chunk_index_enum": 0,
+      "allocated_chunks": 16
+    },
+    "x": {
+      "shape": [
+        2000
+      ],
+      "dtype": "int16",
+      "chunks": null,
+      "filters": [],
+      "storage_initialization": -32767,
+      "fill_value_defined": 2,
+      "fill_time": 2,
+      "attributes": {
+        "_Netcdf4Coordinates": [
+          1
+        ],
+        "CLASS": "DIMENSION_SCALE",
+        "NAME": "x",
+        "_Netcdf4Dimid": 1,
+        "scale_factor": [
+          1.4000000192027073e-05
+        ],
+        "add_offset": [
+          -0.01399299968034029
+        ],
+        "units": "rad",
+        "axis": "X",
+        "long_name": "GOES fixed grid projection x-coordinate",
+        "standard_name": "projection_x_coordinate"
+      },
+      "first_last": [
+        0,
+        1999
+      ],
+      "uniform_step": 1.0,
+      "uniform": true
+    },
+    "y": {
+      "shape": [
+        2000
+      ],
+      "dtype": "int16",
+      "chunks": null,
+      "filters": [],
+      "storage_initialization": -32767,
+      "fill_value_defined": 2,
+      "fill_time": 2,
+      "attributes": {
+        "_Netcdf4Coordinates": [
+          0
+        ],
+        "CLASS": "DIMENSION_SCALE",
+        "NAME": "y",
+        "_Netcdf4Dimid": 0,
+        "scale_factor": [
+          -1.4000000192027073e-05
+        ],
+        "add_offset": [
+          0.11983300000429153
+        ],
+        "units": "rad",
+        "axis": "Y",
+        "long_name": "GOES fixed grid projection y-coordinate",
+        "standard_name": "projection_y_coordinate"
+      },
+      "first_last": [
+        0,
+        1999
+      ],
+      "uniform_step": 1.0,
+      "uniform": true
+    },
+    "t": {
+      "shape": [],
+      "dtype": "float64",
+      "chunks": null,
+      "filters": [],
+      "storage_initialization": 9.969209968386869e+36,
+      "fill_value_defined": 2,
+      "fill_time": 2,
+      "attributes": {
+        "long_name": "J2000 epoch mid-point between the start and end image scan in seconds",
+        "standard_name": "time",
+        "units": "seconds since 2000-01-01 12:00:00",
+        "axis": "T",
+        "bounds": "time_bounds"
+      },
+      "value": 846129631.848003
+    },
+    "goes_imager_projection": {
+      "shape": [],
+      "dtype": "int32",
+      "chunks": null,
+      "filters": [],
+      "storage_initialization": -2147483647,
+      "fill_value_defined": 2,
+      "fill_time": 2,
+      "attributes": {
+        "perspective_point_height": [
+          35786023.0
+        ],
+        "semi_major_axis": [
+          6378137.0
+        ],
+        "semi_minor_axis": [
+          6356752.31414
+        ],
+        "inverse_flattening": [
+          298.2572221
+        ],
+        "latitude_of_projection_origin": [
+          0.0
+        ],
+        "longitude_of_projection_origin": [
+          -75.0
+        ],
+        "long_name": "GOES-R ABI fixed grid projection",
+        "grid_mapping_name": "geostationary",
+        "sweep_angle_axis": "x"
+      },
+      "value": 0
+    },
+    "band_id": {
+      "shape": [
+        1
+      ],
+      "dtype": "int8",
+      "chunks": null,
+      "filters": [],
+      "storage_initialization": -127,
+      "fill_value_defined": 2,
+      "fill_time": 2,
+      "attributes": {
+        "_Netcdf4Coordinates": [
+          3
+        ],
+        "long_name": "ABI band number",
+        "standard_name": "sensor_band_identifier",
+        "units": "1"
+      },
+      "value": [
+        2
+      ]
+    },
+    "band_wavelength": {
+      "shape": [
+        1
+      ],
+      "dtype": "float32",
+      "chunks": null,
+      "filters": [],
+      "storage_initialization": 9.969209968386869e+36,
+      "fill_value_defined": 2,
+      "fill_time": 2,
+      "attributes": {
+        "_Netcdf4Coordinates": [
+          3
+        ],
+        "long_name": "ABI band central wavelength",
+        "standard_name": "sensor_band_central_radiation_wavelength",
+        "units": "um"
+      },
+      "value": [
+        0.6399999856948853
+      ]
+    }
+  },
+  "catalog_seconds": 0.28974991699215025,
+  "capture": {
+    "url": "https://noaa-goes19.s3.amazonaws.com/ABI-L2-CMIPM/2026/297/16/OR_ABI-L2-CMIPM1-M6C02_G19_s20262971600289_e20262971600347_c20262971600379.nc",
+    "etag": "\"dabd2f44c800a9855aa3724806317072\"",
+    "size": 4567126,
+    "cap": 8388608,
+    "extents": [
+      [
+        0,
+        2172
+      ],
+      [
+        6656,
+        6840
+      ],
+      [
+        6842,
+        8284
+      ],
+      [
+        8796,
+        10238
+      ],
+      [
+        10750,
+        13631
+      ],
+      [
+        14143,
+        15227
+      ],
+      [
+        15739,
+        20085
+      ],
+      [
+        20597,
+        22177
+      ],
+      [
+        22689,
+        23653
+      ],
+      [
+        27678,
+        34423
+      ],
+      [
+        34935,
+        42344
+      ],
+      [
+        42856,
+        48817
+      ],
+      [
+        48836,
+        48878
+      ],
+      [
+        48950,
+        49201
+      ],
+      [
+        49372,
+        50628
+      ],
+      [
+        50659,
+        72194
+      ],
+      [
+        72210,
+        72218
+      ],
+      [
+        72226,
+        72230
+      ],
+      [
+        72238,
+        77591
+      ],
+      [
+        4564572,
+        4567002
+      ]
+    ],
+    "provider_gets": 197,
+    "provider_bytes": 67089,
+    "extent_sha256": [
+      [
+        0,
+        2172,
+        "603560ebb8707cb6e705a2f98b088b74a81bf586cd88382b45b6512141abeaec"
+      ],
+      [
+        6656,
+        6840,
+        "7a8ac00d0dd787f3a105eb9ef93c3267709d4ee465fb71c0789f27a178703f3b"
+      ],
+      [
+        6842,
+        8284,
+        "341ae3cfdf02724689fbcc1e6bb8b427c01e400049a6cef9aab1be4a8d2d8cc4"
+      ],
+      [
+        8796,
+        10238,
+        "0b524a092276a3c601390d5a47bb0d24a4c9fc3cbc667d31814ce17d0e1c4d91"
+      ],
+      [
+        10750,
+        13631,
+        "390f0f85e5c484dbd2b765b3c1d1671de4e21fb0abca420bde04e8c88405ef0a"
+      ],
+      [
+        14143,
+        15227,
+        "517b15ea5e58d986f3ba6870551e61c4b7440457f6f4fb952c8a82c02cd64e58"
+      ],
+      [
+        15739,
+        20085,
+        "b32d906d8d3d35b6ebbe42a1544ce51e846abd692bc7f672a0f74690be5e73ea"
+      ],
+      [
+        20597,
+        22177,
+        "0d50f1875a5619fbaa49bc6cc08132b18e60ad3ba857cf3bdc16409ffbbaffc3"
+      ],
+      [
+        22689,
+        23653,
+        "3bd35fb0e5c40115bc0a4a12eacb4c4d89f9f277755af9019aeb4ee4df60c2bc"
+      ],
+      [
+        27678,
+        34423,
+        "90efdd71decc260eb8810fa669510e9326c2af84df851d7bca2d77159718ee71"
+      ],
+      [
+        34935,
+        42344,
+        "c818b9dcbec6520560186db05a160ee5e2049df04488f63089b4c40d39a7e8da"
+      ],
+      [
+        42856,
+        48817,
+        "29fd7669caa174be71d13f18d178bc97b41d8a3d2e3062c6fe362550bfca2947"
+      ],
+      [
+        48836,
+        48878,
+        "d451036f2fcf1bbdadc7905d76d74c43593bb3b09c960b9708c601a9997b1c68"
+      ],
+      [
+        48950,
+        49201,
+        "019548557c30f1bf6a17b45f9b327626c1d6cdd455576e5b1927b765474e0aef"
+      ],
+      [
+        49372,
+        50628,
+        "e66461022f10d46ea594fff069f272c4fc7ebcb2498f90abc49c51e9a1cccc9d"
+      ],
+      [
+        50659,
+        72194,
+        "958a5846877db8c6f3cc558dee737f295726c1ab847adbe0a42053e5e428a2e5"
+      ],
+      [
+        72210,
+        72218,
+        "2422fb3e5659d5be7533ffd011d5dda578d2cb14aadae220b209d8a64fb9461f"
+      ],
+      [
+        72226,
+        72230,
+        "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+      ],
+      [
+        72238,
+        77591,
+        "ea6ea502ef37e0f0053f7c1fd8b38028af43c0a9567d7fedcd9821e27285ccd8"
+      ],
+      [
+        4564572,
+        4567002,
+        "b729e3034b482686e598851e4f9d7870b5dadd7b6b90dfac952164680bf947bc"
+      ]
+    ]
+  }
+}

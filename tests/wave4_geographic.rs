@@ -151,7 +151,10 @@ fn polar_laea_matches_proj_and_separates_projection_domain_from_missingness() {
     assert!(NativeGrid::EaseGridNorth { epsg: 6933 }
         .longitude_latitude(0., 0.)
         .is_none());
-    let center = grid.longitude_latitude(4500., 4500.).unwrap();
+    let center = [
+        fixture["cases"][1]["expected"][0].as_f64().unwrap(),
+        fixture["cases"][1]["expected"][1].as_f64().unwrap(),
+    ];
     let aoi = Spatial::Bounds {
         crs: "EPSG:4326".into(),
         bbox: [center[0], center[1], center[0] + 0.01, center[1] + 0.001],

@@ -1,0 +1,2968 @@
+{
+  "status": "passed",
+  "reference_versions": {
+    "h5py": "3.16.0",
+    "netCDF4": "1.7.4",
+    "zarr": "2.18.3",
+    "xarray": "2025.6.1"
+  },
+  "scope": "two independent GOES-19 CMIPC band/grid specimens; bounded original source captures; raw codes plus CF unsigned/packing annotations",
+  "cases": [
+    {
+      "band": "C13",
+      "case": "center",
+      "plan": {
+        "code": 0,
+        "wall_seconds": 0.02179075000458397,
+        "cpu_seconds": 0.011234999999999998,
+        "peak_rss_bytes": 18137088
+      },
+      "fetch": {
+        "code": 0,
+        "wall_seconds": 0.0477081669960171,
+        "cpu_seconds": 0.024001,
+        "peak_rss_bytes": 23248896
+      },
+      "stream": {
+        "code": 0,
+        "wall_seconds": 0.023671833012485877,
+        "cpu_seconds": 0.013575,
+        "peak_rss_bytes": 19709952
+      },
+      "verification": {
+        "native_selection": {
+          "kind": "array_slice",
+          "start": [
+            900,
+            1200
+          ],
+          "count": [
+            32,
+            32
+          ],
+          "step": [
+            1,
+            1
+          ],
+          "axes": [
+            "/y",
+            "/x"
+          ]
+        },
+        "variables": [
+          {
+            "name": "CMI",
+            "dtype": "int16",
+            "samples": 1024,
+            "sha256": "6eff4e71fe36c7965d22e420b3b91cee145eaf8c1a08a4c2873236eab113bfc4",
+            "valid_centers": 1024,
+            "source_fill": -1
+          },
+          {
+            "name": "DQF",
+            "dtype": "int8",
+            "samples": 1024,
+            "sha256": "5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef",
+            "valid_centers": 1024,
+            "source_fill": -1
+          }
+        ],
+        "coordinate_max_error_degrees": 3.26139115713886e-12,
+        "visible_centers": 1024,
+        "included_centers": 1024,
+        "netcdf4_raw_equal": true,
+        "xarray_reopen": true,
+        "output_objects": 58,
+        "output_bytes": 328533,
+        "stream": {
+          "native_samples": {
+            "CMI": 1024,
+            "DQF": 1024
+          },
+          "all_raw_bits_and_masks_equal_to_independently_verified_output": true
+        }
+      },
+      "execution": {
+        "source_reads": [],
+        "scheduler": {
+          "workers": 1,
+          "per_host": 4,
+          "buffer_bytes": 25165824,
+          "reserved_bytes_peak": 3778147,
+          "reader_state_reserved_bytes": 0,
+          "prepared_native_metadata_bytes": 800948,
+          "authenticated_transport_reserved_bytes": 0,
+          "prepared_v3_metadata_index_bytes": 0,
+          "active_workers_peak": 1,
+          "completed_tasks": 2,
+          "admitted_jobs": 2,
+          "cog_reader_scope": "selection",
+          "seconds": 0.003306125,
+          "order": "plan",
+          "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+          "prepared_hdf5_bytes": 800948,
+          "native_metadata": {
+            "retained_sources": 0,
+            "retained_bytes": 0,
+            "physical_metadata_sources": 0,
+            "physical_metadata_bytes": 0,
+            "cap_bytes": 0,
+            "skipped_sources": 0,
+            "scope": "this Prepared only; immutable version-bound parser pages; never a data cache",
+            "authenticated_sources": 0,
+            "authenticated_transport": {}
+          },
+          "native_strategies": [
+            {
+              "asset_id": "OR_ABI-L2-CMIPC-M6C13_G19_s20262971601182_e20262971603566_c20262971604045",
+              "task_reserved_bytes": 2977199,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "OR_ABI-L2-CMIPC-M6C13_G19_s20262971601182_e20262971603566_c20262971604045",
+              "task_reserved_bytes": 2559581,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            }
+          ]
+        },
+        "transport": {
+          "OR_ABI-L2-CMIPC-M6C13_G19_s20262971601182_e20262971603566_c20262971604045": {
+            "phases": {
+              "hdf5_science_payload": {
+                "GET source.nc": {
+                  "seconds": 0.001774584,
+                  "attempts": 2,
+                  "bytes": 139756,
+                  "retries": 0,
+                  "statuses": {
+                    "206": 2
+                  }
+                }
+              },
+              "hdf5_version_validation": {
+                "HEAD source.nc": {
+                  "seconds": 0.000774333,
+                  "attempts": 3,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 3
+                  }
+                }
+              },
+              "metadata_index_discovery": {
+                "GET source.nc": {
+                  "seconds": 0.003338081,
+                  "attempts": 6,
+                  "bytes": 110057,
+                  "retries": 0,
+                  "statuses": {
+                    "206": 6
+                  }
+                },
+                "HEAD source.nc": {
+                  "seconds": 0.000556917,
+                  "attempts": 2,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 2
+                  }
+                }
+              },
+              "planning": {
+                "HEAD source.nc": {
+                  "seconds": 0.001538083,
+                  "attempts": 1,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 1
+                  }
+                }
+              }
+            },
+            "requests": 14,
+            "bytes": 249813,
+            "retries": 0,
+            "seconds": 0.007970417,
+            "objects": {
+              "GET source.nc": {
+                "seconds": 0.0051143740000000005,
+                "attempts": 8,
+                "bytes": 249813,
+                "retries": 0,
+                "statuses": {
+                  "206": 8
+                }
+              },
+              "HEAD source.nc": {
+                "seconds": 0.002871042,
+                "attempts": 6,
+                "bytes": 0,
+                "retries": 0,
+                "statuses": {
+                  "200": 6
+                }
+              }
+            },
+            "ranges": {
+              "source.nc 0:16384": {
+                "seconds": 0.000691167,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 16384:32768": {
+                "seconds": 0.000559875,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 2388893:2528374": {
+                "seconds": 0.001445667,
+                "attempts": 1,
+                "bytes": 139481,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 32768:49152": {
+                "seconds": 0.000400791,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 4030464:4042217": {
+                "seconds": 0.000481667,
+                "attempts": 1,
+                "bytes": 11753,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 4038064:4038339": {
+                "seconds": 0.000327666,
+                "attempts": 1,
+                "bytes": 275,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 49152:65536": {
+                "seconds": 0.00055675,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 49152:81920": {
+                "seconds": 0.00064075,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              }
+            },
+            "authenticated_http": null,
+            "cached_metadata_bytes": 111241,
+            "inspection_reuse": {
+              "source_inspections": 1,
+              "metadata_parser_opens": 1,
+              "profile_discoveries": 2,
+              "profile_cache_hits": 2,
+              "full_index_scans": 2,
+              "index_cache_hits": 2,
+              "coordinate_axis_reads": 2,
+              "coordinate_cache_hits": 6,
+              "coordinate_index_traversals": 0,
+              "coordinate_decoder_opens": 0,
+              "science_decoder_opens": 2,
+              "metadata_range_hits": 481,
+              "metadata_range_misses": 6,
+              "profile_seconds": 0.000781957,
+              "index_seconds": 1.4333e-05,
+              "coordinate_seconds": 0.0007760829999999999,
+              "retention_reservation_bytes": 654908,
+              "interpretation": "native-hdf5-stored-v1",
+              "index_policy": "full",
+              "sealed": true,
+              "opening": {
+                "source_identity_and_transport_seconds": 0.004668875,
+                "superblock_parser_open_seconds": 0.000727875,
+                "root_group_time_metadata_seconds": 0.001242209
+              }
+            }
+          }
+        },
+        "decoded_source_chunks": 2,
+        "filled_source_chunks": 0,
+        "first_output_seconds": 0.002555666,
+        "assembly_seconds": 0.0,
+        "source_retrieval_seconds": null,
+        "allocation_seconds": null,
+        "copying_seconds": null,
+        "output_setup_seconds": 0.0,
+        "output_finalize_seconds": 0.0,
+        "output_io": null,
+        "native_materialized_bytes": null,
+        "source_data_requests": 2,
+        "source_data_bytes": 139756,
+        "chunks": 2,
+        "decoded_bytes": 3072,
+        "non_nodata_pixels": 2048,
+        "planning_seconds": 0.000742625,
+        "source_open_seconds": 0.0018115,
+        "read_decode_seconds": 0.000759292,
+        "sink_seconds": 0.000492291,
+        "masking_seconds": 0.0,
+        "remote_requests": null,
+        "remote_bytes": null
+      },
+      "preparation_timings": {
+        "inspection_seconds": 0.009519042,
+        "selection_seconds": 1.25e-06,
+        "physical_plan_seconds": 0.001760584
+      },
+      "output_io": {
+        "writes": 57,
+        "bytes_written": 142685,
+        "encode_seconds": 5.216499999999959e-05,
+        "storage_write_seconds": 0.005774832000000001,
+        "object_bookkeeping_bound": 59,
+        "consumer_reservation_bytes": 8388608
+      },
+      "mirror_requests": 38
+    },
+    {
+      "band": "C13",
+      "case": "space",
+      "plan": {
+        "code": 0,
+        "wall_seconds": 0.018092457990860566,
+        "cpu_seconds": 0.010599999999999998,
+        "peak_rss_bytes": 18186240
+      },
+      "fetch": {
+        "code": 0,
+        "wall_seconds": 0.04230658398591913,
+        "cpu_seconds": 0.021936999999999998,
+        "peak_rss_bytes": 22822912
+      },
+      "stream": {
+        "code": 0,
+        "wall_seconds": 0.02222325000911951,
+        "cpu_seconds": 0.012896000000000001,
+        "peak_rss_bytes": 19611648
+      },
+      "verification": {
+        "native_selection": {
+          "kind": "array_slice",
+          "start": [
+            0,
+            0
+          ],
+          "count": [
+            8,
+            8
+          ],
+          "step": [
+            1,
+            1
+          ],
+          "axes": [
+            "/y",
+            "/x"
+          ]
+        },
+        "variables": [
+          {
+            "name": "CMI",
+            "dtype": "int16",
+            "samples": 64,
+            "sha256": "e9175db65a9789096ca9cb5524d3abc2107df03e3c9ba3af1aca628f9c5d3bd2",
+            "valid_centers": 0,
+            "source_fill": -1
+          },
+          {
+            "name": "DQF",
+            "dtype": "int8",
+            "samples": 64,
+            "sha256": "8667e718294e9e0df1d30600ba3eeb201f764aad2dad72748643e4a285e1d1f7",
+            "valid_centers": 0,
+            "source_fill": -1
+          }
+        ],
+        "coordinate_max_error_degrees": 0.0,
+        "visible_centers": 0,
+        "included_centers": 64,
+        "netcdf4_raw_equal": true,
+        "xarray_reopen": true,
+        "output_objects": 58,
+        "output_bytes": 304769,
+        "stream": {
+          "native_samples": {
+            "CMI": 64,
+            "DQF": 64
+          },
+          "all_raw_bits_and_masks_equal_to_independently_verified_output": true
+        }
+      },
+      "execution": {
+        "source_reads": [],
+        "scheduler": {
+          "workers": 1,
+          "per_host": 4,
+          "buffer_bytes": 25165824,
+          "reserved_bytes_peak": 3707898,
+          "reader_state_reserved_bytes": 0,
+          "prepared_native_metadata_bytes": 800104,
+          "authenticated_transport_reserved_bytes": 0,
+          "prepared_v3_metadata_index_bytes": 0,
+          "active_workers_peak": 1,
+          "completed_tasks": 2,
+          "admitted_jobs": 2,
+          "cog_reader_scope": "selection",
+          "seconds": 0.0020095,
+          "order": "plan",
+          "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+          "prepared_hdf5_bytes": 800104,
+          "native_metadata": {
+            "retained_sources": 0,
+            "retained_bytes": 0,
+            "physical_metadata_sources": 0,
+            "physical_metadata_bytes": 0,
+            "cap_bytes": 0,
+            "skipped_sources": 0,
+            "scope": "this Prepared only; immutable version-bound parser pages; never a data cache",
+            "authenticated_sources": 0,
+            "authenticated_transport": {}
+          },
+          "native_strategies": [
+            {
+              "asset_id": "OR_ABI-L2-CMIPC-M6C13_G19_s20262971601182_e20262971603566_c20262971604045",
+              "task_reserved_bytes": 2907794,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "OR_ABI-L2-CMIPC-M6C13_G19_s20262971601182_e20262971603566_c20262971604045",
+              "task_reserved_bytes": 2560769,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            }
+          ]
+        },
+        "transport": {
+          "OR_ABI-L2-CMIPC-M6C13_G19_s20262971601182_e20262971603566_c20262971604045": {
+            "phases": {
+              "hdf5_science_payload": {
+                "GET source.nc": {
+                  "seconds": 0.000725126,
+                  "attempts": 2,
+                  "bytes": 117529,
+                  "retries": 0,
+                  "statuses": {
+                    "206": 2
+                  }
+                }
+              },
+              "hdf5_version_validation": {
+                "HEAD source.nc": {
+                  "seconds": 0.000688208,
+                  "attempts": 3,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 3
+                  }
+                }
+              },
+              "metadata_index_discovery": {
+                "GET source.nc": {
+                  "seconds": 0.00197196,
+                  "attempts": 6,
+                  "bytes": 110057,
+                  "retries": 0,
+                  "statuses": {
+                    "206": 6
+                  }
+                },
+                "HEAD source.nc": {
+                  "seconds": 0.00047266599999999995,
+                  "attempts": 2,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 2
+                  }
+                }
+              },
+              "planning": {
+                "HEAD source.nc": {
+                  "seconds": 0.001058125,
+                  "attempts": 1,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 1
+                  }
+                }
+              }
+            },
+            "requests": 14,
+            "bytes": 227586,
+            "retries": 0,
+            "seconds": 0.004906833,
+            "objects": {
+              "GET source.nc": {
+                "seconds": 0.0026987519999999996,
+                "attempts": 8,
+                "bytes": 227586,
+                "retries": 0,
+                "statuses": {
+                  "206": 8
+                }
+              },
+              "HEAD source.nc": {
+                "seconds": 0.002220417,
+                "attempts": 6,
+                "bytes": 0,
+                "retries": 0,
+                "statuses": {
+                  "200": 6
+                }
+              }
+            },
+            "ranges": {
+              "source.nc 0:16384": {
+                "seconds": 0.000380958,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 16384:32768": {
+                "seconds": 0.000319417,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 32768:49152": {
+                "seconds": 0.000246667,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 4030464:4042217": {
+                "seconds": 0.000289375,
+                "attempts": 1,
+                "bytes": 11753,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 4034272:4035199": {
+                "seconds": 0.000284334,
+                "attempts": 1,
+                "bytes": 927,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 49152:65536": {
+                "seconds": 0.000344375,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 49152:81920": {
+                "seconds": 0.000386125,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 77541:194143": {
+                "seconds": 0.000439792,
+                "attempts": 1,
+                "bytes": 116602,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              }
+            },
+            "authenticated_http": null,
+            "cached_metadata_bytes": 111241,
+            "inspection_reuse": {
+              "source_inspections": 1,
+              "metadata_parser_opens": 1,
+              "profile_discoveries": 2,
+              "profile_cache_hits": 2,
+              "full_index_scans": 2,
+              "index_cache_hits": 2,
+              "coordinate_axis_reads": 2,
+              "coordinate_cache_hits": 6,
+              "coordinate_index_traversals": 0,
+              "coordinate_decoder_opens": 0,
+              "science_decoder_opens": 2,
+              "metadata_range_hits": 481,
+              "metadata_range_misses": 6,
+              "profile_seconds": 0.000540625,
+              "index_seconds": 1.6918e-05,
+              "coordinate_seconds": 0.000502208,
+              "retention_reservation_bytes": 654904,
+              "interpretation": "native-hdf5-stored-v1",
+              "index_policy": "full",
+              "sealed": true,
+              "opening": {
+                "source_identity_and_transport_seconds": 0.00410775,
+                "superblock_parser_open_seconds": 0.000414875,
+                "root_group_time_metadata_seconds": 0.000825417
+              }
+            }
+          }
+        },
+        "decoded_source_chunks": 2,
+        "filled_source_chunks": 0,
+        "first_output_seconds": 0.001344959,
+        "assembly_seconds": 0.0,
+        "source_retrieval_seconds": null,
+        "allocation_seconds": null,
+        "copying_seconds": null,
+        "output_setup_seconds": 0.0,
+        "output_finalize_seconds": 0.0,
+        "output_io": null,
+        "native_materialized_bytes": null,
+        "source_data_requests": 2,
+        "source_data_bytes": 117529,
+        "chunks": 2,
+        "decoded_bytes": 192,
+        "non_nodata_pixels": 0,
+        "planning_seconds": 0.000707375,
+        "source_open_seconds": 0.000741167,
+        "read_decode_seconds": 0.000642874,
+        "sink_seconds": 0.000405543,
+        "masking_seconds": 0.0,
+        "remote_requests": null,
+        "remote_bytes": null
+      },
+      "preparation_timings": {
+        "inspection_seconds": 0.007475333,
+        "selection_seconds": 1.25e-06,
+        "physical_plan_seconds": 0.001649875
+      },
+      "output_io": {
+        "writes": 57,
+        "bytes_written": 119045,
+        "encode_seconds": 3.591399999999994e-05,
+        "storage_write_seconds": 0.0050248770000000005,
+        "object_bookkeeping_bound": 57,
+        "consumer_reservation_bytes": 8388608
+      },
+      "mirror_requests": 76
+    },
+    {
+      "band": "C13",
+      "case": "strided",
+      "plan": {
+        "code": 0,
+        "wall_seconds": 0.018386791984084994,
+        "cpu_seconds": 0.010586,
+        "peak_rss_bytes": 18251776
+      },
+      "fetch": {
+        "code": 0,
+        "wall_seconds": 0.0417693329800386,
+        "cpu_seconds": 0.021109,
+        "peak_rss_bytes": 22822912
+      },
+      "stream": {
+        "code": 0,
+        "wall_seconds": 0.02299483399838209,
+        "cpu_seconds": 0.013436999999999998,
+        "peak_rss_bytes": 19660800
+      },
+      "verification": {
+        "native_selection": {
+          "kind": "array_slice",
+          "start": [
+            900,
+            1200
+          ],
+          "count": [
+            9,
+            11
+          ],
+          "step": [
+            3,
+            2
+          ],
+          "axes": [
+            "/y",
+            "/x"
+          ]
+        },
+        "variables": [
+          {
+            "name": "CMI",
+            "dtype": "int16",
+            "samples": 99,
+            "sha256": "a90467a3d3b70d7283e7d336c6777340e6146f05f028030ce9ca5d5d90d3f233",
+            "valid_centers": 99,
+            "source_fill": -1
+          },
+          {
+            "name": "DQF",
+            "dtype": "int8",
+            "samples": 99,
+            "sha256": "4b298058e1d5fd3f2fa20ead21773912a5dc38da3c0da0bbc7de1adfb6011f1c",
+            "valid_centers": 99,
+            "source_fill": -1
+          }
+        ],
+        "coordinate_max_error_degrees": 3.176126028847648e-12,
+        "visible_centers": 99,
+        "included_centers": 99,
+        "netcdf4_raw_equal": true,
+        "xarray_reopen": true,
+        "output_objects": 58,
+        "output_bytes": 305841,
+        "stream": {
+          "native_samples": {
+            "CMI": 99,
+            "DQF": 99
+          },
+          "all_raw_bits_and_masks_equal_to_independently_verified_output": true
+        }
+      },
+      "execution": {
+        "source_reads": [],
+        "scheduler": {
+          "workers": 1,
+          "per_host": 4,
+          "buffer_bytes": 25165824,
+          "reserved_bytes_peak": 3776731,
+          "reader_state_reserved_bytes": 0,
+          "prepared_native_metadata_bytes": 800236,
+          "authenticated_transport_reserved_bytes": 0,
+          "prepared_v3_metadata_index_bytes": 0,
+          "active_workers_peak": 1,
+          "completed_tasks": 2,
+          "admitted_jobs": 2,
+          "cog_reader_scope": "selection",
+          "seconds": 0.002120167,
+          "order": "plan",
+          "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+          "prepared_hdf5_bytes": 800236,
+          "native_metadata": {
+            "retained_sources": 0,
+            "retained_bytes": 0,
+            "physical_metadata_sources": 0,
+            "physical_metadata_bytes": 0,
+            "cap_bytes": 0,
+            "skipped_sources": 0,
+            "scope": "this Prepared only; immutable version-bound parser pages; never a data cache",
+            "authenticated_sources": 0,
+            "authenticated_transport": {}
+          },
+          "native_strategies": [
+            {
+              "asset_id": "OR_ABI-L2-CMIPC-M6C13_G19_s20262971601182_e20262971603566_c20262971604045",
+              "task_reserved_bytes": 2976495,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "OR_ABI-L2-CMIPC-M6C13_G19_s20262971601182_e20262971603566_c20262971604045",
+              "task_reserved_bytes": 2558877,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            }
+          ]
+        },
+        "transport": {
+          "OR_ABI-L2-CMIPC-M6C13_G19_s20262971601182_e20262971603566_c20262971604045": {
+            "phases": {
+              "hdf5_science_payload": {
+                "GET source.nc": {
+                  "seconds": 0.000722791,
+                  "attempts": 2,
+                  "bytes": 139756,
+                  "retries": 0,
+                  "statuses": {
+                    "206": 2
+                  }
+                }
+              },
+              "hdf5_version_validation": {
+                "HEAD source.nc": {
+                  "seconds": 0.0008122489999999999,
+                  "attempts": 3,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 3
+                  }
+                }
+              },
+              "metadata_index_discovery": {
+                "GET source.nc": {
+                  "seconds": 0.0021116670000000002,
+                  "attempts": 6,
+                  "bytes": 110057,
+                  "retries": 0,
+                  "statuses": {
+                    "206": 6
+                  }
+                },
+                "HEAD source.nc": {
+                  "seconds": 0.0005150420000000001,
+                  "attempts": 2,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 2
+                  }
+                }
+              },
+              "planning": {
+                "HEAD source.nc": {
+                  "seconds": 0.001067,
+                  "attempts": 1,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 1
+                  }
+                }
+              }
+            },
+            "requests": 14,
+            "bytes": 249813,
+            "retries": 0,
+            "seconds": 0.005219459,
+            "objects": {
+              "GET source.nc": {
+                "seconds": 0.0028361669999999997,
+                "attempts": 8,
+                "bytes": 249813,
+                "retries": 0,
+                "statuses": {
+                  "206": 8
+                }
+              },
+              "HEAD source.nc": {
+                "seconds": 0.0023959159999999997,
+                "attempts": 6,
+                "bytes": 0,
+                "retries": 0,
+                "statuses": {
+                  "200": 6
+                }
+              }
+            },
+            "ranges": {
+              "source.nc 0:16384": {
+                "seconds": 0.00044925,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 16384:32768": {
+                "seconds": 0.000338458,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 2388893:2528374": {
+                "seconds": 0.000470958,
+                "attempts": 1,
+                "bytes": 139481,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 32768:49152": {
+                "seconds": 0.000317667,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 4030464:4042217": {
+                "seconds": 0.000284708,
+                "attempts": 1,
+                "bytes": 11753,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 4038064:4038339": {
+                "seconds": 0.000250875,
+                "attempts": 1,
+                "bytes": 275,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 49152:65536": {
+                "seconds": 0.0003665,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 49152:81920": {
+                "seconds": 0.000350333,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              }
+            },
+            "authenticated_http": null,
+            "cached_metadata_bytes": 111241,
+            "inspection_reuse": {
+              "source_inspections": 1,
+              "metadata_parser_opens": 1,
+              "profile_discoveries": 2,
+              "profile_cache_hits": 2,
+              "full_index_scans": 2,
+              "index_cache_hits": 2,
+              "coordinate_axis_reads": 2,
+              "coordinate_cache_hits": 6,
+              "coordinate_index_traversals": 0,
+              "coordinate_decoder_opens": 0,
+              "science_decoder_opens": 2,
+              "metadata_range_hits": 481,
+              "metadata_range_misses": 6,
+              "profile_seconds": 0.000582417,
+              "index_seconds": 1.5959e-05,
+              "coordinate_seconds": 0.000479833,
+              "retention_reservation_bytes": 654908,
+              "interpretation": "native-hdf5-stored-v1",
+              "index_policy": "full",
+              "sealed": true,
+              "opening": {
+                "source_identity_and_transport_seconds": 0.004016791,
+                "superblock_parser_open_seconds": 0.000480541,
+                "root_group_time_metadata_seconds": 0.000837125
+              }
+            }
+          }
+        },
+        "decoded_source_chunks": 2,
+        "filled_source_chunks": 0,
+        "first_output_seconds": 0.001481459,
+        "assembly_seconds": 0.0,
+        "source_retrieval_seconds": null,
+        "allocation_seconds": null,
+        "copying_seconds": null,
+        "output_setup_seconds": 0.0,
+        "output_finalize_seconds": 0.0,
+        "output_io": null,
+        "native_materialized_bytes": null,
+        "source_data_requests": 2,
+        "source_data_bytes": 139756,
+        "chunks": 2,
+        "decoded_bytes": 297,
+        "non_nodata_pixels": 198,
+        "planning_seconds": 0.000758083,
+        "source_open_seconds": 0.000740125,
+        "read_decode_seconds": 0.000734125,
+        "sink_seconds": 0.000419167,
+        "masking_seconds": 0.0,
+        "remote_requests": null,
+        "remote_bytes": null
+      },
+      "preparation_timings": {
+        "inspection_seconds": 0.007644583,
+        "selection_seconds": 1.333e-06,
+        "physical_plan_seconds": 0.001676959
+      },
+      "output_io": {
+        "writes": 57,
+        "bytes_written": 120006,
+        "encode_seconds": 4.058400000000003e-05,
+        "storage_write_seconds": 0.005296203,
+        "object_bookkeeping_bound": 57,
+        "consumer_reservation_bytes": 8388608
+      },
+      "mirror_requests": 114
+    },
+    {
+      "band": "C13",
+      "case": "geographic",
+      "plan": {
+        "code": 0,
+        "wall_seconds": 0.1657060419966001,
+        "cpu_seconds": 0.15496,
+        "peak_rss_bytes": 18399232
+      },
+      "fetch": {
+        "code": 0,
+        "wall_seconds": 0.19416462499066256,
+        "cpu_seconds": 0.16913,
+        "peak_rss_bytes": 22839296
+      },
+      "stream": {
+        "code": 0,
+        "wall_seconds": 0.1676574999873992,
+        "cpu_seconds": 0.15708799999999998,
+        "peak_rss_bytes": 19595264
+      },
+      "verification": {
+        "native_selection": {
+          "kind": "array_slice",
+          "start": [
+            574,
+            1588
+          ],
+          "count": [
+            5,
+            4
+          ],
+          "step": [
+            1,
+            1
+          ],
+          "axes": [
+            "/y",
+            "/x"
+          ]
+        },
+        "variables": [
+          {
+            "name": "CMI",
+            "dtype": "int16",
+            "samples": 20,
+            "sha256": "cc3c907ba40e9ab704e74a7e37036a22da856e727e89a9ed63601419b343f8eb",
+            "valid_centers": 20,
+            "source_fill": -1
+          },
+          {
+            "name": "DQF",
+            "dtype": "int8",
+            "samples": 20,
+            "sha256": "de47c9b27eb8d300dbb5f2c353e632c393262cf06340c4fa7f1b40c4cbd36f90",
+            "valid_centers": 20,
+            "source_fill": -1
+          }
+        ],
+        "coordinate_max_error_degrees": 4.050093593832571e-12,
+        "visible_centers": 20,
+        "included_centers": 20,
+        "netcdf4_raw_equal": true,
+        "xarray_reopen": true,
+        "output_objects": 58,
+        "output_bytes": 303512,
+        "stream": {
+          "native_samples": {
+            "CMI": 20,
+            "DQF": 20
+          },
+          "all_raw_bits_and_masks_equal_to_independently_verified_output": true
+        }
+      },
+      "execution": {
+        "source_reads": [],
+        "scheduler": {
+          "workers": 1,
+          "per_host": 4,
+          "buffer_bytes": 25165824,
+          "reserved_bytes_peak": 3785329,
+          "reader_state_reserved_bytes": 0,
+          "prepared_native_metadata_bytes": 800052,
+          "authenticated_transport_reserved_bytes": 0,
+          "prepared_v3_metadata_index_bytes": 0,
+          "active_workers_peak": 1,
+          "completed_tasks": 2,
+          "admitted_jobs": 2,
+          "cog_reader_scope": "selection",
+          "seconds": 0.002839625,
+          "order": "plan",
+          "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+          "prepared_hdf5_bytes": 800052,
+          "native_metadata": {
+            "retained_sources": 0,
+            "retained_bytes": 0,
+            "physical_metadata_sources": 0,
+            "physical_metadata_bytes": 0,
+            "cap_bytes": 0,
+            "skipped_sources": 0,
+            "scope": "this Prepared only; immutable version-bound parser pages; never a data cache",
+            "authenticated_sources": 0,
+            "authenticated_transport": {}
+          },
+          "native_strategies": [
+            {
+              "asset_id": "OR_ABI-L2-CMIPC-M6C13_G19_s20262971601182_e20262971603566_c20262971604045",
+              "task_reserved_bytes": 2985277,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "OR_ABI-L2-CMIPC-M6C13_G19_s20262971601182_e20262971603566_c20262971604045",
+              "task_reserved_bytes": 2558701,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            }
+          ]
+        },
+        "transport": {
+          "OR_ABI-L2-CMIPC-M6C13_G19_s20262971601182_e20262971603566_c20262971604045": {
+            "phases": {
+              "hdf5_science_payload": {
+                "GET source.nc": {
+                  "seconds": 0.0013348750000000001,
+                  "attempts": 2,
+                  "bytes": 142742,
+                  "retries": 0,
+                  "statuses": {
+                    "206": 2
+                  }
+                }
+              },
+              "hdf5_version_validation": {
+                "HEAD source.nc": {
+                  "seconds": 0.001244791,
+                  "attempts": 3,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 3
+                  }
+                }
+              },
+              "metadata_index_discovery": {
+                "GET source.nc": {
+                  "seconds": 0.003194669,
+                  "attempts": 6,
+                  "bytes": 110057,
+                  "retries": 0,
+                  "statuses": {
+                    "206": 6
+                  }
+                },
+                "HEAD source.nc": {
+                  "seconds": 0.0009134589999999999,
+                  "attempts": 2,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 2
+                  }
+                }
+              },
+              "planning": {
+                "HEAD source.nc": {
+                  "seconds": 0.001746625,
+                  "attempts": 1,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 1
+                  }
+                }
+              }
+            },
+            "requests": 14,
+            "bytes": 252799,
+            "retries": 0,
+            "seconds": 0.008418959,
+            "objects": {
+              "GET source.nc": {
+                "seconds": 0.004531459,
+                "attempts": 8,
+                "bytes": 252799,
+                "retries": 0,
+                "statuses": {
+                  "206": 8
+                }
+              },
+              "HEAD source.nc": {
+                "seconds": 0.003907582,
+                "attempts": 6,
+                "bytes": 0,
+                "retries": 0,
+                "statuses": {
+                  "200": 6
+                }
+              }
+            },
+            "ranges": {
+              "source.nc 0:16384": {
+                "seconds": 0.000890625,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 1548025:1690492": {
+                "seconds": 0.000898125,
+                "attempts": 1,
+                "bytes": 142467,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 16384:32768": {
+                "seconds": 0.00034975,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 32768:49152": {
+                "seconds": 0.000418084,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 4030464:4042217": {
+                "seconds": 0.000415292,
+                "attempts": 1,
+                "bytes": 11753,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 4037239:4037514": {
+                "seconds": 0.000435542,
+                "attempts": 1,
+                "bytes": 275,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 49152:65536": {
+                "seconds": 0.000519333,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 49152:81920": {
+                "seconds": 0.000595417,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              }
+            },
+            "authenticated_http": null,
+            "cached_metadata_bytes": 111241,
+            "inspection_reuse": {
+              "source_inspections": 1,
+              "metadata_parser_opens": 1,
+              "profile_discoveries": 2,
+              "profile_cache_hits": 2,
+              "full_index_scans": 2,
+              "index_cache_hits": 2,
+              "coordinate_axis_reads": 2,
+              "coordinate_cache_hits": 6,
+              "coordinate_index_traversals": 0,
+              "coordinate_decoder_opens": 0,
+              "science_decoder_opens": 2,
+              "metadata_range_hits": 481,
+              "metadata_range_misses": 6,
+              "profile_seconds": 0.000601458,
+              "index_seconds": 1.5667e-05,
+              "coordinate_seconds": 0.000730042,
+              "retention_reservation_bytes": 654908,
+              "interpretation": "native-hdf5-stored-v1",
+              "index_policy": "full",
+              "sealed": true,
+              "opening": {
+                "source_identity_and_transport_seconds": 0.005909958,
+                "superblock_parser_open_seconds": 0.000936958,
+                "root_group_time_metadata_seconds": 0.001119333
+              }
+            }
+          }
+        },
+        "decoded_source_chunks": 2,
+        "filled_source_chunks": 0,
+        "first_output_seconds": 0.001996125,
+        "assembly_seconds": 0.0,
+        "source_retrieval_seconds": null,
+        "allocation_seconds": null,
+        "copying_seconds": null,
+        "output_setup_seconds": 0.0,
+        "output_finalize_seconds": 0.0,
+        "output_io": null,
+        "native_materialized_bytes": null,
+        "source_data_requests": 2,
+        "source_data_bytes": 142742,
+        "chunks": 2,
+        "decoded_bytes": 60,
+        "non_nodata_pixels": 40,
+        "planning_seconds": 0.001072875,
+        "source_open_seconds": 0.001358625,
+        "read_decode_seconds": 0.0007347909999999999,
+        "sink_seconds": 0.0005098749999999999,
+        "masking_seconds": 0.0,
+        "remote_requests": null,
+        "remote_bytes": null
+      },
+      "preparation_timings": {
+        "inspection_seconds": 0.010651667,
+        "selection_seconds": 0.144120875,
+        "physical_plan_seconds": 0.002528125
+      },
+      "output_io": {
+        "writes": 57,
+        "bytes_written": 117810,
+        "encode_seconds": 4.7251999999999554e-05,
+        "storage_write_seconds": 0.0064906650000000005,
+        "object_bookkeeping_bound": 57,
+        "consumer_reservation_bytes": 8388608
+      },
+      "mirror_requests": 152
+    },
+    {
+      "band": "C01",
+      "case": "center",
+      "plan": {
+        "code": 0,
+        "wall_seconds": 0.024203167005907744,
+        "cpu_seconds": 0.012119999999999999,
+        "peak_rss_bytes": 18595840
+      },
+      "fetch": {
+        "code": 0,
+        "wall_seconds": 0.04633912499411963,
+        "cpu_seconds": 0.024623,
+        "peak_rss_bytes": 23363584
+      },
+      "stream": {
+        "code": 0,
+        "wall_seconds": 0.02370291601982899,
+        "cpu_seconds": 0.014023999999999998,
+        "peak_rss_bytes": 20103168
+      },
+      "verification": {
+        "native_selection": {
+          "kind": "array_slice",
+          "start": [
+            900,
+            1200
+          ],
+          "count": [
+            32,
+            32
+          ],
+          "step": [
+            1,
+            1
+          ],
+          "axes": [
+            "/y",
+            "/x"
+          ]
+        },
+        "variables": [
+          {
+            "name": "CMI",
+            "dtype": "int16",
+            "samples": 1024,
+            "sha256": "53a4998514f11657f0bcc6c48a0e58ff9c1643862436ec3589a3f1826afba9b9",
+            "valid_centers": 1024,
+            "source_fill": -1
+          },
+          {
+            "name": "DQF",
+            "dtype": "int8",
+            "samples": 1024,
+            "sha256": "5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef",
+            "valid_centers": 1024,
+            "source_fill": -1
+          }
+        ],
+        "coordinate_max_error_degrees": 5.123013124830322e-12,
+        "visible_centers": 1024,
+        "included_centers": 1024,
+        "netcdf4_raw_equal": true,
+        "xarray_reopen": true,
+        "output_objects": 58,
+        "output_bytes": 337470,
+        "stream": {
+          "native_samples": {
+            "CMI": 1024,
+            "DQF": 1024
+          },
+          "all_raw_bits_and_masks_equal_to_independently_verified_output": true
+        }
+      },
+      "execution": {
+        "source_reads": [],
+        "scheduler": {
+          "workers": 1,
+          "per_host": 4,
+          "buffer_bytes": 25165824,
+          "reserved_bytes_peak": 4823444,
+          "reader_state_reserved_bytes": 0,
+          "prepared_native_metadata_bytes": 1176112,
+          "authenticated_transport_reserved_bytes": 0,
+          "prepared_v3_metadata_index_bytes": 0,
+          "active_workers_peak": 1,
+          "completed_tasks": 3,
+          "admitted_jobs": 2,
+          "cog_reader_scope": "selection",
+          "seconds": 0.0043645,
+          "order": "plan",
+          "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+          "prepared_hdf5_bytes": 1176112,
+          "native_metadata": {
+            "retained_sources": 0,
+            "retained_bytes": 0,
+            "physical_metadata_sources": 0,
+            "physical_metadata_bytes": 0,
+            "cap_bytes": 0,
+            "skipped_sources": 0,
+            "scope": "this Prepared only; immutable version-bound parser pages; never a data cache",
+            "authenticated_sources": 0,
+            "authenticated_transport": {}
+          },
+          "native_strategies": [
+            {
+              "asset_id": "OR_ABI-L2-CMIPC-M6C01_G19_s20262971601182_e20262971603555_c20262971603593",
+              "task_reserved_bytes": 3647332,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "OR_ABI-L2-CMIPC-M6C01_G19_s20262971601182_e20262971603555_c20262971603593",
+              "task_reserved_bytes": 2879941,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            }
+          ]
+        },
+        "transport": {
+          "OR_ABI-L2-CMIPC-M6C01_G19_s20262971601182_e20262971603555_c20262971603593": {
+            "phases": {
+              "hdf5_science_payload": {
+                "GET source.nc": {
+                  "seconds": 0.002122917,
+                  "attempts": 2,
+                  "bytes": 256347,
+                  "retries": 0,
+                  "statuses": {
+                    "206": 2
+                  }
+                }
+              },
+              "hdf5_version_validation": {
+                "HEAD source.nc": {
+                  "seconds": 0.0008049590000000001,
+                  "attempts": 3,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 3
+                  }
+                }
+              },
+              "metadata_index_discovery": {
+                "GET source.nc": {
+                  "seconds": 0.002561581,
+                  "attempts": 9,
+                  "bytes": 189443,
+                  "retries": 0,
+                  "statuses": {
+                    "206": 9
+                  }
+                },
+                "HEAD source.nc": {
+                  "seconds": 0.000436459,
+                  "attempts": 2,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 2
+                  }
+                }
+              },
+              "planning": {
+                "HEAD source.nc": {
+                  "seconds": 0.001307333,
+                  "attempts": 1,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 1
+                  }
+                }
+              }
+            },
+            "requests": 17,
+            "bytes": 445790,
+            "retries": 0,
+            "seconds": 0.0072217489999999995,
+            "objects": {
+              "GET source.nc": {
+                "seconds": 0.004686208,
+                "attempts": 11,
+                "bytes": 445790,
+                "retries": 0,
+                "statuses": {
+                  "206": 11
+                }
+              },
+              "HEAD source.nc": {
+                "seconds": 0.002550416,
+                "attempts": 6,
+                "bytes": 0,
+                "retries": 0,
+                "statuses": {
+                  "200": 6
+                }
+              }
+            },
+            "ranges": {
+              "source.nc 0:16384": {
+                "seconds": 0.000382042,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 14380222:14380497": {
+                "seconds": 0.000654333,
+                "attempts": 1,
+                "bytes": 275,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 14385152:14394371": {
+                "seconds": 0.00026375,
+                "attempts": 1,
+                "bytes": 9219,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 16384:32768": {
+                "seconds": 0.000258167,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 32768:65536": {
+                "seconds": 0.000256291,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 3606870:3862942": {
+                "seconds": 0.001465667,
+                "attempts": 1,
+                "bytes": 256072,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 49152:65536": {
+                "seconds": 0.00030425,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 49152:81920": {
+                "seconds": 0.000291125,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 65536:98304": {
+                "seconds": 0.000266875,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7536640:7553024": {
+                "seconds": 0.00026,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 81920:98304": {
+                "seconds": 0.000274625,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              }
+            },
+            "authenticated_http": null,
+            "cached_metadata_bytes": 191331,
+            "inspection_reuse": {
+              "source_inspections": 1,
+              "metadata_parser_opens": 1,
+              "profile_discoveries": 2,
+              "profile_cache_hits": 2,
+              "full_index_scans": 2,
+              "index_cache_hits": 3,
+              "coordinate_axis_reads": 2,
+              "coordinate_cache_hits": 6,
+              "coordinate_index_traversals": 0,
+              "coordinate_decoder_opens": 0,
+              "science_decoder_opens": 2,
+              "metadata_range_hits": 488,
+              "metadata_range_misses": 9,
+              "profile_seconds": 0.000478001,
+              "index_seconds": 0.000834541,
+              "coordinate_seconds": 0.000416709,
+              "retention_reservation_bytes": 1027684,
+              "interpretation": "native-hdf5-stored-v1",
+              "index_policy": "full",
+              "sealed": true,
+              "opening": {
+                "source_identity_and_transport_seconds": 0.004302459,
+                "superblock_parser_open_seconds": 0.000413041,
+                "root_group_time_metadata_seconds": 0.000740375
+              }
+            }
+          }
+        },
+        "decoded_source_chunks": 3,
+        "filled_source_chunks": 0,
+        "first_output_seconds": 0.002522416,
+        "assembly_seconds": 0.0,
+        "source_retrieval_seconds": null,
+        "allocation_seconds": null,
+        "copying_seconds": null,
+        "output_setup_seconds": 0.0,
+        "output_finalize_seconds": 0.0,
+        "output_io": null,
+        "native_materialized_bytes": null,
+        "source_data_requests": 2,
+        "source_data_bytes": 256347,
+        "chunks": 3,
+        "decoded_bytes": 3072,
+        "non_nodata_pixels": 2048,
+        "planning_seconds": 0.000779334,
+        "source_open_seconds": 0.002157875,
+        "read_decode_seconds": 0.001280291,
+        "sink_seconds": 0.0006887919999999999,
+        "masking_seconds": 0.0,
+        "remote_requests": null,
+        "remote_bytes": null
+      },
+      "preparation_timings": {
+        "inspection_seconds": 0.008289875,
+        "selection_seconds": 1.209e-06,
+        "physical_plan_seconds": 0.001649
+      },
+      "output_io": {
+        "writes": 59,
+        "bytes_written": 148425,
+        "encode_seconds": 7.641600000000005e-05,
+        "storage_write_seconds": 0.005362793,
+        "object_bookkeeping_bound": 59,
+        "consumer_reservation_bytes": 8388608
+      },
+      "mirror_requests": 47
+    },
+    {
+      "band": "C01",
+      "case": "space",
+      "plan": {
+        "code": 0,
+        "wall_seconds": 0.019907084002625197,
+        "cpu_seconds": 0.011014,
+        "peak_rss_bytes": 18333696
+      },
+      "fetch": {
+        "code": 0,
+        "wall_seconds": 0.04112633300246671,
+        "cpu_seconds": 0.022607,
+        "peak_rss_bytes": 22773760
+      },
+      "stream": {
+        "code": 0,
+        "wall_seconds": 0.026659290975658223,
+        "cpu_seconds": 0.014931,
+        "peak_rss_bytes": 19513344
+      },
+      "verification": {
+        "native_selection": {
+          "kind": "array_slice",
+          "start": [
+            0,
+            0
+          ],
+          "count": [
+            8,
+            8
+          ],
+          "step": [
+            1,
+            1
+          ],
+          "axes": [
+            "/y",
+            "/x"
+          ]
+        },
+        "variables": [
+          {
+            "name": "CMI",
+            "dtype": "int16",
+            "samples": 64,
+            "sha256": "e9175db65a9789096ca9cb5524d3abc2107df03e3c9ba3af1aca628f9c5d3bd2",
+            "valid_centers": 0,
+            "source_fill": -1
+          },
+          {
+            "name": "DQF",
+            "dtype": "int8",
+            "samples": 64,
+            "sha256": "8667e718294e9e0df1d30600ba3eeb201f764aad2dad72748643e4a285e1d1f7",
+            "valid_centers": 0,
+            "source_fill": -1
+          }
+        ],
+        "coordinate_max_error_degrees": 0.0,
+        "visible_centers": 0,
+        "included_centers": 64,
+        "netcdf4_raw_equal": true,
+        "xarray_reopen": true,
+        "output_objects": 58,
+        "output_bytes": 309229,
+        "stream": {
+          "native_samples": {
+            "CMI": 64,
+            "DQF": 64
+          },
+          "all_raw_bits_and_masks_equal_to_independently_verified_output": true
+        }
+      },
+      "execution": {
+        "source_reads": [],
+        "scheduler": {
+          "workers": 1,
+          "per_host": 4,
+          "buffer_bytes": 25165824,
+          "reserved_bytes_peak": 4297884,
+          "reader_state_reserved_bytes": 0,
+          "prepared_native_metadata_bytes": 1174316,
+          "authenticated_transport_reserved_bytes": 0,
+          "prepared_v3_metadata_index_bytes": 0,
+          "active_workers_peak": 1,
+          "completed_tasks": 2,
+          "admitted_jobs": 2,
+          "cog_reader_scope": "selection",
+          "seconds": 0.002260375,
+          "order": "plan",
+          "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+          "prepared_hdf5_bytes": 1174316,
+          "native_metadata": {
+            "retained_sources": 0,
+            "retained_bytes": 0,
+            "physical_metadata_sources": 0,
+            "physical_metadata_bytes": 0,
+            "cap_bytes": 0,
+            "skipped_sources": 0,
+            "scope": "this Prepared only; immutable version-bound parser pages; never a data cache",
+            "authenticated_sources": 0,
+            "authenticated_transport": {}
+          },
+          "native_strategies": [
+            {
+              "asset_id": "OR_ABI-L2-CMIPC-M6C01_G19_s20262971601182_e20262971603555_c20262971603593",
+              "task_reserved_bytes": 3123568,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "OR_ABI-L2-CMIPC-M6C01_G19_s20262971601182_e20262971603555_c20262971603593",
+              "task_reserved_bytes": 2880118,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            }
+          ]
+        },
+        "transport": {
+          "OR_ABI-L2-CMIPC-M6C01_G19_s20262971601182_e20262971603555_c20262971603593": {
+            "phases": {
+              "hdf5_science_payload": {
+                "GET source.nc": {
+                  "seconds": 0.0009552510000000001,
+                  "attempts": 2,
+                  "bytes": 82330,
+                  "retries": 0,
+                  "statuses": {
+                    "206": 2
+                  }
+                }
+              },
+              "hdf5_version_validation": {
+                "HEAD source.nc": {
+                  "seconds": 0.000905042,
+                  "attempts": 3,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 3
+                  }
+                }
+              },
+              "metadata_index_discovery": {
+                "GET source.nc": {
+                  "seconds": 0.0027918739999999997,
+                  "attempts": 9,
+                  "bytes": 189443,
+                  "retries": 0,
+                  "statuses": {
+                    "206": 9
+                  }
+                },
+                "HEAD source.nc": {
+                  "seconds": 0.000388541,
+                  "attempts": 2,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 2
+                  }
+                }
+              },
+              "planning": {
+                "HEAD source.nc": {
+                  "seconds": 0.001047708,
+                  "attempts": 1,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 1
+                  }
+                }
+              }
+            },
+            "requests": 17,
+            "bytes": 271773,
+            "retries": 0,
+            "seconds": 0.006079667,
+            "objects": {
+              "GET source.nc": {
+                "seconds": 0.003749209,
+                "attempts": 11,
+                "bytes": 271773,
+                "retries": 0,
+                "statuses": {
+                  "206": 11
+                }
+              },
+              "HEAD source.nc": {
+                "seconds": 0.002342583,
+                "attempts": 6,
+                "bytes": 0,
+                "retries": 0,
+                "statuses": {
+                  "200": 6
+                }
+              }
+            },
+            "ranges": {
+              "source.nc 0:16384": {
+                "seconds": 0.000392417,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 14372311:14372901": {
+                "seconds": 0.000384958,
+                "attempts": 1,
+                "bytes": 590,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 14385152:14394371": {
+                "seconds": 0.000310375,
+                "attempts": 1,
+                "bytes": 9219,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 16384:32768": {
+                "seconds": 0.000354333,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 32768:65536": {
+                "seconds": 0.000292,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 49152:65536": {
+                "seconds": 0.0003025,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 49152:81920": {
+                "seconds": 0.00036275,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 65536:98304": {
+                "seconds": 0.000269375,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7536640:7553024": {
+                "seconds": 0.000263792,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 81920:98304": {
+                "seconds": 0.000238125,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 85588:167328": {
+                "seconds": 0.000569292,
+                "attempts": 1,
+                "bytes": 81740,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              }
+            },
+            "authenticated_http": null,
+            "cached_metadata_bytes": 191331,
+            "inspection_reuse": {
+              "source_inspections": 1,
+              "metadata_parser_opens": 1,
+              "profile_discoveries": 2,
+              "profile_cache_hits": 2,
+              "full_index_scans": 2,
+              "index_cache_hits": 2,
+              "coordinate_axis_reads": 2,
+              "coordinate_cache_hits": 6,
+              "coordinate_index_traversals": 0,
+              "coordinate_decoder_opens": 0,
+              "science_decoder_opens": 2,
+              "metadata_range_hits": 484,
+              "metadata_range_misses": 9,
+              "profile_seconds": 0.000562292,
+              "index_seconds": 0.000811875,
+              "coordinate_seconds": 0.000508001,
+              "retention_reservation_bytes": 1027676,
+              "interpretation": "native-hdf5-stored-v1",
+              "index_policy": "full",
+              "sealed": true,
+              "opening": {
+                "source_identity_and_transport_seconds": 0.00392975,
+                "superblock_parser_open_seconds": 0.000425833,
+                "root_group_time_metadata_seconds": 0.00078425
+              }
+            }
+          }
+        },
+        "decoded_source_chunks": 2,
+        "filled_source_chunks": 0,
+        "first_output_seconds": 0.001430041,
+        "assembly_seconds": 0.0,
+        "source_retrieval_seconds": null,
+        "allocation_seconds": null,
+        "copying_seconds": null,
+        "output_setup_seconds": 0.0,
+        "output_finalize_seconds": 0.0,
+        "output_io": null,
+        "native_materialized_bytes": null,
+        "source_data_requests": 2,
+        "source_data_bytes": 82330,
+        "chunks": 2,
+        "decoded_bytes": 192,
+        "non_nodata_pixels": 0,
+        "planning_seconds": 0.000744334,
+        "source_open_seconds": 0.000972166,
+        "read_decode_seconds": 0.0005821670000000001,
+        "sink_seconds": 0.000472083,
+        "masking_seconds": 0.0,
+        "remote_requests": null,
+        "remote_bytes": null
+      },
+      "preparation_timings": {
+        "inspection_seconds": 0.008149167,
+        "selection_seconds": 1.459e-06,
+        "physical_plan_seconds": 0.001588542
+      },
+      "output_io": {
+        "writes": 57,
+        "bytes_written": 120392,
+        "encode_seconds": 4.525100000000041e-05,
+        "storage_write_seconds": 0.005498294,
+        "object_bookkeeping_bound": 57,
+        "consumer_reservation_bytes": 8388608
+      },
+      "mirror_requests": 94
+    },
+    {
+      "band": "C01",
+      "case": "strided",
+      "plan": {
+        "code": 0,
+        "wall_seconds": 0.024290041998028755,
+        "cpu_seconds": 0.012584,
+        "peak_rss_bytes": 18481152
+      },
+      "fetch": {
+        "code": 0,
+        "wall_seconds": 0.04873137499089353,
+        "cpu_seconds": 0.025612999999999997,
+        "peak_rss_bytes": 23625728
+      },
+      "stream": {
+        "code": 0,
+        "wall_seconds": 0.028048916981788352,
+        "cpu_seconds": 0.015623,
+        "peak_rss_bytes": 20021248
+      },
+      "verification": {
+        "native_selection": {
+          "kind": "array_slice",
+          "start": [
+            900,
+            1200
+          ],
+          "count": [
+            9,
+            11
+          ],
+          "step": [
+            3,
+            2
+          ],
+          "axes": [
+            "/y",
+            "/x"
+          ]
+        },
+        "variables": [
+          {
+            "name": "CMI",
+            "dtype": "int16",
+            "samples": 99,
+            "sha256": "94e91abc85cfaecd351c9014a203d3ad5b15062012f7fb1aaf79ebb33c79ed16",
+            "valid_centers": 99,
+            "source_fill": -1
+          },
+          {
+            "name": "DQF",
+            "dtype": "int8",
+            "samples": 99,
+            "sha256": "4b298058e1d5fd3f2fa20ead21773912a5dc38da3c0da0bbc7de1adfb6011f1c",
+            "valid_centers": 99,
+            "source_fill": -1
+          }
+        ],
+        "coordinate_max_error_degrees": 4.810374321095878e-12,
+        "visible_centers": 99,
+        "included_centers": 99,
+        "netcdf4_raw_equal": true,
+        "xarray_reopen": true,
+        "output_objects": 58,
+        "output_bytes": 314842,
+        "stream": {
+          "native_samples": {
+            "CMI": 99,
+            "DQF": 99
+          },
+          "all_raw_bits_and_masks_equal_to_independently_verified_output": true
+        }
+      },
+      "execution": {
+        "source_reads": [],
+        "scheduler": {
+          "workers": 1,
+          "per_host": 4,
+          "buffer_bytes": 25165824,
+          "reserved_bytes_peak": 4822024,
+          "reader_state_reserved_bytes": 0,
+          "prepared_native_metadata_bytes": 1175396,
+          "authenticated_transport_reserved_bytes": 0,
+          "prepared_v3_metadata_index_bytes": 0,
+          "active_workers_peak": 1,
+          "completed_tasks": 3,
+          "admitted_jobs": 2,
+          "cog_reader_scope": "selection",
+          "seconds": 0.003819041,
+          "order": "plan",
+          "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+          "prepared_hdf5_bytes": 1175396,
+          "native_metadata": {
+            "retained_sources": 0,
+            "retained_bytes": 0,
+            "physical_metadata_sources": 0,
+            "physical_metadata_bytes": 0,
+            "cap_bytes": 0,
+            "skipped_sources": 0,
+            "scope": "this Prepared only; immutable version-bound parser pages; never a data cache",
+            "authenticated_sources": 0,
+            "authenticated_transport": {}
+          },
+          "native_strategies": [
+            {
+              "asset_id": "OR_ABI-L2-CMIPC-M6C01_G19_s20262971601182_e20262971603555_c20262971603593",
+              "task_reserved_bytes": 3646628,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "OR_ABI-L2-CMIPC-M6C01_G19_s20262971601182_e20262971603555_c20262971603593",
+              "task_reserved_bytes": 2879237,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            }
+          ]
+        },
+        "transport": {
+          "OR_ABI-L2-CMIPC-M6C01_G19_s20262971601182_e20262971603555_c20262971603593": {
+            "phases": {
+              "hdf5_science_payload": {
+                "GET source.nc": {
+                  "seconds": 0.001290416,
+                  "attempts": 2,
+                  "bytes": 256347,
+                  "retries": 0,
+                  "statuses": {
+                    "206": 2
+                  }
+                }
+              },
+              "hdf5_version_validation": {
+                "HEAD source.nc": {
+                  "seconds": 0.000944834,
+                  "attempts": 3,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 3
+                  }
+                }
+              },
+              "metadata_index_discovery": {
+                "GET source.nc": {
+                  "seconds": 0.004514877,
+                  "attempts": 9,
+                  "bytes": 189443,
+                  "retries": 0,
+                  "statuses": {
+                    "206": 9
+                  }
+                },
+                "HEAD source.nc": {
+                  "seconds": 0.000594708,
+                  "attempts": 2,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 2
+                  }
+                }
+              },
+              "planning": {
+                "HEAD source.nc": {
+                  "seconds": 0.001447792,
+                  "attempts": 1,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 1
+                  }
+                }
+              }
+            },
+            "requests": 17,
+            "bytes": 445790,
+            "retries": 0,
+            "seconds": 0.008781085000000001,
+            "objects": {
+              "GET source.nc": {
+                "seconds": 0.005807251000000001,
+                "attempts": 11,
+                "bytes": 445790,
+                "retries": 0,
+                "statuses": {
+                  "206": 11
+                }
+              },
+              "HEAD source.nc": {
+                "seconds": 0.0029891250000000005,
+                "attempts": 6,
+                "bytes": 0,
+                "retries": 0,
+                "statuses": {
+                  "200": 6
+                }
+              }
+            },
+            "ranges": {
+              "source.nc 0:16384": {
+                "seconds": 0.000656917,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 14380222:14380497": {
+                "seconds": 0.000514875,
+                "attempts": 1,
+                "bytes": 275,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 14385152:14394371": {
+                "seconds": 0.000446334,
+                "attempts": 1,
+                "bytes": 9219,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 16384:32768": {
+                "seconds": 0.000488166,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 32768:65536": {
+                "seconds": 0.00041725,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 3606870:3862942": {
+                "seconds": 0.000774125,
+                "attempts": 1,
+                "bytes": 256072,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 49152:65536": {
+                "seconds": 0.000629875,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 49152:81920": {
+                "seconds": 0.000541625,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 65536:98304": {
+                "seconds": 0.000481292,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7536640:7553024": {
+                "seconds": 0.000429917,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 81920:98304": {
+                "seconds": 0.000417334,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              }
+            },
+            "authenticated_http": null,
+            "cached_metadata_bytes": 191331,
+            "inspection_reuse": {
+              "source_inspections": 1,
+              "metadata_parser_opens": 1,
+              "profile_discoveries": 2,
+              "profile_cache_hits": 2,
+              "full_index_scans": 2,
+              "index_cache_hits": 3,
+              "coordinate_axis_reads": 2,
+              "coordinate_cache_hits": 6,
+              "coordinate_index_traversals": 0,
+              "coordinate_decoder_opens": 0,
+              "science_decoder_opens": 2,
+              "metadata_range_hits": 488,
+              "metadata_range_misses": 9,
+              "profile_seconds": 0.00072,
+              "index_seconds": 0.001366167,
+              "coordinate_seconds": 0.000698458,
+              "retention_reservation_bytes": 1027684,
+              "interpretation": "native-hdf5-stored-v1",
+              "index_policy": "full",
+              "sealed": true,
+              "opening": {
+                "source_identity_and_transport_seconds": 0.005317083,
+                "superblock_parser_open_seconds": 0.000698375,
+                "root_group_time_metadata_seconds": 0.001281458
+              }
+            }
+          }
+        },
+        "decoded_source_chunks": 3,
+        "filled_source_chunks": 0,
+        "first_output_seconds": 0.002021333,
+        "assembly_seconds": 0.0,
+        "source_retrieval_seconds": null,
+        "allocation_seconds": null,
+        "copying_seconds": null,
+        "output_setup_seconds": 0.0,
+        "output_finalize_seconds": 0.0,
+        "output_io": null,
+        "native_materialized_bytes": null,
+        "source_data_requests": 2,
+        "source_data_bytes": 256347,
+        "chunks": 3,
+        "decoded_bytes": 297,
+        "non_nodata_pixels": 198,
+        "planning_seconds": 0.000922708,
+        "source_open_seconds": 0.0013325,
+        "read_decode_seconds": 0.0013014990000000002,
+        "sink_seconds": 0.000933208,
+        "masking_seconds": 0.0,
+        "remote_requests": null,
+        "remote_bytes": null
+      },
+      "preparation_timings": {
+        "inspection_seconds": 0.011502,
+        "selection_seconds": 1.084e-06,
+        "physical_plan_seconds": 0.002012917
+      },
+      "output_io": {
+        "writes": 59,
+        "bytes_written": 122996,
+        "encode_seconds": 6.883400000000013e-05,
+        "storage_write_seconds": 0.005866958,
+        "object_bookkeeping_bound": 57,
+        "consumer_reservation_bytes": 8388608
+      },
+      "mirror_requests": 141
+    },
+    {
+      "band": "C01",
+      "case": "geographic",
+      "plan": {
+        "code": 0,
+        "wall_seconds": 0.6019629999937024,
+        "cpu_seconds": 0.589824,
+        "peak_rss_bytes": 18382848
+      },
+      "fetch": {
+        "code": 0,
+        "wall_seconds": 0.6250503339979332,
+        "cpu_seconds": 0.5971569999999999,
+        "peak_rss_bytes": 23019520
+      },
+      "stream": {
+        "code": 0,
+        "wall_seconds": 0.5936773330031428,
+        "cpu_seconds": 0.58239,
+        "peak_rss_bytes": 19890176
+      },
+      "verification": {
+        "native_selection": {
+          "kind": "array_slice",
+          "start": [
+            1149,
+            3176
+          ],
+          "count": [
+            8,
+            9
+          ],
+          "step": [
+            1,
+            1
+          ],
+          "axes": [
+            "/y",
+            "/x"
+          ]
+        },
+        "variables": [
+          {
+            "name": "CMI",
+            "dtype": "int16",
+            "samples": 72,
+            "sha256": "5ad1b228158f6e54e6467d6b4ad0072848fbeeea3ddbd8a91d9115ca1151db6d",
+            "valid_centers": 72,
+            "source_fill": -1
+          },
+          {
+            "name": "DQF",
+            "dtype": "int8",
+            "samples": 72,
+            "sha256": "834a709ba2534ebe3ee1397fd4f7bd288b2acc1d20a08d6c862dcd99b6f04400",
+            "valid_centers": 72,
+            "source_fill": -1
+          }
+        ],
+        "coordinate_max_error_degrees": 4.192202140984591e-12,
+        "visible_centers": 72,
+        "included_centers": 69,
+        "netcdf4_raw_equal": true,
+        "xarray_reopen": true,
+        "output_objects": 58,
+        "output_bytes": 309498,
+        "stream": {
+          "native_samples": {
+            "CMI": 72,
+            "DQF": 72
+          },
+          "all_raw_bits_and_masks_equal_to_independently_verified_output": true
+        }
+      },
+      "execution": {
+        "source_reads": [],
+        "scheduler": {
+          "workers": 1,
+          "per_host": 4,
+          "buffer_bytes": 25165824,
+          "reserved_bytes_peak": 4431824,
+          "reader_state_reserved_bytes": 0,
+          "prepared_native_metadata_bytes": 1174416,
+          "authenticated_transport_reserved_bytes": 0,
+          "prepared_v3_metadata_index_bytes": 0,
+          "active_workers_peak": 1,
+          "completed_tasks": 2,
+          "admitted_jobs": 2,
+          "cog_reader_scope": "selection",
+          "seconds": 0.002780334,
+          "order": "plan",
+          "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+          "prepared_hdf5_bytes": 1174416,
+          "native_metadata": {
+            "retained_sources": 0,
+            "retained_bytes": 0,
+            "physical_metadata_sources": 0,
+            "physical_metadata_bytes": 0,
+            "cap_bytes": 0,
+            "skipped_sources": 0,
+            "scope": "this Prepared only; immutable version-bound parser pages; never a data cache",
+            "authenticated_sources": 0,
+            "authenticated_transport": {}
+          },
+          "native_strategies": [
+            {
+              "asset_id": "OR_ABI-L2-CMIPC-M6C01_G19_s20262971601182_e20262971603555_c20262971603593",
+              "task_reserved_bytes": 3257408,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "OR_ABI-L2-CMIPC-M6C01_G19_s20262971601182_e20262971603555_c20262971603593",
+              "task_reserved_bytes": 2879189,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            }
+          ]
+        },
+        "transport": {
+          "OR_ABI-L2-CMIPC-M6C01_G19_s20262971601182_e20262971603555_c20262971603593": {
+            "phases": {
+              "hdf5_science_payload": {
+                "GET source.nc": {
+                  "seconds": 0.001208001,
+                  "attempts": 2,
+                  "bytes": 126623,
+                  "retries": 0,
+                  "statuses": {
+                    "206": 2
+                  }
+                }
+              },
+              "hdf5_version_validation": {
+                "HEAD source.nc": {
+                  "seconds": 0.0009150829999999999,
+                  "attempts": 3,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 3
+                  }
+                }
+              },
+              "metadata_index_discovery": {
+                "GET source.nc": {
+                  "seconds": 0.0036940839999999994,
+                  "attempts": 9,
+                  "bytes": 189443,
+                  "retries": 0,
+                  "statuses": {
+                    "206": 9
+                  }
+                },
+                "HEAD source.nc": {
+                  "seconds": 0.000764875,
+                  "attempts": 2,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 2
+                  }
+                }
+              },
+              "planning": {
+                "HEAD source.nc": {
+                  "seconds": 0.001272041,
+                  "attempts": 1,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 1
+                  }
+                }
+              }
+            },
+            "requests": 17,
+            "bytes": 316066,
+            "retries": 0,
+            "seconds": 0.007841583000000001,
+            "objects": {
+              "GET source.nc": {
+                "seconds": 0.0049042930000000005,
+                "attempts": 11,
+                "bytes": 316066,
+                "retries": 0,
+                "statuses": {
+                  "206": 11
+                }
+              },
+              "HEAD source.nc": {
+                "seconds": 0.002953917,
+                "attempts": 6,
+                "bytes": 0,
+                "retries": 0,
+                "statuses": {
+                  "200": 6
+                }
+              }
+            },
+            "ranges": {
+              "source.nc 0:16384": {
+                "seconds": 0.000501542,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 14381597:14381872": {
+                "seconds": 0.000285583,
+                "attempts": 1,
+                "bytes": 275,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 14385152:14394371": {
+                "seconds": 0.000304334,
+                "attempts": 1,
+                "bytes": 9219,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 16384:32768": {
+                "seconds": 0.000399042,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 32768:65536": {
+                "seconds": 0.000511584,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 4900605:5026953": {
+                "seconds": 0.000921375,
+                "attempts": 1,
+                "bytes": 126348,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 49152:65536": {
+                "seconds": 0.000430791,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 49152:81920": {
+                "seconds": 0.000433,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 65536:98304": {
+                "seconds": 0.000335041,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7536640:7553024": {
+                "seconds": 0.000320333,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 81920:98304": {
+                "seconds": 0.000451917,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              }
+            },
+            "authenticated_http": null,
+            "cached_metadata_bytes": 191331,
+            "inspection_reuse": {
+              "source_inspections": 1,
+              "metadata_parser_opens": 1,
+              "profile_discoveries": 2,
+              "profile_cache_hits": 2,
+              "full_index_scans": 2,
+              "index_cache_hits": 2,
+              "coordinate_axis_reads": 2,
+              "coordinate_cache_hits": 6,
+              "coordinate_index_traversals": 0,
+              "coordinate_decoder_opens": 0,
+              "science_decoder_opens": 2,
+              "metadata_range_hits": 484,
+              "metadata_range_misses": 9,
+              "profile_seconds": 0.0006866250000000001,
+              "index_seconds": 0.001160583,
+              "coordinate_seconds": 0.000621708,
+              "retention_reservation_bytes": 1027684,
+              "interpretation": "native-hdf5-stored-v1",
+              "index_policy": "full",
+              "sealed": true,
+              "opening": {
+                "source_identity_and_transport_seconds": 0.005186875,
+                "superblock_parser_open_seconds": 0.000539667,
+                "root_group_time_metadata_seconds": 0.000932458
+              }
+            }
+          }
+        },
+        "decoded_source_chunks": 2,
+        "filled_source_chunks": 0,
+        "first_output_seconds": 0.002073584,
+        "assembly_seconds": 0.0,
+        "source_retrieval_seconds": null,
+        "allocation_seconds": null,
+        "copying_seconds": null,
+        "output_setup_seconds": 0.0,
+        "output_finalize_seconds": 0.0,
+        "output_io": null,
+        "native_materialized_bytes": null,
+        "source_data_requests": 2,
+        "source_data_bytes": 126623,
+        "chunks": 2,
+        "decoded_bytes": 216,
+        "non_nodata_pixels": 144,
+        "planning_seconds": 0.000976542,
+        "source_open_seconds": 0.001225916,
+        "read_decode_seconds": 0.000804666,
+        "sink_seconds": 0.000527875,
+        "masking_seconds": 0.0,
+        "remote_requests": null,
+        "remote_bytes": null
+      },
+      "preparation_timings": {
+        "inspection_seconds": 0.010716166,
+        "selection_seconds": 0.579937125,
+        "physical_plan_seconds": 0.002288041
+      },
+      "output_io": {
+        "writes": 57,
+        "bytes_written": 120549,
+        "encode_seconds": 3.771000000000002e-05,
+        "storage_write_seconds": 0.005424001,
+        "object_bookkeeping_bound": 57,
+        "consumer_reservation_bytes": 8388608
+      },
+      "mirror_requests": 188
+    }
+  ]
+}

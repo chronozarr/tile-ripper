@@ -1,0 +1,1056 @@
+{
+  "status": "passed",
+  "scope": "GOES19 mesoscale1 C02 reflectance factor, original packed Int16 CMI/Int8 DQF; 0.5km scan-angle grid; PROJ + HDF5-C and separately opened NetCDF-C; raw Zarr/xarray",
+  "cases": [
+    {
+      "case": "geographic",
+      "process": {
+        "code": 0,
+        "wall_seconds": 0.20840295901871286,
+        "cpu_seconds": 0.178648,
+        "peak_rss_bytes": 23216128
+      },
+      "verification": {
+        "native_selection": {
+          "kind": "array_slice",
+          "start": [
+            995,
+            995
+          ],
+          "count": [
+            10,
+            10
+          ],
+          "step": [
+            1,
+            1
+          ],
+          "axes": [
+            "/y",
+            "/x"
+          ]
+        },
+        "variables": [
+          {
+            "name": "CMI",
+            "dtype": "int16",
+            "samples": 100,
+            "sha256": "1043e32b9307fe5ac45a3917e86533585d9084c61b6a890b615ba767a9c40d2c",
+            "valid_centers": 100,
+            "source_fill": -1
+          },
+          {
+            "name": "DQF",
+            "dtype": "int8",
+            "samples": 100,
+            "sha256": "cd00e292c5970d3c5e2f0ffa5171e555bc46bfc4faddfb4a418b6840b86e79a3",
+            "valid_centers": 100,
+            "source_fill": -1
+          }
+        ],
+        "coordinate_max_error_degrees": 4.767741756950272e-12,
+        "visible_centers": 100,
+        "included_centers": 100,
+        "netcdf4_raw_equal": true,
+        "xarray_reopen": true,
+        "output_objects": 58,
+        "output_bytes": 307237,
+        "stream": {
+          "native_samples": {
+            "CMI": 100,
+            "DQF": 100
+          },
+          "all_raw_bits_and_masks_equal_to_independently_verified_output": true
+        }
+      },
+      "preparation_timings": {
+        "inspection_seconds": 0.011101291,
+        "selection_seconds": 0.15334925,
+        "physical_plan_seconds": 0.002356041
+      },
+      "execution": {
+        "source_reads": [],
+        "scheduler": {
+          "workers": 1,
+          "per_host": 4,
+          "buffer_bytes": 25165824,
+          "reserved_bytes_peak": 3964145,
+          "reader_state_reserved_bytes": 0,
+          "prepared_native_metadata_bytes": 871864,
+          "authenticated_transport_reserved_bytes": 0,
+          "prepared_v3_metadata_index_bytes": 0,
+          "active_workers_peak": 1,
+          "completed_tasks": 2,
+          "admitted_jobs": 2,
+          "cog_reader_scope": "selection",
+          "seconds": 0.003431209,
+          "order": "plan",
+          "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+          "prepared_hdf5_bytes": 871864,
+          "native_metadata": {
+            "retained_sources": 0,
+            "retained_bytes": 0,
+            "physical_metadata_sources": 0,
+            "physical_metadata_bytes": 0,
+            "cap_bytes": 0,
+            "skipped_sources": 0,
+            "scope": "this Prepared only; immutable version-bound parser pages; never a data cache",
+            "authenticated_sources": 0,
+            "authenticated_transport": {}
+          },
+          "native_strategies": [
+            {
+              "asset_id": "OR_ABI-L2-CMIPM1-M6C02_G19_s20262971600289_e20262971600347_c20262971600379",
+              "task_reserved_bytes": 3092281,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "OR_ABI-L2-CMIPM1-M6C02_G19_s20262971600289_e20262971600347_c20262971600379",
+              "task_reserved_bytes": 2642903,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            }
+          ]
+        },
+        "transport": {
+          "OR_ABI-L2-CMIPM1-M6C02_G19_s20262971600289_e20262971600347_c20262971600379": {
+            "phases": {
+              "hdf5_science_payload": {
+                "GET source.nc": {
+                  "seconds": 0.0015617089999999999,
+                  "attempts": 2,
+                  "bytes": 155680,
+                  "retries": 0,
+                  "statuses": {
+                    "206": 2
+                  }
+                }
+              },
+              "hdf5_version_validation": {
+                "HEAD source.nc": {
+                  "seconds": 0.0012244600000000001,
+                  "attempts": 3,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 3
+                  }
+                }
+              },
+              "metadata_index_discovery": {
+                "GET source.nc": {
+                  "seconds": 0.0036543730000000003,
+                  "attempts": 6,
+                  "bytes": 127062,
+                  "retries": 0,
+                  "statuses": {
+                    "206": 6
+                  }
+                },
+                "HEAD source.nc": {
+                  "seconds": 0.000800083,
+                  "attempts": 2,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 2
+                  }
+                }
+              },
+              "planning": {
+                "HEAD source.nc": {
+                  "seconds": 0.001865458,
+                  "attempts": 1,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 1
+                  }
+                }
+              }
+            },
+            "requests": 14,
+            "bytes": 282742,
+            "retries": 0,
+            "seconds": 0.009091667000000001,
+            "objects": {
+              "GET source.nc": {
+                "seconds": 0.005217959,
+                "attempts": 8,
+                "bytes": 282742,
+                "retries": 0,
+                "statuses": {
+                  "206": 8
+                }
+              },
+              "HEAD source.nc": {
+                "seconds": 0.003892125,
+                "attempts": 6,
+                "bytes": 0,
+                "retries": 0,
+                "statuses": {
+                  "200": 6
+                }
+              }
+            },
+            "ranges": {
+              "source.nc 0:16384": {
+                "seconds": 0.000644208,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 16384:32768": {
+                "seconds": 0.00048175,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 2063804:2219207": {
+                "seconds": 0.001150292,
+                "attempts": 1,
+                "bytes": 155403,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 32768:65536": {
+                "seconds": 0.000608125,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 4554752:4567126": {
+                "seconds": 0.000733834,
+                "attempts": 1,
+                "bytes": 12374,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 4562060:4562337": {
+                "seconds": 0.000409584,
+                "attempts": 1,
+                "bytes": 277,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 49152:65536": {
+                "seconds": 0.000620625,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 49152:81920": {
+                "seconds": 0.000559458,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              }
+            },
+            "authenticated_http": null,
+            "cached_metadata_bytes": 128246,
+            "inspection_reuse": {
+              "source_inspections": 1,
+              "metadata_parser_opens": 1,
+              "profile_discoveries": 2,
+              "profile_cache_hits": 2,
+              "full_index_scans": 2,
+              "index_cache_hits": 2,
+              "coordinate_axis_reads": 2,
+              "coordinate_cache_hits": 6,
+              "coordinate_index_traversals": 0,
+              "coordinate_decoder_opens": 0,
+              "science_decoder_opens": 2,
+              "metadata_range_hits": 481,
+              "metadata_range_misses": 6,
+              "profile_seconds": 0.000705374,
+              "index_seconds": 1.3792e-05,
+              "coordinate_seconds": 0.000690292,
+              "retention_reservation_bytes": 725032,
+              "interpretation": "native-hdf5-stored-v1",
+              "index_policy": "full",
+              "sealed": true,
+              "opening": {
+                "source_identity_and_transport_seconds": 0.005953541,
+                "superblock_parser_open_seconds": 0.000675042,
+                "root_group_time_metadata_seconds": 0.001548458
+              }
+            }
+          }
+        },
+        "decoded_source_chunks": 2,
+        "filled_source_chunks": 0,
+        "first_output_seconds": 0.002572625,
+        "assembly_seconds": 0.0,
+        "source_retrieval_seconds": null,
+        "allocation_seconds": null,
+        "copying_seconds": null,
+        "output_setup_seconds": 0.0,
+        "output_finalize_seconds": 0.0,
+        "output_io": null,
+        "native_materialized_bytes": null,
+        "source_data_requests": 2,
+        "source_data_bytes": 155680,
+        "chunks": 2,
+        "decoded_bytes": 300,
+        "non_nodata_pixels": 200,
+        "planning_seconds": 0.001024,
+        "source_open_seconds": 0.001586042,
+        "read_decode_seconds": 0.000905334,
+        "sink_seconds": 0.000696167,
+        "masking_seconds": 0.0,
+        "remote_requests": null,
+        "remote_bytes": null
+      },
+      "output_io": {
+        "writes": 57,
+        "bytes_written": 120701,
+        "encode_seconds": 5.433300000000009e-05,
+        "storage_write_seconds": 0.007216336,
+        "object_bookkeeping_bound": 57,
+        "consumer_reservation_bytes": 8388608
+      },
+      "human_plan": "Tile-Ripper native scientific product: goes19-abi-cmipm1-c02\nProvider: pinned\nWorking-memory budget: 33554432 bytes (includes 8388608 reserved for product/output work)\n\nObservation: OR_ABI-L2-CMIPM1-M6C02_G19_s20262971600289_e20262971600347_c20262971600379\nNative coordinate model: {\"coordinate_model\":\"geostationary\",\"perspective_point_height\":35786023.0,\"semi_major_axis\":6378137.0,\"semi_minor_axis\":6356752.31414,\"longitude_of_projection_origin\":-75.0,\"sweep_angle_axis\":\"x\",\"y_packing\":[-0.000014000000192027073,0.11983300000429153],\"x_packing\":[0.000014000000192027073,-0.01399299968034029]}\nSelection: {\"kind\":\"array_slice\",\"start\":[995,995],\"count\":[10,10],\"step\":[1,1],\"axes\":[\"/y\",\"/x\"]}\nSource identity: {\"url\":\"http://127.0.0.1:62110/source.nc\",\"version\":{\"etag\":\"\\\"dabd2f44c800a9855aa3724806317072\\\"\",\"size\":4567126,\"metadata\":false},\"authenticated_scope\":null}\nQuality policies: goes_dqf_good\nActual native grid/CRS: {\"model\":{\"coordinate_model\":\"geostationary\",\"perspective_point_height\":35786023.0,\"semi_major_axis\":6378137.0,\"semi_minor_axis\":6356752.31414,\"longitude_of_projection_origin\":-75.0,\"sweep_angle_axis\":\"x\",\"y_packing\":[-0.000014000000192027073,0.11983300000429153],\"x_packing\":[0.000014000000192027073,-0.01399299968034029]},\"dimension_order\":[\"y\",\"x\"],\"registration\":\"native pixel centers\",\"stored_axes\":\"original codes and packing retained; navigation applies packing explicitly\",\"geographic_selection\":\"inverse navigation of each native center, closed WGS84 polygon; space excluded\",\"unsupported\":[\"reprojection\",\"resampling\",\"antimeridian wrapping\",\"other ABI projection parameters\"]}\nSource shape [2000,2000] / \"/CMI\": required allocated physical chunks 1; decoded source-chunk byte estimate 260000\nSource shape [2000,2000] / \"/DQF\": required allocated physical chunks 1; decoded source-chunk byte estimate 262000\nRequested AOI: {\"kind\":\"bounds\",\"crs\":\"EPSG:4326\",\"bbox\":[-75.02700191605705,38.46249871051421,-74.97299764540202,38.522035705265466]}\nIncluded native centers: 100\nMembership: source-global visible centers in original closed WGS84 polygon\nPhysical plan and resource admission: Tile-Ripper inspection (not a saved execution plan)\nResolved source-global indices: start [995,995], count [10,10], step [1,1]\n  OR_ABI-L2-CMIPM1-M6C02_G19_s20262971600289_e20262971600347_c20262971600379 / /CMI: 10 x 10 native pixels; hdf5-reader 0.9.3; 0 timestamp(s)\n  OR_ABI-L2-CMIPM1-M6C02_G19_s20262971600289_e20262971600347_c20262971600379 / /DQF: 10 x 10 native pixels; hdf5-reader 0.9.3; 0 timestamp(s)\n    Native CRS HDF5:stored_axes:/x,/y; source window x=995 y=995 width=10 height=10\n    Native CRS HDF5:stored_axes:/x,/y; source window x=995 y=995 width=10 height=10\nEstimated logical output value bytes: null (encoding, coordinates and metadata excluded).\nSource identities are checked before and after execution; per-object validation is not an atomic dataset snapshot.\nExpected data-library reads: 0 local, 2 remote (estimates; metadata excluded).\nEstimated unique encoded data bytes: 155680\nMetadata cache: 0 reused inspections; remaining metadata inspected now.\nNative grids; no resampling, calibration or compositing.\nPhysical tile/chunk selections and native CRS/window details: --json.\n  Limit: No implicit reprojection or compositing\n  Limit: buffer_bytes bounds admitted native sample/chunk payloads, not process RSS or external codec/cache scratch\n  Limit: Diagnostic JSON is not executable; use prepared runtime bindings or prepare anew from the request\n  Limit: HDF5 callbacks only: explicit rank-two slices; actual stored axis centers accompany every chunk; transform is an array-index placeholder, not geolocation. Apply scientific and coordinate scale/offset explicitly. CF time remains metadata.\n  Limit: HDF5 callbacks only: explicit rank-two slices; actual stored axis centers accompany every chunk; transform is an array-index placeholder, not geolocation. Apply scientific and coordinate scale/offset explicitly. CF time remains metadata.\n\nUnsupported operations: [\"reprojection\",\"resampling\",\"antimeridian wrapping\",\"other ABI projection parameters\"]\n"
+    },
+    {
+      "case": "chunk-crossing",
+      "process": {
+        "code": 0,
+        "wall_seconds": 0.04924520800705068,
+        "cpu_seconds": 0.026624,
+        "peak_rss_bytes": 22839296
+      },
+      "verification": {
+        "native_selection": {
+          "kind": "array_slice",
+          "start": [
+            1038,
+            995
+          ],
+          "count": [
+            8,
+            10
+          ],
+          "step": [
+            1,
+            1
+          ],
+          "axes": [
+            "/y",
+            "/x"
+          ]
+        },
+        "variables": [
+          {
+            "name": "CMI",
+            "dtype": "int16",
+            "samples": 80,
+            "sha256": "3bd11dd97d5d7ecff8263e2cde1b0d40eec139e75d93270ebcbbe0e175d09ddb",
+            "valid_centers": 80,
+            "source_fill": -1
+          },
+          {
+            "name": "DQF",
+            "dtype": "int8",
+            "samples": 80,
+            "sha256": "5b6fb58e61fa475939767d68a446f97f1bff02c0e5935a3ea8bb51e6515783d8",
+            "valid_centers": 80,
+            "source_fill": -1
+          }
+        ],
+        "coordinate_max_error_degrees": 4.68247662865906e-12,
+        "visible_centers": 80,
+        "included_centers": 80,
+        "netcdf4_raw_equal": true,
+        "xarray_reopen": true,
+        "output_objects": 58,
+        "output_bytes": 313012,
+        "stream": {
+          "native_samples": {
+            "CMI": 80,
+            "DQF": 80
+          },
+          "all_raw_bits_and_masks_equal_to_independently_verified_output": true
+        }
+      },
+      "preparation_timings": {
+        "inspection_seconds": 0.010276,
+        "selection_seconds": 2.583e-06,
+        "physical_plan_seconds": 0.001974417
+      },
+      "execution": {
+        "source_reads": [],
+        "scheduler": {
+          "workers": 1,
+          "per_host": 4,
+          "buffer_bytes": 25165824,
+          "reserved_bytes_peak": 3965589,
+          "reader_state_reserved_bytes": 0,
+          "prepared_native_metadata_bytes": 873340,
+          "authenticated_transport_reserved_bytes": 0,
+          "prepared_v3_metadata_index_bytes": 0,
+          "active_workers_peak": 1,
+          "completed_tasks": 3,
+          "admitted_jobs": 3,
+          "cog_reader_scope": "selection",
+          "seconds": 0.004611584,
+          "order": "plan",
+          "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+          "prepared_hdf5_bytes": 873340,
+          "native_metadata": {
+            "retained_sources": 0,
+            "retained_bytes": 0,
+            "physical_metadata_sources": 0,
+            "physical_metadata_bytes": 0,
+            "cap_bytes": 0,
+            "skipped_sources": 0,
+            "scope": "this Prepared only; immutable version-bound parser pages; never a data cache",
+            "authenticated_sources": 0,
+            "authenticated_transport": {}
+          },
+          "native_strategies": [
+            {
+              "asset_id": "OR_ABI-L2-CMIPM1-M6C02_G19_s20262971600289_e20262971600347_c20262971600379",
+              "task_reserved_bytes": 3092249,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "OR_ABI-L2-CMIPM1-M6C02_G19_s20262971600289_e20262971600347_c20262971600379",
+              "task_reserved_bytes": 3086792,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "OR_ABI-L2-CMIPM1-M6C02_G19_s20262971600289_e20262971600347_c20262971600379",
+              "task_reserved_bytes": 2642871,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            }
+          ]
+        },
+        "transport": {
+          "OR_ABI-L2-CMIPM1-M6C02_G19_s20262971600289_e20262971600347_c20262971600379": {
+            "phases": {
+              "hdf5_science_payload": {
+                "GET source.nc": {
+                  "seconds": 0.001799166,
+                  "attempts": 3,
+                  "bytes": 309264,
+                  "retries": 0,
+                  "statuses": {
+                    "206": 3
+                  }
+                }
+              },
+              "hdf5_version_validation": {
+                "HEAD source.nc": {
+                  "seconds": 0.0011366660000000002,
+                  "attempts": 3,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 3
+                  }
+                }
+              },
+              "metadata_index_discovery": {
+                "GET source.nc": {
+                  "seconds": 0.0031895000000000005,
+                  "attempts": 6,
+                  "bytes": 127062,
+                  "retries": 0,
+                  "statuses": {
+                    "206": 6
+                  }
+                },
+                "HEAD source.nc": {
+                  "seconds": 0.000643791,
+                  "attempts": 2,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 2
+                  }
+                }
+              },
+              "planning": {
+                "HEAD source.nc": {
+                  "seconds": 0.001496416,
+                  "attempts": 1,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 1
+                  }
+                }
+              }
+            },
+            "requests": 15,
+            "bytes": 436326,
+            "retries": 0,
+            "seconds": 0.008251501,
+            "objects": {
+              "GET source.nc": {
+                "seconds": 0.004990623999999999,
+                "attempts": 9,
+                "bytes": 436326,
+                "retries": 0,
+                "statuses": {
+                  "206": 9
+                }
+              },
+              "HEAD source.nc": {
+                "seconds": 0.003278791,
+                "attempts": 6,
+                "bytes": 0,
+                "retries": 0,
+                "statuses": {
+                  "200": 6
+                }
+              }
+            },
+            "ranges": {
+              "source.nc 0:16384": {
+                "seconds": 0.000683917,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 16384:32768": {
+                "seconds": 0.0004655,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 2063804:2219207": {
+                "seconds": 0.000656583,
+                "attempts": 1,
+                "bytes": 155403,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 2219207:2372791": {
+                "seconds": 0.00074775,
+                "attempts": 1,
+                "bytes": 153584,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 32768:65536": {
+                "seconds": 0.000476292,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 4554752:4567126": {
+                "seconds": 0.000420708,
+                "attempts": 1,
+                "bytes": 12374,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 4562060:4562337": {
+                "seconds": 0.000393083,
+                "attempts": 1,
+                "bytes": 277,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 49152:65536": {
+                "seconds": 0.000517709,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 49152:81920": {
+                "seconds": 0.000620125,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              }
+            },
+            "authenticated_http": null,
+            "cached_metadata_bytes": 128246,
+            "inspection_reuse": {
+              "source_inspections": 1,
+              "metadata_parser_opens": 1,
+              "profile_discoveries": 2,
+              "profile_cache_hits": 2,
+              "full_index_scans": 2,
+              "index_cache_hits": 3,
+              "coordinate_axis_reads": 2,
+              "coordinate_cache_hits": 6,
+              "coordinate_index_traversals": 0,
+              "coordinate_decoder_opens": 0,
+              "science_decoder_opens": 3,
+              "metadata_range_hits": 550,
+              "metadata_range_misses": 6,
+              "profile_seconds": 0.0007175829999999999,
+              "index_seconds": 1.3749999999999999e-05,
+              "coordinate_seconds": 0.0007414590000000001,
+              "retention_reservation_bytes": 725028,
+              "interpretation": "native-hdf5-stored-v1",
+              "index_policy": "full",
+              "sealed": true,
+              "opening": {
+                "source_identity_and_transport_seconds": 0.005523459,
+                "superblock_parser_open_seconds": 0.00071775,
+                "root_group_time_metadata_seconds": 0.001116625
+              }
+            }
+          }
+        },
+        "decoded_source_chunks": 3,
+        "filled_source_chunks": 0,
+        "first_output_seconds": 0.00191725,
+        "assembly_seconds": 0.0,
+        "source_retrieval_seconds": null,
+        "allocation_seconds": null,
+        "copying_seconds": null,
+        "output_setup_seconds": 0.0,
+        "output_finalize_seconds": 0.0,
+        "output_io": null,
+        "native_materialized_bytes": null,
+        "source_data_requests": 3,
+        "source_data_bytes": 309264,
+        "chunks": 3,
+        "decoded_bytes": 240,
+        "non_nodata_pixels": 160,
+        "planning_seconds": 0.000899375,
+        "source_open_seconds": 0.001839833,
+        "read_decode_seconds": 0.001527918,
+        "sink_seconds": 0.000980084,
+        "masking_seconds": 0.0,
+        "remote_requests": null,
+        "remote_bytes": null
+      },
+      "output_io": {
+        "writes": 59,
+        "bytes_written": 122068,
+        "encode_seconds": 9.821199999999974e-05,
+        "storage_write_seconds": 0.006713575,
+        "object_bookkeeping_bound": 57,
+        "consumer_reservation_bytes": 8388608
+      },
+      "human_plan": "Tile-Ripper native scientific product: goes19-abi-cmipm1-c02\nProvider: pinned\nWorking-memory budget: 33554432 bytes (includes 8388608 reserved for product/output work)\n\nObservation: OR_ABI-L2-CMIPM1-M6C02_G19_s20262971600289_e20262971600347_c20262971600379\nNative coordinate model: {\"coordinate_model\":\"geostationary\",\"perspective_point_height\":35786023.0,\"semi_major_axis\":6378137.0,\"semi_minor_axis\":6356752.31414,\"longitude_of_projection_origin\":-75.0,\"sweep_angle_axis\":\"x\",\"y_packing\":[-0.000014000000192027073,0.11983300000429153],\"x_packing\":[0.000014000000192027073,-0.01399299968034029]}\nSelection: {\"kind\":\"array_slice\",\"start\":[1038,995],\"count\":[8,10],\"step\":[1,1],\"axes\":[\"/y\",\"/x\"]}\nSource identity: {\"url\":\"http://127.0.0.1:62110/source.nc\",\"version\":{\"etag\":\"\\\"dabd2f44c800a9855aa3724806317072\\\"\",\"size\":4567126,\"metadata\":false},\"authenticated_scope\":null}\nQuality policies: goes_dqf_good\nActual native grid/CRS: {\"model\":{\"coordinate_model\":\"geostationary\",\"perspective_point_height\":35786023.0,\"semi_major_axis\":6378137.0,\"semi_minor_axis\":6356752.31414,\"longitude_of_projection_origin\":-75.0,\"sweep_angle_axis\":\"x\",\"y_packing\":[-0.000014000000192027073,0.11983300000429153],\"x_packing\":[0.000014000000192027073,-0.01399299968034029]},\"dimension_order\":[\"y\",\"x\"],\"registration\":\"native pixel centers\",\"stored_axes\":\"original codes and packing retained; navigation applies packing explicitly\",\"geographic_selection\":\"inverse navigation of each native center, closed WGS84 polygon; space excluded\",\"unsupported\":[\"reprojection\",\"resampling\",\"antimeridian wrapping\",\"other ABI projection parameters\"]}\nSource shape [2000,2000] / \"/CMI\": required allocated physical chunks 2; decoded source-chunk byte estimate 520000\nSource shape [2000,2000] / \"/DQF\": required allocated physical chunks 1; decoded source-chunk byte estimate 262000\nRequested AOI: {\"kind\":\"array_slice\",\"start\":[1038,995],\"count\":[8,10],\"step\":[1,1],\"axes\":[\"/y\",\"/x\"]}\nIncluded native centers: 80\nMembership: source-global visible centers in original closed WGS84 polygon\nPhysical plan and resource admission: Tile-Ripper inspection (not a saved execution plan)\nResolved source-global indices: start [1038,995], count [8,10], step [1,1]\n  OR_ABI-L2-CMIPM1-M6C02_G19_s20262971600289_e20262971600347_c20262971600379 / /CMI: 10 x 8 native pixels; hdf5-reader 0.9.3; 0 timestamp(s)\n  OR_ABI-L2-CMIPM1-M6C02_G19_s20262971600289_e20262971600347_c20262971600379 / /DQF: 10 x 8 native pixels; hdf5-reader 0.9.3; 0 timestamp(s)\n    Native CRS HDF5:stored_axes:/x,/y; source window x=995 y=1038 width=10 height=8\n    Native CRS HDF5:stored_axes:/x,/y; source window x=995 y=1038 width=10 height=8\nEstimated logical output value bytes: null (encoding, coordinates and metadata excluded).\nSource identities are checked before and after execution; per-object validation is not an atomic dataset snapshot.\nExpected data-library reads: 0 local, 3 remote (estimates; metadata excluded).\nEstimated unique encoded data bytes: 309264\nMetadata cache: 0 reused inspections; remaining metadata inspected now.\nNative grids; no resampling, calibration or compositing.\nPhysical tile/chunk selections and native CRS/window details: --json.\n  Limit: No implicit reprojection or compositing\n  Limit: buffer_bytes bounds admitted native sample/chunk payloads, not process RSS or external codec/cache scratch\n  Limit: Diagnostic JSON is not executable; use prepared runtime bindings or prepare anew from the request\n  Limit: HDF5 callbacks only: explicit rank-two slices; actual stored axis centers accompany every chunk; transform is an array-index placeholder, not geolocation. Apply scientific and coordinate scale/offset explicitly. CF time remains metadata.\n  Limit: HDF5 callbacks only: explicit rank-two slices; actual stored axis centers accompany every chunk; transform is an array-index placeholder, not geolocation. Apply scientific and coordinate scale/offset explicitly. CF time remains metadata.\n\nUnsupported operations: [\"reprojection\",\"resampling\",\"antimeridian wrapping\",\"other ABI projection parameters\"]\n"
+    },
+    {
+      "case": "native-strided",
+      "process": {
+        "code": 0,
+        "wall_seconds": 0.04622454199125059,
+        "cpu_seconds": 0.02541,
+        "peak_rss_bytes": 22659072
+      },
+      "verification": {
+        "native_selection": {
+          "kind": "array_slice",
+          "start": [
+            995,
+            995
+          ],
+          "count": [
+            4,
+            4
+          ],
+          "step": [
+            3,
+            2
+          ],
+          "axes": [
+            "/y",
+            "/x"
+          ]
+        },
+        "variables": [
+          {
+            "name": "CMI",
+            "dtype": "int16",
+            "samples": 16,
+            "sha256": "bcaad09d7f801d49786b76d26341a94153e740762a1169c28d6446d7a5f4b755",
+            "valid_centers": 16,
+            "source_fill": -1
+          },
+          {
+            "name": "DQF",
+            "dtype": "int8",
+            "samples": 16,
+            "sha256": "374708fff7719dd5979ec875d56cd2286f6d3cf7ec317a3b25632aab28ec37bb",
+            "valid_centers": 16,
+            "source_fill": -1
+          }
+        ],
+        "coordinate_max_error_degrees": 4.68247662865906e-12,
+        "visible_centers": 16,
+        "included_centers": 16,
+        "netcdf4_raw_equal": true,
+        "xarray_reopen": true,
+        "output_objects": 58,
+        "output_bytes": 305148,
+        "stream": {
+          "native_samples": {
+            "CMI": 16,
+            "DQF": 16
+          },
+          "all_raw_bits_and_masks_equal_to_independently_verified_output": true
+        }
+      },
+      "preparation_timings": {
+        "inspection_seconds": 0.008935792,
+        "selection_seconds": 6.666e-06,
+        "physical_plan_seconds": 0.001720834
+      },
+      "execution": {
+        "source_reads": [],
+        "scheduler": {
+          "workers": 1,
+          "per_host": 4,
+          "buffer_bytes": 25165824,
+          "reserved_bytes_peak": 3963741,
+          "reader_state_reserved_bytes": 0,
+          "prepared_native_metadata_bytes": 871652,
+          "authenticated_transport_reserved_bytes": 0,
+          "prepared_v3_metadata_index_bytes": 0,
+          "active_workers_peak": 1,
+          "completed_tasks": 2,
+          "admitted_jobs": 2,
+          "cog_reader_scope": "selection",
+          "seconds": 0.002762958,
+          "order": "plan",
+          "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+          "prepared_hdf5_bytes": 871652,
+          "native_metadata": {
+            "retained_sources": 0,
+            "retained_bytes": 0,
+            "physical_metadata_sources": 0,
+            "physical_metadata_bytes": 0,
+            "cap_bytes": 0,
+            "skipped_sources": 0,
+            "scope": "this Prepared only; immutable version-bound parser pages; never a data cache",
+            "authenticated_sources": 0,
+            "authenticated_transport": {}
+          },
+          "native_strategies": [
+            {
+              "asset_id": "OR_ABI-L2-CMIPM1-M6C02_G19_s20262971600289_e20262971600347_c20262971600379",
+              "task_reserved_bytes": 3092089,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            },
+            {
+              "asset_id": "OR_ABI-L2-CMIPM1-M6C02_G19_s20262971600289_e20262971600347_c20262971600379",
+              "task_reserved_bytes": 2642711,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            }
+          ]
+        },
+        "transport": {
+          "OR_ABI-L2-CMIPM1-M6C02_G19_s20262971600289_e20262971600347_c20262971600379": {
+            "phases": {
+              "hdf5_science_payload": {
+                "GET source.nc": {
+                  "seconds": 0.001024583,
+                  "attempts": 2,
+                  "bytes": 155680,
+                  "retries": 0,
+                  "statuses": {
+                    "206": 2
+                  }
+                }
+              },
+              "hdf5_version_validation": {
+                "HEAD source.nc": {
+                  "seconds": 0.000978792,
+                  "attempts": 3,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 3
+                  }
+                }
+              },
+              "metadata_index_discovery": {
+                "GET source.nc": {
+                  "seconds": 0.002141415,
+                  "attempts": 6,
+                  "bytes": 127062,
+                  "retries": 0,
+                  "statuses": {
+                    "206": 6
+                  }
+                },
+                "HEAD source.nc": {
+                  "seconds": 0.000458875,
+                  "attempts": 2,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 2
+                  }
+                }
+              },
+              "planning": {
+                "HEAD source.nc": {
+                  "seconds": 0.00132625,
+                  "attempts": 1,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 1
+                  }
+                }
+              }
+            },
+            "requests": 14,
+            "bytes": 282742,
+            "retries": 0,
+            "seconds": 0.005915333,
+            "objects": {
+              "GET source.nc": {
+                "seconds": 0.0031679150000000003,
+                "attempts": 8,
+                "bytes": 282742,
+                "retries": 0,
+                "statuses": {
+                  "206": 8
+                }
+              },
+              "HEAD source.nc": {
+                "seconds": 0.002766041,
+                "attempts": 6,
+                "bytes": 0,
+                "retries": 0,
+                "statuses": {
+                  "200": 6
+                }
+              }
+            },
+            "ranges": {
+              "source.nc 0:16384": {
+                "seconds": 0.000438042,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 16384:32768": {
+                "seconds": 0.000312291,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 2063804:2219207": {
+                "seconds": 0.000635625,
+                "attempts": 1,
+                "bytes": 155403,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 32768:65536": {
+                "seconds": 0.000417833,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 4554752:4567126": {
+                "seconds": 0.00027,
+                "attempts": 1,
+                "bytes": 12374,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 4562060:4562337": {
+                "seconds": 0.00038725,
+                "attempts": 1,
+                "bytes": 277,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 49152:65536": {
+                "seconds": 0.000345417,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 49152:81920": {
+                "seconds": 0.000352375,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              }
+            },
+            "authenticated_http": null,
+            "cached_metadata_bytes": 128246,
+            "inspection_reuse": {
+              "source_inspections": 1,
+              "metadata_parser_opens": 1,
+              "profile_discoveries": 2,
+              "profile_cache_hits": 2,
+              "full_index_scans": 2,
+              "index_cache_hits": 2,
+              "coordinate_axis_reads": 2,
+              "coordinate_cache_hits": 6,
+              "coordinate_index_traversals": 0,
+              "coordinate_decoder_opens": 0,
+              "science_decoder_opens": 2,
+              "metadata_range_hits": 481,
+              "metadata_range_misses": 6,
+              "profile_seconds": 0.000553083,
+              "index_seconds": 1.5584000000000002e-05,
+              "coordinate_seconds": 0.000487792,
+              "retention_reservation_bytes": 725028,
+              "interpretation": "native-hdf5-stored-v1",
+              "index_policy": "full",
+              "sealed": true,
+              "opening": {
+                "source_identity_and_transport_seconds": 0.005296542,
+                "superblock_parser_open_seconds": 0.00046825,
+                "root_group_time_metadata_seconds": 0.000791666
+              }
+            }
+          }
+        },
+        "decoded_source_chunks": 2,
+        "filled_source_chunks": 0,
+        "first_output_seconds": 0.001907833,
+        "assembly_seconds": 0.0,
+        "source_retrieval_seconds": null,
+        "allocation_seconds": null,
+        "copying_seconds": null,
+        "output_setup_seconds": 0.0,
+        "output_finalize_seconds": 0.0,
+        "output_io": null,
+        "native_materialized_bytes": null,
+        "source_data_requests": 2,
+        "source_data_bytes": 155680,
+        "chunks": 2,
+        "decoded_bytes": 48,
+        "non_nodata_pixels": 32,
+        "planning_seconds": 0.000794291,
+        "source_open_seconds": 0.0010534580000000002,
+        "read_decode_seconds": 0.0008287079999999999,
+        "sink_seconds": 0.000613124,
+        "masking_seconds": 0.0,
+        "remote_requests": null,
+        "remote_bytes": null
+      },
+      "output_io": {
+        "writes": 57,
+        "bytes_written": 118558,
+        "encode_seconds": 5.7499000000000054e-05,
+        "storage_write_seconds": 0.0066345430000000006,
+        "object_bookkeeping_bound": 57,
+        "consumer_reservation_bytes": 8388608
+      },
+      "human_plan": "Tile-Ripper native scientific product: goes19-abi-cmipm1-c02\nProvider: pinned\nWorking-memory budget: 33554432 bytes (includes 8388608 reserved for product/output work)\n\nObservation: OR_ABI-L2-CMIPM1-M6C02_G19_s20262971600289_e20262971600347_c20262971600379\nNative coordinate model: {\"coordinate_model\":\"geostationary\",\"perspective_point_height\":35786023.0,\"semi_major_axis\":6378137.0,\"semi_minor_axis\":6356752.31414,\"longitude_of_projection_origin\":-75.0,\"sweep_angle_axis\":\"x\",\"y_packing\":[-0.000014000000192027073,0.11983300000429153],\"x_packing\":[0.000014000000192027073,-0.01399299968034029]}\nSelection: {\"kind\":\"array_slice\",\"start\":[995,995],\"count\":[4,4],\"step\":[3,2],\"axes\":[\"/y\",\"/x\"]}\nSource identity: {\"url\":\"http://127.0.0.1:62110/source.nc\",\"version\":{\"etag\":\"\\\"dabd2f44c800a9855aa3724806317072\\\"\",\"size\":4567126,\"metadata\":false},\"authenticated_scope\":null}\nQuality policies: goes_dqf_good\nActual native grid/CRS: {\"model\":{\"coordinate_model\":\"geostationary\",\"perspective_point_height\":35786023.0,\"semi_major_axis\":6378137.0,\"semi_minor_axis\":6356752.31414,\"longitude_of_projection_origin\":-75.0,\"sweep_angle_axis\":\"x\",\"y_packing\":[-0.000014000000192027073,0.11983300000429153],\"x_packing\":[0.000014000000192027073,-0.01399299968034029]},\"dimension_order\":[\"y\",\"x\"],\"registration\":\"native pixel centers\",\"stored_axes\":\"original codes and packing retained; navigation applies packing explicitly\",\"geographic_selection\":\"inverse navigation of each native center, closed WGS84 polygon; space excluded\",\"unsupported\":[\"reprojection\",\"resampling\",\"antimeridian wrapping\",\"other ABI projection parameters\"]}\nSource shape [2000,2000] / \"/CMI\": required allocated physical chunks 1; decoded source-chunk byte estimate 260000\nSource shape [2000,2000] / \"/DQF\": required allocated physical chunks 1; decoded source-chunk byte estimate 262000\nRequested AOI: {\"kind\":\"array_slice\",\"start\":[995,995],\"count\":[4,4],\"step\":[3,2],\"axes\":[\"/y\",\"/x\"]}\nIncluded native centers: 16\nMembership: source-global visible centers in original closed WGS84 polygon\nPhysical plan and resource admission: Tile-Ripper inspection (not a saved execution plan)\nResolved source-global indices: start [995,995], count [4,4], step [3,2]\n  OR_ABI-L2-CMIPM1-M6C02_G19_s20262971600289_e20262971600347_c20262971600379 / /CMI: 4 x 4 native pixels; hdf5-reader 0.9.3; 0 timestamp(s)\n  OR_ABI-L2-CMIPM1-M6C02_G19_s20262971600289_e20262971600347_c20262971600379 / /DQF: 4 x 4 native pixels; hdf5-reader 0.9.3; 0 timestamp(s)\n    Native CRS HDF5:stored_axes:/x,/y; source window x=995 y=995 width=4 height=4\n    Native CRS HDF5:stored_axes:/x,/y; source window x=995 y=995 width=4 height=4\nEstimated logical output value bytes: null (encoding, coordinates and metadata excluded).\nSource identities are checked before and after execution; per-object validation is not an atomic dataset snapshot.\nExpected data-library reads: 0 local, 2 remote (estimates; metadata excluded).\nEstimated unique encoded data bytes: 155680\nMetadata cache: 0 reused inspections; remaining metadata inspected now.\nNative grids; no resampling, calibration or compositing.\nPhysical tile/chunk selections and native CRS/window details: --json.\n  Limit: No implicit reprojection or compositing\n  Limit: buffer_bytes bounds admitted native sample/chunk payloads, not process RSS or external codec/cache scratch\n  Limit: Diagnostic JSON is not executable; use prepared runtime bindings or prepare anew from the request\n  Limit: HDF5 callbacks only: explicit rank-two slices; actual stored axis centers accompany every chunk; transform is an array-index placeholder, not geolocation. Apply scientific and coordinate scale/offset explicitly. CF time remains metadata.\n  Limit: HDF5 callbacks only: explicit rank-two slices; actual stored axis centers accompany every chunk; transform is an array-index placeholder, not geolocation. Apply scientific and coordinate scale/offset explicitly. CF time remains metadata.\n\nUnsupported operations: [\"reprojection\",\"resampling\",\"antimeridian wrapping\",\"other ABI projection parameters\"]\n"
+    }
+  ]
+}

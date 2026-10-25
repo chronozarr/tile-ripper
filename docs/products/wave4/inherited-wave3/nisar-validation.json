@@ -1,0 +1,2197 @@
+{
+  "status": "passed",
+  "scope": "one real provisional GCOV P05023/product1.0.11/spec1.5.0; frequencyA HHHH only, original UTM16N native-index selection",
+  "cases": [
+    {
+      "case": "center",
+      "plan": {
+        "code": 0,
+        "wall_seconds": 0.03591416700510308,
+        "cpu_seconds": 0.01886,
+        "peak_rss_bytes": 21741568
+      },
+      "fetch": {
+        "code": 0,
+        "wall_seconds": 0.05733929100097157,
+        "cpu_seconds": 0.029096999999999998,
+        "peak_rss_bytes": 29360128
+      },
+      "stream": {
+        "code": 0,
+        "wall_seconds": 0.03919941699132323,
+        "cpu_seconds": 0.022014,
+        "peak_rss_bytes": 26165248
+      },
+      "verification": {
+        "dtype": "float32",
+        "samples": 64,
+        "raw_bits_sha256": "232713f7f03ec926306cd7ff037657c311e8b249ce86ca7e3d95d3178946e1e1",
+        "valid_centers": 64,
+        "coordinate_max_error_degrees": 1.4210854715202004e-14,
+        "xarray_reopen": true,
+        "storage_fill": 0,
+        "cf_fill": "NaN",
+        "output_objects": 40,
+        "output_bytes": 222081,
+        "stream": {
+          "native_samples": {
+            "HHHH": 64
+          },
+          "all_raw_bits_and_masks_equal_to_independently_verified_output": true
+        }
+      },
+      "execution": {
+        "source_reads": [],
+        "scheduler": {
+          "workers": 1,
+          "per_host": 4,
+          "buffer_bytes": 58720256,
+          "reserved_bytes_peak": 25767136,
+          "reader_state_reserved_bytes": 0,
+          "prepared_native_metadata_bytes": 8548476,
+          "authenticated_transport_reserved_bytes": 0,
+          "prepared_v3_metadata_index_bytes": 0,
+          "active_workers_peak": 1,
+          "completed_tasks": 1,
+          "admitted_jobs": 1,
+          "cog_reader_scope": "selection",
+          "seconds": 0.003390209,
+          "order": "plan",
+          "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+          "prepared_hdf5_bytes": 8548476,
+          "native_metadata": {
+            "retained_sources": 0,
+            "retained_bytes": 0,
+            "physical_metadata_sources": 0,
+            "physical_metadata_bytes": 0,
+            "cap_bytes": 0,
+            "skipped_sources": 0,
+            "scope": "this Prepared only; immutable version-bound parser pages; never a data cache",
+            "authenticated_sources": 0,
+            "authenticated_transport": {}
+          },
+          "native_strategies": [
+            {
+              "asset_id": "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001",
+              "task_reserved_bytes": 17218660,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            }
+          ]
+        },
+        "transport": {
+          "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001": {
+            "phases": {
+              "hdf5_science_payload": {
+                "GET source.nc": {
+                  "seconds": 0.001457958,
+                  "attempts": 1,
+                  "bytes": 659148,
+                  "retries": 0,
+                  "statuses": {
+                    "206": 1
+                  }
+                }
+              },
+              "hdf5_version_validation": {
+                "HEAD source.nc": {
+                  "seconds": 0.0006617509999999999,
+                  "attempts": 3,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 3
+                  }
+                }
+              },
+              "metadata_index_discovery": {
+                "GET source.nc": {
+                  "seconds": 0.015882957000000003,
+                  "attempts": 54,
+                  "bytes": 1687552,
+                  "retries": 0,
+                  "statuses": {
+                    "206": 54
+                  }
+                },
+                "HEAD source.nc": {
+                  "seconds": 0.000400958,
+                  "attempts": 2,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 2
+                  }
+                }
+              },
+              "planning": {
+                "HEAD source.nc": {
+                  "seconds": 0.001273584,
+                  "attempts": 1,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 1
+                  }
+                }
+              }
+            },
+            "requests": 61,
+            "bytes": 2346700,
+            "retries": 0,
+            "seconds": 0.019659629000000005,
+            "objects": {
+              "GET source.nc": {
+                "seconds": 0.017347791,
+                "attempts": 55,
+                "bytes": 2346700,
+                "retries": 0,
+                "statuses": {
+                  "206": 55
+                }
+              },
+              "HEAD source.nc": {
+                "seconds": 0.002337709,
+                "attempts": 6,
+                "bytes": 0,
+                "retries": 0,
+                "statuses": {
+                  "200": 6
+                }
+              }
+            },
+            "ranges": {
+              "source.nc 0:16384": {
+                "seconds": 0.000453,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 114688:131072": {
+                "seconds": 0.000289458,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 114688:147456": {
+                "seconds": 0.000351084,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 1294336:1310720": {
+                "seconds": 0.000322959,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 131072:147456": {
+                "seconds": 0.000309125,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 131072:163840": {
+                "seconds": 0.000345458,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 147456:180224": {
+                "seconds": 0.000322791,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 1622016:1638400": {
+                "seconds": 0.000239833,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 163840:196608": {
+                "seconds": 0.000314166,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 16384:32768": {
+                "seconds": 0.000223666,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 16384:49152": {
+                "seconds": 0.000306375,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 180224:196608": {
+                "seconds": 0.000237833,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 180224:212992": {
+                "seconds": 0.000272,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 196608:212992": {
+                "seconds": 0.000251,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 196608:229376": {
+                "seconds": 0.00025625,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 212992:229376": {
+                "seconds": 0.000251125,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 212992:245760": {
+                "seconds": 0.00026675,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 245760:262144": {
+                "seconds": 0.000241958,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 245760:278528": {
+                "seconds": 0.000254667,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 262144:278528": {
+                "seconds": 0.000251458,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 262144:294912": {
+                "seconds": 0.00024925,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 278528:294912": {
+                "seconds": 0.000226125,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 278528:311296": {
+                "seconds": 0.0002535,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 294912:311296": {
+                "seconds": 0.000240417,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 311296:327680": {
+                "seconds": 0.000223291,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 311296:344064": {
+                "seconds": 0.00027475,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 327680:344064": {
+                "seconds": 0.000283875,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 32768:49152": {
+                "seconds": 0.000457542,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 4194304:4489216": {
+                "seconds": 0.000656916,
+                "attempts": 1,
+                "bytes": 294912,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 427802624:427819008": {
+                "seconds": 0.000250125,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 4472832:4767744": {
+                "seconds": 0.000776209,
+                "attempts": 1,
+                "bytes": 294912,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 49152:65536": {
+                "seconds": 0.00022925,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 65536:81920": {
+                "seconds": 0.000228708,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 65536:98304": {
+                "seconds": 0.000357416,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 671744:688128": {
+                "seconds": 0.000294625,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7000293376:7000309760": {
+                "seconds": 0.000285459,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7000588288:7000604672": {
+                "seconds": 0.000280833,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7000883200:7000899584": {
+                "seconds": 0.000287625,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7000915968:7000932352": {
+                "seconds": 0.000248084,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7000932352:7000948736": {
+                "seconds": 0.000230166,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7000981504:7000997888": {
+                "seconds": 0.000275208,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7000997888:7001014272": {
+                "seconds": 0.000247833,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7000997888:7001030656": {
+                "seconds": 0.000259,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7001014272:7001030656": {
+                "seconds": 0.000261666,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7001030656:7001047040": {
+                "seconds": 0.00035775,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7001063424:7001079808": {
+                "seconds": 0.000227792,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7001079808:7001096192": {
+                "seconds": 0.000253458,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7001096192:7001112576": {
+                "seconds": 0.000250292,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7004487680:7004504064": {
+                "seconds": 0.000254625,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7007125504:7007141888": {
+                "seconds": 0.000232,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7008583680:7008600064": {
+                "seconds": 0.000249791,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7008616448:7008632832": {
+                "seconds": 0.000226667,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 81920:114688": {
+                "seconds": 0.000384333,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 961155243:961814391": {
+                "seconds": 0.001457458,
+                "attempts": 1,
+                "bytes": 659148,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 98304:114688": {
+                "seconds": 0.000289333,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              }
+            },
+            "authenticated_http": null,
+            "cached_metadata_bytes": 1704896,
+            "inspection_reuse": {
+              "source_inspections": 1,
+              "metadata_parser_opens": 1,
+              "profile_discoveries": 1,
+              "profile_cache_hits": 1,
+              "full_index_scans": 1,
+              "index_cache_hits": 1,
+              "coordinate_axis_reads": 2,
+              "coordinate_cache_hits": 2,
+              "coordinate_index_traversals": 0,
+              "coordinate_decoder_opens": 0,
+              "science_decoder_opens": 1,
+              "metadata_range_hits": 2057,
+              "metadata_range_misses": 54,
+              "profile_seconds": 0.001024542,
+              "index_seconds": 0.008841458,
+              "coordinate_seconds": 0.0026639999999999997,
+              "retention_reservation_bytes": 8500812,
+              "interpretation": "native-hdf5-stored-v1",
+              "index_policy": "full",
+              "sealed": true,
+              "opening": {
+                "source_identity_and_transport_seconds": 0.004309833,
+                "superblock_parser_open_seconds": 0.000484917,
+                "root_group_time_metadata_seconds": 0.000402417
+              }
+            }
+          }
+        },
+        "decoded_source_chunks": 1,
+        "filled_source_chunks": 0,
+        "first_output_seconds": 0.003362375,
+        "assembly_seconds": 0.0,
+        "source_retrieval_seconds": null,
+        "allocation_seconds": null,
+        "copying_seconds": null,
+        "output_setup_seconds": 0.0,
+        "output_finalize_seconds": 0.0,
+        "output_io": null,
+        "native_materialized_bytes": null,
+        "source_data_requests": 1,
+        "source_data_bytes": 659148,
+        "chunks": 1,
+        "decoded_bytes": 256,
+        "non_nodata_pixels": 64,
+        "planning_seconds": 0.000389,
+        "source_open_seconds": 0.001532958,
+        "read_decode_seconds": 0.001562958,
+        "sink_seconds": 0.000185041,
+        "masking_seconds": 0.0,
+        "remote_requests": null,
+        "remote_bytes": null
+      },
+      "preparation_timings": {
+        "inspection_seconds": 0.022723958,
+        "selection_seconds": 2e-06,
+        "physical_plan_seconds": 0.000977334
+      },
+      "output_io": {
+        "writes": 39,
+        "bytes_written": 97905,
+        "encode_seconds": 2.858299999999952e-05,
+        "storage_write_seconds": 0.0034724160000000003,
+        "object_bookkeeping_bound": 48,
+        "consumer_reservation_bytes": 8388608
+      }
+    },
+    {
+      "case": "corner",
+      "plan": {
+        "code": 0,
+        "wall_seconds": 0.03493958298349753,
+        "cpu_seconds": 0.018452,
+        "peak_rss_bytes": 21626880
+      },
+      "fetch": {
+        "code": 0,
+        "wall_seconds": 0.05595266699674539,
+        "cpu_seconds": 0.027982,
+        "peak_rss_bytes": 27607040
+      },
+      "stream": {
+        "code": 0,
+        "wall_seconds": 0.03635433301678859,
+        "cpu_seconds": 0.020032,
+        "peak_rss_bytes": 24379392
+      },
+      "verification": {
+        "dtype": "float32",
+        "samples": 64,
+        "raw_bits_sha256": "bd0189b8e6e6ab3e87fd07f63087061d591dbe6b524852d5e65e0a74c71c2b5a",
+        "valid_centers": 0,
+        "coordinate_max_error_degrees": 7.105427357601002e-15,
+        "xarray_reopen": true,
+        "storage_fill": 0,
+        "cf_fill": "NaN",
+        "output_objects": 40,
+        "output_bytes": 221905,
+        "stream": {
+          "native_samples": {
+            "HHHH": 64
+          },
+          "all_raw_bits_and_masks_equal_to_independently_verified_output": true
+        }
+      },
+      "execution": {
+        "source_reads": [],
+        "scheduler": {
+          "workers": 1,
+          "per_host": 4,
+          "buffer_bytes": 58720256,
+          "reserved_bytes_peak": 23803419,
+          "reader_state_reserved_bytes": 0,
+          "prepared_native_metadata_bytes": 8548400,
+          "authenticated_transport_reserved_bytes": 0,
+          "prepared_v3_metadata_index_bytes": 0,
+          "active_workers_peak": 1,
+          "completed_tasks": 1,
+          "admitted_jobs": 1,
+          "cog_reader_scope": "selection",
+          "seconds": 0.001208208,
+          "order": "plan",
+          "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+          "prepared_hdf5_bytes": 8548400,
+          "native_metadata": {
+            "retained_sources": 0,
+            "retained_bytes": 0,
+            "physical_metadata_sources": 0,
+            "physical_metadata_bytes": 0,
+            "cap_bytes": 0,
+            "skipped_sources": 0,
+            "scope": "this Prepared only; immutable version-bound parser pages; never a data cache",
+            "authenticated_sources": 0,
+            "authenticated_transport": {}
+          },
+          "native_strategies": [
+            {
+              "asset_id": "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001",
+              "task_reserved_bytes": 15255019,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            }
+          ]
+        },
+        "transport": {
+          "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001": {
+            "phases": {
+              "hdf5_science_payload": {
+                "GET source.nc": {
+                  "seconds": 0.000256125,
+                  "attempts": 1,
+                  "bytes": 4601,
+                  "retries": 0,
+                  "statuses": {
+                    "206": 1
+                  }
+                }
+              },
+              "hdf5_version_validation": {
+                "HEAD source.nc": {
+                  "seconds": 0.0006523750000000001,
+                  "attempts": 3,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 3
+                  }
+                }
+              },
+              "metadata_index_discovery": {
+                "GET source.nc": {
+                  "seconds": 0.015995540000000003,
+                  "attempts": 54,
+                  "bytes": 1687552,
+                  "retries": 0,
+                  "statuses": {
+                    "206": 54
+                  }
+                },
+                "HEAD source.nc": {
+                  "seconds": 0.000422333,
+                  "attempts": 2,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 2
+                  }
+                }
+              },
+              "planning": {
+                "HEAD source.nc": {
+                  "seconds": 0.001187291,
+                  "attempts": 1,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 1
+                  }
+                }
+              }
+            },
+            "requests": 61,
+            "bytes": 1692153,
+            "retries": 0,
+            "seconds": 0.018495166,
+            "objects": {
+              "GET source.nc": {
+                "seconds": 0.016258998000000004,
+                "attempts": 55,
+                "bytes": 1692153,
+                "retries": 0,
+                "statuses": {
+                  "206": 55
+                }
+              },
+              "HEAD source.nc": {
+                "seconds": 0.0022634160000000003,
+                "attempts": 6,
+                "bytes": 0,
+                "retries": 0,
+                "statuses": {
+                  "200": 6
+                }
+              }
+            },
+            "ranges": {
+              "source.nc 0:16384": {
+                "seconds": 0.000505208,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 114688:131072": {
+                "seconds": 0.000233125,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 114688:147456": {
+                "seconds": 0.000251042,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 1294336:1310720": {
+                "seconds": 0.000294709,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 131072:147456": {
+                "seconds": 0.000230208,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 131072:163840": {
+                "seconds": 0.000263042,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 147456:180224": {
+                "seconds": 0.000244792,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 1622016:1638400": {
+                "seconds": 0.00031,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 163840:196608": {
+                "seconds": 0.00025875,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 16384:32768": {
+                "seconds": 0.000251417,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 16384:49152": {
+                "seconds": 0.000317125,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 180224:196608": {
+                "seconds": 0.000254083,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 180224:212992": {
+                "seconds": 0.000290083,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 196608:212992": {
+                "seconds": 0.00023575,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 196608:229376": {
+                "seconds": 0.000318167,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 212992:229376": {
+                "seconds": 0.00023675,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 212992:245760": {
+                "seconds": 0.000260792,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 245760:262144": {
+                "seconds": 0.000255208,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 245760:278528": {
+                "seconds": 0.000259917,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 262144:278528": {
+                "seconds": 0.000365583,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 262144:294912": {
+                "seconds": 0.000266541,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 278528:294912": {
+                "seconds": 0.000249666,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 278528:311296": {
+                "seconds": 0.000262958,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 294912:311296": {
+                "seconds": 0.000238792,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 311296:327680": {
+                "seconds": 0.00023675,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 311296:344064": {
+                "seconds": 0.000267625,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 327680:344064": {
+                "seconds": 0.000336375,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 32768:49152": {
+                "seconds": 0.00026175,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 4194304:4489216": {
+                "seconds": 0.000611834,
+                "attempts": 1,
+                "bytes": 294912,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 427802624:427819008": {
+                "seconds": 0.000284333,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 4472832:4767744": {
+                "seconds": 0.000797792,
+                "attempts": 1,
+                "bytes": 294912,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 4759448:4764049": {
+                "seconds": 0.00025575,
+                "attempts": 1,
+                "bytes": 4601,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 49152:65536": {
+                "seconds": 0.000243792,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 65536:81920": {
+                "seconds": 0.000290958,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 65536:98304": {
+                "seconds": 0.000274916,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 671744:688128": {
+                "seconds": 0.00030675,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7000293376:7000309760": {
+                "seconds": 0.000341083,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7000588288:7000604672": {
+                "seconds": 0.000250875,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7000883200:7000899584": {
+                "seconds": 0.000267625,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7000915968:7000932352": {
+                "seconds": 0.000259833,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7000932352:7000948736": {
+                "seconds": 0.000306333,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7000981504:7000997888": {
+                "seconds": 0.000299583,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7000997888:7001014272": {
+                "seconds": 0.000280583,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7000997888:7001030656": {
+                "seconds": 0.000352541,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7001014272:7001030656": {
+                "seconds": 0.000276958,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7001030656:7001047040": {
+                "seconds": 0.000381417,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7001063424:7001079808": {
+                "seconds": 0.0002865,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7001079808:7001096192": {
+                "seconds": 0.000239167,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7001096192:7001112576": {
+                "seconds": 0.000250625,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7004487680:7004504064": {
+                "seconds": 0.000244334,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7007125504:7007141888": {
+                "seconds": 0.000266834,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7008583680:7008600064": {
+                "seconds": 0.00027825,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7008616448:7008632832": {
+                "seconds": 0.000341042,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 81920:114688": {
+                "seconds": 0.00026,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 98304:114688": {
+                "seconds": 0.000225417,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              }
+            },
+            "authenticated_http": null,
+            "cached_metadata_bytes": 1704896,
+            "inspection_reuse": {
+              "source_inspections": 1,
+              "metadata_parser_opens": 1,
+              "profile_discoveries": 1,
+              "profile_cache_hits": 1,
+              "full_index_scans": 1,
+              "index_cache_hits": 1,
+              "coordinate_axis_reads": 2,
+              "coordinate_cache_hits": 2,
+              "coordinate_index_traversals": 0,
+              "coordinate_decoder_opens": 0,
+              "science_decoder_opens": 1,
+              "metadata_range_hits": 2057,
+              "metadata_range_misses": 54,
+              "profile_seconds": 0.001137083,
+              "index_seconds": 0.008278167,
+              "coordinate_seconds": 0.0026612090000000003,
+              "retention_reservation_bytes": 8500808,
+              "interpretation": "native-hdf5-stored-v1",
+              "index_policy": "full",
+              "sealed": true,
+              "opening": {
+                "source_identity_and_transport_seconds": 0.004445083,
+                "superblock_parser_open_seconds": 0.00054175,
+                "root_group_time_metadata_seconds": 0.000436584
+              }
+            }
+          }
+        },
+        "decoded_source_chunks": 1,
+        "filled_source_chunks": 0,
+        "first_output_seconds": 0.001183125,
+        "assembly_seconds": 0.0,
+        "source_retrieval_seconds": null,
+        "allocation_seconds": null,
+        "copying_seconds": null,
+        "output_setup_seconds": 0.0,
+        "output_finalize_seconds": 0.0,
+        "output_io": null,
+        "native_materialized_bytes": null,
+        "source_data_requests": 1,
+        "source_data_bytes": 4601,
+        "chunks": 1,
+        "decoded_bytes": 256,
+        "non_nodata_pixels": 0,
+        "planning_seconds": 0.000407375,
+        "source_open_seconds": 0.000264792,
+        "read_decode_seconds": 0.000645667,
+        "sink_seconds": 0.0001805,
+        "masking_seconds": 0.0,
+        "remote_requests": null,
+        "remote_bytes": null
+      },
+      "preparation_timings": {
+        "inspection_seconds": 0.022977708,
+        "selection_seconds": 1.875e-06,
+        "physical_plan_seconds": 0.000965958
+      },
+      "output_io": {
+        "writes": 39,
+        "bytes_written": 97830,
+        "encode_seconds": 2.9541999999999752e-05,
+        "storage_write_seconds": 0.0036741250000000003,
+        "object_bookkeeping_bound": 48,
+        "consumer_reservation_bytes": 8388608
+      }
+    },
+    {
+      "case": "strided",
+      "plan": {
+        "code": 0,
+        "wall_seconds": 0.03357366699492559,
+        "cpu_seconds": 0.018113999999999998,
+        "peak_rss_bytes": 21741568
+      },
+      "fetch": {
+        "code": 0,
+        "wall_seconds": 0.05367241700878367,
+        "cpu_seconds": 0.027768,
+        "peak_rss_bytes": 28540928
+      },
+      "stream": {
+        "code": 0,
+        "wall_seconds": 0.03919083398068324,
+        "cpu_seconds": 0.022212999999999997,
+        "peak_rss_bytes": 26230784
+      },
+      "verification": {
+        "dtype": "float32",
+        "samples": 9,
+        "raw_bits_sha256": "adc3d4500ff236fe706d5449cf49ad13fa355c584cb71b1ac0dc38063e3665b3",
+        "valid_centers": 9,
+        "coordinate_max_error_degrees": 7.105427357601002e-15,
+        "xarray_reopen": true,
+        "storage_fill": 0,
+        "cf_fill": "NaN",
+        "output_objects": 40,
+        "output_bytes": 220497,
+        "stream": {
+          "native_samples": {
+            "HHHH": 9
+          },
+          "all_raw_bits_and_masks_equal_to_independently_verified_output": true
+        }
+      },
+      "execution": {
+        "source_reads": [],
+        "scheduler": {
+          "workers": 1,
+          "per_host": 4,
+          "buffer_bytes": 58720256,
+          "reserved_bytes_peak": 25766896,
+          "reader_state_reserved_bytes": 0,
+          "prepared_native_metadata_bytes": 8548396,
+          "authenticated_transport_reserved_bytes": 0,
+          "prepared_v3_metadata_index_bytes": 0,
+          "active_workers_peak": 1,
+          "completed_tasks": 1,
+          "admitted_jobs": 1,
+          "cog_reader_scope": "selection",
+          "seconds": 0.00300825,
+          "order": "plan",
+          "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+          "prepared_hdf5_bytes": 8548396,
+          "native_metadata": {
+            "retained_sources": 0,
+            "retained_bytes": 0,
+            "physical_metadata_sources": 0,
+            "physical_metadata_bytes": 0,
+            "cap_bytes": 0,
+            "skipped_sources": 0,
+            "scope": "this Prepared only; immutable version-bound parser pages; never a data cache",
+            "authenticated_sources": 0,
+            "authenticated_transport": {}
+          },
+          "native_strategies": [
+            {
+              "asset_id": "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001",
+              "task_reserved_bytes": 17218500,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            }
+          ]
+        },
+        "transport": {
+          "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001": {
+            "phases": {
+              "hdf5_science_payload": {
+                "GET source.nc": {
+                  "seconds": 0.00118725,
+                  "attempts": 1,
+                  "bytes": 659148,
+                  "retries": 0,
+                  "statuses": {
+                    "206": 1
+                  }
+                }
+              },
+              "hdf5_version_validation": {
+                "HEAD source.nc": {
+                  "seconds": 0.000595667,
+                  "attempts": 3,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 3
+                  }
+                }
+              },
+              "metadata_index_discovery": {
+                "GET source.nc": {
+                  "seconds": 0.014566169000000006,
+                  "attempts": 54,
+                  "bytes": 1687552,
+                  "retries": 0,
+                  "statuses": {
+                    "206": 54
+                  }
+                },
+                "HEAD source.nc": {
+                  "seconds": 0.000277833,
+                  "attempts": 2,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 2
+                  }
+                }
+              },
+              "planning": {
+                "HEAD source.nc": {
+                  "seconds": 0.001096792,
+                  "attempts": 1,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 1
+                  }
+                }
+              }
+            },
+            "requests": 61,
+            "bytes": 2346700,
+            "retries": 0,
+            "seconds": 0.017707000999999993,
+            "objects": {
+              "GET source.nc": {
+                "seconds": 0.015760665,
+                "attempts": 55,
+                "bytes": 2346700,
+                "retries": 0,
+                "statuses": {
+                  "206": 55
+                }
+              },
+              "HEAD source.nc": {
+                "seconds": 0.001972,
+                "attempts": 6,
+                "bytes": 0,
+                "retries": 0,
+                "statuses": {
+                  "200": 6
+                }
+              }
+            },
+            "ranges": {
+              "source.nc 0:16384": {
+                "seconds": 0.000382333,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 114688:131072": {
+                "seconds": 0.000250792,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 114688:147456": {
+                "seconds": 0.000270334,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 1294336:1310720": {
+                "seconds": 0.000387166,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 131072:147456": {
+                "seconds": 0.000235792,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 131072:163840": {
+                "seconds": 0.0002605,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 147456:180224": {
+                "seconds": 0.000255042,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 1622016:1638400": {
+                "seconds": 0.000269666,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 163840:196608": {
+                "seconds": 0.000255834,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 16384:32768": {
+                "seconds": 0.000225042,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 16384:49152": {
+                "seconds": 0.000269709,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 180224:196608": {
+                "seconds": 0.000226541,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 180224:212992": {
+                "seconds": 0.000241875,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 196608:212992": {
+                "seconds": 0.000222167,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 196608:229376": {
+                "seconds": 0.000245708,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 212992:229376": {
+                "seconds": 0.000218584,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 212992:245760": {
+                "seconds": 0.000256333,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 245760:262144": {
+                "seconds": 0.000217375,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 245760:278528": {
+                "seconds": 0.000258167,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 262144:278528": {
+                "seconds": 0.000213958,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 262144:294912": {
+                "seconds": 0.000230375,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 278528:294912": {
+                "seconds": 0.000227792,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 278528:311296": {
+                "seconds": 0.000243,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 294912:311296": {
+                "seconds": 0.000235625,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 311296:327680": {
+                "seconds": 0.000203625,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 311296:344064": {
+                "seconds": 0.000198584,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 327680:344064": {
+                "seconds": 0.000322167,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 32768:49152": {
+                "seconds": 0.000242917,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 4194304:4489216": {
+                "seconds": 0.00068,
+                "attempts": 1,
+                "bytes": 294912,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 427802624:427819008": {
+                "seconds": 0.000222208,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 4472832:4767744": {
+                "seconds": 0.000856875,
+                "attempts": 1,
+                "bytes": 294912,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 49152:65536": {
+                "seconds": 0.000223291,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 65536:81920": {
+                "seconds": 0.00022625,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 65536:98304": {
+                "seconds": 0.0002615,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 671744:688128": {
+                "seconds": 0.000281708,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7000293376:7000309760": {
+                "seconds": 0.000277,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7000588288:7000604672": {
+                "seconds": 0.000257375,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7000883200:7000899584": {
+                "seconds": 0.00022775,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7000915968:7000932352": {
+                "seconds": 0.000230542,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7000932352:7000948736": {
+                "seconds": 0.000230375,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7000981504:7000997888": {
+                "seconds": 0.000266917,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7000997888:7001014272": {
+                "seconds": 0.00026275,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7000997888:7001030656": {
+                "seconds": 0.000251416,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7001014272:7001030656": {
+                "seconds": 0.000243583,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7001030656:7001047040": {
+                "seconds": 0.000316125,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7001063424:7001079808": {
+                "seconds": 0.00024075,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7001079808:7001096192": {
+                "seconds": 0.000235625,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7001096192:7001112576": {
+                "seconds": 0.000264875,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7004487680:7004504064": {
+                "seconds": 0.000253,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7007125504:7007141888": {
+                "seconds": 0.000222,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7008583680:7008600064": {
+                "seconds": 0.00021875,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7008616448:7008632832": {
+                "seconds": 0.000231542,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 81920:114688": {
+                "seconds": 0.00027025,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 961155243:961814391": {
+                "seconds": 0.001186833,
+                "attempts": 1,
+                "bytes": 659148,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 98304:114688": {
+                "seconds": 0.000228416,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              }
+            },
+            "authenticated_http": null,
+            "cached_metadata_bytes": 1704896,
+            "inspection_reuse": {
+              "source_inspections": 1,
+              "metadata_parser_opens": 1,
+              "profile_discoveries": 1,
+              "profile_cache_hits": 1,
+              "full_index_scans": 1,
+              "index_cache_hits": 1,
+              "coordinate_axis_reads": 2,
+              "coordinate_cache_hits": 2,
+              "coordinate_index_traversals": 0,
+              "coordinate_decoder_opens": 0,
+              "science_decoder_opens": 1,
+              "metadata_range_hits": 2057,
+              "metadata_range_misses": 54,
+              "profile_seconds": 0.001042083,
+              "index_seconds": 0.007582125,
+              "coordinate_seconds": 0.002871958,
+              "retention_reservation_bytes": 8500812,
+              "interpretation": "native-hdf5-stored-v1",
+              "index_policy": "full",
+              "sealed": true,
+              "opening": {
+                "source_identity_and_transport_seconds": 0.004194292,
+                "superblock_parser_open_seconds": 0.000415083,
+                "root_group_time_metadata_seconds": 0.000358333
+              }
+            }
+          }
+        },
+        "decoded_source_chunks": 1,
+        "filled_source_chunks": 0,
+        "first_output_seconds": 0.002980666,
+        "assembly_seconds": 0.0,
+        "source_retrieval_seconds": null,
+        "allocation_seconds": null,
+        "copying_seconds": null,
+        "output_setup_seconds": 0.0,
+        "output_finalize_seconds": 0.0,
+        "output_io": null,
+        "native_materialized_bytes": null,
+        "source_data_requests": 1,
+        "source_data_bytes": 659148,
+        "chunks": 1,
+        "decoded_bytes": 36,
+        "non_nodata_pixels": 9,
+        "planning_seconds": 0.000346,
+        "source_open_seconds": 0.00125175,
+        "read_decode_seconds": 0.001465333,
+        "sink_seconds": 0.000180916,
+        "masking_seconds": 0.0,
+        "remote_requests": null,
+        "remote_bytes": null
+      },
+      "preparation_timings": {
+        "inspection_seconds": 0.021185166,
+        "selection_seconds": 1.875e-06,
+        "physical_plan_seconds": 0.000838041
+      },
+      "output_io": {
+        "writes": 39,
+        "bytes_written": 96436,
+        "encode_seconds": 2.916699999999996e-05,
+        "storage_write_seconds": 0.0035621660000000003,
+        "object_bookkeeping_bound": 48,
+        "consumer_reservation_bytes": 8388608
+      }
+    }
+  ],
+  "netcdf4_real_product": "sparse-source NetCDF-C open unsupported; no real NetCDF-C equality claim; independent HDF5 C/h5py reference and separate NetCDF-C fill fixtures pass"
+}

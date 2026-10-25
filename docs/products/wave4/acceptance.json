@@ -1,0 +1,110 @@
+{
+  "schema": "tile-ripper-wave4-acceptance-v1",
+  "status": "passed",
+  "date": "2026-10-25",
+  "branch": "codex/acquisition-planner",
+  "baseline": "545a159",
+  "initial_implementation_commit": "1aa2e3f",
+  "source_sha256": {
+    "Cargo.toml": "a36dc4e4767888cdd1575df777392f4341bdcce5f3f03818e7f3d4801e7a54b0",
+    "src/hdf5.rs": "2fa6bcb20753e105e4efb981a7a0e5d21a12ff408fc85f1c07c75fad47ffb50b",
+    "src/scientific_output/arrays.rs": "0ae83b0f488fc177f8471704df6102e2a8fc747390ed7b0ccb12750caadd104c",
+    "src/products/arrays.rs": "e2f614766c7ffda018d93c4128af366a4975911170b58bda68bc224337b80cbb",
+    "src/products/arrays/smap.rs": "6eb07a98b7625731402e3e5865e90b4372b381ce5042c24f2e4c37beb9323720",
+    "src/products/arrays/nisar.rs": "45caef1104564847c2c899da1aae43c0ff71e4276e50284349963cb60470b715",
+    "src/cli/products.rs": "035ff1acb19b47ada7daa0ed2d90a3ac01b3d12b33b41b8b1190c90fc3d3d6c1",
+    "src/products/array_grid.rs": "cdf416fd19a490ca84295eaee6c3e0032e6ca7e6097110a18d93cf87cba128a3",
+    "src/products/ease6931.wkt": "fe8ae66e32a04c70eac5d06947013f179cae59e93b8e88d08857b7310a5a2094",
+    "src/swot_aoi.rs": "36f831fe138ac3e37075e89a986e44c6837a926803293720d099a56edef2106f",
+    "tests/wave4_geographic.rs": "b47792e3ad4fa1acb24a26c96065aceffa2b6c38b69ce591dbdde0adb6d45c17"
+  },
+  "binary_sha256": "4709fd13a59f200961cd5a0878913d9eafce6717882c2efd19d2d7a3dd015cce",
+  "reference_versions": {
+    "h5py": "3.16.0",
+    "netCDF4": "1.7.4",
+    "numpy": "2.5.4",
+    "pyproj": "3.7.2",
+    "shapely": "2.2.0",
+    "xarray": "2025.6.1",
+    "zarr": "2.18.3"
+  },
+  "rust_tests": [
+    {
+      "command": "cargo test --locked --all-features --all-targets -- --test-threads=1",
+      "status": "passed",
+      "passed": 216,
+      "failed": 0,
+      "ignored": 9,
+      "local_log": "prototype-output/wave4/all-features-serial-final.log",
+      "log_sha256": "1b8dfac2a2778477179453ec4844f8aab1ac11e0fd01c87ea4ada40e643d327c"
+    },
+    {
+      "command": "cargo test --locked --no-default-features --features native-cog,native-hdf5,authenticated-http -- --test-threads=1",
+      "status": "passed",
+      "passed": 187,
+      "failed": 0,
+      "ignored": 8,
+      "local_log": "prototype-output/wave4/gdal-free-final.log",
+      "log_sha256": "39f93e2d4d935c041fa0545155980fd556199220244fda61a482046956058d4d"
+    },
+    {
+      "command": "cargo test --locked --manifest-path vendor/hdf5-reader/Cargo.toml",
+      "status": "passed",
+      "passed": 356,
+      "failed": 0,
+      "ignored": 0,
+      "local_log": "prototype-output/wave4/hdf5-reader-tests.log",
+      "log_sha256": "aa407000b49f8d2da991e9863f3e13850fec517c3b5a04f74c36d9177179da27"
+    },
+    {
+      "command": "docker run rust:1.92-slim sh /source/bench/wave4_linux.sh",
+      "status": "passed",
+      "passed": 187,
+      "failed": 0,
+      "ignored": 8,
+      "local_log": "prototype-output/wave4/linux-final.log",
+      "log_sha256": "81e0efea5485b14a30afdf1bc42a52a3695cd3d109c7e33e0473c536002a66f7"
+    }
+  ],
+  "science_cases": {
+    "nisar_geographic": 4,
+    "nisar_second_specimen": 1,
+    "smap_polar": 10,
+    "goes_additional": 3,
+    "inherited_wave3": 19
+  },
+  "fault_controls": 40,
+  "live_native_cases": 4,
+  "catalog_workflows": 4,
+  "rust_workflows": 4,
+  "mature_workflow_comparisons": 5,
+  "coordinate_oracles": {
+    "nisar_all_centers": 1229401152,
+    "smap_all_centers": 4000000
+  },
+  "portability": {
+    "macos": "ARM64 native release, all-feature/GDAL-free tests, clippy and dynamic linkage check",
+    "linux": "fresh ARM64 ordinary-user release tests, final production/test source checksums match; no GDAL/libhdf5 linkage",
+    "unqualified": [
+      "Windows",
+      "minimum Rust toolchain"
+    ]
+  },
+  "additional_checks": {
+    "clippy": "cargo clippy --locked --all-features --all-targets -- -D warnings",
+    "format": "cargo fmt --all -- --check; git diff --check",
+    "python": "py_compile five Wave4 Python harnesses",
+    "plan": "dgov structural dry-run passed; dispatch-ready compilation unavailable because no provider is configured; work executed directly"
+  },
+  "test_rerun_note": "One parallel full-suite run returned Failed instead of Truncated in an unchanged SWOT CLI discovery control. The unchanged 16-test suite and final full suite passed serialized; no assertion or deadline was weakened.",
+  "remaining_unsupported": [
+    "other NISAR CRS/shapes/releases and channels, including candidate HVHV",
+    "complex covariance/RSLC/SLC",
+    "ABI full-disk/L1b and other bands/spacecraft",
+    "SMAP other releases/L4/southern grids",
+    "longitude-wrap, curvilinear/irregular grids and unqualified registration",
+    "reprojection/resampling/mosaics/composites",
+    "point/track products (next recommendation: bounded ATL06 v007)"
+  ],
+  "publication": "no merge, push, tag, release, deploy, upstream patch or ChronoZarr change"
+}

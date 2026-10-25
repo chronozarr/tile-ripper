@@ -329,6 +329,31 @@ impl Prepared {
         let mut out=format!("Tile-Ripper native scientific product: {}\nProvider: {}\nWorking-memory budget: {} bytes (includes {} reserved for product/output work)\n",self.request.product,self.catalog["provider"].as_str().unwrap_or("unknown"),self.request.buffer_bytes,RESERVATION);
         for o in &self.observations {
             out+=&format!("\nObservation: {}\nNative coordinate model: {}\nSelection: {}\nSource identity: {}\nQuality policies: {}\n",o.observation.id,serde_json::to_string(&o.grid).unwrap_or_default(),serde_json::to_string(&o.native_selection).unwrap_or_default(),o.base.explain()["sources"][0]["object_identities"]["identity"],self.request.quality_policies.join(", "));
+            out += &format!("Actual native grid/CRS: {}\n", o.grid.describe());
+            let physical = o.base.explain();
+            for d in physical["sources"][0]["object_identities"]["datasets"]
+                .as_array()
+                .into_iter()
+                .flatten()
+            {
+                let chunks = d["chunks"].as_array().map_or(0, |chunks| {
+                    chunks
+                        .iter()
+                        .filter(|c| !c["byte_offset"].is_null())
+                        .count()
+                });
+                let scalar_bytes = match d["stored_dtype"].as_str() {
+                    Some("|i1" | "|u1") => 1,
+                    Some("<i2" | "<u2") => 2,
+                    Some("<f4" | "<u4") => 4,
+                    _ => 0,
+                };
+                let decoded = d["chunk_shape"].as_array().map_or(0, |shape| {
+                    shape.iter().filter_map(Value::as_u64).product::<u64>()
+                }) * scalar_bytes
+                    * chunks as u64;
+                out += &format!("Source shape {} / {}: required allocated physical chunks {}; decoded source-chunk byte estimate {}\n",d["shape"],d["path"],chunks,decoded);
+            }
             out += &format!("Requested AOI: {}\nIncluded native centers: {}\nMembership: {}\nPhysical plan and resource admission: {}\n", serde_json::to_string(&o.selection.requested_aoi).unwrap_or_default(), o.selection.included_centers, o.selection.membership, o.base.human());
             out += &format!(
                 "Unsupported operations: {}\n",

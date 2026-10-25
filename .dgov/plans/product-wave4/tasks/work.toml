@@ -1,0 +1,18 @@
+[tasks.work]
+summary = "Qualify NISAR geographic acquisition and inspect conditional SMAP/GOES extensions"
+role = "worker"
+files = { touch = ["README.md", "src/acquisition.rs", "src/products/ease6931.wkt", "src/products/array_grid.rs", "src/products/arrays.rs", "src/products/arrays/nisar.rs", "src/products/arrays/smap.rs", "src/swot_aoi.rs", "src/cli/products.rs", "src/scientific_output/arrays.rs", "src/hdf5.rs", "tests/wave4_geographic.rs", "bench/wave4_geographic.py", "bench/wave4_inspect.py", "bench/wave4_acceptance.py", "bench/wave4_reference.py", "bench/wave4_receipts.py", "bench/wave4_linux.sh", "tests/data/wave4/*", "docs/products/wave4/*", "examples/product-nisar-geographic.json", "docs/products/workflow.md", "docs/products/roadmap.md", "docs/products/qualification.md"] }
+prompt = """
+Orient:
+- Read the supplied Wave 4 brief, Wave 3 source inspections and independent reference programs.
+Edit:
+- Implement bounded NISAR geographic source-center selection through existing CLI/Rust and transactional Zarr.
+- Inspect another real GCOV, northern SMAP representation and additional ABI layout. Admit only independently justified profiles; document exact blockers.
+- Preserve values, separate masks, source version and authentication. No push/merge/tag/publish/deploy, unrelated formats or ChronoZarr changes.
+Verify:
+- cargo test --locked --all-features --all-targets
+- cargo test --locked --no-default-features --features native-cog,native-hdf5,authenticated-http
+- Frozen source h5py/PROJ/GEOS/Zarr/xarray science comparisons, fault controls and measured workflow costs.
+"""
+commit_message = "Qualify Wave 4 geographic scientific acquisition"
+test_cmd = "cargo test --locked --no-default-features --features native-cog,native-hdf5,authenticated-http"

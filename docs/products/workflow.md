@@ -104,3 +104,9 @@ python bench/wave1_rtc_auth.py --netrc PRIVATE_FILE --binary target/release/tile
 ```
 
 For optimized replay, build with `--release --no-default-features --features native-cog,authenticated-http` and set `TILE_RIPPER_PRODUCTS_BINARY=target/release/tile-ripper` when running `bench/wave1_products.py`. The benchmark defaults to the debug binary, which must also be built without GDAL when `--gdal-free` is exercised.
+
+## Wave 4 geographic scientific products
+
+Use [the geographic NISAR example](../../examples/product-nisar-geographic.json) with ordinary `plan`, `stream` and `fetch`, or the public `products::arrays` Rust adapter. Its AOI is WGS84 bounds; preparation inspects the actual source and resolves native indices automatically. `--human` reports original AOI, native coordinate model, source-global window, included centers, scientific variables, chunks/bytes, quality policy and resource admission.
+
+`nisar-gcov-p1-fa-hhhh` admits the inspected 10/20 m UTM16N HHHH grids. `smap-spl3smp-e-v6-north-am` and `smap-spl3smp-e-v6-north-pm` select separate northern EPSG:6931 groups. `goes19-abi-cmipm1-c02` selects the independently inspected mesoscale-1 reflectance-factor profile. Geographic requests may omit `observations` for bounded discovery; acquisition must resolve one observation. Explicit native-index requests remain available. See the [Wave 4 gate, runnable commands and limits](wave4/qualification.md) before expanding a profile.

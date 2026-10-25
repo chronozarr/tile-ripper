@@ -1,0 +1,546 @@
+{
+  "status": "passed",
+  "verification": {
+    "native_selection": {
+      "kind": "array_slice",
+      "start": [
+        8712,
+        8838
+      ],
+      "count": [
+        8,
+        8
+      ],
+      "step": [
+        1,
+        1
+      ],
+      "axes": [
+        "/science/LSAR/GCOV/grids/frequencyA/yCoordinates",
+        "/science/LSAR/GCOV/grids/frequencyA/xCoordinates"
+      ]
+    },
+    "samples": 64,
+    "included_centers": 64,
+    "source_valid_centers": 64,
+    "usable_centers": 64,
+    "raw_bits_sha256": "66bce4dfd99431432ed84e9c3540c04809fb640c1eb620fa9492322061eddeee",
+    "coordinate_max_error_degrees": 1.4210854715202004e-14,
+    "xarray_reopened": true,
+    "stream": {
+      "native_samples": {
+        "HHHH": 64
+      },
+      "all_raw_bits_and_masks_equal_to_independently_verified_output": true
+    }
+  },
+  "process": {
+    "code": 0,
+    "wall_seconds": 0.06399758299812675,
+    "cpu_seconds": 0.032938,
+    "peak_rss_bytes": 27115520
+  },
+  "preparation_timings": {
+    "inspection_seconds": 0.022632416,
+    "selection_seconds": 0.005716709,
+    "physical_plan_seconds": 0.001313333
+  },
+  "execution": {
+    "source_reads": [],
+    "scheduler": {
+      "workers": 1,
+      "per_host": 4,
+      "buffer_bytes": 58720256,
+      "reserved_bytes_peak": 18069027,
+      "reader_state_reserved_bytes": 0,
+      "prepared_native_metadata_bytes": 4167900,
+      "authenticated_transport_reserved_bytes": 0,
+      "prepared_v3_metadata_index_bytes": 0,
+      "active_workers_peak": 1,
+      "completed_tasks": 1,
+      "admitted_jobs": 1,
+      "cog_reader_scope": "selection",
+      "seconds": 0.003796625,
+      "order": "plan",
+      "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+      "prepared_hdf5_bytes": 4167900,
+      "native_metadata": {
+        "retained_sources": 0,
+        "retained_bytes": 0,
+        "physical_metadata_sources": 0,
+        "physical_metadata_bytes": 0,
+        "cap_bytes": 0,
+        "skipped_sources": 0,
+        "scope": "this Prepared only; immutable version-bound parser pages; never a data cache",
+        "authenticated_sources": 0,
+        "authenticated_transport": {}
+      },
+      "native_strategies": [
+        {
+          "asset_id": "NISAR_L2_PR_GCOV_033_148_A_021_2005_DHDH_M_20261022T105619_20261022T105654_P05023_N_F_J_001",
+          "task_reserved_bytes": 13901127,
+          "strategy": {
+            "read_scope": "planned_windows",
+            "retained_selection_bytes": 0,
+            "decoded_cache_limit_bytes": 0,
+            "coalesced_groups": 0,
+            "max_encoded_group_reservation_bytes": 0,
+            "codec_working_bytes": 131072
+          }
+        }
+      ]
+    },
+    "transport": {
+      "NISAR_L2_PR_GCOV_033_148_A_021_2005_DHDH_M_20261022T105619_20261022T105654_P05023_N_F_J_001": {
+        "phases": {
+          "hdf5_science_payload": {
+            "GET source.nc": {
+              "seconds": 0.001757917,
+              "attempts": 1,
+              "bytes": 657901,
+              "retries": 0,
+              "statuses": {
+                "206": 1
+              }
+            }
+          },
+          "hdf5_version_validation": {
+            "HEAD source.nc": {
+              "seconds": 0.00091675,
+              "attempts": 3,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 3
+              }
+            }
+          },
+          "metadata_index_discovery": {
+            "GET source.nc": {
+              "seconds": 0.015745541,
+              "attempts": 33,
+              "bytes": 868352,
+              "retries": 0,
+              "statuses": {
+                "206": 33
+              }
+            },
+            "HEAD source.nc": {
+              "seconds": 0.000524708,
+              "attempts": 2,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 2
+              }
+            }
+          },
+          "planning": {
+            "HEAD source.nc": {
+              "seconds": 0.00150475,
+              "attempts": 1,
+              "bytes": 0,
+              "retries": 0,
+              "statuses": {
+                "200": 1
+              }
+            }
+          }
+        },
+        "requests": 40,
+        "bytes": 1526253,
+        "retries": 0,
+        "seconds": 0.020433123999999997,
+        "objects": {
+          "GET source.nc": {
+            "seconds": 0.017508668,
+            "attempts": 34,
+            "bytes": 1526253,
+            "retries": 0,
+            "statuses": {
+              "206": 34
+            }
+          },
+          "HEAD source.nc": {
+            "seconds": 0.0029481250000000002,
+            "attempts": 6,
+            "bytes": 0,
+            "retries": 0,
+            "statuses": {
+              "200": 6
+            }
+          }
+        },
+        "ranges": {
+          "source.nc 0:16384": {
+            "seconds": 0.000465541,
+            "attempts": 1,
+            "bytes": 16384,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "source.nc 163840:180224": {
+            "seconds": 0.000796375,
+            "attempts": 1,
+            "bytes": 16384,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "source.nc 163840:196608": {
+            "seconds": 0.000251125,
+            "attempts": 1,
+            "bytes": 32768,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "source.nc 16384:32768": {
+            "seconds": 0.000472,
+            "attempts": 1,
+            "bytes": 16384,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "source.nc 16384:49152": {
+            "seconds": 0.000334667,
+            "attempts": 1,
+            "bytes": 32768,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "source.nc 180224:196608": {
+            "seconds": 0.0002965,
+            "attempts": 1,
+            "bytes": 16384,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "source.nc 1983905792:1983922176": {
+            "seconds": 0.000536959,
+            "attempts": 1,
+            "bytes": 16384,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "source.nc 1983971328:1983987712": {
+            "seconds": 0.000254125,
+            "attempts": 1,
+            "bytes": 16384,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "source.nc 1984020480:1984036864": {
+            "seconds": 0.0004165,
+            "attempts": 1,
+            "bytes": 16384,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "source.nc 1984053248:1984069632": {
+            "seconds": 0.00076575,
+            "attempts": 1,
+            "bytes": 16384,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "source.nc 1984069632:1984086016": {
+            "seconds": 0.000579916,
+            "attempts": 1,
+            "bytes": 16384,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "source.nc 1984118784:1984135168": {
+            "seconds": 0.000848834,
+            "attempts": 1,
+            "bytes": 16384,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "source.nc 1984135168:1984151552": {
+            "seconds": 0.000579292,
+            "attempts": 1,
+            "bytes": 16384,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "source.nc 1984151552:1984167936": {
+            "seconds": 0.000565083,
+            "attempts": 1,
+            "bytes": 16384,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "source.nc 1984167936:1984184320": {
+            "seconds": 0.000356833,
+            "attempts": 1,
+            "bytes": 16384,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "source.nc 1984184320:1984200704": {
+            "seconds": 0.000254208,
+            "attempts": 1,
+            "bytes": 16384,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "source.nc 1984217088:1984233472": {
+            "seconds": 0.000468375,
+            "attempts": 1,
+            "bytes": 16384,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "source.nc 1984233472:1984249856": {
+            "seconds": 0.000763708,
+            "attempts": 1,
+            "bytes": 16384,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "source.nc 1988100096:1988116480": {
+            "seconds": 0.000741166,
+            "attempts": 1,
+            "bytes": 16384,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "source.nc 1988771840:1988788224": {
+            "seconds": 0.000408333,
+            "attempts": 1,
+            "bytes": 16384,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "source.nc 1991049216:1991065600": {
+            "seconds": 0.000434542,
+            "attempts": 1,
+            "bytes": 16384,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "source.nc 1991737344:1991753728": {
+            "seconds": 0.000477417,
+            "attempts": 1,
+            "bytes": 16384,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "source.nc 1991753728:1991770112": {
+            "seconds": 0.000459583,
+            "attempts": 1,
+            "bytes": 16384,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "source.nc 284013319:284671220": {
+            "seconds": 0.001757,
+            "attempts": 1,
+            "bytes": 657901,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "source.nc 310362112:310378496": {
+            "seconds": 0.000379875,
+            "attempts": 1,
+            "bytes": 16384,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "source.nc 311296:327680": {
+            "seconds": 0.000308958,
+            "attempts": 1,
+            "bytes": 16384,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "source.nc 32768:49152": {
+            "seconds": 0.0005595,
+            "attempts": 1,
+            "bytes": 16384,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "source.nc 393216:409600": {
+            "seconds": 0.000270083,
+            "attempts": 1,
+            "bytes": 16384,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "source.nc 4194304:4341760": {
+            "seconds": 0.0008245,
+            "attempts": 1,
+            "bytes": 147456,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "source.nc 4325376:4489216": {
+            "seconds": 0.000819708,
+            "attempts": 1,
+            "bytes": 163840,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "source.nc 49152:65536": {
+            "seconds": 0.000245709,
+            "attempts": 1,
+            "bytes": 16384,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "source.nc 65536:81920": {
+            "seconds": 0.000237542,
+            "attempts": 1,
+            "bytes": 16384,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "source.nc 65536:98304": {
+            "seconds": 0.00022525,
+            "attempts": 1,
+            "bytes": 32768,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          },
+          "source.nc 81920:98304": {
+            "seconds": 0.000332458,
+            "attempts": 1,
+            "bytes": 16384,
+            "retries": 0,
+            "statuses": {
+              "206": 1
+            }
+          }
+        },
+        "authenticated_http": null,
+        "cached_metadata_bytes": 876448,
+        "inspection_reuse": {
+          "source_inspections": 1,
+          "metadata_parser_opens": 1,
+          "profile_discoveries": 1,
+          "profile_cache_hits": 1,
+          "full_index_scans": 1,
+          "index_cache_hits": 1,
+          "coordinate_axis_reads": 2,
+          "coordinate_cache_hits": 2,
+          "coordinate_index_traversals": 0,
+          "coordinate_decoder_opens": 0,
+          "science_decoder_opens": 1,
+          "metadata_range_hits": 1886,
+          "metadata_range_misses": 33,
+          "profile_seconds": 0.001601541,
+          "index_seconds": 0.002244333,
+          "coordinate_seconds": 0.002781376,
+          "retention_reservation_bytes": 4120304,
+          "interpretation": "native-hdf5-stored-v1",
+          "index_policy": "full",
+          "sealed": true,
+          "opening": {
+            "source_identity_and_transport_seconds": 0.004980334,
+            "superblock_parser_open_seconds": 0.000493416,
+            "root_group_time_metadata_seconds": 0.000399708
+          }
+        }
+      }
+    },
+    "decoded_source_chunks": 1,
+    "filled_source_chunks": 0,
+    "first_output_seconds": 0.00375325,
+    "assembly_seconds": 0.0,
+    "source_retrieval_seconds": null,
+    "allocation_seconds": null,
+    "copying_seconds": null,
+    "output_setup_seconds": 0.0,
+    "output_finalize_seconds": 0.0,
+    "output_io": null,
+    "native_materialized_bytes": null,
+    "source_data_requests": 1,
+    "source_data_bytes": 657901,
+    "chunks": 1,
+    "decoded_bytes": 256,
+    "non_nodata_pixels": 64,
+    "planning_seconds": 0.000513708,
+    "source_open_seconds": 0.00181175,
+    "read_decode_seconds": 0.001558125,
+    "sink_seconds": 0.000286208,
+    "masking_seconds": 0.0,
+    "remote_requests": null,
+    "remote_bytes": null
+  },
+  "output_io": {
+    "writes": 39,
+    "bytes_written": 92680,
+    "encode_seconds": 3.550299999999942e-05,
+    "storage_write_seconds": 0.004777832,
+    "object_bookkeeping_bound": 48,
+    "consumer_reservation_bytes": 8388608
+  },
+  "scope": "independently inspected second actual GCOV: 20m grid; HHHH only; no frequency/channel inference"
+}

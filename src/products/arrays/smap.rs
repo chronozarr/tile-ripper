@@ -186,16 +186,20 @@ pub(super) fn discover(r: &ProductRequest) -> Result<Value> {
             ("page_size".into(), r.max_observations.to_string()),
             ("sort_key".into(), "start_date".into()),
         ];
-        if let Spatial::Bounds { crs, bbox } = &r.aoi {
-            if crs == "EPSG:4326" {
-                q.push((
-                    "bounding_box".into(),
-                    bbox.iter()
-                        .map(f64::to_string)
-                        .collect::<Vec<_>>()
-                        .join(","),
-                ));
-            }
+        if let Some(bounds) = Inclusion::new(&r.aoi)?.geometry_bounds() {
+            let bbox = [
+                bounds.min().x,
+                bounds.min().y,
+                bounds.max().x,
+                bounds.max().y,
+            ];
+            q.push((
+                "bounding_box".into(),
+                bbox.iter()
+                    .map(f64::to_string)
+                    .collect::<Vec<_>>()
+                    .join(","),
+            ));
         }
         let response = c
             .get("https://cmr.earthdata.nasa.gov/search/granules.json")
