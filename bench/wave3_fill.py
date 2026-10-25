@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Independent storage initialization oracle; no Rust reader supplies expected data."""
-import argparse,hashlib,json
+import argparse,hashlib,json,subprocess
 from pathlib import Path
 import h5py,netCDF4,numpy as np
 ROOT=Path(__file__).resolve().parents[1]
@@ -22,6 +22,11 @@ def main(directory):
  with h5py.File(path,'w',libver='earliest') as f:
   dcpl=h5py.h5p.create(h5py.h5p.DATASET_CREATE);dcpl.set_chunk((4,4));dcpl.set_fill_time(h5py.h5d.FILL_TIME_NEVER)
   ds=h5py.h5d.create(f.id,b'signal',h5py.h5t.IEEE_F32LE,h5py.h5s.create_simple((8,8)),dcpl=dcpl);f['signal'].attrs['_FillValue']=np.float32(np.nan);f['x']=np.arange(8,dtype='f8');f['y']=np.arange(8,dtype='f8')
- return dict(h5py=h5py.__version__,netCDF4=netCDF4.__version__,rows=rows,never_initialization='fixture only; no meaningful unallocated raw values claimed',authority='https://portal.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html')
+ native_guard=None
+ binary=ROOT/'target/release/examples/hdf5_subset_oracle'
+ if binary.exists():
+  request=dict(source=dict(kind='assets',assets=[dict(id='fill',locator=str(path),format='hdf5')]),spatial=dict(kind='array_slice',start=[0,0],count=[8,8],step=[1,1],axes=['/y','/x']),variables=[dict(kind='dataset',path='/signal')],grid=dict(kind='native'),sink=dict(kind='callback'),budget=dict(buffer_bytes=4194304,max_nodes=1024,chunk_edge=8))
+  req=directory/'never-request.json';req.write_text(json.dumps(request));run=subprocess.run([str(binary),str(req)],capture_output=True,text=True);assert run.returncode!=0 and 'never-initialized' in run.stderr;native_guard=True
+ return dict(h5py=h5py.__version__,netCDF4=netCDF4.__version__,rows=rows,native_never_initialized_rejected=native_guard,never_initialization='fixture only; no meaningful unallocated raw values claimed',authority='https://portal.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html')
 if __name__=='__main__':
  p=argparse.ArgumentParser();p.add_argument('--directory',type=Path,default=ROOT/'prototype-output/wave3/fill');a=p.parse_args();report=main(a.directory);(ROOT/'docs/products/wave3/fill-reference.json').write_text(json.dumps(report,indent=2)+'\n');print(json.dumps(report))

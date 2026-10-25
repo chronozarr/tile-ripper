@@ -308,6 +308,17 @@ impl Prepared {
     pub fn explain(&self) -> Value {
         json!({"schema":"tile-ripper-array-products-v1","product":self.request.product,"catalog":self.catalog,"observations":self.observations.iter().map(|o|json!({"id":o.observation.id,"grid":o.grid.describe(),"native_selection":o.native_selection,"preparation_timings":o.preparation_timings,"physical":o.base.explain()})).collect::<Vec<_>>(),"working_memory":{"requested_bytes":self.request.buffer_bytes,"consumer_and_output_reservation_bytes":RESERVATION,"scope":"reserved in addition to native reader; caller retention and process runtime outside budget"},"quality_policies":self.request.quality_policies,"numeric_semantics":"raw native values and dtype; no unsigned reinterpretation, scale/offset application, reprojection or resampling"})
     }
+    pub fn human(&self) -> String {
+        let mut out=format!("Tile-Ripper native scientific product: {}\nProvider: {}\nWorking-memory budget: {} bytes (includes {} reserved for product/output work)\n",self.request.product,self.catalog["provider"].as_str().unwrap_or("unknown"),self.request.buffer_bytes,RESERVATION);
+        for o in &self.observations {
+            out+=&format!("\nObservation: {}\nNative coordinate model: {}\nSelection: {}\nSource identity: {}\nQuality policies: {}\n",o.observation.id,serde_json::to_string(&o.grid).unwrap_or_default(),serde_json::to_string(&o.native_selection).unwrap_or_default(),o.base.explain()["sources"][0]["object_identities"]["identity"],self.request.quality_policies.join(", "));
+            out += &format!(
+                "Unsupported operations: {}\n",
+                o.grid.describe()["unsupported"]
+            );
+        }
+        out
+    }
     pub fn observations(&self) -> &[PreparedObservation] {
         &self.observations
     }

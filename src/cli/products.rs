@@ -337,6 +337,12 @@ fn run_array(options: super::Options) -> Result<()> {
     {
         return Err("array products require native HDF5/scientific Zarr; policies belong in JSON; authentication is product-specific".into());
     }
+    if let Some(n) = options.workers {
+        std::env::set_var("TILE_RIPPER_WORKERS", n.to_string());
+    }
+    if let Some(n) = options.per_host {
+        std::env::set_var("TILE_RIPPER_PER_HOST", n.to_string());
+    }
     let started = std::time::Instant::now();
     let mut r: ProductRequest = serde_json::from_value(options.input)?;
     if let Some(path) = options.output {
@@ -373,7 +379,13 @@ fn run_array(options: super::Options) -> Result<()> {
         ctrlc::set_handler(move || c.store(true, Ordering::Release))?;
     }
     match options.command.as_str() {
-        "plan" => println!("{}", serde_json::to_string_pretty(&p.explain())?),
+        "plan" => {
+            if options.human {
+                print!("{}", p.human());
+            } else {
+                println!("{}", serde_json::to_string_pretty(&p.explain())?);
+            }
+        }
         "fetch" => {
             let path = r
                 .output

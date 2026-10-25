@@ -1,5 +1,7 @@
 # Product qualification milestones
 
+[Wave 3 qualification](wave3/qualification.md) adds GOES-19 CMIPC C13/C01, SMAP SPL3SMP_E v6 global AM/PM, and one real NISAR provisional frequency-A HHHH diagonal. These are native HDF5 array profiles with explicit coordinate models and independent access/output gates; other mission products and grids remain outside their qualification.
+
 [Wave 2 qualification](wave2/qualification.md) adds separate historical Landsat TM/ETM+ profiles, current OPERA DSWx-S1, and a bounded DIST-ALERT profile. The Wave 1 evidence below remains scoped to its original source specimens and routes. Provider routing and the AlphaEarth prototype retain their separate qualification documents.
 
 # Wave 1 qualification and decision gate

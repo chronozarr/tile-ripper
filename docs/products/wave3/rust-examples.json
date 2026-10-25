@@ -1,0 +1,140 @@
+{
+  "status": "passed",
+  "cases": [
+    {
+      "family": "goes-c13",
+      "status": "passed",
+      "verification": {
+        "native_selection": {
+          "kind": "array_slice",
+          "start": [
+            900,
+            1200
+          ],
+          "count": [
+            32,
+            32
+          ],
+          "step": [
+            1,
+            1
+          ],
+          "axes": [
+            "/y",
+            "/x"
+          ]
+        },
+        "variables": [
+          {
+            "name": "CMI",
+            "dtype": "int16",
+            "samples": 1024,
+            "sha256": "6eff4e71fe36c7965d22e420b3b91cee145eaf8c1a08a4c2873236eab113bfc4",
+            "valid_centers": 1024,
+            "source_fill": -1
+          },
+          {
+            "name": "DQF",
+            "dtype": "int8",
+            "samples": 1024,
+            "sha256": "5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef",
+            "valid_centers": 1024,
+            "source_fill": -1
+          }
+        ],
+        "coordinate_max_error_degrees": 3.26139115713886e-12,
+        "visible_centers": 1024,
+        "included_centers": 1024,
+        "netcdf4_raw_equal": true,
+        "xarray_reopen": true,
+        "output_objects": 58,
+        "output_bytes": 326989
+      },
+      "human_plan": true,
+      "normal_rust_prepare_and_fetch": true
+    },
+    {
+      "family": "smap-am",
+      "status": "passed",
+      "verification": {
+        "native_selection": {
+          "kind": "array_slice",
+          "start": [
+            400,
+            900
+          ],
+          "count": [
+            8,
+            8
+          ],
+          "step": [
+            1,
+            1
+          ],
+          "axes": [
+            "/@smap_ease2_m09/y",
+            "/@smap_ease2_m09/x"
+          ]
+        },
+        "variables": [
+          {
+            "name": "soil_moisture",
+            "dtype": "float32",
+            "samples": 64,
+            "valid_centers": 52,
+            "sha256": "3ec1631934381451922158a4cbc124b4c99442a6c23d4c7e6bd282504d4dbba7"
+          },
+          {
+            "name": "retrieval_qual_flag",
+            "dtype": "uint16",
+            "samples": 64,
+            "valid_centers": 64,
+            "sha256": "695b933743fc86a0966ed8b70a90cdb1dea0f74b4409645fab5d0c7cce2252a1"
+          },
+          {
+            "name": "surface_flag",
+            "dtype": "uint16",
+            "samples": 64,
+            "valid_centers": 64,
+            "sha256": "8d16e9db613e1312cc2aa43bff6c94f76c9103eb907e5834d2c28b03bc93cbb4"
+          },
+          {
+            "name": "freeze_thaw_fraction",
+            "dtype": "float32",
+            "samples": 64,
+            "valid_centers": 0,
+            "sha256": "755d9cfd4efa6b8ca8e5fa04327f88b3002eaf2c028b645adf0b3f819371e01f"
+          }
+        ],
+        "quality_accepted": 14,
+        "coordinate_max_error_degrees": 1.189441789506418e-08,
+        "source_coordinate_rounding_error_degrees": 2.2160074593102763e-06,
+        "source_coordinate_nonfill_centers": 64,
+        "included_centers": 64,
+        "xarray_reopen": true,
+        "output_objects": 61,
+        "output_bytes": 1278768
+      },
+      "human_plan": true,
+      "normal_rust_prepare_and_fetch": true
+    },
+    {
+      "family": "nisar",
+      "status": "passed",
+      "verification": {
+        "dtype": "float32",
+        "samples": 64,
+        "raw_bits_sha256": "232713f7f03ec926306cd7ff037657c311e8b249ce86ca7e3d95d3178946e1e1",
+        "valid_centers": 64,
+        "coordinate_max_error_degrees": 1.4210854715202004e-14,
+        "xarray_reopen": true,
+        "storage_fill": 0,
+        "cf_fill": "NaN",
+        "output_objects": 40,
+        "output_bytes": 219615
+      },
+      "human_plan": true,
+      "normal_rust_prepare_and_fetch": true
+    }
+  ]
+}

@@ -442,7 +442,7 @@ def validate(result, path, req, netcdf=True):
             t = binding["time"]
             assert t["stored_value"] == f[t["path"]][()].item()
             verify_attributes(t["attributes"], f[t["path"]])
-        dtype = "<u2" if ds.dtype.kind == "u" else "<f4"
+        dtype = ds.dtype.newbyteorder("<").str
         for i, c in enumerate(run["chunks"]):
             w = c["window"]
             ys = slice(
@@ -530,7 +530,7 @@ def compact(result):
 
 def science():
     cells = []
-    for dtype in ["<u2", ">u2", "<f4", ">f4"]:
+    for dtype in ["<u2", ">u2", "<f4", ">f4", "<i2", ">i2"]:
         for filters in [
             ("raw", None, False, False),
             ("gzip", "gzip", False, False),
@@ -763,7 +763,6 @@ def faults():
         ("modern-index", {"latest": True}),
         ("unsupported-filter", {"compression": "lzf"}),
         ("contiguous", {"chunks": None, "compression": None}),
-        ("signed-data", {"dtype": "<i2", "shuffle": False}),
     ]:
         p, v = fixture(name, **kw)
         result = run_native(request(p, v), "unsupported-" + name, "stream")
@@ -853,13 +852,14 @@ def faults():
         d = f.create_dataset("signal", shape=(8, 11), chunks=(3, 4), dtype="u2")
         d.attrs["_FillValue"] = np.uint16(65535)
         assert np.array_equal(d[:], np.zeros((8, 11), dtype="u2"))
-    result = run_native(request(p, "/signal", count=(8, 11)), "implicit-fill", "stream")
-    assert (
-        result["returncode"] != 0 and "implicit HDF5 initialization" in result["error"]
-    )
+    req=request(p,"/signal",count=(8,11))
+    result=run_native(req,"implicit-fill","dump")
+    validate(result,p,req)
+    assert result["result"]["runs"][0]["valid_pixels"]==88
+    assert result["result"]["runs"][0]["sum"]==0
     cells.append(
         {
-            "name": "ambiguous-implicit-storage-fill",
+            "name": "independent-default-storage-zero-and-CF-marker",
             "h5py_stored_initialization": 0,
             **compact(result),
         }

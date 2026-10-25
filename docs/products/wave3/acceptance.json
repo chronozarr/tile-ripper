@@ -1,0 +1,174 @@
+{
+  "schema": "tile-ripper-wave3-acceptance-v1",
+  "status": "passed",
+  "date": "2026-10-25",
+  "branch": "codex/acquisition-planner",
+  "baseline": "6500522",
+  "qualified_profiles": [
+    "goes19-abi-cmipc-c13",
+    "goes19-abi-cmipc-c01",
+    "smap-spl3smp-e-v6-am",
+    "smap-spl3smp-e-v6-pm",
+    "nisar-gcov-p1-fa-hhhh"
+  ],
+  "rust_tests": [
+    {
+      "command": "cargo test --locked --all-features --all-targets",
+      "status": "passed",
+      "passed": 212,
+      "failed": 0,
+      "ignored": 9,
+      "local_log": "prototype-output/wave3/final-all-features.log",
+      "log_sha256": "a00c8ffa8277655e8441b96023ad8f1387ee27f88b466a4b4c5daf828a6fe239"
+    },
+    {
+      "command": "cargo test --locked --no-default-features --features native-cog,native-hdf5,authenticated-http -- --test-threads=1",
+      "status": "passed",
+      "passed": 183,
+      "failed": 0,
+      "ignored": 8,
+      "local_log": "prototype-output/wave3/final-gdal-free.log",
+      "log_sha256": "dc1a1570fb857e6012d33b3567186cb3901cce201ec3338f9da2d43fcdfa1a57"
+    },
+    {
+      "command": "cargo test --manifest-path vendor/hdf5-reader/Cargo.toml --all-targets",
+      "status": "passed",
+      "passed": 277,
+      "failed": 0,
+      "ignored": 0,
+      "local_log": "prototype-output/wave3/vendor-tests.log",
+      "log_sha256": "d6802f4a47241bde93cfb2e8b1cf7f9c7a754499b68fa1007a0e31615a91e5ee"
+    },
+    {
+      "command": "sh /source/bench/wave3_linux.sh inside disposable rust:1.92-slim, source and registry mounted read-only",
+      "status": "passed",
+      "passed": 183,
+      "failed": 0,
+      "ignored": 8,
+      "local_log": "prototype-output/wave3/linux-final.log",
+      "log_sha256": "241bf95e930606981cd28fec98ce41f55e13f14b4a2b043f3fa916fe24b37425"
+    }
+  ],
+  "additional_checks": {
+    "root_clippy": "cargo clippy --locked --all-features --all-targets -- -D warnings",
+    "vendor_clippy": "cargo clippy --manifest-path vendor/hdf5-reader/Cargo.toml --all-targets -- -D warnings",
+    "consumer_check": "cargo check --manifest-path consumers/native-stats/Cargo.toml --no-default-features --features native-cog",
+    "format_and_whitespace": "root, vendored reader and consumer cargo fmt checks; git diff --check",
+    "python": "py_compile all six Wave 3 and inherited HDF5 harnesses",
+    "independent_replay_cases": {
+      "goes": 8,
+      "smap": 8,
+      "nisar": 3
+    },
+    "live_native_cases": {
+      "goes": 2,
+      "smap": 2,
+      "nisar": 1
+    },
+    "fault_controls": 21,
+    "reference_policy_controls": 7,
+    "inherited_hdf5": {
+      "scientific": 96,
+      "faults": 32
+    },
+    "rust_examples_and_human_plans": 3,
+    "mature_workflow_benchmarks": 3
+  },
+  "portability": {
+    "macos": {
+      "architecture": "ARM64",
+      "rust": "1.92.0",
+      "fresh_target_build": "prototype-output/wave3/macos-clean-target",
+      "final_source_refresh": true,
+      "gdal_and_libhdf5_linked": false
+    },
+    "linux": {
+      "architecture": "ARM64",
+      "rust": "1.92.0",
+      "fresh_target": true,
+      "ordinary_test_uid": 1000,
+      "gdal_and_libhdf5_linked": false,
+      "recipe": "bench/wave3_linux.sh",
+      "source_hashes_match_final_sources": {
+        "Cargo.toml": "a36dc4e4767888cdd1575df777392f4341bdcce5f3f03818e7f3d4801e7a54b0",
+        "src/hdf5.rs": "f8ee9dd6788da702c04bdb980f05f79666de00c6b5d5cb0256dc0a176ce38918",
+        "src/scientific_output/arrays.rs": "de3a2600b0acbf4cda76d0ab73c0d04d4d3a07caa0abf9a6ecc6fb33fffa5c8a",
+        "src/products/arrays.rs": "678fbe1d5d56eac976034cf607daa05cbc3c49b50d44d0bb68a045a034d4cf95",
+        "src/products/arrays/smap.rs": "5c1cd7ada8917ad1a7c9e7b3d60ddd414f5eb2f1781e39e581691e3f47157173",
+        "src/products/arrays/nisar.rs": "b038205be19c1128f7ef35302192e29f1735889560586f595e68387a5a54634a",
+        "src/cli/products.rs": "035ff1acb19b47ada7daa0ed2d90a3ac01b3d12b33b41b8b1190c90fc3d3d6c1"
+      }
+    },
+    "not_requalified": [
+      "Windows",
+      "declared minimum Rust 1.91"
+    ]
+  },
+  "native_benchmark_binary_sha256": "79e02f3c6f6c7c8bc9b89fd9e9b86de9cb503c5fd2304d8691f7281c03f3db23",
+  "reference_requirements": "reference.txt",
+  "reference_requirements_sha256": "65bacd943ec20429c0e720e38c1fabd235539395d62ab2facca7bac1176abc7d",
+  "local_logs": [
+    {
+      "path": "prototype-output/wave3/clippy.log",
+      "sha256": "0743cbaa0fff2296a9ffca56158e1815114c65af77db3f1d6525178e5e05e0a5"
+    },
+    {
+      "path": "prototype-output/wave3/vendor-clippy.log",
+      "sha256": "c9b4d0d6cd32b64340075bb015b0bba2b5c2431a97ffc2caa19eb0af1bcb2fc3"
+    },
+    {
+      "path": "prototype-output/wave3/consumer-check.log",
+      "sha256": "22abb3a9198f91809ef813f81b5b56f0294a8db75102fff1b792ee627540f1a8"
+    },
+    {
+      "path": "prototype-output/wave3/macos-clean-build.log",
+      "sha256": "e4f35d4a96207d6a2d4bb636540faedf949701ba2fc5a568ce111632326cc6f2"
+    },
+    {
+      "path": "prototype-output/wave3/macos-final-refresh.log",
+      "sha256": "a43b2842cdb78722d006640ab0586a6e0888aa2c91d262d449a26220d21b0eff"
+    },
+    {
+      "path": "prototype-output/wave3/macos-linkage.log",
+      "sha256": "0e59bce12ba251616c2865eee81232ce3782b27dd2c9caa5cf3eaaa1cb136eb2"
+    },
+    {
+      "path": "prototype-output/wave3/final-goes-replay.log",
+      "sha256": "f24c5389a0efeead2dbf8db805906234fa7da8930bcb2eb4847f5356c7dacfcd"
+    },
+    {
+      "path": "prototype-output/wave3/faults.log",
+      "sha256": "281de98cee93b5366d18b0ae7ef700ce2e7fe025d96912fba15aeffe1a43a6f6"
+    },
+    {
+      "path": "prototype-output/wave3/performance.log",
+      "sha256": "d934b07589570f8f1f9d61d0615fac91f3de8d9e54e184bad7825be248fdc351"
+    },
+    {
+      "path": "prototype-output/wave3/inherited-hdf5.log",
+      "sha256": "6146719cf6f2f3fd78442b2e1b304d24c517deed920804e274715570806127ec"
+    },
+    {
+      "path": "prototype-output/wave3/rust-examples.log",
+      "sha256": "9a6d44668a4f068628b760b938eb0e71579f3ca02d9f0b88745cf9a5730d374b"
+    }
+  ],
+  "caveats": [
+    "One earlier SWOT retry fixture failed under concurrent build load; the idle serialized final suite passed without changing its thresholds or tests.",
+    "An initial Linux run as root was rejected as invalid evidence for permission-sensitive tests; the recorded acceptance uses uid 1000.",
+    "SMAP live summary was recovered from original completed output manifests and all arrays independently rechecked; original outer CPU/RSS/wall values were not retained. Separate mirror benchmarks retain these process measurements.",
+    "The NISAR real sparse source did not open with NetCDF-C; h5py/HDF5-C compares the real source, while separate initialization fixtures also match NetCDF-C.",
+    "The dgov plan compiled structurally; dispatch lacked a configured provider. Direct execution retained the existing dispatch and review policy.",
+    "No performance leadership or universal family coverage is claimed."
+  ],
+  "actions": {
+    "commits": "local only",
+    "push": false,
+    "merge": false,
+    "tag": false,
+    "publish": false,
+    "deploy": false,
+    "upstream_submission": false,
+    "chronozarr_changes": false
+  }
+}

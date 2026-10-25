@@ -293,6 +293,13 @@ pub(crate) fn fetch(p: &Prepared, path: &str, cancelled: Arc<AtomicBool>) -> Res
         }
         if first["time"].is_object() {
             let t = &first["time"];
+            let mut time_attrs = attrs(&t["attributes"], &[]);
+            // The subset does not export the source bounds array. Keep its
+            // original reference in source_attributes rather than a dangling CF link.
+            time_attrs
+                .as_object_mut()
+                .ok_or("invalid time attributes")?
+                .remove("bounds");
             let axis = array(
                 store.clone(),
                 &format!("{prefix}/t"),
@@ -300,7 +307,7 @@ pub(crate) fn fetch(p: &Prepared, path: &str, cancelled: Arc<AtomicBool>) -> Res
                 &[],
                 "<f8",
                 Value::Null,
-                attrs(&t["attributes"], &[]),
+                time_attrs,
                 encoding,
             )?;
             axis.store_array_subset_opt(

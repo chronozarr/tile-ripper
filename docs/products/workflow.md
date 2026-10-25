@@ -1,3 +1,7 @@
+# Native scientific array workflows (Wave 3)
+
+GOES ABI, SMAP and the selected NISAR diagonal use the existing `products`, `discover`, `plan`, `stream --values` and `fetch --output NEW.zarr` commands. See the [Wave 3 decision gate](wave3/qualification.md), [GOES commands](wave3/goes.md), [SMAP commands](wave3/smap.md) and [NISAR commands](wave3/nisar.md). Array descriptors appear in `array_profiles`; their concrete coordinate models preserve scan angles, EASE-Grid or original UTM centers. The Rust entry point is `products::arrays::prepare` or its explicit `prepare_earthdata` counterpart, demonstrated by `examples/array_product.rs`. The older COG profile contract below remains unchanged.
+
 # Native scientific product workflows
 
 Build the portable native path (the global Cargo default remains GDAL):
