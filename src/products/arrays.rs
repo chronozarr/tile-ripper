@@ -15,14 +15,17 @@ use std::{
     sync::{atomic::AtomicBool, Arc},
     time::Instant,
 };
+mod smap;
 const RESERVATION: usize = 8 * 1024 * 1024;
 pub fn supports(id: &str) -> bool {
-    matches!(id, "goes19-abi-cmipc-c13" | "goes19-abi-cmipc-c01")
+    matches!(id, "goes19-abi-cmipc-c13" | "goes19-abi-cmipc-c01") || smap::supports(id)
 }
 pub fn profiles() -> Value {
     json!([
      {"id":"goes19-abi-cmipc-c13","family":"GOES ABI CMIPC","spectral_band":13,"bands":["CMI","DQF"],"coordinate_model":"geostationary scanning angles","stored_dtype":["int16","int8"],"science":"brightness temperature; raw packed codes and CF unsigned annotations retained","provider":"noaa","qualification":"only inspected GOES-19 Mode 6 CONUS profile"},
-     {"id":"goes19-abi-cmipc-c01","family":"GOES ABI CMIPC","spectral_band":1,"bands":["CMI","DQF"],"coordinate_model":"geostationary scanning angles","stored_dtype":["int16","int8"],"science":"reflectance factor; raw packed codes and CF unsigned annotations retained","provider":"noaa","qualification":"separate 1 km source specimen"}
+     {"id":"goes19-abi-cmipc-c01","family":"GOES ABI CMIPC","spectral_band":1,"bands":["CMI","DQF"],"coordinate_model":"geostationary scanning angles","stored_dtype":["int16","int8"],"science":"reflectance factor; raw packed codes and CF unsigned annotations retained","provider":"noaa","qualification":"separate 1 km source specimen"},
+     {"id":"smap-spl3smp-e-v6-am","family":"SMAP SPL3SMP_E v006/R19240","pass":"descending AM","bands":["soil_moisture","retrieval_qual_flag","surface_flag","freeze_thaw_fraction"],"coordinate_model":"EPSG:6933 EASE2 M09 native centers","provider":"earthdata","qualification":"global grid only; polar grids excluded"},
+     {"id":"smap-spl3smp-e-v6-pm","family":"SMAP SPL3SMP_E v006/R19240","pass":"ascending PM","bands":["soil_moisture","retrieval_qual_flag","surface_flag","freeze_thaw_fraction"],"coordinate_model":"EPSG:6933 EASE2 M09 native centers","provider":"earthdata","qualification":"separate PM source fields; no averaging"}
     ])
 }
 fn band_token(id: &str) -> Result<&'static str> {
@@ -43,9 +46,9 @@ fn validate(r: &ProductRequest) -> Result<()> {
         || r.buffer_bytes < 16 * 1024 * 1024
         || r.buffer_bytes > 1024 * 1024 * 1024
         || r.chunk_edge == 0
-        || r.chunk_edge > 512
+        || r.chunk_edge > 256
     {
-        return fail("array products require <=1 hour, 1..32 observations, 16..1024 MiB and chunk_edge 1..512");
+        return fail("array products require <=1 hour, 1..32 observations, 16..1024 MiB and chunk_edge 1..256");
     }
     if r.bands.is_empty()
         || r.bands.len() > 2
@@ -145,6 +148,9 @@ fn validate_observation(r: &ProductRequest, o: &Observation) -> Result<()> {
 }
 /// Catalog-only NOAA ListObjectsV2 search. It never prepares or fetches science.
 pub fn discover(r: &ProductRequest) -> Result<Value> {
+    if smap::supports(&r.product) {
+        return smap::discover(r);
+    }
     validate(r)?;
     let started = Instant::now();
     let observations = if let Some(o) = &r.observations {
@@ -245,6 +251,24 @@ pub fn discover(r: &ProductRequest) -> Result<Value> {
         json!({"schema":"tile-ripper-array-products-v1","product":r.product,"provider":if r.provider==Provider::Pinned{"pinned"}else{"noaa"},"complete":true,"observations":observations,"seconds":started.elapsed().as_secs_f64(),"routing":{"selection":"before physical preparation","fallback":"none","prepared_source":"exact locator and source version; never substituted"}}),
     )
 }
+fn admit_retained(
+    r: &ProductRequest,
+    catalog: &Value,
+    definitions: &[Value],
+    coordinates: &[Vec<f64>; 2],
+) -> Result<()> {
+    let metadata = serde_json::to_vec(r)?
+        .len()
+        .checked_add(serde_json::to_vec(catalog)?.len())
+        .and_then(|n| n.checked_add(serde_json::to_vec(definitions).ok()?.len()))
+        .and_then(|n| n.checked_mul(4))
+        .and_then(|n| n.checked_add(coordinates.iter().map(|v| v.len() * 32).sum::<usize>()))
+        .ok_or("array retained metadata reservation overflow")?;
+    if metadata > RESERVATION / 2 {
+        return fail("array product metadata/coordinate retention exceeds reserved half; narrow supplied metadata or native selection");
+    }
+    Ok(())
+}
 /// Immutable prepared observation over its actual native grid.
 #[derive(Clone)]
 pub struct PreparedObservation {
@@ -284,6 +308,9 @@ impl Prepared {
     }
 }
 pub fn prepare(r: &ProductRequest) -> Result<Prepared> {
+    if smap::supports(&r.product) {
+        return smap::prepare(r, None);
+    }
     let catalog = discover(r)?;
     let observations: Vec<Observation> = serde_json::from_value(catalog["observations"].clone())?;
     let mut prepared = Vec::new();
@@ -384,6 +411,7 @@ pub fn prepare(r: &ProductRequest) -> Result<Prepared> {
                 );
             }
         }
+        admit_retained(r, &catalog, &inspection.definitions, &coordinates)?;
         let base = acquisition::prepare_array_inspected(&request, &inspection)?;
         prepared.push(PreparedObservation {
             observation: o,
@@ -404,6 +432,16 @@ pub fn prepare(r: &ProductRequest) -> Result<Prepared> {
 pub fn quality_accepts(policy: &str, value: f64) -> Result<bool> {
     match policy {
         "goes_dqf_good" => Ok(value == 0.),
+        "smap_retrieval_recommended" => Ok(value == 0. || value == 8.),
         _ => fail("unknown array quality policy"),
+    }
+}
+
+#[cfg(feature = "authenticated-http")]
+pub fn prepare_earthdata(r: &ProductRequest, netrc: &std::path::Path) -> Result<Prepared> {
+    if smap::supports(&r.product) {
+        smap::prepare(r, Some(netrc))
+    } else {
+        fail("this array product has no qualified Earthdata route")
     }
 }

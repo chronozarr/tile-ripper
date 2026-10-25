@@ -79,6 +79,7 @@ pub(crate) fn fetch(p: &Prepared, path: &str, cancelled: Arc<AtomicBool>) -> Res
         a["native_grid"] = o.grid.describe();
         a["native_selection"] = json!(o.native_selection);
         a["catalog_observation"] = json!(o.observation);
+        a["product_metadata"] = first["product_metadata"].clone();
         group(store.clone(), &prefix, a, encoding)?;
         let chunks = [count[0].min(edge), count[1].min(edge)];
         let opt = serial().with_store_empty_chunks(true);
@@ -93,6 +94,11 @@ pub(crate) fn fetch(p: &Prepared, path: &str, cancelled: Arc<AtomicBool>) -> Res
                 .ok_or("missing array name")?;
             let mut a = attrs(&d["attributes"], &["y", "x"]);
             a["grid_mapping"] = json!("spatial_ref");
+            a["coordinates"] = json!(if first["time"].is_object() {
+                "t y x latitude longitude"
+            } else {
+                "y x latitude longitude"
+            });
             a["numeric_semantics"]=json!("exact raw stored values; CF unsigned and packing annotations retained without application");
             a["ancillary_variables"] = json!(format!("source_valid_{name} aoi_mask earth_visible"));
             let dtype = d["stored_dtype"].as_str().ok_or("missing array dtype")?;
@@ -127,7 +133,7 @@ pub(crate) fn fetch(p: &Prepared, path: &str, cancelled: Arc<AtomicBool>) -> Res
                 &chunks,
                 "|u1",
                 Value::Null,
-                json!({"_ARRAY_DIMENSIONS":["y","x"],"mask_role":"derived raw quality policy only; independent of science validity and AOI","policy":policy,"definition":"DQF == 0 (good_pixel_qf)","source_variable":"DQF"}),
+                json!({"_ARRAY_DIMENSIONS":["y","x"],"mask_role":"derived raw quality policy only; independent of science validity and AOI","policy":policy,"definition":if policy=="goes_dqf_good"{"DQF == 0 (good_pixel_qf)"}else{"raw retrieval_qual_flag == 0 or 8 (NSIDC v6 recommended retrievals); freeze/thaw bit 3 remains distinct"},"source_variable":if policy=="goes_dqf_good"{"DQF"}else{"retrieval_qual_flag; source PM suffix retained"}}),
                 encoding,
             )?)
         } else {
@@ -219,7 +225,14 @@ pub(crate) fn fetch(p: &Prepared, path: &str, cancelled: Arc<AtomicBool>) -> Res
                 &format!("{prefix}/{name}"),
                 &[n],
                 &[n.min(edge)],
-                "<i2",
+                if matches!(
+                    o.grid,
+                    crate::products::array_grid::NativeGrid::Geostationary { .. }
+                ) {
+                    "<i2"
+                } else {
+                    "<f8"
+                },
                 Value::Null,
                 attrs(a, &[name]),
                 encoding,
@@ -237,11 +250,18 @@ pub(crate) fn fetch(p: &Prepared, path: &str, cancelled: Arc<AtomicBool>) -> Res
             for at in (0..n).step_by(edge) {
                 let len = (n - at).min(edge);
                 let subset = ArraySubset::new_with_start_shape(vec![at as u64], vec![len as u64])?;
-                let values = o.coordinates[i][at..at + len]
-                    .iter()
-                    .map(|v| *v as i16)
-                    .collect::<Vec<_>>();
-                axis.store_array_subset_opt(&subset, &values, &opt)?;
+                if matches!(
+                    o.grid,
+                    crate::products::array_grid::NativeGrid::Geostationary { .. }
+                ) {
+                    let values = o.coordinates[i][at..at + len]
+                        .iter()
+                        .map(|v| *v as i16)
+                        .collect::<Vec<_>>();
+                    axis.store_array_subset_opt(&subset, &values, &opt)?;
+                } else {
+                    axis.store_array_subset_opt(&subset, &o.coordinates[i][at..at + len], &opt)?;
+                }
                 let values = (at..at + len)
                     .map(|v| (start[i] + v * step[i]) as i64)
                     .collect::<Vec<_>>();
@@ -340,7 +360,7 @@ pub(crate) fn fetch(p: &Prepared, path: &str, cancelled: Arc<AtomicBool>) -> Res
             let rect = [y, x, y + c.window.height, x + c.window.width];
             if rect[2] > count[0]
                 || rect[3] > count[1]
-                || coverage[i].len() >= 65536
+                || coverage[i].len() >= 4096
                 || coverage[i]
                     .iter()
                     .any(|a| rect[0] < a[2] && a[0] < rect[2] && rect[1] < a[3] && a[1] < rect[3])
@@ -384,7 +404,10 @@ pub(crate) fn fetch(p: &Prepared, path: &str, cancelled: Arc<AtomicBool>) -> Res
                         for cidx in col..col + w {
                             let at = r * c.window.width + cidx;
                             valid.push(u8::from(c.pixels.valid(at, c.nodata)));
-                            if path == "/DQF" {
+                            if path == "/DQF"
+                                || path.ends_with("/retrieval_qual_flag")
+                                || path.ends_with("/retrieval_qual_flag_pm")
+                            {
                                 if let Some(policy) = p.request.quality_policies.first() {
                                     q.push(u8::from(arrays::quality_accepts(
                                         policy,

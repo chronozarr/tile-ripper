@@ -19,7 +19,10 @@ fn navigation_preserves_space_and_native_radian_packing() {
         y_packing: yp,
         x_packing: xp,
         ..
-    } = g.clone();
+    } = g.clone()
+    else {
+        panic!("wrong test grid")
+    };
     let center = g
         .longitude_latitude(-yp[1] / yp[0], -xp[1] / xp[0])
         .unwrap();

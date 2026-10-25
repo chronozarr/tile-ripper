@@ -72,12 +72,17 @@ fn parse_new_v1_v2(cursor: &mut Cursor<'_>, _version: u8) -> Result<FillValueMes
     let defined_flag = cursor.read_u8()?;
 
     let fill_time = match fill_time_byte {
-        0 => FillTime::IfSet,
-        1 => FillTime::Always,
-        2 => FillTime::Never,
-        _ => FillTime::IfSet,
+        0 => FillTime::Always,
+        1 => FillTime::Never,
+        2 => FillTime::IfSet,
+        _ => return Err(Error::InvalidData("invalid HDF5 fill write time".into())),
     };
 
+    if defined_flag == 0 {
+        return Err(Error::InvalidData(
+            "undefined HDF5 storage fill is unsupported".into(),
+        ));
+    }
     let defined = defined_flag != 0;
 
     let value = if defined {
@@ -108,18 +113,16 @@ fn parse_new_v3(cursor: &mut Cursor<'_>) -> Result<FillValueMessage> {
     let defined = (flags & 0x20) != 0;
 
     let fill_time = match fill_time_bits {
-        0 => FillTime::IfSet,
-        1 => FillTime::Always,
-        2 => FillTime::Never,
-        _ => FillTime::IfSet,
+        0 => FillTime::Always,
+        1 => FillTime::Never,
+        2 => FillTime::IfSet,
+        _ => return Err(Error::InvalidData("invalid HDF5 fill write time".into())),
     };
 
     if undefined {
-        return Ok(FillValueMessage {
-            defined: false,
-            fill_time,
-            value: None,
-        });
+        return Err(Error::InvalidData(
+            "undefined HDF5 storage fill is unsupported".into(),
+        ));
     }
 
     let value = if defined {
@@ -178,7 +181,7 @@ mod tests {
         let mut data = vec![
             0x02, // version 2
             0x01, // alloc time
-            0x01, // fill time = always
+            0x00, // fill time = allocation (always)
             0x01, // defined = yes
         ];
         // fill value size = 8
@@ -200,9 +203,7 @@ mod tests {
             0x10, // flags: undefined bit set
         ];
         let mut cursor = Cursor::new(&data);
-        let msg = parse_new(&mut cursor, 8, 8, data.len()).unwrap();
-        assert!(!msg.defined);
-        assert!(msg.value.is_none());
+        assert!(parse_new(&mut cursor, 8, 8, data.len()).is_err());
     }
 
     #[test]
@@ -229,5 +230,6 @@ mod tests {
         let msg = parse_new(&mut cursor, 8, 8, data.len()).unwrap();
         assert!(!msg.defined);
         assert!(msg.value.is_none());
+        assert_eq!(msg.fill_time, FillTime::IfSet);
     }
 }

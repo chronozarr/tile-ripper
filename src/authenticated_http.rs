@@ -436,6 +436,66 @@ impl AuthenticatedHttp {
             netrc,
         )
     }
+    /// Exact observed NSIDC SPL3SMP_E v006/R19240 object contract. No hosts
+    /// or redirect grants are inherited from another Earthdata archive.
+    pub fn earthdata_smap(canonical_url: &str, netrc: impl Into<PathBuf>) -> Result<Self> {
+        let canonical = Url::parse(canonical_url)?;
+        let archive = "https://data.nsidc.earthdatacloud.nasa.gov";
+        let prefix = "/nsidc-cumulus-prod-protected/SMAP/SPL3SMP_E/006/";
+        let key = canonical
+            .path()
+            .strip_prefix(prefix)
+            .ok_or("SMAP exact collection path required")?;
+        let parts = key.split('/').collect::<Vec<_>>();
+        if canonical.origin().ascii_serialization() != archive
+            || canonical.query().is_some()
+            || canonical.fragment().is_some()
+            || !canonical.username().is_empty()
+            || canonical.password().is_some()
+            || parts.len() != 4
+        {
+            return fail("SMAP exact unsigned NSIDC object required");
+        }
+        let date = format!("{}{}{}", parts[0], parts[1], parts[2]);
+        chrono::NaiveDate::parse_from_str(&date, "%Y%m%d")?;
+        if parts[0].len() != 4
+            || parts[1].len() != 2
+            || parts[2].len() != 2
+            || parts[3] != format!("SMAP_L3_SM_P_E_{date}_R19240_001.h5")
+        {
+            return fail("SMAP source date, processing release or filename conflict");
+        }
+        let resource = "https://d3h5e2j7riftk6.cloudfront.net";
+        let suffix = format!(
+            "/nsidc-cumulus-prod-protected.s3.us-west-2.amazonaws.com/SMAP/SPL3SMP_E/006/{key}"
+        );
+        let head = format!("/head-6fa4010df9e3d374e86134879ef72c9b{suffix}");
+        let get = format!("/s3-6fa4010df9e3d374e86134879ef72c9b{suffix}");
+        let login = "https://urs.earthdata.nasa.gov";
+        let rule = |a: &str, b: &str, p: &str| RedirectRule {
+            from_origin: a.into(),
+            to_origin: b.into(),
+            destination_path: p.into(),
+        };
+        Self::new(
+            Config {
+                canonical_url: canonical_url.into(),
+                login_origin: login.into(),
+                resource_origin: resource.into(),
+                head_resource_path: head.clone(),
+                get_resource_path: get.clone(),
+                redirects: vec![
+                    rule(archive, login, "/oauth/authorize"),
+                    rule(login, archive, "/login"),
+                    rule(archive, archive, canonical.path()),
+                    rule(archive, resource, &head),
+                    rule(archive, resource, &get),
+                ],
+                additional_roots: vec![],
+            },
+            netrc,
+        )
+    }
     /// Opt in to the observed ASF OPERA RTC-S1 V1 protected-object contract.
     ///
     /// Current CMR records expose unsigned Cumulus object URLs directly. This
@@ -1442,5 +1502,34 @@ mod tests {
         assert!(origin("http://localhost").is_err());
         assert!(origin("https://name:secret@localhost").is_err());
         assert!(origin("https://localhost?secret").is_err());
+    }
+    #[test]
+    fn smap_policy_is_exact_object_date_release_and_archive_scoped() -> Result<()> {
+        let netrc = netrc_fixture("smap-profile")?;
+        let url="https://data.nsidc.earthdatacloud.nasa.gov/nsidc-cumulus-prod-protected/SMAP/SPL3SMP_E/006/2026/10/23/SMAP_L3_SM_P_E_20261023_R19240_001.h5";
+        let session = AuthenticatedHttp::earthdata_smap(url, &netrc)?;
+        assert!(session.accepts(url));
+        assert!(!session.accepts(&url.replace("20261023", "20261022")));
+        for bad in [
+            url.replace("/006/", "/007/"),
+            url.replace("R19240", "R19241"),
+            url.replace("/10/23/", "/10/22/"),
+            url.replace(
+                "data.nsidc.earthdatacloud.nasa.gov",
+                "archive.podaac.earthdata.nasa.gov",
+            ),
+            format!("{url}?secret=token"),
+        ] {
+            assert!(AuthenticatedHttp::earthdata_smap(&bad, &netrc).is_err());
+        }
+        assert!(session
+            .config
+            .redirects
+            .iter()
+            .all(|r| r.to_origin == "https://urs.earthdata.nasa.gov"
+                || r.to_origin == "https://data.nsidc.earthdatacloud.nasa.gov"
+                || r.to_origin == "https://d3h5e2j7riftk6.cloudfront.net"));
+        std::fs::remove_file(netrc)?;
+        Ok(())
     }
 }

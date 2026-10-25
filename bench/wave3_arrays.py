@@ -23,7 +23,7 @@ class View(io.RawIOBase):
 def save(path,v):path.parent.mkdir(parents=True,exist_ok=True);path.write_text(json.dumps(v,indent=2,allow_nan=False)+'\n')
 def invoke(args):
  with tempfile.TemporaryFile() as out,tempfile.TemporaryFile() as err:
-  start=time.monotonic();p=subprocess.Popen([str(BIN),*map(str,args)],stdout=out,stderr=err,env={**os.environ,'TILE_RIPPER_HDF5_METADATA_POLICY':'page16k','TILE_RIPPER_WORKERS':'1'});_,status,usage=os.wait4(p.pid,0);p.returncode=os.waitstatus_to_exitcode(status);out.seek(0);err.seek(0)
+  start=time.monotonic();p=subprocess.Popen([str(BIN),*map(str,args)],stdout=out,stderr=err,env={**os.environ,'TILE_RIPPER_HDF5_METADATA_POLICY':os.environ.get('WAVE3_METADATA_POLICY','page16k'),'TILE_RIPPER_WORKERS':'1'});_,status,usage=os.wait4(p.pid,0);p.returncode=os.waitstatus_to_exitcode(status);out.seek(0);err.seek(0)
   result=dict(code=p.returncode,stdout=out.read().decode(),stderr=err.read().decode(),wall_seconds=time.monotonic()-start,cpu_seconds=usage.ru_utime+usage.ru_stime,peak_rss_bytes=usage.ru_maxrss*(1 if sys.platform=='darwin' else 1024))
  if result['code']:raise RuntimeError(json.dumps(result))
  return result
@@ -99,5 +99,57 @@ def goes(capture=False,live=False):
    r=request(band,info,info['url'],cases[0][1]);r['provider']='auto';req=WORK/f'{band}-live-request.json';save(req,r);output=WORK/f'{band}-live-{time.time_ns()}.zarr';run=invoke(['fetch',req,'--output',output]);manifest=json.loads(run['stdout']);results.append(dict(band=band,case='live-noaa',fetch=compact(run),verification=verify_goes(m,output,r,manifest),execution=manifest['observations'][0]['execution']))
  save(DOC/'goes-validation.json',dict(status='passed',reference_versions=dict(h5py=h5py.__version__,netCDF4=netCDF4.__version__,zarr=zarr.__version__,xarray=xr.__version__),scope='two independent GOES-19 CMIPC band/grid specimens; bounded original source captures; raw codes plus CF unsigned/packing annotations',cases=results))
  print(json.dumps(dict(status='passed',cases=len(results))),flush=True)
+def smap_request(passname,info,href,aoi):
+ id='SMAP_L3_SM_P_E_20261023_R19240_001';asset=dict(href=href,etag=info['etag'],metadata={});bands=['soil_moisture','retrieval_qual_flag','surface_flag','freeze_thaw_fraction']
+ return dict(product='smap-spl3smp-e-v6-'+passname,provider='pinned',aoi=aoi,start='2026-10-23T00:00:00Z',end='2026-10-23T23:59:59Z',bands=bands,quality_policies=['smap_retrieval_recommended'],observations=[dict(id=id,datetime='2026-10-23T00:00:00.000Z',collection='SPL3SMP_E',platform='SMAP',processing='006/R19240',assets={b:asset for b in bands},properties={})],buffer_bytes=67108864,chunk_edge=32,max_observations=1)
+def smap_slice(start,count,step=(1,1)):
+ return dict(kind='array_slice',start=start,count=count,step=step,axes=['/@smap_ease2_m09/y','/@smap_ease2_m09/x'])
+def verify_smap(m,path,r,manifest):
+ group='observations/'+r['observations'][0]['id'];g=zarr.open_group(str(path),mode='r')[group];native=manifest['observations'][0]['source']['logical_request']['spatial'];a=native['start'];n=native['count'];step=native['step'];sl=tuple(slice(a,a+n*s,s) for a,n,s in zip(a,n,step));passname='PM' if r['product'].endswith('-pm') else 'AM';suffix='_pm' if passname=='PM' else '';sourcegroup='Soil_Moisture_Retrieval_Data_'+passname;refs=[]
+ with h5py.File(View(m),'r') as f:
+  for b in r['bands']:
+   name=b+suffix;d=f[sourcegroup+'/'+name];expected=d[sl];actual=g[name][:];assert actual.dtype==expected.dtype;assert actual.tobytes()==expected.tobytes(),name
+   valid=expected!=d.attrs['_FillValue'];np.testing.assert_array_equal(g['source_valid_'+name][:],valid.astype('u1'))
+   refs.append(dict(name=name,dtype=str(actual.dtype),samples=actual.size,valid_centers=int(valid.sum()),sha256=hashlib.sha256(actual.tobytes()).hexdigest()))
+  q=f[sourcegroup+'/retrieval_qual_flag'+suffix][sl];expectedq=np.isin(q,[0,8]);np.testing.assert_array_equal(g['quality_smap_retrieval_recommended'][:],expectedq.astype('u1'))
+  expectedx=-17367530.4451615+(a[1]+np.arange(n[1])*step[1]+.5)*9008.055210146;expectedy=7314540.8306386-(a[0]+np.arange(n[0])*step[0]+.5)*9008.055210146
+  np.testing.assert_array_equal(g['x'][:],expectedx);np.testing.assert_array_equal(g['y'][:],expectedy)
+  X,Y=np.meshgrid(expectedx,expectedy);lon,lat=Transformer.from_crs(6933,4326,always_xy=True).transform(X,Y);error=max(float(np.abs(g['longitude'][:]-lon).max()),float(np.abs(g['latitude'][:]-lat).max()));assert error<2e-8,error
+  srclat=f[sourcegroup+'/latitude'+suffix][sl];srclon=f[sourcegroup+'/longitude'+suffix][sl];ok=(srclat!=-9999)&(srclon!=-9999);sourceerr=max(float(np.abs(srclat[ok]-lat[ok]).max()),float(np.abs(srclon[ok]-lon[ok]).max())) if ok.any() else 0.;assert sourceerr<5e-6,sourceerr
+  mask=np.ones(X.shape,dtype=bool)
+  if r['aoi']['kind']=='bounds':
+   w,s,e,nn=r['aoi']['bbox'];mask&=(lon>=w)&(lon<=e)&(lat>=s)&(lat<=nn)
+  np.testing.assert_array_equal(g['aoi_mask'][:],mask.astype('u1'));np.testing.assert_array_equal(g['earth_visible'][:],np.ones(X.shape,dtype='u1'))
+  assert CRS.from_cf(dict(g['spatial_ref'].attrs)).to_epsg()==6933
+  meta=g.attrs['product_metadata'];assert meta['/Metadata/DatasetIdentification']['ECSVersionID']['value']=='006';assert meta['/Metadata/DatasetIdentification']['CompositeReleaseID']['value']=='R19240'
+ with xr.open_zarr(str(path),group=group,decode_cf=False,consolidated=False,chunks=None) as ds:ds.load();assert ds['soil_moisture'+suffix].dtype==np.dtype('f4')
+ files=[p for p in path.rglob('*') if p.is_file()]
+ return dict(native_selection=native,variables=refs,quality_accepted=int(expectedq.sum()),coordinate_max_error_degrees=error,source_coordinate_rounding_error_degrees=sourceerr,source_coordinate_nonfill_centers=int(ok.sum()),included_centers=int(mask.sum()),xarray_reopen=True,output_objects=len(files),output_bytes=sum(p.stat().st_size for p in files))
+def smap(live=False):
+ os.environ["WAVE3_METADATA_POLICY"]="page4k"
+ info=json.loads((WORK/'smap/global/inspection.json').read_text());m=Mirror(WORK/'smap/global');m.verify();results=[]
+ # A geographic envelope strictly between native centers, independently derived by PROJ.
+ xx=-17367530.4451615+(np.array([901.75,905.25])+.5)*9008.055210146;yy=7314540.8306386-(np.array([401.75,405.25])+.5)*9008.055210146
+ lon,lat=Transformer.from_crs(6933,4326,always_xy=True).transform(xx,yy);bbox=[float(lon.min()),float(lat.min()),float(lon.max()),float(lat.max())]
+ for passname in ['am','pm']:
+  cases=[('texas',smap_slice([400,900],[8,8])),('gulf',smap_slice([400,1000],[8,8])),('strided',smap_slice([400,900],[3,4],[3,2])),('geographic',dict(kind='bounds',crs='EPSG:4326',bbox=bbox))]
+  with server(m) as srv:
+   for label,aoi in cases:
+    r=smap_request(passname,info,srv.url,aoi);req=WORK/f'smap-{passname}-{label}.json';save(req,r);out=WORK/f'smap-{passname}-{label}-{time.time_ns()}.zarr';plan=invoke(['plan',req]);run=invoke(['fetch',req,'--output',out]);manifest=json.loads(run['stdout']);verify=verify_smap(m,out,r,manifest);stream=invoke(['stream',req,'--values']);assert json.loads(stream['stdout'].splitlines()[-1])['event']=='complete';results.append(dict(passname=passname,case=label,plan=compact(plan),fetch=compact(run),stream=compact(stream),verification=verify,execution=manifest['observations'][0]['execution'],output_io=manifest['output_io']))
+    canonical=smap_request(passname,info,info['canonical_url'],aoi);canonical['provider']='earthdata';save(DOC/f'smap-{passname}-{label}-request.json',canonical)
+   assert not srv.errors,srv.errors
+  if live:
+   req=WORK/f'smap-{passname}-live.json';r=smap_request(passname,info,info['canonical_url'],cases[0][1]);r['provider']='earthdata';save(req,r);out=WORK/f'smap-{passname}-live-{time.time_ns()}.zarr';run=invoke(['fetch',req,'--auth','earthdata','--netrc',Path.home()/'.netrc','--output',out]);manifest=json.loads(run['stdout']);results.append(dict(passname=passname,case='live-nsidc',fetch=compact(run),verification=verify_smap(m,out,r,manifest),execution=manifest['observations'][0]['execution']))
+ save(DOC/'smap-capture.json',m.info)
+ # Full attributes retained; compact windows become hashes/value counts in acceptance.
+ inspection=copy.deepcopy(info)
+ for d in inspection['datasets'].values():
+  for k in list(d):
+   if k.startswith('window_'):del d[k]
+ save(DOC/'smap-inspection.json',inspection)
+ save(DOC/'smap-validation.json',dict(status='passed',cases=results,scope='global AM and PM v006/R19240 from one daily granule; EPSG6931 polar grid unqualified',raw_reference='range-backed h5py; original HDF5 C library; source coordinate fields independently compared with official grid plus PROJ'))
+ print(json.dumps(dict(status='passed',smap_cases=len(results))),flush=True)
 if __name__=='__main__':
- p=argparse.ArgumentParser();p.add_argument('family',choices=['goes']);p.add_argument('--capture',action='store_true');p.add_argument('--live',action='store_true');a=p.parse_args();goes(a.capture,a.live)
+ p=argparse.ArgumentParser();p.add_argument('family',choices=['goes','smap']);p.add_argument('--capture',action='store_true');p.add_argument('--live',action='store_true');a=p.parse_args()
+ if a.family=='goes':goes(a.capture,a.live)
+ else:smap(a.live)

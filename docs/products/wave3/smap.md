@@ -1,0 +1,26 @@
+# SMAP SPL3SMP_E v006/R19240 global qualification
+
+Exact daily source: `SMAP_L3_SM_P_E_20261023_R19240_001.h5`, collection `C2938664763-NSIDC_CPRD` / SPL3SMP_E version 006. The [physical inspection](smap-inspection.json) pins its strong ETag, 594,638,674-byte size, processing metadata and original group/variable attributes. The [capture receipt](smap-capture.json) identifies the bounded source extents. Sparse source files are incomplete; guarded replay rejects every hole.
+
+Two named profiles preserve descending AM and ascending PM separately. Each admits Float32 soil_moisture and freeze_thaw_fraction plus UInt16 retrieval_qual_flag and surface_flag. PM output retains its original `_pm` variable suffix. The inspected arrays have shape1624×3856, full-row chunks1×3856, legacy v1 B-trees and DEFLATE level2. Raw values, type, original units `cm**3/cm**3`, fill markers and condition words remain unchanged. No averaging, scaling, freezing threshold, soil-moisture valid-range filter or binary surface-condition reinterpretation is applied.
+
+Storage initialization is default HDF5 zero. Scientific fill is independently -9999 for Float32 layers and65534 for quality words. CF `_FillValue` no longer replaces HDF5 storage fill. Both byte orders and allocated/unallocated default/explicit fills are checked against h5py and independently executed NetCDF-C fixtures. Undefined and never-initialized storage remain unsupported.
+
+The [NSIDC v6 guide](https://nsidc.org/data/documentation/smap-enhanced-l3-radiometer-global-and-polar-grid-daily-9-km-ease-grid-soil-moisture-version-6-user) recommends retrieval flags exactly0 or8. `smap_retrieval_recommended` produces a separate mask on that original word. Source validity, AOI inclusion, soil moisture, freeze/thaw fraction, surface flags and observation pass remain independent. Source bit3 and original text mask/meaning definitions are preserved; accepting8 never erases that condition.
+
+Only the global EPSG:6933 EASE2 M09 grid is admitted. The exact [NSIDC grid definition](https://github.com/nsidc/mapxmaps/blob/main/EASE2_M09km.gpd) defines 9008.055210146m spacing and outer-edge origin(-17367530.4451615,7314540.8306386). Centers are x=edge_x+(column+0.5)*spacing and y=edge_y-(row+0.5)*spacing. Source metadata independently confirms dimensions and point registration. The guide's rounded9024.31m table and upper-left-center wording are inconsistent with the precise definition and observed coordinates; those approximations are not used. Native coordinates exist even where observation latitude/longitude fields contain fill. Original coordinate attributes, including PM pointers to AM fields, remain in `source_attributes`; destination CF coordinates refer to actual native axes and derived navigation.
+
+The ellipsoidal cylindrical equal-area inverse is checked with PROJ. The [acceptance receipt](smap-validation.json) compares every selected raw science/quality sample, original source-validity and derived policy value, source coordinate fields, native indices and independent Zarr/xarray reopening. Native navigation differs from PROJ's inverse approximation by at most2e-8degrees (about2mm), far below a9km cell. Source Float32 latitude/longitude agrees within5e-6degrees. Texas/Gulf, positive strides and geographic-center selection cover AM and PM independently. [Live acquisition evidence](smap-live-validation.json) is separate from bounded loopback replay.
+
+NSIDC authentication has its own exact-object policy: archive data.nsidc.earthdatacloud.nasa.gov → URS → archive login/exact object → exact d3h5e2j7riftk6 CloudFront resource. Credentials are sent only to URS; cookies remain origin-confined. The constructor rejects alternate releases, date/name mismatches, queries and other archives. Conditional ranges and final source validation pass for this exact source. Pinned references never inherit live credentials.
+
+```sh
+ target/release/tile-ripper discover --product smap-spl3smp-e-v6-am --bbox '-96,29.9,-95.5,30.5' --start 2026-10-23T00:00:00Z --end 2026-10-23T23:59:59Z --bands soil_moisture,retrieval_qual_flag,surface_flag,freeze_thaw_fraction --limit 2
+ target/release/tile-ripper plan examples/product-smap.json --auth earthdata --netrc PRIVATE_FILE
+ target/release/tile-ripper stream examples/product-smap.json --auth earthdata --netrc PRIVATE_FILE --values
+ target/release/tile-ripper fetch examples/product-smap.json --auth earthdata --netrc PRIVATE_FILE --output NEW.zarr
+cargo run --locked --release --no-default-features --features native-hdf5,authenticated-http --example array_product -- examples/product-smap.json NEW.zarr --netrc PRIVATE_FILE
+uv run --no-project --python 3.12 --with-requirements docs/products/wave3/reference.txt python bench/wave3_arrays.py smap
+```
+
+Polar EPSG:6931 grids, other processing releases, other daily granules and SMAP L4 remain unqualified. Geographic requests preserve the original native grid and a separate closed-polygon pixel-center mask. No output reprojection or resampling occurs.

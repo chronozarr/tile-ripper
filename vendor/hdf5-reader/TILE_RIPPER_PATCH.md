@@ -28,3 +28,20 @@ explicit unsupported-encoding error. Ordinary UInt8/UInt16/UInt32 and existing
 canonical integer metadata retain their behavior. This is a rejection guard,
 not support for arbitrary HDF5 numeric encodings. Parser and end-to-end tests
 cover the boundary. No upstream submission is authorized or performed.
+
+## Storage initialization and fill write time (Wave 3)
+
+`dataset.rs` no longer substitutes the CF `_FillValue` attribute for HDF5 storage
+initialization. Default numeric initialization remains zero; explicit HDF5 fill
+bytes remain authoritative. Scientific CF markers stay attributes. Both endian
+variants, allocated zeros/NaNs and unallocated default/explicit fills agree with
+h5py and separately opened NetCDF-C. Actual SMAP v006/R19240 and NISAR GCOV
+provisional products expose this distinction.
+
+`messages/fill_value.rs` now decodes HDF5 fill write time as allocation=0,
+never=1, if-set=2, matching the HDF5 specification. The previous table swapped
+all three meanings. Undefined storage fill is explicitly rejected rather than
+conflated with default zero. Tile-Ripper also rejects never-initialized storage.
+These are deliberately unsupported states; no arbitrary initialized bytes are
+claimed as scientific values. The library's 277 unit tests pass. This correction
+is local and has not been submitted upstream.

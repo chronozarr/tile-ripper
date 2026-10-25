@@ -183,3 +183,56 @@ fn local_coordinate_and_data_mutation_cannot_return_success() -> Result<()> {
     }
     Ok(())
 }
+
+#[cfg(feature = "native-hdf5")]
+#[test]
+fn implicit_storage_zero_is_not_cf_nan_in_either_byte_order() -> Result<()> {
+    for order in ["le", "be"] {
+        for fill in ["None", "7"] {
+            let mut r = request(&fixture(&format!("storage-cf-{order}-{fill}")));
+            r.spatial = Spatial::ArraySlice {
+                start: [0, 0],
+                count: [8, 8],
+                step: [1, 1],
+                axes: ["/y".into(), "/x".into()],
+            };
+            r.variables = vec![Variable::Dataset {
+                path: "/signal".into(),
+            }];
+            let p = acquisition::prepare(&r, &mut Default::default())?;
+            let definition = &p.explain()["sources"][0]["object_identities"]["datasets"][0];
+            assert_eq!(
+                definition["storage_fill"],
+                if fill == "7" { 7. } else { 0. }
+            );
+            let mut samples = 0;
+            let report = p.execute(|c| {
+                for (i, v) in c.pixels.as_f32().unwrap().iter().enumerate() {
+                    let y = c.window.y + i / c.window.width;
+                    let x = c.window.x + i % c.window.width;
+                    if y == 0 && x == 1 {
+                        assert!(v.is_nan());
+                        assert!(!c.validity().nth(i).unwrap());
+                    } else {
+                        let expected = if y == 0 && x == 0 {
+                            0.
+                        } else if y == 0 && x == 2 {
+                            1.25
+                        } else if fill == "7" {
+                            7.
+                        } else {
+                            0.
+                        };
+                        assert_eq!(*v, expected);
+                        assert!(c.validity().nth(i).unwrap());
+                    }
+                    samples += 1;
+                }
+                Ok(())
+            })?;
+            assert_eq!(samples, 64);
+            assert_eq!(report.filled_source_chunks, 3);
+        }
+    }
+    Ok(())
+}

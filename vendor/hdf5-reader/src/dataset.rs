@@ -24,7 +24,9 @@ use crate::messages::attribute::AttributeMessage;
 use crate::messages::dataspace::{DataspaceMessage, DataspaceType};
 use crate::messages::datatype::{Datatype, StringSize, VarLenKind};
 use crate::messages::external_files::ExternalFilesMessage;
-use crate::messages::fill_value::{FillTime, FillValueMessage};
+#[cfg(test)]
+use crate::messages::fill_value::FillTime;
+use crate::messages::fill_value::FillValueMessage;
 use crate::messages::filter_pipeline::FilterPipelineMessage;
 use crate::messages::layout::{ChunkIndexing, DataLayout};
 use crate::messages::HdfMessage;
@@ -837,20 +839,9 @@ impl Dataset {
         let layout =
             layout.ok_or_else(|| Error::InvalidData("dataset missing data layout".into()))?;
         let layout = normalize_layout(layout, &dataspace);
-        let attr_fill_value = attributes
-            .iter()
-            .find(|attr| {
-                attr.name == "_FillValue" && matches!(attr.dataspace.num_elements(), Ok(1))
-            })
-            .map(|attr| FillValueMessage {
-                defined: !attr.raw_data.is_empty(),
-                fill_time: FillTime::IfSet,
-                value: Some(attr.raw_data.clone()),
-            });
-        let fill_value = match fill_value {
-            Some(existing) if existing.value.is_some() => Some(existing),
-            _ => attr_fill_value,
-        };
+        // CF _FillValue is scientific missingness, not HDF5 initialization.
+        // An absent/default fill message initializes numeric storage to zero.
+        // Keep actual storage fill messages; never synthesize one from attributes.
 
         Ok(Dataset {
             v1_index_traversal: V1IndexTraversal::Full,

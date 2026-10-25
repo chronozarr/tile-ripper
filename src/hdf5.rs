@@ -185,23 +185,9 @@ fn attrs(dataset: &Dataset, file: &Hdf5File) -> Result<Value> {
     {
         return fail("external data storage is outside the admitted HDF5 profile");
     }
-    let explicit_storage_fill = header
-        .messages
-        .iter()
-        .any(|m| matches!(m, HdfMessage::FillValue(fill) if fill.value.is_some()));
-    // Dataset::attributes includes the library's bounded dense-attribute heap
-    // traversal. Header messages alone omit real NetCDF-4 scientific attributes.
+    if header.messages.iter().any(|m|matches!(m,HdfMessage::FillValue(f) if f.fill_time==hdf5_reader::messages::fill_value::FillTime::Never)) {return fail("HDF5 never-initialized storage is outside the admitted profile");}
+    // The parser now keeps storage initialization independent of CF attributes.
     let attributes = dataset.attributes();
-    for attr in &attributes {
-        if attr.name == "_FillValue" && !explicit_storage_fill {
-            // The upstream reader substitutes this attribute for a default
-            // HDF5 fill. Reject that ambiguous layout instead of changing its
-            // stored initialization semantics for unallocated data.
-            return fail(
-                "CF _FillValue with implicit HDF5 initialization is outside the admitted profile",
-            );
-        }
-    }
     stored_attrs(attributes)
 }
 fn stored_attrs(attributes: Vec<hdf5_reader::Attribute>) -> Result<Value> {
@@ -706,7 +692,7 @@ impl InspectedFile {
                 _ => <f32 as hdf5_reader::H5Type>::from_bytes(fill, ds.dtype())? as f64,
             })
         } else {
-            None
+            Some(0.)
         };
         let cf_fill = marker(&ds, "_FillValue", dt)?;
         let missing = marker(&ds, "missing_value", dt)?;
@@ -737,6 +723,7 @@ impl InspectedFile {
         let description = json!({"path":path,"shape":shape,"source_dtype":format!("{:?}",ds.dtype()),"stored_dtype":dt,
             "chunk_shape":chunk,"chunk_index":"v1 B-tree","index_policy":self.index_policy,
             "index_validation_scope":"visited nodes and visible pointers; full policy traverses all nodes",
+            "storage_initialization":if ds.fill_value().is_some_and(|f|f.value.is_some()) {"explicit HDF5 fill message"} else {"default HDF5 numeric zero; independent of CF missingness"},
             "storage_fill":storage_fill.map(|v|if v.is_finite(){json!(v)}else{json!(v.to_string())}),
             "missingness":"CF scalar markers and NaNs; storage initialization alone is valid","attributes":attributes,
             "root_attributes":self.root_attributes,"axis_semantics":"stored coordinate values as exact Float64; apply axis scale/offset explicitly",
@@ -814,6 +801,31 @@ impl InspectedFile {
             .cloned()
             .collect())
     }
+    fn smap_metadata(&self) -> Result<Value> {
+        let mut out = json!({});
+        for path in [
+            "/Metadata/DatasetIdentification",
+            "/Metadata/Extent",
+            "/Metadata/ProcessStep",
+            "/Metadata/GridSpatialRepresentation",
+            "/Metadata/GridSpatialRepresentation/Row",
+            "/Metadata/GridSpatialRepresentation/Column",
+            "/Metadata/GridSpatialRepresentation/GridDefinition",
+        ] {
+            out[path] = stored_attrs(self.parser.group(path)?.attributes()?)?;
+        }
+        let id = &out["/Metadata/DatasetIdentification"];
+        if id["shortName"]["value"] != "SPL3SMP_E"
+            || id["ECSVersionID"]["value"] != "006"
+            || id["CompositeReleaseID"]["value"] != "R19240"
+            || out["/Metadata/GridSpatialRepresentation"]["cellGeometry"]["value"] != "point"
+            || out["/Metadata/GridSpatialRepresentation/Row"]["dimensionSize"]["value"] != 1624.
+            || out["/Metadata/GridSpatialRepresentation/Column"]["dimensionSize"]["value"] != 3856.
+        {
+            return fail("unqualified SMAP v6/R19240 global grid identity");
+        }
+        Ok(out)
+    }
     fn axis(
         &self,
         path: &str,
@@ -847,6 +859,31 @@ impl InspectedFile {
             return fail("immutable HDF5 inspection lacks requested coordinate coverage; inspect a fresh source");
         }
         let started = Instant::now();
+        if ["/@smap_ease2_m09/y", "/@smap_ease2_m09/x"].contains(&path) {
+            let metadata = self.smap_metadata()?;
+            let row = path.ends_with("/y");
+            let expected = if row { 1624 } else { 3856 };
+            if shape != expected {
+                return fail("SMAP dataset shape conflicts with official EASE2 M09 grid");
+            }
+            let values = (0..count)
+                .map(|i| {
+                    let index = start + i * step;
+                    if row {
+                        7314540.8306386 - (index as f64 + 0.5) * 9008.055210146
+                    } else {
+                        -17367530.4451615 + (index as f64 + 0.5) * 9008.055210146
+                    }
+                })
+                .collect::<Vec<_>>();
+            let description = json!({"path":path,"dtype":"FloatingPoint64","storage":{"layout":"derived official EASE2 M09 center formula; source has no rank-one x/y arrays"},"derivation":{"authority":"https://github.com/nsidc/mapxmaps/blob/main/EASE2_M09km.gpd","epsg":6933,"spacing_m":9008.055210146,"edge_origin":[-17367530.4451615,7314540.8306386],"registration":"pixel center = edge origin plus half cell; rows decrease northing"},"attributes":{"units":{"value":"m"},"standard_name":{"value":if row{"projection_y_coordinate"}else{"projection_x_coordinate"}}},"product_metadata":metadata});
+            let result = CachedAxis {
+                values: values.into(),
+                description,
+            };
+            cache.insert((path.into(), selected), result.clone());
+            return Ok(result);
+        }
         let axis = self.parser.dataset(path)?;
         if axis.shape() != [shape as u64] {
             return fail("explicit HDF5 coordinate shape does not match dataset dimension");
@@ -1145,6 +1182,10 @@ impl ArrayInspection {
                 descriptions.push(axis.description);
             }
             definition["axes"] = json!(descriptions);
+            if axes[0] == "/@smap_ease2_m09/y" {
+                definition["product_metadata"] = file.smap_metadata()?;
+                definition["grid_mapping"] = crate::products::array_grid::ease_mapping();
+            }
             if self::is_goes_root(&file.root_attributes) {
                 let mut ancillary = json!({});
                 for path in ["/band_id", "/band_wavelength"] {

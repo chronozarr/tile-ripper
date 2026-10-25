@@ -329,14 +329,13 @@ fn run_array(options: super::Options) -> Result<()> {
     if options.checkpoint.is_some()
         || options.quality_policy.is_some()
         || options.cache_path.is_some()
-        || options.access.is_some()
         || options
             .output_format
             .as_ref()
             .is_some_and(|s| s != "zarr_v2")
         || options.backend == Some(super::Backend::Gdal)
     {
-        return Err("array products require native HDF5/scientific Zarr; policies belong in JSON; GOES is anonymous".into());
+        return Err("array products require native HDF5/scientific Zarr; policies belong in JSON; authentication is product-specific".into());
     }
     let mut r: ProductRequest = serde_json::from_value(options.input)?;
     if let Some(path) = options.output {
@@ -349,7 +348,24 @@ fn run_array(options: super::Options) -> Result<()> {
         );
         return Ok(());
     }
-    let p = products::arrays::prepare(&r)?;
+    let p = if let Some(access) = options.access {
+        if access.profile != "earthdata" || access.policy.is_some() || access.ca.is_some() {
+            return Err(
+                "array authentication requires explicit --auth earthdata --netrc PRIVATE_FILE"
+                    .into(),
+            );
+        }
+        #[cfg(feature = "authenticated-http")]
+        {
+            products::arrays::prepare_earthdata(&r, std::path::Path::new(&access.netrc))?
+        }
+        #[cfg(not(feature = "authenticated-http"))]
+        {
+            return Err("array authentication requires authenticated-http feature".into());
+        }
+    } else {
+        products::arrays::prepare(&r)?
+    };
     let cancelled = Arc::new(AtomicBool::new(false));
     if options.command == "fetch" || options.command == "stream" {
         let c = cancelled.clone();

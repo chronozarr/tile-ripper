@@ -2,12 +2,31 @@
 #[cfg(feature = "native-hdf5")]
 fn main() -> tile_ripper::Result<()> {
     use tile_ripper::products::{arrays, ProductRequest};
-    let args: Vec<_> = std::env::args().collect();
+    let mut args: Vec<_> = std::env::args().collect();
+    let netrc = if args.len() >= 4 && args[args.len() - 2] == "--netrc" {
+        let path = args.pop().unwrap();
+        args.pop();
+        Some(path)
+    } else {
+        None
+    };
     let request: ProductRequest = serde_json::from_slice(&std::fs::read(
         args.get(1)
             .ok_or("usage: array_product REQUEST.json [NEW.zarr]")?,
     )?)?;
-    let prepared = arrays::prepare(&request)?;
+    let prepared = if let Some(path) = netrc {
+        #[cfg(feature = "authenticated-http")]
+        {
+            arrays::prepare_earthdata(&request, std::path::Path::new(&path))?
+        }
+        #[cfg(not(feature = "authenticated-http"))]
+        {
+            let _ = path;
+            return Err("--netrc requires authenticated-http".into());
+        }
+    } else {
+        arrays::prepare(&request)?
+    };
     println!("{}", serde_json::to_string_pretty(&prepared.explain())?);
     if let Some(path) = args.get(2) {
         println!(
