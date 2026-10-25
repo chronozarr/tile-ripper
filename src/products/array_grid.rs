@@ -6,6 +6,7 @@ use serde_json::Value;
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(tag = "coordinate_model", rename_all = "snake_case")]
 pub enum NativeGrid {
+    NisarUtm16North,
     EaseGridGlobal {
         epsg: u32,
     },
@@ -71,6 +72,17 @@ impl NativeGrid {
     /// Longitude/latitude of an actual source center, or None for space.
     pub fn longitude_latitude(&self, y: f64, x: f64) -> Option<[f64; 2]> {
         match self {
+            Self::NisarUtm16North => {
+                let native = proj4rs::Proj::from_proj_string(
+                    "+proj=utm +zone=16 +datum=WGS84 +units=m +no_defs",
+                )
+                .ok()?;
+                let geographic =
+                    proj4rs::Proj::from_proj_string("+proj=longlat +datum=WGS84 +no_defs").ok()?;
+                let mut p = (x, y, 0.);
+                proj4rs::transform::transform(&native, &geographic, &mut p).ok()?;
+                (p.0.is_finite() && p.1.is_finite()).then_some([p.0.to_degrees(), p.1.to_degrees()])
+            }
             Self::EaseGridGlobal { epsg: 6933 } => ease_inverse(y, x),
             Self::EaseGridGlobal { .. } => None,
             Self::Geostationary {
@@ -106,6 +118,9 @@ impl NativeGrid {
         }
     }
     pub fn describe(&self) -> Value {
+        if matches!(self, Self::NisarUtm16North) {
+            return serde_json::json!({"model":self,"crs":"EPSG:32616","axis_units":"metres","dimension_order":["y","x"],"registration":"original Float64 source pixel centers","geographic_navigation":"qualified UTM inverse of selected native centers","selection":"explicit native indices only","unsupported":["geographic AOI translation for this large NISAR grid","other NISAR CRS/grids","complex/off-diagonal covariance","decibel conversion","reprojection"]});
+        }
         if matches!(self, Self::EaseGridGlobal { .. }) {
             return serde_json::json!({"model":self,"dimension_order":["y","x"],"registration":"native pixel centers","axis_units":"metres","directions":["northing decreases with row","easting increases with column"],"native_coordinates":{"edge_origin":[-17367530.4451615,7314540.8306386],"spacing":9008.055210146,"formula":"x=edge_x+(column+0.5)*spacing; y=edge_y-(row+0.5)*spacing","authority":"https://github.com/nsidc/mapxmaps/blob/main/EASE2_M09km.gpd"},"geographic_selection":"inverse EPSG:6933 at original centers; closed WGS84 polygon","unsupported":["EPSG:6931 polar SMAP grids","resampling","reprojection","AM/PM averaging"]});
         }
@@ -214,7 +229,23 @@ pub(crate) struct Inclusion {
 impl Inclusion {
     pub(crate) fn new(aoi: &Spatial) -> Result<Self> {
         let geometry = match aoi {
-            Spatial::ArraySlice { .. } => None,
+            Spatial::ArraySlice {
+                start, count, step, ..
+            } => {
+                if count.contains(&0)
+                    || step.contains(&0)
+                    || count.iter().any(|n| *n > 65536)
+                    || (0..2).any(|i| {
+                        (count[i] - 1)
+                            .checked_mul(step[i])
+                            .and_then(|n| n.checked_add(start[i]))
+                            .is_none()
+                    })
+                {
+                    return fail("native selection requires positive bounded counts/strides without index overflow");
+                }
+                None
+            }
             Spatial::Bounds { crs, bbox }
                 if crs == "EPSG:4326"
                     && bbox.iter().all(|v| v.is_finite())
@@ -268,7 +299,23 @@ pub(crate) fn resolve(
         }
         return Ok(aoi.clone());
     }
+    if matches!(grid, NativeGrid::NisarUtm16North) {
+        return fail("NISAR profile currently requires explicit native-index selection");
+    }
     let inclusion = Inclusion::new(aoi)?;
+    let vertices = inclusion.geometry.as_ref().map_or(0, |g| {
+        g.exterior().0.len() + g.interiors().iter().map(|r| r.0.len()).sum::<usize>()
+    });
+    if ys
+        .len()
+        .checked_mul(xs.len())
+        .and_then(|n| n.checked_mul(vertices))
+        .is_none_or(|n| n > 256_000_000)
+    {
+        return fail(
+            "geographic selection exceeds 256 million native-center/vertex tests; simplify AOI",
+        );
+    }
     let separable = if matches!(grid, NativeGrid::EaseGridGlobal { .. }) {
         Some((
             ys.iter()
@@ -307,4 +354,29 @@ pub(crate) fn resolve(
         step: [1, 1],
         axes,
     })
+}
+
+/// Native center membership without changing values or source validity.
+pub fn native_aoi_mask(
+    aoi: &Spatial,
+    grid: &NativeGrid,
+    ys: &[f64],
+    xs: &[f64],
+) -> Result<Vec<u8>> {
+    let inclusion = Inclusion::new(aoi)?;
+    let count = ys
+        .len()
+        .checked_mul(xs.len())
+        .filter(|n| *n <= 1_048_576)
+        .ok_or("AOI chunk exceeds one million native centers")?;
+    if matches!(aoi, Spatial::ArraySlice { .. }) {
+        return Ok(vec![1; count]);
+    }
+    let mut mask = Vec::with_capacity(count);
+    for y in ys {
+        for x in xs {
+            mask.push(u8::from(inclusion.accepts(grid.longitude_latitude(*y, *x))));
+        }
+    }
+    Ok(mask)
 }

@@ -1,0 +1,2887 @@
+{
+  "status": "passed",
+  "scope": "one real provisional GCOV P05023/product1.0.11/spec1.5.0; frequencyA HHHH only, original UTM16N native-index selection",
+  "cases": [
+    {
+      "case": "center",
+      "plan": {
+        "code": 0,
+        "wall_seconds": 0.6022772500000428,
+        "cpu_seconds": 0.033673,
+        "peak_rss_bytes": 21266432
+      },
+      "fetch": {
+        "code": 0,
+        "wall_seconds": 0.06170645900419913,
+        "cpu_seconds": 0.029002999999999998,
+        "peak_rss_bytes": 28098560
+      },
+      "stream": {
+        "code": 0,
+        "wall_seconds": 0.03542125000967644,
+        "cpu_seconds": 0.018131,
+        "peak_rss_bytes": 25067520
+      },
+      "verification": {
+        "dtype": "float32",
+        "samples": 64,
+        "raw_bits_sha256": "232713f7f03ec926306cd7ff037657c311e8b249ce86ca7e3d95d3178946e1e1",
+        "valid_centers": 64,
+        "coordinate_max_error_degrees": 1.4210854715202004e-14,
+        "xarray_reopen": true,
+        "storage_fill": 0,
+        "cf_fill": "NaN",
+        "output_objects": 40,
+        "output_bytes": 219180
+      },
+      "execution": {
+        "source_reads": [],
+        "scheduler": {
+          "workers": 1,
+          "per_host": 4,
+          "buffer_bytes": 58720256,
+          "reserved_bytes_peak": 25766800,
+          "reader_state_reserved_bytes": 0,
+          "prepared_native_metadata_bytes": 8548140,
+          "authenticated_transport_reserved_bytes": 0,
+          "prepared_v3_metadata_index_bytes": 0,
+          "active_workers_peak": 1,
+          "completed_tasks": 1,
+          "admitted_jobs": 1,
+          "cog_reader_scope": "selection",
+          "seconds": 0.003517208,
+          "order": "plan",
+          "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+          "prepared_hdf5_bytes": 8548140,
+          "native_metadata": {
+            "retained_sources": 0,
+            "retained_bytes": 0,
+            "physical_metadata_sources": 0,
+            "physical_metadata_bytes": 0,
+            "cap_bytes": 0,
+            "skipped_sources": 0,
+            "scope": "this Prepared only; immutable version-bound parser pages; never a data cache",
+            "authenticated_sources": 0,
+            "authenticated_transport": {}
+          },
+          "native_strategies": [
+            {
+              "asset_id": "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001",
+              "task_reserved_bytes": 17218660,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            }
+          ]
+        },
+        "transport": {
+          "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001": {
+            "phases": {
+              "hdf5_science_payload": {
+                "GET source.nc": {
+                  "seconds": 0.001445125,
+                  "attempts": 1,
+                  "bytes": 659148,
+                  "retries": 0,
+                  "statuses": {
+                    "206": 1
+                  }
+                }
+              },
+              "hdf5_version_validation": {
+                "HEAD source.nc": {
+                  "seconds": 0.000767958,
+                  "attempts": 3,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 3
+                  }
+                }
+              },
+              "metadata_index_discovery": {
+                "GET source.nc": {
+                  "seconds": 0.016577576,
+                  "attempts": 54,
+                  "bytes": 1687552,
+                  "retries": 0,
+                  "statuses": {
+                    "206": 54
+                  }
+                },
+                "HEAD source.nc": {
+                  "seconds": 0.000432541,
+                  "attempts": 2,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 2
+                  }
+                }
+              },
+              "planning": {
+                "HEAD source.nc": {
+                  "seconds": 0.001154583,
+                  "attempts": 1,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 1
+                  }
+                }
+              }
+            },
+            "requests": 61,
+            "bytes": 2346700,
+            "retries": 0,
+            "seconds": 0.020363119,
+            "objects": {
+              "GET source.nc": {
+                "seconds": 0.018030081000000007,
+                "attempts": 55,
+                "bytes": 2346700,
+                "retries": 0,
+                "statuses": {
+                  "206": 55
+                }
+              },
+              "HEAD source.nc": {
+                "seconds": 0.002356458,
+                "attempts": 6,
+                "bytes": 0,
+                "retries": 0,
+                "statuses": {
+                  "200": 6
+                }
+              }
+            },
+            "ranges": {
+              "source.nc 0:16384": {
+                "seconds": 0.000446667,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 114688:131072": {
+                "seconds": 0.000294041,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 114688:147456": {
+                "seconds": 0.000312458,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 1294336:1310720": {
+                "seconds": 0.000298542,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 131072:147456": {
+                "seconds": 0.0002685,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 131072:163840": {
+                "seconds": 0.000317125,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 147456:180224": {
+                "seconds": 0.000297458,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 1622016:1638400": {
+                "seconds": 0.000334417,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 163840:196608": {
+                "seconds": 0.000314166,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 16384:32768": {
+                "seconds": 0.0002685,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 16384:49152": {
+                "seconds": 0.000282041,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 180224:196608": {
+                "seconds": 0.000290209,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 180224:212992": {
+                "seconds": 0.000306375,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 196608:212992": {
+                "seconds": 0.000328208,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 196608:229376": {
+                "seconds": 0.000279625,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 212992:229376": {
+                "seconds": 0.00030825,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 212992:245760": {
+                "seconds": 0.000290375,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 245760:262144": {
+                "seconds": 0.0002755,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 245760:278528": {
+                "seconds": 0.000304416,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 262144:278528": {
+                "seconds": 0.000252791,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 262144:294912": {
+                "seconds": 0.000290708,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 278528:294912": {
+                "seconds": 0.000264916,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 278528:311296": {
+                "seconds": 0.000298875,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 294912:311296": {
+                "seconds": 0.000273292,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 311296:327680": {
+                "seconds": 0.000260167,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 311296:344064": {
+                "seconds": 0.000279834,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 327680:344064": {
+                "seconds": 0.000378667,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 32768:49152": {
+                "seconds": 0.000276125,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 4194304:4489216": {
+                "seconds": 0.000691208,
+                "attempts": 1,
+                "bytes": 294912,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 427802624:427819008": {
+                "seconds": 0.000274583,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 4472832:4767744": {
+                "seconds": 0.000858625,
+                "attempts": 1,
+                "bytes": 294912,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 49152:65536": {
+                "seconds": 0.000268417,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 65536:81920": {
+                "seconds": 0.000264042,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 65536:98304": {
+                "seconds": 0.000299708,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 671744:688128": {
+                "seconds": 0.000335375,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7000293376:7000309760": {
+                "seconds": 0.000336542,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7000588288:7000604672": {
+                "seconds": 0.000292125,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7000883200:7000899584": {
+                "seconds": 0.000239875,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7000915968:7000932352": {
+                "seconds": 0.000261125,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7000932352:7000948736": {
+                "seconds": 0.000243583,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7000981504:7000997888": {
+                "seconds": 0.000273833,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7000997888:7001014272": {
+                "seconds": 0.000254833,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7000997888:7001030656": {
+                "seconds": 0.000263833,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7001014272:7001030656": {
+                "seconds": 0.000273375,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7001030656:7001047040": {
+                "seconds": 0.000378459,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7001063424:7001079808": {
+                "seconds": 0.000261958,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7001079808:7001096192": {
+                "seconds": 0.000249084,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7001096192:7001112576": {
+                "seconds": 0.000257209,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7004487680:7004504064": {
+                "seconds": 0.00026275,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7007125504:7007141888": {
+                "seconds": 0.000265167,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7008583680:7008600064": {
+                "seconds": 0.000236959,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7008616448:7008632832": {
+                "seconds": 0.000247042,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 81920:114688": {
+                "seconds": 0.000317666,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 961155243:961814391": {
+                "seconds": 0.001444625,
+                "attempts": 1,
+                "bytes": 659148,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 98304:114688": {
+                "seconds": 0.000262875,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              }
+            },
+            "authenticated_http": null,
+            "cached_metadata_bytes": 1704896,
+            "inspection_reuse": {
+              "source_inspections": 1,
+              "metadata_parser_opens": 1,
+              "profile_discoveries": 1,
+              "profile_cache_hits": 1,
+              "full_index_scans": 1,
+              "index_cache_hits": 1,
+              "coordinate_axis_reads": 2,
+              "coordinate_cache_hits": 2,
+              "coordinate_index_traversals": 0,
+              "coordinate_decoder_opens": 0,
+              "science_decoder_opens": 1,
+              "metadata_range_hits": 2057,
+              "metadata_range_misses": 54,
+              "profile_seconds": 0.001218542,
+              "index_seconds": 0.0089935,
+              "coordinate_seconds": 0.002906708,
+              "retention_reservation_bytes": 8500644,
+              "interpretation": "native-hdf5-stored-v1",
+              "index_policy": "full",
+              "sealed": true,
+              "opening": {
+                "source_identity_and_transport_seconds": 0.004391959,
+                "superblock_parser_open_seconds": 0.000473834,
+                "root_group_time_metadata_seconds": 0.000418209
+              }
+            }
+          }
+        },
+        "decoded_source_chunks": 1,
+        "filled_source_chunks": 0,
+        "first_output_seconds": 0.00348075,
+        "assembly_seconds": 0.0,
+        "source_retrieval_seconds": null,
+        "allocation_seconds": null,
+        "copying_seconds": null,
+        "output_setup_seconds": 0.0,
+        "output_finalize_seconds": 0.0,
+        "output_io": null,
+        "native_materialized_bytes": null,
+        "source_data_requests": 1,
+        "source_data_bytes": 659148,
+        "chunks": 1,
+        "decoded_bytes": 256,
+        "non_nodata_pixels": 64,
+        "planning_seconds": 0.000414042,
+        "source_open_seconds": 0.00152175,
+        "read_decode_seconds": 0.001629542,
+        "sink_seconds": 0.000205125,
+        "masking_seconds": 0.0,
+        "remote_requests": null,
+        "remote_bytes": null
+      },
+      "output_io": {
+        "writes": 39,
+        "bytes_written": 96731,
+        "encode_seconds": 0.0001446270000000004,
+        "storage_write_seconds": 0.0043410820000000004,
+        "object_bookkeeping_bound": 48,
+        "consumer_reservation_bytes": 8388608
+      }
+    },
+    {
+      "case": "corner",
+      "plan": {
+        "code": 0,
+        "wall_seconds": 0.026267999986885116,
+        "cpu_seconds": 0.013464,
+        "peak_rss_bytes": 21610496
+      },
+      "fetch": {
+        "code": 0,
+        "wall_seconds": 0.04696983299800195,
+        "cpu_seconds": 0.021781,
+        "peak_rss_bytes": 27508736
+      },
+      "stream": {
+        "code": 0,
+        "wall_seconds": 0.02977837499929592,
+        "cpu_seconds": 0.01525,
+        "peak_rss_bytes": 24002560
+      },
+      "verification": {
+        "dtype": "float32",
+        "samples": 64,
+        "raw_bits_sha256": "bd0189b8e6e6ab3e87fd07f63087061d591dbe6b524852d5e65e0a74c71c2b5a",
+        "valid_centers": 0,
+        "coordinate_max_error_degrees": 7.105427357601002e-15,
+        "xarray_reopen": true,
+        "storage_fill": 0,
+        "cf_fill": "NaN",
+        "output_objects": 40,
+        "output_bytes": 218998
+      },
+      "execution": {
+        "source_reads": [],
+        "scheduler": {
+          "workers": 1,
+          "per_host": 4,
+          "buffer_bytes": 58720256,
+          "reserved_bytes_peak": 23803079,
+          "reader_state_reserved_bytes": 0,
+          "prepared_native_metadata_bytes": 8548060,
+          "authenticated_transport_reserved_bytes": 0,
+          "prepared_v3_metadata_index_bytes": 0,
+          "active_workers_peak": 1,
+          "completed_tasks": 1,
+          "admitted_jobs": 1,
+          "cog_reader_scope": "selection",
+          "seconds": 0.00108325,
+          "order": "plan",
+          "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+          "prepared_hdf5_bytes": 8548060,
+          "native_metadata": {
+            "retained_sources": 0,
+            "retained_bytes": 0,
+            "physical_metadata_sources": 0,
+            "physical_metadata_bytes": 0,
+            "cap_bytes": 0,
+            "skipped_sources": 0,
+            "scope": "this Prepared only; immutable version-bound parser pages; never a data cache",
+            "authenticated_sources": 0,
+            "authenticated_transport": {}
+          },
+          "native_strategies": [
+            {
+              "asset_id": "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001",
+              "task_reserved_bytes": 15255019,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            }
+          ]
+        },
+        "transport": {
+          "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001": {
+            "phases": {
+              "hdf5_science_payload": {
+                "GET source.nc": {
+                  "seconds": 0.000210916,
+                  "attempts": 1,
+                  "bytes": 4601,
+                  "retries": 0,
+                  "statuses": {
+                    "206": 1
+                  }
+                }
+              },
+              "hdf5_version_validation": {
+                "HEAD source.nc": {
+                  "seconds": 0.0005157919999999999,
+                  "attempts": 3,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 3
+                  }
+                }
+              },
+              "metadata_index_discovery": {
+                "GET source.nc": {
+                  "seconds": 0.014300832,
+                  "attempts": 54,
+                  "bytes": 1687552,
+                  "retries": 0,
+                  "statuses": {
+                    "206": 54
+                  }
+                },
+                "HEAD source.nc": {
+                  "seconds": 0.00032783400000000005,
+                  "attempts": 2,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 2
+                  }
+                }
+              },
+              "planning": {
+                "HEAD source.nc": {
+                  "seconds": 0.000766084,
+                  "attempts": 1,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 1
+                  }
+                }
+              }
+            },
+            "requests": 61,
+            "bytes": 1692153,
+            "retries": 0,
+            "seconds": 0.016107414999999996,
+            "objects": {
+              "GET source.nc": {
+                "seconds": 0.014519291000000002,
+                "attempts": 55,
+                "bytes": 1692153,
+                "retries": 0,
+                "statuses": {
+                  "206": 55
+                }
+              },
+              "HEAD source.nc": {
+                "seconds": 0.001610916,
+                "attempts": 6,
+                "bytes": 0,
+                "retries": 0,
+                "statuses": {
+                  "200": 6
+                }
+              }
+            },
+            "ranges": {
+              "source.nc 0:16384": {
+                "seconds": 0.000395708,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 114688:131072": {
+                "seconds": 0.000218291,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 114688:147456": {
+                "seconds": 0.000257833,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 1294336:1310720": {
+                "seconds": 0.000273417,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 131072:147456": {
+                "seconds": 0.000225833,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 131072:163840": {
+                "seconds": 0.000255458,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 147456:180224": {
+                "seconds": 0.000235542,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 1622016:1638400": {
+                "seconds": 0.00030375,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 163840:196608": {
+                "seconds": 0.000240458,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 16384:32768": {
+                "seconds": 0.000217083,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 16384:49152": {
+                "seconds": 0.000260583,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 180224:196608": {
+                "seconds": 0.000229083,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 180224:212992": {
+                "seconds": 0.000233875,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 196608:212992": {
+                "seconds": 0.000215375,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 196608:229376": {
+                "seconds": 0.000243166,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 212992:229376": {
+                "seconds": 0.000213166,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 212992:245760": {
+                "seconds": 0.000248167,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 245760:262144": {
+                "seconds": 0.000214084,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 245760:278528": {
+                "seconds": 0.000247416,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 262144:278528": {
+                "seconds": 0.000218959,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 262144:294912": {
+                "seconds": 0.000260292,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 278528:294912": {
+                "seconds": 0.000213459,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 278528:311296": {
+                "seconds": 0.000227583,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 294912:311296": {
+                "seconds": 0.000213458,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 311296:327680": {
+                "seconds": 0.000217166,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 311296:344064": {
+                "seconds": 0.0002575,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 327680:344064": {
+                "seconds": 0.000280375,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 32768:49152": {
+                "seconds": 0.000210291,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 4194304:4489216": {
+                "seconds": 0.000664208,
+                "attempts": 1,
+                "bytes": 294912,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 427802624:427819008": {
+                "seconds": 0.000235083,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 4472832:4767744": {
+                "seconds": 0.000777792,
+                "attempts": 1,
+                "bytes": 294912,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 4759448:4764049": {
+                "seconds": 0.000210583,
+                "attempts": 1,
+                "bytes": 4601,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 49152:65536": {
+                "seconds": 0.000214625,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 65536:81920": {
+                "seconds": 0.000219292,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 65536:98304": {
+                "seconds": 0.000285542,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 671744:688128": {
+                "seconds": 0.00031925,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7000293376:7000309760": {
+                "seconds": 0.0003105,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7000588288:7000604672": {
+                "seconds": 0.000255667,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7000883200:7000899584": {
+                "seconds": 0.000243167,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7000915968:7000932352": {
+                "seconds": 0.00022325,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7000932352:7000948736": {
+                "seconds": 0.00024075,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7000981504:7000997888": {
+                "seconds": 0.000256042,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7000997888:7001014272": {
+                "seconds": 0.000245041,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7000997888:7001030656": {
+                "seconds": 0.000246791,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7001014272:7001030656": {
+                "seconds": 0.000259042,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7001030656:7001047040": {
+                "seconds": 0.000332333,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7001063424:7001079808": {
+                "seconds": 0.000231666,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7001079808:7001096192": {
+                "seconds": 0.000222167,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7001096192:7001112576": {
+                "seconds": 0.000274375,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7004487680:7004504064": {
+                "seconds": 0.000239,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7007125504:7007141888": {
+                "seconds": 0.000243042,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7008583680:7008600064": {
+                "seconds": 0.000254125,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7008616448:7008632832": {
+                "seconds": 0.00022,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 81920:114688": {
+                "seconds": 0.0002325,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 98304:114688": {
+                "seconds": 0.00021375,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              }
+            },
+            "authenticated_http": null,
+            "cached_metadata_bytes": 1704896,
+            "inspection_reuse": {
+              "source_inspections": 1,
+              "metadata_parser_opens": 1,
+              "profile_discoveries": 1,
+              "profile_cache_hits": 1,
+              "full_index_scans": 1,
+              "index_cache_hits": 1,
+              "coordinate_axis_reads": 2,
+              "coordinate_cache_hits": 2,
+              "coordinate_index_traversals": 0,
+              "coordinate_decoder_opens": 0,
+              "science_decoder_opens": 1,
+              "metadata_range_hits": 2057,
+              "metadata_range_misses": 54,
+              "profile_seconds": 0.001048833,
+              "index_seconds": 0.007344125,
+              "coordinate_seconds": 0.002608375,
+              "retention_reservation_bytes": 8500636,
+              "interpretation": "native-hdf5-stored-v1",
+              "index_policy": "full",
+              "sealed": true,
+              "opening": {
+                "source_identity_and_transport_seconds": 0.00322425,
+                "superblock_parser_open_seconds": 0.000419208,
+                "root_group_time_metadata_seconds": 0.00037075
+              }
+            }
+          }
+        },
+        "decoded_source_chunks": 1,
+        "filled_source_chunks": 0,
+        "first_output_seconds": 0.001055125,
+        "assembly_seconds": 0.0,
+        "source_retrieval_seconds": null,
+        "allocation_seconds": null,
+        "copying_seconds": null,
+        "output_setup_seconds": 0.0,
+        "output_finalize_seconds": 0.0,
+        "output_io": null,
+        "native_materialized_bytes": null,
+        "source_data_requests": 1,
+        "source_data_bytes": 4601,
+        "chunks": 1,
+        "decoded_bytes": 256,
+        "non_nodata_pixels": 0,
+        "planning_seconds": 0.000329959,
+        "source_open_seconds": 0.000217042,
+        "read_decode_seconds": 0.000567875,
+        "sink_seconds": 0.000187375,
+        "masking_seconds": 0.0,
+        "remote_requests": null,
+        "remote_bytes": null
+      },
+      "output_io": {
+        "writes": 39,
+        "bytes_written": 96662,
+        "encode_seconds": 2.820699999999997e-05,
+        "storage_write_seconds": 0.003281837,
+        "object_bookkeeping_bound": 48,
+        "consumer_reservation_bytes": 8388608
+      }
+    },
+    {
+      "case": "strided",
+      "plan": {
+        "code": 0,
+        "wall_seconds": 0.025446167011978105,
+        "cpu_seconds": 0.013097999999999999,
+        "peak_rss_bytes": 21299200
+      },
+      "fetch": {
+        "code": 0,
+        "wall_seconds": 0.04552049998892471,
+        "cpu_seconds": 0.023239,
+        "peak_rss_bytes": 28950528
+      },
+      "stream": {
+        "code": 0,
+        "wall_seconds": 0.031406499998411164,
+        "cpu_seconds": 0.017016999999999997,
+        "peak_rss_bytes": 25231360
+      },
+      "verification": {
+        "dtype": "float32",
+        "samples": 9,
+        "raw_bits_sha256": "adc3d4500ff236fe706d5449cf49ad13fa355c584cb71b1ac0dc38063e3665b3",
+        "valid_centers": 9,
+        "coordinate_max_error_degrees": 7.105427357601002e-15,
+        "xarray_reopen": true,
+        "storage_fill": 0,
+        "cf_fill": "NaN",
+        "output_objects": 40,
+        "output_bytes": 217708
+      },
+      "execution": {
+        "source_reads": [],
+        "scheduler": {
+          "workers": 1,
+          "per_host": 4,
+          "buffer_bytes": 58720256,
+          "reserved_bytes_peak": 25766544,
+          "reader_state_reserved_bytes": 0,
+          "prepared_native_metadata_bytes": 8548044,
+          "authenticated_transport_reserved_bytes": 0,
+          "prepared_v3_metadata_index_bytes": 0,
+          "active_workers_peak": 1,
+          "completed_tasks": 1,
+          "admitted_jobs": 1,
+          "cog_reader_scope": "selection",
+          "seconds": 0.003042083,
+          "order": "plan",
+          "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+          "prepared_hdf5_bytes": 8548044,
+          "native_metadata": {
+            "retained_sources": 0,
+            "retained_bytes": 0,
+            "physical_metadata_sources": 0,
+            "physical_metadata_bytes": 0,
+            "cap_bytes": 0,
+            "skipped_sources": 0,
+            "scope": "this Prepared only; immutable version-bound parser pages; never a data cache",
+            "authenticated_sources": 0,
+            "authenticated_transport": {}
+          },
+          "native_strategies": [
+            {
+              "asset_id": "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001",
+              "task_reserved_bytes": 17218500,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            }
+          ]
+        },
+        "transport": {
+          "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001": {
+            "phases": {
+              "hdf5_science_payload": {
+                "GET source.nc": {
+                  "seconds": 0.00134375,
+                  "attempts": 1,
+                  "bytes": 659148,
+                  "retries": 0,
+                  "statuses": {
+                    "206": 1
+                  }
+                }
+              },
+              "hdf5_version_validation": {
+                "HEAD source.nc": {
+                  "seconds": 0.000475333,
+                  "attempts": 3,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 3
+                  }
+                }
+              },
+              "metadata_index_discovery": {
+                "GET source.nc": {
+                  "seconds": 0.013334831999999994,
+                  "attempts": 54,
+                  "bytes": 1687552,
+                  "retries": 0,
+                  "statuses": {
+                    "206": 54
+                  }
+                },
+                "HEAD source.nc": {
+                  "seconds": 0.000266458,
+                  "attempts": 2,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 2
+                  }
+                }
+              },
+              "planning": {
+                "HEAD source.nc": {
+                  "seconds": 0.000780042,
+                  "attempts": 1,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 1
+                  }
+                }
+              }
+            },
+            "requests": 61,
+            "bytes": 2346700,
+            "retries": 0,
+            "seconds": 0.016187003,
+            "objects": {
+              "GET source.nc": {
+                "seconds": 0.014684877000000002,
+                "attempts": 55,
+                "bytes": 2346700,
+                "retries": 0,
+                "statuses": {
+                  "206": 55
+                }
+              },
+              "HEAD source.nc": {
+                "seconds": 0.001523251,
+                "attempts": 6,
+                "bytes": 0,
+                "retries": 0,
+                "statuses": {
+                  "200": 6
+                }
+              }
+            },
+            "ranges": {
+              "source.nc 0:16384": {
+                "seconds": 0.000333917,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 114688:131072": {
+                "seconds": 0.000220666,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 114688:147456": {
+                "seconds": 0.000234583,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 1294336:1310720": {
+                "seconds": 0.000275917,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 131072:147456": {
+                "seconds": 0.000215625,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 131072:163840": {
+                "seconds": 0.000250916,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 147456:180224": {
+                "seconds": 0.000247791,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 1622016:1638400": {
+                "seconds": 0.0002395,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 163840:196608": {
+                "seconds": 0.000256,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 16384:32768": {
+                "seconds": 0.000210916,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 16384:49152": {
+                "seconds": 0.000231334,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 180224:196608": {
+                "seconds": 0.000228667,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 180224:212992": {
+                "seconds": 0.000208417,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 196608:212992": {
+                "seconds": 0.000217542,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 196608:229376": {
+                "seconds": 0.0002275,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 212992:229376": {
+                "seconds": 0.000261875,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 212992:245760": {
+                "seconds": 0.000211125,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 245760:262144": {
+                "seconds": 0.000193875,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 245760:278528": {
+                "seconds": 0.000210042,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 262144:278528": {
+                "seconds": 0.000194292,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 262144:294912": {
+                "seconds": 0.000193208,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 278528:294912": {
+                "seconds": 0.00020175,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 278528:311296": {
+                "seconds": 0.000186667,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 294912:311296": {
+                "seconds": 0.00019525,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 311296:327680": {
+                "seconds": 0.000181083,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 311296:344064": {
+                "seconds": 0.000210833,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 327680:344064": {
+                "seconds": 0.000238625,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 32768:49152": {
+                "seconds": 0.000232708,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 4194304:4489216": {
+                "seconds": 0.000601083,
+                "attempts": 1,
+                "bytes": 294912,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 427802624:427819008": {
+                "seconds": 0.000219334,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 4472832:4767744": {
+                "seconds": 0.000723541,
+                "attempts": 1,
+                "bytes": 294912,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 49152:65536": {
+                "seconds": 0.00021575,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 65536:81920": {
+                "seconds": 0.00021175,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 65536:98304": {
+                "seconds": 0.000258042,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 671744:688128": {
+                "seconds": 0.000262625,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7000293376:7000309760": {
+                "seconds": 0.000266708,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7000588288:7000604672": {
+                "seconds": 0.0002095,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7000883200:7000899584": {
+                "seconds": 0.000233541,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7000915968:7000932352": {
+                "seconds": 0.000216708,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7000932352:7000948736": {
+                "seconds": 0.000225708,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7000981504:7000997888": {
+                "seconds": 0.000243291,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7000997888:7001014272": {
+                "seconds": 0.0002275,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7000997888:7001030656": {
+                "seconds": 0.0002585,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7001014272:7001030656": {
+                "seconds": 0.000244042,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7001030656:7001047040": {
+                "seconds": 0.000276834,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7001063424:7001079808": {
+                "seconds": 0.000228125,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7001079808:7001096192": {
+                "seconds": 0.000235292,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7001096192:7001112576": {
+                "seconds": 0.000252583,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7004487680:7004504064": {
+                "seconds": 0.000237041,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7007125504:7007141888": {
+                "seconds": 0.000223792,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7008583680:7008600064": {
+                "seconds": 0.00024225,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 7008616448:7008632832": {
+                "seconds": 0.000233209,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 81920:114688": {
+                "seconds": 0.000246875,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 961155243:961814391": {
+                "seconds": 0.001343417,
+                "attempts": 1,
+                "bytes": 659148,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "source.nc 98304:114688": {
+                "seconds": 0.00021625,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              }
+            },
+            "authenticated_http": null,
+            "cached_metadata_bytes": 1704896,
+            "inspection_reuse": {
+              "source_inspections": 1,
+              "metadata_parser_opens": 1,
+              "profile_discoveries": 1,
+              "profile_cache_hits": 1,
+              "full_index_scans": 1,
+              "index_cache_hits": 1,
+              "coordinate_axis_reads": 2,
+              "coordinate_cache_hits": 2,
+              "coordinate_index_traversals": 0,
+              "coordinate_decoder_opens": 0,
+              "science_decoder_opens": 1,
+              "metadata_range_hits": 2057,
+              "metadata_range_misses": 54,
+              "profile_seconds": 0.000902417,
+              "index_seconds": 0.007006125,
+              "coordinate_seconds": 0.002399626,
+              "retention_reservation_bytes": 8500628,
+              "interpretation": "native-hdf5-stored-v1",
+              "index_policy": "full",
+              "sealed": true,
+              "opening": {
+                "source_identity_and_transport_seconds": 0.00317,
+                "superblock_parser_open_seconds": 0.000358542,
+                "root_group_time_metadata_seconds": 0.000309875
+              }
+            }
+          }
+        },
+        "decoded_source_chunks": 1,
+        "filled_source_chunks": 0,
+        "first_output_seconds": 0.003017,
+        "assembly_seconds": 0.0,
+        "source_retrieval_seconds": null,
+        "allocation_seconds": null,
+        "copying_seconds": null,
+        "output_setup_seconds": 0.0,
+        "output_finalize_seconds": 0.0,
+        "output_io": null,
+        "native_materialized_bytes": null,
+        "source_data_requests": 1,
+        "source_data_bytes": 659148,
+        "chunks": 1,
+        "decoded_bytes": 36,
+        "non_nodata_pixels": 9,
+        "planning_seconds": 0.000279708,
+        "source_open_seconds": 0.00140025,
+        "read_decode_seconds": 0.00134775,
+        "sink_seconds": 0.000187,
+        "masking_seconds": 0.0,
+        "remote_requests": null,
+        "remote_bytes": null
+      },
+      "output_io": {
+        "writes": 39,
+        "bytes_written": 95298,
+        "encode_seconds": 3.133400000000025e-05,
+        "storage_write_seconds": 0.003656083,
+        "object_bookkeeping_bound": 48,
+        "consumer_reservation_bytes": 8388608
+      }
+    },
+    {
+      "case": "live-asf",
+      "fetch": {
+        "code": 0,
+        "wall_seconds": 25.04369074999704,
+        "cpu_seconds": 0.359077,
+        "peak_rss_bytes": 32538624
+      },
+      "verification": {
+        "dtype": "float32",
+        "samples": 64,
+        "raw_bits_sha256": "232713f7f03ec926306cd7ff037657c311e8b249ce86ca7e3d95d3178946e1e1",
+        "valid_centers": 64,
+        "coordinate_max_error_degrees": 1.4210854715202004e-14,
+        "xarray_reopen": true,
+        "storage_fill": 0,
+        "cf_fill": "NaN",
+        "output_objects": 40,
+        "output_bytes": 256142
+      },
+      "execution": {
+        "source_reads": [],
+        "scheduler": {
+          "workers": 1,
+          "per_host": 4,
+          "buffer_bytes": 58720256,
+          "reserved_bytes_peak": 26815356,
+          "reader_state_reserved_bytes": 0,
+          "prepared_native_metadata_bytes": 9596696,
+          "authenticated_transport_reserved_bytes": 0,
+          "prepared_v3_metadata_index_bytes": 0,
+          "active_workers_peak": 1,
+          "completed_tasks": 1,
+          "admitted_jobs": 1,
+          "cog_reader_scope": "selection",
+          "seconds": 0.66185275,
+          "order": "plan",
+          "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+          "prepared_hdf5_bytes": 9596696,
+          "native_metadata": {
+            "retained_sources": 0,
+            "retained_bytes": 0,
+            "physical_metadata_sources": 0,
+            "physical_metadata_bytes": 0,
+            "cap_bytes": 0,
+            "skipped_sources": 0,
+            "scope": "this Prepared only; immutable version-bound parser pages; never a data cache",
+            "authenticated_sources": 0,
+            "authenticated_transport": {}
+          },
+          "native_strategies": [
+            {
+              "asset_id": "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001",
+              "task_reserved_bytes": 17218660,
+              "strategy": {
+                "read_scope": "planned_windows",
+                "retained_selection_bytes": 0,
+                "decoded_cache_limit_bytes": 0,
+                "coalesced_groups": 0,
+                "max_encoded_group_reservation_bytes": 0,
+                "codec_working_bytes": 131072
+              }
+            }
+          ]
+        },
+        "transport": {
+          "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001": {
+            "phases": {
+              "hdf5_science_payload": {
+                "GET NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5": {
+                  "seconds": 0.654809833,
+                  "attempts": 1,
+                  "bytes": 659148,
+                  "retries": 0,
+                  "statuses": {
+                    "206": 1
+                  }
+                }
+              },
+              "hdf5_version_validation": {
+                "HEAD NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5": {
+                  "seconds": 2.618221625,
+                  "attempts": 3,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 3
+                  }
+                }
+              },
+              "metadata_index_discovery": {
+                "GET NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5": {
+                  "seconds": 19.101829544999998,
+                  "attempts": 54,
+                  "bytes": 1687552,
+                  "retries": 0,
+                  "statuses": {
+                    "206": 54
+                  }
+                },
+                "HEAD NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5": {
+                  "seconds": 1.434823958,
+                  "attempts": 2,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 2
+                  }
+                }
+              },
+              "planning": {
+                "HEAD NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5": {
+                  "seconds": 1.137024,
+                  "attempts": 1,
+                  "bytes": 0,
+                  "retries": 0,
+                  "statuses": {
+                    "200": 1
+                  }
+                }
+              }
+            },
+            "requests": 61,
+            "bytes": 2346700,
+            "retries": 0,
+            "seconds": 24.946469967000002,
+            "objects": {
+              "GET NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5": {
+                "seconds": 19.756715585,
+                "attempts": 55,
+                "bytes": 2346700,
+                "retries": 0,
+                "statuses": {
+                  "206": 55
+                }
+              },
+              "HEAD NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5": {
+                "seconds": 5.190084376000001,
+                "attempts": 6,
+                "bytes": 0,
+                "retries": 0,
+                "statuses": {
+                  "200": 6
+                }
+              }
+            },
+            "ranges": {
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 0:16384": {
+                "seconds": 3.020314791,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 114688:131072": {
+                "seconds": 0.310070791,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 114688:147456": {
+                "seconds": 0.312850334,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 1294336:1310720": {
+                "seconds": 0.251793083,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 131072:147456": {
+                "seconds": 0.306664375,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 131072:163840": {
+                "seconds": 0.356653084,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 147456:180224": {
+                "seconds": 0.3971255,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 1622016:1638400": {
+                "seconds": 0.262836917,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 163840:196608": {
+                "seconds": 0.30471475,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 16384:32768": {
+                "seconds": 0.252854875,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 16384:49152": {
+                "seconds": 0.364725917,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 180224:196608": {
+                "seconds": 0.283760625,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 180224:212992": {
+                "seconds": 0.314541208,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 196608:212992": {
+                "seconds": 0.269015291,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 196608:229376": {
+                "seconds": 0.341772,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 212992:229376": {
+                "seconds": 0.272135292,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 212992:245760": {
+                "seconds": 0.299417292,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 245760:262144": {
+                "seconds": 0.347045916,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 245760:278528": {
+                "seconds": 0.336955584,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 262144:278528": {
+                "seconds": 0.270980708,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 262144:294912": {
+                "seconds": 0.307637292,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 278528:294912": {
+                "seconds": 0.255396666,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 278528:311296": {
+                "seconds": 0.358969792,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 294912:311296": {
+                "seconds": 0.325104,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 311296:327680": {
+                "seconds": 0.272795709,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 311296:344064": {
+                "seconds": 0.323255833,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 327680:344064": {
+                "seconds": 0.269313125,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 32768:49152": {
+                "seconds": 0.255885041,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 4194304:4489216": {
+                "seconds": 0.488769792,
+                "attempts": 1,
+                "bytes": 294912,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 427802624:427819008": {
+                "seconds": 0.335798792,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 4472832:4767744": {
+                "seconds": 0.483961792,
+                "attempts": 1,
+                "bytes": 294912,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 49152:65536": {
+                "seconds": 0.29654875,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 65536:81920": {
+                "seconds": 0.241065917,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 65536:98304": {
+                "seconds": 0.327827125,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 671744:688128": {
+                "seconds": 0.266248084,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 7000293376:7000309760": {
+                "seconds": 0.308568625,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 7000588288:7000604672": {
+                "seconds": 0.268432875,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 7000883200:7000899584": {
+                "seconds": 0.274471875,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 7000915968:7000932352": {
+                "seconds": 0.2649615,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 7000932352:7000948736": {
+                "seconds": 0.267742083,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 7000981504:7000997888": {
+                "seconds": 0.235596875,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 7000997888:7001014272": {
+                "seconds": 0.356315292,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 7000997888:7001030656": {
+                "seconds": 0.30225325,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 7001014272:7001030656": {
+                "seconds": 0.258695542,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 7001030656:7001047040": {
+                "seconds": 0.306328333,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 7001063424:7001079808": {
+                "seconds": 0.269315292,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 7001079808:7001096192": {
+                "seconds": 0.279628667,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 7001096192:7001112576": {
+                "seconds": 0.29360275,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 7004487680:7004504064": {
+                "seconds": 0.267716875,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 7007125504:7007141888": {
+                "seconds": 0.275209125,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 7008583680:7008600064": {
+                "seconds": 0.259838042,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 7008616448:7008632832": {
+                "seconds": 0.335712459,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 81920:114688": {
+                "seconds": 0.341531292,
+                "attempts": 1,
+                "bytes": 32768,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 961155243:961814391": {
+                "seconds": 0.654804958,
+                "attempts": 1,
+                "bytes": 659148,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              },
+              "NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001.h5 98304:114688": {
+                "seconds": 0.250848417,
+                "attempts": 1,
+                "bytes": 16384,
+                "retries": 0,
+                "statuses": {
+                  "206": 1
+                }
+              }
+            },
+            "authenticated_http": {
+              "checkpoint_claims": 0,
+              "peak_in_flight": 1,
+              "wire_head": 12,
+              "wire_get": 59,
+              "redirects": 10,
+              "login_requests": 1,
+              "refreshes": 0,
+              "route_cache_hits": 54,
+              "response_body_bytes": 2347132,
+              "redirect_body_bytes": 432,
+              "signing_auth_seconds": 8.209920417,
+              "statuses": {
+                "200": 6,
+                "206": 55,
+                "301": 1,
+                "302": 2,
+                "303": 7
+              },
+              "origins": {
+                "https://d1mv8zhcvry6x4.cloudfront.net": 61,
+                "https://nisar.asf.earthdatacloud.nasa.gov": 9,
+                "https://urs.earthdata.nasa.gov": 1
+              }
+            },
+            "cached_metadata_bytes": 1704896,
+            "inspection_reuse": {
+              "source_inspections": 1,
+              "metadata_parser_opens": 1,
+              "profile_discoveries": 1,
+              "profile_cache_hits": 1,
+              "full_index_scans": 1,
+              "index_cache_hits": 1,
+              "coordinate_axis_reads": 2,
+              "coordinate_cache_hits": 2,
+              "coordinate_index_traversals": 0,
+              "coordinate_decoder_opens": 0,
+              "science_decoder_opens": 1,
+              "metadata_range_hits": 2057,
+              "metadata_range_misses": 54,
+              "profile_seconds": 0.844997792,
+              "index_seconds": 8.90276275,
+              "coordinate_seconds": 1.757958458,
+              "retention_reservation_bytes": 8500624,
+              "interpretation": "native-hdf5-stored-v1",
+              "index_policy": "full",
+              "sealed": true,
+              "opening": {
+                "source_identity_and_transport_seconds": 1.1433945,
+                "superblock_parser_open_seconds": 3.020502,
+                "root_group_time_metadata_seconds": 0.306553959
+              }
+            }
+          }
+        },
+        "decoded_source_chunks": 1,
+        "filled_source_chunks": 0,
+        "first_output_seconds": 0.661734416,
+        "assembly_seconds": 0.0,
+        "source_retrieval_seconds": null,
+        "allocation_seconds": null,
+        "copying_seconds": null,
+        "output_setup_seconds": 0.0,
+        "output_finalize_seconds": 0.0,
+        "output_io": null,
+        "native_materialized_bytes": null,
+        "source_data_requests": 1,
+        "source_data_bytes": 659148,
+        "chunks": 1,
+        "decoded_bytes": 256,
+        "non_nodata_pixels": 64,
+        "planning_seconds": 0.864684792,
+        "source_open_seconds": 0.655129042,
+        "read_decode_seconds": 0.004131833,
+        "sink_seconds": 0.001783459,
+        "masking_seconds": 0.0,
+        "remote_requests": null,
+        "remote_bytes": null
+      }
+    }
+  ],
+  "netcdf4_real_product": "sparse-source NetCDF-C open unsupported; no real NetCDF-C equality claim; independent HDF5 C/h5py reference and separate NetCDF-C fill fixtures pass"
+}

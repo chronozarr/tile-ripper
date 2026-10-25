@@ -56,7 +56,7 @@ pub fn discover(args: &[String]) -> Result<()> {
         .try_into()
         .map_err(|_| "bbox needs four coordinates")?;
     let r: ProductRequest = serde_json::from_value(
-        serde_json::json!({"product":get("--product")?,"provider":flags.get("--provider").copied().unwrap_or("auto"),"aoi":Spatial::Bounds{crs:"EPSG:4326".into(),bbox},"start":get("--start")?,"end":get("--end")?,"bands":get("--bands")?.split(',').collect::<Vec<_>>(),"max_observations":flags.get("--limit").map_or(Ok(8),|v|v.parse::<usize>())?}),
+        serde_json::json!({"product":get("--product")?,"provider":flags.get("--provider").copied().unwrap_or("auto"),"aoi":Spatial::Bounds{crs:"EPSG:4326".into(),bbox},"start":get("--start")?,"end":get("--end")?,"bands":get("--bands")?.split(',').collect::<Vec<_>>(),"buffer_bytes":if get("--product")?=="nisar-gcov-p1-fa-hhhh"{67108864}else{33554432},"max_observations":flags.get("--limit").map_or(Ok(8),|v|v.parse::<usize>())?}),
     )?;
     #[cfg(feature = "native-hdf5")]
     let catalog = if products::arrays::supports(&r.product) {
@@ -337,6 +337,7 @@ fn run_array(options: super::Options) -> Result<()> {
     {
         return Err("array products require native HDF5/scientific Zarr; policies belong in JSON; authentication is product-specific".into());
     }
+    let started = std::time::Instant::now();
     let mut r: ProductRequest = serde_json::from_value(options.input)?;
     if let Some(path) = options.output {
         r.output = Some(path);
@@ -386,20 +387,32 @@ fn run_array(options: super::Options) -> Result<()> {
         "stream" => {
             println!(
                 "{}",
-                serde_json::json!({"event":"prepared","provenance":p.explain()})
+                serde_json::json!({"event":"prepared","provenance":p.explain(),"preparation_seconds":started.elapsed().as_secs_f64()})
             );
             let reports=p.execute(&cancelled,|o,c|{
-                let mut row=serde_json::json!({"event":"chunk","asset_id":c.asset_id,"variable":c.variable,"window":c.window,"coordinates":c.coordinates,"provisional":true,"coordinate_model":o.grid});
+                let mut row=serde_json::json!({"event":"chunk","asset_id":c.asset_id,"variable":c.variable,"window":c.window,"coordinates":c.coordinates,"provisional":true,"coordinate_model":o.grid,"seconds":started.elapsed().as_secs_f64()});
                 if options.values {
                     let(dtype,bytes):(&str,Vec<u8>)=match &c.pixels {Pixels::Int8(v)=>("int8",v.iter().map(|v|*v as u8).collect()),Pixels::UInt8(v)=>("uint8",v.clone()),Pixels::Int16(v)=>("int16",v.iter().flat_map(|v|v.to_le_bytes()).collect()),Pixels::UInt16(v)=>("uint16",v.iter().flat_map(|v|v.to_le_bytes()).collect()),Pixels::UInt32(v)=>("uint32",v.iter().flat_map(|v|v.to_le_bytes()).collect()),Pixels::Float32(v)=>("float32",v.iter().flat_map(|v|v.to_le_bytes()).collect())};
                     row["dtype"]=dtype.into();row["values_le_base64"]=base64::engine::general_purpose::STANDARD.encode(bytes).into();
                     row["source_valid_mask_base64"]=base64::engine::general_purpose::STANDARD.encode(c.validity().map(u8::from).collect::<Vec<_>>()).into();
+                    let (xs,ys)=c.coordinates.as_ref().ok_or("missing native chunk axes")?;
+                    let aoi=products::array_grid::native_aoi_mask(&r.aoi,&o.grid,ys,xs)?;
+                    row["aoi_mask_base64"]=base64::engine::general_purpose::STANDARD.encode(aoi).into();
+                    if let Some(policy)=r.quality_policies.first(){
+                        let leaf=match &c.variable{tile_ripper::Variable::Dataset{path}=>path.rsplit('/').next().unwrap_or(""),_=>""};
+                        if leaf=="DQF"||leaf=="retrieval_qual_flag"||leaf=="retrieval_qual_flag_pm"{
+                            let mut mask=Vec::with_capacity(c.pixels.len());
+                            for i in 0..c.pixels.len(){let v=match &c.pixels{Pixels::Int8(v)=>v[i] as f64,Pixels::UInt16(v)=>v[i] as f64,_=>return Err("quality policy storage mismatch".into())};mask.push(u8::from(products::arrays::quality_accepts(policy,v)?));}
+                            row["quality"]=serde_json::json!({"policy":policy,"mask_base64":base64::engine::general_purpose::STANDARD.encode(mask)});
+                        }
+                    }
+
                 }
                 println!("{}",serde_json::to_string(&row)?);Ok(())
             })?;
             println!(
                 "{}",
-                serde_json::json!({"event":"complete","source_versions_validated":true,"observed":reports})
+                serde_json::json!({"event":"complete","source_versions_validated":true,"observed":reports,"seconds":started.elapsed().as_secs_f64()})
             );
         }
         _ => return Err("unknown array command".into()),

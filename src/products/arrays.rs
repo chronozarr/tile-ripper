@@ -15,17 +15,21 @@ use std::{
     sync::{atomic::AtomicBool, Arc},
     time::Instant,
 };
+mod nisar;
 mod smap;
 const RESERVATION: usize = 8 * 1024 * 1024;
 pub fn supports(id: &str) -> bool {
-    matches!(id, "goes19-abi-cmipc-c13" | "goes19-abi-cmipc-c01") || smap::supports(id)
+    matches!(id, "goes19-abi-cmipc-c13" | "goes19-abi-cmipc-c01")
+        || smap::supports(id)
+        || nisar::supports(id)
 }
 pub fn profiles() -> Value {
     json!([
      {"id":"goes19-abi-cmipc-c13","family":"GOES ABI CMIPC","spectral_band":13,"bands":["CMI","DQF"],"coordinate_model":"geostationary scanning angles","stored_dtype":["int16","int8"],"science":"brightness temperature; raw packed codes and CF unsigned annotations retained","provider":"noaa","qualification":"only inspected GOES-19 Mode 6 CONUS profile"},
      {"id":"goes19-abi-cmipc-c01","family":"GOES ABI CMIPC","spectral_band":1,"bands":["CMI","DQF"],"coordinate_model":"geostationary scanning angles","stored_dtype":["int16","int8"],"science":"reflectance factor; raw packed codes and CF unsigned annotations retained","provider":"noaa","qualification":"separate 1 km source specimen"},
      {"id":"smap-spl3smp-e-v6-am","family":"SMAP SPL3SMP_E v006/R19240","pass":"descending AM","bands":["soil_moisture","retrieval_qual_flag","surface_flag","freeze_thaw_fraction"],"coordinate_model":"EPSG:6933 EASE2 M09 native centers","provider":"earthdata","qualification":"global grid only; polar grids excluded"},
-     {"id":"smap-spl3smp-e-v6-pm","family":"SMAP SPL3SMP_E v006/R19240","pass":"ascending PM","bands":["soil_moisture","retrieval_qual_flag","surface_flag","freeze_thaw_fraction"],"coordinate_model":"EPSG:6933 EASE2 M09 native centers","provider":"earthdata","qualification":"separate PM source fields; no averaging"}
+     {"id":"smap-spl3smp-e-v6-pm","family":"SMAP SPL3SMP_E v006/R19240","pass":"ascending PM","bands":["soil_moisture","retrieval_qual_flag","surface_flag","freeze_thaw_fraction"],"coordinate_model":"EPSG:6933 EASE2 M09 native centers","provider":"earthdata","qualification":"separate PM source fields; no averaging"},
+     {"id":"nisar-gcov-p1-fa-hhhh","family":"NISAR provisional GCOV v1","frequency":"A","bands":["HHHH"],"science":"already calibrated RTC gamma0 linear power","coordinate_model":"source Float64 UTM16N centers","selection":"native indices only","qualification":"inspected P05023/productVersion1.0.11; no other covariance terms"}
     ])
 }
 fn band_token(id: &str) -> Result<&'static str> {
@@ -91,6 +95,11 @@ fn filename_time(name: &str) -> Result<String> {
 }
 fn validate_observation(r: &ProductRequest, o: &Observation) -> Result<()> {
     let token = band_token(&r.product)?;
+    if o.platform.as_deref().is_some_and(|p| p != "G19")
+        || o.processing.as_deref().is_some_and(|p| p != "L2 M6")
+    {
+        return fail("GOES catalog platform/processing conflicts with profile");
+    }
     if o.id.len() > 200
         || !o
             .id
@@ -148,6 +157,9 @@ fn validate_observation(r: &ProductRequest, o: &Observation) -> Result<()> {
 }
 /// Catalog-only NOAA ListObjectsV2 search. It never prepares or fetches science.
 pub fn discover(r: &ProductRequest) -> Result<Value> {
+    if nisar::supports(&r.product) {
+        return nisar::discover(r);
+    }
     if smap::supports(&r.product) {
         return smap::discover(r);
     }
@@ -269,10 +281,17 @@ fn admit_retained(
     }
     Ok(())
 }
+#[derive(Clone, Debug, serde::Serialize)]
+pub struct PreparationTimings {
+    pub inspection_seconds: f64,
+    pub selection_seconds: f64,
+    pub physical_plan_seconds: f64,
+}
 /// Immutable prepared observation over its actual native grid.
 #[derive(Clone)]
 pub struct PreparedObservation {
     pub observation: Observation,
+    pub preparation_timings: PreparationTimings,
     pub native_selection: Spatial,
     pub grid: NativeGrid,
     pub definitions: Vec<Value>,
@@ -287,7 +306,7 @@ pub struct Prepared {
 }
 impl Prepared {
     pub fn explain(&self) -> Value {
-        json!({"schema":"tile-ripper-array-products-v1","product":self.request.product,"catalog":self.catalog,"observations":self.observations.iter().map(|o|json!({"id":o.observation.id,"grid":o.grid.describe(),"native_selection":o.native_selection,"physical":o.base.explain()})).collect::<Vec<_>>(),"working_memory":{"requested_bytes":self.request.buffer_bytes,"consumer_and_output_reservation_bytes":RESERVATION,"scope":"reserved in addition to native reader; caller retention and process runtime outside budget"},"quality_policies":self.request.quality_policies,"numeric_semantics":"raw native values and dtype; no unsigned reinterpretation, scale/offset application, reprojection or resampling"})
+        json!({"schema":"tile-ripper-array-products-v1","product":self.request.product,"catalog":self.catalog,"observations":self.observations.iter().map(|o|json!({"id":o.observation.id,"grid":o.grid.describe(),"native_selection":o.native_selection,"preparation_timings":o.preparation_timings,"physical":o.base.explain()})).collect::<Vec<_>>(),"working_memory":{"requested_bytes":self.request.buffer_bytes,"consumer_and_output_reservation_bytes":RESERVATION,"scope":"reserved in addition to native reader; caller retention and process runtime outside budget"},"quality_policies":self.request.quality_policies,"numeric_semantics":"raw native values and dtype; no unsigned reinterpretation, scale/offset application, reprojection or resampling"})
     }
     pub fn observations(&self) -> &[PreparedObservation] {
         &self.observations
@@ -308,6 +327,9 @@ impl Prepared {
     }
 }
 pub fn prepare(r: &ProductRequest) -> Result<Prepared> {
+    if nisar::supports(&r.product) {
+        return nisar::prepare(r, None);
+    }
     if smap::supports(&r.product) {
         return smap::prepare(r, None);
     }
@@ -354,7 +376,9 @@ pub fn prepare(r: &ProductRequest) -> Result<Prepared> {
                 chunk_edge: r.chunk_edge,
             },
         };
+        let t = Instant::now();
         let inspection = crate::hdf5::ArrayInspection::inspect(&request, Default::default())?;
+        let inspection_seconds = t.elapsed().as_secs_f64();
         let first = inspection
             .definitions
             .first()
@@ -367,6 +391,11 @@ pub fn prepare(r: &ProductRequest) -> Result<Prepared> {
             || root["time_coverage_start"]["value"] != o.datetime
         {
             return fail("physical GOES product/time metadata conflicts with selected observation");
+        }
+        for axis in first["axes"].as_array().ok_or("missing GOES axes")? {
+            if axis["stored_dtype"] != "<i2" {
+                return fail("GOES source axes must retain original Int16 packing");
+            }
         }
         let spectral = if band_token(&r.product)? == "C13" {
             13
@@ -388,6 +417,7 @@ pub fn prepare(r: &ProductRequest) -> Result<Prepared> {
                 _=>return fail("unqualified GOES variable"),
             }
         }
+        let selection_started = Instant::now();
         request.spatial = array_grid::resolve(
             &grid,
             &inspection.coordinates[0],
@@ -395,6 +425,8 @@ pub fn prepare(r: &ProductRequest) -> Result<Prepared> {
             &r.aoi,
             axes,
         )?;
+        let selection_seconds = selection_started.elapsed().as_secs_f64();
+        crate::planner::validate(&request)?;
         let Spatial::ArraySlice {
             start, count, step, ..
         } = &request.spatial
@@ -412,9 +444,16 @@ pub fn prepare(r: &ProductRequest) -> Result<Prepared> {
             }
         }
         admit_retained(r, &catalog, &inspection.definitions, &coordinates)?;
+        let t = Instant::now();
         let base = acquisition::prepare_array_inspected(&request, &inspection)?;
+        let physical_plan_seconds = t.elapsed().as_secs_f64();
         prepared.push(PreparedObservation {
             observation: o,
+            preparation_timings: PreparationTimings {
+                inspection_seconds,
+                selection_seconds,
+                physical_plan_seconds,
+            },
             native_selection: request.spatial,
             grid,
             definitions: inspection.definitions.clone(),
@@ -441,6 +480,8 @@ pub fn quality_accepts(policy: &str, value: f64) -> Result<bool> {
 pub fn prepare_earthdata(r: &ProductRequest, netrc: &std::path::Path) -> Result<Prepared> {
     if smap::supports(&r.product) {
         smap::prepare(r, Some(netrc))
+    } else if nisar::supports(&r.product) {
+        nisar::prepare(r, Some(netrc))
     } else {
         fail("this array product has no qualified Earthdata route")
     }

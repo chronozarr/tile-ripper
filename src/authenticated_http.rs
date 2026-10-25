@@ -496,6 +496,62 @@ impl AuthenticatedHttp {
             netrc,
         )
     }
+    /// Exact observed provisional NISAR GCOV P05023 source; independent ASF
+    /// archive and resource grants, with original HDF5 as the only source.
+    pub fn earthdata_nisar(canonical_url: &str, netrc: impl Into<PathBuf>) -> Result<Self> {
+        let u = Url::parse(canonical_url)?;
+        let archive = "https://nisar.asf.earthdatacloud.nasa.gov";
+        let prefix = "/NISAR/NISAR_L2_GCOV_PROVISIONAL_V1/";
+        let key = u
+            .path()
+            .strip_prefix(prefix)
+            .ok_or("NISAR provisional source path required")?;
+        let p = key.split('/').collect::<Vec<_>>();
+        if u.origin().ascii_serialization() != archive
+            || u.query().is_some()
+            || u.fragment().is_some()
+            || !u.username().is_empty()
+            || u.password().is_some()
+            || p.len() != 2
+            || p[0].len() != 91
+            || !p[0].starts_with("NISAR_L2_PR_GCOV_")
+            || !p[0].ends_with("_P05023_N_F_J_001")
+            || !p[0]
+                .bytes()
+                .all(|b| b.is_ascii_uppercase() || b.is_ascii_digit() || b == b'_')
+            || p[1] != format!("{}.h5", p[0])
+        {
+            return fail("NISAR exact unsigned GCOV P05023 object required");
+        }
+        let resource = "https://d1mv8zhcvry6x4.cloudfront.net";
+        let suffix=format!("/sds-n-cumulus-prod-nisar-products.s3.us-west-2.amazonaws.com/NISAR_L2_GCOV_PROVISIONAL_V1/{key}");
+        let head = format!("/head-7fdfbcb0ce308dc58d08f97acb1f0590{suffix}");
+        let get = format!("/s3-7fdfbcb0ce308dc58d08f97acb1f0590{suffix}");
+        let login = "https://urs.earthdata.nasa.gov";
+        let rule = |a: &str, b: &str, p: &str| RedirectRule {
+            from_origin: a.into(),
+            to_origin: b.into(),
+            destination_path: p.into(),
+        };
+        Self::new(
+            Config {
+                canonical_url: canonical_url.into(),
+                login_origin: login.into(),
+                resource_origin: resource.into(),
+                head_resource_path: head.clone(),
+                get_resource_path: get.clone(),
+                redirects: vec![
+                    rule(archive, login, "/oauth/authorize"),
+                    rule(login, archive, "/login"),
+                    rule(archive, archive, u.path()),
+                    rule(archive, resource, &head),
+                    rule(archive, resource, &get),
+                ],
+                additional_roots: vec![],
+            },
+            netrc,
+        )
+    }
     /// Opt in to the observed ASF OPERA RTC-S1 V1 protected-object contract.
     ///
     /// Current CMR records expose unsigned Cumulus object URLs directly. This
@@ -1529,6 +1585,25 @@ mod tests {
             .all(|r| r.to_origin == "https://urs.earthdata.nasa.gov"
                 || r.to_origin == "https://data.nsidc.earthdatacloud.nasa.gov"
                 || r.to_origin == "https://d3h5e2j7riftk6.cloudfront.net"));
+        std::fs::remove_file(netrc)?;
+        Ok(())
+    }
+    #[test]
+    fn nisar_policy_cannot_inherit_another_asf_archive_or_source() -> Result<()> {
+        let netrc = netrc_fixture("nisar-profile")?;
+        let id="NISAR_L2_PR_GCOV_033_148_A_020_4005_DHDH_A_20261022T105546_20261022T105620_P05023_N_F_J_001";
+        let url=format!("https://nisar.asf.earthdatacloud.nasa.gov/NISAR/NISAR_L2_GCOV_PROVISIONAL_V1/{id}/{id}.h5");
+        let session = AuthenticatedHttp::earthdata_nisar(&url, &netrc)?;
+        assert!(session.accepts(&url));
+        for bad in [
+            url.replace("P05023", "P05024"),
+            url.replace("GCOV", "RSLC"),
+            url.replace("nisar.asf.", "cumulus.asf."),
+            format!("{url}?signed=secret"),
+        ] {
+            assert!(AuthenticatedHttp::earthdata_nisar(&bad, &netrc).is_err());
+        }
+        assert!(!session.accepts(&url.replace("20261022T105546", "20261022T105547")));
         std::fs::remove_file(netrc)?;
         Ok(())
     }

@@ -268,17 +268,29 @@ pub(crate) fn fetch(p: &Prepared, path: &str, cancelled: Arc<AtomicBool>) -> Res
                 index.store_array_subset_opt(&subset, &values, &opt)?;
             }
         }
+        let nisar = matches!(
+            o.grid,
+            crate::products::array_grid::NativeGrid::NisarUtm16North
+        );
         let mapping = array(
             store.clone(),
             &format!("{prefix}/spatial_ref"),
             &[],
             &[],
-            "<i4",
+            if nisar { "<u4" } else { "<i4" },
             Value::Null,
             attrs(&first["grid_mapping"]["attributes"], &[]),
             encoding,
         )?;
-        mapping.store_array_subset_opt(&ArraySubset::new_with_shape(vec![]), &[0i32], &opt)?;
+        if nisar {
+            mapping.store_array_subset_opt(
+                &ArraySubset::new_with_shape(vec![]),
+                &[32616u32],
+                &opt,
+            )?;
+        } else {
+            mapping.store_array_subset_opt(&ArraySubset::new_with_shape(vec![]), &[0i32], &opt)?;
+        }
         if first["time"].is_object() {
             let t = &first["time"];
             let axis = array(

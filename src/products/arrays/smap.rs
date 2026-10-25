@@ -90,6 +90,11 @@ fn day(id: &str) -> Result<chrono::NaiveDate> {
 }
 fn validate_observation(r: &ProductRequest, o: &Observation) -> Result<()> {
     let date = day(&o.id)?;
+    if o.platform.as_deref().is_some_and(|p| p != "SMAP")
+        || o.processing.as_deref().is_some_and(|p| p != "006/R19240")
+    {
+        return fail("SMAP catalog platform/processing conflicts with profile");
+    }
     if o.collection != COLLECTION
         || chrono::DateTime::parse_from_rfc3339(&o.datetime)?.date_naive() != date
     {
@@ -305,7 +310,9 @@ pub(super) fn prepare(r: &ProductRequest, netrc: Option<&std::path::Path>) -> Re
                 chunk_edge: r.chunk_edge,
             },
         };
+        let t = Instant::now();
         let inspection = crate::hdf5::ArrayInspection::inspect(&request, transport)?;
+        let inspection_seconds = t.elapsed().as_secs_f64();
         let first = &inspection.definitions[0];
         let meta = &first["product_metadata"];
         if meta["/Metadata/DatasetIdentification"]["fileName"]["value"] != format!("{}.h5", o.id)
@@ -338,6 +345,7 @@ pub(super) fn prepare(r: &ProductRequest, netrc: Option<&std::path::Path>) -> Re
             if b=="retrieval_qual_flag"&&(a["flag_masks"]["value"]!="1s, 2s, 4s, 8s"||a["flag_meanings"]["value"]!="Retrieval_recommended Retrieval_attempted Retrieval_success FT_retrieval_success"){return fail("unqualified SMAP retrieval flag definitions");}
         }
         let grid = NativeGrid::EaseGridGlobal { epsg: 6933 };
+        let t = Instant::now();
         request.spatial = array_grid::resolve(
             &grid,
             &inspection.coordinates[0],
@@ -345,6 +353,8 @@ pub(super) fn prepare(r: &ProductRequest, netrc: Option<&std::path::Path>) -> Re
             &r.aoi,
             axes(),
         )?;
+        let selection_seconds = t.elapsed().as_secs_f64();
+        crate::planner::validate(&request)?;
         let Spatial::ArraySlice {
             start, count, step, ..
         } = &request.spatial
@@ -362,9 +372,16 @@ pub(super) fn prepare(r: &ProductRequest, netrc: Option<&std::path::Path>) -> Re
             }
         }
         admit_retained(r, &catalog, &inspection.definitions, &coordinates)?;
+        let t = Instant::now();
         let base = acquisition::prepare_array_inspected(&request, &inspection)?;
+        let physical_plan_seconds = t.elapsed().as_secs_f64();
         prepared.push(PreparedObservation {
             observation: o,
+            preparation_timings: PreparationTimings {
+                inspection_seconds,
+                selection_seconds,
+                physical_plan_seconds,
+            },
             native_selection: request.spatial,
             grid,
             definitions: inspection.definitions.clone(),

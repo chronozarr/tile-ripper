@@ -4,7 +4,7 @@
 No capture action downloads whole objects. Sparse mirrors reject holes on replay.
 Raw backing files are incomplete and are never admitted as complete sources.
 """
-import argparse,copy,hashlib,io,json,os,subprocess,sys,tempfile,time
+import argparse,base64,copy,hashlib,io,json,os,subprocess,sys,tempfile,time
 from pathlib import Path
 import h5py,netCDF4,numpy as np,requests,xarray as xr,zarr
 from pyproj import CRS,Transformer
@@ -72,6 +72,19 @@ def verify_goes(m,path,r,manifest):
   ds.load();assert ds.CMI.dtype==np.dtype('int16') and ds.DQF.dtype==np.dtype('int8')
  files=[p for p in path.rglob('*') if p.is_file()]
  return dict(native_selection=native,variables=rows,coordinate_max_error_degrees=error,visible_centers=int(earth.sum()),included_centers=int(aoi.sum()),netcdf4_raw_equal=True,xarray_reopen=True,output_objects=len(files),output_bytes=sum(p.stat().st_size for p in files))
+def verify_stream(events,output,r,native):
+ assert events[-1]['event']=='complete'
+ group=zarr.open_group(str(output),mode='r')['observations/'+r['observations'][0]['id']];counts={};coverage={}
+ for e in events:
+  if e['event']!='chunk':continue
+  name=e['variable']['path'].rsplit('/',1)[-1];win=e['window'];row=(win['y']-native['start'][0])//native['step'][0];col=(win['x']-native['start'][1])//native['step'][1];sl=(slice(row,row+win['height']),slice(col,col+win['width']));expected=group[name][sl]
+  actual=np.frombuffer(base64.b64decode(e['values_le_base64']),dtype=np.dtype(e['dtype']).newbyteorder('<')).reshape(expected.shape);assert actual.dtype==expected.dtype and actual.tobytes()==expected.tobytes()
+  for field,key in [('source_valid_mask_base64','source_valid_'+name),('aoi_mask_base64','aoi_mask')]:assert base64.b64decode(e[field])==group[key][sl].tobytes()
+  if 'quality' in e:assert base64.b64decode(e['quality']['mask_base64'])==group['quality_'+e['quality']['policy']][sl].tobytes()
+  if name not in coverage:coverage[name]=np.zeros(group[name].shape,dtype='u1')
+  assert not coverage[name][sl].any();coverage[name][sl]=1;counts[name]=counts.get(name,0)+actual.size
+ assert all(mask.all() for mask in coverage.values()) and len(counts)==len(r['bands'])
+ return dict(native_samples=counts,all_raw_bits_and_masks_equal_to_independently_verified_output=True)
 def goes(capture=False,live=False):
  results=[]
  for band in ['C13','C01']:
@@ -84,6 +97,7 @@ def goes(capture=False,live=False):
     r=request(band,info,s.url,aoi);stamp=str(time.time_ns());req=WORK/f'{band}-{label}-request.json';save(req,r);output=WORK/f'{band}-{label}-{stamp}.zarr'
     plan=invoke(['plan',req]);fetch=invoke(['fetch',req,'--output',output]);manifest=json.loads(fetch['stdout']);verified=verify_goes(m,output,r,manifest)
     stream=invoke(['stream',req,'--values']);events=[json.loads(line) for line in stream['stdout'].splitlines()];assert events[-1]['event']=='complete'
+    verified['stream']=verify_stream(events,output,r,manifest['plan']['observations'][0]['native_selection'])
     results.append(dict(band=band,case=label,plan=compact(plan),fetch=compact(fetch),stream=compact(stream),verification=verified,execution=manifest['observations'][0]['execution'],output_io=manifest['output_io'],mirror_requests=len(s.events)))
     canonical=request(band,info,info['url'],aoi);canonical['provider']='auto';save(DOC/f'goes-{band.lower()}-{label}-request.json',canonical)
    if s.errors:raise RuntimeError(str(s.errors))
@@ -135,7 +149,7 @@ def smap(live=False):
   cases=[('texas',smap_slice([400,900],[8,8])),('gulf',smap_slice([400,1000],[8,8])),('strided',smap_slice([400,900],[3,4],[3,2])),('geographic',dict(kind='bounds',crs='EPSG:4326',bbox=bbox))]
   with server(m) as srv:
    for label,aoi in cases:
-    r=smap_request(passname,info,srv.url,aoi);req=WORK/f'smap-{passname}-{label}.json';save(req,r);out=WORK/f'smap-{passname}-{label}-{time.time_ns()}.zarr';plan=invoke(['plan',req]);run=invoke(['fetch',req,'--output',out]);manifest=json.loads(run['stdout']);verify=verify_smap(m,out,r,manifest);stream=invoke(['stream',req,'--values']);assert json.loads(stream['stdout'].splitlines()[-1])['event']=='complete';results.append(dict(passname=passname,case=label,plan=compact(plan),fetch=compact(run),stream=compact(stream),verification=verify,execution=manifest['observations'][0]['execution'],output_io=manifest['output_io']))
+    r=smap_request(passname,info,srv.url,aoi);req=WORK/f'smap-{passname}-{label}.json';save(req,r);out=WORK/f'smap-{passname}-{label}-{time.time_ns()}.zarr';plan=invoke(['plan',req]);run=invoke(['fetch',req,'--output',out]);manifest=json.loads(run['stdout']);verify=verify_smap(m,out,r,manifest);stream=invoke(['stream',req,'--values']);events=[json.loads(v) for v in stream['stdout'].splitlines()];verify['stream']=verify_stream(events,out,r,manifest['plan']['observations'][0]['native_selection']);results.append(dict(passname=passname,case=label,plan=compact(plan),fetch=compact(run),stream=compact(stream),verification=verify,execution=manifest['observations'][0]['execution'],output_io=manifest['output_io']))
     canonical=smap_request(passname,info,info['canonical_url'],aoi);canonical['provider']='earthdata';save(DOC/f'smap-{passname}-{label}-request.json',canonical)
    assert not srv.errors,srv.errors
   if live:
@@ -149,7 +163,35 @@ def smap(live=False):
  save(DOC/'smap-inspection.json',inspection)
  save(DOC/'smap-validation.json',dict(status='passed',cases=results,scope='global AM and PM v006/R19240 from one daily granule; EPSG6931 polar grid unqualified',raw_reference='range-backed h5py; original HDF5 C library; source coordinate fields independently compared with official grid plus PROJ'))
  print(json.dumps(dict(status='passed',smap_cases=len(results))),flush=True)
+def nisar_request(info,href,start,count,step=(1,1)):
+ asset=dict(href=href,etag=info['etag'],metadata={})
+ return dict(product='nisar-gcov-p1-fa-hhhh',provider='pinned',aoi=dict(kind='array_slice',start=start,count=count,step=step,axes=['/science/LSAR/GCOV/grids/frequencyA/yCoordinates','/science/LSAR/GCOV/grids/frequencyA/xCoordinates']),start='2026-10-22T10:55:00Z',end='2026-10-22T10:57:00Z',bands=['HHHH'],observations=[dict(id=info['granule'],datetime='2026-10-22T10:55:46.000000000Z',collection=info['collection'],platform='NISAR',processing='P05023',assets={'HHHH':asset},properties={})],quality_policies=[],buffer_bytes=67108864,chunk_edge=32,max_observations=1)
+def verify_nisar(m,path,r,manifest):
+ group='observations/'+r['observations'][0]['id'];g=zarr.open_group(str(path),mode='r')[group];sl=tuple(slice(a,a+n*s,s) for a,n,s in zip(r['aoi']['start'],r['aoi']['count'],r['aoi']['step']));root='/science/LSAR/GCOV/grids/frequencyA'
+ with h5py.File(View(m)) as f:
+  expected=f[root+'/HHHH'][sl];actual=g['HHHH'][:];assert actual.dtype==np.dtype('f4') and actual.tobytes()==expected.tobytes()
+  valid=~np.isnan(expected);np.testing.assert_array_equal(g['source_valid_HHHH'][:],valid.astype('u1'));np.testing.assert_array_equal(g['aoi_mask'][:],np.ones(expected.shape,dtype='u1'))
+  x=f[root+'/xCoordinates'][sl[1]];y=f[root+'/yCoordinates'][sl[0]];np.testing.assert_array_equal(g['x'][:],x);np.testing.assert_array_equal(g['y'][:],y);assert g['x'].dtype==np.dtype('f8') and g['y'].dtype==np.dtype('f8')
+  X,Y=np.meshgrid(x,y);lon,lat=Transformer.from_crs(32616,4326,always_xy=True).transform(X,Y);error=max(float(np.abs(g['longitude'][:]-lon).max()),float(np.abs(g['latitude'][:]-lat).max()));assert error<1e-8,error
+  assert int(g['spatial_ref'][()])==32616 and g['spatial_ref'].dtype==np.dtype('u4')
+  meta=g.attrs['product_metadata'];p='/science/LSAR/GCOV/metadata/processingInformation/parameters/rtc/';assert meta[p+'outputBackscatterNormalizationConvention']['value']=='gamma0';assert meta[p+'outputBackscatterExpressionConvention']['value']=='Linear power';assert meta['/science/LSAR/GCOV/metadata/calibrationInformation/frequencyA/HH/scaleFactor']['value']==27030.051422175486
+ with xr.open_zarr(str(path),group=group,decode_cf=False,consolidated=False,chunks=None) as ds:ds.load();assert ds.HHHH.dtype==np.dtype('f4')
+ files=[p for p in path.rglob('*') if p.is_file()]
+ return dict(dtype=str(actual.dtype),samples=actual.size,raw_bits_sha256=hashlib.sha256(actual.tobytes()).hexdigest(),valid_centers=int(valid.sum()),coordinate_max_error_degrees=error,xarray_reopen=True,storage_fill=0,cf_fill='NaN',output_objects=len(files),output_bytes=sum(p.stat().st_size for p in files))
+def nisar(live=False):
+ os.environ['WAVE3_METADATA_POLICY']='page16k';info=json.loads((WORK/'nisar/inspection.json').read_text());m=Mirror(WORK/'nisar');m.verify();results=[]
+ with server(m) as srv:
+  for name,start,count,step in [('center',[17388,17676],[8,8],[1,1]),('corner',[0,0],[8,8],[1,1]),('strided',[17388,17676],[3,3],[3,3])]:
+   r=nisar_request(info,srv.url,start,count,step);req=WORK/f'nisar-{name}.json';save(req,r);out=WORK/f'nisar-{name}-{time.time_ns()}.zarr';plan=invoke(['plan',req]);run=invoke(['fetch',req,'--output',out]);manifest=json.loads(run['stdout']);verified=verify_nisar(m,out,r,manifest);stream=invoke(['stream',req,'--values']);events=[json.loads(v) for v in stream['stdout'].splitlines()];verified['stream']=verify_stream(events,out,r,manifest['plan']['observations'][0]['native_selection']);results.append(dict(case=name,plan=compact(plan),fetch=compact(run),stream=compact(stream),verification=verified,execution=manifest['observations'][0]['execution'],output_io=manifest['output_io']))
+   canonical=nisar_request(info,info['canonical_url'],start,count,step);canonical['provider']='earthdata';save(DOC/f'nisar-{name}-request.json',canonical)
+  assert not srv.errors,srv.errors
+ if live:
+  r=nisar_request(info,info['canonical_url'],[17388,17676],[8,8]);r['provider']='earthdata';req=WORK/'nisar-live.json';save(req,r);out=WORK/f'nisar-live-{time.time_ns()}.zarr';run=invoke(['fetch',req,'--auth','earthdata','--netrc',Path.home()/'.netrc','--output',out]);manifest=json.loads(run['stdout']);results.append(dict(case='live-asf',fetch=compact(run),verification=verify_nisar(m,out,r,manifest),execution=manifest['observations'][0]['execution']))
+ save(DOC/'nisar-capture.json',m.info);save(DOC/'nisar-inspection.json',info);save(DOC/'nisar-metadata-inspection.json',json.loads((WORK/'nisar/metadata-extension.json').read_text()));save(DOC/'nisar-fill-oracle.json',json.loads((WORK/'nisar/fill-oracle.json').read_text()))
+ save(DOC/'nisar-validation.json',dict(status='passed',scope='one real provisional GCOV P05023/product1.0.11/spec1.5.0; frequencyA HHHH only, original UTM16N native-index selection',cases=results,netcdf4_real_product='sparse-source NetCDF-C open unsupported; no real NetCDF-C equality claim; independent HDF5 C/h5py reference and separate NetCDF-C fill fixtures pass'))
+ print(json.dumps(dict(status='passed',nisar_cases=len(results))),flush=True)
 if __name__=='__main__':
- p=argparse.ArgumentParser();p.add_argument('family',choices=['goes','smap']);p.add_argument('--capture',action='store_true');p.add_argument('--live',action='store_true');a=p.parse_args()
+ p=argparse.ArgumentParser();p.add_argument('family',choices=['goes','smap','nisar']);p.add_argument('--capture',action='store_true');p.add_argument('--live',action='store_true');a=p.parse_args()
  if a.family=='goes':goes(a.capture,a.live)
- else:smap(a.live)
+ elif a.family=='smap':smap(a.live)
+ else:nisar(a.live)

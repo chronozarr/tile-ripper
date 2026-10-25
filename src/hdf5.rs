@@ -801,6 +801,111 @@ impl InspectedFile {
             .cloned()
             .collect())
     }
+    fn nisar_metadata(&self) -> Result<Value> {
+        use base64::Engine;
+        let mut paths = Vec::new();
+        for name in [
+            "granuleId",
+            "productVersion",
+            "productSpecificationVersion",
+            "compositeReleaseId",
+            "processingDateTime",
+            "zeroDopplerStartTime",
+            "zeroDopplerEndTime",
+            "productType",
+            "radarBand",
+            "processingType",
+            "isUrgentObservation",
+            "diagnosticModeFlag",
+            "lookDirection",
+            "orbitPassDirection",
+            "instrumentName",
+            "platformName",
+            "isGeocoded",
+        ] {
+            paths.push(format!("/science/LSAR/identification/{name}"));
+        }
+        let base = "/science/LSAR/GCOV/metadata/processingInformation";
+        for name in [
+            "radiometricTerrainCorrectionApplied",
+            "noiseCorrectionApplied",
+            "polarimetricSymmetrizationApplied",
+            "isFullCovariance",
+            "rtc/inputBackscatterNormalizationConvention",
+            "rtc/outputBackscatterNormalizationConvention",
+            "rtc/outputBackscatterExpressionConvention",
+        ] {
+            paths.push(format!("{base}/parameters/{name}"));
+        }
+        for name in [
+            "softwareVersion",
+            "radiometricTerrainCorrection",
+            "radiometricTerrainCorrectionAlgorithmReference",
+            "geocoding",
+            "geocodingAlgorithmReference",
+        ] {
+            paths.push(format!("{base}/algorithms/{name}"));
+        }
+        for name in [
+            "scaleFactor",
+            "scaleFactorSlope",
+            "differentialPhase",
+            "differentialDelay",
+            "rfiLikelihood",
+        ] {
+            paths.push(format!(
+                "/science/LSAR/GCOV/metadata/calibrationInformation/frequencyA/HH/{name}"
+            ));
+        }
+        for name in ["listOfCovarianceTerms", "listOfPolarizations", "projection"] {
+            paths.push(format!("/science/LSAR/GCOV/grids/frequencyA/{name}"));
+        }
+        let mut out = json!({});
+        for path in paths {
+            let d = self.parser.dataset(&path)?;
+            if d.num_elements()? > 4 || hdf5_reader::dtype_element_size(d.dtype())? > 8192 {
+                return fail("NISAR scalar metadata exceeds bounded profile");
+            }
+            let value = match d.dtype() {
+                Datatype::String { .. } => {
+                    if d.num_elements()? == 1 {
+                        json!(d.read_string()?)
+                    } else {
+                        json!(d.read_strings()?)
+                    }
+                }
+                Datatype::FloatingPoint { size: 8, .. } => json!(d
+                    .read_array::<f64>()?
+                    .iter()
+                    .next()
+                    .copied()
+                    .ok_or("missing NISAR scalar")?),
+                Datatype::FixedPoint {
+                    size: 4,
+                    signed: false,
+                    ..
+                } => json!(d
+                    .read_array::<u32>()?
+                    .iter()
+                    .next()
+                    .copied()
+                    .ok_or("missing NISAR scalar")?),
+                Datatype::FixedPoint {
+                    size: 1,
+                    signed: false,
+                    ..
+                } => json!(d
+                    .read_array::<u8>()?
+                    .iter()
+                    .next()
+                    .copied()
+                    .ok_or("missing NISAR scalar")?),
+                _ => return fail("unqualified NISAR metadata storage type"),
+            };
+            out[&path] = json!({"value":value,"source_dtype":format!("{:?}",d.dtype()),"shape":d.shape(),"stored_bytes_base64":base64::engine::general_purpose::STANDARD.encode(d.read_raw_bytes()?),"attributes":attrs(&d,&self.parser)?});
+        }
+        Ok(out)
+    }
     fn smap_metadata(&self) -> Result<Value> {
         let mut out = json!({});
         for path in [
@@ -912,7 +1017,7 @@ impl InspectedFile {
         validate_coordinate_markers(&axis, &values)?;
         let result = CachedAxis {
             values: values.into(),
-            description: json!({"path":path,"dtype":format!("{:?}",axis.dtype()),"attributes":attributes,"storage":storage}),
+            description: json!({"path":path,"dtype":format!("{:?}",axis.dtype()),"stored_dtype":coordinate_dtype(&axis)?,"attributes":attributes,"storage":storage}),
         };
         self.coordinate_reads.fetch_add(1, Ordering::Relaxed);
         *self.coordinate_seconds.lock().unwrap() += started.elapsed().as_secs_f64();
@@ -1149,12 +1254,17 @@ impl ArrayInspection {
                 return fail("array product requires dataset paths");
             };
             let profile = file.profile(path, axes)?;
-            if profile.shape.iter().any(|n| *n == 0 || *n > 16384)
-                || profile.shape[0]
-                    .checked_mul(profile.shape[1])
-                    .is_none_or(|n| n > 32_000_000)
-            {
-                return fail("array inspection grid exceeds 16384 per axis / 32 million centers");
+            let nisar = path == "/science/LSAR/GCOV/grids/frequencyA/HHHH";
+            let permitted = if nisar {
+                profile.shape == [34776, 35352]
+            } else {
+                profile.shape.iter().all(|n| *n > 0 && *n <= 16384)
+                    && profile.shape[0]
+                        .checked_mul(profile.shape[1])
+                        .is_some_and(|n| n <= 32_000_000)
+            };
+            if !permitted {
+                return fail("array inspection exceeds qualified source shape limits");
             }
             if expected.is_some_and(|s| s != profile.shape) {
                 return fail("array product layers have different native grids");
@@ -1185,6 +1295,9 @@ impl ArrayInspection {
             if axes[0] == "/@smap_ease2_m09/y" {
                 definition["product_metadata"] = file.smap_metadata()?;
                 definition["grid_mapping"] = crate::products::array_grid::ease_mapping();
+            }
+            if nisar {
+                definition["product_metadata"] = file.nisar_metadata()?;
             }
             if self::is_goes_root(&file.root_attributes) {
                 let mut ancillary = json!({});
@@ -1323,6 +1436,43 @@ pub(crate) struct Binding {
     jobs: Vec<Job>,
     pub groups: Vec<Group>,
     description: Value,
+}
+fn coordinate_dtype(ds: &Dataset) -> Result<&'static str> {
+    match ds.dtype() {
+        Datatype::FixedPoint {
+            size: 1,
+            signed: false,
+            ..
+        } => Ok("|u1"),
+        Datatype::FixedPoint {
+            size: 1,
+            signed: true,
+            ..
+        } => Ok("|i1"),
+        Datatype::FixedPoint {
+            size: 2,
+            signed: false,
+            ..
+        } => Ok("<u2"),
+        Datatype::FixedPoint {
+            size: 2,
+            signed: true,
+            ..
+        } => Ok("<i2"),
+        Datatype::FixedPoint {
+            size: 4,
+            signed: false,
+            ..
+        } => Ok("<u4"),
+        Datatype::FixedPoint {
+            size: 4,
+            signed: true,
+            ..
+        } => Ok("<i4"),
+        Datatype::FloatingPoint { size: 4, .. } => Ok("<f4"),
+        Datatype::FloatingPoint { size: 8, .. } => Ok("<f8"),
+        _ => fail("unqualified axis dtype"),
+    }
 }
 fn coordinate(ds: &Dataset, start: usize, count: usize, step: usize) -> Result<Vec<f64>> {
     let end = (count - 1)

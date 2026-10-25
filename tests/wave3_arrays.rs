@@ -41,3 +41,35 @@ fn quality_policy_does_not_fold_other_codes_into_good() {
     assert!(arrays::quality_accepts("goes_dqf_good", 0.).unwrap());
     assert!(arrays::quality_accepts("unknown", 0.).is_err());
 }
+
+#[test]
+fn invalid_native_counts_strides_and_overflow_fail_before_discovery() {
+    use serde_json::json;
+    use tile_ripper::products::ProductRequest;
+    for (count, step, start) in [
+        ([1, 1], [0, 1], [0, 0]),
+        ([0, 1], [1, 1], [0, 0]),
+        ([2, 1], [usize::MAX, 1], [2, 0]),
+        ([65537, 1], [1, 1], [0, 0]),
+    ] {
+        let r:ProductRequest=serde_json::from_value(json!({"product":"goes19-abi-cmipc-c13","start":"2026-10-24T16:00:00Z","end":"2026-10-24T16:05:00Z","bands":["CMI"],"aoi":{"kind":"array_slice","start":start,"count":count,"step":step,"axes":["/y","/x"]}})).unwrap();
+        let error = arrays::discover(&r).unwrap_err().to_string();
+        assert!(error.contains("native selection"), "{error}");
+    }
+}
+#[test]
+fn smap_policy_preserves_flag8_identity_and_excludes_unknown_words() {
+    assert!(arrays::quality_accepts("smap_retrieval_recommended", 0.).unwrap());
+    assert!(arrays::quality_accepts("smap_retrieval_recommended", 8.).unwrap());
+    for code in [1., 7., 9., 15., 16., 65534., 65535.] {
+        assert!(!arrays::quality_accepts("smap_retrieval_recommended", code).unwrap());
+    }
+}
+#[test]
+fn nisar_native_navigation_matches_independent_proj_reference() {
+    let xy = NativeGrid::NisarUtm16North
+        .longitude_latitude(4052515., 551885.)
+        .unwrap();
+    assert!((xy[0] - -86.41976768852962).abs() < 1e-9);
+    assert!((xy[1] - 36.616747474338396).abs() < 1e-9);
+}
