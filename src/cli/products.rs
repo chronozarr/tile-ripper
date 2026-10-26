@@ -178,10 +178,9 @@ pub fn run(options: super::Options) -> Result<()> {
             }
         }
         "fetch" => {
-            println!(
-                "{}",
-                serde_json::to_string_pretty(&prepared.fetch_cancellable(cancelled.clone())?)?
-            );
+            let manifest = prepared.fetch_cancellable(cancelled.clone())?;
+            let path = r.output.as_deref().ok_or("product fetch requires output")?;
+            print!("{}", fetch_report(&manifest, path, options.human)?);
         }
         "stream" => {
             use base64::Engine;
@@ -318,6 +317,32 @@ pub fn run(options: super::Options) -> Result<()> {
     Ok(())
 }
 
+/// The fetch manifest as JSON, or with `--human` the short summary other
+/// fetches print. Array manifests report transport per observation.
+fn fetch_report(manifest: &serde_json::Value, output: &str, human: bool) -> Result<String> {
+    if !human {
+        return Ok(serde_json::to_string_pretty(manifest)? + "\n");
+    }
+    let (records, transport) = if manifest["schema"] == "tile-ripper-array-output-v1" {
+        let observations = manifest["observations"]
+            .as_array()
+            .ok_or("array manifest lacks observations")?;
+        let transport = observations
+            .iter()
+            .try_fold((0u64, 0u64), |(requests, bytes), o| {
+                let (r, b) = super::transport_totals(&o["execution"]["transport"])?;
+                Some((requests.checked_add(r)?, bytes.checked_add(b)?))
+            });
+        (observations.len(), transport)
+    } else {
+        (
+            manifest["outputs"].as_array().map_or(0, Vec::len),
+            super::transport_totals(&manifest["observed"]["transport"]),
+        )
+    };
+    Ok(super::fetch_summary(records, output, transport))
+}
+
 #[cfg(feature = "native-hdf5")]
 fn run_array(options: super::Options) -> Result<()> {
     use base64::Engine;
@@ -391,9 +416,9 @@ fn run_array(options: super::Options) -> Result<()> {
                 .output
                 .as_ref()
                 .ok_or("array fetch requires output or --output NEW.zarr")?;
-            println!(
+            print!(
                 "{}",
-                serde_json::to_string_pretty(&p.fetch(path, cancelled)?)?
+                fetch_report(&p.fetch(path, cancelled)?, path, options.human)?
             );
         }
         "stream" => {
@@ -430,4 +455,37 @@ fn run_array(options: super::Options) -> Result<()> {
         _ => return Err("unknown array command".into()),
     }
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn human_fetch_prints_a_short_summary_for_both_manifest_shapes() {
+        let inspection = "x".repeat(200_000);
+        let cog = serde_json::json!({"document_type":"acquisition_result","outputs":[{},{}],
+            "observed":{"transport":{"a.example":{"requests":3,"bytes":10}}},"inspection":inspection});
+        let array = serde_json::json!({"schema":"tile-ripper-array-output-v1","plan":inspection,
+            "observations":[{"execution":{"transport":{"b.example":{"requests":2,"bytes":5}}}}]});
+        for (manifest, records, http) in [
+            (&cog, 2, "Observed HTTP: 3 requests, 10 response-body bytes"),
+            (
+                &array,
+                1,
+                "Observed HTTP: 2 requests, 5 response-body bytes",
+            ),
+        ] {
+            let summary = fetch_report(manifest, "./out.zarr", true).unwrap();
+            assert!(summary.starts_with(&format!(
+                "Acquisition complete: {records} output records.\nOutput: ./out.zarr\nCompletion and provenance: manifest.json\n{http}"
+            )), "{summary}");
+            assert!(summary.len() < 400, "{summary}");
+            let json = fetch_report(manifest, "./out.zarr", false).unwrap();
+            assert_eq!(
+                serde_json::from_str::<serde_json::Value>(&json).unwrap(),
+                *manifest
+            );
+        }
+    }
 }

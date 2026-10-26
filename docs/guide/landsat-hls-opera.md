@@ -37,7 +37,7 @@ tile-ripper fetch examples/product-landsat.json \
 
 In a test run the plan found one scene with five layers (32 x 39 native pixels each) through `planetary_computer`, `credentials required: false`; the fetch wrote five groups. Planetary Computer's signing service returned HTTP 504 on several first attempts; the command fails without switching provider, and a rerun succeeded.
 
-Product `fetch` prints its report as JSON (the same text saved as `manifest.json`); `--human` only changes `plan`. Choose a new `--output` path; existing paths are refused.
+Product `fetch` prints its report as JSON (the same text saved as `manifest.json`); with `--human` it prints a short completion summary instead. Choose a new `--output` path; existing paths are refused.
 
 A public reference example needs no account. It pins one HLS L30 granule in its `observations` array:
 

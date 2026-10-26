@@ -123,11 +123,10 @@ real fetches:
 - ERA5: Float32 kelvin with no scale or offset, so both opens give the same
   numbers.
 
-**Always read masks and classification layers with `mask_and_scale=False`.**
-In Sentinel-2 and Landsat/HLS/OPERA outputs the masks have fill value 0, so
-the default open turns every 0 into NaN and every 1 into 1.0, which hides the
-excluded pixels. Class layers such as OPERA `WTR` likewise become floats with
-their fill code (255) as NaN.
+**Read classification layers with `mask_and_scale=False`.** Class layers such
+as OPERA `WTR` declare their fill code (255), so the default open turns them
+into floats with 255 as NaN. The 0/1 masks declare no fill value and open as
+UInt8 either way.
 
 ## Masks
 

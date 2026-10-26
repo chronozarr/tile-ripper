@@ -32,7 +32,7 @@ Do not combine these with a request file.
 | `--source URL_OR_PATH` | Zarr store, or the endpoint of a catalog for `--format stac`. |
 | `--format zarr_v2\|stac` | `zarr_v2` for a Zarr store; `stac` for a SpatioTemporal Asset Catalog (STAC) API. |
 | `--collection NAME` | STAC collection. Required with `--format stac`; not valid with `zarr_v2`. |
-| `--bbox W,S,E,N` | Bounds in EPSG:4326 (WGS84 longitude and latitude). Crossing the antimeridian is not supported. Use this or `--aoi`, not both. |
+| `--bbox W,S,E,N` | Bounds in EPSG:4326 (WGS84 longitude and latitude). Crossing the antimeridian is not supported. On a Zarr source whose longitudes run 0–360, such as ERA5, give 0–360 values; a negative longitude fails. Use this or `--aoi`, not both. |
 | `--aoi FILE` | Area of interest (AOI): a GeoJSON Polygon geometry, not a Feature or collection. Zarr sources accept `--bbox` only. |
 | `--start RFC3339 --end RFC3339` | Inclusive time bounds in RFC 3339 form, such as `2020-06-01T00:00:00Z`. Start must not be later than end. |
 | `--variables NAME[,NAME]` | Array names for Zarr sources; band names for STAC. |

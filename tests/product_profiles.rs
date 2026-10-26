@@ -312,3 +312,38 @@ fn hls_dswx_and_rtc_policies_preserve_separate_source_semantics() -> Result<()> 
         .is_err());
     Ok(())
 }
+
+#[cfg(not(feature = "native-hdf5"))]
+#[test]
+fn array_product_in_a_build_without_native_hdf5_names_the_missing_feature() {
+    for id in [
+        "goes19-abi-cmipc-c13",
+        "smap-spl3smp-e-v6-am",
+        "nisar-gcov-p1-fa-hhhh",
+    ] {
+        let message = profile(id).unwrap_err().to_string();
+        assert!(message.contains("native-hdf5"), "{message}");
+        assert!(
+            message.contains(
+                "--no-default-features --features native-cog,native-hdf5,authenticated-http"
+            ),
+            "{message}"
+        );
+    }
+    let message = profile("not-a-product").unwrap_err().to_string();
+    assert_eq!(message, "unknown scientific product profile");
+}
+
+#[cfg(feature = "native-hdf5")]
+#[test]
+fn array_product_names_match_the_native_hdf5_profiles() {
+    let listed = products::arrays::profiles();
+    let ids = listed
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|p| p["id"].as_str().unwrap())
+        .collect::<Vec<_>>();
+    assert_eq!(ids, products::profile::ARRAY_PRODUCTS);
+    assert!(ids.iter().all(|id| products::arrays::supports(id)));
+}

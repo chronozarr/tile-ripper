@@ -267,8 +267,7 @@ remains the default output. Adding `native-cog` reads native GeoTIFF/COG
 sources (Sentinel-2 and the Landsat, HLS and OPERA products, with UInt8
 class/palette indices, UInt16, Int16 and Float32 samples) and writes
 GDAL-free Zarr output. GOES, SMAP and NISAR profiles need `native-hdf5`; a
-build without it answers a GOES request with
-`unknown scientific product profile`. Earthdata login needs
+build without it refuses them and names the missing feature. Earthdata login needs
 `authenticated-http`; each archive (LP DAAC for HLS, PO.DAAC for DSWx-HLS
 v1.1, ASF for RTC-S1 v1.0, and the SWOT, SMAP and NISAR archives) has its own
 exact access policy, and older ASF datapool routes are not supported. The
