@@ -1,5 +1,10 @@
 # Private alpha closeout — 0.1.0-alpha.1 candidate
 
+> Historical October 19 closeout. The current tree requires vendored
+> `hdf5-reader` and `zarrs_filesystem` sources, so the non-vendored handoff below
+> is no longer a usable procedure for this branch. See the
+> [current consolidation checklist](../consolidation.md) before preparing a candidate.
+
 The source alpha is prepared for approval and a first human trial. No license is
 applied, no tag exists, and no distribution/publication is authorized by this report.
 The earlier readiness work is preserved in local commit `022d9f1`.

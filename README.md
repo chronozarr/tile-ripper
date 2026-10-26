@@ -1,5 +1,9 @@
 # Tile-Ripper
 
+For the current development state, validation and remaining release work, see
+the [consolidation checklist](docs/consolidation.md). The October 19 alpha trial
+is an earlier candidate contract; it does not cover every workflow added below.
+
 Named native product workflows now cover sensor-specific Landsat 4/5 TM, Landsat 7 ETM+ and Landsat 8/9 Collection 2 surface reflectance, HLS L30/S30 v2, OPERA DSWx-HLS, current DSWx-S1, DIST-ALERT, and the qualified OPERA RTC-S1 Float32 profile. Use `tile-ripper products` and the existing `plan` / `fetch` / `stream` commands with a product request. See [runnable examples and installation](docs/products/workflow.md), [exact real-source qualification and access limits](docs/products/qualification.md), [scientific band/quality definitions](docs/products/specifications.md), and the [25-row coverage roadmap](docs/products/roadmap.md). Stored values, native grids, calibration, classification labels, and independent quality masks are preserved.
 
 [Wave 3 native array products](docs/products/wave3/qualification.md) add current GOES-19 CMIPC C13/C01, SMAP SPL3SMP_E v6 global AM/PM, and a real NISAR GCOV frequency-A HHHH diagonal. Their ordinary discovery/plan/stream/fetch commands preserve original scientific types, typed native grids, source fill, separate AOI/quality masks and durable Zarr. GOES is anonymous; SMAP and NISAR use separately qualified explicit Earthdata policies. [Wave 4 geographic acquisition](docs/products/wave4/qualification.md) adds WGS84 AOIs for the inspected 10/20 m NISAR UTM16N grids, separate SMAP northern-polar AM/PM profiles, and GOES-19 mesoscale-1 C02. Build with `--no-default-features --features native-cog,native-hdf5,authenticated-http`; Cargo defaults remain unchanged.

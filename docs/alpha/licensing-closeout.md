@@ -1,5 +1,10 @@
 # Licensing closeout — proposed source alpha, 2026-10-19
 
+> Historical audit of the earlier source tree. The current branch includes
+> two vendored dependency forks; the no-vendoring statements and source-handoff
+> scope below require a new audit of the actual candidate. See the
+> [current consolidation checklist](../consolidation.md).
+
 Recommendation remains Apache-2.0 for the authorized project-owned source. Exact
 [proposed files](proposed-licensing/README.md) are staged for review only. Nothing
 has been applied to the project. MIT/Apache dual licensing is also permissive but

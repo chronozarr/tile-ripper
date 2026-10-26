@@ -1,5 +1,10 @@
 # Tile-Ripper 0.1.0-alpha.1 — private source candidate
 
+> Historical October 19 candidate scope. The development branch now includes
+> additional products and two vendored dependency forks. Use the
+> [consolidation checklist](docs/consolidation.md) for current validation and
+> closeout work; the earlier source-handoff procedure needs revision before use.
+
 For scientists who need small native subsets with inspectable acquisition plans
 and provenance. No consistent speed advantage over tuned GDAL/xarray is established.
 **Not distributed yet:** ownership/license approval is pending. Proposed license
