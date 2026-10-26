@@ -1,5 +1,12 @@
 # Prototype dependency scope
 
+The current locked-tree inventory is in
+[the consolidation inventory](consolidation/license-inventory.json), including
+both modified path dependencies. [Source handoff and fork maintenance](consolidation/source-handoff.md)
+and [current licensing evidence](alpha/licensing-closeout.md) supersede the
+historical package counts below. Consolidation changes no production dependency
+version; a standalone filesystem-fork test lock is now retained as well.
+
 Direct Cargo dependencies use exact versions; Cargo.lock pins transitive
 versions and checksums. Use `--locked` for builds and tests. The existing study
 uv manifests/locks were preserved, and their already installed Python

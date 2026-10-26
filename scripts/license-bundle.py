@@ -4,13 +4,23 @@ import hashlib
 import json
 from pathlib import Path
 import subprocess
+import argparse
 
 base = Path(__file__).resolve().parents[1]
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument('--output', type=Path, required=True,
+                    help='New directory; historical evidence is never overwritten')
+args = parser.parse_args()
 review = base / 'docs/alpha/proposed-licensing'
+output_directory = args.output.resolve()
+output_directory.mkdir(parents=True, exist_ok=False)
 metadata = json.loads(subprocess.check_output([
-    'cargo', 'metadata', '--locked', '--offline', '--format-version', '1'], cwd=base))
+    'cargo', 'metadata', '--locked', '--offline', '--all-features', '--format-version', '1'], cwd=base))
 recovered = json.loads((review / 'recovered-notices.json').read_text())
 extra = json.loads((review / 'extra-notices.json').read_text())
+current_recovery = base / 'docs/consolidation/recovered-notices.json'
+if current_recovery.exists():
+    recovered += json.loads(current_recovery.read_text())
 texts = {}
 rows = []
 
@@ -20,20 +30,25 @@ def add(data):
     return digest
 
 for package in sorted(metadata['packages'], key=lambda p: (p['name'], p['version'])):
-    if package['source'] is None:
-        continue
     root = Path(package['manifest_path']).parent
+    if root == base:
+        continue
     row = {'name': package['name'], 'version': package['version'],
+           'source_kind': 'registry' if package['source'] else 'vendored',
            'declared_license': package['license'], 'notices': []}
     for path in sorted(root.rglob('*')):
+        if 'target' in path.relative_to(root).parts:
+            continue
         if path.is_file() and path.name.lower().startswith((
                 'license', 'licence', 'copying', 'copyright', 'notice', 'authors')):
-            row['notices'].append({'source': 'registry:' + str(path.relative_to(root)),
+            prefix = 'registry:' if package['source'] else 'vendor/' + package['name'] + '/'
+            row['notices'].append({'source': prefix + str(path.relative_to(root)),
                                    'sha256': add(path.read_bytes())})
     for upstream in recovered:
         if (upstream['name'], upstream['version']) == (package['name'], package['version']):
             for file in upstream['files']:
-                data = (review / 'upstream' / (file['sha256'] + '.txt')).read_bytes()
+                evidence = base / file['local_path'] if 'local_path' in file else review / 'upstream' / (file['sha256'] + '.txt')
+                data = evidence.read_bytes()
                 assert hashlib.sha256(data).hexdigest() == file['sha256']
                 row['notices'].append({'source': file['url'], 'sha256': add(data)})
     for file in extra:
@@ -54,19 +69,22 @@ for package in sorted(metadata['packages'], key=lambda p: (p['name'], p['version
         row['review_note'] = 'Packaged LICENSE is MIT; Cargo expression is absent.'
     if package['name'] in ('json_dotpath', 'pdqselect') or package['name'].startswith('winapi-'):
         row['review_required'] = 'Standalone exact upstream license/copyright text incomplete; see audit.'
+    if not row['notices']:
+        row['review_required'] = 'Exact original notice text absent from the current evidence; see current licensing closeout.'
     rows.append(row)
 
-(review / 'third-party-index.json').write_text(json.dumps(rows, indent=2) + '\n')
+(output_directory / 'third-party-index.json').write_text(json.dumps(rows, indent=2) + '\n')
 header = '''PROPOSED THIRD-PARTY LICENSE EVIDENCE — NOT A PROJECT LICENSE GRANT
 
-All locked registry packages are indexed in third-party-index.json, including
+All resolved third-party packages are indexed in third-party-index.json, including
 inactive optional/target dependencies. Exact original texts are deduplicated by
 SHA-256. Alternate license texts are retained as evidence, not selected together.
-See README.md for license choices, required notices and unresolved exceptions.
-No GDAL runtime, vendored crate, or executable is included in the source alpha.
+See docs/consolidation/source-handoff.md for the current source scope and exceptions.
+The source includes modified hdf5-reader and zarrs_filesystem crates with original
+notices. This evidence bundle does not apply a license to Tile-Ripper.
 
 '''
-with (review / 'THIRD-PARTY-LICENSES.txt').open('w') as output:
+with (output_directory / 'THIRD-PARTY-LICENSES.txt').open('w') as output:
     output.write(header)
     for digest, text in sorted(texts.items()):
         output.write('\n===== SHA256 ' + digest + ' =====\n' + text + '\n')

@@ -1,8 +1,11 @@
 # Installation and release preparation
 
 See the [consolidation checklist](consolidation.md) for current validation and
-candidate preparation. The October 19 alpha trial linked below covers its
-earlier feature scope; its source-handoff instructions predate the vendored forks.
+candidate preparation. The [current scientist trial](alpha/human-trial.md) uses
+the complete native build with public ERA5 and GOES data. Its installation omits
+GDAL; the default-build instructions below retain the established GDAL workflow.
+Include both vendored forks in any internal source snapshot; follow the
+[current source-handoff review](consolidation/source-handoff.md) before distribution.
 
 For the exact pinned `0.1.0-alpha.1` candidate instructions, isolated install/uninstall,
 and two real acquisitions use [the self-contained scientist trial](alpha/human-trial.md).

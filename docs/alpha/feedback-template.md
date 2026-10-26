@@ -2,8 +2,8 @@
 
 - Tester name (or anonymous identifier):
 - Date and fixed source revision:
-- OS/version, architecture, Rust version, GDAL version:
-- Existing Rust/GDAL/Python tools versus newly installed prerequisites:
+- OS/version, architecture, Rust version, build feature set (GDAL version if applicable):
+- Existing Rust/build/Python tools versus newly installed prerequisites:
 - Overall start UTC (before prerequisites):
 - First successful fetch UTC; elapsed minutes including setup:
 - First fetch-only start/end UTC and elapsed seconds:
@@ -13,8 +13,8 @@
 | --- | --- | --- |
 | Prerequisites | | |
 | Source install and version listing | | |
-| Sentinel-2 plan | | |
-| Sentinel-2 fetch / gdalinfo | | |
+| GOES plan | | |
+| GOES fetch / raw Int16 CMI and Int8 DQF inspection | | |
 | ERA5 plan | | |
 | ERA5 fetch / value inspection | | |
 | Understand manifests | | |

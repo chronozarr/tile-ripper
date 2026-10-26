@@ -1,46 +1,39 @@
-# Tile-Ripper 0.1.0-alpha.1 — private source candidate
+# Tile-Ripper private source candidate
 
-> Historical October 19 candidate scope. The development branch now includes
-> additional products and two vendored dependency forks. Use the
-> [consolidation checklist](docs/consolidation.md) for current validation and
-> closeout work; the earlier source-handoff procedure needs revision before use.
+The current candidate combines the qualified workflows through Wave 4. It is
+unreleased, retains Cargo version `0.1.0-alpha.1`, and has no stable API/schema
+promise. Project ownership and license approval remain open. No human trial has
+completed. [Consolidation status](docs/consolidation.md) records the local checks
+and remaining owner decisions.
 
-For scientists who need small native subsets with inspectable acquisition plans
-and provenance. No consistent speed advantage over tuned GDAL/xarray is established.
-**Not distributed yet:** ownership/license approval is pending. Proposed license
-files are review material, not an active grant. No human trial has completed.
+Start with the [scientist trial](docs/alpha/human-trial.md): install an isolated
+GDAL-free build, fetch two small public datasets, inspect raw output and uninstall.
+Rust and native C/C++ build tools are required; Python packages are optional
+output-inspection tools. Cargo's default build still uses system GDAL.
 
-Use the supplied source folder at the maintainer's fixed revision. Start with the
-[self-contained newcomer trial](docs/alpha/human-trial.md): platform prerequisites,
-exact source install/uninstall, two small acquisitions, output inspection and
-feedback are all there. That default GeoTIFF trial requires Rust and system GDAL, not Python.
-Optional xarray output inspection uses a separate Python environment.
-
-The opt-in [native Sentinel trial](docs/native-sentinel/trial.md) instead acquires
-WGS84 polygon/date/band requests and consumes masked native arrays **without
-GDAL, PROJ or libtiff**. It has its own validated, narrower geography contract;
-it does not change this candidate's default reader or licensing status.
-
-| Capability | Alpha contract |
+| Build | Scope |
 | --- | --- |
-| Tested installation | macOS arm64 + Homebrew GDAL 3.12.4; Ubuntu 24.04 arm64 container + system GDAL 3.8.4; Rust 1.92.0 |
-| Other platforms | Untested; not excluded by design |
-| Sentinel-2 | Earth Search C1 L2A, named UInt16 native bands, bounded dates/AOI, separate GeoTIFFs |
-| Scientific Zarr | Specific WeatherBench2 ERA5 64×32 and NASA POWER IMERG daily v2 stores, native Float32 subsets |
-| Advanced local inputs | Narrow UInt16 GeoTIFF/custom-grid Zarr profiles; see exact contract |
-| Plan | Network metadata/identity checks, native selection and physical-read estimates; saved JSON is inspection-only |
-| Fetch | Native output plus complete provenance manifest; source-version checks; no atomic whole-dataset snapshot |
-| Scientific tools | GDAL/rasterio/QGIS for TIFF; xarray + Zarr v2 for Zarr |
+| Default | Established GDAL GeoTIFF and Zarr paths; GDAL must be installed separately. |
+| `--no-default-features` | Admitted Zarr-only acquisition. |
+| `--no-default-features --features native-cog,native-hdf5,authenticated-http` | Qualified native COG, scientific array products, SWOT and explicit Earthdata access; recommended complete native candidate. |
+| `--all-features` | Validation/comparison build, includes GDAL and experimental output choices. |
 
-Read the [exact layout restrictions and known limits](docs/alpha/contract.md).
-No arbitrary STAC/CF/Zarr, Zarr v3, HDF5, remote credentials, cloud masking,
-reprojection, mosaic, aggregation, longitude wrapping, Python bindings or scheduler.
-Native S2 scale/offset must be interpreted; Zarr units and NaNs are preserved.
-Payload budgets do not cap total memory or GDAL wire bytes. SIGINT may leave a
-partial directory; success requires normal process completion and a complete
-manifest. Existing outputs are never overwritten. API/schema may change.
+[The candidate contract](docs/alpha/contract.md) maps each supported profile to its
+exact scientific qualification, geographic limits, quality policies and access
+route. Coverage includes selected Sentinel-2, Landsat, HLS, OPERA, GOES, SMAP,
+NISAR, SWOT and Zarr workflows. A mission name alone does not establish support.
+AlphaEarth remains a separate streaming prototype; point/track products remain
+outside the candidate.
 
-[Installation/troubleshooting](docs/installation.md) ·
-[Tester feedback](docs/alpha/feedback-template.md) ·
-[Licensing approvals](docs/alpha/licensing-closeout.md) ·
-[Current decision/procedure](docs/alpha/closeout.md)
+Native values, grids, calibration metadata and separate masks are retained.
+Successful use requires completed source validation and a completion manifest or
+stream receipt. Per-object versions do not provide an atomic dataset snapshot.
+No consistent speed advantage over tuned GDAL/xarray is established.
+
+The source includes modified `hdf5-reader` and `zarrs_filesystem` crates with their
+original notices and documented patches. Use the [current source-handoff review](docs/consolidation/source-handoff.md),
+which supersedes the earlier non-vendored procedure. No package, binary, runtime
+or container is distributed by this candidate.
+
+[Installation](docs/installation.md) · [Validation](docs/consolidation/validation.md) ·
+[Human feedback](docs/alpha/feedback-template.md) · [Owner decisions](docs/alpha/closeout.md)

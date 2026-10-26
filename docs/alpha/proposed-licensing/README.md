@@ -1,5 +1,12 @@
 # Proposed licensing files — inactive pending authority approval
 
+This directory preserves the October 19 evidence and proposed project grant.
+Its package counts and non-vendored handoff assumptions are historical. Use the
+[current source/notice review](../licensing-closeout.md) and
+[current handoff procedure](../../consolidation/source-handoff.md).
+The current collector requires `--output NEW_DIRECTORY` so these originals are
+not overwritten.
+
 `LICENSE` is the unmodified Apache-2.0 text from the Apache Software Foundation.
 Its location here does not grant a license to Tile-Ripper. There is no root
 LICENSE or Cargo license field. Do not copy this file to the root until authority

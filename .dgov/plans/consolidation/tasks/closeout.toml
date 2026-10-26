@@ -1,0 +1,19 @@
+[tasks.closeout]
+summary = "Complete local consolidation and identify owner decisions"
+role = "worker"
+files = { touch = ["ALPHA.md", "README.md", "docs/installation.md", "docs/consolidation.md", "docs/alpha/*", "docs/consolidation/*", "scripts/*", "vendor/hdf5-reader/TILE_RIPPER_PATCH.md", "vendor/zarrs_filesystem/TILE-RIPPER-PATCH.md"] }
+prompt = """
+Orient:
+- Read docs/consolidation.md and the current qualified source and milestone receipts.
+Edit:
+- Consolidate the candidate contract and trial, exact vendored-source review and local source-handoff procedure.
+- Add repeatable local validation and separate independent replay/live commands with new output namespaces.
+- Preserve history and source evidence locally, integrate the tested branch locally and remove only verified regenerable build directories.
+- Leave licensing ownership/grant, external destination and actual human feedback to the user.
+Verify:
+- Run the locked feature matrix on Rust 1.92 and declared minimum 1.91, vendored tests, standalone consumer and documentation checks.
+- Reproduce independent science checks without overwriting milestone receipts, and verify a clean source installation and output reopening.
+- Verify the recovery bundle and preserve all scientific captures.
+"""
+commit_message = "Consolidate the qualified local Tile-Ripper candidate"
+test_cmd = "python3 scripts/validate.py --toolchain 1.92.0 --output prototype-output/consolidation/rust-1.92"

@@ -1,8 +1,8 @@
 # Tile-Ripper
 
-For the current development state, validation and remaining release work, see
-the [consolidation checklist](docs/consolidation.md). The October 19 alpha trial
-is an earlier candidate contract; it does not cover every workflow added below.
+For the current candidate contract, repeatable validation and remaining owner
+decisions, start with [ALPHA.md](ALPHA.md) and the
+[consolidation checklist](docs/consolidation.md).
 
 Named native product workflows now cover sensor-specific Landsat 4/5 TM, Landsat 7 ETM+ and Landsat 8/9 Collection 2 surface reflectance, HLS L30/S30 v2, OPERA DSWx-HLS, current DSWx-S1, DIST-ALERT, and the qualified OPERA RTC-S1 Float32 profile. Use `tile-ripper products` and the existing `plan` / `fetch` / `stream` commands with a product request. See [runnable examples and installation](docs/products/workflow.md), [exact real-source qualification and access limits](docs/products/qualification.md), [scientific band/quality definitions](docs/products/specifications.md), and the [25-row coverage roadmap](docs/products/roadmap.md). Stored values, native grids, calibration, classification labels, and independent quality masks are preserved.
 

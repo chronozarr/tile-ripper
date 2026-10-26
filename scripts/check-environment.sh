@@ -1,7 +1,16 @@
 #!/bin/sh
 # Run before Cargo, so diagnostics also work when the executable cannot load GDAL.
 set -eu
-for tool in cargo rustc cc cmake pkg-config gdal-config gdalinfo; do
+mode=default
+if [ "${1:-}" = --native ]; then
+    mode=native
+    shift
+fi
+required_tools='cargo rustc cc cmake pkg-config'
+if [ "$mode" = default ]; then
+    required_tools="$required_tools gdal-config gdalinfo"
+fi
+for tool in $required_tools; do
     if ! command -v "$tool" >/dev/null 2>&1; then
         echo "Missing $tool. See docs/installation.md for platform prerequisites." >&2
         exit 1
@@ -9,15 +18,17 @@ for tool in cargo rustc cc cmake pkg-config gdal-config gdalinfo; do
 done
 rustc --version
 cargo --version
-gdal-config --version
-gdalinfo --version
-if ! gdalinfo --formats | grep -q GTiff; then
-    echo 'GDAL lacks GTiff support. Install the platform GDAL package.' >&2
-    exit 1
+if [ "$mode" = default ]; then
+    gdal-config --version
+    gdalinfo --version
+    if ! gdalinfo --formats | grep -q GTiff; then
+        echo 'GDAL lacks GTiff support. Install the platform GDAL package.' >&2
+        exit 1
+    fi
 fi
 if [ "$#" -gt 0 ]; then
     if ! "$1" --help >/dev/null; then
-        echo 'Executable failed to load/run. Rebuild against the installed system GDAL; do not mix Homebrew/Conda prefixes. See docs/installation.md.' >&2
+        echo 'Executable failed to load/run. Check its build tools and linked runtime. See docs/installation.md.' >&2
         exit 1
     fi
 fi

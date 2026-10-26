@@ -1,164 +1,100 @@
-# First scientist trial — Tile-Ripper 0.1.0-alpha.1
+# First scientist trial for the current candidate
 
-This is a trial to be completed by a real person. No human validation is claimed.
-Allow time for native packages and a Rust build. You need a terminal, public HTTPS
-access and a few GB of temporary build space. The scientific downloads are small:
-Sentinel-2 about 3 MB estimated encoded chunks (actual GDAL wire bytes unavailable),
-ERA5 about 0.65 MB measured total bodies on previous trials. This is not a strict
-network cap. Don't expand dates, regions or variables during this first trial.
+This trial needs a real person; the automated installation/smoke receipt does not
+count as human feedback. Use the fixed source revision supplied by the maintainer
+after [source-handoff approval](closeout.md). Record the revision, UTC start time,
+`uname -sm`, Rust version and which tools were already installed. Copy the
+[feedback template](feedback-template.md) before starting.
 
-The maintainer supplies a clean source checkout at a fixed revision **after**
-licensing/access approval, with no credentials required for these data sources.
-Open a terminal and change into that folder; all commands below run there.
-Record its revision (`git rev-parse HEAD` if Git metadata is included). Copy the
-[feedback template](feedback-template.md) before starting. Record UTC now with
-`date -u '+%Y-%m-%dT%H:%M:%SZ'`: this is the overall trial start time.
-
-## 1. Prerequisites
-
-Tested: macOS arm64 (Apple Silicon) / Homebrew GDAL 3.12.4, or Ubuntu 24.04 arm64
-container / apt GDAL 3.8.4. Other platforms are untested, not excluded by design.
-`uname -sm` records your architecture. A fresh Mac provisioning test has not been
-completed; Ubuntu was tested in a container, not a physical machine.
-
-On macOS, install Apple's command-line tools if `xcode-select -p` fails
-(`xcode-select --install`, then finish the installer). Install Homebrew from its
-[official instructions](https://brew.sh/) if absent, then:
-
-```sh
-brew install gdal pkg-config cmake
-```
-
-On Ubuntu:
-
-```sh
-sudo apt-get update
-sudo apt-get install build-essential pkg-config cmake libgdal-dev gdal-bin ca-certificates curl
-```
-
-Install Rust/rustup from [the official Rust instructions](https://www.rust-lang.org/tools/install)
-if absent; open a new terminal so Cargo is in PATH. Do not change a working system
-GDAL to match a particular version number just for this trial. Record the version
-you actually get; Homebrew/apt releases may change. Then on either platform:
+The complete native build avoids GDAL. You need Rust, a C/C++ compiler, CMake,
+pkg-config, public HTTPS access and several GB of temporary build space. On macOS,
+use Apple's command-line tools and `brew install cmake pkg-config`. On Ubuntu,
+install `build-essential cmake pkg-config ca-certificates`. Use your normal trusted
+Rust/rustup installation; then run from the source folder:
 
 ```sh
 rustup toolchain install 1.92.0 --profile minimal
-rustup run 1.92.0 sh scripts/check-environment.sh
-```
-
-Stop and record errors if prerequisites fail. Do not mix Conda and Homebrew GDAL.
-
-## 2. Isolated source installation
-
-Use the exact lockfile; no registry package is published. One build job reduces
-linker memory pressure. All trial-specific files go in `.alpha/` in this checkout.
-
-```sh
+rustup run 1.92.0 sh scripts/check-environment.sh --native
 mkdir -p .alpha
-cargo +1.92.0 install --path . --locked --jobs 1 --root "$PWD/.alpha/install" --target-dir "$PWD/.alpha/build"
-export PATH="$PWD/.alpha/install/bin:$PATH"
-rustup run 1.92.0 sh scripts/check-environment.sh "$PWD/.alpha/install/bin/tile-ripper"
+cargo +1.92.0 install --path . --locked --jobs 2 \
+  --no-default-features --features native-cog,native-hdf5,authenticated-http \
+  --root "$PWD/.alpha/install" --target-dir "$PWD/.alpha/build"
 cargo +1.92.0 install --list --root "$PWD/.alpha/install"
+rustup run 1.92.0 sh scripts/check-environment.sh --native "$PWD/.alpha/install/bin/tile-ripper"
 ```
 
-The listing should show `tile-ripper v0.1.0-alpha.1`. No CLI `--version` flag is
-promised. Save the revision, Rust/GDAL versions and any prerequisite repairs.
+The listing should show `tile-ripper v0.1.0-alpha.1`. Use this exact executable
+path below so an older installation cannot supply the commands. Do not use an
+existing `.alpha/install` prefix or overwrite an earlier output when repeating.
+Stop and record a failed step before repairing it.
 
-## 3. Sentinel-2 plan, fetch and inspection
+## Plan and fetch two public datasets
 
-Before running, write down what you expect the dates, bands and AOI to select.
-The bundled request selects two bands on 2025-07-28 in a tiny North Carolina
-polygon. It is not a cloud-free composite. Choose a new output path if repeating.
+Write down what you expect each request to select before running it. Keep the
+bundled region, dates and variables unchanged for this first trial. ERA5 is a
+coarse regridded product, and GOES C13 contains packed brightness-temperature
+codes with a separate quality field. Neither request needs Earthdata credentials.
+The requests are small subsets, but physical chunk/layout reads amplify traffic;
+this trial is not a strict network-byte cap.
 
 ```sh
-tile-ripper plan examples/unified-stac.json --human
-date -u '+%Y-%m-%dT%H:%M:%SZ'
-tile-ripper fetch examples/unified-stac.json --output .alpha/sentinel --human
-date -u '+%Y-%m-%dT%H:%M:%SZ'
-find .alpha/sentinel -name '*.tif' -exec gdalinfo {} \;
+.alpha/install/bin/tile-ripper plan examples/weatherbench2.json --human
+.alpha/install/bin/tile-ripper fetch examples/weatherbench2.json --gdal-free --output .alpha/era5 --human
+.alpha/install/bin/tile-ripper plan examples/product-goes-abi.json --human
+.alpha/install/bin/tile-ripper fetch examples/product-goes-abi.json --gdal-free --output .alpha/goes --human
 ```
 
-Record first successful fetch time, including all prerequisite/build time from
-trial start; also report time from the timestamp immediately before fetch.
-Stop on errors; don't count partial output as success. Expect two native 91×113
-UInt16 TIFFs, EPSG:32617, 10 m, nodata 0, scale 0.0001 and offset −0.1 on the
-previously tested observations. If the public catalog differs, report it.
-Stored integer samples are not already scaled reflectance; clouds remain data.
+Record fetch start/end times and time to the first success including installation.
+Inspect each `manifest.json`: process success and `status: "complete"` are required.
+The ERA5 result is `.alpha/era5/era5.zarr`: two times, four latitudes, three
+longitudes, native Float32 `2m_temperature` in Kelvin. GOES output is a Zarr root
+at `.alpha/goes`, with the original observation ID under `observations/`, original
+Int16 `CMI`, Int8 `DQF`, coordinates and separate masks. Scan coordinates are angles,
+not metres. Scale/offset must be interpreted explicitly.
 
-## 4. ERA5 Zarr plan, fetch and inspection
-
-```sh
-tile-ripper plan examples/weatherbench2.json --human
-tile-ripper fetch examples/weatherbench2.json --output .alpha/era5 --human
-```
-
-Expect `.alpha/era5/era5.zarr`, two UTC times (1959-01-01 00:00, 06:00), four
-latitudes × three longitudes and `2m_temperature` in Kelvin. This is a coarse
-64×32 regridded ERA5 product. Bounds select intersecting native cells; outer
-centers may fall beyond the rectangle. No Celsius conversion occurs.
-
-Inspect both completion manifests with your text editor. To verify status and see
-available provenance fields with ordinary Python (no libraries):
+Optional Python inspection uses a separate Python 3.12 environment; it is not an
+acquisition dependency. Use an existing Zarr-v2/xarray environment, or install the
+frozen reader dependencies from `docs/products/wave4/reference.txt` in a new venv.
+If uv is already installed, this self-contained command supplies the reader:
 
 ```sh
-python3 - <<'PY'
-import json
-from pathlib import Path
-for folder in (Path('.alpha/sentinel'), Path('.alpha/era5')):
-    m = json.loads((folder / 'manifest.json').read_text())
-    assert m['status'] == 'complete'
-    print(folder, 'status:', m['status'], 'fields:', ', '.join(sorted(m)))
-PY
-```
-
-To read actual Zarr values, use an existing xarray/Zarr v2 environment, or create
-this optional isolated reader (Python 3.11–3.13 recommended; package installation
-needs internet; this environment is not part of Tile-Ripper):
-
-On macOS, use an installed Python 3.13 (`brew install python@3.13` if needed),
-then `python3.13 -m venv .alpha/reader`. On Ubuntu 24.04, install `python3-venv`
-if needed and run `python3 -m venv .alpha/reader` (the system Python is 3.12).
-Do not use Python 3.14 with these older reader pins. Then:
-
-```sh
-.alpha/reader/bin/python -m pip install -r bench/zarr-requirements.txt
-.alpha/reader/bin/python - <<'PY'
+uv run --no-project --python 3.12 --with-requirements docs/products/wave4/reference.txt python - <<'PY'
 import xarray as xr
-ds = xr.open_zarr('.alpha/era5/era5.zarr', consolidated=False, chunks=None)
-print(ds)
-print(ds.time.values)
-print(ds['2m_temperature'].attrs)
-print(ds['2m_temperature'].values)
-assert dict(ds.sizes) == {'time': 2, 'latitude': 4, 'longitude': 3}
-assert ds['2m_temperature'].attrs['units'] == 'K'
+import zarr
+era5 = xr.open_zarr('.alpha/era5/era5.zarr', consolidated=False, chunks=None, decode_cf=False)
+print(era5)
+print(era5['2m_temperature'].values)
+assert dict(era5.sizes) == {'time': 2, 'latitude': 4, 'longitude': 3}
+root = zarr.open_group('.alpha/goes', mode='r')
+for observation in root['observations'].group_keys():
+    ds = xr.open_zarr('.alpha/goes', group='observations/' + observation,
+                      consolidated=False, chunks=None, decode_cf=False)
+    print(ds)
+    assert ds.CMI.dtype.name == 'int16' and ds.DQF.dtype.name == 'int8'
+    print(ds.CMI.attrs, ds.CMI.values, ds.DQF.values)
 PY
 ```
 
-Record any
-reader setup issue separately from acquisition errors. Python is not required to
-install or acquire with Tile-Ripper; these steps use it only for inspection.
+In your own words, explain estimates versus measured traffic, packed values versus
+calibration, source validity versus quality, provisional output versus completion,
+and per-object versions versus a dataset snapshot. Unclear instructions are useful
+feedback. This small trial exercises two workflows; the other profiles retain
+their separate [qualification contracts](contract.md).
 
-Explain in your own words: What did plan estimate versus fetch measure? What is
-native versus transformed? How do the manifest's source references, versions,
-source_metadata, output records and complete status support reuse? Do per-object
-ETags guarantee an atomic dataset snapshot? What happens after interruption?
-Do not look at implementation code to answer; unclear docs are useful feedback.
+## Feedback and uninstall
 
-## 5. Feedback and cleanup
-
-Complete [feedback-template.md](feedback-template.md) and give it to the maintainer
-through your agreed channel. No automatic telemetry or upload occurs. Include
-exact commands/errors and manifests only after checking for sensitive local paths
-or any changed private URLs. A failure is useful; don't silently repair docs.
-
-Uninstall just this isolated executable:
+Complete the feedback template and use the channel agreed with the maintainer;
+there is no automatic upload. Inspect logs/manifests for private local paths before
+sharing them. Uninstall only this trial's executable:
 
 ```sh
 cargo +1.92.0 uninstall --root "$PWD/.alpha/install" tile-ripper
 ```
 
-Acquired datasets, reader, logs and build files remain in `.alpha/`. After saving
-feedback, delete that exact folder using your file manager. This does not remove
-system GDAL, Rust, Homebrew or Cargo's shared dependency cache. Remove the PATH
-entry by opening a new terminal. On SIGINT, inspect output and choose a new path;
-there is no resume or automatic cleanup guarantee for a killed process.
+Outputs, logs and build files remain in `.alpha/`; remove that exact trial folder
+after preserving feedback. System build tools and Cargo's shared registry cache
+remain installed. Interrupted processes may leave incomplete output; inspect it
+and choose a new destination rather than treating partial files as success.
+
+Maintainers can automate the two live acquisitions and output reopening with
+`scripts/trial-smoke.py`. Its receipt is automated evidence, not a completed human trial.
