@@ -25,8 +25,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
-    if subprocess.run(['git', 'diff', '--quiet', 'HEAD'], cwd=ROOT).returncode:
-        parser.error('commit tracked changes before taking a source recovery snapshot')
+    if subprocess.check_output(['git', 'status', '--porcelain'], cwd=ROOT):
+        parser.error('commit source changes before taking a source recovery snapshot')
     output = args.output.resolve()
     output.mkdir(parents=True, exist_ok=False, mode=0o700)
     revision = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
