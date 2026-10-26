@@ -313,6 +313,46 @@ mod typed {
     }
 
     #[test]
+    fn masks_have_no_fill_value_and_store_chunks_outside_the_aoi() {
+        let out = std::env::temp_dir().join(format!(
+            "tile-ripper-native-mask-fill-{}-{}.zarr",
+            std::process::id(),
+            NEXT.fetch_add(1, Ordering::Relaxed),
+        ));
+        let mut r = request(
+            "qa_uint16_no_nodata.tif",
+            Sink::ZarrDirectory {
+                path: out.to_string_lossy().into(),
+            },
+            triangle(),
+        );
+        // Four 16 x 16 chunks; the bottom-right one lies wholly outside the
+        // triangle, so it is never read.
+        r.budget.chunk_edge = 16;
+        acquisition::prepare(&r, &mut LayoutCache::default())
+            .unwrap()
+            .fetch()
+            .unwrap();
+        let group = out.join("observations/000000");
+        assert!(!group.join("values/0.1.1").exists());
+        for mask in ["valid", "aoi_mask"] {
+            let metadata: serde_json::Value =
+                serde_json::from_slice(&std::fs::read(group.join(mask).join(".zarray")).unwrap())
+                    .unwrap();
+            // xarray turns a Zarr v2 fill value into _FillValue and masks it.
+            assert_eq!(metadata["fill_value"], serde_json::Value::Null, "{mask}");
+            assert!(group.join(mask).join("0.1.1").is_file(), "{mask}");
+        }
+        let store = Arc::new(FilesystemStore::new(&out).unwrap());
+        let aoi_array = Array::open(store, "/observations/000000/aoi_mask").unwrap();
+        let aoi = aoi_array
+            .retrieve_array_subset::<Vec<u8>>(&aoi_array.subset_all())
+            .unwrap();
+        assert_eq!((aoi[0], aoi[32 * 32 - 1]), (1, 0));
+        std::fs::remove_dir_all(out).unwrap();
+    }
+
+    #[test]
     fn all_zero_no_nodata_values_are_physically_stored() {
         let name = "qa_uint16_allzero_no_nodata.tif";
         let out = std::env::temp_dir().join(format!(

@@ -74,9 +74,10 @@ analysis_values = raw.where(valid)
 ```
 
 Zarr-Python 2.18.3 and 3.1.3 with xarray 2025.6.1 were independently tested. `mask_and_scale=False`
-keeps the stored dtype and both 0/1 masks; time still decodes normally. With xarray's
+keeps the stored dtype of `values`; time still decodes normally. With xarray's
 default CF decoding, `scale_factor`, `add_offset` and source fill may instead
-produce calibrated floating-point values. Calibration is never applied by the
+produce calibrated floating-point values. The 0/1 masks declare no fill value,
+so they open as UInt8 either way. Calibration is never applied by the
 Tile-Ripper writer. The [validation receipt](validation.json) records independent
 GDAL/PROJ and xarray checks, including microsecond acquisition timestamps.
 
@@ -109,7 +110,8 @@ Open groups separately and choose alignment explicitly in analysis software.
 
 `values` contains native stored samples, with the existing pixel-center AOI mask
 setting excluded cells to representable source nodata. Skipped wholly excluded
-chunks use that same fill. `aoi_mask` distinguishes excluded centers from nodata
+chunks use that same fill; the masks store those chunks as explicit zeros.
+`aoi_mask` distinguishes excluded centers from nodata
 inside the AOI; `valid` combines AOI inclusion and source-nodata validity. Windows
 are clipped to source coverage: absent source territory is omitted, never padded
 into an invented aligned scene. A genuinely empty selection produces an empty
