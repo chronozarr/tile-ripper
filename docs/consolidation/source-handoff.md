@@ -26,8 +26,8 @@ historical notice exceptions remain visible rather than being treated as cleared
 The [machine-readable audit](vendor/vendor-audit.json) records each distributed
 file's hash, changed files, omitted upstream packaging files and exact crate
 archive checksum. The patches describe all modifications to files supplied by
-the corresponding published crate; locally added lockfiles/notices/patch notes
-are listed separately. The source comparison has not widened HDF5 admission.
+the corresponding published crate. Added notices/patch notes and every retained
+lockfile are also listed. The source comparison has not widened HDF5 admission.
 
 | Fork | Published base and local changes |
 | --- | --- |

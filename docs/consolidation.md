@@ -1,66 +1,92 @@
-# Tile-Ripper consolidation checklist
+# Tile-Ripper consolidation status
 
-Audit date: 25 October 2026. Development baseline: `a5e18c2` on
-`codex/acquisition-planner`. Finish the candidate contract, source handoff and
-repeatable validation before starting another product wave.
+Local consolidation completed on 26 October 2026. The qualified implementation
+through `a5e18c2` is integrated into local `main`, with current candidate
+instructions, repeatable checks and recovery records. No runtime source or
+production dependency version changed. The candidate remains unreleased;
+owner decisions and human feedback are still required before distribution.
 
-## Current development
+## Completed locally
 
-The implementation is 64 commits beyond `main`, which still contains the
-original study at `ada67bb`. The development worktree is
-`/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper`.
-Neither checkout has a remote; no release tag exists. The implementation tree
-was clean before this documentation pass. The main checkout has three untracked
-experiment `.gitignore` files, left untouched.
-
-Wave 4 is complete within its inspected source profiles: geographic NISAR HHHH
-on two UTM16N grids, northern-polar SMAP AM/PM and GOES-19 mesoscale-1 C02.
-[Qualification](products/wave4/qualification.md) and its
-[acceptance receipt](products/wave4/acceptance.json) retain the science, access,
-fault and platform evidence. Every source hash listed in that receipt matches
-the audited checkout. Other products keep their own qualification boundaries;
-the [coverage roadmap](products/roadmap.md) distinguishes qualified profiles
-from candidates. ATL06, ATL08, GEDI and NISAR HVHV remain unimplemented or
-unqualified, as specified in the product reports.
-
-## Closeout work in priority order
-
-| Priority | Loose end | Completion condition |
-| --- | --- | --- |
-| 1 | The current implementation has no consolidated candidate contract. `ALPHA.md`, the alpha contract and its human trial describe the earlier October 19 candidate. | Choose the next candidate's supported profiles and feature builds; reconcile its installation, limitations, examples and human trial against one fixed revision. Preserve historical science reports. |
-| 1 | The old source-handoff procedure excludes vendored dependencies, but Cargo now requires two local forks. Its licensing audit also says no vendored implementation was found. | Review the actual current source contents and both forks, their original notices and local changes; replace the old handoff procedure. Obtain the ownership/provenance/license decisions already identified in the alpha closeout before distribution. |
-| 1 | All implementation history is local and lives outside the main checkout. | Establish the intended integration and backup destination, preserve the qualified revision and its evidence, then perform the agreed integration. Do not infer a remote or public-release destination. |
-| 2 | Verification is spread across milestone commands, Python harnesses and ignored captures. No `.github` workflow or single local validation entrypoint exists. | Provide one documented local command for the supported build/test matrix and separate commands for independent replay and live-provider gates. Document capture prerequisites and skipped tests; keep live runs explicit and write new results separately from sealed receipts. |
-| 2 | Alpha usability has only agent/automated evidence. | Run the chosen candidate's complete install, plan, fetch, inspect and uninstall trial with a scientist; record their actual feedback and resolve failures. |
-| 2 | Minimum-toolchain and platform evidence is uneven. | Extend the Rust 1.91 compile check below to tests and each supported feature build, or adjust the declared minimum. Keep Windows, Intel macOS and Linux x86_64 outside the verified matrix until exercised. |
-| 3 | Two vendored forks need an explicit maintenance decision. | Retain exact upstream bases, patches and tests; choose whether to maintain, rebase or propose each change upstream. The [HDF5 patch note](../vendor/hdf5-reader/TILE_RIPPER_PATCH.md) and [filesystem patch note](../vendor/zarrs_filesystem/TILE-RIPPER-PATCH.md) describe the current changes. |
-| 3 | Local build artifacts occupy about 40 GiB in the root `target/` alone. | Inventory ignored captures and build directories, retain evidence needed for replay, then remove only agreed regenerable artifacts. No cleanup was performed in this audit. |
-
-The existing [alpha closeout](alpha/closeout.md) records unresolved owner decisions.
-Its October 19 source-only procedure cannot describe the current vendored tree
-without revision. `publish = false` remains appropriate while the candidate is
-being consolidated.
-
-## Validation during this audit
-
-These checks ran against `a5e18c2` on macOS ARM64:
-
-| Check | Result |
+| Checklist item | Result |
 | --- | --- |
-| `cargo test --locked --all-features --all-targets -- --test-threads=1` | 216 passed, zero failed, 9 ignored |
-| `cargo test --locked --no-default-features --features native-cog,native-hdf5,authenticated-http -- --test-threads=1` | 187 passed, zero failed, 8 ignored |
-| `cargo clippy --locked --all-features --all-targets -- -D warnings` | Passed |
-| `cargo fmt --all -- --check` | Passed |
-| `cargo +1.91.0 check --locked --no-default-features --features native-cog,native-hdf5,authenticated-http` | Passed; a compile check, not minimum-toolchain test qualification |
-| Local Markdown targets in README, ALPHA and docs, excluding the proposed licensing bundle | Zero missing targets |
-| Wave 4 receipt source checksums | All matched |
+| Current candidate contract | [ALPHA](../ALPHA.md), [profile contract](alpha/contract.md), [installation](installation.md), [scientist trial](alpha/human-trial.md) and feedback now describe the current native candidate and its qualified profiles. Cargo defaults remain GDAL; the complete native build is the trial's primary path. |
+| Source handoff and notices | [Current source handoff](consolidation/source-handoff.md) includes both required vendored forks. The inventory covers 426 third-party packages; the bundle contains 299 unique original texts. Nine additional packages' notices were recovered, while six exact-notice gaps remain explicit. Project license proposals remain inactive. |
+| Integration | Local `main` was advanced by fast-forward from `ada67bb`; both checkouts have clean Git status. The three pre-existing experiment ignore files were preserved in recovery and committed unchanged. No remote or release tag was created. |
+| Repeatable validation | [One local entrypoint](consolidation/validation.md) runs the locked six-build matrix, both fork suites, standalone consumer, Clippy, formatting, Python syntax and documentation checks. Separate replay and live/source-trial commands use fresh result directories. |
+| Minimum Rust and platform checks | Rust 1.91 and 1.92 both pass every host matrix build and fork suite. A fresh Linux ARM64/1.92 container passes 187 native tests under UID 1000 without GDAL/libhdf5 linkage. |
+| Independent science and lifecycle replay | 19 Wave 3 science cases, 18 Wave 4 cases, 61 fault controls, all 1,229,401,152 original NISAR centers and all four million northern-SMAP centers pass in a separate sandbox. Original reports, examples and capture manifests are unchanged. |
+| Clean source installation | A tracked-source archive at `bbc6cf1` built from an empty target, installed to an isolated prefix, fetched public ERA5/GOES, reopened output with xarray and uninstalled successfully. The native executable has no GDAL/libhdf5 linkage. This is automated evidence; no human usability result is claimed. |
+| Fork maintenance | Full patches reapply to checksum-pinned published crate archives and reproduce every modified file hash. Keep both pinned forks locally for this candidate; rebase/remove only after equivalent upstream behavior passes the same gates. |
+| Recovery and cleanup | A verified Git bundle, internal source archive and compact backup of nine scientific mirrors preserve the current work. Sixteen regenerable Cargo build directories containing about 67.1 GiB of allocated artifacts were removed; scientific captures, environments, outputs and logs were retained. All nine mirrors' captured extent hashes still match. |
 
-Ignored tests include subprocess helpers and controls requiring external
-ownership, real-source probes or dedicated HTTP/HTTPS fixtures. The ordinary
-Cargo suite does not replace those harnesses. This audit did not rerun live
-provider acquisition, independent scientific replay or Linux portability;
-those remain the milestone receipts' evidence. No consistent provider speed
-advantage is established.
+## Verification results
 
-Audit logs are local at `/tmp/tile-ripper-audit-{native-tests,all-tests,clippy,fmt,msrv}.log`;
-they are temporary diagnostics, not a new sealed acceptance package.
+The same results passed under Rust 1.91.0 and 1.92.0 on macOS ARM64:
+
+| Test build | Passed | Ignored |
+| --- | ---: | ---: |
+| Default GDAL | 132 | 2 |
+| Zarr-only | 94 | 1 |
+| Native COG | 126 | 3 |
+| Native HDF5 | 135 | 2 |
+| Complete native | 187 | 8 |
+| All features | 216 | 9 |
+| Standalone HDF5 fork | 356 | 0 |
+| Standalone filesystem fork | 6 | 0 |
+
+Every build has zero failures. Both consumer configurations, Clippy and formatting
+pass. Ignored tests retain their explicit helper/external-fixture requirements;
+the replay is separate from protected-provider authentication. No protected live
+acquisition was repeated during consolidation. Existing archive qualifications
+remain scoped to their exact source/version/policy receipts.
+
+[Acceptance index](consolidation/acceptance.json),
+[Rust 1.91](consolidation/checks/rust-1.91.json),
+[Rust 1.92](consolidation/checks/rust-1.92.json),
+[Linux](consolidation/checks/linux-arm64.json),
+[science replay](consolidation/checks/science-replay.json),
+[clean source trial](consolidation/checks/source-trial.json) and
+[cleanup record](consolidation/checks/cleanup.json) preserve compact results and log hashes.
+Full logs and new outputs remain under the development worktree's
+`prototype-output/consolidation/`; the Linux log is copied into the recovery snapshot.
+
+## Decisions needed from the owner
+
+1. Confirm source ownership, external adaptations and any institutional review;
+   approve the project license and scope. Apache-2.0 remains the existing proposal.
+   [The owner decision list](alpha/closeout.md) states the exact confirmations.
+2. Choose an off-machine private backup/remote destination and access scope.
+   Local integration and recovery are complete, but do not protect against loss
+   of this computer. No external upload has been made.
+3. Choose the first human tester and feedback channel after source access is
+   approved. The trial and feedback template are ready; automated results cannot
+   supply another person's usability assessment.
+
+The six registry-package exact-notice gaps and historical wrapper/platform
+exceptions remain [documented engineering boundaries](alpha/licensing-closeout.md)
+for a later binary or expanded-vendor review. They have not been replaced by
+invented notices. Windows, Intel macOS, Linux x86_64, musl and WASM remain outside
+the verified platform matrix. Point/track products, NISAR HVHV, uninspected grids
+and other mission releases remain candidates in the [coverage roadmap](products/roadmap.md).
+
+## Local recovery locations
+
+The private recovery root is
+`/Users/jakegearon/.local/share/tile-ripper/recovery/`:
+
+- `2026-10-26-before-integration/` preserves the earlier source revision, verified
+  history and scientific extents, original experiment ignore files and validated
+  native executables.
+- `2026-10-26-consolidated/` preserves final consolidated source/history, scientific
+  extents and validation logs. `recovery.json` records commit and archive hashes;
+  `RESTORE.md` describes recovery. Bundle verification includes a new clone;
+  scientific verification reconstructs sparse files and hashes every saved extent.
+
+The development worktree remains at
+`/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper` because its
+ignored scientific corpus is retained. Routine code work can use the integrated
+`/Users/jakegearon/projects/tile-ripper` checkout. Build directories can be recreated
+with the documented locked commands; validated executables are also retained in
+the private recovery copy. No tag, publication, upstream submission or ChronoZarr
+change is part of this consolidation.
