@@ -15,6 +15,18 @@ pub const OPERA_DSWX_HLS_V1: &str = "opera-dswx-hls";
 pub const OPERA_DSWX_S1_V1: &str = "opera-dswx-s1";
 pub const OPERA_DIST_ALERT_V1: &str = "opera-dist-alert";
 pub const OPERA_RTC_S1_V1: &str = "opera-rtc-s1";
+/// Products served by the native HDF5 array readers. Listed outside the
+/// `native-hdf5` gate so other builds can name the missing feature.
+pub const ARRAY_PRODUCTS: &[&str] = &[
+    "goes19-abi-cmipc-c13",
+    "goes19-abi-cmipc-c01",
+    "goes19-abi-cmipm1-c02",
+    "smap-spl3smp-e-v6-am",
+    "smap-spl3smp-e-v6-pm",
+    "smap-spl3smp-e-v6-north-am",
+    "smap-spl3smp-e-v6-north-pm",
+    "nisar-gcov-p1-fa-hhhh",
+];
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
 #[serde(rename_all = "snake_case")]
@@ -609,7 +621,13 @@ pub fn profile(id: &str) -> Result<ProductProfile> {
     profiles()
         .into_iter()
         .find(|candidate| eq_name(candidate.id, id))
-        .ok_or_else(|| "unknown scientific product profile".into())
+        .ok_or_else(|| {
+            if cfg!(not(feature = "native-hdf5")) && ARRAY_PRODUCTS.contains(&id) {
+                format!("{id} needs the native-hdf5 Cargo feature, which this build does not include; rebuild with --no-default-features --features native-cog,native-hdf5,authenticated-http (see docs/installation.md)").into()
+            } else {
+                "unknown scientific product profile".into()
+            }
+        })
 }
 
 pub fn profiles() -> Vec<ProductProfile> {
