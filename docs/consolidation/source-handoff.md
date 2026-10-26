@@ -2,9 +2,9 @@
 
 The candidate source contains two modified dependency crates. Both are required
 path dependencies and must stay in an internal source snapshot. The former
-non-vendored handoff procedure does not apply. Project ownership and the intended
-project license still require the owner's decisions before external distribution.
-No root project license has been installed.
+non-vendored handoff procedure does not apply. The owner approved Apache-2.0 on 26 October 2026; [LICENSE](../../LICENSE) and
+[NOTICE](../../NOTICE) apply to the project source while original dependency
+licenses and notices remain intact.
 
 ## Source contents
 
@@ -12,8 +12,7 @@ Include the project source, tests, examples, scripts, documentation, Cargo
 manifests/lockfiles and both complete tracked `vendor/` directories. Preserve their
 original license texts, patch notes and the current notice evidence. A Git source
 archive naturally excludes ignored build outputs, captured datasets, environments
-and private credentials. Record its commit and SHA-256. An internal recovery
-snapshot is not permission to publish it.
+and private credentials. Record its commit and SHA-256. Private recovery snapshots and acquired datasets stay outside the public repository.
 
 Other Cargo dependencies are obtained separately from their pinned registry
 versions; system GDAL is also separately installed. No compiled executable, GDAL

@@ -1,0 +1,46 @@
+---
+layout: landing
+title: Native raster subsets with an inspectable plan
+---
+
+export const cells = Array.from({ length: 96 }, (_, i) => ({ x: 18 + (i % 12) * 25, y: 22 + Math.floor(i / 12) * 25, selected: i % 12 >= 4 && i % 12 <= 7 && Math.floor(i / 12) >= 2 && Math.floor(i / 12) <= 5 }))
+
+<div className="tr-home">
+<header className="tr-hero">
+<div>
+<h1>Native raster subsets,<br />with a plan you can inspect.</h1>
+<p className="tr-lead">Tile-Ripper retrieves small scientific raster selections through one Rust library and one CLI. Inspect the observations, source grids and physical reads before fetching the original values.</p>
+<nav className="tr-actions" aria-label="Get started">
+<a className="tr-primary" href="/quickstart">Fetch a first subset</a>
+<a href="/contract">Read the support contract</a>
+</nav>
+<p className="tr-status">Source alpha · Apache-2.0 · Rust 1.91+</p>
+</div>
+<figure className="tr-grid">
+<svg viewBox="0 0 342 258" role="img" aria-labelledby="grid-title grid-description">
+<title id="grid-title">A selection on the original source grid</title>
+<desc id="grid-description">A rectangular area selects pixel centers. The surrounding source grid and physical chunks remain unchanged.</desc>
+<rect x="8" y="12" width="320" height="220" fill="#f0f6f8" rx="8" />
+{cells.map((cell, i) => <rect key={i} x={cell.x} y={cell.y} width="23" height="23" fill={cell.selected ? '#79bbc1' : '#dce8ed'} />)}
+<path d="M115 66H220V170H115Z" fill="none" stroke="#0a6b78" strokeWidth="2.5" />
+<path d="M16 20H168V120H16ZM168 20H320V120H168ZM16 120H168V222H16ZM168 120H320V222H168Z" fill="none" stroke="#617b8a" strokeWidth="1" />
+<text x="18" y="251" fill="#546778" fontSize="12">Original grid</text>
+<text x="208" y="251" fill="#0a6b78" fontSize="12">Requested selection</text>
+</svg>
+<figcaption>Selection shown schematically. No raster reprojection.</figcaption>
+</figure>
+</header>
+
+<section className="tr-command" aria-label="Plan and fetch">
+<div><strong>Inspect, then acquire</strong><p>The same request drives both commands.</p></div>
+<pre><code>tile-ripper plan request.json --human{`\n`}tile-ripper fetch request.json --output subset.zarr</code></pre>
+</section>
+
+<section className="tr-details">
+<div><h2>Preserve the science</h2><p>Keep stored types, native coordinates and calibration metadata. Source missingness, geographic membership and named quality masks remain explicit.</p><a href="/output">Read native output with xarray</a></div>
+<div><h2>Know what is supported</h2><p>Selected Sentinel-2, Landsat, HLS, OPERA, SWOT, GOES, SMAP, NISAR and Zarr profiles have independent qualification. Each source version and layout has its own limits.</p><a href="/coverage">Explore qualified product coverage</a></div>
+<div><h2>Validate completion</h2><p>Streams are provisional until final source validation succeeds. Fetch writes completion and provenance records; per-object versions do not guarantee a dataset snapshot.</p><a href="/cli">Use the CLI and Rust API</a></div>
+</section>
+
+<section className="tr-close"><h2>Acquisition alongside exploration</h2><p>Tile-Ripper focuses on bounded native acquisition. <a href="https://chronozarr.org">ChronoZarr</a> provides raster time-series conversion and browser exploration. They are separate projects in the same organization.</p><p>No consistent speed advantage over tuned GDAL or xarray is established. Use the published measurements and exact support contract when choosing a workflow.</p></section>
+</div>

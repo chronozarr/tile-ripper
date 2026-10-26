@@ -23,7 +23,7 @@ MATRIX = {
 
 
 def documentation_checks():
-    missing = []
+    missing, local_evidence = [], []
     for p in [ROOT / "README.md", ROOT / "ALPHA.md", *ROOT.glob("docs/**/*.md")]:
         if "proposed-licensing" in p.parts:
             continue
@@ -31,14 +31,30 @@ def documentation_checks():
             if ref.startswith(("https:", "http:", "mailto:", "#")):
                 continue
             ref = ref.split("#")[0]
-            if ref and not (p.parent / ref).exists():
+            target = (p.parent / ref).resolve()
+            if (target.is_relative_to(ROOT / "prototype-output") or
+                    (target.parent == ROOT / "docs/acquisition-engine" and target.suffix == ".gz")):
+                local_evidence.append([str(p.relative_to(ROOT)), ref])
+                continue
+            if ref and not target.exists():
                 missing.append([str(p.relative_to(ROOT)), ref])
     receipt = json.loads((ROOT / "docs/products/wave4/acceptance.json").read_text())
-    mismatches = [p for p, digest in receipt["source_sha256"].items()
-                  if hashlib.sha256((ROOT / p).read_bytes()).hexdigest() != digest]
+    approval = json.loads((ROOT / "docs/consolidation/license-decision.json").read_text())
+    mismatches, metadata_changes = [], []
+    for p, digest in receipt["source_sha256"].items():
+        actual = hashlib.sha256((ROOT / p).read_bytes()).hexdigest()
+        if actual == digest:
+            continue
+        if (p == "Cargo.toml" and digest == approval["baseline_manifest_sha256"]
+                and actual == approval["approved_manifest_sha256"]):
+            metadata_changes.append("package.license = Apache-2.0; production dependencies unchanged")
+        else:
+            mismatches.append(p)
     if missing or mismatches:
         raise RuntimeError(json.dumps({"missing_links": missing, "wave4_source_mismatches": mismatches}))
-    return {"missing_links": missing, "wave4_source_mismatches": mismatches}
+    return {"missing_links": missing, "wave4_source_mismatches": mismatches,
+            "approved_manifest_metadata_changes": metadata_changes,
+            "local_evidence_links": local_evidence}
 
 
 def main():

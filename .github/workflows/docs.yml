@@ -1,0 +1,25 @@
+name: Documentation build
+on:
+  push:
+    paths: ['site/**', 'docs/**', 'README.md', 'ALPHA.md', 'LICENSE', 'NOTICE', '.github/workflows/docs.yml']
+  pull_request:
+    paths: ['site/**', 'docs/**', 'README.md', 'ALPHA.md', 'LICENSE', 'NOTICE', '.github/workflows/docs.yml']
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: site
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+      - run: npm ci --min-release-age=7
+      - run: npm audit
+      - run: npm test
+      - run: npm run build

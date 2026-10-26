@@ -2,7 +2,7 @@
 
 This trial needs a real person; the automated installation/smoke receipt does not
 count as human feedback. Use the fixed source revision supplied by the maintainer
-after [source-handoff approval](closeout.md). Record the revision, UTC start time,
+from [the published source](https://github.com/chronozarr/tile-ripper). Record the revision, UTC start time,
 `uname -sm`, Rust version and which tools were already installed. Copy the
 [feedback template](feedback-template.md) before starting.
 

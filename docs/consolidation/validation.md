@@ -17,6 +17,13 @@ native COG, native HDF5, complete native, and all features. Install system GDAL
 for this full matrix. It uses two Cargo build jobs and serial Rust tests to avoid
 the resource/deadline failures recorded during earlier parallel runs.
 
+Historical links into ignored `prototype-output/` captures and the compressed
+acquisition-engine raw logs are recorded as local evidence links. Their absence
+from a clean source checkout does not fail the source-link check. Frozen science
+replay checks the separate capture prerequisites explicitly. The owner-approved
+Apache-2.0 Cargo metadata addition is recorded in `license-decision.json`; it does
+not replace the qualified scientific source hashes or change production dependencies.
+
 Exercise the declared minimum with the same matrix:
 
 ```sh

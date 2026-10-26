@@ -1,5 +1,7 @@
 # Tile-Ripper
 
+[Documentation](https://tileripper.com) · [Quickstart](https://tileripper.com/quickstart) · [Apache-2.0](LICENSE)
+
 For the current candidate contract, repeatable validation and remaining owner
 decisions, start with [ALPHA.md](ALPHA.md) and the
 [consolidation checklist](docs/consolidation.md).
@@ -81,7 +83,7 @@ selection, live recovery and Linux ARM64 checkpoint behavior.
 Retrieve native scientific raster subsets with one Rust library and one
 `plan` / `fetch` / `stream` CLI. Inspect the selected observations, native grids and physical
 reads before downloading data. Outputs include a completion/provenance manifest.
-**Private-alpha candidate (unreleased; licensing approval pending):** support is limited to the profiles below. This is not a general
+**Source alpha (Apache-2.0; no package/binary release yet):** support is limited to the profiles below. This is not a general
 Zarr reader, reprojection engine, mosaic or temporal compositor. No Python is
 required to acquire data. The default build uses GDAL; opt-in builds support
 [GDAL-free Sentinel-2 polygon acquisition and Zarr acquisition](docs/native-sentinel/workflow.md).

@@ -6,10 +6,11 @@ source, and their changes are documented in full [fork diffs and file hashes](..
 The October 19 no-vendoring conclusion is superseded; its evidence remains in
 Git history and the unchanged proposed-licensing directory.
 
-No project license has been installed. Git authorship does not establish the
-owner's authority or resolve institutional/collaborator rights. The exact owner,
-provenance and license decisions are listed in [the current closeout](closeout.md).
-The earlier Apache-2.0 text and NOTICE remain proposals only.
+The owner approved Apache-2.0 on 26 October 2026. The project now includes the
+standard [LICENSE](../../LICENSE), an updated [NOTICE](../../NOTICE), and Cargo
+license metadata. This approval does not replace any dependency license. The
+[decision record](../consolidation/license-decision.json) identifies the exact
+manifest metadata change; production dependencies are unchanged.
 
 ## Current third-party evidence
 
@@ -52,5 +53,4 @@ Cargo obtains them separately. They remain material to any later binary or
 expanded-vendor review. A bundled GDAL runtime would add its own actual linked
 components and terms. This review records the source and evidence; it does not
 claim complete binary redistribution clearance. Use the
-[current source contents and handoff](../consolidation/source-handoff.md), with
-the owner's project-rights decision, for the proposed source-only candidate.
+[current source contents and handoff](../consolidation/source-handoff.md), for the Apache-licensed source candidate.

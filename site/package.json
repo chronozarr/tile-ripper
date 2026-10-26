@@ -1,0 +1,40 @@
+{
+  "name": "tile-ripper-docs",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vocs dev",
+    "predev": "npm run prepare-mermaid && npm run sync-content",
+    "build": "vocs build",
+    "prebuild": "npm run prepare-mermaid && npm run sync-content && node scripts/collect-notices.mjs",
+    "postbuild": "node scripts/check-links.mjs",
+    "prepare-mermaid": "node scripts/prepare-mermaid.mjs",
+    "postinstall": "npm run prepare-mermaid",
+    "sync-content": "node scripts/sync-content.mjs",
+    "deploy": "npm run build && wrangler deploy",
+    "test": "node --test test/*.test.mjs"
+  },
+  "dependencies": {
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "vocs": "1.4.1"
+  },
+  "devDependencies": {
+    "@types/react": "19.2.14",
+    "esbuild": "0.28.2",
+    "mermaid": "11.17.2",
+    "typescript": "5.9.3",
+    "wrangler": "4.151.1"
+  },
+  "overrides": {
+    "dompurify": "3.4.17",
+    "katex": "0.18.2",
+    "toml": "5.0.1",
+    "vite@^7": "7.3.7",
+    "vite@^8": "8.3.4",
+    "miniflare": {
+      "undici": "7.30.1"
+    }
+  }
+}

@@ -1,9 +1,9 @@
-# Current private candidate contract
+# Source alpha contract
 
 This contract covers the implementation qualified through `a5e18c2`, with local
 consolidation tracked in [the checklist](../consolidation.md). Cargo version remains
-`0.1.0-alpha.1`; no released version is being replaced. Source distribution awaits
-the [owner decisions and handoff review](closeout.md). API and manifest schemas
+`0.1.0-alpha.1`; no released version is being replaced. Source is licensed under [Apache-2.0](../../LICENSE), with original third-party
+notices retained. See the [source handoff and trial status](closeout.md). API and manifest schemas
 may change. The October 19 contract is retained in Git history at `0f1a1b4`.
 
 ## Build and platform scope

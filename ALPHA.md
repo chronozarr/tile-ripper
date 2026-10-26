@@ -1,8 +1,8 @@
-# Tile-Ripper private source candidate
+# Tile-Ripper source alpha
 
 The current candidate combines the qualified workflows through Wave 4. It is
 unreleased, retains Cargo version `0.1.0-alpha.1`, and has no stable API/schema
-promise. Project ownership and license approval remain open. No human trial has
+promise. Project source is licensed under [Apache-2.0](LICENSE). No human trial has
 completed. [Consolidation status](docs/consolidation.md) records the local checks
 and remaining owner decisions.
 
@@ -32,8 +32,8 @@ No consistent speed advantage over tuned GDAL/xarray is established.
 
 The source includes modified `hdf5-reader` and `zarrs_filesystem` crates with their
 original notices and documented patches. Use the [current source-handoff review](docs/consolidation/source-handoff.md),
-which supersedes the earlier non-vendored procedure. No package, binary, runtime
-or container is distributed by this candidate.
+which supersedes the earlier non-vendored procedure. The source is published at [chronozarr/tile-ripper](https://github.com/chronozarr/tile-ripper).
+No package, binary, runtime or container release is supplied.
 
 [Installation](docs/installation.md) · [Validation](docs/consolidation/validation.md) ·
-[Human feedback](docs/alpha/feedback-template.md) · [Owner decisions](docs/alpha/closeout.md)
+[Human feedback](docs/alpha/feedback-template.md) · [Source and trial status](docs/alpha/closeout.md)

@@ -1,6 +1,8 @@
-# Proposed licensing files — inactive pending authority approval
+# Historical licensing proposal
 
 This directory preserves the October 19 evidence and proposed project grant.
+The owner approved Apache-2.0 on October 26; the active project files are
+[LICENSE](../../../LICENSE) and [NOTICE](../../../NOTICE).
 Its package counts and non-vendored handoff assumptions are historical. Use the
 [current source/notice review](../licensing-closeout.md) and
 [current handoff procedure](../../consolidation/source-handoff.md).

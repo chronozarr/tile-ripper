@@ -4,15 +4,16 @@ Local consolidation completed on 26 October 2026. The qualified implementation
 through `a5e18c2` is integrated into local `main`, with current candidate
 instructions, repeatable checks and recovery records. No runtime source or
 production dependency version changed. The candidate remains unreleased;
-owner decisions and human feedback are still required before distribution.
+Apache-2.0 licensing and a public source remote were subsequently approved;
+the human usability trial remains open.
 
 ## Completed locally
 
 | Checklist item | Result |
 | --- | --- |
 | Current candidate contract | [ALPHA](../ALPHA.md), [profile contract](alpha/contract.md), [installation](installation.md), [scientist trial](alpha/human-trial.md) and feedback now describe the current native candidate and its qualified profiles. Cargo defaults remain GDAL; the complete native build is the trial's primary path. |
-| Source handoff and notices | [Current source handoff](consolidation/source-handoff.md) includes both required vendored forks. The inventory covers 426 third-party packages; the bundle contains 299 unique original texts. Nine additional packages' notices were recovered, while six exact-notice gaps remain explicit. Project license proposals remain inactive. |
-| Integration | Local `main` was advanced by fast-forward from `ada67bb`; both checkouts have clean Git status. The three pre-existing experiment ignore files were preserved in recovery and committed unchanged. No remote or release tag was created. |
+| Source handoff and notices | [Current source handoff](consolidation/source-handoff.md) includes both required vendored forks. The inventory covers 426 third-party packages; the bundle contains 299 unique original texts. Nine additional packages' notices were recovered, while six exact-notice gaps remain explicit. Apache-2.0 is now approved and applied; original dependency notices are preserved. |
+| Integration | Local `main` was advanced by fast-forward from `ada67bb`; both checkouts have clean Git status. The three pre-existing experiment ignore files were preserved in recovery and committed unchanged. The subsequently approved public remote is `chronozarr/tile-ripper`; no package/binary release tag was created. |
 | Repeatable validation | [One local entrypoint](consolidation/validation.md) runs the locked six-build matrix, both fork suites, standalone consumer, Clippy, formatting, Python syntax and documentation checks. Separate replay and live/source-trial commands use fresh result directories. |
 | Minimum Rust and platform checks | Rust 1.91 and 1.92 both pass every host matrix build and fork suite. A fresh Linux ARM64/1.92 container passes 187 native tests under UID 1000 without GDAL/libhdf5 linkage. |
 | Independent science and lifecycle replay | 19 Wave 3 science cases, 18 Wave 4 cases, 61 fault controls, all 1,229,401,152 original NISAR centers and all four million northern-SMAP centers pass in a separate sandbox. Original reports, examples and capture manifests are unchanged. |
@@ -51,17 +52,18 @@ remain scoped to their exact source/version/policy receipts.
 Full logs and new outputs remain under the development worktree's
 `prototype-output/consolidation/`; the Linux log is copied into the recovery snapshot.
 
-## Decisions needed from the owner
+## Source publication and remaining human trial
 
-1. Confirm source ownership, external adaptations and any institutional review;
-   approve the project license and scope. Apache-2.0 remains the existing proposal.
-   [The owner decision list](alpha/closeout.md) states the exact confirmations.
-2. Choose an off-machine private backup/remote destination and access scope.
-   Local integration and recovery are complete, but do not protect against loss
-   of this computer. No external upload has been made.
-3. Choose the first human tester and feedback channel after source access is
-   approved. The trial and feedback template are ready; automated results cannot
-   supply another person's usability assessment.
+The owner approved Apache-2.0 on 26 October 2026. The root LICENSE/NOTICE and
+Cargo metadata are active. Source is published at
+[chronozarr/tile-ripper](https://github.com/chronozarr/tile-ripper), with docs at
+[tileripper.com](https://tileripper.com). The old personal Tile-Ripper URL is a
+redirect to ChronoZarr and was preserved. No force-push of ChronoZarr occurred.
+
+The Git remote provides an off-machine copy of tracked source/history. Ignored
+scientific captures remain in the local recovery copies described below. Choose
+the first human tester and feedback channel; the trial and template are ready,
+but automated checks cannot supply another person's usability assessment.
 
 The six registry-package exact-notice gaps and historical wrapper/platform
 exceptions remain [documented engineering boundaries](alpha/licensing-closeout.md)
@@ -88,5 +90,4 @@ The development worktree remains at
 ignored scientific corpus is retained. Routine code work can use the integrated
 `/Users/jakegearon/projects/tile-ripper` checkout. Build directories can be recreated
 with the documented locked commands; validated executables are also retained in
-the private recovery copy. No tag, publication, upstream submission or ChronoZarr
-change is part of this consolidation.
+the private recovery copy. Source and docs publication followed the owner's approval. No package tag, upstream submission or ChronoZarr change was made.

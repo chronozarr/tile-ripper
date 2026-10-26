@@ -9,7 +9,7 @@ Include both vendored forks in any internal source snapshot; follow the
 
 For the exact pinned `0.1.0-alpha.1` candidate instructions, isolated install/uninstall,
 and two real acquisitions use [the self-contained scientist trial](alpha/human-trial.md).
-[ALPHA.md](../ALPHA.md) is the short entrypoint; licensing remains pending.
+[ALPHA.md](../ALPHA.md) is the short entrypoint; project source uses [Apache-2.0](../LICENSE).
 
 Tile-Ripper is private-alpha candidate source software, not a published package or standalone
 binary release. Build from the repository checkout with Cargo.lock. The default-build
