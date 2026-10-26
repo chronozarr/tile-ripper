@@ -49,7 +49,7 @@ Edit these three parts of a request file and leave `source`, `grid` and `budget`
 ```
 
 - `bbox` is `[west, south, east, north]`. Every grid cell that overlaps it is selected, so returned cell edges can extend beyond the box. Run on ERA5, this example returned 2 longitudes, 2 latitudes and 4 times.
-- ERA5 longitudes run from 0 to 354.375° east and are not wrapped. A box of `[-10, 35, -1, 45]` selected one longitude, the cell centered on 0°; use 350 to 360 for that area, and split a box that crosses 0° into two requests.
+- ERA5 longitudes run from 0 to 354.375° east and are not wrapped. Give western longitudes as 180 to 360 (350 to 360 for 10° W to 0°) and split a box that crosses 0° into two requests; a negative longitude fails with the range to use.
 - `time` is an inclusive interval, or explicit instants as in the GFS file: `{"kind": "instants", "values": ["2023-01-15T00:00:00Z"]}`.
 - `variables` names a top-level array. Only the variables in the table were tested.
 - GFS takes its box in the store's own coordinates. Keep the example's `crs` string (a sphere of radius 6,371,229 m); replacing it with EPSG:4326 changes the scientific metadata. The selection flags (`--bbox`) cover Zarr version 2 and SpatioTemporal Asset Catalog (STAC) sources only; for version 3 use the JSON file.
