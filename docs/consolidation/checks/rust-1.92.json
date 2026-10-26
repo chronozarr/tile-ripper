@@ -1,0 +1,286 @@
+{
+  "status": "passed",
+  "toolchain": "1.92.0",
+  "platform": "macOS-26.7.1-arm64-arm-64bit",
+  "checks": [
+    {
+      "name": "format",
+      "command": [
+        "cargo",
+        "+1.92.0",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "seconds": 1.2329470410186332,
+      "log": "format.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "clippy",
+      "command": [
+        "cargo",
+        "+1.92.0",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--all-features",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "seconds": 25.64078183300444,
+      "log": "clippy.log",
+      "sha256": "3d590f2ccf542704ffad2ff564d5d85a7b7528c22bd8fe968adc64337ac59ba4"
+    },
+    {
+      "name": "tests-default",
+      "command": [
+        "cargo",
+        "+1.92.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--all-targets",
+        "--",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "seconds": 76.51026062498568,
+      "log": "tests-default.log",
+      "sha256": "e44f1311445859140fce0783c118eb6f6ef3e22c99ba38c02cd33cabfad95de7",
+      "tests": {
+        "passed": 132,
+        "failed": 0,
+        "ignored": 2
+      }
+    },
+    {
+      "name": "tests-zarr-only",
+      "command": [
+        "cargo",
+        "+1.92.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--no-default-features",
+        "--all-targets",
+        "--",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "seconds": 53.26532145802048,
+      "log": "tests-zarr-only.log",
+      "sha256": "c5a80254b266aa7c69c2864ea4aca29228544029a0cb2dc982e9d86f9d199e3a",
+      "tests": {
+        "passed": 94,
+        "failed": 0,
+        "ignored": 1
+      }
+    },
+    {
+      "name": "tests-native-cog",
+      "command": [
+        "cargo",
+        "+1.92.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--no-default-features",
+        "--features",
+        "native-cog",
+        "--all-targets",
+        "--",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "seconds": 61.55741512498935,
+      "log": "tests-native-cog.log",
+      "sha256": "df4e3fabfcbce7c6bb2f178038f2b91cafc1cdaaa5e41252e167c1ef640f5d0e",
+      "tests": {
+        "passed": 126,
+        "failed": 0,
+        "ignored": 3
+      }
+    },
+    {
+      "name": "tests-native-hdf5",
+      "command": [
+        "cargo",
+        "+1.92.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--no-default-features",
+        "--features",
+        "native-hdf5",
+        "--all-targets",
+        "--",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "seconds": 65.60063874998013,
+      "log": "tests-native-hdf5.log",
+      "sha256": "e1e55eec73f8f0b7c25198b1119a0659c352b2b27c086245a57108670260e048",
+      "tests": {
+        "passed": 135,
+        "failed": 0,
+        "ignored": 2
+      }
+    },
+    {
+      "name": "tests-native-full",
+      "command": [
+        "cargo",
+        "+1.92.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--no-default-features",
+        "--features",
+        "native-cog,native-hdf5,authenticated-http",
+        "--all-targets",
+        "--",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "seconds": 39.26243462500861,
+      "log": "tests-native-full.log",
+      "sha256": "8a37f36de28ae73a13f976a3f159ba4d32c46b880269ae5af7178240f5bf65e6",
+      "tests": {
+        "passed": 187,
+        "failed": 0,
+        "ignored": 8
+      }
+    },
+    {
+      "name": "tests-all-features",
+      "command": [
+        "cargo",
+        "+1.92.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--all-features",
+        "--all-targets",
+        "--",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "seconds": 41.069126707996475,
+      "log": "tests-all-features.log",
+      "sha256": "a195afc7f8eedb3206f70d4a75c77580bba9dc8de874d4812b130a22fef10047",
+      "tests": {
+        "passed": 216,
+        "failed": 0,
+        "ignored": 9
+      }
+    },
+    {
+      "name": "vendor-tests-hdf5-reader",
+      "command": [
+        "cargo",
+        "+1.92.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/vendor/hdf5-reader/Cargo.toml",
+        "--all-targets",
+        "--",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "seconds": 0.5577376250002999,
+      "log": "vendor-tests-hdf5-reader.log",
+      "sha256": "e0544168832d87bc954fa3859c733858077efde4af9503fe87e301368ab8b12a",
+      "tests": {
+        "passed": 356,
+        "failed": 0,
+        "ignored": 0
+      }
+    },
+    {
+      "name": "vendor-tests-zarrs_filesystem",
+      "command": [
+        "cargo",
+        "+1.92.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/vendor/zarrs_filesystem/Cargo.toml",
+        "--all-targets",
+        "--",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "seconds": 7.646114749979461,
+      "log": "vendor-tests-zarrs_filesystem.log",
+      "sha256": "e948a00f448baf63a8078846297e34522570c9a6274fb74e0471376c2bb3ac0a",
+      "tests": {
+        "passed": 6,
+        "failed": 0,
+        "ignored": 0
+      }
+    },
+    {
+      "name": "consumer-default",
+      "command": [
+        "cargo",
+        "+1.92.0",
+        "check",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "consumers/native-stats/Cargo.toml"
+      ],
+      "exit_code": 0,
+      "seconds": 5.030225915979827,
+      "log": "consumer-default.log",
+      "sha256": "b5f480375ba9bd8807bba46ec096547afe52e20572afe80360dda255850708d3"
+    },
+    {
+      "name": "consumer-native",
+      "command": [
+        "cargo",
+        "+1.92.0",
+        "check",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "consumers/native-stats/Cargo.toml",
+        "--no-default-features",
+        "--features",
+        "native-cog"
+      ],
+      "exit_code": 0,
+      "seconds": 1.0420581250218675,
+      "log": "consumer-native.log",
+      "sha256": "5451d66cd2a4feb4fbdb1f73f2bc30de05e414c0e3915c617c724ef714b7e6d9"
+    },
+    {
+      "name": "python-syntax",
+      "command": [
+        "/usr/local/bin/python3",
+        "-m",
+        "compileall",
+        "-q",
+        "scripts",
+        "bench"
+      ],
+      "exit_code": 0,
+      "seconds": 0.05830279199290089,
+      "log": "python-syntax.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "documentation": {
+    "missing_links": [],
+    "wave4_source_mismatches": []
+  }
+}

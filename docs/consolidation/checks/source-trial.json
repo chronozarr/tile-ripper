@@ -1,0 +1,160 @@
+{
+  "status": "passed",
+  "revision": "bbc6cf19716ed2a130f5d3e17afab0911e36e48a",
+  "toolchain": "1.92.0",
+  "human_trial": false,
+  "commands": [
+    {
+      "name": "archive",
+      "command": [
+        "git",
+        "archive",
+        "--format=tar",
+        "--output",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/consolidation/source-trial/source.tar",
+        "bbc6cf19716ed2a130f5d3e17afab0911e36e48a"
+      ],
+      "exit_code": 0,
+      "seconds": 0.5215821669844445
+    },
+    {
+      "name": "install",
+      "command": [
+        "cargo",
+        "+1.92.0",
+        "install",
+        "--path",
+        ".",
+        "--locked",
+        "--offline",
+        "--jobs",
+        "2",
+        "--no-default-features",
+        "--features",
+        "native-cog,native-hdf5,authenticated-http",
+        "--root",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/consolidation/source-trial/install",
+        "--target-dir",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/consolidation/source-trial/build"
+      ],
+      "exit_code": 0,
+      "seconds": 271.52550250000786
+    },
+    {
+      "name": "help",
+      "command": [
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/consolidation/source-trial/install/bin/tile-ripper",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 0.4034762920055073
+    },
+    {
+      "name": "list",
+      "command": [
+        "cargo",
+        "+1.92.0",
+        "install",
+        "--list",
+        "--root",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/consolidation/source-trial/install"
+      ],
+      "exit_code": 0,
+      "seconds": 0.029965958994580433
+    },
+    {
+      "name": "environment",
+      "command": [
+        "rustup",
+        "run",
+        "1.92.0",
+        "sh",
+        "scripts/check-environment.sh",
+        "--native",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/consolidation/source-trial/install/bin/tile-ripper"
+      ],
+      "exit_code": 0,
+      "seconds": 0.06443104197387584
+    },
+    {
+      "name": "smoke",
+      "command": [
+        "/Users/jakegearon/.cache/uv/builds-v0/.tmpN2CNEp/bin/python",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/consolidation/source-trial/source/scripts/trial-smoke.py",
+        "--binary",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/consolidation/source-trial/install/bin/tile-ripper",
+        "--output",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/consolidation/source-trial/live-smoke"
+      ],
+      "exit_code": 0,
+      "seconds": 11.730496500007575
+    },
+    {
+      "name": "uninstall",
+      "command": [
+        "cargo",
+        "+1.92.0",
+        "uninstall",
+        "--root",
+        "/Users/jakegearon/.codex/worktrees/acquisition-planner/tile-ripper/prototype-output/consolidation/source-trial/install",
+        "tile-ripper"
+      ],
+      "exit_code": 0,
+      "seconds": 0.021372666989918798
+    }
+  ],
+  "archive_sha256": "bb57f84023ea426d3ed35b02e1527270582c3e1feea7e0201ba93775045fb693",
+  "binary_sha256": "8512f017d83e3957c5b650cbf03113be8b1c1b8e847d67f521934f81da3500ca",
+  "live_smoke": {
+    "status": "passed",
+    "human_trial": false,
+    "binary_sha256": "8512f017d83e3957c5b650cbf03113be8b1c1b8e847d67f521934f81da3500ca",
+    "commands": [
+      {
+        "dataset": "era5",
+        "action": "plan",
+        "exit_code": 0,
+        "seconds": 0.7797770829929505
+      },
+      {
+        "dataset": "era5",
+        "action": "fetch",
+        "exit_code": 0,
+        "seconds": 1.020847625011811
+      },
+      {
+        "dataset": "goes",
+        "action": "plan",
+        "exit_code": 0,
+        "seconds": 4.394126082974253
+      },
+      {
+        "dataset": "goes",
+        "action": "fetch",
+        "exit_code": 0,
+        "seconds": 4.794461583020166
+      }
+    ],
+    "era5": {
+      "sizes": {
+        "time": 2,
+        "latitude": 4,
+        "longitude": 3
+      },
+      "dtype": "float32",
+      "units": "K"
+    },
+    "goes": [
+      {
+        "id": "OR_ABI-L2-CMIPC-M6C13_G19_s20262971601182_e20262971603566_c20262971604045",
+        "sizes": {
+          "y": 5,
+          "x": 4
+        },
+        "CMI": "int16",
+        "DQF": "int8"
+      }
+    ]
+  },
+  "uninstalled": true
+}
