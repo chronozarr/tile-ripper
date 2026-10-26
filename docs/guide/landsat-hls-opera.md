@@ -84,7 +84,8 @@ Use a result only if the command exits successfully and `manifest.json` says `"s
 ## Limits
 
 - 1 to 32 observations, 1 to 16 bands, an interval of at most 31 days.
-- Area of interest (AOI) of at most 30° per axis and 400 square degrees, no antimeridian crossing. A search must fit one page; narrow the query if it fails.
+- Native acquisition requires an area of interest (AOI) of at most 5° per axis, within ±80° latitude, with no antimeridian crossing.
+- Catalog discovery with a bounding box allows at most 30° per axis and 400 square degrees. A search must fit one page; narrow the query if it fails. Split larger search areas into AOIs within the native acquisition limits before fetching.
 - North-up 30 m WGS84 Universal Transverse Mercator (UTM) grids only; polar grids are not supported.
 - No reflectance or decibel conversion, harmonization, compositing, alignment, reprojection or resampling.
 - Landsat 7 scan-line gaps stay missing. HLS version 1.4, Landsat thermal products, DIST-ANN and older ASF `datapool` URLs are not supported.
