@@ -1,9 +1,15 @@
 # Tile-Ripper
 
+Tile-Ripper downloads a small area and time range from supported scientific
+raster datasets into Zarr, keeping the original stored values, native grid and
+masks, and recording the exact source files and versions it read.
+
+Start here: [Quickstart](https://tileripper.com/quickstart) · [Supported data](https://tileripper.com/supported-data) · [Installation](https://tileripper.com/installation)
+
 [Documentation](https://tileripper.com) · [Quickstart](https://tileripper.com/quickstart) · [Apache-2.0](LICENSE)
 
-For the current candidate contract, repeatable validation and remaining owner
-decisions, start with [ALPHA.md](ALPHA.md) and the
+Maintainers: for the current candidate contract, repeatable validation and
+remaining owner decisions, start with [ALPHA.md](ALPHA.md) and the
 [consolidation checklist](docs/consolidation.md).
 
 Named native product workflows now cover sensor-specific Landsat 4/5 TM, Landsat 7 ETM+ and Landsat 8/9 Collection 2 surface reflectance, HLS L30/S30 v2, OPERA DSWx-HLS, current DSWx-S1, DIST-ALERT, and the qualified OPERA RTC-S1 Float32 profile. Use `tile-ripper products` and the existing `plan` / `fetch` / `stream` commands with a product request. See [runnable examples and installation](docs/products/workflow.md), [exact real-source qualification and access limits](docs/products/qualification.md), [scientific band/quality definitions](docs/products/specifications.md), and the [25-row coverage roadmap](docs/products/roadmap.md). Stored values, native grids, calibration, classification labels, and independent quality masks are preserved.

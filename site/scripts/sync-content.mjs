@@ -26,14 +26,37 @@ function rewrite(text, source, raw = false) {
   });
 }
 
+// Replaces the first H1 with the nav title and demotes any later H1 to H2.
+// Lines inside fenced code blocks (shell comments start with "# ") are left alone.
+function retitle(text, title) {
+  let fence = null;
+  let titled = false;
+  return text.split('\n').map(line => {
+    const marker = line.match(/^\s*(`{3,}|~{3,})(.*)$/);
+    if (fence) {
+      if (marker && marker[1][0] === fence[0] && marker[1].length >= fence.length && !marker[2].trim()) fence = null;
+      return line;
+    }
+    if (marker) {
+      fence = marker[1];
+      return line;
+    }
+    if (!line.startsWith('# ')) return line;
+    if (titled) return '#' + line;
+    titled = true;
+    return '# ' + title;
+  }).join('\n');
+}
+
 for (const [source, route, title] of pages) {
-  const original = readFileSync(resolve(root, source), 'utf8').replace(/^# .+$/m, '# ' + title);
+  const original = retitle(readFileSync(resolve(root, source), 'utf8'), title);
   const raw = rewrite(original, source, true);
   writeFileSync(resolve(site, 'docs/public/raw', route + '.md'), raw);
   const content = rewrite(original, source)
     .split(/(```[\s\S]*?```|~~~[\s\S]*?~~~|`+[^`]*`+)/g)
     .map(part => part.startsWith('`') || part.startsWith('~~~') ? part
-      : part.replaceAll('<', '&lt;').replaceAll('{', '&#123;').replaceAll('}', '&#125;'))
+      : part.replace(/<(https?:\/\/[^>\s]+)>/g, '[$1]($1)')
+        .replaceAll('<', '&lt;').replaceAll('{', '&#123;').replaceAll('}', '&#125;'))
     .join('');
   writeFileSync(resolve(site, 'docs/pages', route + '.md'),
     `---\ntitle: ${JSON.stringify(title)}\n---\n\n` + content);

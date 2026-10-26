@@ -13,11 +13,14 @@ beyond those libraries.
 
 These are categories of decisions, not a user-study count. Tile-Ripper direct flags
 remove JSON authoring, but source compatibility and scientific selection remain
-user decisions. Building requires Rust, native compilers and GDAL. A Python user
+user decisions. Building the recommended complete native build requires Rust,
+a C/C++ toolchain (compiler, CMake and pkg-config) and CA certificates, not
+GDAL; GDAL is needed only for the default build and for GeoTIFF output, and
+that build also needs a GDAL runtime installation. See
+[installation](installation.md). A Python user
 with xarray already installed may have a lower setup cost using that environment.
 Rasterio wheels can simplify native dependencies; their GDAL build may differ from
-the system library. Tile-Ripper's current executable does not remove GDAL runtime
-installation. There is no paid service or account requirement for the examples.
+the system library. There is no paid service or account requirement for the examples.
 
 ## Ordinary xarray approach
 

@@ -7,7 +7,7 @@ export default defineConfig({
   iconUrl: '/favicon.svg',
   aiCta: false,
   theme: {
-    accentColor: '#0a6b78',
+    accentColor: { light: '#0a6b78', dark: '#5bbfca' },
     variables: {
       fontFamily: {
         default: 'Optima, Candara, "Trebuchet MS", sans-serif',
@@ -17,12 +17,13 @@ export default defineConfig({
   },
   topNav: [
     { text: 'Quickstart', link: '/quickstart' },
-    { text: 'Products', link: '/products' },
-    { text: 'Coverage', link: '/coverage' },
+    { text: 'Installation', link: '/installation' },
+    { text: 'Supported data', link: '/supported-data' },
     { text: 'ChronoZarr', link: 'https://chronozarr.org' },
   ],
   socials: [{ icon: 'github', link: repository }],
   sidebar: sections.map(section => ({ text: section.text,
+    collapsed: section.collapsed,
     items: section.pages.map(([, route, text]) => ({ text, link: '/' + route })),
   })),
 })
