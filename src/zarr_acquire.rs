@@ -1,5 +1,5 @@
 //! Narrow local CF-style Zarr v2 acquisition. Codecs and storage belong to zarrs.
-use crate::{cog, fail, model::*, planner::push, Result};
+use crate::{fail, model::*, planner::push, Result};
 use std::{fs, path::Path, sync::Arc, time::Instant};
 use zarrs::{array::Array, array::ArraySubset, filesystem::FilesystemStore};
 type Store = FilesystemStore;
@@ -1022,19 +1022,6 @@ fn output_array(
     )?;
     Ok(array)
 }
-pub(crate) fn fetch(r: &Request, cache: &mut cog::LayoutCache) -> Result<crate::ExecutionReport> {
-    let Sink::ZarrDirectory { path } = &r.sink else {
-        unreachable!()
-    };
-    let _ = path;
-    let t = Instant::now();
-    let p = crate::plan(r, cache)?;
-    let planning = t.elapsed().as_secs_f64();
-    fetch_plan(r, &p, planning)
-}
-pub(crate) fn fetch_plan(r: &Request, p: &Plan, planning: f64) -> Result<crate::ExecutionReport> {
-    fetch_on(r, p, planning, &crate::storage::Sources::default())
-}
 pub(crate) fn fetch_on(
     r: &Request,
     p: &Plan,
@@ -1080,8 +1067,10 @@ pub(crate) fn fetch_on(
             );
         }
     }
-    fs::create_dir(root)?;
-    let result = (|| -> Result<crate::ExecutionReport> {
+    if !root.is_dir() {
+        return fail("Zarr output staging directory is unavailable");
+    }
+    (|| -> Result<crate::ExecutionReport> {
         let Source::Assets { assets } = &r.source else {
             unreachable!()
         };
@@ -1303,11 +1292,7 @@ pub(crate) fn fetch_on(
             manifest.elapsed().as_secs_f64(),
         );
         Ok(report)
-    })();
-    if result.is_err() {
-        let _ = fs::remove_dir_all(root);
-    }
-    result
+    })()
 }
 
 /// Adapter-local, byte-bounded LRU of decoded destination chunks. Evictions are

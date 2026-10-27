@@ -42,7 +42,7 @@ impl Writer {
         let mut options = FilesystemStoreOptions::default();
         options.defer_device_flush(true);
         let metrics = Arc::new(Metrics::new(Arc::new(FilesystemStore::new_with_options(
-            &transaction.stage,
+            transaction.stage(),
             options,
         )?)));
         let store = Arc::new(Store::new(metrics.clone()));

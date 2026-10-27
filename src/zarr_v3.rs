@@ -513,7 +513,11 @@ impl Binding {
                 first=false; last=start+len;
                 json!({"logical":idx,"offset":start,"length":len,"gap_before":gap})
             }).collect();
-            let candidates = crate::zarr_ranges::Config::from_env(crate::storage::worker_count().unwrap_or(2)).ok().map(|c|c.groups(&spans,c.max_span));
+            let candidates = crate::runtime_config::zarr_ranges(
+                crate::storage::worker_count().unwrap_or(2),
+            )
+            .ok()
+            .map(|c| c.groups(&spans, c.max_span));
             json!({"key":key,"identity":self.source.identity(&key),"physical_order":physical,"missing_logical_chunks":missing.get(&key),"unique_selected_bytes":spans.iter().map(|s|s.1).sum::<u64>(),"repeated_selected_bytes":0,"candidate_body_bytes":candidates.as_ref().map(|g|g.iter().map(|r|r.len() as u64).sum::<u64>()),"candidate_requests":candidates.as_ref().map(Vec::len),"candidate_ranges_before_execution_window_and_memory_limits":candidates})
         }).collect::<Vec<_>>())
     }

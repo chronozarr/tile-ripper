@@ -420,8 +420,21 @@ impl Objects {
     pub fn metadata_bytes(&self, key: &str) -> Result<s::MaybeBytes> {
         let key = s::StoreKey::new(key)?;
         if let Self::Local(store) = self {
-            if store.size_key(&key)?.is_some_and(|n| n > 1024 * 1024) {
-                return fail("source metadata exceeds 1 MiB");
+            return match crate::metadata_io::read(&store.key_to_fspath(&key)) {
+                Ok(bytes) => Ok(Some(bytes.into())),
+                Err(error)
+                    if error
+                        .downcast_ref::<std::io::Error>()
+                        .is_some_and(|e| e.kind() == std::io::ErrorKind::NotFound) =>
+                {
+                    Ok(None)
+                }
+                Err(error) => Err(error),
+            };
+        }
+        if let Self::Overlay { origin, entries } = self {
+            if !entries.contains_key(key.as_str()) {
+                return origin.metadata_bytes(key.as_str());
             }
         }
         let bytes = self.get(&key)?;
@@ -1025,24 +1038,7 @@ impl Http {
 }
 
 pub(crate) fn worker_count() -> Result<usize> {
-    fn configured(name: &str, default: usize) -> Result<usize> {
-        let value = match std::env::var(name) {
-            Ok(value) => value
-                .parse::<usize>()
-                .map_err(|_| format!("{name} must be an integer from 1 to 64"))?,
-            Err(std::env::VarError::NotPresent) => default,
-            Err(std::env::VarError::NotUnicode(_)) => {
-                return fail(&format!("{name} must be an integer from 1 to 64"));
-            }
-        };
-        if !(1..=64).contains(&value) {
-            return fail(&format!("{name} must be from 1 to 64"));
-        }
-        Ok(value)
-    }
-
-    let cpus = thread::available_parallelism().map_or(1, usize::from);
-    Ok(configured("TILE_RIPPER_WORKERS", cpus.min(2))?.min(configured("TILE_RIPPER_PER_HOST", 4)?))
+    crate::runtime_config::worker_count()
 }
 
 /// Execute each distinct key once with bounded scoped workers and restore the

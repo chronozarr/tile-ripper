@@ -120,6 +120,8 @@ pub fn execute(
     cache: &mut LayoutCache,
     sink: impl FnMut(Chunk) -> Result<()>,
 ) -> Result<ExecutionReport> {
+    let runtime = crate::runtime_config::RuntimeConfig::capture(r)?;
+    let _runtime = runtime.enter();
     if !matches!(r.source, Source::Assets { .. })
         || matches!(r.sink, Sink::Directory { .. })
         || crate::storage::requires_zarr_bindings(r)
@@ -219,41 +221,11 @@ impl SelectedCogReader {
     }
 }
 pub fn fetch(r: &Request, cache: &mut LayoutCache) -> Result<ExecutionReport> {
-    if !matches!(r.source, Source::Assets { .. })
-        || matches!(r.sink, Sink::Directory { .. })
-        || crate::storage::requires_zarr_bindings(r)
-        || matches!(&r.source, Source::Assets {assets} if assets.iter().any(|a| a.format == Format::Cog && cog::remote(&a.locator)))
-        || (cog::native_selected()
-            && matches!(&r.source, Source::Assets {assets} if assets.iter().any(|a| a.format == Format::Cog)))
-    {
-        return Ok(serde_json::from_value(
-            crate::acquisition::fetch(r, cache)?["observed"].clone(),
-        )?);
-    }
-    if matches!(r.sink, Sink::ZarrDirectory { .. }) {
-        return crate::zarr_acquire::fetch(r, cache);
-    }
-    let Sink::GeoTiffDirectory { path } = &r.sink else {
-        return fail("fetch requires a GeoTIFF directory sink; library callers may use execute with a callback");
-    };
-    let _ = path;
-    // Refuse overwrites, and remove a newly created directory on failure.
-    let start = Instant::now();
-    let preview = plan(r, cache)?;
-    let planning_seconds = start.elapsed().as_secs_f64();
-    fetch_plan(r, &preview, planning_seconds)
-}
-pub(crate) fn fetch_plan(
-    r: &Request,
-    preview: &Plan,
-    planning_seconds: f64,
-) -> Result<ExecutionReport> {
-    fetch_on(
-        r,
-        preview,
-        planning_seconds,
-        &crate::storage::Sources::default(),
-    )
+    let runtime = crate::runtime_config::RuntimeConfig::capture(r)?;
+    let _runtime = runtime.enter();
+    Ok(serde_json::from_value(
+        crate::acquisition::fetch(r, cache)?["observed"].clone(),
+    )?)
 }
 pub(crate) fn fetch_on(
     r: &Request,
@@ -285,8 +257,17 @@ pub(crate) fn fetch_on(
         if preview.selected.iter().any(|s| s.dimensions.is_some()) {
             return fail("Zarr extraction requires native Zarr directory output");
         }
-        fs::create_dir(root)?;
-        let result = execute_plan(r, preview, planning_seconds, |mut chunk| {
+        // Callers reserve this private staging directory first. This writer
+        // neither creates nor removes it: transaction ownership determines
+        // cleanup and atomic publication.
+        if !root.is_dir() {
+            return fail("GeoTIFF output staging directory is missing");
+        }
+        // `sources` belongs to the prepared acquisition. In particular, it owns
+        // authenticated COG sessions, their trust roots, and source bindings;
+        // re-entering through `execute_plan` would silently replace it with an
+        // unprepared default source set.
+        let result = execute_on(r, preview, planning_seconds, sources, |mut chunk| {
             let file = root.join(format!("chunk-{}.tif", chunk.node_id));
             let mut ds = DriverManager::get_driver_by_name("GTiff")?
                 .create_with_band_type::<u16, _>(
@@ -326,15 +307,11 @@ pub(crate) fn fetch_on(
                 )
                 .is_err()
                 {
-                    let _ = fs::remove_dir_all(root);
                     return fail("could not write output manifest");
                 }
                 Ok(report)
             }
-            Err(e) => {
-                let _ = fs::remove_dir_all(root);
-                Err(e)
-            }
+            Err(e) => Err(e),
         }
     }
 }
