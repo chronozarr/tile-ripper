@@ -186,6 +186,13 @@ fn geographic_domain(g: &Geometry) -> Result<()> {
     Ok(())
 }
 pub fn transform(spatial: &Spatial, target: &str) -> Result<Geometry> {
+    transform_for_selection(spatial, target, crate::spatial::NativeSelection::Standard)
+}
+fn transform_for_selection(
+    spatial: &Spatial,
+    target: &str,
+    selection: crate::spatial::NativeSelection,
+) -> Result<Geometry> {
     let g = geometry(spatial)?;
     if g.crs == target {
         return Ok(g);
@@ -198,7 +205,12 @@ pub fn transform(spatial: &Spatial, target: &str) -> Result<Geometry> {
     }
     let [xmin, ymin, xmax, ymax] = bounds(&g);
     let center = zone as f64 * 6. - 183.;
-    if xmin < center - 6. || xmax > center + 6. || (!south && ymin < 0.) || (south && ymax > 0.) {
+    let extended_north = matches!(selection, crate::spatial::NativeSelection::ProviderExtendedNorthernUtm { zone: selected } if selected == zone);
+    if xmin < center - 6.
+        || xmax > center + 6.
+        || (!south && ymin < 0. && !extended_north)
+        || (south && ymax > 0.)
+    {
         return fail("AOI is outside the supported target UTM zone vicinity or hemisphere");
     }
     let from = Proj::from_proj_string("+proj=longlat +datum=WGS84 +no_defs")?;
@@ -386,12 +398,19 @@ fn fill_span(data: &mut [u8], w: &Window, row: usize, left: f64, right: f64) {
     }
 }
 pub fn native_mask(s: &Spatial, l: &Layout) -> Result<Option<Geometry>> {
+    native_mask_for_selection(s, l, crate::spatial::NativeSelection::Standard)
+}
+pub(crate) fn native_mask_for_selection(
+    s: &Spatial,
+    l: &Layout,
+    selection: crate::spatial::NativeSelection,
+) -> Result<Option<Geometry>> {
     // Preserve the existing generic direct-native-bounds acquisition path.
     if matches!(s, Spatial::Bounds {crs, ..} if crs == &l.crs) {
         return Ok(None);
     }
     validate_grid(l)?;
-    let g = transform(s, &l.crs)?;
+    let g = transform_for_selection(s, &l.crs, selection)?;
     let t = l.transform;
     let grid = geometry(&Spatial::Bounds {
         crs: l.crs.clone(),

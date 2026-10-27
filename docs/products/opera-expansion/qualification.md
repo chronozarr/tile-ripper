@@ -12,7 +12,7 @@ DSWx-NI remains an explicitly pinned prototype. It has no production discovery r
 
 Annual output retains the actual provider coverage interval and summary year. Its time coordinate labels coverage start; CF `time_bounds` stores the unchanged provider endpoints, including fractional seconds. Selection uses interval intersection. Supplied annual intervals and asset references are checked against the exact live CMR record before acquisition. Date layers use `days since 2020-12-31`; duration layers use `days`.
 
-The annual example uses an explicit 128 MiB buffer for 21 authenticated source transports. The default 32 MiB request correctly fails its transport reservation guard; Tile-Ripper never silently increases a caller's budget. Current annual qualification covers northern T17SNU. The southern T20LRP provider representation uses EPSG:32620 with negative northing; that CRS convention remains outside the native reader's hemisphere admission. This is a reader limitation, not a declaration that the provider's pixels are invalid.
+The annual example uses an explicit 128 MiB buffer for 21 authenticated source transports. The default 32 MiB request correctly fails its transport reservation guard; Tile-Ripper never silently increases a caller's budget. The original annual receipt covers northern T17SNU. Subsequent [southern qualification](../dist-ann-southern/README.md) covers T20LRP’s provider-declared EPSG:32620 with negative northings through a scoped annual-only admission path; original receipts below are not rewritten.
 
 ## Reproduce
 

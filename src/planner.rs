@@ -4,7 +4,91 @@ use crate::{
     model::*,
     zarr, Result,
 };
-use std::collections::HashSet;
+use std::collections::{BTreeMap, HashSet};
+
+/// Product-private native-geometry exception records.  This lives beside the
+/// COG planner so the exception is applied per inspected asset, rather than
+/// becoming a request flag or a property of a reusable layout.
+#[derive(Default)]
+pub(crate) struct NativeSelectionPolicy {
+    annual_dist_extended_north: BTreeMap<String, AnnualDistExtendedNorth>,
+}
+struct AnnualDistExtendedNorth {
+    candidate: crate::products::dist_ann::ExtendedNorthernUtm,
+    observation: std::sync::Arc<crate::products::Observation>,
+    band: String,
+    asset: crate::products::ProductAsset,
+}
+impl NativeSelectionPolicy {
+    pub(crate) fn admit_annual_dist_extended_north(
+        &mut self,
+        asset_id: String,
+        candidate: crate::products::dist_ann::ExtendedNorthernUtm,
+        observation: std::sync::Arc<crate::products::Observation>,
+        band: String,
+        asset: crate::products::ProductAsset,
+    ) -> Result<()> {
+        if self
+            .annual_dist_extended_north
+            .insert(
+                asset_id,
+                AnnualDistExtendedNorth {
+                    candidate,
+                    observation,
+                    band,
+                    asset,
+                },
+            )
+            .is_some()
+        {
+            return fail("duplicate annual DIST native selection policy asset");
+        }
+        Ok(())
+    }
+    fn selection_for(
+        &self,
+        asset: &Asset,
+        layout: &Layout,
+        sources: Option<&crate::storage::Sources>,
+    ) -> Result<crate::spatial::NativeSelection> {
+        let Some(entry) = self.annual_dist_extended_north.get(&asset.id) else {
+            return Ok(crate::spatial::NativeSelection::Standard);
+        };
+        let zone = entry
+            .candidate
+            .tile
+            .get(1..3)
+            .ok_or("annual DIST extended-north tile is malformed")?
+            .parse::<u32>()?;
+        // Ordinary EPSG:327xx annual grids continue through the canonical
+        // southern path.  Only a source actually declaring its northern code
+        // may be considered for the special convention.
+        if layout.crs != format!("EPSG:{}", 32600 + zone) {
+            return Ok(crate::spatial::NativeSelection::Standard);
+        }
+        let sources = sources.ok_or(
+            "annual DIST extended-north selection requires native inspected source evidence",
+        )?;
+        let source = serde_json::json!({
+            "object_version":asset.etag.clone(),
+            "object_identities":sources.describe(&asset.id),
+        });
+        let profile = crate::products::profile::profile(crate::products::dist_ann::ID)?;
+        let band = profile.band(&entry.band)?;
+        // This is intentionally before spatial selection: product identity,
+        // retained physical COG evidence, and the native grid must all agree
+        // before an EPSG:326xx southern AOI transform is allowed.
+        crate::products::dist_ann::validate_physical(
+            &entry.observation,
+            band,
+            &entry.asset,
+            &source,
+            layout,
+        )?;
+        crate::products::dist_ann::extended_northern_grid(&entry.candidate, layout)?;
+        Ok(crate::spatial::NativeSelection::ProviderExtendedNorthernUtm { zone })
+    }
+}
 
 pub trait FormatPlanner {
     fn capabilities(&self) -> Capabilities;
@@ -18,15 +102,22 @@ impl FormatPlanner for CogPlanner<'_> {
         cog_capabilities()
     }
     fn plan_asset(&mut self, asset: &Asset, request: &Request, p: &mut Plan) -> Result<()> {
-        plan_cog_asset(asset, request, p, |band| {
-            let inspection = std::time::Instant::now();
-            let layout = self.cache.resolve(asset, band);
-            crate::diagnostics::profile_stage(
-                "cog_layout_inspection",
-                inspection.elapsed().as_secs_f64(),
-            );
-            layout
-        })
+        plan_cog_asset(
+            asset,
+            request,
+            p,
+            &NativeSelectionPolicy::default(),
+            None,
+            |band| {
+                let inspection = std::time::Instant::now();
+                let layout = self.cache.resolve(asset, band);
+                crate::diagnostics::profile_stage(
+                    "cog_layout_inspection",
+                    inspection.elapsed().as_secs_f64(),
+                );
+                layout
+            },
+        )
     }
 }
 fn cog_capabilities() -> Capabilities {
@@ -52,6 +143,8 @@ fn plan_cog_asset(
     asset: &Asset,
     request: &Request,
     p: &mut Plan,
+    selection_policy: &NativeSelectionPolicy,
+    sources: Option<&crate::storage::Sources>,
     mut resolve: impl FnMut(usize) -> Result<(Layout, bool)>,
 ) -> Result<()> {
     let valid_nodata = |dtype: &str, value: f64| {
@@ -71,6 +164,7 @@ fn plan_cog_asset(
             return fail("COG requires integer band selectors");
         };
         let (layout, cached) = resolve(*index)?;
+        let selection = selection_policy.selection_for(asset, &layout, sources)?;
         // The legacy chunked GeoTIFF writer is deliberately UInt16-only. Reject
         // unsupported source storage while preparing the concrete sink, before
         // `fetch` creates its destination or starts decoding. `Directory`
@@ -85,7 +179,7 @@ fn plan_cog_asset(
                 "GeoTIFF directory output currently supports UInt16 native bands only; use zarr_directory for UInt8, Int16, or Float32 native bands",
             );
         }
-        let mask = crate::spatial::native_mask(&request.spatial, &layout)?;
+        let mask = crate::spatial::native_mask_for_selection(&request.spatial, &layout, selection)?;
         let spatial = if let Some(g) = &mask {
             if g.is_empty() || g.area() <= 0. {
                 continue;
@@ -353,6 +447,14 @@ pub(crate) fn plan_on(
     cache: &mut LayoutCache,
     sources: &crate::storage::Sources,
 ) -> Result<Plan> {
+    plan_on_with_native_selection(request, cache, sources, &NativeSelectionPolicy::default())
+}
+pub(crate) fn plan_on_with_native_selection(
+    request: &Request,
+    cache: &mut LayoutCache,
+    sources: &crate::storage::Sources,
+    selection_policy: &NativeSelectionPolicy,
+) -> Result<Plan> {
     let _quiet = crate::diagnostics::QuietNative::enter();
     let started = std::time::Instant::now();
     let assets = validate(request)?;
@@ -444,17 +546,29 @@ pub(crate) fn plan_on(
                 Format::Cog => {
                     if let Some(layouts) = layouts {
                         let mut layouts = layouts.into_iter();
-                        plan_cog_asset(asset, request, &mut p, |_| {
-                            Ok((layouts.next().ok_or("missing inspected layout")?, false))
-                        })?;
+                        plan_cog_asset(
+                            asset,
+                            request,
+                            &mut p,
+                            selection_policy,
+                            Some(sources),
+                            |_| Ok((layouts.next().ok_or("missing inspected layout")?, false)),
+                        )?;
                     } else {
                         #[cfg(feature = "native-cog")]
                         if cog::native_selected() {
-                            plan_cog_asset(asset, request, &mut p, |band| {
-                                Ok((sources.native.inspect(asset, band)?, false))
-                            })?;
+                            plan_cog_asset(
+                                asset,
+                                request,
+                                &mut p,
+                                selection_policy,
+                                Some(sources),
+                                |band| Ok((sources.native.inspect(asset, band)?, false)),
+                            )?;
                             continue;
                         }
+                        // Non-native paths never receive a special selection
+                        // policy; retain the generic planner behaviour.
                         CogPlanner { cache }.plan_asset(asset, request, &mut p)?;
                     }
                 }

@@ -1121,6 +1121,18 @@ fn wave2_grid_identity(observation: &Observation, l: &crate::Layout) -> Result<(
         .split('_')
         .nth(3)
         .ok_or("missing OPERA MGRS tile")?;
+    wave2_grid_identity_for_tile(tile, l, false)
+}
+
+/// Bind an inspected Wave 2 grid to a named MGRS tile.  `extended_north` is
+/// private to the annual DIST preselection gate; it means an actual EPSG:326xx
+/// source holds a southern tile with zero false northing, not that its CRS or
+/// coordinates should be normalized.
+pub(crate) fn wave2_grid_identity_for_tile(
+    tile: &str,
+    l: &crate::Layout,
+    extended_north: bool,
+) -> Result<()> {
     let bytes = tile.as_bytes();
     if bytes.len() != 6 || bytes[0] != b'T' || !bytes[1..].iter().all(u8::is_ascii_alphanumeric) {
         return fail("invalid Wave 2 MGRS tile");
@@ -1130,7 +1142,10 @@ fn wave2_grid_identity(observation: &Observation, l: &crate::Layout) -> Result<(
     if !(1..=60).contains(&zone) || !bands.contains(&bytes[3]) {
         return fail("invalid Wave 2 MGRS zone/latitude band");
     }
-    let epsg = if bytes[3] >= b'N' {
+    if extended_north && bytes[3] >= b'N' {
+        return fail("extended-north UTM is only valid for a southern MGRS tile");
+    }
+    let epsg = if bytes[3] >= b'N' || extended_north {
         32600 + zone
     } else {
         32700 + zone
@@ -1171,7 +1186,11 @@ fn wave2_grid_identity(observation: &Observation, l: &crate::Layout) -> Result<(
         let from = proj4rs::Proj::from_proj_string("+proj=longlat +datum=WGS84 +no_defs")?;
         let to = proj4rs::Proj::from_proj_string(&format!(
             "+proj=utm +zone={zone} {} +datum=WGS84 +units=m +no_defs",
-            if bytes[3] < b'N' { "+south" } else { "" }
+            if bytes[3] < b'N' && !extended_north {
+                "+south"
+            } else {
+                ""
+            }
         ))?;
         let mut center = (
             (zone as f64 * 6. - 183.).to_radians(),
@@ -1293,6 +1312,8 @@ fn prepare_inner(
     let c = client()?;
     let mut assets = vec![];
     let mut metadata = vec![];
+    let mut native_selection = crate::planner::NativeSelectionPolicy::default();
+    let mut annual_observation_context = BTreeMap::new();
     let mut ids = BTreeSet::new();
     for (i, o) in catalog.observations.iter().enumerate() {
         if !ids.insert(&o.id) {
@@ -1316,6 +1337,21 @@ fn prepare_inner(
                 datetime: Some(o.datetime.clone()),
                 etag: a.etag.clone(),
             });
+            if p.family == profile::ProductFamily::OperaDistAnn {
+                if let Some(candidate) = dist_ann::extended_northern_candidate(o)? {
+                    let observation = annual_observation_context
+                        .entry(o.id.clone())
+                        .or_insert_with(|| std::sync::Arc::new(o.clone()))
+                        .clone();
+                    native_selection.admit_annual_dist_extended_north(
+                        id.clone(),
+                        candidate,
+                        observation,
+                        b.name.clone(),
+                        a.clone(),
+                    )?;
+                }
+            }
             metadata.push(json!({"asset_id":id,"provider":catalog.provider,"canonical_locator":crate::stac_workflow::safe_reference(&a.href),"access_policy":if catalog.provider == routing::Provider::PlanetaryComputer { routing::SIGNING_POLICY } else { routing::POLICY },"item_id":o.id,"collection":o.collection,"requested_band":b.name,"product":r.product,"product_version":p.processing_version(&o.id)?,"platform":o.platform,"processing":o.processing,"product_band":b,"acquisition":o.properties,"asset_metadata":a.metadata,"href":crate::stac_workflow::safe_reference(&a.href),"raster_bands":[{"scale":b.scale,"offset":b.offset,"unit":b.unit}],"quality_policies":r.quality_policies.iter().filter(|name|name.parse::<profile::QualityPolicy>().is_ok_and(|q|q.required_bands().contains(&b.name.as_str()))).collect::<Vec<_>>() }));
             if p.family == profile::ProductFamily::OperaDistAnn {
                 let record = metadata.last_mut().expect("source record was appended");
@@ -1387,7 +1423,12 @@ fn prepare_inner(
                 };
                 sessions.insert(asset.id.clone(), std::sync::Arc::new(session));
             }
-            acquisition::prepare_authenticated_cogs(&request, cache, sessions)?
+            acquisition::prepare_authenticated_cogs_with_native_selection(
+                &request,
+                cache,
+                sessions,
+                &native_selection,
+            )?
         }
         #[cfg(not(all(feature = "native-cog", feature = "authenticated-http")))]
         {
@@ -1400,6 +1441,8 @@ fn prepare_inner(
         acquisition::prepare(&request, cache)?
     };
     let physical_inspection = prepared.explain();
+    let mut extended_north_provenance = BTreeMap::new();
+    let mut last_date_provenance = BTreeMap::new();
     for selected in &prepared.plan().selected {
         let l = selected
             .layout
@@ -1428,6 +1471,13 @@ fn prepare_inner(
             })
             .ok_or("inspected physical product source metadata missing")?;
         inspected_product_identity(&r.product, observation, band, asset, physical_source, l)?;
+        if p.family == profile::ProductFamily::OperaDistAnn {
+            if let Some(provenance) =
+                dist_ann::last_date_provenance(observation, band, physical_source)?
+            {
+                last_date_provenance.insert(selected.asset_id.clone(), provenance);
+            }
+        }
         let dtype = match l.dtype.as_str() {
             "UInt16" | "<u2" => "uint16",
             "Int16" | "<i2" => "int16",
@@ -1494,13 +1544,37 @@ fn prepare_inner(
         {
             return fail("product profile requires actual north-up 30 m WGS84 UTM source grid");
         }
-        if matches!(
+        if p.family == profile::ProductFamily::OperaDistAnn {
+            let candidate = dist_ann::extended_northern_candidate(observation)?;
+            let extended = candidate.as_ref().is_some_and(|candidate| {
+                candidate
+                    .tile
+                    .get(1..3)
+                    .and_then(|zone| zone.parse::<u32>().ok())
+                    .is_some_and(|zone| l.crs == format!("EPSG:{}", 32600 + zone))
+            });
+            if extended {
+                let candidate = candidate.expect("extended annual candidate exists");
+                dist_ann::extended_northern_grid(&candidate, l)?;
+                extended_north_provenance.insert(selected.asset_id.clone(), json!({
+                    "source_declared_crs":l.crs,
+                    "source_transform":l.transform,
+                    "mgrs_tile":candidate.tile,
+                    "mgrs_latitude_band":candidate.tile.get(3..4),
+                    "selection_mapping":"provider extended northern UTM coordinates (false northing 0; no +south)",
+                    "data_reprojection":false,
+                    "crs_relabeling":false,
+                    "coordinate_shift_m":0,
+                }));
+            } else {
+                wave2_grid_identity(observation, l)?;
+            }
+        } else if matches!(
             p.family,
             profile::ProductFamily::OperaDswxS1
                 | profile::ProductFamily::OperaDist
                 | profile::ProductFamily::OperaDswxNiPrototype
                 | profile::ProductFamily::OperaDistS1
-                | profile::ProductFamily::OperaDistAnn
         ) {
             wave2_grid_identity(observation, l)?;
         }
@@ -1517,6 +1591,16 @@ fn prepare_inner(
     let mut decision = catalog.routing;
     let mut verified = 0usize;
     for source in &mut metadata {
+        if let Some(convention) =
+            extended_north_provenance.get(source["asset_id"].as_str().unwrap_or(""))
+        {
+            source["native_coordinate_convention"] = convention.clone();
+        }
+        if let Some(provenance) =
+            last_date_provenance.get(source["asset_id"].as_str().unwrap_or(""))
+        {
+            source["annual_last_date_temporal_provenance"] = provenance.clone();
+        }
         let physical = physical_inspection["sources"]
             .as_array()
             .and_then(|sources| {
@@ -1588,6 +1672,42 @@ pub fn source_validity<'a>(
 #[cfg(test)]
 mod wave2_identity_tests {
     use super::*;
+
+    #[cfg(feature = "native-cog")]
+    #[test]
+    fn conventional_wave2_products_do_not_inherit_the_annual_extended_frame() -> Result<()> {
+        let request: ProductRequest = serde_json::from_str(include_str!(
+            "../docs/products/wave2/dist-alert-request.json"
+        ))?;
+        let mut observation = request.observations.unwrap().remove(0);
+        let mut tokens = observation
+            .id
+            .split('_')
+            .map(str::to_owned)
+            .collect::<Vec<_>>();
+        tokens[3] = "T20LRP".into();
+        observation.id = tokens.join("_");
+        let mut layout = crate::Layout {
+            width: 3660,
+            height: 3660,
+            transform: [799980., 30., 0., -1099980., 0., -30.],
+            crs: "EPSG:32620".into(),
+            variable: Variable::Band { index: 1 },
+            block: [256, 256],
+            dtype: "Byte".into(),
+            nodata: Some(255.),
+            scale: None,
+            offset: None,
+            tiles: vec![],
+        };
+        assert!(wave2_grid_identity(&observation, &layout).is_err());
+        // Explicit physical-frame admission is reserved for the annual gate.
+        wave2_grid_identity_for_tile("T20LRP", &layout, true)?;
+        layout.crs = "EPSG:32720".into();
+        layout.transform[3] += 10_000_000.;
+        wave2_grid_identity(&observation, &layout)?;
+        Ok(())
+    }
 
     #[test]
     fn annual_coverage_is_verified_against_catalog_not_caller_fields() -> Result<()> {

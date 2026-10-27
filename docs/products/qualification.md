@@ -10,7 +10,7 @@
 
 `opera-dist-alert-s1` passed ten-layer authenticated native acquisition and independent source/stream/reopened-Zarr comparisons. `opera-dist-ann-hls` passed all 21 annual layers, including raw bits, source/AOI/policy masks, native coordinates, exact provider time bounds and 2,940 streamed chunks with validated source versions. The exact sources, class occurrences and limitations are recorded in the [expansion qualification](opera-expansion/qualification.md), [DIST-S1 receipt](opera-expansion/dist-s1-cmr-receipt.json) and [DIST-ANN receipt](opera-expansion/dist-ann-qualification-receipt.json).
 
-For annual DIST, the present source/output qualification covers the northern T17SNU representation. The southern T20LRP reference uses EPSG:32620 with negative northing, which is an unqualified CRS/hemisphere representation in this reader—not a claim that the NASA source is corrupt or scientifically incorrect. No global annual-coverage claim follows.
+The [southern qualification](dist-ann-southern/README.md) extends the annual path to the real T20LRP provider representation: all 21 layers retain EPSG:32620, negative northings and zero false northing, with independent source/output/stream checks. It preserves separate CMR input-year coverage and TIFF last-date update metadata. Current scope is the exact source representations in those receipts, not a blanket global/version admission.
 
 # Wave 1 qualification and decision gate
 
