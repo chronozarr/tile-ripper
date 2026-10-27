@@ -1,0 +1,49 @@
+{
+  "source": {
+    "kind": "assets",
+    "assets": [
+      {
+        "id": "gfs",
+        "locator": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis/v0.1.0.icechunk#snapshot=6K6H23PYR6QXA9VM0C6G",
+        "format": "icechunk",
+        "datetime": null
+      }
+    ]
+  },
+  "spatial": {
+    "kind": "bounds",
+    "crs": "GEOGCS[\"unknown\",DATUM[\"unknown\",SPHEROID[\"unknown\",6371229,0]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AXIS[\"Longitude\",EAST],AXIS[\"Latitude\",NORTH]]",
+    "bbox": [
+      -101.125,
+      33.625,
+      -100.625,
+      34.125
+    ]
+  },
+  "time": {
+    "kind": "instants",
+    "values": [
+      "2026-10-25T00:00:00Z"
+    ]
+  },
+  "variables": [
+    {
+      "kind": "dataset",
+      "path": "temperature_2m"
+    }
+  ],
+  "quality": [],
+  "grid": {
+    "kind": "native"
+  },
+  "operations": [],
+  "sink": {
+    "kind": "directory",
+    "path": "./gfs-materialized-subset"
+  },
+  "budget": {
+    "buffer_bytes": 268435456,
+    "max_nodes": 100000,
+    "chunk_edge": 32
+  }
+}

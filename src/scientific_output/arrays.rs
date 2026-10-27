@@ -421,6 +421,9 @@ pub(crate) fn fetch(p: &Prepared, path: &str, cancelled: Arc<AtomicBool>) -> Res
                         Pixels::UInt16(v) => write_values!(v),
                         Pixels::UInt32(v) => write_values!(v),
                         Pixels::Float32(v) => write_values!(v),
+                        Pixels::Float64(_) => {
+                            return Err("unqualified rank-two product Float64 output".into())
+                        }
                     }
                     let mut valid = Vec::with_capacity(h * w);
                     let mut q = Vec::with_capacity(h * w);

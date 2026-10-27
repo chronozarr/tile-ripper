@@ -29,6 +29,7 @@ fn values(p: swot::Prepared) -> Result<Value> {
                 Pixels::Int16(v) => v.iter().flat_map(|v| v.to_le_bytes()).collect(),
                 Pixels::UInt32(v) => v.iter().flat_map(|v| v.to_le_bytes()).collect(),
                 Pixels::Float32(v) => v.iter().flat_map(|v| v.to_bits().to_le_bytes()).collect(),
+                Pixels::Float64(v) => v.iter().flat_map(|v| v.to_bits().to_le_bytes()).collect(),
             };
             layers.push(json!({"bytes":bytes,"mask":c.validity().collect::<Vec<_>>(),"coordinates":c.coordinates}));
         }

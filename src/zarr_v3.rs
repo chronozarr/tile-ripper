@@ -98,7 +98,7 @@ impl Context {
     }
     pub(crate) fn describe(&self, id: &str) -> Value {
         let arrays = self.arrays.lock().unwrap();
-        json!(arrays.iter().filter(|((asset,_),_)|asset==id).map(|((_,path),b)| (path.clone(),json!({"shape":b.info.shape,"logical_chunk_shape":b.info.inner,"physical_chunk_shape":b.info.outer,"codecs":b.info.metadata["codecs"],"physical_objects":b.ranges.values().map(|(key,_)|key).collect::<BTreeSet<_>>().len(),"selected_logical_chunks":b.ranges.len(),"physical_read_plan":if b.info.sharded {b.physical_plan()}else{Value::Null},"access":if b.info.sharded {"selective_encoded_subchunks"}else{"whole_ordinary_chunks"},"cf_missing_value":b.nodata.map(|n|if n.is_nan(){json!("NaN")}else{json!(n)})}))).collect::<BTreeMap<_,_>>())
+        json!(arrays.iter().filter(|((asset,_),_)|asset==id).map(|((_,path),b)| (path.clone(),json!({"shape":b.info.shape,"logical_chunk_shape":b.info.inner,"physical_chunk_shape":b.info.outer,"codecs":b.info.metadata["codecs"],"source_snapshot":b.source.snapshot(),"physical_objects":b.ranges.values().map(|(key,_)|key).collect::<BTreeSet<_>>().len(),"selected_logical_chunks":b.ranges.len(),"physical_read_plan":b.physical_plan(),"access":if b.info.sharded {"selective_encoded_subchunks"}else{"whole_ordinary_chunks"},"cf_missing_value":b.nodata.map(|n|if n.is_nan(){json!("NaN")}else{json!(n)})}))).collect::<BTreeMap<_,_>>())
     }
 }
 
@@ -704,6 +704,10 @@ impl Reader {
             self.decoded
                 .retrieve_chunk_opt::<Vec<f32>>(&zeros, &serial())
                 .map(crate::Pixels::Float32)
+        } else if self.binding.info.dtype == "<f8" {
+            self.decoded
+                .retrieve_chunk_opt::<Vec<f64>>(&zeros, &serial())
+                .map(crate::Pixels::Float64)
         } else {
             self.decoded
                 .retrieve_chunk_opt::<Vec<u16>>(&zeros, &serial())
@@ -1019,7 +1023,7 @@ impl Context {
         if r.budget
             .chunk_edge
             .checked_mul(r.budget.chunk_edge)
-            .and_then(|n| n.checked_mul(4))
+            .and_then(|n| n.checked_mul(8))
             .is_none_or(|n| n > r.budget.buffer_bytes / 4)
         {
             return fail("v3 delivery buffer exceeds quarter buffer_bytes");
@@ -1074,11 +1078,13 @@ impl Context {
             };
             let path = crate::zarr_acquire::name(path)?;
             let info = Info::read(&source, path, &r.budget)?;
-            if !matches!(info.dtype.as_str(), "<u2" | "<f4")
+            if !matches!(info.dtype.as_str(), "<u2" | "<f4" | "<f8")
                 || info.names.len() != 3
                 || info.names[0] != "time"
             {
-                return fail("v3 data requires UInt16/Float32 time-first rank-three arrays");
+                return fail(
+                    "v3 data requires UInt16/Float32/Float64 time-first rank-three arrays",
+                );
             }
             let yi = info
                 .names
@@ -1151,10 +1157,17 @@ impl Context {
                 info.inner_metadata(),
                 &r.budget,
             )?;
+            let mut key_metadata = info.metadata.clone();
+            if crate::zarr_decode::is_grib(&key_metadata) {
+                // This array supplies only chunk keys/shapes. The checked reader
+                // owns the narrow GRIB + scale_offset decoding path.
+                key_metadata["codecs"] =
+                    json!([{"name":"bytes","configuration":{"endian":"little"}}]);
+            }
             let original = Array::new_with_metadata(
                 source.clone(),
                 &format!("/{path}"),
-                serde_json::from_value(info.metadata.clone())?,
+                serde_json::from_value(key_metadata)?,
             )?;
             let mut logical = BTreeSet::new();
             for t in &ti {
@@ -1350,7 +1363,26 @@ impl Context {
             let mut selected_indices = vec![ti.clone(), vec![], vec![]];
             selected_indices[yi] = (window.y..window.y + window.height).collect();
             selected_indices[xi] = (window.x..window.x + window.width).collect();
-            p.selected.push(Selected{asset_id:a.id.clone(),datetime:None,timestamps:ti.iter().map(|i|d.times[*i].to_rfc3339()).collect(),dimensions:Some(DimensionSelection{shape:info.shape.clone(),chunk_shape:info.inner.clone(),names:info.names.clone(),indices:selected_indices}),mask_geometry:None,reason:format!("native v3 coordinate subset: {path}"),capabilities:Capabilities{selection:vec!["native bounds, explicit CF CRS, time, variables".into()],reads:if info.sharded{vec!["one cached index range per physical shard; selected encoded inner chunks".into()]}else{vec!["whole ordinary chunk objects".into()]},decoding:"zarrs 0.23.14 with fixed-output codec admission".into(),compression:"bytes/gzip/Zstd/Blosc LZ4 or Zstd; optional CRC32C shard index".into(),materialization:true},layout:Some(layout),window:window.clone()});
+            let grib = crate::zarr_decode::is_grib(&info.metadata);
+            p.selected.push(Selected {
+                asset_id: a.id.clone(), datetime: None,
+                timestamps: ti.iter().map(|i| d.times[*i].to_rfc3339()).collect(),
+                dimensions: Some(DimensionSelection { shape: info.shape.clone(), chunk_shape: info.inner.clone(), names: info.names.clone(), indices: selected_indices }),
+                mask_geometry: None,
+                reason: format!("native {} coordinate subset: {path}", if a.format == Format::Icechunk { "snapshot-pinned Icechunk" } else { "v3" }),
+                capabilities: Capabilities {
+                    selection: vec!["native bounds, explicit CF CRS, time, variables".into()],
+                    reads: if grib { vec!["whole GRIB2 message byte range; complete native grid per source chunk".into()] }
+                        else if info.sharded { vec!["one cached index range per physical shard; selected encoded inner chunks".into()] }
+                        else { vec!["whole ordinary chunk objects".into()] },
+                    decoding: if grib { "gribberish 1.9.0; admitted packing/grid/count checks; exact Float64 storage scale_offset".into() }
+                        else { "zarrs 0.23.14 with fixed-output codec admission".into() },
+                    compression: if grib { "GRIB2 templates 0,2,3,41,42; optional source storage scale_offset; whole-message decode".into() }
+                        else { "bytes/gzip/Zstd/Blosc LZ4 or Zstd; optional CRC32C shard index".into() },
+                    materialization: true,
+                },
+                layout: Some(layout), window: window.clone(),
+            });
             for (idx, (key, _)) in &binding.ranges {
                 let read = push(
                     p,
@@ -1370,7 +1402,11 @@ impl Context {
                     &a.id,
                     vec![read],
                     Operation::Decode {
-                        reader: "zarrs v3 logical inner chunk".into(),
+                        reader: if grib {
+                            "gribberish GRIB2 logical source chunk".into()
+                        } else {
+                            "zarrs v3 logical inner chunk".into()
+                        },
                     },
                 )?;
                 push(
@@ -1384,7 +1420,12 @@ impl Context {
                 )?;
             }
         }
-        p.limitations.push("V3 native rank-three UInt16/Float32, time first, regular explicit spatial axes and declared native CRS; no reprojection/calibration. Storage fill is distinct from CF missingness. Shard keys are physical, node indices/chunk_shape logical. Outer/nested sharding codecs, external masks and unsupported index pipelines are refused; no full-shard fallback. Strong per-object versions are not an atomic dataset snapshot.".into());
+        p.limitations.push("V3 native rank-three UInt16/Float32/Float64, time first, regular explicit spatial axes and declared native CRS; no reprojection or metadata calibration. Storage codecs are decoded once; original codec metadata is retained. Storage fill is distinct from CF missingness. Shard keys are physical, node indices/chunk_shape logical. Outer/nested sharding codecs, external masks and unsupported index pipelines are refused; no full-shard fallback.".into());
+        if source.snapshot().is_some() {
+            p.limitations.push("Icechunk resolves its version once to an immutable snapshot; external virtual files are separately ETag-pinned during preparation. Without a reference checksum this does not prove that external bytes match snapshot creation. Native library repository/snapshot/manifest HTTP and allocations are outside payload counters and reservations; total wire bytes and process RSS are not established. GRIB uses whole-grid source messages, native Float64 and explicitly admitted storage scale_offset; no spatial range reduction inside a GRIB message. Scheduler per-host admission is keyed to repository origin; references may read a different physical origin.".into());
+        } else {
+            p.limitations.push("Strong per-object versions for ordinary Zarr do not form an atomic dataset snapshot.".into());
+        }
         Ok(())
     }
 }

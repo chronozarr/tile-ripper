@@ -1114,7 +1114,7 @@ fn selection_chunk(
         crate::Pixels::UInt8(v) => crate::Pixels::UInt8(rows(v, whole, x, y, w, len)?),
         crate::Pixels::UInt16(v) => crate::Pixels::UInt16(rows(v, whole, x, y, w, len)?),
         crate::Pixels::Int16(v) => crate::Pixels::Int16(rows(v, whole, x, y, w, len)?),
-        crate::Pixels::Int8(_) | crate::Pixels::UInt32(_) => {
+        crate::Pixels::Int8(_) | crate::Pixels::UInt32(_) | crate::Pixels::Float64(_) => {
             return fail("unsupported native COG sample type")
         }
         crate::Pixels::Float32(v) => crate::Pixels::Float32(rows(v, whole, x, y, w, len)?),
@@ -1128,6 +1128,7 @@ fn capacity_bytes(values: &crate::Pixels) -> usize {
         crate::Pixels::Int16(v) => v.capacity() * 2,
         crate::Pixels::UInt32(v) => v.capacity() * 4,
         crate::Pixels::Float32(v) => v.capacity() * 4,
+        crate::Pixels::Float64(v) => v.capacity() * 8,
     }
 }
 fn apply_mask(values: &mut crate::Pixels, nodata: f64, mask: &[u8]) -> Result<()> {
@@ -1145,7 +1146,7 @@ fn apply_mask(values: &mut crate::Pixels, nodata: f64, mask: &[u8]) -> Result<()
         crate::Pixels::UInt16(v) => replace!(v, nodata as u16),
         crate::Pixels::Int16(v) => replace!(v, nodata as i16),
         crate::Pixels::Float32(v) => replace!(v, nodata as f32),
-        crate::Pixels::Int8(_) | crate::Pixels::UInt32(_) => {
+        crate::Pixels::Int8(_) | crate::Pixels::UInt32(_) | crate::Pixels::Float64(_) => {
             return fail("unsupported native COG sample type")
         }
     }

@@ -68,6 +68,7 @@ fn run() -> Result<()> {
             Pixels::Int16(v) => ("int16", adler(v.iter().flat_map(|v| v.to_le_bytes()))),
             Pixels::UInt16(v) => ("uint16", adler(v.iter().flat_map(|v| v.to_le_bytes()))),
             Pixels::Float32(v) => ("float32", adler(v.iter().flat_map(|v| v.to_le_bytes()))),
+            Pixels::Float64(v) => ("float64", adler(v.iter().flat_map(|v| v.to_le_bytes()))),
         };
         let (mut n, mut total) = (0usize, 0f64);
         for (i, keep) in c.validity().enumerate() {
@@ -80,6 +81,7 @@ fn run() -> Result<()> {
                     Pixels::Int16(v) => f64::from(v[i]),
                     Pixels::UInt16(v) => f64::from(v[i]),
                     Pixels::Float32(v) => f64::from(v[i]),
+                    Pixels::Float64(v) => v[i],
                 };
             }
         }

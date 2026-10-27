@@ -651,7 +651,7 @@ pub(crate) struct SelectedReader {
     x_index: usize,
 }
 fn dataset_on(r: &Request, a: &Asset, sources: &crate::storage::Sources) -> Result<Arc<Dataset>> {
-    if a.format == Format::ZarrV3 {
+    if a.format.is_v3() {
         sources.v3.dataset(&a.id)
     } else {
         Ok(Arc::new(inspect_on(r, sources.get(a)?)?))
@@ -671,7 +671,7 @@ impl SelectedReader {
         };
         let path = name(path)?;
         let trace = Arc::new(std::sync::Mutex::new(ReadTrace::default()));
-        let input = if a.format == Format::ZarrV3 {
+        let input = if a.format.is_v3() {
             Input::V3(crate::zarr_v3::Reader::new(
                 sources.v3.binding(&a.id, path)?,
                 &r.budget,
@@ -803,6 +803,8 @@ impl SelectedReader {
                     let alloc = Instant::now();
                     let mut pixels = if layout.dtype == "<f4" {
                         crate::Pixels::Float32(vec![f32::NAN; width * height])
+                    } else if layout.dtype == "<f8" {
+                        crate::Pixels::Float64(vec![f64::NAN; width * height])
                     } else {
                         crate::Pixels::UInt16(vec![0; width * height])
                     };
@@ -956,7 +958,7 @@ fn output_array(
     chunks: Vec<usize>,
     format: &Format,
 ) -> Result<Array<OutputStore>> {
-    let (mut m, mut attrs) = if *format == Format::ZarrV3 {
+    let (mut m, mut attrs) = if format.is_v3() {
         let original = source.json(&format!("{path}/zarr.json"))?;
         let dtype = match original["data_type"].as_str() {
             Some("uint16") => "<u2",
@@ -1100,12 +1102,12 @@ pub(crate) fn fetch_on(
             for sel in &selected {
                 if let Variable::Dataset { path } = &sel.layout.as_ref().unwrap().variable {
                     let n = name(path)?;
-                    source_arrays.insert(n.into(), if a.format==Format::ZarrV3 { source_store.json(&format!("{n}/zarr.json"))? } else { serde_json::json!({"metadata":json(&source_store,&format!("{n}/.zarray"))?,"attributes":json(&source_store,&format!("{n}/.zattrs"))?}) });
+                    source_arrays.insert(n.into(), if a.format.is_v3() { source_store.json(&format!("{n}/zarr.json"))? } else { serde_json::json!({"metadata":json(&source_store,&format!("{n}/.zarray"))?,"attributes":json(&source_store,&format!("{n}/.zattrs"))?}) });
                 }
             }
             original_metadata.insert(
                 a.id.clone(),
-                serde_json::json!({"group_attributes":d.root_attrs,"arrays":source_arrays}),
+                serde_json::json!({"group_attributes":d.root_attrs,"arrays":source_arrays,"source_snapshot":source_store.snapshot()}),
             );
             let mut attrs = d.root_attrs.clone();
             if d.conventional {
@@ -1336,6 +1338,7 @@ impl OutputBuffer {
             match &values {
                 crate::Pixels::UInt16(v) => ar.store_chunk_opt(&key, v, &serial())?,
                 crate::Pixels::Float32(v) => ar.store_chunk_opt(&key, v, &serial())?,
+                crate::Pixels::Float64(v) => ar.store_chunk_opt(&key, v, &serial())?,
                 _ => return fail("Zarr output currently requires UInt16 or Float32"),
             };
             if self.first_output.is_none() {
@@ -1370,7 +1373,15 @@ impl OutputBuffer {
         }
         let cs = ar.chunk_shape_usize(&[0, 0, 0])?;
         let float = ar.data_type() == &zarrs::array::data_type::float32();
-        let bytes = cs.iter().product::<usize>() * if float { 4 } else { 2 };
+        let double = ar.data_type() == &zarrs::array::data_type::float64();
+        let bytes = cs.iter().product::<usize>()
+            * if double {
+                8
+            } else if float {
+                4
+            } else {
+                2
+            };
         if bytes > self.limit {
             return fail("destination chunk exceeds output buffer budget");
         }
@@ -1394,6 +1405,8 @@ impl OutputBuffer {
                     let t = Instant::now();
                     let values = if float {
                         crate::Pixels::Float32(ar.retrieve_chunk_opt::<Vec<f32>>(&key, &serial())?)
+                    } else if double {
+                        crate::Pixels::Float64(ar.retrieve_chunk_opt::<Vec<f64>>(&key, &serial())?)
                     } else {
                         crate::Pixels::UInt16(ar.retrieve_chunk_opt::<Vec<u16>>(&key, &serial())?)
                     };

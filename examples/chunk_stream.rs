@@ -24,6 +24,7 @@ fn main() -> Result<()> {
             Pixels::UInt16(v) => Box::new(v.iter().map(|v| *v as f64)),
             Pixels::Int16(v) => Box::new(v.iter().map(|v| *v as f64)),
             Pixels::Float32(v) => Box::new(v.iter().map(|v| *v as f64)),
+            Pixels::Float64(v) => Box::new(v.iter().copied()),
         };
         for (v, keep) in values.zip(c.validity()) {
             if keep {
@@ -39,6 +40,7 @@ fn main() -> Result<()> {
                 Pixels::UInt16(v) => adler(v.iter().flat_map(|v| v.to_le_bytes())),
                 Pixels::Int16(v) => adler(v.iter().flat_map(|v| v.to_le_bytes())),
                 Pixels::Float32(v) => adler(v.iter().flat_map(|v| v.to_le_bytes())),
+                Pixels::Float64(v) => adler(v.iter().flat_map(|v| v.to_le_bytes())),
             };
             let coordinate_digest = c
                 .coordinates

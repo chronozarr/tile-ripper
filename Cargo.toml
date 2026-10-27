@@ -14,16 +14,17 @@ native-cog = ["dep:tiff-reader", "dep:geotiff-core", "dep:roxmltree", "dep:geo",
 native-hdf5 = ["dep:roxmltree", "dep:hdf5-reader", "dep:geo", "dep:proj4rs", "dep:ring"]
 authenticated-http = ["reqwest/cookies", "tokio/rt-multi-thread", "tokio/time", "tokio/macros", "dep:ring"]
 experimental-output = ["zarrs/sharding", "zarrs/zstd"]
+icechunk = ["dep:icechunk", "dep:zarrs_icechunk", "dep:icechunk-format", "dep:icechunk-types", "dep:icechunk-storage", "dep:icechunk-arrow-object-store", "dep:futures", "dep:gribberish", "tokio/rt-multi-thread", "tokio/time", "tokio/net"]
 
 [dependencies]
 hdf5-reader = { version = "=0.9.3", path = "vendor/hdf5-reader", default-features = false, optional = true }
 gdal = { version = "=0.19.0", optional = true }
 serde = { version = "=1.0.228", features = ["derive"] }
-serde_json = "=1.0.145"
-chrono = { version = "=0.4.42", default-features = false, features = ["std"] }
+serde_json = "=1.0.150"
+chrono = { version = "=0.4.44", default-features = false, features = ["std"] }
 stac = { version = "=0.17.6", features = ["std"] }
 stac-io = "=0.3.4"
-tokio = { version = "=1.48.0", features = ["rt"] }
+tokio = { version = "=1.52.3", features = ["rt"] }
 zarrs = { version = "=0.23.14", default-features = false, features = ["filesystem", "gzip", "blosc", "crc32c", "sharding", "zstd"] }
 # Scoped copy of the existing filesystem dependency; see its patch note.
 zarrs_filesystem = { version = "=0.3.13", path = "vendor/zarrs_filesystem" }
@@ -34,6 +35,15 @@ zstd = "=0.13.3"
 base64 = "=0.22.1"
 ctrlc = { version = "=3.5.2", features = ["termination"] }
 ring = { version = "=0.17.14", optional = true }
+icechunk = { version = "=2.1.0", default-features = false, features = ["object-store-http", "object-store-fs"], optional = true }
+zarrs_icechunk = { version = "=0.5.1", default-features = false, optional = true }
+# Pin the compatible Icechunk crate family; newer 2.x releases require Rust 1.95.
+icechunk-format = { version = "=2.1.0", optional = true }
+icechunk-types = { version = "=2.1.0", optional = true }
+icechunk-storage = { version = "=2.1.0", optional = true }
+icechunk-arrow-object-store = { version = "=2.1.0", default-features = false, optional = true }
+futures = { version = "=0.3.32", optional = true }
+gribberish = { version = "=1.9.0", default-features = false, features = ["png", "zarrs"], optional = true }
 
 tiff-reader = { version = "=0.9.0", path = "vendor/tiff-reader", default-features = false, features = ["zstd"], optional = true }
 geotiff-core = { version = "=0.9.0", optional = true }

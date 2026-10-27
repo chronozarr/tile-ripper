@@ -13,6 +13,7 @@ export const sections = [
     ['docs/guide/goes-smap-nisar.md', 'goes-smap-nisar', 'GOES, SMAP and NISAR'],
     ['docs/guide/swot.md', 'swot-raster', 'SWOT Raster'],
     ['docs/guide/zarr.md', 'zarr-stores', 'ERA5, IMERG and GFS (Zarr)'],
+    ['docs/icechunk/workflow.md', 'icechunk', 'Icechunk and virtual GRIB'],
   ] },
   { text: 'Use the output', pages: [
     ['docs/guide/output.md', 'reading-output', 'Output, values and masks'],
@@ -37,6 +38,7 @@ export const sections = [
     ['docs/swot-job/workflow.md', 'swot', 'SWOT jobs: full contract'],
     ['docs/swot-aoi/workflow.md', 'swot-geography', 'SWOT geographic selection: full contract'],
     ['docs/zarr-v3-input/workflow.md', 'zarr', 'Zarr v3 input profile'],
+    ['docs/icechunk/reference.md', 'icechunk-evidence', 'Icechunk source and access measurements'],
     ['docs/providers/qualification.md', 'providers', 'Provider routing report'],
     ['docs/transfer-resume/workflow.md', 'resume', 'SWOT transfer resume'],
   ] },

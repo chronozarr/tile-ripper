@@ -578,9 +578,11 @@ pub(crate) fn plan_on_with_native_selection(
                     #[cfg(not(feature = "native-hdf5"))]
                     return fail("build with native-hdf5 to acquire HDF5");
                 }
-                Format::ZarrV3 => sources
-                    .v3
-                    .plan(asset, request, &mut p, sources.get(asset)?)?,
+                Format::ZarrV3 | Format::Icechunk => {
+                    sources
+                        .v3
+                        .plan(asset, request, &mut p, sources.get(asset)?)?
+                }
                 Format::ZarrV2 if cog::remote(&asset.locator) => {
                     crate::zarr_acquire::plan_asset_on(asset, request, &mut p, sources.get(asset)?)?
                 }

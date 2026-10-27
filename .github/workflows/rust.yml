@@ -39,7 +39,12 @@ jobs:
           - {name: native-cog, flags: '--no-default-features --features native-cog'}
           - {name: native-hdf5, flags: '--no-default-features --features native-hdf5'}
           - {name: native-full, flags: '--no-default-features --features native-cog,native-hdf5,authenticated-http'}
+          - {name: icechunk, flags: '--no-default-features --features icechunk'}
           - {name: all-features, flags: '--all-features'}
+        # Icechunk requires Rust 1.91.1; retain the 1.91.0 baseline checks.
+        exclude:
+          - {rust: '1.91.0', profile: {name: icechunk, flags: '--no-default-features --features icechunk'}}
+          - {rust: '1.91.0', profile: {name: all-features, flags: '--all-features'}}
     steps:
       - uses: actions/checkout@v4
       - name: Install GDAL
@@ -65,3 +70,4 @@ jobs:
       - run: cargo +1.92.0 test --locked --manifest-path vendor/tiff-reader/Cargo.toml --no-default-features --features zstd --lib zstd_
       - run: cargo +1.92.0 check --locked --manifest-path consumers/native-stats/Cargo.toml
       - run: cargo +1.92.0 check --locked --manifest-path consumers/native-stats/Cargo.toml --no-default-features --features native-cog
+      - run: cargo +1.92.0 check --locked --manifest-path consumers/native-stats/Cargo.toml --no-default-features --features icechunk

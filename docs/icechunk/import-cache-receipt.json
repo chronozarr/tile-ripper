@@ -1,0 +1,524 @@
+{
+  "created_utc": "2026-10-27T19:53:51.817988+00:00",
+  "repository": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis/v0.1.0.icechunk",
+  "snapshot_id": "6K6H23PYR6QXA9VM0C6G",
+  "selection": {
+    "time": [
+      48072,
+      48074
+    ],
+    "latitude": [
+      224,
+      226
+    ],
+    "longitude": [
+      316,
+      318
+    ]
+  },
+  "read_order": [
+    0,
+    1,
+    0
+  ],
+  "dependencies": {
+    "icechunk": "2.3.0",
+    "zarr": "3.4.0",
+    "xarray": "2026.2.0",
+    "numpy": "2.4.4"
+  },
+  "limits": [
+    "Loopback forwarding adds latency; response-body bytes exclude HTTP/TLS overhead.",
+    "The source-opening injection is test instrumentation, not a production endpoint rewrite.",
+    "Cache budget covers maintained Icechunk encoded chunk bytes, not metadata, decoded chunks or RSS.",
+    "One source window only; no archive-wide or device-wide performance promise."
+  ],
+  "cases": [
+    {
+      "encoded_chunk_cache_bytes": 0,
+      "reads": [
+        {
+          "trial": 0,
+          "time_index_in_selection": 0,
+          "wall_seconds": 1.7201060830266215,
+          "values": {
+            "shape": [
+              1,
+              2,
+              2
+            ],
+            "dtype": "float32",
+            "logical_bytes": 16,
+            "sha256": "96b6b81600ad95bb8ebbf43325a2253d83244fc8a48c949550004c79a0a6eb6a",
+            "finite_values": 4,
+            "nan_values": 0,
+            "min": 20.125,
+            "max": 21.375,
+            "first_values": [
+              20.125,
+              21.0,
+              20.25,
+              21.375
+            ]
+          },
+          "transport": {
+            "response_body_bytes": 1372181,
+            "http_operations": 3,
+            "events": [
+              {
+                "stage": "cache_0:trial_0:time_0",
+                "method": "GET",
+                "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis/v0.1.0.icechunk/manifests/TD9P10XPA7BDKAMXMPAG",
+                "kind": "repository",
+                "request_headers": {
+                  "Range": "bytes=0-6369"
+                },
+                "status": 206,
+                "response_body_bytes": 6370,
+                "etag": "\"fc1fe198a077b7ee8af6b9f23f29b672\"",
+                "content_range": "bytes 0-6369/6370",
+                "sha256": "d3c5c08488904a6a67b5439c505f4d80ab20223f4384d3817511c2047fea0fac",
+                "wall_seconds": 0.34304779197555035
+              },
+              {
+                "stage": "cache_0:trial_0:time_0",
+                "method": "GET",
+                "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis/v0.1.0.icechunk/chunks/2G30H43FNHY7HHDYCTSG",
+                "kind": "repository",
+                "request_headers": {
+                  "Range": "bytes=64989511-64990538"
+                },
+                "status": 206,
+                "response_body_bytes": 1028,
+                "etag": "\"a40d8d04d6ae9a32b79bea5f02cdd05d\"",
+                "content_range": "bytes 64989511-64990538/64990539",
+                "sha256": "e2e5fcdd5f96414ada2e3c91e99e89124d00c3ccbcffc659bef1eebd72ba4b26",
+                "wall_seconds": 0.3280961670097895
+              },
+              {
+                "stage": "cache_0:trial_0:time_0",
+                "method": "GET",
+                "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis/v0.1.0.icechunk/chunks/2G30H43FNHY7HHDYCTSG",
+                "kind": "repository",
+                "request_headers": {
+                  "Range": "bytes=57249035-58613817"
+                },
+                "status": 206,
+                "response_body_bytes": 1364783,
+                "etag": "\"a40d8d04d6ae9a32b79bea5f02cdd05d\"",
+                "content_range": "bytes 57249035-58613817/64990539",
+                "sha256": "a96639701c3814c21346b1406b82c8eaeb53b898cd97b6ef6df35e5d4b7faf9f",
+                "wall_seconds": 1.0134027499589138
+              }
+            ]
+          }
+        },
+        {
+          "trial": 1,
+          "time_index_in_selection": 1,
+          "wall_seconds": 1.2837300830287859,
+          "values": {
+            "shape": [
+              1,
+              2,
+              2
+            ],
+            "dtype": "float32",
+            "logical_bytes": 16,
+            "sha256": "8e7a6718e5fc61a4c1989f692ac8abd0623d5a11ee434ba7dbb83b08cf1dd46f",
+            "finite_values": 4,
+            "nan_values": 0,
+            "min": 19.375,
+            "max": 20.5,
+            "first_values": [
+              19.375,
+              20.5,
+              20.125,
+              20.25
+            ]
+          },
+          "transport": {
+            "response_body_bytes": 1365811,
+            "http_operations": 2,
+            "events": [
+              {
+                "stage": "cache_0:trial_1:time_1",
+                "method": "GET",
+                "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis/v0.1.0.icechunk/chunks/2G30H43FNHY7HHDYCTSG",
+                "kind": "repository",
+                "request_headers": {
+                  "Range": "bytes=64989511-64990538"
+                },
+                "status": 206,
+                "response_body_bytes": 1028,
+                "etag": "\"a40d8d04d6ae9a32b79bea5f02cdd05d\"",
+                "content_range": "bytes 64989511-64990538/64990539",
+                "sha256": "e2e5fcdd5f96414ada2e3c91e99e89124d00c3ccbcffc659bef1eebd72ba4b26",
+                "wall_seconds": 0.3203155829687603
+              },
+              {
+                "stage": "cache_0:trial_1:time_1",
+                "method": "GET",
+                "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis/v0.1.0.icechunk/chunks/2G30H43FNHY7HHDYCTSG",
+                "kind": "repository",
+                "request_headers": {
+                  "Range": "bytes=57249035-58613817"
+                },
+                "status": 206,
+                "response_body_bytes": 1364783,
+                "etag": "\"a40d8d04d6ae9a32b79bea5f02cdd05d\"",
+                "content_range": "bytes 57249035-58613817/64990539",
+                "sha256": "a96639701c3814c21346b1406b82c8eaeb53b898cd97b6ef6df35e5d4b7faf9f",
+                "wall_seconds": 0.9311822919989936
+              }
+            ]
+          }
+        },
+        {
+          "trial": 2,
+          "time_index_in_selection": 0,
+          "wall_seconds": 1.2496303750085644,
+          "values": {
+            "shape": [
+              1,
+              2,
+              2
+            ],
+            "dtype": "float32",
+            "logical_bytes": 16,
+            "sha256": "96b6b81600ad95bb8ebbf43325a2253d83244fc8a48c949550004c79a0a6eb6a",
+            "finite_values": 4,
+            "nan_values": 0,
+            "min": 20.125,
+            "max": 21.375,
+            "first_values": [
+              20.125,
+              21.0,
+              20.25,
+              21.375
+            ]
+          },
+          "transport": {
+            "response_body_bytes": 1365811,
+            "http_operations": 2,
+            "events": [
+              {
+                "stage": "cache_0:trial_2:time_0",
+                "method": "GET",
+                "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis/v0.1.0.icechunk/chunks/2G30H43FNHY7HHDYCTSG",
+                "kind": "repository",
+                "request_headers": {
+                  "Range": "bytes=64989511-64990538"
+                },
+                "status": 206,
+                "response_body_bytes": 1028,
+                "etag": "\"a40d8d04d6ae9a32b79bea5f02cdd05d\"",
+                "content_range": "bytes 64989511-64990538/64990539",
+                "sha256": "e2e5fcdd5f96414ada2e3c91e99e89124d00c3ccbcffc659bef1eebd72ba4b26",
+                "wall_seconds": 0.33683287497842684
+              },
+              {
+                "stage": "cache_0:trial_2:time_0",
+                "method": "GET",
+                "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis/v0.1.0.icechunk/chunks/2G30H43FNHY7HHDYCTSG",
+                "kind": "repository",
+                "request_headers": {
+                  "Range": "bytes=57249035-58613817"
+                },
+                "status": 206,
+                "response_body_bytes": 1364783,
+                "etag": "\"a40d8d04d6ae9a32b79bea5f02cdd05d\"",
+                "content_range": "bytes 57249035-58613817/64990539",
+                "sha256": "a96639701c3814c21346b1406b82c8eaeb53b898cd97b6ef6df35e5d4b7faf9f",
+                "wall_seconds": 0.8761570840142667
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "encoded_chunk_cache_bytes": 33554432,
+      "reads": [
+        {
+          "trial": 0,
+          "time_index_in_selection": 0,
+          "wall_seconds": 1.4774099169881083,
+          "values": {
+            "shape": [
+              1,
+              2,
+              2
+            ],
+            "dtype": "float32",
+            "logical_bytes": 16,
+            "sha256": "96b6b81600ad95bb8ebbf43325a2253d83244fc8a48c949550004c79a0a6eb6a",
+            "finite_values": 4,
+            "nan_values": 0,
+            "min": 20.125,
+            "max": 21.375,
+            "first_values": [
+              20.125,
+              21.0,
+              20.25,
+              21.375
+            ]
+          },
+          "transport": {
+            "response_body_bytes": 1372181,
+            "http_operations": 3,
+            "events": [
+              {
+                "stage": "cache_33554432:trial_0:time_0",
+                "method": "GET",
+                "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis/v0.1.0.icechunk/manifests/TD9P10XPA7BDKAMXMPAG",
+                "kind": "repository",
+                "request_headers": {
+                  "Range": "bytes=0-6369"
+                },
+                "status": 206,
+                "response_body_bytes": 6370,
+                "etag": "\"fc1fe198a077b7ee8af6b9f23f29b672\"",
+                "content_range": "bytes 0-6369/6370",
+                "sha256": "d3c5c08488904a6a67b5439c505f4d80ab20223f4384d3817511c2047fea0fac",
+                "wall_seconds": 0.28187137498753145
+              },
+              {
+                "stage": "cache_33554432:trial_0:time_0",
+                "method": "GET",
+                "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis/v0.1.0.icechunk/chunks/2G30H43FNHY7HHDYCTSG",
+                "kind": "repository",
+                "request_headers": {
+                  "Range": "bytes=64989511-64990538"
+                },
+                "status": 206,
+                "response_body_bytes": 1028,
+                "etag": "\"a40d8d04d6ae9a32b79bea5f02cdd05d\"",
+                "content_range": "bytes 64989511-64990538/64990539",
+                "sha256": "e2e5fcdd5f96414ada2e3c91e99e89124d00c3ccbcffc659bef1eebd72ba4b26",
+                "wall_seconds": 0.35283062496455386
+              },
+              {
+                "stage": "cache_33554432:trial_0:time_0",
+                "method": "GET",
+                "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis/v0.1.0.icechunk/chunks/2G30H43FNHY7HHDYCTSG",
+                "kind": "repository",
+                "request_headers": {
+                  "Range": "bytes=57249035-58613817"
+                },
+                "status": 206,
+                "response_body_bytes": 1364783,
+                "etag": "\"a40d8d04d6ae9a32b79bea5f02cdd05d\"",
+                "content_range": "bytes 57249035-58613817/64990539",
+                "sha256": "a96639701c3814c21346b1406b82c8eaeb53b898cd97b6ef6df35e5d4b7faf9f",
+                "wall_seconds": 0.8219498749822378
+              }
+            ]
+          }
+        },
+        {
+          "trial": 1,
+          "time_index_in_selection": 1,
+          "wall_seconds": 0.0131210419931449,
+          "values": {
+            "shape": [
+              1,
+              2,
+              2
+            ],
+            "dtype": "float32",
+            "logical_bytes": 16,
+            "sha256": "8e7a6718e5fc61a4c1989f692ac8abd0623d5a11ee434ba7dbb83b08cf1dd46f",
+            "finite_values": 4,
+            "nan_values": 0,
+            "min": 19.375,
+            "max": 20.5,
+            "first_values": [
+              19.375,
+              20.5,
+              20.125,
+              20.25
+            ]
+          },
+          "transport": {
+            "response_body_bytes": 0,
+            "http_operations": 0,
+            "events": []
+          }
+        },
+        {
+          "trial": 2,
+          "time_index_in_selection": 0,
+          "wall_seconds": 0.01278345799073577,
+          "values": {
+            "shape": [
+              1,
+              2,
+              2
+            ],
+            "dtype": "float32",
+            "logical_bytes": 16,
+            "sha256": "96b6b81600ad95bb8ebbf43325a2253d83244fc8a48c949550004c79a0a6eb6a",
+            "finite_values": 4,
+            "nan_values": 0,
+            "min": 20.125,
+            "max": 21.375,
+            "first_values": [
+              20.125,
+              21.0,
+              20.25,
+              21.375
+            ]
+          },
+          "transport": {
+            "response_body_bytes": 0,
+            "http_operations": 0,
+            "events": []
+          }
+        }
+      ]
+    },
+    {
+      "encoded_chunk_cache_bytes": 67108864,
+      "reads": [
+        {
+          "trial": 0,
+          "time_index_in_selection": 0,
+          "wall_seconds": 1.5639187499764375,
+          "values": {
+            "shape": [
+              1,
+              2,
+              2
+            ],
+            "dtype": "float32",
+            "logical_bytes": 16,
+            "sha256": "96b6b81600ad95bb8ebbf43325a2253d83244fc8a48c949550004c79a0a6eb6a",
+            "finite_values": 4,
+            "nan_values": 0,
+            "min": 20.125,
+            "max": 21.375,
+            "first_values": [
+              20.125,
+              21.0,
+              20.25,
+              21.375
+            ]
+          },
+          "transport": {
+            "response_body_bytes": 1372181,
+            "http_operations": 3,
+            "events": [
+              {
+                "stage": "cache_67108864:trial_0:time_0",
+                "method": "GET",
+                "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis/v0.1.0.icechunk/manifests/TD9P10XPA7BDKAMXMPAG",
+                "kind": "repository",
+                "request_headers": {
+                  "Range": "bytes=0-6369"
+                },
+                "status": 206,
+                "response_body_bytes": 6370,
+                "etag": "\"fc1fe198a077b7ee8af6b9f23f29b672\"",
+                "content_range": "bytes 0-6369/6370",
+                "sha256": "d3c5c08488904a6a67b5439c505f4d80ab20223f4384d3817511c2047fea0fac",
+                "wall_seconds": 0.34494149999227375
+              },
+              {
+                "stage": "cache_67108864:trial_0:time_0",
+                "method": "GET",
+                "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis/v0.1.0.icechunk/chunks/2G30H43FNHY7HHDYCTSG",
+                "kind": "repository",
+                "request_headers": {
+                  "Range": "bytes=64989511-64990538"
+                },
+                "status": 206,
+                "response_body_bytes": 1028,
+                "etag": "\"a40d8d04d6ae9a32b79bea5f02cdd05d\"",
+                "content_range": "bytes 64989511-64990538/64990539",
+                "sha256": "e2e5fcdd5f96414ada2e3c91e99e89124d00c3ccbcffc659bef1eebd72ba4b26",
+                "wall_seconds": 0.29548324999632314
+              },
+              {
+                "stage": "cache_67108864:trial_0:time_0",
+                "method": "GET",
+                "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis/v0.1.0.icechunk/chunks/2G30H43FNHY7HHDYCTSG",
+                "kind": "repository",
+                "request_headers": {
+                  "Range": "bytes=57249035-58613817"
+                },
+                "status": 206,
+                "response_body_bytes": 1364783,
+                "etag": "\"a40d8d04d6ae9a32b79bea5f02cdd05d\"",
+                "content_range": "bytes 57249035-58613817/64990539",
+                "sha256": "a96639701c3814c21346b1406b82c8eaeb53b898cd97b6ef6df35e5d4b7faf9f",
+                "wall_seconds": 0.8924998749862425
+              }
+            ]
+          }
+        },
+        {
+          "trial": 1,
+          "time_index_in_selection": 1,
+          "wall_seconds": 0.016400791006162763,
+          "values": {
+            "shape": [
+              1,
+              2,
+              2
+            ],
+            "dtype": "float32",
+            "logical_bytes": 16,
+            "sha256": "8e7a6718e5fc61a4c1989f692ac8abd0623d5a11ee434ba7dbb83b08cf1dd46f",
+            "finite_values": 4,
+            "nan_values": 0,
+            "min": 19.375,
+            "max": 20.5,
+            "first_values": [
+              19.375,
+              20.5,
+              20.125,
+              20.25
+            ]
+          },
+          "transport": {
+            "response_body_bytes": 0,
+            "http_operations": 0,
+            "events": []
+          }
+        },
+        {
+          "trial": 2,
+          "time_index_in_selection": 0,
+          "wall_seconds": 0.013973249995615333,
+          "values": {
+            "shape": [
+              1,
+              2,
+              2
+            ],
+            "dtype": "float32",
+            "logical_bytes": 16,
+            "sha256": "96b6b81600ad95bb8ebbf43325a2253d83244fc8a48c949550004c79a0a6eb6a",
+            "finite_values": 4,
+            "nan_values": 0,
+            "min": 20.125,
+            "max": 21.375,
+            "first_values": [
+              20.125,
+              21.0,
+              20.25,
+              21.375
+            ]
+          },
+          "transport": {
+            "response_body_bytes": 0,
+            "http_operations": 0,
+            "events": []
+          }
+        }
+      ]
+    }
+  ],
+  "exact_values_unchanged": true
+}

@@ -87,6 +87,7 @@ fn main() -> tile_ripper::Result<()> {
                 Pixels::Int16(v) => v.iter().flat_map(|v| v.to_le_bytes()).collect(),
                 Pixels::UInt32(v) => v.iter().flat_map(|v| v.to_le_bytes()).collect(),
                 Pixels::Float32(v) => v.iter().flat_map(|v| v.to_le_bytes()).collect(),
+                Pixels::Float64(v) => v.iter().flat_map(|v| v.to_le_bytes()).collect(),
             };
             let mask = c.validity().map(u8::from).collect::<Vec<_>>();
             if mode == "dump" {

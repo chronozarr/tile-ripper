@@ -10,10 +10,10 @@ python3 scripts/validate.py --toolchain 1.92.0 --output prototype-output/consoli
 ```
 
 The local command uses no provider data. It checks documentation links and the
-qualified Wave 4 source hashes, formatting, Clippy, six feature builds, both
+qualified Wave 4 source hashes, formatting, Clippy, seven feature builds, both
 vendored test suites, the standalone consumer and Python syntax. Each check has
 a log and hash in `report.json`. The feature builds are default GDAL, Zarr-only,
-native COG, native HDF5, complete native, and all features. Install system GDAL
+native COG, native HDF5, complete native, Icechunk, and all features. Install system GDAL
 for this full matrix. It uses two Cargo build jobs and serial Rust tests to avoid
 the resource/deadline failures recorded during earlier parallel runs.
 
@@ -30,11 +30,13 @@ replay checks the separate capture prerequisites explicitly. The owner-approved
 Apache-2.0 Cargo metadata addition is recorded in `license-decision.json`; it does
 not replace the qualified scientific source hashes or change production dependencies.
 
-Exercise the declared minimum with the same matrix:
+The baseline profiles still support Rust 1.91.0. The optional Icechunk dependency
+requires 1.91.1, so run the full matrix above with 1.92.0. To exercise the baseline
+minimum without the Icechunk feature:
 
 ```sh
-rustup component add --toolchain 1.91.0 rustfmt clippy
-python3 scripts/validate.py --toolchain 1.91.0 --output prototype-output/consolidation/rust-1.91-new
+cargo +1.91.0 test --locked --no-default-features --all-targets -- --test-threads=1
+cargo +1.91.0 test --locked --all-targets -- --test-threads=1
 ```
 
 Ignored tests include subprocess helpers, foreign-UID permission controls,

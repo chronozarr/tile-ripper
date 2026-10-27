@@ -1,0 +1,1122 @@
+{
+  "status": "passed",
+  "created_utc": "2026-10-27T20:20:42.632055+00:00",
+  "binary": "target/debug/tile-ripper",
+  "binary_profile": "debug",
+  "binary_sha256": "4ce9b826b287ad0a4f88af7b6b1b1827ddbcd22e6d28d85088c8994ab61b2023",
+  "harness_sha256": "cc1f39c3ada4d027ffe2feb255f21f158d350daa44520503ccefeaf68df49a62",
+  "reference_receipt_sha256": "6d029d095b01f47f30d676186769004edacdcb7bb56736b5c0eef46ed9fb8435",
+  "scope": "fixed GFS analysis snapshots; exact native values, coordinates and CLI completion",
+  "measurement_limits": [
+    "Each command starts a fresh process/session; provider and OS cache states are unknown.",
+    "Reported wall times include preparation and process startup; fetch includes durable output.",
+    "A debug executable is not evidence of release-build throughput.",
+    "Native transport counters cover physical payload bodies, not Icechunk library metadata HTTP.",
+    "Reference values come from a separate maintained Python reader and recorded source bodies.",
+    "Materialized and virtual sources have different numerical representations; no automatic routing."
+  ],
+  "binary_end_matches_start": true,
+  "raw_evidence_directory": "prototype-output/icechunk/final-native-cli-20261027",
+  "build_command": "cargo +1.92.0 build --locked --no-default-features --features icechunk --bin tile-ripper",
+  "cases": [
+    {
+      "product": "materialized",
+      "workload": "regional_one_time",
+      "trial": 0,
+      "snapshot_id": "6K6H23PYR6QXA9VM0C6G",
+      "shape": [
+        1,
+        2,
+        2
+      ],
+      "dtype": "float32",
+      "native_sha256": "96b6b81600ad95bb8ebbf43325a2253d83244fc8a48c949550004c79a0a6eb6a",
+      "reference_equal_bits": true,
+      "coordinates_equal": true,
+      "units": "degree_Celsius",
+      "stream_validated": true,
+      "stream_chunks": 1,
+      "wall_seconds": {
+        "plan": 4.0969400409958325,
+        "stream": 4.694814582995605,
+        "fetch": 4.7381849169614725
+      },
+      "logs_directory": "materialized-regional_one_time-0",
+      "observed": {
+        "source_data_requests": 1,
+        "source_data_bytes": 1364783,
+        "decoded_source_chunks": 1,
+        "filled_source_chunks": 0,
+        "decoded_bytes": 16,
+        "first_output_seconds": 0.849436209
+      },
+      "scheduler": {
+        "workers": 1,
+        "per_host": 4,
+        "buffer_bytes": 268435456,
+        "reserved_bytes_peak": 32800492,
+        "reader_state_reserved_bytes": 0,
+        "prepared_native_metadata_bytes": 1262734,
+        "authenticated_transport_reserved_bytes": 0,
+        "prepared_v3_metadata_index_bytes": 1262734,
+        "active_workers_peak": 1,
+        "completed_tasks": 1,
+        "admitted_jobs": 1,
+        "cog_reader_scope": "selection",
+        "seconds": 0.849556542,
+        "order": "plan",
+        "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+        "zarr_v3_coalescing": {
+          "config": {
+            "policy": "cost",
+            "max_span": 4194304,
+            "max_gap": 65536,
+            "max_overfetch_ratio": 1.0,
+            "latency_seconds": 0.002,
+            "bandwidth_bytes_second": 32000000.0,
+            "concurrency": 1
+          },
+          "window_logical_chunks": 32,
+          "plan_metadata_bytes": 0,
+          "batches": []
+        },
+        "zarr_v3_ranges": [
+          {
+            "logical_payloads": 1,
+            "selected_bytes": 1364783,
+            "payload_requests": 1,
+            "fetched_bytes": 1364783,
+            "merged_requests": 0,
+            "merged_cache_hits": 0,
+            "prepared_index_hits": 1,
+            "retained_buffer_peak": 0
+          }
+        ]
+      },
+      "crs_equivalent": true
+    },
+    {
+      "product": "materialized",
+      "workload": "regional_one_time",
+      "trial": 1,
+      "snapshot_id": "6K6H23PYR6QXA9VM0C6G",
+      "shape": [
+        1,
+        2,
+        2
+      ],
+      "dtype": "float32",
+      "native_sha256": "96b6b81600ad95bb8ebbf43325a2253d83244fc8a48c949550004c79a0a6eb6a",
+      "reference_equal_bits": true,
+      "coordinates_equal": true,
+      "units": "degree_Celsius",
+      "stream_validated": true,
+      "stream_chunks": 1,
+      "wall_seconds": {
+        "plan": 2.7748381250421517,
+        "stream": 4.324144083017018,
+        "fetch": 4.623306124994997
+      },
+      "logs_directory": "materialized-regional_one_time-1",
+      "observed": {
+        "source_data_requests": 1,
+        "source_data_bytes": 1364783,
+        "decoded_source_chunks": 1,
+        "filled_source_chunks": 0,
+        "decoded_bytes": 16,
+        "first_output_seconds": 0.691161042
+      },
+      "scheduler": {
+        "workers": 1,
+        "per_host": 4,
+        "buffer_bytes": 268435456,
+        "reserved_bytes_peak": 32800492,
+        "reader_state_reserved_bytes": 0,
+        "prepared_native_metadata_bytes": 1262734,
+        "authenticated_transport_reserved_bytes": 0,
+        "prepared_v3_metadata_index_bytes": 1262734,
+        "active_workers_peak": 1,
+        "completed_tasks": 1,
+        "admitted_jobs": 1,
+        "cog_reader_scope": "selection",
+        "seconds": 0.691289417,
+        "order": "plan",
+        "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+        "zarr_v3_coalescing": {
+          "config": {
+            "policy": "cost",
+            "max_span": 4194304,
+            "max_gap": 65536,
+            "max_overfetch_ratio": 1.0,
+            "latency_seconds": 0.002,
+            "bandwidth_bytes_second": 32000000.0,
+            "concurrency": 1
+          },
+          "window_logical_chunks": 32,
+          "plan_metadata_bytes": 0,
+          "batches": []
+        },
+        "zarr_v3_ranges": [
+          {
+            "logical_payloads": 1,
+            "selected_bytes": 1364783,
+            "payload_requests": 1,
+            "fetched_bytes": 1364783,
+            "merged_requests": 0,
+            "merged_cache_hits": 0,
+            "prepared_index_hits": 1,
+            "retained_buffer_peak": 0
+          }
+        ]
+      },
+      "crs_equivalent": true
+    },
+    {
+      "product": "materialized",
+      "workload": "regional_24_hours",
+      "trial": 0,
+      "snapshot_id": "6K6H23PYR6QXA9VM0C6G",
+      "shape": [
+        24,
+        2,
+        2
+      ],
+      "dtype": "float32",
+      "native_sha256": "b5a1c95facd8cc6cc9fc8877696e023b2f759585d10a352f338d7a2942abccd0",
+      "reference_equal_bits": true,
+      "coordinates_equal": true,
+      "units": "degree_Celsius",
+      "stream_validated": true,
+      "stream_chunks": 24,
+      "wall_seconds": {
+        "plan": 3.4691979580093175,
+        "stream": 4.999704458983615,
+        "fetch": 5.0455683750333264
+      },
+      "logs_directory": "materialized-regional_24_hours-0",
+      "observed": {
+        "source_data_requests": 1,
+        "source_data_bytes": 1364783,
+        "decoded_source_chunks": 1,
+        "filled_source_chunks": 0,
+        "decoded_bytes": 384,
+        "first_output_seconds": 0.899044084
+      },
+      "scheduler": {
+        "workers": 1,
+        "per_host": 4,
+        "buffer_bytes": 268435456,
+        "reserved_bytes_peak": 32800492,
+        "reader_state_reserved_bytes": 0,
+        "prepared_native_metadata_bytes": 1262734,
+        "authenticated_transport_reserved_bytes": 0,
+        "prepared_v3_metadata_index_bytes": 1262734,
+        "active_workers_peak": 1,
+        "completed_tasks": 1,
+        "admitted_jobs": 1,
+        "cog_reader_scope": "selection",
+        "seconds": 0.900068542,
+        "order": "plan",
+        "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+        "zarr_v3_coalescing": {
+          "config": {
+            "policy": "cost",
+            "max_span": 4194304,
+            "max_gap": 65536,
+            "max_overfetch_ratio": 1.0,
+            "latency_seconds": 0.002,
+            "bandwidth_bytes_second": 32000000.0,
+            "concurrency": 1
+          },
+          "window_logical_chunks": 32,
+          "plan_metadata_bytes": 0,
+          "batches": []
+        },
+        "zarr_v3_ranges": [
+          {
+            "logical_payloads": 1,
+            "selected_bytes": 1364783,
+            "payload_requests": 1,
+            "fetched_bytes": 1364783,
+            "merged_requests": 0,
+            "merged_cache_hits": 0,
+            "prepared_index_hits": 1,
+            "retained_buffer_peak": 0
+          }
+        ]
+      },
+      "crs_equivalent": true
+    },
+    {
+      "product": "materialized",
+      "workload": "regional_24_hours",
+      "trial": 1,
+      "snapshot_id": "6K6H23PYR6QXA9VM0C6G",
+      "shape": [
+        24,
+        2,
+        2
+      ],
+      "dtype": "float32",
+      "native_sha256": "b5a1c95facd8cc6cc9fc8877696e023b2f759585d10a352f338d7a2942abccd0",
+      "reference_equal_bits": true,
+      "coordinates_equal": true,
+      "units": "degree_Celsius",
+      "stream_validated": true,
+      "stream_chunks": 24,
+      "wall_seconds": {
+        "plan": 3.407725249999203,
+        "stream": 4.5151137500070035,
+        "fetch": 5.954694624990225
+      },
+      "logs_directory": "materialized-regional_24_hours-1",
+      "observed": {
+        "source_data_requests": 1,
+        "source_data_bytes": 1364783,
+        "decoded_source_chunks": 1,
+        "filled_source_chunks": 0,
+        "decoded_bytes": 384,
+        "first_output_seconds": 0.806576208
+      },
+      "scheduler": {
+        "workers": 1,
+        "per_host": 4,
+        "buffer_bytes": 268435456,
+        "reserved_bytes_peak": 32800492,
+        "reader_state_reserved_bytes": 0,
+        "prepared_native_metadata_bytes": 1262734,
+        "authenticated_transport_reserved_bytes": 0,
+        "prepared_v3_metadata_index_bytes": 1262734,
+        "active_workers_peak": 1,
+        "completed_tasks": 1,
+        "admitted_jobs": 1,
+        "cog_reader_scope": "selection",
+        "seconds": 0.807710958,
+        "order": "plan",
+        "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+        "zarr_v3_coalescing": {
+          "config": {
+            "policy": "cost",
+            "max_span": 4194304,
+            "max_gap": 65536,
+            "max_overfetch_ratio": 1.0,
+            "latency_seconds": 0.002,
+            "bandwidth_bytes_second": 32000000.0,
+            "concurrency": 1
+          },
+          "window_logical_chunks": 32,
+          "plan_metadata_bytes": 0,
+          "batches": []
+        },
+        "zarr_v3_ranges": [
+          {
+            "logical_payloads": 1,
+            "selected_bytes": 1364783,
+            "payload_requests": 1,
+            "fetched_bytes": 1364783,
+            "merged_requests": 0,
+            "merged_cache_hits": 0,
+            "prepared_index_hits": 1,
+            "retained_buffer_peak": 0
+          }
+        ]
+      },
+      "crs_equivalent": true
+    },
+    {
+      "product": "materialized",
+      "workload": "regional_map_101",
+      "trial": 0,
+      "snapshot_id": "6K6H23PYR6QXA9VM0C6G",
+      "shape": [
+        1,
+        101,
+        101
+      ],
+      "dtype": "float32",
+      "native_sha256": "7268e625660d232bf5500c9712808ce5fc352ed372236061cc6069c7473098c2",
+      "reference_equal_bits": true,
+      "coordinates_equal": true,
+      "units": "degree_Celsius",
+      "stream_validated": true,
+      "stream_chunks": 25,
+      "wall_seconds": {
+        "plan": 3.3453162499936298,
+        "stream": 6.283488209010102,
+        "fetch": 6.431160209001973
+      },
+      "logs_directory": "materialized-regional_map_101-0",
+      "observed": {
+        "source_data_requests": 5,
+        "source_data_bytes": 9401948,
+        "decoded_source_chunks": 9,
+        "filled_source_chunks": 0,
+        "decoded_bytes": 40804,
+        "first_output_seconds": 1.032695167
+      },
+      "scheduler": {
+        "workers": 1,
+        "per_host": 4,
+        "buffer_bytes": 268435456,
+        "reserved_bytes_peak": 47590508,
+        "reader_state_reserved_bytes": 0,
+        "prepared_native_metadata_bytes": 1270682,
+        "authenticated_transport_reserved_bytes": 0,
+        "prepared_v3_metadata_index_bytes": 1269173,
+        "active_workers_peak": 1,
+        "completed_tasks": 9,
+        "admitted_jobs": 1,
+        "cog_reader_scope": "selection",
+        "seconds": 2.230655167,
+        "order": "plan",
+        "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+        "zarr_v3_coalescing": {
+          "config": {
+            "policy": "cost",
+            "max_span": 4194304,
+            "max_gap": 65536,
+            "max_overfetch_ratio": 1.0,
+            "latency_seconds": 0.002,
+            "bandwidth_bytes_second": 32000000.0,
+            "concurrency": 1
+          },
+          "window_logical_chunks": 32,
+          "plan_metadata_bytes": 1509,
+          "batches": [
+            {
+              "selected": 0,
+              "nodes": [
+                1,
+                4,
+                7,
+                10,
+                13,
+                16,
+                19,
+                22,
+                25
+              ],
+              "reservation": 46319826,
+              "fetches": [
+                {
+                  "key": "temperature_2m/c/33/0/0",
+                  "range": {
+                    "start": 57249035,
+                    "end": 61249701,
+                    "selected": 4000666,
+                    "members": [
+                      [
+                        33,
+                        4,
+                        6
+                      ],
+                      [
+                        33,
+                        5,
+                        6
+                      ],
+                      [
+                        33,
+                        4,
+                        7
+                      ]
+                    ]
+                  }
+                },
+                {
+                  "key": "temperature_2m/c/33/0/0",
+                  "range": {
+                    "start": 61249701,
+                    "end": 62849477,
+                    "selected": 1599776,
+                    "members": [
+                      [
+                        33,
+                        5,
+                        7
+                      ],
+                      [
+                        33,
+                        6,
+                        6
+                      ]
+                    ]
+                  }
+                },
+                {
+                  "key": "temperature_2m/c/33/0/1",
+                  "range": {
+                    "start": 20335437,
+                    "end": 22126026,
+                    "selected": 1790589,
+                    "members": [
+                      [
+                        33,
+                        4,
+                        8
+                      ],
+                      [
+                        33,
+                        5,
+                        8
+                      ]
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "zarr_v3_ranges": [
+          {
+            "logical_payloads": 9,
+            "selected_bytes": 9401948,
+            "payload_requests": 5,
+            "fetched_bytes": 9401948,
+            "merged_requests": 3,
+            "merged_cache_hits": 4,
+            "prepared_index_hits": 9,
+            "retained_buffer_peak": 7391031
+          }
+        ]
+      },
+      "crs_equivalent": true
+    },
+    {
+      "product": "materialized",
+      "workload": "regional_map_101",
+      "trial": 1,
+      "snapshot_id": "6K6H23PYR6QXA9VM0C6G",
+      "shape": [
+        1,
+        101,
+        101
+      ],
+      "dtype": "float32",
+      "native_sha256": "7268e625660d232bf5500c9712808ce5fc352ed372236061cc6069c7473098c2",
+      "reference_equal_bits": true,
+      "coordinates_equal": true,
+      "units": "degree_Celsius",
+      "stream_validated": true,
+      "stream_chunks": 25,
+      "wall_seconds": {
+        "plan": 3.542922542023007,
+        "stream": 6.912622541014571,
+        "fetch": 7.880312708031852
+      },
+      "logs_directory": "materialized-regional_map_101-1",
+      "observed": {
+        "source_data_requests": 5,
+        "source_data_bytes": 9401948,
+        "decoded_source_chunks": 9,
+        "filled_source_chunks": 0,
+        "decoded_bytes": 40804,
+        "first_output_seconds": 1.099076125
+      },
+      "scheduler": {
+        "workers": 1,
+        "per_host": 4,
+        "buffer_bytes": 268435456,
+        "reserved_bytes_peak": 47590508,
+        "reader_state_reserved_bytes": 0,
+        "prepared_native_metadata_bytes": 1270682,
+        "authenticated_transport_reserved_bytes": 0,
+        "prepared_v3_metadata_index_bytes": 1269173,
+        "active_workers_peak": 1,
+        "completed_tasks": 9,
+        "admitted_jobs": 1,
+        "cog_reader_scope": "selection",
+        "seconds": 2.555179542,
+        "order": "plan",
+        "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+        "zarr_v3_coalescing": {
+          "config": {
+            "policy": "cost",
+            "max_span": 4194304,
+            "max_gap": 65536,
+            "max_overfetch_ratio": 1.0,
+            "latency_seconds": 0.002,
+            "bandwidth_bytes_second": 32000000.0,
+            "concurrency": 1
+          },
+          "window_logical_chunks": 32,
+          "plan_metadata_bytes": 1509,
+          "batches": [
+            {
+              "selected": 0,
+              "nodes": [
+                1,
+                4,
+                7,
+                10,
+                13,
+                16,
+                19,
+                22,
+                25
+              ],
+              "reservation": 46319826,
+              "fetches": [
+                {
+                  "key": "temperature_2m/c/33/0/0",
+                  "range": {
+                    "start": 57249035,
+                    "end": 61249701,
+                    "selected": 4000666,
+                    "members": [
+                      [
+                        33,
+                        4,
+                        6
+                      ],
+                      [
+                        33,
+                        5,
+                        6
+                      ],
+                      [
+                        33,
+                        4,
+                        7
+                      ]
+                    ]
+                  }
+                },
+                {
+                  "key": "temperature_2m/c/33/0/0",
+                  "range": {
+                    "start": 61249701,
+                    "end": 62849477,
+                    "selected": 1599776,
+                    "members": [
+                      [
+                        33,
+                        5,
+                        7
+                      ],
+                      [
+                        33,
+                        6,
+                        6
+                      ]
+                    ]
+                  }
+                },
+                {
+                  "key": "temperature_2m/c/33/0/1",
+                  "range": {
+                    "start": 20335437,
+                    "end": 22126026,
+                    "selected": 1790589,
+                    "members": [
+                      [
+                        33,
+                        4,
+                        8
+                      ],
+                      [
+                        33,
+                        5,
+                        8
+                      ]
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "zarr_v3_ranges": [
+          {
+            "logical_payloads": 9,
+            "selected_bytes": 9401948,
+            "payload_requests": 5,
+            "fetched_bytes": 9401948,
+            "merged_requests": 3,
+            "merged_cache_hits": 4,
+            "prepared_index_hits": 9,
+            "retained_buffer_peak": 7391031
+          }
+        ]
+      },
+      "crs_equivalent": true
+    },
+    {
+      "product": "virtual",
+      "workload": "regional_one_time",
+      "trial": 0,
+      "snapshot_id": "SJSV5KG1GSWR2XQD2SW0",
+      "shape": [
+        1,
+        2,
+        2
+      ],
+      "dtype": "float64",
+      "native_sha256": "da8e4b7cc256ce57e3724d24899ec8488b3729be06373f77dcab6c64c7c2954e",
+      "reference_equal_bits": true,
+      "coordinates_equal": true,
+      "units": "degree_Celsius",
+      "stream_validated": true,
+      "stream_chunks": 1,
+      "wall_seconds": {
+        "plan": 2.949468042002991,
+        "stream": 3.766441667045001,
+        "fetch": 4.19444479199592
+      },
+      "logs_directory": "virtual-regional_one_time-0",
+      "observed": {
+        "source_data_requests": 1,
+        "source_data_bytes": 872896,
+        "decoded_source_chunks": 1,
+        "filled_source_chunks": 0,
+        "decoded_bytes": 32,
+        "first_output_seconds": 0.616207208
+      },
+      "scheduler": {
+        "workers": 1,
+        "per_host": 4,
+        "buffer_bytes": 268435456,
+        "reserved_bytes_peak": 44485617,
+        "reader_state_reserved_bytes": 0,
+        "prepared_native_metadata_bytes": 1193841,
+        "authenticated_transport_reserved_bytes": 0,
+        "prepared_v3_metadata_index_bytes": 1193841,
+        "active_workers_peak": 1,
+        "completed_tasks": 1,
+        "admitted_jobs": 1,
+        "cog_reader_scope": "selection",
+        "seconds": 0.616335166,
+        "order": "plan",
+        "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+        "zarr_v3_coalescing": {
+          "config": {
+            "policy": "cost",
+            "max_span": 4194304,
+            "max_gap": 65536,
+            "max_overfetch_ratio": 1.0,
+            "latency_seconds": 0.002,
+            "bandwidth_bytes_second": 32000000.0,
+            "concurrency": 1
+          },
+          "window_logical_chunks": 32,
+          "plan_metadata_bytes": 0,
+          "batches": []
+        },
+        "zarr_v3_ranges": [
+          {
+            "logical_payloads": 1,
+            "selected_bytes": 872896,
+            "payload_requests": 1,
+            "fetched_bytes": 872896,
+            "merged_requests": 0,
+            "merged_cache_hits": 0,
+            "prepared_index_hits": 0,
+            "retained_buffer_peak": 0
+          }
+        ]
+      },
+      "crs_equivalent": true
+    },
+    {
+      "product": "virtual",
+      "workload": "regional_one_time",
+      "trial": 1,
+      "snapshot_id": "SJSV5KG1GSWR2XQD2SW0",
+      "shape": [
+        1,
+        2,
+        2
+      ],
+      "dtype": "float64",
+      "native_sha256": "da8e4b7cc256ce57e3724d24899ec8488b3729be06373f77dcab6c64c7c2954e",
+      "reference_equal_bits": true,
+      "coordinates_equal": true,
+      "units": "degree_Celsius",
+      "stream_validated": true,
+      "stream_chunks": 1,
+      "wall_seconds": {
+        "plan": 3.0830918340361677,
+        "stream": 3.947606583999004,
+        "fetch": 4.199779124988709
+      },
+      "logs_directory": "virtual-regional_one_time-1",
+      "observed": {
+        "source_data_requests": 1,
+        "source_data_bytes": 872896,
+        "decoded_source_chunks": 1,
+        "filled_source_chunks": 0,
+        "decoded_bytes": 32,
+        "first_output_seconds": 0.612491042
+      },
+      "scheduler": {
+        "workers": 1,
+        "per_host": 4,
+        "buffer_bytes": 268435456,
+        "reserved_bytes_peak": 44485617,
+        "reader_state_reserved_bytes": 0,
+        "prepared_native_metadata_bytes": 1193841,
+        "authenticated_transport_reserved_bytes": 0,
+        "prepared_v3_metadata_index_bytes": 1193841,
+        "active_workers_peak": 1,
+        "completed_tasks": 1,
+        "admitted_jobs": 1,
+        "cog_reader_scope": "selection",
+        "seconds": 0.612620708,
+        "order": "plan",
+        "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+        "zarr_v3_coalescing": {
+          "config": {
+            "policy": "cost",
+            "max_span": 4194304,
+            "max_gap": 65536,
+            "max_overfetch_ratio": 1.0,
+            "latency_seconds": 0.002,
+            "bandwidth_bytes_second": 32000000.0,
+            "concurrency": 1
+          },
+          "window_logical_chunks": 32,
+          "plan_metadata_bytes": 0,
+          "batches": []
+        },
+        "zarr_v3_ranges": [
+          {
+            "logical_payloads": 1,
+            "selected_bytes": 872896,
+            "payload_requests": 1,
+            "fetched_bytes": 872896,
+            "merged_requests": 0,
+            "merged_cache_hits": 0,
+            "prepared_index_hits": 0,
+            "retained_buffer_peak": 0
+          }
+        ]
+      },
+      "crs_equivalent": true
+    },
+    {
+      "product": "virtual",
+      "workload": "regional_24_hours",
+      "trial": 0,
+      "snapshot_id": "SJSV5KG1GSWR2XQD2SW0",
+      "shape": [
+        24,
+        2,
+        2
+      ],
+      "dtype": "float64",
+      "native_sha256": "9052068c6be51e72b572ff9294bd0cca7234335c22c3d275ee46278c3f0c0b08",
+      "reference_equal_bits": true,
+      "coordinates_equal": true,
+      "units": "degree_Celsius",
+      "stream_validated": true,
+      "stream_chunks": 24,
+      "wall_seconds": {
+        "plan": 4.515993290988263,
+        "stream": 14.618782292003743,
+        "fetch": 15.109815625008196
+      },
+      "logs_directory": "virtual-regional_24_hours-0",
+      "observed": {
+        "source_data_requests": 24,
+        "source_data_bytes": 18408814,
+        "decoded_source_chunks": 24,
+        "filled_source_chunks": 0,
+        "decoded_bytes": 768,
+        "first_output_seconds": 0.626705583
+      },
+      "scheduler": {
+        "workers": 2,
+        "per_host": 4,
+        "buffer_bytes": 268435456,
+        "reserved_bytes_peak": 87808295,
+        "reader_state_reserved_bytes": 0,
+        "prepared_native_metadata_bytes": 1206215,
+        "authenticated_transport_reserved_bytes": 0,
+        "prepared_v3_metadata_index_bytes": 1206215,
+        "active_workers_peak": 2,
+        "completed_tasks": 24,
+        "admitted_jobs": 24,
+        "cog_reader_scope": "selection",
+        "seconds": 7.292395916,
+        "order": "plan",
+        "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+        "zarr_v3_coalescing": {
+          "config": {
+            "policy": "cost",
+            "max_span": 4194304,
+            "max_gap": 65536,
+            "max_overfetch_ratio": 1.0,
+            "latency_seconds": 0.002,
+            "bandwidth_bytes_second": 32000000.0,
+            "concurrency": 2
+          },
+          "window_logical_chunks": 32,
+          "plan_metadata_bytes": 0,
+          "batches": []
+        },
+        "zarr_v3_ranges": [
+          {
+            "logical_payloads": 12,
+            "selected_bytes": 9387614,
+            "payload_requests": 12,
+            "fetched_bytes": 9387614,
+            "merged_requests": 0,
+            "merged_cache_hits": 0,
+            "prepared_index_hits": 0,
+            "retained_buffer_peak": 0
+          },
+          {
+            "logical_payloads": 12,
+            "selected_bytes": 9021200,
+            "payload_requests": 12,
+            "fetched_bytes": 9021200,
+            "merged_requests": 0,
+            "merged_cache_hits": 0,
+            "prepared_index_hits": 0,
+            "retained_buffer_peak": 0
+          }
+        ]
+      },
+      "crs_equivalent": true
+    },
+    {
+      "product": "virtual",
+      "workload": "regional_24_hours",
+      "trial": 1,
+      "snapshot_id": "SJSV5KG1GSWR2XQD2SW0",
+      "shape": [
+        24,
+        2,
+        2
+      ],
+      "dtype": "float64",
+      "native_sha256": "9052068c6be51e72b572ff9294bd0cca7234335c22c3d275ee46278c3f0c0b08",
+      "reference_equal_bits": true,
+      "coordinates_equal": true,
+      "units": "degree_Celsius",
+      "stream_validated": true,
+      "stream_chunks": 24,
+      "wall_seconds": {
+        "plan": 5.08282704197336,
+        "stream": 14.248603791987989,
+        "fetch": 14.71035100001609
+      },
+      "logs_directory": "virtual-regional_24_hours-1",
+      "observed": {
+        "source_data_requests": 24,
+        "source_data_bytes": 18408814,
+        "decoded_source_chunks": 24,
+        "filled_source_chunks": 0,
+        "decoded_bytes": 768,
+        "first_output_seconds": 0.609234708
+      },
+      "scheduler": {
+        "workers": 2,
+        "per_host": 4,
+        "buffer_bytes": 268435456,
+        "reserved_bytes_peak": 87808295,
+        "reader_state_reserved_bytes": 0,
+        "prepared_native_metadata_bytes": 1206215,
+        "authenticated_transport_reserved_bytes": 0,
+        "prepared_v3_metadata_index_bytes": 1206215,
+        "active_workers_peak": 2,
+        "completed_tasks": 24,
+        "admitted_jobs": 24,
+        "cog_reader_scope": "selection",
+        "seconds": 7.065385958,
+        "order": "plan",
+        "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+        "zarr_v3_coalescing": {
+          "config": {
+            "policy": "cost",
+            "max_span": 4194304,
+            "max_gap": 65536,
+            "max_overfetch_ratio": 1.0,
+            "latency_seconds": 0.002,
+            "bandwidth_bytes_second": 32000000.0,
+            "concurrency": 2
+          },
+          "window_logical_chunks": 32,
+          "plan_metadata_bytes": 0,
+          "batches": []
+        },
+        "zarr_v3_ranges": [
+          {
+            "logical_payloads": 12,
+            "selected_bytes": 9387614,
+            "payload_requests": 12,
+            "fetched_bytes": 9387614,
+            "merged_requests": 0,
+            "merged_cache_hits": 0,
+            "prepared_index_hits": 0,
+            "retained_buffer_peak": 0
+          },
+          {
+            "logical_payloads": 12,
+            "selected_bytes": 9021200,
+            "payload_requests": 12,
+            "fetched_bytes": 9021200,
+            "merged_requests": 0,
+            "merged_cache_hits": 0,
+            "prepared_index_hits": 0,
+            "retained_buffer_peak": 0
+          }
+        ]
+      },
+      "crs_equivalent": true
+    },
+    {
+      "product": "virtual",
+      "workload": "regional_map_101",
+      "trial": 0,
+      "snapshot_id": "SJSV5KG1GSWR2XQD2SW0",
+      "shape": [
+        1,
+        101,
+        101
+      ],
+      "dtype": "float64",
+      "native_sha256": "2a40098dbc812f5483bfc9988ede91932d5462b11c773ad54fa8ef82b77a3318",
+      "reference_equal_bits": true,
+      "coordinates_equal": true,
+      "units": "degree_Celsius",
+      "stream_validated": true,
+      "stream_chunks": 16,
+      "wall_seconds": {
+        "plan": 2.8331701250281185,
+        "stream": 3.800410915981047,
+        "fetch": 4.312593084003311
+      },
+      "logs_directory": "virtual-regional_map_101-0",
+      "observed": {
+        "source_data_requests": 1,
+        "source_data_bytes": 872896,
+        "decoded_source_chunks": 1,
+        "filled_source_chunks": 0,
+        "decoded_bytes": 81608,
+        "first_output_seconds": 0.603101917
+      },
+      "scheduler": {
+        "workers": 1,
+        "per_host": 4,
+        "buffer_bytes": 268435456,
+        "reserved_bytes_peak": 44485617,
+        "reader_state_reserved_bytes": 0,
+        "prepared_native_metadata_bytes": 1193841,
+        "authenticated_transport_reserved_bytes": 0,
+        "prepared_v3_metadata_index_bytes": 1193841,
+        "active_workers_peak": 1,
+        "completed_tasks": 1,
+        "admitted_jobs": 1,
+        "cog_reader_scope": "selection",
+        "seconds": 0.604516375,
+        "order": "plan",
+        "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+        "zarr_v3_coalescing": {
+          "config": {
+            "policy": "cost",
+            "max_span": 4194304,
+            "max_gap": 65536,
+            "max_overfetch_ratio": 1.0,
+            "latency_seconds": 0.002,
+            "bandwidth_bytes_second": 32000000.0,
+            "concurrency": 1
+          },
+          "window_logical_chunks": 32,
+          "plan_metadata_bytes": 0,
+          "batches": []
+        },
+        "zarr_v3_ranges": [
+          {
+            "logical_payloads": 1,
+            "selected_bytes": 872896,
+            "payload_requests": 1,
+            "fetched_bytes": 872896,
+            "merged_requests": 0,
+            "merged_cache_hits": 0,
+            "prepared_index_hits": 0,
+            "retained_buffer_peak": 0
+          }
+        ]
+      },
+      "crs_equivalent": true
+    },
+    {
+      "product": "virtual",
+      "workload": "regional_map_101",
+      "trial": 1,
+      "snapshot_id": "SJSV5KG1GSWR2XQD2SW0",
+      "shape": [
+        1,
+        101,
+        101
+      ],
+      "dtype": "float64",
+      "native_sha256": "2a40098dbc812f5483bfc9988ede91932d5462b11c773ad54fa8ef82b77a3318",
+      "reference_equal_bits": true,
+      "coordinates_equal": true,
+      "units": "degree_Celsius",
+      "stream_validated": true,
+      "stream_chunks": 16,
+      "wall_seconds": {
+        "plan": 2.7442038750159554,
+        "stream": 3.9359002499841154,
+        "fetch": 4.212361792044248
+      },
+      "logs_directory": "virtual-regional_map_101-1",
+      "observed": {
+        "source_data_requests": 1,
+        "source_data_bytes": 872896,
+        "decoded_source_chunks": 1,
+        "filled_source_chunks": 0,
+        "decoded_bytes": 81608,
+        "first_output_seconds": 0.606661667
+      },
+      "scheduler": {
+        "workers": 1,
+        "per_host": 4,
+        "buffer_bytes": 268435456,
+        "reserved_bytes_peak": 44485617,
+        "reader_state_reserved_bytes": 0,
+        "prepared_native_metadata_bytes": 1193841,
+        "authenticated_transport_reserved_bytes": 0,
+        "prepared_v3_metadata_index_bytes": 1193841,
+        "active_workers_peak": 1,
+        "completed_tasks": 1,
+        "admitted_jobs": 1,
+        "cog_reader_scope": "selection",
+        "seconds": 0.608047125,
+        "order": "plan",
+        "memory_scope": "conservative reader working reservations; includes authenticated transport sessions, prepared COG and v3 metadata/index reservations, encoded data and working output planes; excludes process/runtime, GDAL cache, legacy v2 prepared metadata and caller retention",
+        "zarr_v3_coalescing": {
+          "config": {
+            "policy": "cost",
+            "max_span": 4194304,
+            "max_gap": 65536,
+            "max_overfetch_ratio": 1.0,
+            "latency_seconds": 0.002,
+            "bandwidth_bytes_second": 32000000.0,
+            "concurrency": 1
+          },
+          "window_logical_chunks": 32,
+          "plan_metadata_bytes": 0,
+          "batches": []
+        },
+        "zarr_v3_ranges": [
+          {
+            "logical_payloads": 1,
+            "selected_bytes": 872896,
+            "payload_requests": 1,
+            "fetched_bytes": 872896,
+            "merged_requests": 0,
+            "merged_cache_hits": 0,
+            "prepared_index_hits": 0,
+            "retained_buffer_peak": 0
+          }
+        ]
+      },
+      "crs_equivalent": true
+    }
+  ],
+  "output_crs_verification": "pyproj.CRS.from_cf on every reopened spatial_ref array; equality ignores axis order only"
+}
