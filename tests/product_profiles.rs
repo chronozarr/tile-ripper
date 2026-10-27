@@ -12,7 +12,7 @@ use tile_ripper::{
 #[test]
 fn profiles_are_serializable_declarations_not_capabilities() -> Result<()> {
     let profiles = profiles();
-    assert_eq!(profiles.len(), 9);
+    assert_eq!(profiles.len(), 12);
     assert_eq!(
         profiles.iter().map(|p| p.id).collect::<Vec<_>>(),
         [
@@ -25,6 +25,9 @@ fn profiles_are_serializable_declarations_not_capabilities() -> Result<()> {
             OPERA_RTC_S1_V1,
             "opera-dswx-s1",
             "opera-dist-alert",
+            "opera-dswx-ni-prototype",
+            "opera-dist-alert-s1",
+            "opera-dist-ann-hls",
         ]
     );
     for profile in profiles {
@@ -49,7 +52,10 @@ fn profiles_are_serializable_declarations_not_capabilities() -> Result<()> {
             "m",
             "degree",
             "degree_Celsius",
-            "days since 2020-12-31"
+            "days since 2020-12-31",
+            "days",
+            "count",
+            "%"
         ]
         .contains(&band.unit)));
     }

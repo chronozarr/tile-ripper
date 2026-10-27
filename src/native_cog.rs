@@ -809,9 +809,9 @@ fn layout(tiff: &TiffFile, band: usize) -> Result<Layout> {
     if !palette && i.tag(320).is_some() {
         return fail("native COG ColorMap requires Byte palette photometric storage");
     }
-    if !matches!(i.compression(), 1 | 5 | 8 | 32946) || !sample.predictor(i.predictor()) {
+    if !matches!(i.compression(), 1 | 5 | 8 | 32946 | 50000) || !sample.predictor(i.predictor()) {
         return fail(
-            "native COG supports lossless uncompressed/LZW/Deflate with integer predictor 1/2 or Float32 predictor 1/3 only",
+            "native COG supports lossless uncompressed/LZW/Deflate/Zstd with integer predictor 1/2 or Float32 predictor 1/3 only",
         );
     }
     // Never silently lose internal masks or follow unbounded auxiliary trees.

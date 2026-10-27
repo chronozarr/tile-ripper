@@ -1,6 +1,6 @@
 # Wave 1 scientific product specifications
 
-These profiles are closed, declarative descriptions of five named product profiles. A profile identifies expected catalog, grid, band, storage, calibration, and quality semantics. It does not make a remote object readable or scientifically admissible. Every selected object still requires the normal physical inspection and execution gates.
+These profiles are closed, declarative descriptions of named product profiles. A profile identifies expected catalog, grid, band, storage, calibration, and quality semantics. It does not make a remote object readable or scientifically admissible. Every selected object still requires the normal physical inspection and execution gates.
 
 The implementation preserves stored samples. Scale and offset are metadata (`physical = stored * scale + offset`); they are not applied automatically. Raw QA, classification, and radar-mask layers remain ordinary selected layers. A requested policy produces a separate named science mask from its listed raw layer. It never overwrites the raw layer, silently aligns another observation, or applies calibration or cross-sensor harmonization.
 
@@ -13,6 +13,9 @@ The implementation preserves stored samples. Scale and offset are metadata (`phy
 | `hls-s30` | NASA LP DAAC CMR/STAC collection `HLSS30_2.0`; same access boundary as L30 | [HLS User Guide V2.0, April 2026](https://lpdaac.usgs.gov/documents/1698/HLS_User_Guide_V2.pdf) |
 | `opera-dswx-hls` | NASA PO.DAAC collection `OPERA_L3_DSWX-HLS_V1`, CMR collection version 1.0; admitted granule processing releases 1.0 and 1.1; Earthdata-authenticated HTTPS or temporary in-region S3 credentials | [OPERA DSWx-HLS Product Specification v1.0.1, Rev B, July 10 2024](https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-docs/web-misc/opera/OPERA_DSWx-HLS_ProductSpec_v1.0.0_D-107395_RevB.pdf), [PO.DAAC collection landing page](https://podaac.jpl.nasa.gov/dataset/OPERA_L3_DSWX-HLS_V1) |
 | `opera-rtc-s1` | NASA ASF DAAC collection `OPERA_L2_RTC-S1_V1`, product version 1.0; Earthdata-authenticated HTTPS or temporary in-region S3 credentials | [OPERA RTC-S1 Product Specification v1.0.3, Rev B, March 21 2024](https://d2pn8kiwq2w21t.cloudfront.net/documents/ProductSpec_RTC-S1.pdf), [ASF OPERA RTC-S1 product guide](https://hyp3-docs.asf.alaska.edu/guides/opera_rtc_product_guide/) |
+| `opera-dswx-ni-prototype` | One anonymous, public engineering job: exact v0.1/software-0.3.0 objects, names and ETags only; no CMR collection or automatic route | [prototype source and qualification receipt](opera-expansion/dswx-ni.md) |
+| `opera-dist-alert-s1` | ASF collection `OPERA_L3_DIST-ALERT-S1_V1`, product v1.0, exact Earthdata Cumulus object route | [qualified ten-layer source/output scope](opera-expansion/dist-s1.md) |
+| `opera-dist-ann-hls` | LP DAAC collection `OPERA_L3_DIST-ANN-HLS_V1`, annual v1 COGs with exact Earthdata route and provider-recorded coverage extent | [qualified 21-layer source/output scope](opera-expansion/dist-ann.md) |
 
 Catalog labels and profile metadata are expectations. They do not establish that tile-ripper has performed a live catalog, authentication, range-read, decoder, or scientific equality qualification for these products.
 
@@ -72,6 +75,24 @@ Available polarizations are individual Float32 linear gamma0-power COGs: usually
 
 The finite-sample policy tests only IEEE finiteness. It does not convert linear gamma0 to decibels and does not infer geometric validity; use the separate RTC mask policy for that.
 
+### OPERA DSWx-NI v0.1 engineering prototype
+
+This is not final DSWx-NI v1.0 or a production archive profile. It accepts only the public, ETag-pinned NISAR GCOV/LSAR specimen described in the [prototype receipt](opera-expansion/dswx-ni.md). All four 3660 by 3660, 30 m UTM 42N layers are UInt8 with fill 255: `WTR`, `BWTR`, `CONF`, and `DIAG`. Raw class indices are stored unchanged. `250` (HAND), `251` (layover/shadow), and `254` (ocean) remain valid contextual raw values; `255` alone is missing.
+
+The optional WTR policies are distinct: open water `{1}`, water `{1,3}`, and edge/partial water `{1,3,8}`. BWTR water is `{1}`. No S1 policy is widened or aliased for NI. `CONF` is categorical and `DIAG` is a 0–100 rounded fuzzy score; neither is a probability.
+
+### OPERA DIST-ALERT-S1 v1.0
+
+The integration declares ten single-band, 30 m UTM COGs from one accumulated Sentinel-1 observation: `GEN-DIST-STATUS`, `GEN-METRIC`, `GEN-DIST-STATUS-ACQ`, `GEN-METRIC-MAX`, `GEN-DIST-CONF`, `GEN-DIST-DATE`, `GEN-DIST-COUNT`, `GEN-DIST-PERC`, `GEN-DIST-DUR`, and `GEN-DIST-LAST-DATE`. Status/count/percent are UInt8 with fill 255; metric/maximum/confidence are Float32 with NaN fill; date/duration/last-date are Int16 with fill -1. `GEN-DIST-DATE` and `GEN-DIST-LAST-DATE` are **days since 2020-12-31**. `GEN-DIST-DUR` is a **duration in days**, not an epoch date. Confidence is an uncalibrated source metric, not a probability or threshold.
+
+The only declared status policies select confirmed classes `{3,6,7,8}` or the ongoing subset `{3,6}` from `GEN-DIST-STATUS`. The [source/output receipt](opera-expansion/dist-s1-cmr-receipt.json) records the exact qualified specimen and observed class scope.
+
+### OPERA DIST-ANN-HLS v1 annual summary
+
+The [qualification receipt](opera-expansion/dist-ann-qualification-receipt.json) covers all 21 annual layers, including UInt8 `VEG-DIST-STATUS` and `GEN-DIST-STATUS` (fill 255), plus Int16 `VEG-DIST-DATE`, `GEN-DIST-DATE`, `VEG-LAST-DATE`, and `GEN-LAST-DATE` (fill -1). Each named `*-DATE`/`*-LAST-DATE` is **days since 2020-12-31**. `VEG-DIST-DUR` and `GEN-DIST-DUR` are instead **durations in days**. A summary-year token is not converted to a January 1 observation. Instead, the output carries the exact CMR coverage start/end as `time_bounds`, uses coverage start for its time coordinate, and records the summary year separately. Current-year confirmed classes are `{3,6,7,8}`; retained previous-year confirmed classes are `{9,10}`.
+
+The qualified reader representation is northern T17SNU, not a blanket global admission. A southern T20LRP reference uses EPSG:32620 with negative northing. It is retained as an unqualified CRS/hemisphere representation rather than characterized as corrupt or scientifically invalid.
+
 ## Closed quality policies
 
 | Policy | Required raw layer | Acceptance rule |
@@ -91,6 +112,10 @@ The finite-sample policy tests only IEEE finiteness. It does not convert linear 
 | `opera_rtc_finite` | one selected polarization | Float32 sample is finite. |
 | `opera_rtc_mask_valid` | `mask` | Classes 0-3. |
 | `opera_rtc_mask_unaffected` | `mask` | Class 0 only. |
+| `dswx_ni_wtr_openwater`, `dswx_ni_wtr_water`, `dswx_ni_wtr_edgewater` | `WTR` | Respectively `{1}`, `{1,3}`, and `{1,3,8}` for the pinned NI specimen. |
+| `dswx_ni_bwtr_water` | `BWTR` | Class 1 only for the pinned NI specimen. |
+| `dist_s1_confirmed`, `dist_s1_confirmed_ongoing` | `GEN-DIST-STATUS` | Respectively `{3,6,7,8}` and `{3,6}`; source/output qualification is scoped by the recorded receipt. |
+| `dist_ann_*confirmed` | matching annual status layer | Current-year `{3,6,7,8}`, prior-year `{9,10}`, or their explicit union; the raw annual status is retained. |
 
 Policy names are a closed enum. Unknown policy names, mismatched sample types, reserved states, undefined class codes, and contradictory Landsat QA encodings return errors. This prevents a new producer code or malformed word from being silently treated as either good or bad science.
 

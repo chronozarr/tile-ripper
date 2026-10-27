@@ -76,6 +76,11 @@ impl Prepared {
                 }
             }
         }
+        if let Some(selection_time) = product.get("selection_time") {
+            inspection["logical_request"]["time"] = selection_time.clone();
+            inspection["logical_request"]["temporal_interpretation"] =
+                product["temporal_interpretation"].clone();
+        }
         inspection["product"] = product;
         sanitize(&mut inspection);
         self.inspection = std::sync::Arc::new(inspection);
@@ -200,6 +205,11 @@ impl Prepared {
                     source["canonical_locator"].as_str().unwrap_or(""),
                     source["object_version"]
                 );
+            }
+            if let Some(source) = source.filter(|source| source["temporal_extent"].is_object()) {
+                let extent = &source["temporal_extent"];
+                s += &format!("    Annual summary {}; actual source coverage {} through {}; time coordinate labels coverage start\n",
+                    extent["summary_year"], extent["coverage_start"], extent["coverage_end"]);
             }
             for time in selection.timestamps.iter().take(8) {
                 s += &format!("    {time}\n");

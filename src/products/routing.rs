@@ -68,6 +68,21 @@ fn supports_pc(product: &str) -> bool {
 pub fn routes(product: &str) -> Result<Vec<Route>> {
     let p = profile::profile(product)?;
     let mut out = Vec::new();
+    if p.family == profile::ProductFamily::OperaDswxNiPrototype {
+        return Ok(vec![Route {
+            provider: Provider::Pinned,
+            catalog: "explicit pinned public engineering objects; no production catalog",
+            product: p.id.into(),
+            processing_version: p.version,
+            discovery: "unsupported; supply the separately qualified prototype observation",
+            access: "anonymous conditional HTTPS ranges confined to pinned prototype objects",
+            credential_requirement: "none",
+            access_policy: "dswx-ni-prototype-pinned-v0.1",
+            capabilities: "native UInt8 COG values, separate source/AOI/optional class masks",
+            availability: "one version-pinned public engineering specimen; not final NI v1.0",
+            limitations: "no production discovery, archive authentication, provider fallback or S1-policy alias",
+        }]);
+    }
     if supports_pc(p.id) {
         out.push(Route { provider: Provider::PlanetaryComputer,
             catalog: "https://planetarycomputer.microsoft.com/api/stac/v1",
@@ -82,7 +97,7 @@ pub fn routes(product: &str) -> Result<Vec<Route>> {
     if p.family != profile::ProductFamily::Landsat {
         out.push(Route { provider:Provider::Earthdata, catalog:"https://cmr.earthdata.nasa.gov/search",
             product:p.id.into(), processing_version:p.version, discovery:"exact CMR collection/version and complete bounded granule search",
-            access:"qualified product-specific exact-object Earthdata session",
+            access:"product-specific exact-object Earthdata session; qualification scope is recorded per product",
             credential_requirement:"explicit private netrc", access_policy:"earthdata-product-exact-object-v1",
             capabilities:"native COG; conditional byte ranges; product-specific redirect confinement",
             availability:"queried AOI/date only; missing observations are not substituted",
@@ -130,6 +145,10 @@ fn locator_provider(href: &str) -> Result<Provider> {
 }
 pub(crate) fn select(r: &ProductRequest, _authorized: bool) -> Result<Provider> {
     let product = profile::profile(&r.product)?.id;
+    if product == super::dswx_ni::ID && (r.provider != Provider::Pinned || r.observations.is_none())
+    {
+        return fail("DSWx-NI prototype requires provider pinned and explicit qualified observations; no production discovery is supported");
+    }
     if let Some(observations) = &r.observations {
         let mut providers = BTreeSet::new();
         for o in observations {

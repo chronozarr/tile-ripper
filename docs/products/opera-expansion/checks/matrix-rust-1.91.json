@@ -1,0 +1,332 @@
+{
+  "status": "passed",
+  "toolchain": "1.91.0",
+  "platform": "macOS-26.7.1-arm64-arm-64bit",
+  "checks": [
+    {
+      "name": "format",
+      "command": [
+        "cargo",
+        "+1.91.0",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "seconds": 0.701547666976694,
+      "log": "format.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "clippy",
+      "command": [
+        "cargo",
+        "+1.91.0",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--all-features",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "seconds": 21.82501270796638,
+      "log": "clippy.log",
+      "sha256": "2184e797f6e6b893eec539f7bc4170bb2599fa41c94542d8b6883d6e0a79274d"
+    },
+    {
+      "name": "tests-default",
+      "command": [
+        "cargo",
+        "+1.91.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--all-targets",
+        "--",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "seconds": 90.37996537500294,
+      "log": "tests-default.log",
+      "sha256": "1ae871dbe094fa07f3f823b01089a30089a55592af375e8381315347ffd560e1",
+      "tests": {
+        "passed": 156,
+        "failed": 0,
+        "ignored": 2
+      }
+    },
+    {
+      "name": "tests-zarr-only",
+      "command": [
+        "cargo",
+        "+1.91.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--no-default-features",
+        "--all-targets",
+        "--",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "seconds": 56.95394454203779,
+      "log": "tests-zarr-only.log",
+      "sha256": "359fd94f9ed129379b1346f44e3178fb80b31748358f75109a2de2f23617e476",
+      "tests": {
+        "passed": 115,
+        "failed": 0,
+        "ignored": 1
+      }
+    },
+    {
+      "name": "tests-native-cog",
+      "command": [
+        "cargo",
+        "+1.91.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--no-default-features",
+        "--features",
+        "native-cog",
+        "--all-targets",
+        "--",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "seconds": 73.15103466704022,
+      "log": "tests-native-cog.log",
+      "sha256": "7e7938654789d61086af156107b2aa7a521a2620f6bb61dab525fcafbf5dfb8e",
+      "tests": {
+        "passed": 151,
+        "failed": 0,
+        "ignored": 3
+      }
+    },
+    {
+      "name": "tests-native-hdf5",
+      "command": [
+        "cargo",
+        "+1.91.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--no-default-features",
+        "--features",
+        "native-hdf5",
+        "--all-targets",
+        "--",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "seconds": 80.27947624999797,
+      "log": "tests-native-hdf5.log",
+      "sha256": "8afec4f74cf40f787dab45a2eedc3013a8d5af8ec7a98e5d37e7b7572cc16d26",
+      "tests": {
+        "passed": 156,
+        "failed": 0,
+        "ignored": 2
+      }
+    },
+    {
+      "name": "tests-native-full",
+      "command": [
+        "cargo",
+        "+1.91.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--no-default-features",
+        "--features",
+        "native-cog,native-hdf5,authenticated-http",
+        "--all-targets",
+        "--",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "seconds": 95.92604962497717,
+      "log": "tests-native-full.log",
+      "sha256": "172844f0b479c277b5fc03c432ba9571f1be1efc6e1c79d8824cd11fff1fc4f5",
+      "tests": {
+        "passed": 213,
+        "failed": 0,
+        "ignored": 8
+      }
+    },
+    {
+      "name": "tests-all-features",
+      "command": [
+        "cargo",
+        "+1.91.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--all-features",
+        "--all-targets",
+        "--",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "seconds": 129.7718887500232,
+      "log": "tests-all-features.log",
+      "sha256": "c1309a7dc43d0a3790af7f1fc21ce664d0f43d176de318635e13a6442356a1c7",
+      "tests": {
+        "passed": 244,
+        "failed": 0,
+        "ignored": 9
+      }
+    },
+    {
+      "name": "vendor-tests-hdf5-reader",
+      "command": [
+        "cargo",
+        "+1.91.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "/Users/jakegearon/projects/tile-ripper/vendor/hdf5-reader/Cargo.toml",
+        "--all-targets",
+        "--",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "seconds": 0.6690372920129448,
+      "log": "vendor-tests-hdf5-reader.log",
+      "sha256": "c219b0541145593e9efb2df1f426a4a1a1915872c1eff5a3e25d3c20f60d6f59",
+      "tests": {
+        "passed": 356,
+        "failed": 0,
+        "ignored": 0
+      }
+    },
+    {
+      "name": "vendor-tests-zarrs_filesystem",
+      "command": [
+        "cargo",
+        "+1.91.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "/Users/jakegearon/projects/tile-ripper/vendor/zarrs_filesystem/Cargo.toml",
+        "--all-targets",
+        "--",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "seconds": 0.32298904203344136,
+      "log": "vendor-tests-zarrs_filesystem.log",
+      "sha256": "af20ea81457527fb5d3e51e7e1d1790c45cb7ff0dc65970c11337380d855e3c5",
+      "tests": {
+        "passed": 6,
+        "failed": 0,
+        "ignored": 0
+      }
+    },
+    {
+      "name": "vendor-tests-tiff-reader-zstd",
+      "command": [
+        "cargo",
+        "+1.91.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "/Users/jakegearon/projects/tile-ripper/vendor/tiff-reader/Cargo.toml",
+        "--no-default-features",
+        "--features",
+        "zstd",
+        "--lib",
+        "zstd_"
+      ],
+      "exit_code": 0,
+      "seconds": 0.13454333395930007,
+      "log": "vendor-tests-tiff-reader-zstd.log",
+      "sha256": "de0cb9bc45b56b94aaf596aaf2e63595546195585781b3a3a3fac2d2519e0bd3",
+      "tests": {
+        "passed": 3,
+        "failed": 0,
+        "ignored": 0
+      }
+    },
+    {
+      "name": "consumer-default",
+      "command": [
+        "cargo",
+        "+1.91.0",
+        "check",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "consumers/native-stats/Cargo.toml"
+      ],
+      "exit_code": 0,
+      "seconds": 3.1314240420470014,
+      "log": "consumer-default.log",
+      "sha256": "51024e439a1243f72f7ac610d26bc7d94eaf859c3bb5fff1da2631a4e855dbab"
+    },
+    {
+      "name": "consumer-native",
+      "command": [
+        "cargo",
+        "+1.91.0",
+        "check",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "consumers/native-stats/Cargo.toml",
+        "--no-default-features",
+        "--features",
+        "native-cog"
+      ],
+      "exit_code": 0,
+      "seconds": 2.8630085419863462,
+      "log": "consumer-native.log",
+      "sha256": "23df482ec6f2b4db4e7d0a1e991a45bcd94a70a9e334eab9454d8f1cfe40a9a7"
+    },
+    {
+      "name": "python-syntax",
+      "command": [
+        "/Users/jakegearon/.pyenv/versions/3.10.14/bin/python3",
+        "-m",
+        "compileall",
+        "-q",
+        "scripts",
+        "bench"
+      ],
+      "exit_code": 0,
+      "seconds": 0.07414758403319865,
+      "log": "python-syntax.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "documentation": {
+    "missing_links": [],
+    "wave4_source_mismatches": [],
+    "source_receipt": "docs/products/opera-expansion/acceptance.json",
+    "approved_manifest_metadata_changes": [],
+    "local_evidence_links": [
+      [
+        "docs/swot-discovery/report.md",
+        "../../prototype-output/swot-job/discovered-final-acceptance-xx8v_cum/observations.zarr"
+      ],
+      [
+        "docs/swot-job/report.md",
+        "../../prototype-output/swot-job/live-final-binary-reconstruction-2bwb4n_c/observations.zarr"
+      ],
+      [
+        "docs/acquisition-engine/report.md",
+        "accepted-runs.jsonl.gz"
+      ],
+      [
+        "docs/acquisition-engine/report.md",
+        "bulk-runs.json.gz"
+      ]
+    ]
+  }
+}

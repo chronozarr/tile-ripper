@@ -25,6 +25,9 @@ pub enum ProductFamily {
     OperaRtc,
     OperaDswxS1,
     OperaDist,
+    OperaDswxNiPrototype,
+    OperaDistS1,
+    OperaDistAnn,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
@@ -64,6 +67,9 @@ pub enum BandRole {
     Backscatter,
     Confidence,
     Date,
+    Count,
+    Duration,
+    Metric,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Serialize)]
@@ -75,6 +81,8 @@ pub enum NoDataValue {
     UInt16(u16),
     #[serde(rename = "int16")]
     Int16(i16),
+    #[serde(rename = "float32_nan")]
+    Float32NaN,
 }
 
 impl NoDataValue {
@@ -83,6 +91,7 @@ impl NoDataValue {
             Self::UInt8(value) => value as f64,
             Self::UInt16(value) => value as f64,
             Self::Int16(value) => value as f64,
+            Self::Float32NaN => f64::NAN,
         }
     }
 }
@@ -193,6 +202,18 @@ impl ProductProfile {
         platform: Option<&str>,
         processing: Option<&str>,
     ) -> Result<()> {
+        match self.family {
+            ProductFamily::OperaDswxNiPrototype => {
+                return super::dswx_ni::validate_identity(granule, platform, processing)
+            }
+            ProductFamily::OperaDistS1 => {
+                return super::dist_s1::validate_identity(granule, platform, processing)
+            }
+            ProductFamily::OperaDistAnn => {
+                return super::dist_ann::validate_identity(granule, platform, processing)
+            }
+            _ => {}
+        }
         if granule.is_empty() {
             return fail("product identity requires a granule name");
         }
@@ -247,6 +268,9 @@ impl ProductProfile {
                 let identity = parse_opera_identity(granule, true)?;
                 validate_parsed_platform(identity.platform, platform)
             }
+            ProductFamily::OperaDswxNiPrototype
+            | ProductFamily::OperaDistS1
+            | ProductFamily::OperaDistAnn => unreachable!("handled above"),
         }
     }
 
@@ -254,6 +278,18 @@ impl ProductProfile {
     /// HLS identifiers carry a source-scene nominal token, so HLS binds the
     /// calendar day; Landsat binds its acquisition date and OPERA binds seconds.
     pub fn validate_datetime(&self, granule: &str, datetime: &str) -> Result<()> {
+        match self.family {
+            ProductFamily::OperaDswxNiPrototype => {
+                return super::dswx_ni::validate_datetime(granule, datetime)
+            }
+            ProductFamily::OperaDistS1 => {
+                return super::dist_s1::validate_datetime(granule, datetime)
+            }
+            ProductFamily::OperaDistAnn => {
+                return super::dist_ann::validate_datetime(granule, datetime)
+            }
+            _ => {}
+        }
         let observed = chrono::DateTime::parse_from_rfc3339(datetime)?.naive_utc();
         let expected = match self.family {
             ProductFamily::Landsat => parse_landsat_identity(granule)?.acquisition,
@@ -267,6 +303,9 @@ impl ProductProfile {
                 parse_wave2_opera_identity(granule, self.family == ProductFamily::OperaDist)?
                     .acquisition
             }
+            ProductFamily::OperaDswxNiPrototype
+            | ProductFamily::OperaDistS1
+            | ProductFamily::OperaDistAnn => unreachable!("handled above"),
         };
         let matches = match self.family {
             ProductFamily::Landsat
@@ -279,6 +318,9 @@ impl ProductProfile {
             ProductFamily::OperaDswx | ProductFamily::OperaRtc => {
                 observed.and_utc().timestamp() == expected.and_utc().timestamp()
             }
+            ProductFamily::OperaDswxNiPrototype
+            | ProductFamily::OperaDistS1
+            | ProductFamily::OperaDistAnn => unreachable!("handled above"),
         };
         if matches {
             Ok(())
@@ -297,9 +339,11 @@ pub enum QualitySample {
     Float32(f32),
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
-#[serde(rename_all = "snake_case")]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum QualityPolicy {
+    DswxNi(super::dswx_ni::Policy),
+    DistS1(super::dist_s1::Policy),
+    DistAnn(super::dist_ann::Policy),
     LandsatTmEtmPixelClear,
     LandsatTmRadiometricallyUnsaturated,
     LandsatEtmRadiometricallyUnsaturated,
@@ -334,6 +378,9 @@ pub enum QualityPolicy {
 impl QualityPolicy {
     pub const fn name(self) -> &'static str {
         match self {
+            Self::DswxNi(policy) => policy.name(),
+            Self::DistS1(policy) => policy.name(),
+            Self::DistAnn(policy) => policy.name(),
             Self::LandsatTmEtmPixelClear => "landsat_tm_etm_pixel_clear",
             Self::LandsatTmRadiometricallyUnsaturated => "landsat_tm_radiometrically_unsaturated",
             Self::LandsatEtmRadiometricallyUnsaturated => "landsat_etm_radiometrically_unsaturated",
@@ -370,6 +417,9 @@ impl QualityPolicy {
     /// alternatives for polarization-dependent RTC imagery, not a band stack.
     pub const fn required_bands(self) -> &'static [&'static str] {
         match self {
+            Self::DswxNi(policy) => policy.required_bands(),
+            Self::DistS1(policy) => policy.required_bands(),
+            Self::DistAnn(policy) => policy.required_bands(),
             Self::LandsatTmEtmPixelClear => &["QA_PIXEL"],
             Self::LandsatTmRadiometricallyUnsaturated
             | Self::LandsatEtmRadiometricallyUnsaturated => &["QA_RADSAT"],
@@ -403,6 +453,9 @@ impl QualityPolicy {
 
     pub const fn description(self) -> &'static str {
         match self {
+            Self::DswxNi(policy) => policy.description(),
+            Self::DistS1(policy) => policy.description(),
+            Self::DistAnn(policy) => policy.description(),
             Self::LandsatTmEtmPixelClear => "TM/ETM+ QA_PIXEL fill, dilated cloud, cloud, cloud shadow and snow bits absent; clear bit 6 is not used because of the documented Landsat 4-7 water issue",
             Self::LandsatTmRadiometricallyUnsaturated => "TM QA_RADSAT all defined saturation and dropped-pixel bits zero (mask 0x027f)",
             Self::LandsatEtmRadiometricallyUnsaturated => "ETM+ QA_RADSAT all defined saturation including band 6H and dropped-pixel bits zero (mask 0x037f); scan gaps are never filled",
@@ -456,6 +509,9 @@ impl QualityPolicy {
     /// Evaluate one raw source sample without altering or calibrating it.
     pub fn accepts(self, sample: QualitySample) -> Result<bool> {
         match (self, sample) {
+            (Self::DswxNi(policy), sample) => policy.accepts(sample),
+            (Self::DistS1(policy), sample) => policy.accepts(sample),
+            (Self::DistAnn(policy), sample) => policy.accepts(sample),
             (Self::LandsatTmEtmPixelClear, QualitySample::UInt16(word)) => {
                 if word & 0xc004 != 0 || ((word >> 10) & 3) == 2 || ((word >> 12) & 3) == 2 {
                     return fail("TM/ETM+ QA_PIXEL reserved bits set");
@@ -623,7 +679,19 @@ pub fn profiles() -> Vec<ProductProfile> {
         rtc(),
         dswx_s1(),
         dist_alert(),
+        super::dswx_ni::profile(),
+        super::dist_s1::profile(),
+        super::dist_ann::profile(),
     ]
+}
+
+impl Serialize for QualityPolicy {
+    fn serialize<S: serde::Serializer>(
+        &self,
+        serializer: S,
+    ) -> std::result::Result<S::Ok, S::Error> {
+        serializer.serialize_str(self.name())
+    }
 }
 
 impl std::str::FromStr for QualityPolicy {
@@ -639,7 +707,7 @@ impl std::str::FromStr for QualityPolicy {
 }
 
 #[allow(clippy::too_many_arguments)]
-fn band(
+pub(super) fn band(
     name: &'static str,
     aliases: &'static [&'static str],
     role: BandRole,
@@ -670,6 +738,9 @@ fn band(
             BandRole::Backscatter => "native linear gamma0 backscatter sample",
             BandRole::Confidence => "native algorithm confidence code, not a probability",
             BandRole::Date => "native date code with its source-defined epoch",
+            BandRole::Count => "native observation or event count",
+            BandRole::Duration => "native duration with its source-defined unit",
+            BandRole::Metric => "native algorithm metric; no threshold or calibration applied",
         },
         dtype: data_type,
         nodata,
