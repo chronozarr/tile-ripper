@@ -1,0 +1,222 @@
+{
+  "status": "passed",
+  "date": "2026-10-28",
+  "base_revisions": {
+    "tile-ripper": "dffca42394055a4c507dbd9b9068710045986660",
+    "chronozarr": "6fb85ac"
+  },
+  "publication": "local uncommitted changes; no release, push, or remote acquisition",
+  "checks": {
+    "rust_library": 64,
+    "rust_independent_regressions": 25,
+    "python_combined": 325,
+    "python_bridge_regressions_in_combined": 38,
+    "rust_clippy_all_targets": "passed, warnings denied",
+    "python_ruff": "passed",
+    "python_ty_module_and_new_tests": "passed",
+    "format_and_diff_checks": "passed"
+  },
+  "regression_baseline": "original dffca42 reproduced 9 failures in the first 11 independent tests; the expanded 25-test suite passes",
+  "code_sha256": {
+    "tile-ripper/src/stack.rs": "c041b9b563cbf4fa81d5b5ae003b33285c0aa61af9b65159323912c0235af62a",
+    "tile-ripper/src/cli/stack.rs": "b9dbd78e8110f7dc820f78f7a620cabdf88211198706fd8b0e08f98da54d5daf",
+    "tile-ripper/src/zarr_decode.rs": "6a186e504b7b646a528f023d676efa1e0af3d4fe902681973e52f9de3deaf8ad",
+    "tile-ripper/tests/stack_review.rs": "667a0a04282230e13ff66585b9ac7f059e8d8c10d319a51d16567a89097bc9bd",
+    "chronozarr/src/chronozarr/tile_ripper.py": "b54d0ddb6feaa4e25ac3fd786d99b9dbd53b3b60e0d5ddc402135b3faf41e8c7",
+    "chronozarr/tests/test_tile_ripper.py": "a79d1f2e01726358dc4d3da9e963f1b69b5468867f288373e809fc0417841440"
+  },
+  "real_capture_checks": {
+    "hls_direct": {
+      "status": "passed",
+      "input": "hls-s30-earthdata-live-20261024T165438-0.zarr",
+      "output": "prototype-output/stack-review-20261028/hls-verified",
+      "input_payload_sha256": "6bb18d9fd110d81ecb3b713f137b8d6ccfcfd39c4099833fa7f579ed09a9ddb1",
+      "manifest_sha256": "064eb64ca3cd78f1fb3db6547639fe473141143e3a289b7610cc2e59429f8f91",
+      "shape": [
+        1,
+        1,
+        30,
+        30
+      ],
+      "bands": [
+        "B04"
+      ],
+      "quality_policy": "hls_fmask_clear",
+      "conversion_route": "direct",
+      "exact_level0_bytes": true,
+      "exact_masks": true,
+      "source_descriptors_preserved": 2,
+      "input_unchanged": true,
+      "validation_problems": [],
+      "local_probe_seconds": 0.11124166595982388,
+      "output_bytes": 79641,
+      "counts": [
+        {
+          "time": "2026-10-22T23:51:43.692726Z",
+          "source_valid_pixels": 784,
+          "final_valid_pixels": 3,
+          "quality_excluded_pixels": 781
+        }
+      ],
+      "browser_pixel_checks": [
+        {
+          "t": 0,
+          "x": 23,
+          "y": 1,
+          "stored": [
+            -63
+          ],
+          "physical": [
+            -0.0063
+          ]
+        }
+      ],
+      "scope": "retained local captures; no acquisition, speed comparison or human trial"
+    },
+    "sentinel2_stack": {
+      "status": "passed",
+      "input": "linux-verified-blosc_zstd.zarr",
+      "output": "prototype-output/stack-review-20261028/s2-final",
+      "input_payload_sha256": "337051e32c6207b5957f7976a7d567d7a7c6fdb3f001364afd5fb29fa0596698",
+      "manifest_sha256": "7bcdd8364da88d54853f305743f29d8a91a71e2a26fb3b08da8eaf14d506c0e9",
+      "shape": [
+        2,
+        2,
+        113,
+        91
+      ],
+      "bands": [
+        "B04",
+        "B08"
+      ],
+      "quality_policy": null,
+      "conversion_route": "stack_then_generic_with_explicit_provenance",
+      "exact_level0_bytes": true,
+      "exact_masks": true,
+      "source_descriptors_preserved": 4,
+      "input_unchanged": true,
+      "validation_problems": [],
+      "local_probe_seconds": 0.28806991601595655,
+      "output_bytes": 116068,
+      "counts": [
+        {
+          "time": "2025-01-02T16:13:26.072+00:00",
+          "source_valid_pixels": 5004,
+          "final_valid_pixels": 5004,
+          "quality_excluded_pixels": 0
+        },
+        {
+          "time": "2025-01-12T16:13:25.631+00:00",
+          "source_valid_pixels": 5004,
+          "final_valid_pixels": 5004,
+          "quality_excluded_pixels": 0
+        }
+      ],
+      "browser_pixel_checks": [
+        {
+          "t": 0,
+          "x": 70,
+          "y": 0,
+          "stored": [
+            1502,
+            1557
+          ],
+          "physical": [
+            0.050199999999999995,
+            0.0557
+          ]
+        },
+        {
+          "t": 1,
+          "x": 70,
+          "y": 0,
+          "stored": [
+            1518,
+            1614
+          ],
+          "physical": [
+            0.05180000000000001,
+            0.06140000000000001
+          ]
+        }
+      ],
+      "scope": "retained local captures; no acquisition, speed comparison or human trial"
+    }
+  },
+  "browser": {
+    "status": "passed",
+    "scope": "local static hosting, WebGL rendering, temporal navigation and click-to-query; external requests blocked",
+    "stores": [
+      {
+        "status": "passed",
+        "store": "hls-verified",
+        "timesteps_queried": 1,
+        "checks": [
+          {
+            "t": 0,
+            "pixel": {
+              "x": 23,
+              "y": 1
+            },
+            "stored": [
+              -63
+            ],
+            "physical": [
+              -0.0063
+            ]
+          }
+        ],
+        "browser_errors": [],
+        "requests": 3,
+        "screenshot": "prototype-output/stack-review-20261028/hls-verified.png"
+      },
+      {
+        "status": "passed",
+        "store": "s2-final",
+        "timesteps_queried": 2,
+        "checks": [
+          {
+            "t": 0,
+            "pixel": {
+              "x": 70,
+              "y": 0
+            },
+            "stored": [
+              1502,
+              1557
+            ],
+            "physical": [
+              0.050199999999999995,
+              0.0557
+            ]
+          },
+          {
+            "t": 1,
+            "pixel": {
+              "x": 70,
+              "y": 0
+            },
+            "stored": [
+              1518,
+              1614
+            ],
+            "physical": [
+              0.05180000000000001,
+              0.06140000000000001
+            ]
+          }
+        ],
+        "browser_errors": [],
+        "requests": 17,
+        "screenshot": "prototype-output/stack-review-20261028/s2-final.png"
+      }
+    ]
+  },
+  "limits": [
+    "Direct Python bridge admits ordinary uncompressed C-order unfiltered per-observation v2 COG output only.",
+    "Historical compressed Sentinel-2 capture was checked through the fixed Rust stack and generic conversion with explicit provenance; its absent null-fill CRS scalar chunk is refused by direct import.",
+    "Memory reservations cover admitted pixel/codec work, not whole-process RSS.",
+    "These are retained-capture conversion and browser checks, not a 30-day acquisition comparison, user study, or speed claim.",
+    "The generic stack conversion CLI does not automatically copy source descriptors; use the direct bridge or explicit Python provenance."
+  ]
+}

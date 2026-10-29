@@ -1,8 +1,8 @@
 # ADR 0004 — Same-grid time stacking and the Chronozarr bridge
 
-Status: local implementation and review fixes, 2026-10-28. Unreleased.
+Status: proposed in draft PRs, 2026-10-28. Unreleased.
 The original stacking commit is `dffca42`; its parent is `e98c448` in the
-PR #3–#6 dependency chain. This document describes the current local behavior,
+PR #3–#6 dependency chain. This document describes the proposed checkout behavior,
 not the merge or release status of those dependencies.
 
 ## Purpose
@@ -25,8 +25,10 @@ Two consumers now have different paths:
 The qualified acquisition writer is unchanged. Neither path resamples,
 reprojects, mosaics, composites, deduplicates acquisitions or changes stored
 calibration. No new Rust encoder, product profile or general plugin system is
-introduced. Product expansion remains held pending a separate acquisition use case.
-The accompanying evidence PR records the matched HLS comparison.
+introduced. Product expansion remains held after the matched real-analysis
+comparison below found no speed advantage for this workflow.
+See the [PR packaging record](stack-review/pr-packaging.md) for the dependency
+order and current checks.
 
 ## Persistent scientific stack
 
@@ -154,9 +156,64 @@ For categorical class codes, explicitly use one level rather than arithmetic
 mean overviews. The direct bridge preserves invalid Float32 NaN sample bits;
 the generic converter instead replaces NaNs with fill under its mask.
 
-## Qualification boundary
+## Evidence and remaining decision
+
+The original 2026-10-27 S2 smoke used 18 Earth Search asset/band observations to
+form a `[9, 2, 113, 91]` stack. Its recorded value equality and successful
+conversion were a plumbing check, not a performance or usability result. The
+original tests missed real S2 source-pin spelling, QA placement, malformed
+metadata, interleaved calibration and final root status. Review regressions now
+exercise those boundaries separately from the original synthetic tests.
+The [28 October review-fix results](stack-review/README.md) record the final
+tests, source hashes and retained real-data/browser checks.
 
 Named nonannual product fetches remain limited to 31 days and 32 observations,
 and `stack` consumes one completed output. Longer archives and other writer
-schemas are not implied by this bridge. The accompanying evidence PR records
-retained real-data readback, browser checks and the matched HLS comparison.
+schemas are not implied by this bridge.
+
+The [matched 30-day Ucayali HLS analysis](stack-review/hls-river-30day.md)
+completed on 28 October. Eight dates and 32 pinned assets produced identical
+science values, masks, analysis and static playback through Tile-Ripper and
+Rasterio/NumPy. Three fresh-process trials per path gave median total runtimes
+of 18.82 s and 12.61 s respectively. Tile-Ripper used less sampled process-tree
+memory and retained an additional raw observation archive; this is a workflow
+comparison, not an isolated decoder benchmark or a human usability trial.
+
+The run also fixed per-asset signing rate limits and the inspected provider's
+southern HLS native-grid convention. The complete receipt records those fixes,
+outside-AOI fill handling and all final checks. The measured result supports
+Python directly feeding Chronozarr for this HLS workflow. A narrower native
+acquisition role needs a concrete user requirement for its additional archive,
+bounded decoding or provenance checks; successful conversion alone does not
+establish that user benefit.
+
+The [profiling follow-up](stack-review/hls-river-performance.md) reduced native
+runtime 25.4% in contemporaneous old/new controls through connection reuse,
+bounded metadata read-ahead and exact-tile selection buffering. All values and
+full source descriptors remain equal. The matched rerun still favors Python
+(13.70 s versus 17.47 s). These remain historical measurements.
+
+The later [HTTP timeline follow-up](stack-review/hls-river-http.md) found that
+four Python workers could issue 16 simultaneous source requests. It removed
+two adjacent native reader HEADs while preserving fresh preparation/pre/post
+checks, reducing native runtime 15.8% in interleaved controls. At that stage, default
+medians were effectively tied (native 10.88 s, Python 10.92 s); with both paths
+capped at four actual requests, native retains a small 6.0% overhead (11.08 s
+versus 10.45 s). All 18 timed outputs match the original values, masks and
+provenance. The extra archive and bridge still require an acquisition use case;
+these timings do not independently establish that user benefit.
+
+The [matched sixteen-request rerun](stack-review/hls-river-http16.md) then gave
+both paths the same higher HTTP ceiling and verified actual payload peaks of
+sixteen. Native completed in 5.16 s median versus Python's 9.85 s, with identical
+values, masks, analysis and source provenance. Interleaved four-request controls
+show native benefiting more from the additional capacity across metadata and
+asset scheduling. This is a measured workload result; the native raw archive
+and its purpose remain separate from a general decoder or usability claim.
+
+The subsequent [Python acquisition across scenes](stack-review/hls-river-parallel16.md)
+rerun also gives Python sixteen metadata/acquisition workers with one HTTP
+connection each. Python then completed in 4.66 s median versus native 5.06 s,
+with identical science and provenance. Interleaved previous-Python controls
+gave 9.48 s, confirming that scene scheduling explained much of the earlier
+native lead. Native retained lower sampled peak RSS, 209 versus 278 MiB.

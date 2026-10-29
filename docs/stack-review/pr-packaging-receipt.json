@@ -1,0 +1,422 @@
+{
+  "scope": "offline PR packaging validation, no new benchmark timing",
+  "created_utc": "2026-10-29T03:48:18.130644+00:00",
+  "native_stack_commit": "219756ab9debf192e294a63fc76fa1620b72f889",
+  "native_source_sha256": {
+    "src/acquisition.rs": "eef83868e8928ce95146428dfe073e7b44e792161853cab0046722167e98bb75",
+    "src/cog_range.rs": "9b3c1d041da399644380d856a1e22294629dba04edf46b98155af32070d23535",
+    "src/http_transport.rs": "52c2311f870ba1b6b277307d6bef2a352e230192e7c43c662e53a5fabd971783",
+    "src/http_trace.rs": "90a8b2b75cadf34b04fc36d5922b42a32a569bb54363e6759c5a0e98f56906ea",
+    "src/native_cog.rs": "5ae648be45564329f2b2bd7aae50dfc7d80239c8fcdb66c2d2be73263d3913a7",
+    "src/planner.rs": "ed2b65cc6e16c9324a84e1b075fe893ff34b240e3f2032be845592179e2ee4e6",
+    "src/products.rs": "027f2cbeccf9a5fc0e0bac461f292eb1e1d64f0029c801dc4abb9afb0df6d23e",
+    "src/products/routing.rs": "4768123ecaf72cdfa20b85e224ac6b21b5877de0fbbf60c805a4546e87db5e56",
+    "src/stac_workflow.rs": "aa511407de71844612df5c6af591cfdb8c2e1184e8881252b4a7e8215568364a",
+    "src/storage.rs": "83d00f16099fe32510cb949b61e0f00a95b92b6c4063eb9ebf0ea699753e0aaf",
+    "src/stack.rs": "c041b9b563cbf4fa81d5b5ae003b33285c0aa61af9b65159323912c0235af62a",
+    "src/zarr_decode.rs": "6a186e504b7b646a528f023d676efa1e0af3d4fe902681973e52f9de3deaf8ad"
+  },
+  "bridge_source_sha256": "b54d0ddb6feaa4e25ac3fd786d99b9dbd53b3b60e0d5ddc402135b3faf41e8c7",
+  "rust_checks": {
+    "stack-native.log": {
+      "passed": 221,
+      "failed": 0,
+      "ignored": 3,
+      "log_sha256": "d14e9fbaaee579fd5c7587e1c7a05c4cea750bd0f55abc1a0afc7f77d9a7c569"
+    },
+    "stack-all-features.log": {
+      "passed": 321,
+      "failed": 0,
+      "ignored": 9,
+      "log_sha256": "84cacedd5177b054b7b39be94af3b4633e421f088e154e8744bb47819489bae8"
+    },
+    "stack-zarr-only.log": {
+      "passed": 164,
+      "failed": 0,
+      "ignored": 1,
+      "log_sha256": "19b94d89d6660761cb4825a5bc3821c582088e0351a31b37fb73dd9332170c29"
+    },
+    "stack-msrv-native-full.log": {
+      "passed": 283,
+      "failed": 0,
+      "ignored": 8,
+      "log_sha256": "014dc82ea39591ffc162e3016ee91be9e2ad0823ff898bcee86d77bcbd5b8631"
+    }
+  },
+  "bridge_readback": {
+    "status": "passed",
+    "input": "observations.zarr",
+    "output": "/Users/jakegearon/projects/tile-ripper/prototype-output/pr-packaging-20261028/bridge-readback",
+    "input_payload_sha256": "f842525895c63754c90283d6b48311f2e079875436d3ba7336d77eda6b8758a3",
+    "manifest_sha256": "6b3aeef5b874f04d9e0f8e7cbb2328a345e9be6f5d59d2a93d6cf4feb5086deb",
+    "shape": [
+      8,
+      3,
+      333,
+      332
+    ],
+    "bands": [
+      "B03",
+      "B04",
+      "B8A"
+    ],
+    "quality_policy": "hls_fmask_clear",
+    "conversion_route": "direct",
+    "exact_level0_bytes": true,
+    "exact_masks": true,
+    "source_descriptors_preserved": 32,
+    "input_unchanged": true,
+    "validation_problems": [],
+    "local_probe_seconds": 0.7797287920257077,
+    "output_bytes": 5142450,
+    "counts": [
+      {
+        "time": "2025-07-03T15:25:19.807800Z",
+        "source_valid_pixels": 109449,
+        "final_valid_pixels": 1779,
+        "quality_excluded_pixels": 107670
+      },
+      {
+        "time": "2025-07-08T15:25:39.497460Z",
+        "source_valid_pixels": 109561,
+        "final_valid_pixels": 106543,
+        "quality_excluded_pixels": 3018
+      },
+      {
+        "time": "2025-07-10T15:25:35.586370Z",
+        "source_valid_pixels": 109433,
+        "final_valid_pixels": 91651,
+        "quality_excluded_pixels": 17782
+      },
+      {
+        "time": "2025-07-13T15:25:20.106080Z",
+        "source_valid_pixels": 109553,
+        "final_valid_pixels": 108809,
+        "quality_excluded_pixels": 744
+      },
+      {
+        "time": "2025-07-18T15:25:39.814740Z",
+        "source_valid_pixels": 109549,
+        "final_valid_pixels": 0,
+        "quality_excluded_pixels": 109549
+      },
+      {
+        "time": "2025-07-20T15:25:35.910740Z",
+        "source_valid_pixels": 109557,
+        "final_valid_pixels": 105206,
+        "quality_excluded_pixels": 4351
+      },
+      {
+        "time": "2025-07-23T15:25:18.805230Z",
+        "source_valid_pixels": 109517,
+        "final_valid_pixels": 16043,
+        "quality_excluded_pixels": 93474
+      },
+      {
+        "time": "2025-07-30T15:25:34.443600Z",
+        "source_valid_pixels": 109561,
+        "final_valid_pixels": 0,
+        "quality_excluded_pixels": 109561
+      }
+    ],
+    "browser_pixel_checks": [
+      {
+        "t": 0,
+        "x": 254,
+        "y": 59,
+        "stored": [
+          419,
+          158,
+          4161
+        ],
+        "physical": [
+          0.0419,
+          0.0158,
+          0.4161
+        ]
+      },
+      {
+        "t": 1,
+        "x": 1,
+        "y": 1,
+        "stored": [
+          339,
+          176,
+          3277
+        ],
+        "physical": [
+          0.0339,
+          0.0176,
+          0.3277
+        ]
+      },
+      {
+        "t": 2,
+        "x": 1,
+        "y": 1,
+        "stored": [
+          327,
+          176,
+          3245
+        ],
+        "physical": [
+          0.0327,
+          0.0176,
+          0.3245
+        ]
+      },
+      {
+        "t": 3,
+        "x": 1,
+        "y": 1,
+        "stored": [
+          347,
+          183,
+          3143
+        ],
+        "physical": [
+          0.0347,
+          0.0183,
+          0.3143
+        ]
+      },
+      {
+        "t": 5,
+        "x": 1,
+        "y": 1,
+        "stored": [
+          345,
+          190,
+          3076
+        ],
+        "physical": [
+          0.0345,
+          0.019,
+          0.30760000000000004
+        ]
+      },
+      {
+        "t": 6,
+        "x": 324,
+        "y": 151,
+        "stored": [
+          1250,
+          1215,
+          3515
+        ],
+        "physical": [
+          0.125,
+          0.12150000000000001,
+          0.35150000000000003
+        ]
+      }
+    ],
+    "scope": "retained local captures; no acquisition, speed comparison or human trial",
+    "all_levels_values_checked": 3318672,
+    "all_levels_masks_checked": 1106224,
+    "reference": "/Users/jakegearon/projects/tile-ripper/prototype-output/hls-river-parallel16-20261028/matched-tile-1/playback"
+  },
+  "browser": {
+    "status": "passed",
+    "scope": "local static hosting, WebGL rendering, temporal navigation and click-to-query; external requests blocked",
+    "stores": [
+      {
+        "status": "passed",
+        "store": "/Users/jakegearon/projects/tile-ripper/prototype-output/pr-packaging-20261028/bridge-readback",
+        "timesteps_queried": 8,
+        "checks": [
+          {
+            "t": 0,
+            "pixel": {
+              "x": 254,
+              "y": 130
+            },
+            "valid": true,
+            "stored": [
+              534,
+              441,
+              85
+            ],
+            "physical": [
+              0.0534,
+              0.0441,
+              0.0085
+            ]
+          },
+          {
+            "t": 1,
+            "pixel": {
+              "x": 62,
+              "y": 169
+            },
+            "valid": true,
+            "stored": [
+              482,
+              240,
+              3853
+            ],
+            "physical": [
+              0.0482,
+              0.024,
+              0.38530000000000003
+            ]
+          },
+          {
+            "t": 2,
+            "pixel": {
+              "x": 231,
+              "y": 170
+            },
+            "valid": true,
+            "stored": [
+              164,
+              121,
+              491
+            ],
+            "physical": [
+              0.0164,
+              0.012100000000000001,
+              0.049100000000000005
+            ]
+          },
+          {
+            "t": 5,
+            "pixel": {
+              "x": 21,
+              "y": 161
+            },
+            "valid": true,
+            "stored": [
+              354,
+              195,
+              3446
+            ],
+            "physical": [
+              0.0354,
+              0.0195,
+              0.3446
+            ]
+          },
+          {
+            "t": 6,
+            "pixel": {
+              "x": 138,
+              "y": 282
+            },
+            "valid": true,
+            "stored": [
+              450,
+              270,
+              3049
+            ],
+            "physical": [
+              0.045000000000000005,
+              0.027,
+              0.3049
+            ]
+          },
+          {
+            "t": 4,
+            "pixel": {
+              "x": 166,
+              "y": 166
+            },
+            "valid": false
+          },
+          {
+            "t": 7,
+            "pixel": {
+              "x": 166,
+              "y": 166
+            },
+            "valid": false
+          },
+          {
+            "t": 3,
+            "pixel": {
+              "x": 249,
+              "y": 166
+            },
+            "valid": true,
+            "stored": [
+              723,
+              554,
+              2814
+            ],
+            "physical": [
+              0.0723,
+              0.055400000000000005,
+              0.28140000000000004
+            ]
+          }
+        ],
+        "browser_errors": [],
+        "requests": 577,
+        "screenshot": "/Users/jakegearon/projects/tile-ripper/prototype-output/pr-packaging-20261028/bridge-browser-input.png"
+      }
+    ]
+  },
+  "curl_trace_fixture": {
+    "status": "passed",
+    "reads": 16,
+    "transactions": 96,
+    "body_bytes": 7840960,
+    "traced_peak": 16,
+    "independent_server_overlap_peak": 16,
+    "curl_summaries": [
+      {
+        "event": "trace_summary",
+        "client": "gdal",
+        "pid": 97089,
+        "starts": 96,
+        "ends": 96,
+        "issues": 0,
+        "inexact": 0,
+        "pending_transfers": 0
+      }
+    ],
+    "credentials_redacted": true
+  },
+  "historical_receipts": {
+    "hls-river-http16-receipt.json": "d5a4d1f314ca913642d9867a0a989f65775aa8993332702130baeece562c9d23",
+    "acceptance.json": "791b77b0bfdce0af1ac26c93be9c59c5b27ae4fe4e2a9317a66de32eef4500ed",
+    "hls-river-30day-receipt.json": "ae29c3a873e2803650858efe22864aca018abccdfd870b1ea200ab533cff6104",
+    "hls-river-http-receipt.json": "0cfdfcdfa46302b0553f97a0f15f322b4d79c8fdf3406d6393ee7a20fda89b5a",
+    "hls-river-parallel16-receipt.json": "d04ec90a5eca20280d68e6aba892a6ddffc73228bfb02e52ca5e7c0c591d03bf",
+    "hls-river-performance-receipt.json": "e3559f6608a55c8210f904edbb11501582d3e5b4d1152a22dfda2eeec27489b9"
+  },
+  "local_artifacts": "prototype-output/pr-packaging-20261028/",
+  "publication": "draft PRs only; no merge, release or deployment",
+  "ci": "see live PR checks; pending checks are not claimed passed",
+  "bridge_head_commit": "c6bcb81a7b6b48a43b339e5a3037983fe15e6231",
+  "python_unit_tests": {
+    "passed": 2294,
+    "failed": 0,
+    "python": "3.13.17",
+    "branch_aware_total_coverage_percent": 93,
+    "log_sha256": "8414f15c6597aced50d83d167c1c8cfd5e13db62cbf98aa841e7290115175bd2",
+    "coverage_log_sha256": "49cc4720affbaa243308c559119150a76ce0f45dde6d4901c47369f03330f11d"
+  },
+  "review_prs": [
+    "https://github.com/chronozarr/tile-ripper/pull/7",
+    "https://github.com/chronozarr/tile-ripper/pull/8",
+    "https://github.com/chronozarr/tile-ripper/pull/9",
+    "https://github.com/chronozarr/chronozarr/pull/145"
+  ],
+  "additional_local_checks": [
+    "strict all-feature Clippy",
+    "rustfmt",
+    "Ruff lint/format",
+    "ty project environment",
+    "architecture",
+    "wheel and source archive build",
+    "isolated sdist unit collection",
+    "wheel API import",
+    "native and bridge site build/links",
+    "native site tests",
+    "bridge six dependency compatibility tests",
+    "bridge local cross-origin hosting",
+    "root/site audits zero findings"
+  ],
+  "finalized_utc": "2026-10-29T03:51:22.916646+00:00"
+}
