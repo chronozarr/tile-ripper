@@ -17,6 +17,9 @@ Whether you need an account depends on the product and route. LP DAAC, PO.DAAC a
 | `opera-rtc-s1` | OPERA terrain-corrected Sentinel-1 backscatter v1.0: VV, VH, mask | No for the public sample; Earthdata for ASF production |
 | `opera-dswx-s1` | OPERA DSWx from Sentinel-1, product 1.0 from software 1.2: WTR, BWTR, CONF, DIAG | Earthdata (PO.DAAC) |
 | `opera-dist-alert` | OPERA DIST-ALERT-HLS v1 (disturbance alert), one observation: nine layers | Earthdata (LP DAAC) |
+| `opera-dswx-ni-prototype` | Pinned public DSWx-NI engineering specimen only: UInt8 WTR, BWTR, CONF and DIAG | No, for the four exact public objects only |
+| `opera-dist-alert-s1` | DIST-ALERT-S1 v1.0: ten qualified COG layers | Earthdata (ASF Cumulus) |
+| `opera-dist-ann-hls` | DIST-ANN-HLS v1: 21 qualified annual layers on the northern T17SNU specimen; the example reserves 128 MiB | Earthdata (LP DAAC) |
 
 `tile-ripper products` prints these names as JSON, with bands, stored types and policies. It also lists bands that were not tested; claims here cover only the layers above. A public reference sample is a few real published files; it does not prove access to the production archive. Searching NASA's catalog needs no account; reading protected files does. See [Earthdata login](earthdata-login.md).
 
@@ -56,13 +59,28 @@ tile-ripper fetch examples/product-opera-dswx-s1.json \
   --output ./dswx-s1.zarr > dswx-s1-report.json
 ```
 
+DIST-S1 and DIST-ANN use the same explicit private-netrc form after their own
+exact archive route has been admitted. Do not reuse an HLS/PO.DAAC locator or
+turn an example into an archive-wide access rule:
+
+```sh
+tile-ripper plan examples/opera-dist-alert-s1.json \
+  --auth earthdata --netrc PRIVATE_FILE --gdal-free --human
+tile-ripper plan examples/opera-dist-ann-hls.json \
+  --auth earthdata --netrc PRIVATE_FILE --gdal-free --human
+```
+
+The DSWx-NI example is different: it supplies four public objects and exact
+ETags with `provider: pinned`; it deliberately has no discovery or production
+authentication route. See the [prototype receipt](../products/opera-expansion/dswx-ni.md).
+
 ## Request fields
 
 | Field | Meaning |
 | --- | --- |
 | `product` | Name from the table. |
 | `aoi` | `{"kind": "bounds", "crs": "EPSG:4326", "bbox": [W, S, E, N]}`, or `"kind": "polygon"` with `coordinates`. |
-| `start`, `end` | RFC 3339 times, inclusive. |
+| `start`, `end` | RFC 3339 times, inclusive. Most products permit at most 31 days. DIST-ANN permits up to 366 days and selects its provider-recorded coverage interval; its filename year is not invented as an instantaneous observation time. |
 | `bands` | Native names or aliases such as `red`, `nir`. |
 | `quality_policies` | Optional named masks, such as `landsat_pixel_clear` or `hls_fmask_clear`. Each needs its raw layer in `bands`. See [definitions](../products/specifications.md). |
 | `max_observations` | Cap on observations found. Exceeding it is an error, not truncation. |
@@ -83,12 +101,12 @@ Use a result only if the command exits successfully and `manifest.json` says `"s
 
 ## Limits
 
-- 1 to 32 observations, 1 to 16 bands, an interval of at most 31 days.
+- 1 to 32 observations and an interval of at most 31 days (DIST-ANN: at most 366 days). Most profiles allow 1 to 16 bands; DIST-ANN exposes six currently admitted bands.
 - Native acquisition requires an area of interest (AOI) of at most 5° per axis, within ±80° latitude, with no antimeridian crossing.
 - Catalog discovery with a bounding box allows at most 30° per axis and 400 square degrees. A search must fit one page; narrow the query if it fails. Split larger search areas into AOIs within the native acquisition limits before fetching.
 - North-up 30 m WGS84 Universal Transverse Mercator (UTM) grids only; polar grids are not supported.
 - No reflectance or decibel conversion, harmonization, compositing, alignment, reprojection or resampling.
-- Landsat 7 scan-line gaps stay missing. HLS version 1.4, Landsat thermal products, DIST-ANN and older ASF `datapool` URLs are not supported.
+- Landsat 7 scan-line gaps stay missing. HLS version 1.4, Landsat thermal products, DIST-ANN claims beyond the current layer-specific receipt scope or northern T17SNU reader representation, final/production DSWx-NI, and older ASF `datapool` URLs are not supported. The southern T20LRP reference's EPSG:32620 with negative northing is not called corrupt; it is an unqualified CRS/hemisphere representation for this reader.
 - No resume: restart an interrupted fetch.
 
 ## Details and evidence

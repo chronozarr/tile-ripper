@@ -62,5 +62,6 @@ jobs:
         run: rustup toolchain install 1.92.0 --profile minimal
       - run: cargo +1.92.0 test --locked --manifest-path vendor/hdf5-reader/Cargo.toml --all-targets -- --test-threads=1
       - run: cargo +1.92.0 test --locked --manifest-path vendor/zarrs_filesystem/Cargo.toml --all-targets -- --test-threads=1
+      - run: cargo +1.92.0 test --locked --manifest-path vendor/tiff-reader/Cargo.toml --no-default-features --features zstd --lib zstd_
       - run: cargo +1.92.0 check --locked --manifest-path consumers/native-stats/Cargo.toml
       - run: cargo +1.92.0 check --locked --manifest-path consumers/native-stats/Cargo.toml --no-default-features --features native-cog

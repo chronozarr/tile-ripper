@@ -114,6 +114,38 @@ mod typed {
     }
 
     #[test]
+    fn zstd_integer_and_float_predictors_preserve_every_stored_bit_and_validity() {
+        for original in [
+            "hls_int16.tif",
+            "classification_uint8.tif",
+            "radar_float32.tif",
+            "radar_float32_nan_nodata.tif",
+        ] {
+            let compressed = original.replace(".tif", "_zstd.tif");
+            let (layout, before) = decode(original);
+            let (zstd_layout, after) = decode(&compressed);
+            let mut before_layout = serde_json::to_value(layout).unwrap();
+            let mut after_layout = serde_json::to_value(zstd_layout).unwrap();
+            before_layout.as_object_mut().unwrap().remove("tiles");
+            after_layout.as_object_mut().unwrap().remove("tiles");
+            assert_eq!(before_layout, after_layout);
+            match (&before.pixels, &after.pixels) {
+                (Pixels::UInt8(a), Pixels::UInt8(b)) => assert_eq!(a, b),
+                (Pixels::Int16(a), Pixels::Int16(b)) => assert_eq!(a, b),
+                (Pixels::Float32(a), Pixels::Float32(b)) => assert_eq!(
+                    a.iter().map(|v| v.to_bits()).collect::<Vec<_>>(),
+                    b.iter().map(|v| v.to_bits()).collect::<Vec<_>>()
+                ),
+                _ => panic!("unexpected fixture sample type"),
+            }
+            assert_eq!(
+                before.validity().collect::<Vec<_>>(),
+                after.validity().collect::<Vec<_>>()
+            );
+        }
+    }
+
+    #[test]
     fn rasterio_fixtures_decode_typed_storage_values_and_metadata() {
         let (layout, chunk) = decode("hls_int16.tif");
         assert_eq!(layout.dtype, "Int16");

@@ -1,5 +1,7 @@
 # OPERA expansion feasibility
 
+Implementation and source/output qualification are now recorded in [OPERA expansion qualification](opera-expansion/qualification.md). The assessment below preserves the research baseline.
+
 Assessment date: **2026-10-27**. This is a research and qualification proposal for the local Tile-Ripper checkout. It adds no product implementation, release claim, or production-access qualification.
 
 **Yes: several missing OPERA products fit Tile-Ripper's acquisition model.** DIST-ALERT-S1 and DIST-ANN-HLS are the best first production-archive additions; DISP-S1 is a worthwhile separate HDF5 milestone; CSLC-S1 requires new numeric and output support. **DSWx-NI COGs already exist as anonymously readable v0.1 engineering samples**, and a pinned prototype profile is feasible without a new physical reader. Its production discovery and final-v1.0 qualification remain held. Other NISAR-derived OPERA products and VLM also remain held. The existing NISAR GCOV profile supplies none of those OPERA products.

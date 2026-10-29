@@ -192,6 +192,10 @@ pub fn run(options: super::Options) -> Result<()> {
                 "{}",
                 serde_json::json!({"event":"prepared","provenance":stream.provenance})
             );
+            let temporal_sources = stream.provenance["sources"]
+                .as_array()
+                .cloned()
+                .unwrap_or_default();
             for item in stream.by_ref() {
                 if cancelled.load(std::sync::atomic::Ordering::Acquire) {
                     stream.cancel();
@@ -201,6 +205,21 @@ pub fn run(options: super::Options) -> Result<()> {
                 }
                 let c = item?;
                 let mut row = serde_json::json!({"event":"chunk","asset_id":c.asset_id,"datetime":c.datetime,"window":c.window,"crs":c.crs,"transform":c.transform,"physical_valid_pixels":c.validity().filter(|v|*v).count(),"provisional":true});
+                if let Some(source) = temporal_sources
+                    .iter()
+                    .find(|source| source["asset_id"] == c.asset_id)
+                {
+                    for key in [
+                        "temporal_extent",
+                        "time_coordinate_role",
+                        "prototype",
+                        "qualification_scope",
+                    ] {
+                        if let Some(value) = source.get(key) {
+                            row[key] = value.clone();
+                        }
+                    }
+                }
                 let selected = plan
                     .selected
                     .iter()

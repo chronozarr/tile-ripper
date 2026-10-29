@@ -4,6 +4,9 @@
 pub mod array_grid;
 #[cfg(feature = "native-hdf5")]
 pub mod arrays;
+pub mod dist_ann;
+pub mod dist_s1;
+pub mod dswx_ni;
 pub mod profile;
 pub mod routing;
 use crate::{
@@ -120,17 +123,28 @@ impl ProductRequest {
         let p = profile::profile(&self.product)?;
         let start = chrono::DateTime::parse_from_rfc3339(&self.start)?;
         let end = chrono::DateTime::parse_from_rfc3339(&self.end)?;
-        if end < start || (end - start).num_seconds() > 31 * 86400 {
-            return fail("product date interval must be ordered and at most 31 days");
+        let max_days = if p.family == profile::ProductFamily::OperaDistAnn {
+            366
+        } else {
+            31
+        };
+        if end < start || end - start > chrono::Duration::days(max_days) {
+            return fail("product date interval must be ordered and within its product limit (31 days, or 366 days for annual DIST)");
         }
         if !(1..=32).contains(&self.max_observations)
-            || !(1..=16).contains(&self.bands.len())
+            || self.bands.is_empty()
+            || self.bands.len()
+                > if p.family == profile::ProductFamily::OperaDistAnn {
+                    21
+                } else {
+                    16
+                }
             || self.buffer_bytes < 4 * 1024 * 1024
             || self.buffer_bytes > 1024 * 1024 * 1024
             || self.chunk_edge == 0
             || self.chunk_edge > 1024
         {
-            return fail("invalid product limits: 1..32 observations, 1..16 bands, 4..1024 MiB buffer, chunk edge 1..1024");
+            return fail("invalid product limits: 1..32 observations, 1..16 bands (21 for annual DIST), 4..1024 MiB buffer, chunk edge 1..1024");
         }
         let mut names = BTreeSet::new();
         for name in &self.bands {
@@ -423,6 +437,8 @@ fn collection(product: &str) -> Result<(&'static str, &'static str)> {
         "opera-rtc-s1" => Ok(("OPERA_L2_RTC-S1_V1", "1")),
         "opera-dswx-s1" => Ok(("OPERA_L3_DSWX-S1_V1", "1.0")),
         "opera-dist-alert" => Ok(("OPERA_L3_DIST-ALERT-HLS_V1", "1")),
+        "opera-dist-alert-s1" => Ok(("OPERA_L3_DIST-ALERT-S1_V1", "1")),
+        "opera-dist-ann-hls" => Ok(("OPERA_L3_DIST-ANN-HLS_V1", "1")),
         _ => fail("no CMR route for product"),
     }
 }
@@ -520,11 +536,94 @@ fn discover_cmr(r: &ProductRequest) -> Result<Vec<Observation>> {
                 },
             );
         }
-        out.push(Observation{id:id.into(),datetime:text(e,"time_start")?.into(),collection:short.into(),platform:None,processing:None,assets,properties:json!({"cmr_concept_id":e["id"],"collection_concept_id":concept,"updated":e["updated"]})});
+        let mut properties = json!({"cmr_concept_id":e["id"],"collection_concept_id":concept,"updated":e["updated"],"source_time_start":e["time_start"],"source_time_end":e["time_end"]});
+        if r.product == dist_ann::ID {
+            properties["temporal_extent"] = json!({
+                "coverage_start":text(e,"time_start")?,
+                "coverage_end":text(e,"time_end")?,
+                "summary_year":dist_ann::summary_year(id)?,
+            });
+        }
+        out.push(Observation {
+            id: id.into(),
+            datetime: text(e, "time_start")?.into(),
+            collection: short.into(),
+            platform: None,
+            processing: None,
+            assets,
+            properties,
+        });
     }
     Ok(out)
 }
+/// Annual TIFFs do not encode their coverage interval. Bind supplied intervals
+/// to a fresh exact CMR record, rather than trusting caller-authored properties.
+fn verify_annual_catalog_extent(observation: &Observation, entry: &Value) -> Result<Value> {
+    let id = entry["producer_granule_id"]
+        .as_str()
+        .or_else(|| entry["title"].as_str())
+        .ok_or("CMR annual granule identity missing")?;
+    if id != observation.id {
+        return fail("CMR annual granule identity mismatch");
+    }
+    let extent = dist_ann::temporal_extent(observation)?;
+    let start = chrono::DateTime::parse_from_rfc3339(text(entry, "time_start")?)?;
+    let end = chrono::DateTime::parse_from_rfc3339(text(entry, "time_end")?)?;
+    if extent.coverage_start != start || extent.coverage_end != end {
+        return fail(
+            "annual supplied coverage interval conflicts with the exact live CMR granule record",
+        );
+    }
+    let links = entry["links"]
+        .as_array()
+        .ok_or("CMR annual data links missing")?;
+    for asset in observation.assets.values() {
+        if !links.iter().any(|link| {
+            link["inherited"] != true
+                && link["rel"]
+                    .as_str()
+                    .is_some_and(|rel| rel.ends_with("/data#"))
+                && link["href"] == asset.href
+        }) {
+            return fail("annual supplied asset is absent from exact live CMR granule record");
+        }
+    }
+    Ok(
+        json!({"authority":"NASA CMR exact granule record, not TIFF metadata","collection_concept_id":"C2519119034-LPCLOUD","granule_concept_id":entry["id"],"revision_id":entry["revision_id"],"updated":entry["updated"],"coverage_start":entry["time_start"],"coverage_end":entry["time_end"]}),
+    )
+}
+fn verify_annual_supplied_observations(observations: &mut [Observation]) -> Result<()> {
+    let client = client()?;
+    for observation in observations {
+        let mut url = Url::parse(&format!("{CMR}/granules.json"))?;
+        url.query_pairs_mut()
+            .append_pair("collection_concept_id", "C2519119034-LPCLOUD")
+            .append_pair("granule_ur", &observation.id)
+            .append_pair("page_size", "2");
+        let value = read_json(
+            client
+                .get(url)
+                .send()
+                .map_err(|_| "annual exact CMR verification transport failed")?,
+        )?;
+        let entries = value["feed"]["entry"]
+            .as_array()
+            .ok_or("CMR annual verification entries missing")?;
+        if entries.len() != 1 {
+            return fail("annual exact CMR verification is missing or ambiguous");
+        }
+        observation.properties["verified_catalog_extent"] =
+            verify_annual_catalog_extent(observation, &entries[0])?;
+    }
+    Ok(())
+}
 fn band_href(product: &str, band: &str, href: &str) -> bool {
+    match product {
+        dswx_ni::ID => return dswx_ni::band_href(band).is_ok_and(|canonical| canonical == href),
+        dist_s1::ID => return dist_s1::band_href(band, href),
+        dist_ann::ID => return dist_ann::band_href(band, href),
+        _ => {}
+    }
     let path = href.split('?').next().unwrap_or("").to_ascii_lowercase();
     let band = band.to_ascii_lowercase();
     if product.starts_with("hls-") {
@@ -537,7 +636,15 @@ fn validate_observation(r: &ProductRequest, o: &Observation) -> Result<()> {
     let p = profile::profile(&r.product)?;
     p.validate_identity(&o.id, o.platform.as_deref(), o.processing.as_deref())?;
     p.validate_datetime(&o.id, &o.datetime)?;
-    let collection_ok = if p.family == profile::ProductFamily::Landsat {
+    match p.family {
+        profile::ProductFamily::OperaDswxNiPrototype => dswx_ni::validate_observation(r, o)?,
+        profile::ProductFamily::OperaDistS1 => dist_s1::validate_observation(r, o)?,
+        profile::ProductFamily::OperaDistAnn => dist_ann::validate_observation(r, o)?,
+        _ => {}
+    }
+    let collection_ok = if p.family == profile::ProductFamily::OperaDswxNiPrototype {
+        o.collection == p.catalog.collection
+    } else if p.family == profile::ProductFamily::Landsat {
         o.collection == "landsat-c2-l2"
     } else {
         let (short, version) = collection(&r.product)?;
@@ -556,8 +663,9 @@ fn validate_observation(r: &ProductRequest, o: &Observation) -> Result<()> {
         return fail("observation collection conflicts with product identity");
     }
     let time = chrono::DateTime::parse_from_rfc3339(&o.datetime)?;
-    if time < chrono::DateTime::parse_from_rfc3339(&r.start)?
-        || time > chrono::DateTime::parse_from_rfc3339(&r.end)?
+    if p.family != profile::ProductFamily::OperaDistAnn
+        && (time < chrono::DateTime::parse_from_rfc3339(&r.start)?
+            || time > chrono::DateTime::parse_from_rfc3339(&r.end)?)
     {
         return fail("observation outside requested inclusive interval");
     }
@@ -699,6 +807,25 @@ fn landsat_band_suffix(href: &str, band: &str) -> bool {
         .unwrap_or_default()
         .to_ascii_uppercase();
     filename.ends_with(&format!("_{band}.TIF"))
+}
+
+fn inspected_product_identity(
+    product: &str,
+    observation: &Observation,
+    band: &profile::BandProfile,
+    asset: &ProductAsset,
+    source: &Value,
+    layout: &crate::Layout,
+) -> Result<()> {
+    match product {
+        dswx_ni::ID => return dswx_ni::validate_physical(observation, band, asset, source, layout),
+        dist_s1::ID => return dist_s1::validate_physical(observation, band, asset, source, layout),
+        dist_ann::ID => {
+            return dist_ann::validate_physical(observation, band, asset, source, layout)
+        }
+        _ => {}
+    }
+    physical_identity(product, observation, band, asset, source)
 }
 
 fn physical_identity(
@@ -1139,7 +1266,7 @@ fn prepare_inner(
     if !crate::cog::native_selected() {
         return fail("product profiles require native COG selection; build native-cog and select --backend native");
     }
-    let catalog = discover_routed(r, netrc.is_some())?;
+    let mut catalog = discover_routed(r, netrc.is_some())?;
     // Routing is final before source inspection. Never open credentials for a
     // credential-free selection, even when authorization was supplied.
     let netrc = if catalog.provider == routing::Provider::Earthdata {
@@ -1154,6 +1281,10 @@ fn prepare_inner(
         return fail("selected Earthdata route requires explicit --auth earthdata --netrc PRIVATE_FILE; use a fresh --provider planetary_computer plan where qualified coverage exists");
     }
     let p = profile::profile(&r.product)?;
+    if p.family == profile::ProductFamily::OperaDistAnn && r.observations.is_some() {
+        verify_annual_supplied_observations(&mut catalog.observations)?;
+        catalog.metadata_reservation_bytes = metadata_reservation(r, &catalog.observations)?;
+    }
     let acquisition_buffer_bytes = r
         .buffer_bytes
         .checked_sub(catalog.metadata_reservation_bytes)
@@ -1186,15 +1317,33 @@ fn prepare_inner(
                 etag: a.etag.clone(),
             });
             metadata.push(json!({"asset_id":id,"provider":catalog.provider,"canonical_locator":crate::stac_workflow::safe_reference(&a.href),"access_policy":if catalog.provider == routing::Provider::PlanetaryComputer { routing::SIGNING_POLICY } else { routing::POLICY },"item_id":o.id,"collection":o.collection,"requested_band":b.name,"product":r.product,"product_version":p.processing_version(&o.id)?,"platform":o.platform,"processing":o.processing,"product_band":b,"acquisition":o.properties,"asset_metadata":a.metadata,"href":crate::stac_workflow::safe_reference(&a.href),"raster_bands":[{"scale":b.scale,"offset":b.offset,"unit":b.unit}],"quality_policies":r.quality_policies.iter().filter(|name|name.parse::<profile::QualityPolicy>().is_ok_and(|q|q.required_bands().contains(&b.name.as_str()))).collect::<Vec<_>>() }));
+            if p.family == profile::ProductFamily::OperaDistAnn {
+                let record = metadata.last_mut().expect("source record was appended");
+                record["temporal_extent"] = serde_json::to_value(dist_ann::temporal_extent(o)?)?;
+                record["time_coordinate_role"] = json!("source_coverage_start");
+                record["temporal_selection"] =
+                    json!("provider coverage interval intersects requested interval");
+            }
+            if p.family == profile::ProductFamily::OperaDswxNiPrototype {
+                let record = metadata.last_mut().expect("source record was appended");
+                record["prototype"] = json!(true);
+                record["qualification_scope"] = json!(
+                    "pinned v0.1 engineering specimen; not final NI v1.0 or a production archive"
+                );
+            }
         }
     }
     let request = Request {
         source: Source::Assets { assets },
         spatial: r.aoi.clone(),
-        time: Some(Time::Interval {
-            start: r.start.clone(),
-            end: r.end.clone(),
-        }),
+        time: if p.family == profile::ProductFamily::OperaDistAnn {
+            None
+        } else {
+            Some(Time::Interval {
+                start: r.start.clone(),
+                end: r.end.clone(),
+            })
+        },
         variables: vec![Variable::Band { index: 1 }],
         quality: vec![],
         grid: Grid::Native,
@@ -1227,6 +1376,12 @@ fn prepare_inner(
                     "opera-dswx-s1" => AuthenticatedHttp::earthdata_dswx_s1(&asset.locator, netrc)?,
                     "opera-dist-alert" => {
                         AuthenticatedHttp::earthdata_dist_alert(&asset.locator, netrc)?
+                    }
+                    "opera-dist-alert-s1" => {
+                        AuthenticatedHttp::earthdata_dist_s1(&asset.locator, netrc)?
+                    }
+                    "opera-dist-ann-hls" => {
+                        AuthenticatedHttp::earthdata_dist_ann(&asset.locator, netrc)?
                     }
                     _ => return fail("no qualified authenticated product COG route"),
                 };
@@ -1272,7 +1427,7 @@ fn prepare_inner(
                     .find(|candidate| candidate["asset_id"] == selected.asset_id)
             })
             .ok_or("inspected physical product source metadata missing")?;
-        physical_identity(&r.product, observation, band, asset, physical_source)?;
+        inspected_product_identity(&r.product, observation, band, asset, physical_source, l)?;
         let dtype = match l.dtype.as_str() {
             "UInt16" | "<u2" => "uint16",
             "Int16" | "<i2" => "int16",
@@ -1287,23 +1442,40 @@ fn prepare_inner(
             ));
         }
         let expected_nodata = band.nodata.map(profile::NoDataValue::as_f64);
-        let catalog_nodata = asset.metadata["raster:bands"]
+        let declared_nodata = asset.metadata["raster:bands"]
             .as_array()
             .and_then(|bands| bands.first())
-            .and_then(|raster| raster["nodata"].as_f64());
-        let nodata_matches = match (expected_nodata, l.nodata, catalog_nodata) {
-            (Some(expected), Some(actual), declared) => {
-                actual.is_finite()
-                    && actual == expected
-                    && declared.is_none_or(|value| value == expected)
+            .and_then(|raster| raster.get("nodata"))
+            .filter(|value| !value.is_null());
+        let catalog_nodata = declared_nodata.and_then(Value::as_f64);
+        let nodata_matches = if expected_nodata.is_some_and(f64::is_nan) {
+            let actual = native_physical(physical_source)
+                .and_then(|physical| physical["gdal_nodata_text"].as_str())
+                .and_then(|text| text.parse::<f64>().ok());
+            actual.is_some_and(f64::is_nan)
+                && l.nodata.is_none_or(f64::is_nan)
+                && declared_nodata.is_none_or(|value| {
+                    value.as_f64().is_some_and(f64::is_nan)
+                        || value
+                            .as_str()
+                            .and_then(|text| text.parse::<f64>().ok())
+                            .is_some_and(f64::is_nan)
+                })
+        } else {
+            match (expected_nodata, l.nodata, catalog_nodata) {
+                (Some(expected), Some(actual), declared) => {
+                    actual.is_finite()
+                        && actual == expected
+                        && declared.is_none_or(|value| value == expected)
+                }
+                (Some(expected), None, Some(declared)) => declared == expected,
+                (Some(_), None, None) => true,
+                (None, None, None) => true,
+                // Native RTC normalizes a non-finite GDAL_NODATA token to no finite
+                // replacement while retaining the exact token in physical metadata.
+                (None, Some(actual), None) => actual.is_nan(),
+                _ => false,
             }
-            (Some(expected), None, Some(declared)) => declared == expected,
-            (Some(_), None, None) => true,
-            (None, None, None) => true,
-            // Native RTC normalizes a non-finite GDAL_NODATA token to no finite
-            // replacement while retaining the exact token in physical metadata.
-            (None, Some(actual), None) => actual.is_nan(),
-            _ => false,
         };
         if !nodata_matches {
             return fail("TIFF nodata conflicts with authoritative product profile");
@@ -1324,7 +1496,11 @@ fn prepare_inner(
         }
         if matches!(
             p.family,
-            profile::ProductFamily::OperaDswxS1 | profile::ProductFamily::OperaDist
+            profile::ProductFamily::OperaDswxS1
+                | profile::ProductFamily::OperaDist
+                | profile::ProductFamily::OperaDswxNiPrototype
+                | profile::ProductFamily::OperaDistS1
+                | profile::ProductFamily::OperaDistAnn
         ) {
             wave2_grid_identity(observation, l)?;
         }
@@ -1360,7 +1536,7 @@ fn prepare_inner(
         }
     }
     decision.equivalence = json!({"classification":if verified == metadata.len() && verified > 0 {"scientifically_equivalent_selected_samples"} else {"unknown_or_partial_across_providers"},"verified_physical_assets":verified,"total_assets":metadata.len(),"scope":"see each source's immutable ETag/locator-bound sample evidence; no whole-object byte identity or archive-wide interchangeability claim"});
-    Ok(prepared.with_product_metadata(metadata,json!({"profile":p,"routing":decision,"quality_policies":r.quality_policies,"mask_scope":"derived masks belong to their raw QA/classification observation; no implicit cross-band alignment","discovery_seconds":catalog.seconds,"metadata_reservation_bytes":catalog.metadata_reservation_bytes,"requested_total_buffer_bytes":r.buffer_bytes,"acquisition_buffer_bytes":acquisition_buffer_bytes})))
+    Ok(prepared.with_product_metadata(metadata,json!({"profile":p,"routing":decision,"quality_policies":r.quality_policies,"mask_scope":"derived masks belong to their raw QA/classification observation; no implicit cross-band alignment","discovery_seconds":catalog.seconds,"metadata_reservation_bytes":catalog.metadata_reservation_bytes,"requested_total_buffer_bytes":r.buffer_bytes,"acquisition_buffer_bytes":acquisition_buffer_bytes,"selection_time":Time::Interval{start:r.start.clone(),end:r.end.clone()},"temporal_interpretation":if p.family==profile::ProductFamily::OperaDistAnn {"annual coverage interval; coordinate labels actual provider coverage_start"}else{"source observation timestamp; additional source times retained in provenance"}})))
 }
 
 /// Evaluate a named policy against its raw layer without mutating the source.
@@ -1413,6 +1589,27 @@ pub fn source_validity<'a>(
 mod wave2_identity_tests {
     use super::*;
 
+    #[test]
+    fn annual_coverage_is_verified_against_catalog_not_caller_fields() -> Result<()> {
+        let request: ProductRequest =
+            serde_json::from_str(include_str!("../examples/opera-dist-ann-hls.json"))?;
+        let observation = &request.observations.as_ref().unwrap()[0];
+        let extent = dist_ann::temporal_extent(observation)?;
+        let entry = json!({"producer_granule_id":observation.id,"id":"G-fixture-LPCLOUD","revision_id":7,
+            "time_start":extent.coverage_start.to_rfc3339(),"time_end":extent.coverage_end.to_rfc3339(),
+            "links":observation.assets.values().map(|asset|json!({"rel":"http://esipfed.org/ns/fedsearch/1.1/data#","href":asset.href})).collect::<Vec<_>>()});
+        verify_annual_catalog_extent(observation, &entry)?;
+        let mut fake = observation.clone();
+        fake.properties["temporal_extent"]["coverage_end"] = json!("2025-12-31T23:59:59Z");
+        assert!(verify_annual_catalog_extent(&fake, &entry).is_err());
+        let mut missing_asset = entry.clone();
+        missing_asset["links"] = json!([]);
+        assert!(verify_annual_catalog_extent(observation, &missing_asset).is_err());
+        let mut wrong_id = entry;
+        wrong_id["producer_granule_id"] = json!("different");
+        assert!(verify_annual_catalog_extent(observation, &wrong_id).is_err());
+        Ok(())
+    }
     #[test]
     fn dist_physical_metadata_cannot_swap_status_confidence_or_date_layers() -> Result<()> {
         let request: ProductRequest = serde_json::from_str(include_str!(

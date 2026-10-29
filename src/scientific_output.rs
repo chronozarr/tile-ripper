@@ -250,6 +250,27 @@ fn product_missingness(source: &Value, layout: &Layout, product: &ProductValidit
         "raw_values":"preserved; product missingness does not create a physical source nodata value"
     })
 }
+/// Validate annual interval metadata before output staging or time encoding.
+fn annual_bounds(source: &Value) -> Result<Option<[i64; 2]>> {
+    let Some(extent) = source.get("temporal_extent") else {
+        return Ok(None);
+    };
+    let nanos = |key: &str| -> Result<i64> {
+        let date = chrono::DateTime::parse_from_rfc3339(
+            extent[key]
+                .as_str()
+                .ok_or("annual coverage endpoint missing")?,
+        )?;
+        Ok(date
+            .timestamp_nanos_opt()
+            .ok_or("annual coverage outside nanosecond range")?)
+    };
+    let bounds = [nanos("coverage_start")?, nanos("coverage_end")?];
+    if bounds[0] > bounds[1] {
+        return Err("annual coverage is reversed".into());
+    }
+    Ok(Some(bounds))
+}
 fn quality_mask(
     policy: crate::products::profile::QualityPolicy,
     pixels: &crate::Pixels,
@@ -565,9 +586,23 @@ pub(crate) fn fetch_with_options(
             .checked_mul(s.window.height.div_ceil(edge_y))
             .ok_or("output object count overflow")?;
         let quality_count = quality_policies(&inspection, &s.asset_id)?.len();
+        let source = inspection["sources"]
+            .as_array()
+            .and_then(|sources| {
+                sources
+                    .iter()
+                    .find(|source| source["asset_id"] == s.asset_id)
+            })
+            .unwrap_or(&Value::Null);
+        let bounds_objects = if annual_bounds(source)?.is_some() {
+            3
+        } else {
+            0
+        };
         objects = objects
             .checked_add(
-                18 + s.window.width.div_ceil(coordinate_edge)
+                18 + bounds_objects
+                    + s.window.width.div_ceil(coordinate_edge)
                     + s.window.height.div_ceil(coordinate_edge),
             )
             .and_then(|n| n.checked_add(tiles.checked_mul(3)?))
@@ -634,6 +669,22 @@ pub(crate) fn fetch_with_options(
     if let Some(records) = output_records.as_array_mut() {
         for (record, selected) in records.iter_mut().zip(&selected) {
             let policies = quality_policies(&inspection, &selected.asset_id)?;
+            if let Some(source) = inspection["sources"].as_array().and_then(|sources| {
+                sources
+                    .iter()
+                    .find(|source| source["asset_id"] == selected.asset_id)
+            }) {
+                for key in [
+                    "temporal_extent",
+                    "time_coordinate_role",
+                    "prototype",
+                    "qualification_scope",
+                ] {
+                    if let Some(value) = source.get(key) {
+                        record[key] = value.clone();
+                    }
+                }
+            }
             if !policies.is_empty() {
                 record["derived_masks"] = json!(policies
                     .iter()
@@ -685,15 +736,21 @@ pub(crate) fn fetch_with_options(
             })
             .transpose()?
             .unwrap_or(i64::MIN);
-        group(
-            store.clone(),
-            &base,
-            json!({"asset_id":s.asset_id,"variable":l.variable,"datetime":s.datetime,
+        let mut observation_attrs = json!({"asset_id":s.asset_id,"variable":l.variable,"datetime":s.datetime,
             "source":source,"source_window":s.window,"source_grid":l,"transform":t,"crs":l.crs,
             "source_nodata":l.nodata,"source_scale":l.scale,"source_offset":l.offset,
-            "aoi_mask_applied":s.mask_geometry.is_some(),"time_missing":s.datetime.is_none()}),
-            encoding,
-        )?;
+            "aoi_mask_applied":s.mask_geometry.is_some(),"time_missing":s.datetime.is_none()});
+        for key in [
+            "temporal_extent",
+            "time_coordinate_role",
+            "prototype",
+            "qualification_scope",
+        ] {
+            if let Some(value) = source.get(key) {
+                observation_attrs[key] = value.clone();
+            }
+        }
+        group(store.clone(), &base, observation_attrs, encoding)?;
         for (axis, len, origin, step) in [
             ("x", s.window.width, t[0], t[1]),
             ("y", s.window.height, t[3], t[5]),
@@ -743,6 +800,16 @@ pub(crate) fn fetch_with_options(
                 })?;
             }
         }
+        let bounds = annual_bounds(&source)?;
+        if bounds.is_some_and(|bounds| bounds[0] != time_value) {
+            return Err("annual time coordinate differs from source coverage_start".into());
+        }
+        let mut time_attrs = json!({"_ARRAY_DIMENSIONS":["time"],"standard_name":"time","units":"nanoseconds since 1970-01-01 00:00:00","calendar":"proleptic_gregorian"});
+        if bounds.is_some() {
+            time_attrs["bounds"] = json!("time_bounds");
+            time_attrs["long_name"] = json!("actual source coverage start for an annual summary");
+            time_attrs["time_coordinate_role"] = json!("source_coverage_start");
+        }
         let time = array(
             store.clone(),
             &format!("{base}/time"),
@@ -750,12 +817,27 @@ pub(crate) fn fetch_with_options(
             &[1],
             "<i8",
             Value::Null,
-            json!({"_ARRAY_DIMENSIONS":["time"],"standard_name":"time","units":"nanoseconds since 1970-01-01 00:00:00","calendar":"proleptic_gregorian"}),
+            time_attrs,
             encoding,
         )?;
         encode_call(&store, &mut encode_seconds, || {
             time.store_chunk_opt(&[0], &[time_value], &serial_required())
         })?;
+        if let Some(bounds) = bounds {
+            let output = array(
+                store.clone(),
+                &format!("{base}/time_bounds"),
+                &[1, 2],
+                &[1, 2],
+                "<i8",
+                Value::Null,
+                json!({"_ARRAY_DIMENSIONS":["time","bounds"],"units":"nanoseconds since 1970-01-01 00:00:00","calendar":"proleptic_gregorian","endpoint_semantics":"actual provider coverage endpoints, unchanged"}),
+                encoding,
+            )?;
+            encode_call(&store, &mut encode_seconds, || {
+                output.store_chunk_opt(&[0, 0], &bounds, &serial_required())
+            })?;
+        }
         let crs = array(
             store.clone(),
             &format!("{base}/spatial_ref"),
@@ -1190,6 +1272,52 @@ mod tests {
             .unwrap();
         assert_eq!(&mask[..4], &[0, 0, 0, 1]);
         fs::remove_dir_all(r).unwrap();
+    }
+    #[cfg(all(feature = "native-cog", not(feature = "gdal")))]
+    #[test]
+    fn annual_output_preserves_actual_subyear_coverage_and_fractional_seconds() {
+        use zarrs::filesystem::FilesystemStore;
+        let root = root();
+        let dest = root.join("annual.zarr");
+        let start = "2025-04-20T17:49:36.820Z";
+        let end = "2025-08-23T17:49:16.708Z";
+        let mut request = typed_product_request("radar_float32.tif", &dest);
+        let Source::Assets { assets } = &mut request.source else {
+            unreachable!()
+        };
+        assets[0].datetime = Some(start.into());
+        let extent = json!({"coverage_start":start,"coverage_end":end,"summary_year":2025});
+        let prepared = crate::acquisition::prepare(&request, &mut crate::cog::LayoutCache::default()).unwrap()
+            .with_product_metadata(vec![json!({"asset_id":"typed-product","temporal_extent":extent,"time_coordinate_role":"source_coverage_start"})], json!({"profile":"test"}));
+        let result = prepared.fetch().unwrap();
+        assert_eq!(result["outputs"][0]["temporal_extent"], extent);
+        let store = Arc::new(FilesystemStore::new(&dest).unwrap());
+        let time = Array::open(store.clone(), "/observations/000000/time").unwrap();
+        let time_values = time
+            .retrieve_array_subset::<Vec<i64>>(&time.subset_all())
+            .unwrap();
+        let bounds = Array::open(store, "/observations/000000/time_bounds").unwrap();
+        let bounds_values = bounds
+            .retrieve_array_subset::<Vec<i64>>(&bounds.subset_all())
+            .unwrap();
+        let expected: Vec<i64> = [start, end]
+            .iter()
+            .map(|value| {
+                chrono::DateTime::parse_from_rfc3339(value)
+                    .unwrap()
+                    .timestamp_nanos_opt()
+                    .unwrap()
+            })
+            .collect();
+        assert_eq!(bounds_values, expected);
+        assert_eq!(time_values, [expected[0]]);
+        let attrs: Value = serde_json::from_slice(
+            &fs::read(dest.join("observations/000000/time/.zattrs")).unwrap(),
+        )
+        .unwrap();
+        assert_eq!(attrs["bounds"], "time_bounds");
+        assert_eq!(attrs["time_coordinate_role"], "source_coverage_start");
+        fs::remove_dir_all(root).unwrap();
     }
     #[cfg(all(feature = "native-cog", not(feature = "gdal")))]
     #[test]

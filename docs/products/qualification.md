@@ -4,6 +4,14 @@
 
 [Wave 2 qualification](wave2/qualification.md) adds separate historical Landsat TM/ETM+ profiles, current OPERA DSWx-S1, and a bounded DIST-ALERT profile. The Wave 1 evidence below remains scoped to its original source specimens and routes. Provider routing and the AlphaEarth prototype retain their separate qualification documents.
 
+## OPERA expansion status
+
+`opera-dswx-ni-prototype` has a completed, narrow public-specimen gate: four ETag-pinned v0.1/software-0.3.0 NISAR GCOV COGs, three small windows (interior, fill-edge, and tile-crossing), independent rasterio/GDAL raw-bit comparisons, source/AOI and requested-policy masks, stream completion, and reopened Zarr output. The [source receipt](opera-expansion/dswx-ni-source-receipt.json) and [qualification receipt](opera-expansion/dswx-ni-qualification.json) are the authority. This is neither a final DSWx-NI v1.0 nor a production-archive qualification.
+
+`opera-dist-alert-s1` passed ten-layer authenticated native acquisition and independent source/stream/reopened-Zarr comparisons. `opera-dist-ann-hls` passed all 21 annual layers, including raw bits, source/AOI/policy masks, native coordinates, exact provider time bounds and 2,940 streamed chunks with validated source versions. The exact sources, class occurrences and limitations are recorded in the [expansion qualification](opera-expansion/qualification.md), [DIST-S1 receipt](opera-expansion/dist-s1-cmr-receipt.json) and [DIST-ANN receipt](opera-expansion/dist-ann-qualification-receipt.json).
+
+For annual DIST, the present source/output qualification covers the northern T17SNU representation. The southern T20LRP reference uses EPSG:32620 with negative northing, which is an unqualified CRS/hemisphere representation in this reader—not a claim that the NASA source is corrupt or scientifically incorrect. No global annual-coverage claim follows.
+
 # Wave 1 qualification and decision gate
 
 Scope: local `codex/acquisition-planner`, starting at `629538c`, executed on 2026-10-23. No global Cargo default change, push, merge, tag, release, deployment, requester-pays request, or ChronoZarr change is part of this work.
@@ -46,7 +54,7 @@ For Float32, every source NaN is invalid while its payload bits remain unchanged
 
 ## Authentication and source versions
 
-`AuthenticatedHttp::earthdata_hls`, `earthdata_dswx` and `earthdata_rtc` are separate from the existing SWOT constructor. They accept only their own unsigned exact-object LP DAAC HLSL30.020/HLSS30.020, PO.DAAC DSWx-HLS v1.1, or ASF Cumulus RTC-S1 v1.0 COG locators and the separately observed directed archive→URS→archive→exact CloudFront resource paths. `products::prepare_earthdata_authenticated` selects the constructor by profile. No policy inherits another archive’s hosts. Basic credentials go only to URS; cookies are isolated by exact origin; resource requests receive neither credentials nor login cookies. Every COG asset has an exact session-map entry. New hosts, path layouts, collection releases, unmatched/missing/extra sessions and source-version conflicts fail closed.
+`AuthenticatedHttp::earthdata_hls`, `earthdata_dswx`, `earthdata_rtc`, `earthdata_dist_s1`, and `earthdata_dist_ann` are separate from the existing SWOT constructor. Each accepts only its own unsigned exact-object host, collection, granule, layer and directed archive→URS→archive→exact resource path. `products::prepare_earthdata_authenticated` selects the constructor by profile. No policy inherits another archive’s hosts. Basic credentials go only to URS; cookies are isolated by exact origin; resource requests receive neither credentials nor login cookies. Every COG asset has an exact session-map entry. New hosts, path layouts, collection releases, unmatched/missing/extra sessions and source-version conflicts fail closed. DIST-S1 and DIST-ANN transport scope still requires their separate end-to-end receipts before it is called production-qualified.
 
 Authentication reservations are aggregate per request and charged alongside prepared metadata and active native reader reservations. Source reads remain conditional on strong ETags; preparation, pre-execution and post-execution checks retain object size/version guarantees and terminal failure invalidation. Stream chunks are provisional until completion, and scientific output is published only after final validation. This extends COG transport only because actual HLS and OPERA products required it; SWOT authorization remains separate. The three archive policies are deployment-specific and deliberately fail on unqualified host/path changes.
 

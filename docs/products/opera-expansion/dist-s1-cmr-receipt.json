@@ -1,0 +1,45 @@
+{
+  "schema": "tile-ripper-opera-dist-s1-source-receipt-v1",
+  "status": "qualified_bounded_authenticated_v1_source_stream_and_zarr_replay",
+  "observed_at": "2026-10-27T17:05:32Z",
+  "collection": {"concept_id": "C4090131664-ASF", "short_name": "OPERA_L3_DIST-ALERT-S1_V1", "catalog_version": "1", "provider": "ASF"},
+  "granule": {"concept_id": "G4246933966-ASF", "id": "OPERA_L3_DIST-ALERT-S1_T15UWR_20260228T235832Z_20260714T134753Z_S1C_30_v1.0", "platform": "Sentinel-1C", "datetime": "2026-02-28T23:58:32Z", "processing_version": "v1.0"},
+  "canonical_https": {"origin": "https://cumulus.asf.earthdatacloud.nasa.gov", "path_prefix": "/OPERA/OPERA_L3_DIST-ALERT-S1_V1/<granule>/<granule>_<layer>.tif"},
+  "access": {"anonymous_range_status": 302, "authenticated": true, "credential_origin": "user-authorized private URS netrc", "recorded_credentials": false, "redirect_resources_recorded": false},
+  "capture": {"kind": "full-object bounded capture, not sparse range capture", "per_object_cap_bytes": 8388608, "objects": 10, "total_bytes": 2932053, "conditional_strong_etags": true},
+  "shared_native_contract": {"shape": [3660, 3660], "block": [512, 512], "crs": "EPSG:32615", "transform": [499980.0, 30.0, 0.0, 5600040.0, 0.0, -30.0], "compression": "ZSTD", "mgrs_tile_id": "15UWR", "sensor": "S1C", "post_rtc_lineage_contains": "20260228T235832Z / S1C / v1.0"},
+  "oracle_window": {"source": "independent rasterio and gdal_translate ENVI reads", "pixel": [3566, 3130], "window": [3114, 3550, 32, 32], "valid_pixels_per_layer": 1024, "representative_raw_hashes_match": ["GEN-DIST-STATUS", "GEN-METRIC", "GEN-DIST-DATE", "GEN-DIST-CONF"]},
+  "end_to_end": {
+    "binary_sha256": "df68e52fa5a146cfe984dad0088abb7e25178f4cc54dd8b9ae78b89bfd2bd038",
+    "request": "examples/opera-dist-alert-s1.json; 17x17-pixel narrow AOI within the independently checked valid region",
+    "stream": {"completed_tasks": 10, "source_versions_validated": true, "source_data_requests": 10, "source_data_bytes": 1107416, "native_zstd_decode": true},
+    "zarr_v2": {"reopened": true, "observation_groups": 10, "aoi_raw_pixels_match_source_for_all_layers": true, "aoi_mask_and_source_valid_masks_retained": true, "duration_unit": "days", "date_units": "days since 2020-12-31"},
+    "unversioned_catalog_assets": "all ten request ETags set to null resolved and streamed successfully; inspected strong ETags were retained",
+    "pin_mismatch": {"method": "replace one requested ETag pin with a different strong ETag", "result": "prepare failed with ETag conflict", "published_output": false}
+  },
+  "reproducibility": {
+    "retained_artifacts": "prototype-output/opera-expansion/dist-s1/qualification/",
+    "saved_request": "request-pinned.json",
+    "saved_live_values_stream": "stream-values.jsonl",
+    "saved_durable_zarr": "oracle.zarr",
+    "saved_replay_result": "replay.json",
+    "replay_assertions": [
+      "saved bounds AOI rasterized independently on each native source window",
+      "native CRS, affine transform, and x/y coordinates",
+      "all ten source-to-stream and stream-to-Zarr raw sample bits, including Float32 NaN payload bits when present",
+      "stream AOI/source-valid masks, durable AOI/valid masks, status policy masks, and completed conditional-version stream"
+    ]
+  },
+  "layers": {
+    "GEN-DIST-STATUS": {"etag": "\"5555c33c11f0cc9f21377f214c780027-1\"", "bytes": 28462, "dtype": "uint8", "fill": 255, "sample": 4, "window_raw_sha256": "0e7f7ceb571548a3c2d54046285c243f38da7ce83e0958e89326a1afca60bdb1"},
+    "GEN-METRIC": {"etag": "\"cef3522d4bf25753a7de90c611890acd-1\"", "bytes": 1306547, "dtype": "float32", "fill": "NaN", "sample": 4.82175874710083, "window_raw_sha256": "3e3f7cb2b975377f3fd4717062024f8c7c7478ed6e72cc028164cf94fc84884f"},
+    "GEN-DIST-STATUS-ACQ": {"etag": "\"5555c33c11f0cc9f21377f214c780027-1\"", "bytes": 28462, "dtype": "uint8", "fill": 255, "sample": 4, "window_raw_sha256": "0e7f7ceb571548a3c2d54046285c243f38da7ce83e0958e89326a1afca60bdb1"},
+    "GEN-METRIC-MAX": {"etag": "\"cef3522d4bf25753a7de90c611890acd-1\"", "bytes": 1306547, "dtype": "float32", "fill": "NaN", "sample": 4.82175874710083, "window_raw_sha256": "3e3f7cb2b975377f3fd4717062024f8c7c7478ed6e72cc028164cf94fc84884f"},
+    "GEN-DIST-CONF": {"etag": "\"48e4f96357e472da8d0dd3de563726ce-1\"", "bytes": 139167, "dtype": "float32", "fill": "NaN", "sample": 4.82175874710083, "window_raw_sha256": "b1c49a49b27d2d1ca63c97d320777a1f8216713e7029cd2d49613d28ef273de6"},
+    "GEN-DIST-DATE": {"etag": "\"b179a0b1a230b5fcd59dcbcc01249b51-1\"", "bytes": 34319, "dtype": "int16", "fill": -1, "sample": 1885, "window_raw_sha256": "29f2e459a2e4fad0049566f6c67e95a075fbc59b8922beb433422437d998d4ec"},
+    "GEN-DIST-COUNT": {"etag": "\"3d0e7fcc6202ac466da0df57332e09b9-1\"", "bytes": 21376, "dtype": "uint8", "fill": 255, "sample": 1, "window_raw_sha256": "39ec997e0922cd8adacbc3e9a624ebe601adc8375fcc4120b2dfd2eb1f3ec771"},
+    "GEN-DIST-PERC": {"etag": "\"6e14b883c9d70975bc1c06c063d130d5-1\"", "bytes": 26853, "dtype": "uint8", "fill": 255, "sample": 100, "window_raw_sha256": "2a706ffc97c5dad2e05fa88c5e24aa391948d1a36ff2398ff7a5dc826002160b"},
+    "GEN-DIST-DUR": {"etag": "\"c815c50ec8cfbc192f9583e84e625395-1\"", "bytes": 25953, "dtype": "int16", "fill": -1, "sample": 1, "window_raw_sha256": "8597af5b7bf3399f3351f7983b4d003e8af5078b944d9e92edba8c1c2f0da2a4"},
+    "GEN-DIST-LAST-DATE": {"etag": "\"8d239506b85bf9138c6a4b40f7b7d58e-1\"", "bytes": 14367, "dtype": "int16", "fill": -1, "sample": 1885, "window_raw_sha256": "6aa16f0b1f3a17fcdc853a31efa5dfb22ccc5f65c415f2329838eb9cf51e9c68"}
+  }
+}

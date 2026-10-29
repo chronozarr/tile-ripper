@@ -38,11 +38,19 @@ The same `plan`, `fetch`, and `stream` commands accept product requests; the ord
 
 `products` enumerates canonical names, mission-specific aliases, storage types, calibration, catalog/access requirements, and policy definitions. HLS requests use `hls-l30` or `hls-s30`, with `B04` and `Fmask`; these remain distinct profiles and observations. S30 `B08` and `B8A` retain distinct spectral meanings. Landsat surface temperature is outside this SR profile. Landsat 4–7 require their own QA/science admission.
 
-Without `observations`, discovery uses Planetary Computer STAC for Landsat and freshly resolves the exact CMR collection short-name/version for NASA products. The full bounded search must fit a single page; exceeding a cap fails with instructions to narrow the query. A request permits 1–32 observations, 1–16 bands, a date interval of at most 31 days, and a WGS84 AOI no larger than 30 degrees per axis / 400 square degrees. It has no antimeridian wrapping. Missing requested assets, ambiguous catalog links, duplicate bands/observations, timestamps outside the interval, unknown policies, or a policy without its raw layer fail explicitly.
+Without `observations`, discovery uses Planetary Computer STAC for Landsat and freshly resolves the exact CMR collection short-name/version for NASA products. The full bounded search must fit a single page; exceeding a cap fails with instructions to narrow the query. A request permits 1–32 observations, 1–16 bands (DIST-ANN is the 21-band annual exception), a date interval of at most 31 days, and a WGS84 AOI no larger than 30 degrees per axis / 400 square degrees. DIST-ANN instead permits a 366-day interval and selects against its retained coverage interval. It has no antimeridian wrapping. Missing requested assets, ambiguous catalog links, duplicate bands/observations, timestamps outside the interval, unknown policies, or a policy without its raw layer fail explicitly.
 
 To use a selected catalog result, add its `observations` array to the request. An explicit empty array is an empty selection and never starts another search. Explicit observations contain `id`, `datetime`, `collection`, nullable `platform`/`processing`, and `assets` keyed by canonical native band name. An asset contains `href`, optional `etag`, and optional source `metadata`. Local mirrors are accepted and retain local size/mtime binding; remote objects require strong ETags and before/after identity validation. Profiles cannot make a physically incompatible object readable.
 
 The public NASA example requests pin actual official reference products. Their acquisition dates can predate production archive coverage. See [qualification](qualification.md) for the precise sample and production-access distinction. CMR discovery alone does not authorize a protected asset download. Generic S3 inputs, requester-pays setup, and Earthdata credentials are never inferred from a family name.
+
+### OPERA expansion scope
+
+[`opera-dswx-ni-prototype`](../../examples/opera-dswx-ni-prototype.json) is the exception to ordinary discovery: it accepts only the four supplied anonymous public engineering COGs and their exact ETags. It has passed its bounded pinned-specimen gate, but it is not final-NI-v1.0 or production support.
+
+[`opera-dist-alert-s1`](../../examples/opera-dist-alert-s1.json) qualifies ten DIST-S1 layers behind the exact ASF Cumulus Earthdata route. [`opera-dist-ann-hls`](../../examples/opera-dist-ann-hls.json) qualifies all 21 annual layers on the northern T17SNU source through the exact LP DAAC route. Its example explicitly reserves 128 MiB for the authenticated source set. The output retains CMR `coverage_start`, `coverage_end`, and the filename summary year. It does not fabricate a single annual acquisition instant. See [DSWx-NI](opera-expansion/dswx-ni.md), [DIST-S1](opera-expansion/dist-s1.md), and [DIST-ANN](opera-expansion/dist-ann.md) for the current evidence boundaries.
+
+Annual spatial admission is not a global-coverage statement. The current native reader scope is the northern T17SNU representation. The southern T20LRP specimen carries EPSG:32620 with a negative northing; that may be a provider convention, but it is not yet an admitted CRS/hemisphere representation in Tile-Ripper and is rejected without labelling the NASA source scientifically wrong.
 
 ## Scientific output
 
@@ -60,7 +68,7 @@ Streaming emits provisional chunks followed by an explicit completion record. `-
 
 Landsat uses the no-cost Planetary Computer route. Delegation signing is performed only for canonical Landsat C2 Azure objects, stays in runtime memory, and is omitted from inspection/output provenance. Signed URLs can expire; a failed acquisition must be prepared again. No long-lived token is saved in a request or plan.
 
-NASA archive discovery is public. Current production HLS, PO.DAAC DSWx-HLS, and ASF RTC-S1 HTTP/S3 access have distinct Earthdata policies. HLS L30/S30 v2, current DSWx-HLS v1.1 and RTC-S1 v1.0 each have a separately qualified exact-object COG policy. The product helper selects the matching archive constructor; these policies do not inherit the SWOT HDF5 route. Build `--no-default-features --features native-cog,authenticated-http` and use:
+NASA archive discovery is public. Current production HLS, PO.DAAC DSWx-HLS, ASF RTC-S1, DIST-S1, and DIST-ANN HTTP/S3 access use distinct Earthdata policies. The product helper selects the matching archive constructor; these policies do not inherit the SWOT HDF5 route or each other. Build `--no-default-features --features native-cog,authenticated-http` and pass an explicit private netrc for any protected route:
 
 ```sh
 cargo build --release --locked --no-default-features --features native-cog,authenticated-http

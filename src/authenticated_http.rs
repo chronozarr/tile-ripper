@@ -621,6 +621,87 @@ impl AuthenticatedHttp {
             netrc,
         )
     }
+    /// Exact object policy for the separately qualified DIST-S1 v1 route.
+    pub fn earthdata_dist_s1(url: &str, netrc: impl Into<PathBuf>) -> Result<Self> {
+        Self::earthdata_dist_product(url, netrc, true)
+    }
+    /// Exact object policy for DIST-ANN-HLS v1; no other LP DAAC collection inherits it.
+    pub fn earthdata_dist_ann(url: &str, netrc: impl Into<PathBuf>) -> Result<Self> {
+        Self::earthdata_dist_product(url, netrc, false)
+    }
+    fn earthdata_dist_product(url: &str, netrc: impl Into<PathBuf>, radar: bool) -> Result<Self> {
+        let canonical = Url::parse(url)?;
+        let (product, archive, resource, prefix, bucket, gate) = if radar {
+            (
+                "opera-dist-alert-s1",
+                "https://cumulus.asf.earthdatacloud.nasa.gov",
+                "https://d1bctmng8vmwga.cloudfront.net",
+                "/OPERA/",
+                "asf-cumulus-prod-opera-products",
+                "b339e3a40716b5999fea2aad1aee9f03",
+            )
+        } else {
+            (
+                "opera-dist-ann-hls",
+                "https://data.lpdaac.earthdatacloud.nasa.gov",
+                "https://d1nklfio7vscoe.cloudfront.net",
+                "/lp-prod-protected/",
+                "lp-prod-protected",
+                "2d2df3a34830d5223d1e9547cd713408",
+            )
+        };
+        let profile = crate::products::profile::profile(product)?;
+        let key = canonical
+            .path()
+            .strip_prefix(prefix)
+            .ok_or("DIST exact archive prefix required")?;
+        let parts = key.split('/').collect::<Vec<_>>();
+        if canonical.origin().ascii_serialization() != archive
+            || !canonical.username().is_empty()
+            || canonical.password().is_some()
+            || canonical.query().is_some()
+            || canonical.fragment().is_some()
+            || parts.len() != 3
+            || parts[0] != profile.catalog.collection
+        {
+            return fail("DIST exact unsigned collection/granule/layer object required");
+        }
+        profile.validate_identity(parts[1], None, None)?;
+        if !profile
+            .bands
+            .iter()
+            .any(|band| parts[2] == format!("{}_{}.tif", parts[1], band.name))
+        {
+            return fail("DIST filename must match the containing granule and admitted layer");
+        }
+        let suffix = format!("/{bucket}.s3.us-west-2.amazonaws.com/{key}");
+        let head = format!("/head-{gate}{suffix}");
+        let get = format!("/s3-{gate}{suffix}");
+        let login = "https://urs.earthdata.nasa.gov";
+        let rule = |a: &str, b: &str, p: &str| RedirectRule {
+            from_origin: a.into(),
+            to_origin: b.into(),
+            destination_path: p.into(),
+        };
+        Self::new(
+            Config {
+                canonical_url: url.into(),
+                login_origin: login.into(),
+                resource_origin: resource.into(),
+                head_resource_path: head.clone(),
+                get_resource_path: get.clone(),
+                redirects: vec![
+                    rule(archive, login, "/oauth/authorize"),
+                    rule(login, archive, "/login"),
+                    rule(archive, archive, canonical.path()),
+                    rule(archive, resource, &head),
+                    rule(archive, resource, &get),
+                ],
+                additional_roots: vec![],
+            },
+            netrc,
+        )
+    }
     pub fn new(mut config: Config, netrc: impl Into<PathBuf>) -> Result<Self> {
         let canonical = Url::parse(&config.canonical_url)
             .map_err(|_| "invalid canonical authenticated locator")?;
@@ -1483,6 +1564,33 @@ mod tests {
             vv.replace(&format!("/{granule}_VV.tif"), "/different_VV.tif"),
         ] {
             assert!(AuthenticatedHttp::earthdata_rtc(&invalid, &path).is_err());
+        }
+        std::fs::remove_file(path)?;
+        Ok(())
+    }
+    #[cfg(unix)]
+    #[test]
+    fn new_dist_routes_bind_collection_granule_layer_and_release() -> Result<()> {
+        let path = netrc_fixture("dist-expansion")?;
+        let radar_id =
+            "OPERA_L3_DIST-ALERT-S1_T15UWR_20260228T235832Z_20260714T134753Z_S1C_30_v1.0";
+        let annual_id = "OPERA_L3_DIST-ANN-HLS_T26XNT_2025_20260109T064522Z_30_v1";
+        for (radar, id, base, layer) in [
+            (true, radar_id, "https://cumulus.asf.earthdatacloud.nasa.gov/OPERA/OPERA_L3_DIST-ALERT-S1_V1", "GEN-METRIC"),
+            (false, annual_id, "https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/OPERA_L3_DIST-ANN-HLS_V1", "VEG-DIST-STATUS"),
+        ] {
+            let url = format!("{base}/{id}/{id}_{layer}.tif");
+            let make = |url: &str| AuthenticatedHttp::earthdata_dist_product(url, &path, radar);
+            let session = make(&url)?;
+            assert!(session.accepts(&url));
+            for invalid in [format!("{url}?token=secret"), format!("{url}#fragment"),
+                url.replace("_V1/", "_V2/"), url.replace(&format!("/{id}_"), "/different_"),
+                url.replace(&format!("_{layer}.tif"), "_UNKNOWN.tif"),
+                url.replace("earthdatacloud.nasa.gov", "example.org"),
+                url.replace("_30_v1", "_30_v2")] {
+                assert!(make(&invalid).is_err(), "must reject {invalid}");
+            }
+            assert!(AuthenticatedHttp::earthdata_dist_product(&url, &path, !radar).is_err());
         }
         std::fs::remove_file(path)?;
         Ok(())

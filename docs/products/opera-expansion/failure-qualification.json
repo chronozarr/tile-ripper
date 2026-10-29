@@ -1,0 +1,54 @@
+{
+  "binary_sha256": "df68e52fa5a146cfe984dad0088abb7e25178f4cc54dd8b9ae78b89bfd2bd038",
+  "captured_utc": "2026-10-27T17:53:58.273015+00:00",
+  "cases": [
+    {
+      "conditional_if_match_412_observed": false,
+      "destination_or_stage_absent": true,
+      "exit_nonzero": true,
+      "expected_failure": "DSWx-NI prototype asset locator or ETag differs from the pinned specimen",
+      "name": "ni-unpinned-etag",
+      "rejection_phase": "product validation before source I/O or staging",
+      "stderr_sha256": "6aee3c384480ba191e88e371b9d9af6a13bf0b3657b82bbd3cc12522fa82b783"
+    },
+    {
+      "conditional_if_match_412_observed": false,
+      "destination_or_stage_absent": true,
+      "exit_nonzero": true,
+      "expected_failure": "authenticated native COG resolved ETag conflicts with request pin",
+      "name": "dist-s1-etag-conflict",
+      "rejection_phase": "authenticated identity HEAD before staging or pixel range reads",
+      "stderr_sha256": "8d6172744e39114b0d3c814ed5f0f5cc530771d54d4530f7cdfe67efe04259c4"
+    },
+    {
+      "conditional_if_match_412_observed": false,
+      "destination_or_stage_absent": true,
+      "exit_nonzero": true,
+      "expected_failure": "authenticated native COG resolved ETag conflicts with request pin",
+      "name": "dist-ann-etag-conflict",
+      "rejection_phase": "authenticated identity HEAD before staging or pixel range reads",
+      "stderr_sha256": "8d6172744e39114b0d3c814ed5f0f5cc530771d54d4530f7cdfe67efe04259c4"
+    },
+    {
+      "conditional_if_match_412_observed": false,
+      "destination_or_stage_absent": true,
+      "exit_nonzero": true,
+      "expected_failure": "annual supplied coverage interval conflicts with the exact live CMR granule record",
+      "name": "dist-ann-cmr-extent",
+      "rejection_phase": "fresh CMR metadata validation before staging",
+      "stderr_sha256": "588bb98c904f63df3177757219f6416067f08c9da9f6335477098641f5fa9cdf"
+    },
+    {
+      "conditional_if_match_412_observed": false,
+      "destination_or_stage_absent": true,
+      "exit_nonzero": true,
+      "expected_failure": "annual DIST coverage interval does not overlap the requested interval",
+      "name": "dist-ann-nonoverlap",
+      "rejection_phase": "request interval validation before archive I/O or staging",
+      "stderr_sha256": "efe86477d332750129a1155fc2a69b8a9d7371d3b083bec3d4a6486c8cd625c3"
+    }
+  ],
+  "schema": "tile-ripper-opera-expansion-failure-qualification-v1",
+  "scope": "Fresh cloned requests only. All cases require nonzero exit and no published/staging destination. Raw logs and request copies are ignored under prototype-output. The frozen release rejects deliberately wrong authenticated ETags during preflight identity resolution; this immutable-source probe therefore does not reach conditional If-Match 412.",
+  "status": "passed_with_preflight_etag_conflicts"
+}

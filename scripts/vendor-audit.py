@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Compare the two local forks with cached, checksum-pinned upstream crates."""
+"""Compare the local forks with cached, checksum-pinned upstream crates."""
 import argparse
 import difflib
 import hashlib
@@ -10,6 +10,7 @@ import tarfile
 
 ROOT = Path(__file__).resolve().parents[1]
 CRATES = {
+    "tiff-reader": ("0.9.0", "5f5f0c80d1e2039b4cf5218b4fb55c93fbc1a466a1db893936407a00c3d59de2"),
     "hdf5-reader": ("0.9.3", "c50e22fc5c53e8e23edd603050ac342ea4cde1898b64bf86266d60f6a9cc3963"),
     "zarrs_filesystem": ("0.3.13", "a63fc5f551c941a98a5942814030c937ec979effb35e5edbf7f6334323aefd78"),
 }

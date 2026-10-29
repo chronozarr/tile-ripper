@@ -103,6 +103,8 @@ def main():
             manifest = str(ROOT / "vendor" / name / "Cargo.toml")
             run("vendor-tests-" + name, cargo + ["test", "--locked", "--offline", "--manifest-path", manifest,
                                                 "--all-targets", "--", "--test-threads=1"])
+        run("vendor-tests-tiff-reader-zstd", cargo + ["test", "--locked", "--offline", "--manifest-path",
+            str(ROOT / "vendor/tiff-reader/Cargo.toml"), "--no-default-features", "--features", "zstd", "--lib", "zstd_"])
         for name, features in (("default", []), ("native", ["--no-default-features", "--features", "native-cog"])):
             run("consumer-" + name, cargo + ["check", "--locked", "--offline", "--manifest-path",
                                              "consumers/native-stats/Cargo.toml", *features])

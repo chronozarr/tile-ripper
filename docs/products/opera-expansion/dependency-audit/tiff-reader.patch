@@ -1,0 +1,619 @@
+--- a/Cargo.lock
++++ b/Cargo.lock
+@@ -3,12 +3,6 @@
+ version = 4
+ 
+ [[package]]
+-name = "adler2"
+-version = "2.0.1"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "320119579fcad9c21884f5c4861d16174d0e06250625266f50fe6898340abefa"
+-
+-[[package]]
+ name = "allocator-api2"
+ version = "0.2.21"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+@@ -22,9 +16,9 @@
+ 
+ [[package]]
+ name = "bitflags"
+-version = "2.13.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "b4388bee8683e3d04af747c73422af53102d2bd24d9eadb6cbc100baef4b43f8"
++version = "2.13.2"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "3ded4057c258ba199e2d26386d3af3780957ecaee6c4ef4041c6b4b8b97c0b06"
+ 
+ [[package]]
+ name = "byteorder-lite"
+@@ -33,16 +27,28 @@
+ checksum = "8f1fe948ff07f4bd06c30984e69f5b4899c516a3ef74f34df92a2df2ab535495"
+ 
+ [[package]]
++name = "cc"
++version = "1.10.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "86e055fa6e3e40ad6187ba25b6855eeb635d5271f8e0f0e1e9a5826b8d75bea0"
++dependencies = [
++ "find-msvc-tools",
++ "jobserver",
++ "libc",
++ "shlex",
++]
++
++[[package]]
+ name = "cfg-if"
+-version = "1.0.4"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "9330f8b2ff13f34540b44e946ef35111825727b38d33286ef986142615121801"
++version = "1.0.5"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "4e7648175b45a9a48536d676f68d918270699102aa8dab5496df06904c914600"
+ 
+ [[package]]
+ name = "crossbeam-deque"
+-version = "0.8.6"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "9dd111b7b7f7d55b72c0a6ae361660ee5853c9af73f70c3c2ef6858b950e2e51"
++version = "0.8.8"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "622f3fc73690be383c7214310406f28a90e6edeadc3cea882f9d71e495b9711a"
+ dependencies = [
+  "crossbeam-epoch",
+  "crossbeam-utils",
+@@ -50,18 +56,18 @@
+ 
+ [[package]]
+ name = "crossbeam-epoch"
+-version = "0.9.20"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "2d6914041f254d6e9176c01941b21115dcfb7089e55135a35411081bd106ef3f"
++version = "0.9.21"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "dc74980687109a3b14c72fd458107bf0baa1da1a1a805e178d15501ba9b86d9d"
+ dependencies = [
+  "crossbeam-utils",
+ ]
+ 
+ [[package]]
+ name = "crossbeam-utils"
+-version = "0.8.21"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "d0a5c400df2834b80a4c3327b3aad3a4c4cd4de0629063962b03235697506a28"
++version = "0.8.23"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "a31eee39dddec8330830986fcd7625edb5a24ec90ea038215273bbc3adb08ac6"
+ 
+ [[package]]
+ name = "crunchy"
+@@ -71,23 +77,28 @@
+ 
+ [[package]]
+ name = "either"
+-version = "1.16.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "91622ff5e7162018101f2fea40d6ebf4a78bbe5a49736a2020649edf9693679e"
++version = "1.19.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "0e9c71c2167ca323c882b99918929403426e2373ea17242ff5653e0d5e1058be"
+ 
+ [[package]]
+ name = "equivalent"
+-version = "1.0.2"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "877a4ace8713b0bcf2a4e7eec82529c029f1d0619886d18145fea96c3ffe5c0f"
++version = "1.0.3"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "00d174d5400e5e8fd687ad1049e2f578285fa914201b1af7e8b112a4546bd826"
++
++[[package]]
++name = "find-msvc-tools"
++version = "0.1.15"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "1c66915cc5391097de7a2b0b972e8505aa33c0df401fd3a6811dbdb32881ba48"
+ 
+ [[package]]
+ name = "flate2"
+-version = "1.1.9"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "843fba2746e448b37e26a819579957415c8cef339bf08564fe8b7ddbd959573c"
+-dependencies = [
+- "miniz_oxide",
++version = "1.1.10"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "6e634e2e0ebac1ee034020da1ca582e17ffe4e0f5e985823721e168928136dcb"
++dependencies = [
+  "zlib-rs",
+ ]
+ 
+@@ -96,6 +107,17 @@
+ version = "0.2.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "77ce24cb58228fbb8aa041425bb1050850ac19177686ea6e0f41a70416f56fdb"
++
++[[package]]
++name = "getrandom"
++version = "0.4.3"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "300e883d756b2e4ec94e02791f39b04b522276138852cfc41d9fb7e904106099"
++dependencies = [
++ "cfg-if",
++ "libc",
++ "r-efi",
++]
+ 
+ [[package]]
+ name = "half"
+@@ -129,6 +151,16 @@
+ ]
+ 
+ [[package]]
++name = "jobserver"
++version = "0.1.35"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "1c00acbd29eabad4a2392fa0e921c874934dbbf4194312ad20f04a0ed67a3cb3"
++dependencies = [
++ "getrandom",
++ "libc",
++]
++
++[[package]]
+ name = "jpeg-decoder"
+ version = "0.3.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+@@ -145,21 +177,21 @@
+ 
+ [[package]]
+ name = "lerc-band-materialize"
+-version = "0.4.2"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "18be969ccd207ee5d5f1443a07c01b2073d10be9684615ee4559bb0c18971f15"
++version = "0.4.3"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "5c7ea338fd659c5fdf23de24ec878e31eeacf55b839d74c355a00f602e1f519d"
+ 
+ [[package]]
+ name = "lerc-core"
+-version = "0.4.2"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "a5fb652a10fb68b3fa04025c56bb1ff85ef4f13685ec895a22feb48e4e412e9d"
++version = "0.4.3"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "2c52050f983cb85074a1b9107a6db8b3c8242e9261f42c3e319ada57b2acca2e"
+ 
+ [[package]]
+ name = "lerc-reader"
+-version = "0.4.2"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "bd66be405fd5a0d78fecb43eed330ee8c396d5181bd9694f0af2e1d9d6bf9f83"
++version = "0.4.3"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "42bf327f4c6b9fd69e1e7bf7fccf0fabb3cf9d074b862ae59f69fd069388ef14"
+ dependencies = [
+  "lerc-band-materialize",
+  "lerc-core",
+@@ -168,9 +200,9 @@
+ 
+ [[package]]
+ name = "libc"
+-version = "0.2.186"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "68ab91017fe16c622486840e4c83c9a37afeff978bd239b5293d61ece587de66"
++version = "0.2.191"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "65cd87c9a6d60536580b316ad985726104730a5151c99845f2490428ef91240a"
+ 
+ [[package]]
+ name = "lock_api"
+@@ -192,9 +224,9 @@
+ 
+ [[package]]
+ name = "matrixmultiply"
+-version = "0.3.10"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "a06de3016e9fae57a36fd14dba131fccf49f74b40b7fbdb472f96e361ec71a08"
++version = "0.3.11"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "3f607c237553f086e7043417a51df26b2eb899d3caff94e6a67592ff992fedc7"
+ dependencies = [
+  "autocfg",
+  "rawpointer",
+@@ -202,21 +234,11 @@
+ 
+ [[package]]
+ name = "memmap2"
+-version = "0.9.11"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "d1219ed1b7f229ee7104d281dd01d6802fe28bb6e95d292942c4daacdeb798c0"
++version = "0.9.12"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "6b0ca1155a9ecc25aa12e8313a119f32edf0255fea2f44839c4ac0a12b2ac157"
+ dependencies = [
+  "libc",
+-]
+-
+-[[package]]
+-name = "miniz_oxide"
+-version = "0.8.9"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "1fa76a2c86f704bdb222d66965fb3d63269ce38518b83cb0575fca855ebb6316"
+-dependencies = [
+- "adler2",
+- "simd-adler32",
+ ]
+ 
+ [[package]]
+@@ -245,9 +267,9 @@
+ 
+ [[package]]
+ name = "num-integer"
+-version = "0.1.46"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "7969661fd2958a5cb096e56c8e1ad0444ac2bbcd0061bd28660485a44879858f"
++version = "0.1.47"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "7ce2d95d4b3734dc35aa2f45e1aa22cd416814592a4f9d9205e11affd5b8e10b"
+ dependencies = [
+  "num-traits",
+ ]
+@@ -285,25 +307,31 @@
+ ]
+ 
+ [[package]]
++name = "pkg-config"
++version = "0.3.34"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "f6b464fbc74e149a392436b17d523f769e057cb6877f6a5c4618bc6f11800548"
++
++[[package]]
+ name = "portable-atomic"
+-version = "1.13.1"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "c33a9471896f1c69cecef8d20cbe2f7accd12527ce60845ff44c153bb2a21b49"
++version = "1.15.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "05c8b63e8d9609db387f0324918f81d68fe27748f084ef092fb35954d0539a85"
+ 
+ [[package]]
+ name = "portable-atomic-util"
+-version = "0.2.7"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "c2a106d1259c23fac8e543272398ae0e3c0b8d33c88ed73d0cc71b0f1d902618"
++version = "0.2.8"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "10ab3eb7f3becc3a1cbc4f2c6f20267996cfc1a6467a873763411b136a122715"
+ dependencies = [
+  "portable-atomic",
+ ]
+ 
+ [[package]]
+ name = "proc-macro2"
+-version = "1.0.106"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "8fd00f0bb2e90d81d1044c2b32617f68fcb9fa3bb7640c23e9c748e53fb30934"
++version = "1.0.107"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "985e7ec9bb745e6ce6535b544d84d6cd6f7ad8bd711c398938ae983b91a766d9"
+ dependencies = [
+  "unicode-ident",
+ ]
+@@ -316,12 +344,18 @@
+ 
+ [[package]]
+ name = "quote"
+-version = "1.0.45"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "41f2619966050689382d2b44f664f4bc593e129785a36d6ee376ddf37259b924"
++version = "1.0.47"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "1fbf4db142a473a8d80c26bbf18454ed458bf8d26c8219c331daecfdbd079001"
+ dependencies = [
+  "proc-macro2",
+ ]
++
++[[package]]
++name = "r-efi"
++version = "6.0.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "f8dcc9c7d52a811697d2151c701e0d08956f92b0e24136cf4cf27b57a6a0d9bf"
+ 
+ [[package]]
+ name = "rawpointer"
+@@ -359,37 +393,28 @@
+ ]
+ 
+ [[package]]
+-name = "ruzstd"
+-version = "0.8.1"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "3640bec8aad418d7d03c72ea2de10d5c646a598f9883c7babc160d91e3c1b26c"
+-dependencies = [
+- "twox-hash",
+-]
+-
+-[[package]]
+ name = "scopeguard"
+ version = "1.2.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "94143f37725109f92c262ed2cf5e59bce7498c01bcc1502d7b9afe439a4e9f49"
+ 
+ [[package]]
+-name = "simd-adler32"
+-version = "0.3.9"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "703d5c7ef118737c72f1af64ad2f6f8c5e1921f818cdcb97b8fe6fc69bf66214"
++name = "shlex"
++version = "2.0.1"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "f8fadd59c855ef2080decdef8ff161eb6661b86933c9d82e5ba29dc602a55aba"
+ 
+ [[package]]
+ name = "smallvec"
+-version = "1.15.2"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "8ed6a63f02c8539c91a8685a86f4099661ba3da017932f6ebbea6de3f0fa7c90"
++version = "1.16.4"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "d0d5d4b1981b8bbbb7aed204cae5726d683d5d6ac7e74ec54122ea28f315e7c8"
+ 
+ [[package]]
+ name = "syn"
+-version = "2.0.118"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "1b9ae57f904213ebb649ce6895b8a66c66f0203b9319718f69a5612a065b1422"
++version = "3.0.9"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "d78c8dee4c7bf0e14673097256fed6142ce9d3b85a408189d07482442145823b"
+ dependencies = [
+  "proc-macro2",
+  "quote",
+@@ -398,18 +423,18 @@
+ 
+ [[package]]
+ name = "thiserror"
+-version = "2.0.18"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "4288b5bcbc7920c07a1149a35cf9590a2aa808e0bc1eafaade0b80947865fbc4"
++version = "2.0.21"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "09e52cb86a36cede5cb101bf8908837b3e4c6e5e59fe7fd85c23fb56200d189e"
+ dependencies = [
+  "thiserror-impl",
+ ]
+ 
+ [[package]]
+ name = "thiserror-impl"
+-version = "2.0.18"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ebc4ee7f67670e9b64d05fa4253e753e016c6c95ff35b89b7941d6b856dec1d5"
++version = "2.0.21"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "fe5197923287db20a58125f0bc85c062f7f2c892de97b18c356f9efb14b28524"
+ dependencies = [
+  "proc-macro2",
+  "quote",
+@@ -441,23 +466,17 @@
+  "ndarray",
+  "parking_lot",
+  "rayon",
+- "ruzstd",
+  "thiserror",
+  "tiff-core",
+  "weezl",
+-]
+-
+-[[package]]
+-name = "twox-hash"
+-version = "2.1.2"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "9ea3136b675547379c4bd395ca6b938e5ad3c3d20fad76e7fe85f9e0d011419c"
++ "zstd",
++]
+ 
+ [[package]]
+ name = "unicode-ident"
+-version = "1.0.24"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "e6e4313cd5fcd3dad5cafa179702e2b244f760991f45397d14d4ebf38247da75"
++version = "1.0.27"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "a2c754d6c33795a1c324727428e5a7dedb5b06195f9890bdbcba760d3e246563"
+ 
+ [[package]]
+ name = "weezl"
+@@ -473,6 +492,34 @@
+ 
+ [[package]]
+ name = "zlib-rs"
+-version = "0.6.5"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "5431d5661c32445236631278f27946e444ddafe4684cac70b185272d4f9c52d5"
++version = "0.6.8"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "b268e58e7c693d7c271f93ffc4ba3b380412554231c85bf61ca7af91042a4112"
++
++[[package]]
++name = "zstd"
++version = "0.13.3"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "e91ee311a569c327171651566e07972200e76fcfe2242a4fa446149a3881c08a"
++dependencies = [
++ "zstd-safe",
++]
++
++[[package]]
++name = "zstd-safe"
++version = "7.3.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "64d80649ab6db9d9f6f9c80a40becd948eda4714a0a5ac8c4d157a32231c7882"
++dependencies = [
++ "zstd-sys",
++]
++
++[[package]]
++name = "zstd-sys"
++version = "2.1.2+zstd.1.5.7"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "481ada9c543b2323cbb7bbdbb5249177fbf0188ed959ed2c15e4b22421c84ed3"
++dependencies = [
++ "cc",
++ "pkg-config",
++]
+--- a/Cargo.toml
++++ b/Cargo.toml
+@@ -49,7 +49,7 @@
+ jpeg = ["dep:jpeg-decoder"]
+ rayon = ["dep:rayon"]
+ webp = ["dep:image-webp"]
+-zstd = ["dep:ruzstd"]
++zstd = ["dep:zstd"]
+ 
+ [lib]
+ name = "tiff_reader"
+@@ -94,8 +94,8 @@
+ version = "1"
+ optional = true
+ 
+-[dependencies.ruzstd]
+-version = "0.8.1"
++[dependencies.zstd]
++version = "=0.13.3"
+ optional = true
+ 
+ [dependencies.thiserror]
+--- a/Cargo.toml.orig
++++ b/Cargo.toml.orig
+@@ -29,7 +29,7 @@
+ f16 = ["tiff-core/f16"]
+ rayon = ["dep:rayon"]
+ jpeg = ["dep:jpeg-decoder"]
+-zstd = ["dep:ruzstd"]
++zstd = ["dep:zstd"]
+ webp = ["dep:image-webp"]
+ 
+ [dependencies.rayon]
+@@ -40,8 +40,8 @@
+ version = "0.3"
+ optional = true
+ 
+-[dependencies.ruzstd]
+-version = "0.8.1"
++[dependencies.zstd]
++version = "=0.13.3"
+ optional = true
+ 
+ [dependencies.image-webp]
+--- a/src/filters.rs
++++ b/src/filters.rs
+@@ -1,6 +1,6 @@
+ //! Compression filter pipeline for TIFF strip/tile decompression.
+ 
+-#[cfg(any(feature = "jpeg", feature = "zstd", feature = "webp"))]
++#[cfg(any(feature = "jpeg", feature = "webp"))]
+ use std::io::Cursor;
+ use std::io::Read;
+ #[cfg(feature = "jpeg")]
+@@ -326,13 +326,40 @@
+ 
+ #[cfg(feature = "zstd")]
+ fn decompress_zstd(data: &[u8], index: usize, decoded_len_limit: usize) -> Result<Vec<u8>> {
+-    let decoder = ruzstd::decoding::StreamingDecoder::new(Cursor::new(data)).map_err(|error| {
+-        Error::DecompressionFailed {
+-            index,
+-            reason: format!("ZSTD: {error}"),
+-        }
++    // One-shot libzstd decoding uses the fixed destination as history; it does
++    // not allocate the frame-advertised streaming window. Reject concatenated
++    // frames and size bombs before allocating the bounded output.
++    let failure = |reason: String| Error::DecompressionFailed { index, reason };
++    let frame_size = zstd::zstd_safe::find_frame_compressed_size(data)
++        .map_err(|_| failure("ZSTD: invalid frame".into()))?;
++    if frame_size != data.len() {
++        return Err(failure(
++            "ZSTD: trailing or concatenated frames unsupported".into(),
++        ));
++    }
++    if zstd::zstd_safe::get_frame_content_size(data)
++        .map_err(|_| failure("ZSTD: invalid content size".into()))?
++        .is_some_and(|size| size > decoded_len_limit as u64)
++    {
++        return Err(decoded_block_too_large(index, "ZSTD", decoded_len_limit));
++    }
++    let mut context = zstd::zstd_safe::DCtx::create();
++    if context.sizeof() > 128 * 1024 {
++        return Err(failure(
++            "ZSTD: decoder context exceeds reserved workspace".into(),
++        ));
++    }
++    let mut output = vec![0u8; decoded_len_limit];
++    let length = context.decompress(&mut output[..], data).map_err(|_| {
++        failure("ZSTD: invalid frame or decoded output exceeds block budget".into())
+     })?;
+-    read_bounded_to_end(decoder, index, "ZSTD", decoded_len_limit)
++    if context.sizeof() > 128 * 1024 {
++        return Err(failure(
++            "ZSTD: decoder workspace exceeded reservation".into(),
++        ));
++    }
++    output.truncate(length);
++    Ok(output)
+ }
+ 
+ #[cfg(feature = "webp")]
+@@ -760,13 +787,38 @@
+     #[test]
+     fn zstd_decoder_rejects_blocks_that_exceed_budget() {
+         let payload = [0x2a; 128];
+-        let compressed = ruzstd::encoding::compress_to_vec(
+-            &payload[..],
+-            ruzstd::encoding::CompressionLevel::Fastest,
+-        );
++        let compressed = zstd::bulk::compress(&payload[..], 1).unwrap();
+ 
+         let err = decompress(Compression::Zstd.to_code(), &compressed, 0, None, 127).unwrap_err();
+         assert!(err.to_string().contains("block budget"));
++    }
++    #[cfg(feature = "zstd")]
++    #[test]
++    fn zstd_fixed_destination_rejects_corruption_trailing_frames_and_bombs() {
++        let raw = vec![42u8; 262144];
++        let mut compressor = zstd::bulk::Compressor::new(1).unwrap();
++        compressor
++            .set_parameter(zstd::zstd_safe::CParameter::ChecksumFlag(true))
++            .unwrap();
++        let encoded = compressor.compress(&raw).unwrap();
++        let decode =
++            |bytes: &[u8], cap| decompress(Compression::Zstd.to_code(), bytes, 0, None, cap);
++        assert_eq!(decode(&encoded, raw.len()).unwrap(), raw);
++        assert!(decode(&encoded, 128).is_err());
++        assert!(decode(&encoded[..encoded.len() - 1], raw.len()).is_err());
++        let mut corrupt = encoded.clone();
++        *corrupt.last_mut().unwrap() ^= 1;
++        assert!(decode(&corrupt, raw.len()).is_err());
++        let mut trailing = encoded.clone();
++        trailing.push(0);
++        assert!(decode(&trailing, raw.len()).is_err());
++        assert!(decode(&encoded.repeat(2), raw.len() * 2).is_err());
++        compressor
++            .set_parameter(zstd::zstd_safe::CParameter::ContentSizeFlag(false))
++            .unwrap();
++        let unknown_size = compressor.compress(&raw).unwrap();
++        assert!(decode(&unknown_size, 128).is_err());
++        assert_eq!(decode(&unknown_size, raw.len()).unwrap(), raw);
+     }
+ 
+     #[cfg(feature = "jpeg")]
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -2625,10 +2625,7 @@
+             blob.extend_from_slice(&value.to_le_bytes());
+         }
+ 
+-        let compressed = ruzstd::encoding::compress_to_vec(
+-            &blob[..],
+-            ruzstd::encoding::CompressionLevel::Fastest,
+-        );
++        let compressed = zstd::bulk::compress(&blob[..], 1).unwrap();
+         let data = build_lerc_tiff(2, 2, &compressed, 32, 3, 1, Some([2, 2]));
+         let file = TiffFile::from_bytes(data).unwrap();
+         let image = file.read_image::<f32>(0).unwrap();
