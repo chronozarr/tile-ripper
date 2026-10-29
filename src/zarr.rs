@@ -5,7 +5,7 @@ use crate::{
     Result,
 };
 use serde::Deserialize;
-use std::{fs, path::Path};
+use std::path::Path;
 #[derive(Deserialize)]
 struct Array {
     zarr_format: u8,
@@ -48,7 +48,7 @@ impl FormatPlanner for LegacyArrayPlanner {
             return fail("Zarr prototype accepts one array selected by dataset path /");
         }
         let root = Path::new(&asset.locator);
-        let a: Array = serde_json::from_slice(&fs::read(root.join(".zarray"))?)?;
+        let a: Array = serde_json::from_slice(&crate::metadata_io::read(&root.join(".zarray"))?)?;
         if a.zarr_format != 2
             || a.shape.len() != 2
             || a.chunks.len() != 2
@@ -62,10 +62,12 @@ impl FormatPlanner for LegacyArrayPlanner {
         if sep != "." && sep != "/" {
             return fail("invalid Zarr dimension separator");
         }
-        let attrs: Attributes =
-            serde_json::from_slice(&fs::read(root.join(".zattrs"))?).map_err(|_| {
-                "Zarr bounds selection requires explicit tile_ripper_grid georeferencing in .zattrs"
-            })?;
+        let attrs: Attributes = serde_json::from_slice(&crate::metadata_io::read(
+            &root.join(".zattrs"),
+        )?)
+        .map_err(|_| {
+            "Zarr bounds selection requires explicit tile_ripper_grid georeferencing in .zattrs"
+        })?;
         let t = attrs.tile_ripper_grid.transform;
         if !t.iter().all(|x| x.is_finite()) || t[1] <= 0. || t[5] >= 0. || t[2] != 0. || t[4] != 0.
         {

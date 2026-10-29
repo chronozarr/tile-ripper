@@ -71,6 +71,20 @@ fn plan_cog_asset(
             return fail("COG requires integer band selectors");
         };
         let (layout, cached) = resolve(*index)?;
+        // The legacy chunked GeoTIFF writer is deliberately UInt16-only. Reject
+        // unsupported source storage while preparing the concrete sink, before
+        // `fetch` creates its destination or starts decoding. `Directory`
+        // requests are auto-resolved to this sink for COGs, including direct
+        // diagnostic planning that has not yet entered acquisition preparation.
+        if matches!(
+            request.sink,
+            Sink::Directory { .. } | Sink::GeoTiffDirectory { .. }
+        ) && layout.dtype != "UInt16"
+        {
+            return fail(
+                "GeoTIFF directory output currently supports UInt16 native bands only; use zarr_directory for UInt8, Int16, or Float32 native bands",
+            );
+        }
         let mask = crate::spatial::native_mask(&request.spatial, &layout)?;
         let spatial = if let Some(g) = &mask {
             if g.is_empty() || g.area() <= 0. {
@@ -321,8 +335,14 @@ pub fn validate(r: &Request) -> Result<&[Asset]> {
     Ok(assets)
 }
 pub fn plan(request: &Request, cache: &mut LayoutCache) -> Result<Plan> {
+    let runtime = crate::runtime_config::RuntimeConfig::capture(request)?;
+    let _runtime = runtime.enter();
     if !matches!(request.source, Source::Assets { .. })
         || crate::storage::requires_zarr_bindings(request)
+        || matches!(&request.source, Source::Assets { assets } if assets.iter().any(|asset| {
+            asset.format == Format::Cog
+                && (cog::native_selected() || cog::remote(&asset.locator))
+        }))
     {
         return Ok(crate::acquisition::prepare(request, cache)?.plan().clone());
     }
@@ -366,6 +386,7 @@ pub(crate) fn plan_on(
             let mut handles = Vec::new();
             for asset in batch {
                 let configuration = &configuration;
+                let runtime = crate::runtime_config::active();
                 handles.push(
                     if independent
                         // Keep multiband metadata incremental: plan node limits
@@ -376,6 +397,9 @@ pub(crate) fn plan_on(
                         && time_matches(asset, &request.time)?
                     {
                         Some(scope.spawn(move || -> Result<Vec<Layout>> {
+                            let _runtime = runtime
+                                .as_ref()
+                                .map(crate::runtime_config::RuntimeConfig::enter);
                             crate::cog::apply_thread_configuration(configuration)?;
                             request
                                 .variables

@@ -70,6 +70,12 @@ impl Config {
             concurrency: concurrency.max(1),
         })
     }
+    pub fn with_concurrency(&self, concurrency: usize) -> Self {
+        Self {
+            concurrency: concurrency.max(1),
+            ..self.clone()
+        }
+    }
     /// Input order is irrelevant; callers retain their logical delivery order.
     pub fn groups(&self, spans: &[(u64, u64, Vec<usize>)], cap: u64) -> Vec<Group> {
         let mut sorted = spans.to_vec();

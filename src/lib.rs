@@ -3,6 +3,7 @@ pub mod cog;
 pub mod execute;
 pub mod model;
 pub mod planner;
+mod runtime_config;
 pub mod zarr;
 pub use execute::{execute, fetch, Chunk, ExecutionReport};
 pub use model::*;
@@ -22,12 +23,14 @@ pub mod acquisition;
 pub mod products;
 
 mod diagnostics;
+mod output_transaction;
 
 #[cfg(feature = "authenticated-http")]
 pub mod authenticated_http;
 #[cfg(all(feature = "native-hdf5", feature = "authenticated-http"))]
 pub mod checkpoint;
 mod http_transport;
+mod metadata_io;
 mod storage;
 mod zarr_io;
 

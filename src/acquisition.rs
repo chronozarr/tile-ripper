@@ -1,7 +1,8 @@
 //! One acquisition lifecycle. Inspection documents cannot be deserialized/replayed.
-#[cfg(any(feature = "native-hdf5", feature = "authenticated-http"))]
-use crate::fail;
-use crate::{cog::LayoutCache, model::*, stac_workflow, Chunk, ExecutionReport, Result};
+use crate::{
+    cog::LayoutCache, fail, model::*, output_transaction::Transaction, stac_workflow, Chunk,
+    ExecutionReport, Result,
+};
 use serde_json::{json, Value};
 use std::{
     fs,
@@ -58,6 +59,7 @@ fn cog_runtime(runtime: &Runtime) -> bool {
 #[derive(Clone)]
 pub struct Prepared {
     runtime: std::sync::Arc<Runtime>,
+    runtime_config: std::sync::Arc<crate::runtime_config::RuntimeConfig>,
     inspection: std::sync::Arc<Value>,
     output: Sink,
 }
@@ -268,6 +270,7 @@ impl Prepared {
         cancelled: &std::sync::atomic::AtomicBool,
         sink: impl FnMut(Chunk) -> Result<()>,
     ) -> Result<ExecutionReport> {
+        let _runtime = self.runtime_config.enter();
         let _quiet = crate::diagnostics::QuietNative::enter();
         match self.runtime.as_ref() {
             Runtime::Direct {
@@ -339,6 +342,7 @@ impl Prepared {
         cancelled: &std::sync::atomic::AtomicBool,
         sink: impl FnMut([Chunk; 5]) -> Result<()>,
     ) -> Result<ExecutionReport> {
+        let _runtime = self.runtime_config.enter();
         let _quiet = crate::diagnostics::QuietNative::enter();
         let Runtime::Direct {
             request,
@@ -373,13 +377,15 @@ impl Prepared {
     }
     /// Native format writers are retained. Only the provenance envelope is unified.
     pub fn fetch(&self) -> Result<Value> {
+        let _runtime = self.runtime_config.enter();
         if self.scientific_output() {
             return self.fetch_cancellable(Default::default());
         }
         let _quiet = crate::diagnostics::QuietNative::enter();
         let fetch_started = Instant::now();
-        destination(&self.output)?;
-        let (root, legacy) = match self.runtime.as_ref() {
+        let transaction = Transaction::new(Path::new(destination(&self.output)?))?;
+        let staged_root = transaction.stage().to_path_buf();
+        let legacy = match self.runtime.as_ref() {
             Runtime::Direct {
                 request,
                 plan,
@@ -392,48 +398,45 @@ impl Prepared {
                 sources.validate_cog_identities(request, &Default::default())?;
                 sources.validate()?;
                 sources.phase("execution");
-                let root = destination(&request.sink)?;
-                if Path::new(root).exists() {
-                    return Err("output directory already exists; choose a new directory".into());
-                }
-                if let Some(parent) = Path::new(root)
-                    .parent()
-                    .filter(|p| !p.as_os_str().is_empty())
-                {
-                    fs::create_dir_all(parent)?;
-                }
+                let mut staged = (**request).clone();
+                staged.sink = match &request.sink {
+                    Sink::Directory { .. } => Sink::Directory {
+                        path: staged_root.to_string_lossy().into_owned(),
+                    },
+                    Sink::GeoTiffDirectory { .. } => Sink::GeoTiffDirectory {
+                        path: staged_root.to_string_lossy().into_owned(),
+                    },
+                    Sink::ZarrDirectory { .. } => Sink::ZarrDirectory {
+                        path: staged_root.to_string_lossy().into_owned(),
+                    },
+                    Sink::Callback => {
+                        return fail("fetch requires a directory output; use execute for callbacks")
+                    }
+                };
                 let materialization_prefix = fetch_started.elapsed().as_secs_f64();
-                crate::execute::fetch_on(request, plan, *planning_seconds, sources)
+                crate::execute::fetch_on(&staged, plan, *planning_seconds, sources)
                     .map_err(|e| safe_error(request, "fetch", e))?;
-                // A successful native writer owns this new directory; cleanup is safe.
                 sources.phase("post_execution_validation");
-                if let Err(e) = versions
+                versions
                     .validate()
                     .and_then(|_| sources.validate_cog_identities(request, &Default::default()))
-                    .and_then(|_| sources.validate())
-                {
-                    let _ = fs::remove_dir_all(root);
-                    return Err(e);
-                }
-                (
-                    root.to_owned(),
-                    fs::read(Path::new(root).join("manifest.json")).and_then(|bytes| {
-                        let mut value: Value = serde_json::from_slice(&bytes)?;
-                        value["observed"]["transport"] = sources.stats();
-                        if let Some(seconds) = value["observed"]["first_output_seconds"].as_f64() {
-                            value["observed"]["first_output_seconds"] =
-                                json!(seconds + materialization_prefix);
-                        }
-                        Ok(serde_json::to_vec(&value)?)
-                    }),
-                )
+                    .and_then(|_| sources.validate())?;
+                fs::read(staged_root.join("manifest.json")).and_then(|bytes| {
+                    let mut value: Value = serde_json::from_slice(&bytes)?;
+                    value["observed"]["transport"] = sources.stats();
+                    if let Some(seconds) = value["observed"]["first_output_seconds"].as_f64() {
+                        value["observed"]["first_output_seconds"] =
+                            json!(seconds + materialization_prefix);
+                    }
+                    Ok(serde_json::to_vec(&value)?)
+                })
             }
             Runtime::Catalog(p) => {
-                let value = p.fetch()?;
-                (p.output().to_owned(), Ok(serde_json::to_vec(&value)?))
+                let value = p.fetch_to(&staged_root)?;
+                serde_json::to_vec(&value).map_err(Into::into)
             }
         };
-        let result = (|| -> Result<Value> {
+        (|| -> Result<Value> {
             let stage = Instant::now();
             let mut manifest: Value = serde_json::from_slice(&legacy?)?;
             let outputs = outputs(self.plan(), strategy(&self.runtime, &self.output));
@@ -462,19 +465,16 @@ impl Prepared {
                 stage.elapsed().as_secs_f64(),
             );
             let stage = Instant::now();
-            let temporary = Path::new(&root).join(".manifest.tmp");
+            let temporary = staged_root.join(".manifest.tmp");
             fs::write(&temporary, bytes)?;
-            fs::rename(temporary, Path::new(&root).join("manifest.json"))?;
+            fs::rename(temporary, staged_root.join("manifest.json"))?;
             crate::diagnostics::profile_stage(
                 "common_manifest_write_rename",
                 stage.elapsed().as_secs_f64(),
             );
+            transaction.publish(&std::sync::atomic::AtomicBool::new(false))?;
             Ok(manifest)
-        })();
-        if result.is_err() {
-            let _ = fs::remove_dir_all(&root);
-        }
-        result
+        })()
     }
     /// COG-to-Zarr materialization uses the public provisional chunk stream and
     /// shares this cancellation flag with its producer. Other sinks keep their
@@ -483,6 +483,7 @@ impl Prepared {
         &self,
         cancelled: std::sync::Arc<std::sync::atomic::AtomicBool>,
     ) -> Result<Value> {
+        let _runtime = self.runtime_config.enter();
         if !self.scientific_output() {
             return Err("cancellable fetch requires COG/STAC with a zarr_directory sink".into());
         }
@@ -501,6 +502,7 @@ impl Prepared {
         options: crate::ScientificOutputOptions,
         cancelled: std::sync::Arc<std::sync::atomic::AtomicBool>,
     ) -> Result<Value> {
+        let _runtime = self.runtime_config.enter();
         if !self.scientific_output() {
             return Err(
                 "scientific output options require COG/STAC with a zarr_directory sink".into(),
@@ -739,6 +741,8 @@ fn prepare_on(
     transport: crate::http_transport::Transport,
     prepared_sources: Option<crate::storage::Sources>,
 ) -> Result<Prepared> {
+    let runtime_config = crate::runtime_config::RuntimeConfig::capture(request)?;
+    let _runtime = runtime_config.enter();
     crate::planner::validate_common(request)?;
     let runtime = match &request.source {
         Source::Stac { .. } | Source::Catalog { .. } => {
@@ -889,6 +893,7 @@ fn prepare_on(
     sanitize(&mut inspection);
     Ok(Prepared {
         runtime: std::sync::Arc::new(runtime),
+        runtime_config,
         inspection: std::sync::Arc::new(inspection),
         output: request.sink.clone(),
     })
@@ -1184,10 +1189,7 @@ impl Versions {
                         v.axis(&dir, r.budget.max_nodes)?;
                     }
                 }
-                if fs::metadata(root.join("zarr.json"))?.len() > 1024 * 1024 {
-                    return Err("v3 group metadata exceeds 1 MiB".into());
-                }
-                let group: Value = serde_json::from_slice(&fs::read(root.join("zarr.json"))?)?;
+                let group = crate::metadata_io::json(&root.join("zarr.json"))?;
                 for var in &r.variables {
                     if let Variable::Dataset { path } = var {
                         let n = crate::zarr_acquire::name(path)?;
@@ -1197,10 +1199,7 @@ impl Versions {
                             if let Some(m) = group["consolidated_metadata"]["metadata"].get(n) {
                                 m.clone()
                             } else {
-                                if fs::metadata(&path)?.len() > 1024 * 1024 {
-                                    return Err("v3 array metadata exceeds 1 MiB".into());
-                                }
-                                serde_json::from_slice(&fs::read(path)?)?
+                                crate::metadata_io::json(&path)?
                             };
                         let attrs = &metadata["attributes"];
                         if let Some(mapping) = attrs["grid_mapping"].as_str() {
@@ -1213,7 +1212,7 @@ impl Versions {
                 }
                 continue;
             }
-            let root_attrs: Value = serde_json::from_slice(&fs::read(root.join(".zattrs"))?)?;
+            let root_attrs = crate::metadata_io::json(&root.join(".zattrs"))?;
             let axes = if root_attrs["tile_ripper_grid"].is_object() {
                 ["time", "y", "x"]
             } else if root.join("lat/.zarray").is_file() {

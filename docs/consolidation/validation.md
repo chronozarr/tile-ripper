@@ -17,6 +17,12 @@ native COG, native HDF5, complete native, and all features. Install system GDAL
 for this full matrix. It uses two Cargo build jobs and serial Rust tests to avoid
 the resource/deadline failures recorded during earlier parallel runs.
 
+Intentional implementation follow-ups can select a new exact source-hash
+receipt with `--source-receipt PATH`; the default remains the original Wave 4
+receipt. See the [acquisition review follow-up](../review-hardening/workflow.md).
+The selector still verifies all listed hashes and does not replace independent
+scientific replay or provider-access qualification.
+
 Historical links into ignored `prototype-output/` captures and the compressed
 acquisition-engine raw logs are recorded as local evidence links. Their absence
 from a clean source checkout does not fail the source-link check. Frozen science

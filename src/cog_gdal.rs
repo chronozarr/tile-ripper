@@ -134,8 +134,9 @@ pub(crate) fn clear_remote_cache(asset: &Asset) -> Result<()> {
     Ok(())
 }
 
-/// Snapshot caller-local overrides before starting native worker threads.
-/// Environment and process-global options remain GDAL's fallback.
+/// Snapshot effective caller configuration before starting native workers.
+/// A thread-local override wins; otherwise retain the current process/global
+/// value so a later environment or global GDAL change cannot affect workers.
 pub(crate) fn thread_configuration() -> Result<Vec<(&'static str, String)>> {
     [
         "GDAL_HTTP_HEADERS",
@@ -153,14 +154,23 @@ pub(crate) fn thread_configuration() -> Result<Vec<(&'static str, String)>> {
         "CPL_CURL_VERBOSE",
     ]
     .iter()
-    .map(|key| Ok((*key, gdal::config::get_thread_local_config_option(key, "")?)))
+    .map(|key| {
+        const MISSING: &str = "__tile_ripper_thread_option_missing__";
+        let thread = gdal::config::get_thread_local_config_option(key, MISSING)?;
+        let value = if thread == MISSING {
+            gdal::config::get_config_option(key, "")?
+        } else {
+            thread
+        };
+        Ok((*key, value))
+    })
     .collect()
 }
 pub(crate) fn apply_thread_configuration(configuration: &[(&str, String)]) -> Result<()> {
     for (key, value) in configuration {
-        if !value.is_empty() {
-            gdal::config::set_thread_local_config_option(key, value)?;
-        }
+        // An explicit empty thread-local value prevents a subsequently
+        // changed process-global option from leaking into this worker.
+        gdal::config::set_thread_local_config_option(key, value)?;
     }
     Ok(())
 }

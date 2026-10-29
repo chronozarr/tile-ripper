@@ -9,10 +9,11 @@ use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use std::{
     collections::HashSet,
+    sync::Arc,
     time::{Duration, Instant},
 };
 #[cfg(feature = "gdal")]
-use std::{fs, path::Path};
+use std::{fs, path::Path, sync::atomic::AtomicBool};
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
@@ -107,13 +108,19 @@ pub struct Prepared {
     plan: Plan,
     pub planning_seconds: f64,
     sources: crate::storage::Sources,
+    runtime_config: Arc<crate::runtime_config::RuntimeConfig>,
 }
 impl Discovered {
     pub fn sources(&self) -> &[SourceReference] {
         &self.sources
     }
     pub fn prepare(mut self, cache: &mut LayoutCache) -> Result<Prepared> {
+        let initial = crate::runtime_config::RuntimeConfig::capture(&self.core)?;
+        let initial_scope = initial.enter();
         configure(&self.request.limits)?;
+        let runtime_config = initial.with_current_gdal()?;
+        drop(initial_scope);
+        let _runtime = runtime_config.enter();
         let t = Instant::now();
         resolve_identities(&mut self.core, &mut self.sources, &self.request.limits)?;
         let sources = crate::storage::Sources::new(&self.core)?;
@@ -166,13 +173,11 @@ impl Discovered {
             plan,
             planning_seconds: t.elapsed().as_secs_f64(),
             sources,
+            runtime_config,
         })
     }
 }
 impl Prepared {
-    pub(crate) fn output(&self) -> &str {
-        &self.discovered.request.output
-    }
     pub fn plan(&self) -> &Plan {
         &self.plan
     }
@@ -198,6 +203,7 @@ impl Prepared {
         cancelled: &std::sync::atomic::AtomicBool,
         sink: impl FnMut(crate::Chunk) -> Result<()>,
     ) -> Result<ExecutionReport> {
+        let _runtime = self.runtime_config.enter();
         configure(&self.discovered.request.limits)?;
         self.sources
             .validate_cog_identities(&self.discovered.core, &self.discovered.request.limits)?;
@@ -219,17 +225,26 @@ impl Prepared {
     /// One tiled native GeoTIFF per source asset; chunk writes stay bounded.
     #[cfg(feature = "gdal")]
     pub fn fetch(&self) -> Result<Value> {
-        let root = Path::new(&self.discovered.request.output);
-        if root.exists() {
-            return fail("output directory already exists; choose a new directory");
+        let _runtime = self.runtime_config.enter();
+        let transaction = crate::output_transaction::Transaction::new(Path::new(
+            &self.discovered.request.output,
+        ))?;
+        let manifest = self.fetch_to(transaction.stage())?;
+        if !transaction.stage().join("manifest.json").is_file() {
+            return fail("GeoTIFF writer did not finalize its completion manifest");
         }
-        let parent = root
-            .parent()
-            .filter(|p| !p.as_os_str().is_empty())
-            .unwrap_or(Path::new("."));
-        fs::create_dir_all(parent)?;
-        fs::create_dir(root)?;
-        let result = (|| -> Result<Value> {
+        transaction.publish(&AtomicBool::new(false))?;
+        Ok(manifest)
+    }
+    /// Write into an already-reserved private staging directory. The caller owns
+    /// the one final publication commit.
+    #[cfg(feature = "gdal")]
+    pub(crate) fn fetch_to(&self, root: &Path) -> Result<Value> {
+        let _runtime = self.runtime_config.enter();
+        if !root.is_dir() {
+            return fail("GeoTIFF output staging directory is unavailable");
+        }
+        (|| -> Result<Value> {
             let mut current: Option<(String, Dataset)> = None;
             let mut written = HashSet::new();
             let report = self.execute(|mut chunk| {
@@ -304,11 +319,7 @@ impl Prepared {
                 serde_json::to_vec_pretty(&manifest)?,
             )?;
             Ok(manifest)
-        })();
-        if result.is_err() {
-            let _ = fs::remove_dir_all(root);
-        }
-        result
+        })()
     }
 }
 fn decisions() -> Vec<&'static str> {
@@ -705,6 +716,9 @@ fn configure(_: &Limits) -> Result<()> {
 #[cfg(not(feature = "gdal"))]
 impl Prepared {
     pub fn fetch(&self) -> Result<Value> {
+        fail("GeoTIFF output requires the gdal feature")
+    }
+    pub(crate) fn fetch_to(&self, _: &std::path::Path) -> Result<Value> {
         fail("GeoTIFF output requires the gdal feature")
     }
 }

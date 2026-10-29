@@ -86,17 +86,6 @@ impl Reader {
     }
 }
 
-fn positive_env(name: &str, default: usize) -> Result<usize> {
-    match std::env::var(name) {
-        Ok(v) => v
-            .parse::<usize>()
-            .ok()
-            .filter(|n| (1..=64).contains(n))
-            .ok_or_else(|| format!("{name} must be an integer from 1 to 64").into()),
-        Err(std::env::VarError::NotPresent) => Ok(default),
-        Err(_) => Err(format!("invalid {name}").into()),
-    }
-}
 fn host(a: &Asset) -> Result<String> {
     if crate::cog::remote(&a.locator) {
         Ok(reqwest::Url::parse(&a.locator)?
@@ -299,9 +288,9 @@ fn coalesce_tasks(
     tasks: Vec<Task>,
 ) -> Result<Vec<Task>> {
     let workers = crate::storage::worker_count()?
-        .min(positive_env("TILE_RIPPER_PER_HOST", 4)?)
+        .min(crate::runtime_config::per_host()?)
         .min(tasks.len().max(1));
-    let config = crate::zarr_ranges::Config::from_env(workers)?;
+    let config = crate::runtime_config::zarr_ranges(workers)?;
     if config.policy == crate::zarr_ranges::Policy::Individual {
         return Ok(tasks);
     }
@@ -459,11 +448,7 @@ pub(crate) fn execute(
             )
         })
         .ok_or("prepared reservation overflow")?;
-    let mut workers = positive_env(
-        "TILE_RIPPER_WORKERS",
-        std::thread::available_parallelism().map_or(1, |n| n.get().min(2)),
-    )?
-    .min(tasks.len().max(1));
+    let mut workers = crate::runtime_config::workers()?.min(tasks.len().max(1));
     // Reader contexts retain decoded coordinates/dimension indices across tasks.
     // Reserve their largest possible footprint for every worker for its lifetime.
     let per_reader = tasks.iter().map(|t| t.reader_bytes).max().unwrap_or(0);
@@ -485,7 +470,7 @@ pub(crate) fn execute(
                 .is_some_and(|total| total <= r.budget.buffer_bytes)
         })
         .ok_or("reader state and one task exceed buffer_bytes; increase the working buffer")?;
-    let per_host = positive_env("TILE_RIPPER_PER_HOST", 4)?;
+    let per_host = crate::runtime_config::per_host()?;
     let Source::Assets { assets } = &r.source else {
         unreachable!()
     };
@@ -507,10 +492,15 @@ pub(crate) fn execute(
     let mut result = empty_report(planning);
     let outcome = std::thread::scope(|scope| -> Result<()> {
         let mut handles = Vec::new();
+        let runtime = crate::runtime_config::active();
         for _ in 0..workers {
             let (tasks, senders, admission, abort, configuration) =
                 (&tasks, &senders, &admission, &abort, &configuration);
+            let runtime = runtime.clone();
             handles.push(scope.spawn(move || -> Result<ExecutionReport> {
+                let _runtime = runtime
+                    .as_ref()
+                    .map(crate::runtime_config::RuntimeConfig::enter);
                 let _quiet = crate::diagnostics::QuietNative::enter();
                 crate::cog::apply_thread_configuration(configuration)?;
                 let mut report = empty_report(0.);
@@ -736,7 +726,7 @@ pub(crate) fn execute(
         result.scheduler["prepared_hdf5_bytes"] = serde_json::json!(sources.hdf5.bytes());
     }
     if sources.v3.bytes() > 0 {
-        result.scheduler["zarr_v3_coalescing"] = serde_json::json!({"config":crate::zarr_ranges::Config::from_env(workers.min(per_host))?,"window_logical_chunks":32,"plan_metadata_bytes":tasks.iter().filter_map(|t|t.batch.as_ref()).map(|b|b.metadata_bytes()).sum::<usize>(),"batches":tasks.iter().filter_map(|t|t.batch.as_ref().map(|b|serde_json::json!({"selected":t.selected,"nodes":t.nodes,"reservation":t.bytes,"fetches":b.fetches}))).collect::<Vec<_>>()});
+        result.scheduler["zarr_v3_coalescing"] = serde_json::json!({"config":crate::runtime_config::zarr_ranges(workers.min(per_host))?,"window_logical_chunks":32,"plan_metadata_bytes":tasks.iter().filter_map(|t|t.batch.as_ref()).map(|b|b.metadata_bytes()).sum::<usize>(),"batches":tasks.iter().filter_map(|t|t.batch.as_ref().map(|b|serde_json::json!({"selected":t.selected,"nodes":t.nodes,"reservation":t.bytes,"fetches":b.fetches}))).collect::<Vec<_>>()});
     }
     if let Some(metrics) = range_metrics {
         result.scheduler["zarr_v3_ranges"] = metrics;

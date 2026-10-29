@@ -132,9 +132,7 @@ mod gdal_impl;
 #[cfg(feature = "gdal")]
 pub use gdal_impl::open;
 #[cfg(feature = "gdal")]
-pub(crate) use gdal_impl::{
-    apply_thread_configuration, clear_remote_cache, thread_configuration, ConditionalHeaders,
-};
+pub(crate) use gdal_impl::{apply_thread_configuration, clear_remote_cache, ConditionalHeaders};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Backend {
@@ -147,6 +145,15 @@ pub enum Backend {
 /// default when compiled. Keep that environment selection fixed from request
 /// preparation until all related `Prepared` values and streams are dropped.
 pub fn backend() -> Result<Backend> {
+    if let Some(config) = crate::runtime_config::active() {
+        return config
+            .backend()
+            .ok_or_else(|| "COG backend was not captured for this acquisition".into());
+    }
+    backend_from_environment()
+}
+
+pub(crate) fn backend_from_environment() -> Result<Backend> {
     let default = if cfg!(feature = "gdal") {
         "gdal"
     } else {
@@ -162,6 +169,22 @@ pub fn backend() -> Result<Backend> {
         "native" => Ok(Backend::Native),
         _ => fail("COG backend unavailable; enable gdal or native-cog and select gdal/native"),
     }
+}
+
+pub(crate) fn capture_thread_configuration() -> Result<Vec<(&'static str, String)>> {
+    #[cfg(feature = "gdal")]
+    {
+        gdal_impl::thread_configuration()
+    }
+    #[cfg(not(feature = "gdal"))]
+    Ok(vec![])
+}
+
+pub(crate) fn thread_configuration() -> Result<Vec<(&'static str, String)>> {
+    if let Some(config) = crate::runtime_config::active() {
+        return Ok(config.gdal_thread_configuration());
+    }
+    capture_thread_configuration()
 }
 /// Require Tile-Ripper to be compiled without its `gdal` feature. This guard
 /// permits feature-free Zarr and does not change backend state. It cannot detect
@@ -181,10 +204,6 @@ pub fn inspect(asset: &Asset, band: usize) -> Result<Layout> {
         #[cfg(feature = "native-cog")]
         Backend::Native => crate::native_cog::inspect(asset, band),
     }
-}
-#[cfg(not(feature = "gdal"))]
-pub(crate) fn thread_configuration() -> Result<Vec<(&'static str, String)>> {
-    Ok(vec![])
 }
 #[cfg(not(feature = "gdal"))]
 pub(crate) fn apply_thread_configuration(_: &[(&str, String)]) -> Result<()> {

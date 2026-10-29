@@ -1,0 +1,66 @@
+name: Rust engine
+on:
+  push:
+    paths: ['src/**', 'tests/**', 'examples/**', 'bench/**', 'scripts/**', 'vendor/**', 'consumers/**', '.cargo/**', 'Cargo.toml', 'Cargo.lock', '.github/workflows/rust.yml']
+  pull_request:
+    paths: ['src/**', 'tests/**', 'examples/**', 'bench/**', 'scripts/**', 'vendor/**', 'consumers/**', '.cargo/**', 'Cargo.toml', 'Cargo.lock', '.github/workflows/rust.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: rust-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+env:
+  CARGO_BUILD_JOBS: '2'
+  CARGO_TERM_COLOR: always
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install GDAL
+        run: sudo apt-get update && sudo apt-get install -y libgdal-dev pkg-config
+      - name: Install Rust
+        run: rustup toolchain install 1.92.0 --profile minimal --component rustfmt --component clippy
+      - run: cargo +1.92.0 fmt --all -- --check
+      - run: cargo +1.92.0 clippy --locked --all-features --all-targets -- -D warnings
+  tests:
+    name: Rust ${{ matrix.rust }} / ${{ matrix.profile.name }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        rust: ['1.91.0', '1.92.0']
+        profile:
+          - {name: default, flags: ''}
+          - {name: zarr-only, flags: '--no-default-features'}
+          - {name: native-cog, flags: '--no-default-features --features native-cog'}
+          - {name: native-hdf5, flags: '--no-default-features --features native-hdf5'}
+          - {name: native-full, flags: '--no-default-features --features native-cog,native-hdf5,authenticated-http'}
+          - {name: all-features, flags: '--all-features'}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install GDAL
+        if: matrix.profile.name == 'default' || matrix.profile.name == 'all-features'
+        run: sudo apt-get update && sudo apt-get install -y libgdal-dev pkg-config
+      - name: Install Rust
+        run: rustup toolchain install ${{ matrix.rust }} --profile minimal
+      - name: Fetch locked dependencies
+        run: cargo +${{ matrix.rust }} fetch --locked
+      - name: Test without provider access
+        run: cargo +${{ matrix.rust }} test --locked --offline ${{ matrix.profile.flags }} --all-targets -- --test-threads=1
+  vendored-and-consumer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install GDAL
+        run: sudo apt-get update && sudo apt-get install -y libgdal-dev pkg-config
+      - name: Install Rust
+        run: rustup toolchain install 1.92.0 --profile minimal
+      - run: cargo +1.92.0 test --locked --manifest-path vendor/hdf5-reader/Cargo.toml --all-targets -- --test-threads=1
+      - run: cargo +1.92.0 test --locked --manifest-path vendor/zarrs_filesystem/Cargo.toml --all-targets -- --test-threads=1
+      - run: cargo +1.92.0 check --locked --manifest-path consumers/native-stats/Cargo.toml
+      - run: cargo +1.92.0 check --locked --manifest-path consumers/native-stats/Cargo.toml --no-default-features --features native-cog

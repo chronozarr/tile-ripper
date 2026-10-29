@@ -22,7 +22,7 @@ MATRIX = {
 }
 
 
-def documentation_checks():
+def documentation_checks(source_receipt=None):
     missing, local_evidence = [], []
     for p in [ROOT / "README.md", ROOT / "ALPHA.md", *ROOT.glob("docs/**/*.md")]:
         if "proposed-licensing" in p.parts:
@@ -38,7 +38,8 @@ def documentation_checks():
                 continue
             if ref and not target.exists():
                 missing.append([str(p.relative_to(ROOT)), ref])
-    receipt = json.loads((ROOT / "docs/products/wave4/acceptance.json").read_text())
+    source_receipt = source_receipt or ROOT / "docs/products/wave4/acceptance.json"
+    receipt = json.loads(source_receipt.read_text())
     approval = json.loads((ROOT / "docs/consolidation/license-decision.json").read_text())
     mismatches, metadata_changes = [], []
     for p, digest in receipt["source_sha256"].items():
@@ -51,8 +52,10 @@ def documentation_checks():
         else:
             mismatches.append(p)
     if missing or mismatches:
-        raise RuntimeError(json.dumps({"missing_links": missing, "wave4_source_mismatches": mismatches}))
+        raise RuntimeError(json.dumps({"missing_links": missing, "source_receipt": str(source_receipt),
+                                       "baseline_source_mismatches": mismatches}))
     return {"missing_links": missing, "wave4_source_mismatches": mismatches,
+            "source_receipt": str(source_receipt),
             "approved_manifest_metadata_changes": metadata_changes,
             "local_evidence_links": local_evidence}
 
@@ -60,6 +63,8 @@ def documentation_checks():
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--toolchain", default="1.92.0")
+    parser.add_argument("--source-receipt", type=Path,
+                        help="Exact source-hash receipt to verify; defaults to the frozen Wave 4 receipt")
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     output = args.output.resolve()
@@ -88,7 +93,7 @@ def main():
             raise RuntimeError(f"{name} failed; see {path}")
 
     try:
-        report["documentation"] = documentation_checks()
+        report["documentation"] = documentation_checks(args.source_receipt)
         run("format", cargo + ["fmt", "--all", "--", "--check"])
         run("clippy", cargo + ["clippy", "--locked", "--offline", "--all-features", "--all-targets", "--", "-D", "warnings"])
         for name, features in MATRIX.items():
