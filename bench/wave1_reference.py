@@ -778,11 +778,11 @@ def build(request_path: Path, native_path: Path, destination: Path) -> dict:
                             }
 
                         valid_out = zarr_array(
-                            group, "valid", shape, chunks, "|u1", 0,
+                            group, "valid", shape, chunks, "|u1", None,
                             mask_attrs("AOI included and valid under physical and product fill semantics"),
                         )
                         aoi_out = zarr_array(
-                            group, "aoi_mask", shape, chunks, "|u1", 0,
+                            group, "aoi_mask", shape, chunks, "|u1", None,
                             mask_attrs("AOI pixel center inclusion; source nodata may still be included"),
                         )
                         quality_out = {}
@@ -797,7 +797,7 @@ def build(request_path: Path, native_path: Path, destination: Path) -> dict:
                                 "flag_meanings": "rejected accepted",
                             })
                             quality_out[policy] = zarr_array(
-                                group, f"quality_{policy}", shape, chunks, "|u1", 0, attrs,
+                                group, f"quality_{policy}", shape, chunks, "|u1", None, attrs,
                             )
                         value_hash = hashlib.sha256()
                         valid_hash = hashlib.sha256()
