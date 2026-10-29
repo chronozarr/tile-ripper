@@ -1,5 +1,18 @@
 //! Native grid selection; optional GDAL geometry and projection extension.
 use crate::{fail, Layout, Result, Spatial, Window};
+/// A product-private exception to the normal UTM hemisphere guard.  It is not
+/// part of the request, layout, or observation schemas: callers may only get
+/// one after a product-specific inspected-grid gate has accepted an exact
+/// provider convention.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum NativeSelection {
+    Standard,
+    /// A southern MGRS tile stored in its northern UTM zone with false northing
+    /// zero.  The source CRS and coordinates remain untouched.
+    ProviderExtendedNorthernUtm {
+        zone: u32,
+    },
+}
 #[cfg(feature = "gdal")]
 #[path = "spatial_gdal.rs"]
 mod gdal_impl;
@@ -156,6 +169,13 @@ mod native {
             Spatial::Bounds {crs, ..} if crs == &l.crs => Ok(None),
             _ => fail("GDAL-free selection requires bounds in the exact native CRS; AOI transformation and polygon masks require the gdal feature"),
         }
+    }
+    pub(crate) fn native_mask_for_selection(
+        s: &Spatial,
+        l: &Layout,
+        _: NativeSelection,
+    ) -> Result<Option<Geometry>> {
+        native_mask(s, l)
     }
 }
 #[cfg(all(not(feature = "gdal"), not(feature = "native-cog")))]

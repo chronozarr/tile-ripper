@@ -132,9 +132,19 @@ pub fn mask(g: &Geometry, l: &Layout, w: &Window) -> Result<Buffer<u8>> {
         .read_as::<u8>((0, 0), (w.width, w.height), (w.width, w.height), None)?)
 }
 pub fn native_mask(spatial: &Spatial, l: &Layout) -> Result<Option<Geometry>> {
+    native_mask_for_selection(spatial, l, crate::spatial::NativeSelection::Standard)
+}
+pub(crate) fn native_mask_for_selection(
+    spatial: &Spatial,
+    l: &Layout,
+    _: crate::spatial::NativeSelection,
+) -> Result<Option<Geometry>> {
     if matches!(spatial,Spatial::Bounds { crs,.. } if *crs==l.crs) {
         return Ok(None);
     }
+    // GDAL has always mapped a geographic AOI directly to its declared CRS.
+    // Admission of the annual provider convention happens in the private
+    // product policy before this call; preserve all existing GDAL behaviour.
     let g = transform(spatial, &l.crs)?;
     let extent = Spatial::Bounds {
         crs: l.crs.clone(),

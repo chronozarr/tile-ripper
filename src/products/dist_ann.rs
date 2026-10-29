@@ -18,6 +18,14 @@ pub const ID: &str = "opera-dist-ann-hls";
 pub const COLLECTION: &str = "OPERA_L3_DIST-ANN-HLS_V1";
 const VERSION: &str = "1";
 
+/// Crate-private evidence that an exact annual source is eligible to use the
+/// provider's extended-northern-UTM coordinates during AOI selection.  It is
+/// deliberately not serializable and never originates from a user request.
+#[derive(Clone, Debug)]
+pub(crate) struct ExtendedNorthernUtm {
+    pub(crate) tile: String,
+}
+
 const BANDS: [&str; 21] = [
     "VEG-DIST-STATUS",
     "GEN-DIST-STATUS",
@@ -273,7 +281,7 @@ pub fn profile() -> ProductProfile {
             QualityPolicy::DistAnn(Policy::VegPreviousYearConfirmed),
             QualityPolicy::DistAnn(Policy::GenPreviousYearConfirmed),
         ],
-        capability_caveat: "This profile grants no acquisition without an independently inspected, Earthdata-authorized source. Qualification currently covers conventional northern-hemisphere WGS84 UTM specimens; provider extended-northern-zone southern-tile conventions are not admitted. A fabricated instantaneous acquisition time, implicit annual compositing, and confidence thresholds are not supported.",
+        capability_caveat: "This profile grants no acquisition without an independently inspected, Earthdata-authorized source. Conventional WGS84 UTM grids remain supported; a southern MGRS tile in provider-declared extended northern UTM coordinates is admitted only after exact annual identity, immutable source evidence, and physical-grid checks. It preserves the declared EPSG:326xx coordinates and false northing zero: no reprojection, CRS relabeling, or 10,000 km coordinate shift occurs. A fabricated instantaneous acquisition time, implicit annual compositing, and confidence thresholds are not supported.",
     }
 }
 
@@ -319,6 +327,52 @@ fn valid_mgrs(value: &str) -> bool {
         && matches!(bytes[3], b'C'..=b'H' | b'J'..=b'N' | b'P'..=b'X')
         && matches!(bytes[4], b'A'..=b'H' | b'J'..=b'N' | b'P'..=b'Z')
         && matches!(bytes[5], b'A'..=b'H' | b'J'..=b'N' | b'P'..=b'Z')
+}
+
+/// Return a candidate only for an already identity-validated annual granule
+/// whose MGRS band is south of the equator.  The inspected COG grid must still
+/// pass `extended_northern_grid` before this grants any special projection.
+pub(crate) fn extended_northern_candidate(
+    observation: &Observation,
+) -> Result<Option<ExtendedNorthernUtm>> {
+    granule(&observation.id)?;
+    let tile = observation
+        .id
+        .split('_')
+        .nth(3)
+        .ok_or("annual DIST granule is missing its MGRS tile")?;
+    Ok((tile.as_bytes().get(3).is_some_and(|band| *band < b'N'))
+        .then(|| ExtendedNorthernUtm { tile: tile.into() }))
+}
+
+/// Validate the actual, already-inspected COG grid before allowing WGS84 AOI
+/// coordinates to be projected into a southern tile's provider-declared
+/// EPSG:326xx frame.  This preserves the GeoTIFF CRS, false northing zero, and
+/// negative source northings; it never creates EPSG:327xx coordinates.
+pub(crate) fn extended_northern_grid(
+    candidate: &ExtendedNorthernUtm,
+    layout: &Layout,
+) -> Result<u32> {
+    let bytes = candidate.tile.as_bytes();
+    let zone = candidate
+        .tile
+        .get(1..3)
+        .ok_or("annual DIST extended-north tile is malformed")?
+        .parse::<u32>()?;
+    if bytes.len() != 6 || bytes[3] >= b'N' || layout.crs != format!("EPSG:{}", 32600 + zone) {
+        return fail("annual DIST extended-north source CRS conflicts with southern MGRS tile");
+    }
+    // The full native frame, rather than only its upper-left corner, must
+    // reach negative northing.  This accommodates an M-band source snapped a
+    // few metres north of zero but rejects an ordinary northern grid.
+    let bottom = layout.transform[3] + layout.height as f64 * layout.transform[5];
+    if !bottom.is_finite() || bottom >= 0. {
+        return fail(
+            "annual DIST extended-north source grid does not occupy the southern physical frame",
+        );
+    }
+    super::wave2_grid_identity_for_tile(&candidate.tile, layout, true)?;
+    Ok(zone)
 }
 
 fn normal(value: &str) -> String {
@@ -471,6 +525,76 @@ fn dtype(layout: &Layout) -> &'static str {
     }
 }
 
+fn last_date_description(band: &str) -> Option<&'static str> {
+    match band {
+        "VEG-LAST-DATE" => {
+            Some("Day_of_last_land_observation_for_vegetation_disturbance_detection")
+        }
+        "GEN-LAST-DATE" => Some("Day_of_last_land_observation_for_generic_disturbance_detection"),
+        _ => None,
+    }
+}
+
+fn dist_alert_lineage(tile: &str, value: &str) -> Result<()> {
+    let basename = value
+        .trim()
+        .trim_end_matches('/')
+        .rsplit('/')
+        .next()
+        .unwrap_or("");
+    crate::products::profile::profile("opera-dist-alert")?
+        .validate_identity(basename, None, None)?;
+    if basename.split('_').nth(3) != Some(tile) {
+        return fail("annual DIST last-date source lineage conflicts with its MGRS tile or DIST-ALERT-HLS v1 identity");
+    }
+    Ok(())
+}
+
+/// Extract the semantic lineage carried only by an annual `*-LAST-DATE` TIFF.
+/// Its producer update timestamp is distinct from the CMR annual input-year
+/// coverage interval, which remains authoritative in `temporal_extent`.
+pub(crate) fn last_date_provenance(
+    observation: &Observation,
+    band: &BandProfile,
+    source: &Value,
+) -> Result<Option<Value>> {
+    let Some(description) = last_date_description(&band.name) else {
+        return Ok(None);
+    };
+    let tile = observation
+        .id
+        .split('_')
+        .nth(3)
+        .ok_or("annual DIST granule is missing its MGRS tile")?;
+    let native = source
+        .pointer("/object_identities/native_cog")
+        .or_else(|| source.get("physical_metadata"))
+        .ok_or("annual DIST source lacks retained native COG evidence")?;
+    let xml = native["gdal_metadata_xml"]
+        .as_str()
+        .ok_or("annual DIST source lacks retained GDAL metadata")?;
+    let update = xml_item(xml, "Update_Date")
+        .filter(|value| chrono::DateTime::parse_from_rfc3339(value).is_ok())
+        .ok_or("annual DIST last-date source lacks a valid update timestamp")?;
+    let lineage =
+        xml_item(xml, "Input_DIST-ALERT_granule").filter(|value| !value.trim().is_empty());
+    if xml_item(xml, "DESCRIPTION").is_some_and(|value| value != description) {
+        return fail("annual DIST last-date source description conflicts with requested layer");
+    }
+    if let Some(lineage) = lineage {
+        dist_alert_lineage(tile, lineage)?;
+    }
+    Ok(Some(serde_json::json!({
+        "catalog_coverage_interval":temporal_extent(observation)?,
+        "tiff_update_timestamp":update,
+        "tiff_input_dist_alert_granule":lineage,
+        "tiff_layer_description":xml_item(xml, "DESCRIPTION"),
+        "expected_last_date_layer_description":description,
+        "tiff_percent_updated":xml_item(xml, "Percent_Updated"),
+        "temporal_relation":"TIFF Update_Date is retained producer layer metadata; it is not equated to the CMR annual input-year coverage interval",
+    })))
+}
+
 /// Bind one inspected COG to its requested annual layer, interval, and grid.
 /// The whole prepared-source value is required: its native COG evidence lives
 /// under `object_identities.native_cog` and must not be replaced by request
@@ -555,15 +679,127 @@ pub fn validate_physical(
             return fail("annual DIST source has an invalid native Percent_data metadata value");
         }
     }
-    if band.name.ends_with("LAST-DATE") {
-        let update = xml_item(xml, "Update_Date")
-            .and_then(|value| chrono::DateTime::parse_from_rfc3339(value).ok())
-            .ok_or("annual DIST last-date source lacks an update timestamp")?;
-        if (update - extent.coverage_end).num_milliseconds().abs() > 1 {
-            return fail(
-                "annual DIST last-date source update time conflicts with catalog coverage end",
-            );
+    // Annual CMR RangeDateTime reports the HLS input-year coverage, while the
+    // native LAST-DATE layer carries its own producer update and alert lineage.
+    // Validate each independently; do not manufacture a timestamp equality.
+    last_date_provenance(observation, band, source)?;
+    Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn annual(tile: &str) -> Observation {
+        Observation {
+            id: format!("OPERA_L3_DIST-ANN-HLS_{tile}_2025_20260109T064522Z_30_v1"),
+            datetime: "2025-01-02T16:13:44.046Z".into(),
+            collection: COLLECTION.into(),
+            platform: None,
+            processing: None,
+            assets: Default::default(),
+            properties: serde_json::json!({
+                "temporal_extent": {
+                    "coverage_start":"2025-01-02T16:13:44.046Z",
+                    "coverage_end":"2025-12-29T14:25:53.638Z",
+                    "summary_year":2025,
+                }
+            }),
         }
     }
-    Ok(())
+    fn last_date_source(xml: &str) -> Value {
+        serde_json::json!({"physical_metadata":{"gdal_metadata_xml":xml}})
+    }
+
+    fn southern_extended() -> Layout {
+        Layout {
+            width: 3660,
+            height: 3660,
+            transform: [799_980., 30., 0., -1_099_980., 0., -30.],
+            crs: "EPSG:32620".into(),
+            variable: crate::Variable::Band { index: 1 },
+            block: [256, 256],
+            dtype: "UInt8".into(),
+            nodata: Some(255.),
+            scale: None,
+            offset: None,
+            tiles: vec![],
+        }
+    }
+
+    #[test]
+    fn extended_northern_admission_binds_the_actual_southern_frame() -> Result<()> {
+        let candidate = ExtendedNorthernUtm {
+            tile: "T20LRP".into(),
+        };
+        let layout = southern_extended();
+        assert_eq!(extended_northern_grid(&candidate, &layout)?, 20);
+
+        let mut wrong = layout.clone();
+        wrong.crs = "EPSG:32720".into();
+        assert!(extended_northern_grid(&candidate, &wrong).is_err());
+
+        wrong = layout.clone();
+        wrong.transform[3] += 10_000_000.;
+        assert!(extended_northern_grid(&candidate, &wrong).is_err());
+
+        wrong = layout.clone();
+        wrong.transform[0] += 100_000.;
+        assert!(extended_northern_grid(&candidate, &wrong).is_err());
+
+        // M-band upper rows can be snapped just north of zero; admission is
+        // based on the complete physical frame, whose lower edge is negative.
+        let m_band = ExtendedNorthernUtm {
+            tile: "T20MRE".into(),
+        };
+        let mut snapped = southern_extended();
+        snapped.transform[3] = 20.;
+        assert_eq!(extended_northern_grid(&m_band, &snapped)?, 20);
+        Ok(())
+    }
+
+    #[test]
+    fn last_date_update_is_independent_of_cmr_annual_coverage() -> Result<()> {
+        let profile = profile();
+        let band = profile.band("GEN-LAST-DATE")?;
+        let southern = annual("T20LRP");
+        let southern_xml = r#"<GDALMetadata>
+            <Item name="Input_DIST-ALERT_granule">/OPERA_L3_DIST-ALERT-HLS_T20LRP_20251228T140910Z_20251230T014403Z_L9_30_v1</Item>
+            <Item name="Percent_Updated">98.68</Item>
+            <Item name="Update_Date">2025-12-29T14:15:39.774933Z</Item>
+            <Item name="DESCRIPTION">Day_of_last_land_observation_for_generic_disturbance_detection</Item>
+        </GDALMetadata>"#;
+        let provenance = last_date_provenance(&southern, band, &last_date_source(southern_xml))?
+            .expect("LAST-DATE always retains its update metadata");
+        assert_eq!(
+            provenance["tiff_update_timestamp"],
+            "2025-12-29T14:15:39.774933Z"
+        );
+        assert_eq!(
+            provenance["catalog_coverage_interval"]["coverage_end"],
+            "2025-12-29T14:25:53.638Z"
+        );
+        assert_eq!(provenance["tiff_percent_updated"], "98.68");
+
+        // The existing northern receipt uses the same producer fields and
+        // remains valid without forcing an equality to its CMR interval.
+        let northern = annual("T17SNU");
+        let northern_xml = r#"<GDALMetadata>
+            <Item name="Input_DIST-ALERT_granule">/OPERA_L3_DIST-ALERT-HLS_T17SNU_20251225T155404Z_20251227T084358Z_L8_30_v1</Item>
+            <Item name="Update_Date">2025-12-26T16:23:45.583195Z</Item>
+            <Item name="DESCRIPTION">Day_of_last_land_observation_for_generic_disturbance_detection</Item>
+        </GDALMetadata>"#;
+        assert!(last_date_provenance(&northern, band, &last_date_source(northern_xml))?.is_some());
+
+        let malformed = southern_xml.replace("2025-12-29T14:15:39.774933Z", "not-a-time");
+        assert!(last_date_provenance(&southern, band, &last_date_source(&malformed)).is_err());
+        let wrong_tile = southern_xml.replace("T20LRP_20251228", "T21LRP_20251228");
+        assert!(last_date_provenance(&southern, band, &last_date_source(&wrong_tile)).is_err());
+        let wrong_layer = southern_xml.replace(
+            "Day_of_last_land_observation_for_generic_disturbance_detection",
+            "Day_of_last_land_observation_for_vegetation_disturbance_detection",
+        );
+        assert!(last_date_provenance(&southern, band, &last_date_source(&wrong_layer)).is_err());
+        Ok(())
+    }
 }

@@ -582,6 +582,26 @@ pub fn prepare_authenticated_cogs(
         std::sync::Arc<crate::authenticated_http::AuthenticatedHttp>,
     >,
 ) -> Result<Prepared> {
+    prepare_authenticated_cogs_with_native_selection(
+        request,
+        cache,
+        sessions,
+        &crate::planner::NativeSelectionPolicy::default(),
+    )
+}
+/// As above, with a crate-private product policy that can authorize one
+/// inspected native grid to use a provider-specific coordinate convention.
+/// No public request field can opt into this path.
+#[cfg(all(feature = "native-cog", feature = "authenticated-http"))]
+pub(crate) fn prepare_authenticated_cogs_with_native_selection(
+    request: &Request,
+    cache: &mut LayoutCache,
+    sessions: std::collections::BTreeMap<
+        String,
+        std::sync::Arc<crate::authenticated_http::AuthenticatedHttp>,
+    >,
+    selection_policy: &crate::planner::NativeSelectionPolicy,
+) -> Result<Prepared> {
     if !crate::cog::native_selected() {
         return fail("authenticated COG preparation requires the native COG backend");
     }
@@ -592,8 +612,14 @@ pub fn prepare_authenticated_cogs(
     crate::planner::validate(request)?;
     let sources = crate::storage::Sources::with_cog_sessions(request, sessions)?;
     let _quiet = crate::diagnostics::QuietNative::enter();
-    prepare_on(request, cache, Default::default(), Some(sources))
-        .map_err(|e| safe_error(request, "prepare", e))
+    prepare_on_with_native_selection(
+        request,
+        cache,
+        Default::default(),
+        Some(sources),
+        selection_policy,
+    )
+    .map_err(|e| safe_error(request, "prepare", e))
 }
 #[cfg(all(feature = "native-cog", feature = "authenticated-http"))]
 fn validate_authenticated_cog_sessions(
@@ -751,6 +777,21 @@ fn prepare_on(
     transport: crate::http_transport::Transport,
     prepared_sources: Option<crate::storage::Sources>,
 ) -> Result<Prepared> {
+    prepare_on_with_native_selection(
+        request,
+        cache,
+        transport,
+        prepared_sources,
+        &crate::planner::NativeSelectionPolicy::default(),
+    )
+}
+fn prepare_on_with_native_selection(
+    request: &Request,
+    cache: &mut LayoutCache,
+    transport: crate::http_transport::Transport,
+    prepared_sources: Option<crate::storage::Sources>,
+    selection_policy: &crate::planner::NativeSelectionPolicy,
+) -> Result<Prepared> {
     let runtime_config = crate::runtime_config::RuntimeConfig::capture(request)?;
     let _runtime = runtime_config.enter();
     crate::planner::validate_common(request)?;
@@ -799,7 +840,12 @@ fn prepare_on(
                 Some(sources) => sources,
                 None => crate::storage::Sources::with_transport(&request, transport)?,
             };
-            let plan = crate::planner::plan_on(&request, cache, &sources)?;
+            let plan = crate::planner::plan_on_with_native_selection(
+                &request,
+                cache,
+                &sources,
+                selection_policy,
+            )?;
             sources.seal()?;
             versions.validate()?;
             versions.add_data(&request, &plan)?;

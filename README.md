@@ -186,7 +186,7 @@ version-pinned native acquisitions with a tuned GDAL reader.
 | OPERA DIST-ALERT-HLS V1 | Nine native status/confidence/onset/last-date/current-mask layers; separate accumulated detection and observation quality; [qualification](docs/products/wave2/dist-alert.md) |
 | OPERA DSWx-NI v0.1 engineering prototype | Four public, exact-ETag UInt8 WTR/BWTR/CONF/DIAG COGs; pinned-only and not final NI v1.0 or a production route; [bounded qualification](docs/products/opera-expansion/dswx-ni.md) |
 | OPERA DIST-ALERT-S1 V1.0 | Ten qualified native layers over the exact ASF Cumulus route; independent raw bits, masks, coordinates, stream and reopened output; [scope](docs/products/opera-expansion/dist-s1.md) |
-| OPERA DIST-ANN-HLS V1 | Twenty-one qualified annual layers on the northern T17SNU specimen; provider coverage interval, CF time bounds and summary year retained; [scope](docs/products/opera-expansion/dist-ann.md) |
+| OPERA DIST-ANN-HLS V1 | Twenty-one qualified annual layers on northern T17SNU and southern T20LRP; original source CRS/northings, provider coverage and CF time bounds retained; [southern qualification](docs/products/dist-ann-southern/README.md) |
 | HLS L30 and S30 v2 | Distinct Int16 reflectance and UInt8 Fmask profiles; public GSFC references and separately qualified explicit Earthdata COG access; 30 m UTM groups |
 | OPERA DSWx-HLS v1 | Exact UInt8 classified water and UInt16 diagnostics, separate named class masks; public reference and current PO.DAAC v1.1 authenticated access |
 | OPERA RTC-S1 v1 | Exact Float32 linear gamma0 VV/VH and UInt8 mask on public references and a current authenticated ASF Cumulus Sentinel-1C burst |

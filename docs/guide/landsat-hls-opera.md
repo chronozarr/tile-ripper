@@ -19,7 +19,7 @@ Whether you need an account depends on the product and route. LP DAAC, PO.DAAC a
 | `opera-dist-alert` | OPERA DIST-ALERT-HLS v1 (disturbance alert), one observation: nine layers | Earthdata (LP DAAC) |
 | `opera-dswx-ni-prototype` | Pinned public DSWx-NI engineering specimen only: UInt8 WTR, BWTR, CONF and DIAG | No, for the four exact public objects only |
 | `opera-dist-alert-s1` | DIST-ALERT-S1 v1.0: ten qualified COG layers | Earthdata (ASF Cumulus) |
-| `opera-dist-ann-hls` | DIST-ANN-HLS v1: 21 qualified annual layers on the northern T17SNU specimen; the example reserves 128 MiB | Earthdata (LP DAAC) |
+| `opera-dist-ann-hls` | DIST-ANN-HLS v1: 21 qualified annual layers on northern T17SNU and southern T20LRP; examples reserve 128 MiB | Earthdata (LP DAAC) |
 
 `tile-ripper products` prints these names as JSON, with bands, stored types and policies. It also lists bands that were not tested; claims here cover only the layers above. A public reference sample is a few real published files; it does not prove access to the production archive. Searching NASA's catalog needs no account; reading protected files does. See [Earthdata login](earthdata-login.md).
 
@@ -106,7 +106,7 @@ Use a result only if the command exits successfully and `manifest.json` says `"s
 - Catalog discovery with a bounding box allows at most 30° per axis and 400 square degrees. A search must fit one page; narrow the query if it fails. Split larger search areas into AOIs within the native acquisition limits before fetching.
 - North-up 30 m WGS84 Universal Transverse Mercator (UTM) grids only; polar grids are not supported.
 - No reflectance or decibel conversion, harmonization, compositing, alignment, reprojection or resampling.
-- Landsat 7 scan-line gaps stay missing. HLS version 1.4, Landsat thermal products, DIST-ANN claims beyond the current layer-specific receipt scope or northern T17SNU reader representation, final/production DSWx-NI, and older ASF `datapool` URLs are not supported. The southern T20LRP reference's EPSG:32620 with negative northing is not called corrupt; it is an unqualified CRS/hemisphere representation for this reader.
+- Landsat 7 scan-line gaps stay missing. HLS version 1.4, Landsat thermal products, DIST-ANN versions/grids beyond the recorded qualification scope, final/production DSWx-NI, and older ASF `datapool` URLs are not supported. The [southern DIST-ANN example](../../examples/opera-dist-ann-hls-south.json) preserves the provider's EPSG:32620/negative-northing convention through an annual-only inspected-grid gate; [qualification](../products/dist-ann-southern/README.md).
 - No resume: restart an interrupted fetch.
 
 ## Details and evidence

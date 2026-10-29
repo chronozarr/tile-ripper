@@ -91,7 +91,7 @@ The only declared status policies select confirmed classes `{3,6,7,8}` or the on
 
 The [qualification receipt](opera-expansion/dist-ann-qualification-receipt.json) covers all 21 annual layers, including UInt8 `VEG-DIST-STATUS` and `GEN-DIST-STATUS` (fill 255), plus Int16 `VEG-DIST-DATE`, `GEN-DIST-DATE`, `VEG-LAST-DATE`, and `GEN-LAST-DATE` (fill -1). Each named `*-DATE`/`*-LAST-DATE` is **days since 2020-12-31**. `VEG-DIST-DUR` and `GEN-DIST-DUR` are instead **durations in days**. A summary-year token is not converted to a January 1 observation. Instead, the output carries the exact CMR coverage start/end as `time_bounds`, uses coverage start for its time coordinate, and records the summary year separately. Current-year confirmed classes are `{3,6,7,8}`; retained previous-year confirmed classes are `{9,10}`.
 
-The qualified reader representation is northern T17SNU, not a blanket global admission. A southern T20LRP reference uses EPSG:32620 with negative northing. It is retained as an unqualified CRS/hemisphere representation rather than characterized as corrupt or scientifically invalid.
+Qualified representations include conventional northern T17SNU and the [southern T20LRP provider frame](dist-ann-southern/README.md). The latter retains EPSG:32620, negative northings, original GeoKeys and false northing zero. Its special AOI mapping requires annual identity, strong source version, physical metadata and MGRS checks before selection. TIFF `Update_Date` is retained independently of catalog input-year coverage; neither timestamp is substituted for the other.
 
 ## Closed quality policies
 

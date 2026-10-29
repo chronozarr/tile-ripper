@@ -18,7 +18,7 @@ The CMR identity, canonical protected href shapes, and annual interval are recor
 
 The [qualification receipt](dist-ann-qualification-receipt.json) records one fresh authenticated 21-layer acquisition with the release binary, independent ETag-bound TIFF decoding for each delivered source window, durable Zarr reopening, raw bits, source-validity and AOI masks, matching applicable quality masks, native axes/CRS/provenance, and exact provider time bounds. Its stream replay covered 2,940 chunks and ended with source-version validation. It retains only the three observed redirect origins (LP DAAC, URS, and the admitted LP DAAC CloudFront resource); credentials were supplied to URS only. This qualifies the pinned conventional northern-hemisphere specimen, not other annual tiles or provider grid conventions.
 
-The current qualification specimen uses conventional northern-hemisphere WGS84 UTM. Some southern annual tiles use a provider extended-northern-zone convention (for example, EPSG:32620 with a negative northing); Tile-Ripper’s native UTM hemisphere gate does not admit that convention, so this profile does not claim near-global annual coverage.
+The original receipt above covers conventional northern-hemisphere WGS84 UTM. A subsequent [southern qualification](../dist-ann-southern/README.md) admits the verified T20LRP extended-northern-zone convention through an annual-only physical/MGRS gate, preserving EPSG:32620 and negative northings. Earlier source and output receipts remain unchanged.
 
 Run the bounded harness only with a supplied authorized netrc and a built binary (the tracked dependency set is [reference.txt](reference.txt)):
 
