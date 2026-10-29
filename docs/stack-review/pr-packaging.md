@@ -10,7 +10,7 @@ packaging uses separate review worktrees.
 | --- | --- | --- |
 | Acquisition hardening | [Tile-Ripper #7](https://github.com/chronozarr/tile-ripper/pull/7), targets `codex/icechunk-acquisition` | Depends on existing #3–#6; source identity, transport, bounded selection, signing and inspected HLS native-grid handling |
 | Scientific stack | [Tile-Ripper #8](https://github.com/chronozarr/tile-ripper/pull/8), targets #7's branch | Exact-grid assembly, checked decoding, cancellation, provenance and atomic completion |
-| Evidence and docs | `codex/hls-benchmark-evidence`, targets #8's branch | Reproducible tools, unchanged historical receipts, current comparison and qualification boundaries |
+| Evidence and docs | [Tile-Ripper #9](https://github.com/chronozarr/tile-ripper/pull/9), targets #8's branch | Reproducible tools, unchanged historical receipts, current comparison and qualification boundaries |
 | Playback bridge | [Chronozarr #145](https://github.com/chronozarr/chronozarr/pull/145), targets `main` | Independent of Icechunk #143; checkout-only Python API and explicit scene/QA joins |
 
 Review native changes in dependency order; these are not independent patches
@@ -26,15 +26,17 @@ Clippy and rustfmt pass. Rust 1.91 native-full passes 283 tests (8 existing igno
 older baseline. Feature runs are serial and use an isolated target directory.
 Independent read-only reviews found no blocking issue in either code scope.
 
-The main-based Chronozarr branch passes all 2,256 existing unit tests. A final
-targeted run passes 116 tests, including all 38 new bridge regressions under
-the CI unit marker and documentation/version checks. A combined coverage run
-records the final total. Ruff, formatting, ty with the project environment,
+The main-based Chronozarr branch passes **2,294 unit tests** in the combined
+coverage run, including all 38 new bridge regressions under the CI unit marker.
+Overall branch-aware coverage is 93%. The separate final targeted run passes
+116 bridge/documentation/version tests. Ruff, formatting, ty with the project environment,
 and architecture checks pass. Wheel/source distributions build, tests collect
 from the isolated archive, and the wheel exports `convert_tile_ripper`.
 Local Python is 3.13; Python 3.11 remains a separate CI job.
 
-Both documentation sites build and check internal links. CI exposed existing
+Both documentation sites build and check internal links. Native site tests,
+all six Chronozarr dependency compatibility tests and cross-origin local
+hosting checks pass; root/site audits report zero findings. CI exposed existing
 documentation dependency audit findings. Native docs pin patched
 `@hono/node-server` 2.1.3; Chronozarr also pins `@vanilla-extract/css` 1.21.3,
 removing its vulnerable deepmerge dependency. The seven-day package quarantine
