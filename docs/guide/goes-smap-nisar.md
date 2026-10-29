@@ -11,9 +11,9 @@ reprojected, resampled or calibrated.
 Uses the build from [Installation](../installation.md). Commands
 assume `tile-ripper` is on your PATH; from a source checkout use
 `./target/release/tile-ripper`. Run commands from the repository root
-so `examples/...` paths resolve. If a request fails with `unknown
-scientific product profile`, your build lacks `native-hdf5`; rebuild
-as described in Installation.
+so `examples/...` paths resolve. A build without `native-hdf5` refuses
+these products and names the missing feature; rebuild as described in
+Installation.
 
 | Family | Account needed |
 | --- | --- |

@@ -913,7 +913,7 @@ pub(crate) fn fetch_with_options(
             &shape,
             &chunks,
             "|u1",
-            json!(0),
+            Value::Null,
             mask_attrs(
                 "AOI included and valid under physical source and product semantic missingness",
             ),
@@ -925,7 +925,7 @@ pub(crate) fn fetch_with_options(
             &shape,
             &chunks,
             "|u1",
-            json!(0),
+            Value::Null,
             mask_attrs("AOI pixel center inclusion; source nodata may still be included"),
             encoding,
         )?;
@@ -937,7 +937,7 @@ pub(crate) fn fetch_with_options(
                 &shape,
                 &chunks,
                 "|u1",
-                json!(0),
+                Value::Null,
                 json!({"_ARRAY_DIMENSIONS":["time","y","x"],"grid_mapping":"spatial_ref",
                     "long_name":policy.description(),"flag_values":[0,1],
                     "flag_meanings":"rejected accepted","quality_policy":policy.name(),
@@ -1051,10 +1051,12 @@ pub(crate) fn fetch_with_options(
             );
         }
         encode_call(&store, &mut encode_seconds, || {
-            o.valid.store_array_subset_opt(&subset, &valid, &serial())
+            o.valid
+                .store_array_subset_opt(&subset, &valid, &serial_required())
         })?;
         encode_call(&store, &mut encode_seconds, || {
-            o.aoi.store_array_subset_opt(&subset, &aoi, &serial())
+            o.aoi
+                .store_array_subset_opt(&subset, &aoi, &serial_required())
         })?;
         for (policy, output) in &o.quality {
             let mut derived = quality_mask(*policy, &c.pixels)?;
@@ -1062,7 +1064,7 @@ pub(crate) fn fetch_with_options(
                 *accepted &= *included;
             }
             encode_call(&store, &mut encode_seconds, || {
-                output.store_array_subset_opt(&subset, &derived, &serial())
+                output.store_array_subset_opt(&subset, &derived, &serial_required())
             })?;
         }
         // Payload and encode scratch were admitted before creating staging;
@@ -1079,6 +1081,44 @@ pub(crate) fn fetch_with_options(
         return Err("incomplete COG output coverage".into());
     }
     check_cancelled(&cancelled)?;
+    // Chunks wholly outside a polygon AOI are never read. Masks declare no
+    // fill value (xarray would decode it as missing), so store their zeros.
+    let mask_fill = Instant::now();
+    let mut touched = vec![HashSet::new(); observations.len()];
+    for (i, window) in expected.values() {
+        let o = &observations[*i];
+        let subset = ArraySubset::new_with_start_shape(
+            vec![
+                0,
+                (window.y - o.selected.window.y) as u64,
+                (window.x - o.selected.window.x) as u64,
+            ],
+            vec![1, window.height as u64, window.width as u64],
+        )?;
+        if let Some(chunks) = o.valid.chunks_in_array_subset(&subset)? {
+            touched[*i].extend(&chunks.indices());
+        }
+    }
+    for (o, touched) in observations.iter().zip(&touched) {
+        let grid = ArraySubset::new_with_shape(o.valid.chunk_grid_shape().to_vec());
+        for chunk in &grid.indices() {
+            if touched.contains(&chunk) {
+                continue;
+            }
+            check_cancelled(&cancelled)?;
+            let subset = o.valid.chunk_subset_bounded(&chunk)?;
+            let zeros = vec![0u8; subset.num_elements_usize()];
+            for mask in [&o.valid, &o.aoi]
+                .into_iter()
+                .chain(o.quality.iter().map(|(_, mask)| mask))
+            {
+                encode_call(&store, &mut encode_seconds, || {
+                    mask.store_array_subset_opt(&subset, &zeros, &serial_required())
+                })?;
+            }
+        }
+    }
+    sink_seconds += mask_fill.elapsed().as_secs_f64();
     let finalize = Instant::now();
     let mut attrs = root_attrs;
     attrs["status"] = json!("complete");
