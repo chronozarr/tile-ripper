@@ -4,8 +4,10 @@ use std::{collections::BTreeMap, fs};
 use tile_ripper::Result;
 pub mod discovery;
 pub mod products;
+pub mod stack;
 const HELP: &str = r#"tile-ripper plan|fetch|stream [request.json] [options]
   tile-ripper products
+  tile-ripper stack INPUT.zarr OUTPUT.zarr   same-grid time stacks of a fetch output (--help)
   tile-ripper discover --product FAMILY --bbox W,S,E,N --start RFC3339 --end RFC3339 --bands NAMES --limit 8
   Product JSON: docs/products/workflow.md
   tile-ripper discover --collection SWOT_L2_HR_Raster_D --bbox W,S,E,N \
