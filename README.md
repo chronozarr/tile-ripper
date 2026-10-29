@@ -137,6 +137,15 @@ GeoTIFF writing requires the optional `gdal` feature. Zarr-only builds can omit
 both features. C/C++ codec build tools remain required; see
 [installation](docs/installation.md). GDAL remains the default build and reader.
 
+Completed COG observation outputs can also feed the checkout's
+[same-grid stack and direct Chronozarr bridge](docs/0004-same-grid-time-stacking.md).
+Use `stack` when you need a persistent scientific cube; the Python playback
+bridge joins a selected quality mask to its science scene and feeds Chronozarr's
+existing encoder without writing that intermediate cube.
+The [matched HLS benchmark with sixteen-way acquisition](docs/stack-review/hls-river-parallel16.md)
+records full workflow timing, actual request concurrency and independent value,
+QA and source-provenance checks.
+
 Run from a checkout of this branch. [Installation and platform status](docs/installation.md)
 cover native dependencies, local installation and release preparation.
 
