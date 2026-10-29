@@ -18,6 +18,7 @@ MATRIX = {
     "native-cog": ["--no-default-features", "--features", "native-cog"],
     "native-hdf5": ["--no-default-features", "--features", "native-hdf5"],
     "native-full": ["--no-default-features", "--features", "native-cog,native-hdf5,authenticated-http"],
+    "icechunk": ["--no-default-features", "--features", "icechunk"],
     "all-features": ["--all-features"],
 }
 
@@ -105,7 +106,8 @@ def main():
                                                 "--all-targets", "--", "--test-threads=1"])
         run("vendor-tests-tiff-reader-zstd", cargo + ["test", "--locked", "--offline", "--manifest-path",
             str(ROOT / "vendor/tiff-reader/Cargo.toml"), "--no-default-features", "--features", "zstd", "--lib", "zstd_"])
-        for name, features in (("default", []), ("native", ["--no-default-features", "--features", "native-cog"])):
+        for name, features in (("default", []), ("native", ["--no-default-features", "--features", "native-cog"]),
+                               ("icechunk", ["--no-default-features", "--features", "icechunk"])):
             run("consumer-" + name, cargo + ["check", "--locked", "--offline", "--manifest-path",
                                              "consumers/native-stats/Cargo.toml", *features])
         run("python-syntax", [sys.executable, "-m", "compileall", "-q", "scripts", "bench"])

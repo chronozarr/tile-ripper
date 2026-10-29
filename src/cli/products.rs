@@ -299,6 +299,9 @@ pub fn run(options: super::Options) -> Result<()> {
                         tile_ripper::Pixels::Float32(v) => {
                             ("float32", v.iter().flat_map(|v| v.to_le_bytes()).collect())
                         }
+                        tile_ripper::Pixels::Float64(v) => {
+                            ("float64", v.iter().flat_map(|v| v.to_le_bytes()).collect())
+                        }
                     };
                     row["source_valid_mask_base64"] = base64::engine::general_purpose::STANDARD
                         .encode(
@@ -448,7 +451,7 @@ fn run_array(options: super::Options) -> Result<()> {
             let reports=p.execute(&cancelled,|o,c|{
                 let mut row=serde_json::json!({"event":"chunk","asset_id":c.asset_id,"variable":c.variable,"window":c.window,"coordinates":c.coordinates,"provisional":true,"coordinate_model":o.grid,"seconds":started.elapsed().as_secs_f64()});
                 if options.values {
-                    let(dtype,bytes):(&str,Vec<u8>)=match &c.pixels {Pixels::Int8(v)=>("int8",v.iter().map(|v|*v as u8).collect()),Pixels::UInt8(v)=>("uint8",v.clone()),Pixels::Int16(v)=>("int16",v.iter().flat_map(|v|v.to_le_bytes()).collect()),Pixels::UInt16(v)=>("uint16",v.iter().flat_map(|v|v.to_le_bytes()).collect()),Pixels::UInt32(v)=>("uint32",v.iter().flat_map(|v|v.to_le_bytes()).collect()),Pixels::Float32(v)=>("float32",v.iter().flat_map(|v|v.to_le_bytes()).collect())};
+                    let(dtype,bytes):(&str,Vec<u8>)=match &c.pixels {Pixels::Int8(v)=>("int8",v.iter().map(|v|*v as u8).collect()),Pixels::UInt8(v)=>("uint8",v.clone()),Pixels::Int16(v)=>("int16",v.iter().flat_map(|v|v.to_le_bytes()).collect()),Pixels::UInt16(v)=>("uint16",v.iter().flat_map(|v|v.to_le_bytes()).collect()),Pixels::UInt32(v)=>("uint32",v.iter().flat_map(|v|v.to_le_bytes()).collect()),Pixels::Float32(v)=>("float32",v.iter().flat_map(|v|v.to_le_bytes()).collect()),Pixels::Float64(v)=>("float64",v.iter().flat_map(|v|v.to_le_bytes()).collect())};
                     row["dtype"]=dtype.into();row["values_le_base64"]=base64::engine::general_purpose::STANDARD.encode(bytes).into();
                     row["source_valid_mask_base64"]=base64::engine::general_purpose::STANDARD.encode(c.validity().map(u8::from).collect::<Vec<_>>()).into();
                     let (xs,ys)=c.coordinates.as_ref().ok_or("missing native chunk axes")?;

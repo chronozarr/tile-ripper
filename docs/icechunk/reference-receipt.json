@@ -1,0 +1,3188 @@
+{
+  "created_utc": "2026-10-27T19:44:49.284829+00:00",
+  "purpose": "Independent maintained-Python-reader source correctness and response-body measurement; not Rust implementation speed evidence",
+  "dependencies": {
+    "icechunk": "2.3.0",
+    "zarr": "3.4.1",
+    "gribberish": "1.8.4",
+    "numpy": "2.5.4",
+    "requests": "2.34.2"
+  },
+  "credentials": "explicit anonymous only; no environment credential discovery",
+  "products": {
+    "materialized": {
+      "catalog_url": "https://stac.dynamical.org/noaa-gfs-analysis/collection.json",
+      "repository_url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis/v0.1.0.icechunk",
+      "snapshot_id": "6K6H23PYR6QXA9VM0C6G",
+      "metadata": {
+        "temperature_2m": {
+          "shape": [
+            48135,
+            721,
+            1440
+          ],
+          "data_type": "float32",
+          "chunk_grid": {
+            "name": "regular",
+            "configuration": {
+              "chunk_shape": [
+                1440,
+                400,
+                400
+              ]
+            }
+          },
+          "chunk_key_encoding": {
+            "name": "default",
+            "configuration": {
+              "separator": "/"
+            }
+          },
+          "fill_value": "NaN",
+          "codecs": [
+            {
+              "name": "sharding_indexed",
+              "configuration": {
+                "chunk_shape": [
+                  1440,
+                  50,
+                  50
+                ],
+                "codecs": [
+                  {
+                    "name": "bytes",
+                    "configuration": {
+                      "endian": "little"
+                    }
+                  },
+                  {
+                    "name": "blosc",
+                    "configuration": {
+                      "typesize": 4,
+                      "cname": "zstd",
+                      "clevel": 3,
+                      "shuffle": "shuffle",
+                      "blocksize": 0
+                    }
+                  }
+                ],
+                "index_codecs": [
+                  {
+                    "name": "bytes",
+                    "configuration": {
+                      "endian": "little"
+                    }
+                  },
+                  {
+                    "name": "crc32c"
+                  }
+                ],
+                "index_location": "end"
+              }
+            }
+          ],
+          "attributes": {
+            "long_name": "2 metre temperature",
+            "short_name": "2t",
+            "standard_name": "air_temperature",
+            "units": "degree_Celsius",
+            "step_type": "instant",
+            "coordinates": "spatial_ref",
+            "_FillValue": "AAAAAAAA+H8="
+          },
+          "dimension_names": [
+            "time",
+            "latitude",
+            "longitude"
+          ],
+          "zarr_format": 3,
+          "node_type": "array",
+          "storage_transformers": []
+        },
+        "time": {
+          "shape": [
+            48135
+          ],
+          "data_type": "int64",
+          "chunk_grid": {
+            "name": "regular",
+            "configuration": {
+              "chunk_shape": [
+                166440
+              ]
+            }
+          },
+          "chunk_key_encoding": {
+            "name": "default",
+            "configuration": {
+              "separator": "/"
+            }
+          },
+          "fill_value": 0,
+          "codecs": [
+            {
+              "name": "bytes",
+              "configuration": {
+                "endian": "little"
+              }
+            },
+            {
+              "name": "blosc",
+              "configuration": {
+                "typesize": 8,
+                "cname": "zstd",
+                "clevel": 3,
+                "shuffle": "shuffle",
+                "blocksize": 0
+              }
+            }
+          ],
+          "attributes": {
+            "long_name": "Time",
+            "standard_name": "time",
+            "axis": "T",
+            "statistics_approximate": {
+              "min": "2021-05-01T00:00:00",
+              "max": "Present"
+            },
+            "units": "seconds since 1970-01-01",
+            "calendar": "proleptic_gregorian"
+          },
+          "dimension_names": [
+            "time"
+          ],
+          "zarr_format": 3,
+          "node_type": "array",
+          "storage_transformers": []
+        },
+        "latitude": {
+          "shape": [
+            721
+          ],
+          "data_type": "float64",
+          "chunk_grid": {
+            "name": "regular",
+            "configuration": {
+              "chunk_shape": [
+                721
+              ]
+            }
+          },
+          "chunk_key_encoding": {
+            "name": "default",
+            "configuration": {
+              "separator": "/"
+            }
+          },
+          "fill_value": "NaN",
+          "codecs": [
+            {
+              "name": "bytes",
+              "configuration": {
+                "endian": "little"
+              }
+            },
+            {
+              "name": "blosc",
+              "configuration": {
+                "typesize": 8,
+                "cname": "zstd",
+                "clevel": 3,
+                "shuffle": "shuffle",
+                "blocksize": 0
+              }
+            }
+          ],
+          "attributes": {
+            "long_name": "Latitude",
+            "standard_name": "latitude",
+            "axis": "Y",
+            "units": "degree_north",
+            "statistics_approximate": {
+              "min": -90.0,
+              "max": 90.0
+            },
+            "_FillValue": "AAAAAAAA+H8="
+          },
+          "dimension_names": [
+            "latitude"
+          ],
+          "zarr_format": 3,
+          "node_type": "array",
+          "storage_transformers": []
+        },
+        "longitude": {
+          "shape": [
+            1440
+          ],
+          "data_type": "float64",
+          "chunk_grid": {
+            "name": "regular",
+            "configuration": {
+              "chunk_shape": [
+                1440
+              ]
+            }
+          },
+          "chunk_key_encoding": {
+            "name": "default",
+            "configuration": {
+              "separator": "/"
+            }
+          },
+          "fill_value": "NaN",
+          "codecs": [
+            {
+              "name": "bytes",
+              "configuration": {
+                "endian": "little"
+              }
+            },
+            {
+              "name": "blosc",
+              "configuration": {
+                "typesize": 8,
+                "cname": "zstd",
+                "clevel": 3,
+                "shuffle": "shuffle",
+                "blocksize": 0
+              }
+            }
+          ],
+          "attributes": {
+            "long_name": "Longitude",
+            "standard_name": "longitude",
+            "axis": "X",
+            "units": "degree_east",
+            "statistics_approximate": {
+              "min": -180.0,
+              "max": 179.75
+            },
+            "_FillValue": "AAAAAAAA+H8="
+          },
+          "dimension_names": [
+            "longitude"
+          ],
+          "zarr_format": 3,
+          "node_type": "array",
+          "storage_transformers": []
+        },
+        "spatial_ref": {
+          "shape": [],
+          "data_type": "int64",
+          "chunk_grid": {
+            "name": "regular",
+            "configuration": {
+              "chunk_shape": []
+            }
+          },
+          "chunk_key_encoding": {
+            "name": "default",
+            "configuration": {
+              "separator": "/"
+            }
+          },
+          "fill_value": 0,
+          "codecs": [
+            {
+              "name": "bytes",
+              "configuration": {
+                "endian": "little"
+              }
+            },
+            {
+              "name": "zstd",
+              "configuration": {
+                "level": 0,
+                "checksum": false
+              }
+            }
+          ],
+          "attributes": {
+            "comment": "This coordinate reference system matches the source data which follows WMO conventions of assuming the earth is a perfect sphere with a radius of 6,371,229m. It is similar to EPSG:4326, but EPSG:4326 uses a more accurate representation of the earth's shape.",
+            "crs_wkt": "GEOGCS[\"unknown\",DATUM[\"unknown\",SPHEROID[\"unknown\",6371229,0]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AXIS[\"Longitude\",EAST],AXIS[\"Latitude\",NORTH]]",
+            "semi_major_axis": 6371229.0,
+            "semi_minor_axis": 6371229.0,
+            "inverse_flattening": 0.0,
+            "reference_ellipsoid_name": "unknown",
+            "longitude_of_prime_meridian": 0.0,
+            "prime_meridian_name": "Greenwich",
+            "geographic_crs_name": "unknown",
+            "horizontal_datum_name": "unknown",
+            "grid_mapping_name": "latitude_longitude",
+            "spatial_ref": "GEOGCS[\"unknown\",DATUM[\"unknown\",SPHEROID[\"unknown\",6371229,0]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AXIS[\"Longitude\",EAST],AXIS[\"Latitude\",NORTH]]"
+          },
+          "zarr_format": 3,
+          "node_type": "array",
+          "storage_transformers": []
+        }
+      },
+      "open_metadata_wall_seconds": 2.7247827500104904,
+      "open_metadata_transport": {
+        "response_body_bytes": 222320,
+        "http_operations": 12,
+        "events": [
+          {
+            "stage": "materialized:open_metadata",
+            "method": "GET",
+            "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis/v0.1.0.icechunk/config.yaml",
+            "kind": "repository",
+            "request_headers": {},
+            "status": 404,
+            "response_body_bytes": 316,
+            "etag": null,
+            "content_range": null,
+            "sha256": "596fcad99b058f4ce9043d2962a35d1ea663d5ada842339c6721ebc3092caec8",
+            "wall_seconds": 0.29770837497198954
+          },
+          {
+            "stage": "materialized:open_metadata",
+            "method": "GET",
+            "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis/v0.1.0.icechunk/refs/branch.main/ref.json",
+            "kind": "repository",
+            "request_headers": {},
+            "status": 404,
+            "response_body_bytes": 330,
+            "etag": null,
+            "content_range": null,
+            "sha256": "8d02e9be06611a892f1cbe9037a22320b00bc6156d6e764c5385ebf32e02bb9f",
+            "wall_seconds": 0.2973313329857774
+          },
+          {
+            "stage": "materialized:open_metadata",
+            "method": "GET",
+            "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis/v0.1.0.icechunk/repo",
+            "kind": "repository",
+            "request_headers": {},
+            "status": 200,
+            "response_body_bytes": 96275,
+            "etag": "\"d870c7129f6e4ba4ca40e140a51e0dc9\"",
+            "content_range": null,
+            "sha256": "f3169a941c00cc4cbaf40d3b55801660edf7f8217597ba5d1943fffb5aef7157",
+            "wall_seconds": 0.4697333340300247
+          },
+          {
+            "stage": "materialized:open_metadata",
+            "method": "GET",
+            "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis/v0.1.0.icechunk/repo",
+            "kind": "repository",
+            "request_headers": {},
+            "status": 200,
+            "response_body_bytes": 96275,
+            "etag": "\"d870c7129f6e4ba4ca40e140a51e0dc9\"",
+            "content_range": null,
+            "sha256": "f3169a941c00cc4cbaf40d3b55801660edf7f8217597ba5d1943fffb5aef7157",
+            "wall_seconds": 0.5133185419836082
+          },
+          {
+            "stage": "materialized:open_metadata",
+            "method": "GET",
+            "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis/v0.1.0.icechunk/snapshots/6K6H23PYR6QXA9VM0C6G",
+            "kind": "repository",
+            "request_headers": {},
+            "status": 200,
+            "response_body_bytes": 7837,
+            "etag": "\"641905c8c15f73df05708e0b22f7d102\"",
+            "content_range": null,
+            "sha256": "5bb87192afa81bcd3b35c2a337b08f2f31f690e849eb4aac09388ec0194ab9bb",
+            "wall_seconds": 0.35843320802086964
+          },
+          {
+            "stage": "materialized:open_metadata",
+            "method": "GET",
+            "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis/v0.1.0.icechunk/manifests/9PXV5C9W49N0KC3KN950",
+            "kind": "repository",
+            "request_headers": {
+              "Range": "bytes=0-6330"
+            },
+            "status": 206,
+            "response_body_bytes": 6331,
+            "etag": "\"6d27d1210be8c0af97d224803daf92ce\"",
+            "content_range": "bytes 0-6330/6331",
+            "sha256": "548bd07af3af6ac35f68117876aa7f92019846d514968b36ec55bb0167b666cc",
+            "wall_seconds": 0.3223054999834858
+          },
+          {
+            "stage": "materialized:open_metadata",
+            "method": "GET",
+            "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis/v0.1.0.icechunk/manifests/YXSBR8NXJ3BJKRTYPJZG",
+            "kind": "repository",
+            "request_headers": {
+              "Range": "bytes=0-159"
+            },
+            "status": 206,
+            "response_body_bytes": 160,
+            "etag": "\"ac1405032a2fb9cf82cde26ec93fafe2\"",
+            "content_range": "bytes 0-159/160",
+            "sha256": "615a3b150d4820e14fc7db545aa8f5d8b605c8107f51f58c9a2ccf8a90faf5d8",
+            "wall_seconds": 0.34417770797153935
+          },
+          {
+            "stage": "materialized:open_metadata",
+            "method": "GET",
+            "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis/v0.1.0.icechunk/manifests/3G33K4NQVEFJYFH5BEVG",
+            "kind": "repository",
+            "request_headers": {
+              "Range": "bytes=0-594"
+            },
+            "status": 206,
+            "response_body_bytes": 595,
+            "etag": "\"4c52dfafde73d08229ce1d3bc0f91904\"",
+            "content_range": "bytes 0-594/595",
+            "sha256": "e242f3f217b149b4c2504c276cbb5c873ac99f65d594fa2c23db011dbb5bd6a1",
+            "wall_seconds": 0.34595241700299084
+          },
+          {
+            "stage": "materialized:open_metadata",
+            "method": "GET",
+            "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis/v0.1.0.icechunk/manifests/73E95NHZD3C8Y2F26SGG",
+            "kind": "repository",
+            "request_headers": {
+              "Range": "bytes=0-6454"
+            },
+            "status": 206,
+            "response_body_bytes": 6455,
+            "etag": "\"8eefb481d4320512354bf54ecf714c09\"",
+            "content_range": "bytes 0-6454/6455",
+            "sha256": "e978c0022bb8ffb318d6fb7ae2f813d7ba8a1f2a557046494b71994294ec6e0c",
+            "wall_seconds": 0.3575670829741284
+          },
+          {
+            "stage": "materialized:open_metadata",
+            "method": "GET",
+            "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis/v0.1.0.icechunk/manifests/WWV1E7ZCPWAZEC1TG7A0",
+            "kind": "repository",
+            "request_headers": {
+              "Range": "bytes=0-155"
+            },
+            "status": 206,
+            "response_body_bytes": 156,
+            "etag": "\"e146b1b49b3bf08e4aa63dda8de7bbe5\"",
+            "content_range": "bytes 0-155/156",
+            "sha256": "b1d241bb36c2b5f11d0f46af94fc91530a0e4ee1850d041c65ca7f4c1c9977ae",
+            "wall_seconds": 0.32516704202862456
+          },
+          {
+            "stage": "materialized:open_metadata",
+            "method": "GET",
+            "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis/v0.1.0.icechunk/chunks/C4KGTRAY1WC962Q0BWXG",
+            "kind": "repository",
+            "request_headers": {
+              "Range": "bytes=0-7013"
+            },
+            "status": 206,
+            "response_body_bytes": 7014,
+            "etag": "\"b3477fb295c74335d9242dadf616752a\"",
+            "content_range": "bytes 0-7013/7014",
+            "sha256": "df4e9cbba9dcdaeea56eb599e864db12c072fdc36ed5cc7b7973a64461efbb64",
+            "wall_seconds": 0.3927572909742594
+          },
+          {
+            "stage": "materialized:open_metadata",
+            "method": "GET",
+            "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis/v0.1.0.icechunk/chunks/KV5RZGH169QKKKE1EF30",
+            "kind": "repository",
+            "request_headers": {
+              "Range": "bytes=0-575"
+            },
+            "status": 206,
+            "response_body_bytes": 576,
+            "etag": "\"38f0ca23661525fee65557c4de3f26c3\"",
+            "content_range": "bytes 0-575/576",
+            "sha256": "b2962657b4a6756720ee382d99b0514a5a34a49ef1935c5117c8c2d443914355",
+            "wall_seconds": 0.3167945409659296
+          }
+        ]
+      },
+      "workloads": [
+        {
+          "name": "regional_one_time",
+          "index_start": [
+            48072,
+            224,
+            316
+          ],
+          "index_count": [
+            1,
+            2,
+            2
+          ],
+          "selected_coordinates": {
+            "time": [
+              1792886400
+            ],
+            "latitude": [
+              34.0,
+              33.75
+            ],
+            "longitude": [
+              -101.0,
+              -100.75
+            ]
+          },
+          "repeats": [
+            {
+              "trial": 0,
+              "session_cache": "retained; first payload read",
+              "wall_seconds": 1.7919355829944834,
+              "transport": {
+                "response_body_bytes": 1372181,
+                "http_operations": 3,
+                "events": [
+                  {
+                    "stage": "materialized:regional_one_time:0",
+                    "method": "GET",
+                    "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis/v0.1.0.icechunk/manifests/TD9P10XPA7BDKAMXMPAG",
+                    "kind": "repository",
+                    "request_headers": {
+                      "Range": "bytes=0-6369"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 6370,
+                    "etag": "\"fc1fe198a077b7ee8af6b9f23f29b672\"",
+                    "content_range": "bytes 0-6369/6370",
+                    "sha256": "d3c5c08488904a6a67b5439c505f4d80ab20223f4384d3817511c2047fea0fac",
+                    "wall_seconds": 0.3186957499710843
+                  },
+                  {
+                    "stage": "materialized:regional_one_time:0",
+                    "method": "GET",
+                    "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis/v0.1.0.icechunk/chunks/2G30H43FNHY7HHDYCTSG",
+                    "kind": "repository",
+                    "request_headers": {
+                      "Range": "bytes=64989511-64990538"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 1028,
+                    "etag": "\"a40d8d04d6ae9a32b79bea5f02cdd05d\"",
+                    "content_range": "bytes 64989511-64990538/64990539",
+                    "sha256": "e2e5fcdd5f96414ada2e3c91e99e89124d00c3ccbcffc659bef1eebd72ba4b26",
+                    "wall_seconds": 0.4006347079994157
+                  },
+                  {
+                    "stage": "materialized:regional_one_time:0",
+                    "method": "GET",
+                    "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis/v0.1.0.icechunk/chunks/2G30H43FNHY7HHDYCTSG",
+                    "kind": "repository",
+                    "request_headers": {
+                      "Range": "bytes=57249035-58613817"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 1364783,
+                    "etag": "\"a40d8d04d6ae9a32b79bea5f02cdd05d\"",
+                    "content_range": "bytes 57249035-58613817/64990539",
+                    "sha256": "a96639701c3814c21346b1406b82c8eaeb53b898cd97b6ef6df35e5d4b7faf9f",
+                    "wall_seconds": 1.0515127910184674
+                  }
+                ]
+              },
+              "values": {
+                "shape": [
+                  1,
+                  2,
+                  2
+                ],
+                "dtype": "float32",
+                "logical_bytes": 16,
+                "sha256": "96b6b81600ad95bb8ebbf43325a2253d83244fc8a48c949550004c79a0a6eb6a",
+                "finite_values": 4,
+                "nan_values": 0,
+                "min": 20.125,
+                "max": 21.375,
+                "first_values": [
+                  20.125,
+                  21.0,
+                  20.25,
+                  21.375
+                ]
+              }
+            },
+            {
+              "trial": 1,
+              "session_cache": "retained; repeated payload read",
+              "wall_seconds": 1.3983946249936707,
+              "transport": {
+                "response_body_bytes": 1365811,
+                "http_operations": 2,
+                "events": [
+                  {
+                    "stage": "materialized:regional_one_time:1",
+                    "method": "GET",
+                    "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis/v0.1.0.icechunk/chunks/2G30H43FNHY7HHDYCTSG",
+                    "kind": "repository",
+                    "request_headers": {
+                      "Range": "bytes=64989511-64990538"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 1028,
+                    "etag": "\"a40d8d04d6ae9a32b79bea5f02cdd05d\"",
+                    "content_range": "bytes 64989511-64990538/64990539",
+                    "sha256": "e2e5fcdd5f96414ada2e3c91e99e89124d00c3ccbcffc659bef1eebd72ba4b26",
+                    "wall_seconds": 0.3207433340139687
+                  },
+                  {
+                    "stage": "materialized:regional_one_time:1",
+                    "method": "GET",
+                    "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis/v0.1.0.icechunk/chunks/2G30H43FNHY7HHDYCTSG",
+                    "kind": "repository",
+                    "request_headers": {
+                      "Range": "bytes=57249035-58613817"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 1364783,
+                    "etag": "\"a40d8d04d6ae9a32b79bea5f02cdd05d\"",
+                    "content_range": "bytes 57249035-58613817/64990539",
+                    "sha256": "a96639701c3814c21346b1406b82c8eaeb53b898cd97b6ef6df35e5d4b7faf9f",
+                    "wall_seconds": 1.061003708979115
+                  }
+                ]
+              },
+              "values": {
+                "shape": [
+                  1,
+                  2,
+                  2
+                ],
+                "dtype": "float32",
+                "logical_bytes": 16,
+                "sha256": "96b6b81600ad95bb8ebbf43325a2253d83244fc8a48c949550004c79a0a6eb6a",
+                "finite_values": 4,
+                "nan_values": 0,
+                "min": 20.125,
+                "max": 21.375,
+                "first_values": [
+                  20.125,
+                  21.0,
+                  20.25,
+                  21.375
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "regional_24_hours",
+          "index_start": [
+            48072,
+            224,
+            316
+          ],
+          "index_count": [
+            24,
+            2,
+            2
+          ],
+          "selected_coordinates": {
+            "time": [
+              1792886400,
+              1792890000,
+              1792893600,
+              1792897200,
+              1792900800,
+              1792904400,
+              1792908000,
+              1792911600,
+              1792915200,
+              1792918800,
+              1792922400,
+              1792926000,
+              1792929600,
+              1792933200,
+              1792936800,
+              1792940400,
+              1792944000,
+              1792947600,
+              1792951200,
+              1792954800,
+              1792958400,
+              1792962000,
+              1792965600,
+              1792969200
+            ],
+            "latitude": [
+              34.0,
+              33.75
+            ],
+            "longitude": [
+              -101.0,
+              -100.75
+            ]
+          },
+          "repeats": [
+            {
+              "trial": 0,
+              "session_cache": "retained; first payload read",
+              "wall_seconds": 1.2257160840090364,
+              "transport": {
+                "response_body_bytes": 1365811,
+                "http_operations": 2,
+                "events": [
+                  {
+                    "stage": "materialized:regional_24_hours:0",
+                    "method": "GET",
+                    "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis/v0.1.0.icechunk/chunks/2G30H43FNHY7HHDYCTSG",
+                    "kind": "repository",
+                    "request_headers": {
+                      "Range": "bytes=64989511-64990538"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 1028,
+                    "etag": "\"a40d8d04d6ae9a32b79bea5f02cdd05d\"",
+                    "content_range": "bytes 64989511-64990538/64990539",
+                    "sha256": "e2e5fcdd5f96414ada2e3c91e99e89124d00c3ccbcffc659bef1eebd72ba4b26",
+                    "wall_seconds": 0.3641829160042107
+                  },
+                  {
+                    "stage": "materialized:regional_24_hours:0",
+                    "method": "GET",
+                    "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis/v0.1.0.icechunk/chunks/2G30H43FNHY7HHDYCTSG",
+                    "kind": "repository",
+                    "request_headers": {
+                      "Range": "bytes=57249035-58613817"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 1364783,
+                    "etag": "\"a40d8d04d6ae9a32b79bea5f02cdd05d\"",
+                    "content_range": "bytes 57249035-58613817/64990539",
+                    "sha256": "a96639701c3814c21346b1406b82c8eaeb53b898cd97b6ef6df35e5d4b7faf9f",
+                    "wall_seconds": 0.8458953329827636
+                  }
+                ]
+              },
+              "values": {
+                "shape": [
+                  24,
+                  2,
+                  2
+                ],
+                "dtype": "float32",
+                "logical_bytes": 384,
+                "sha256": "b5a1c95facd8cc6cc9fc8877696e023b2f759585d10a352f338d7a2942abccd0",
+                "finite_values": 96,
+                "nan_values": 0,
+                "min": 16.25,
+                "max": 22.0,
+                "first_values": [
+                  20.125,
+                  21.0,
+                  20.25,
+                  21.375,
+                  19.375,
+                  20.5,
+                  20.125,
+                  20.25,
+                  19.75,
+                  20.125,
+                  20.0,
+                  20.125,
+                  19.625,
+                  19.875,
+                  19.5,
+                  20.0,
+                  19.375,
+                  20.0,
+                  19.25,
+                  19.875,
+                  19.25,
+                  19.75,
+                  19.125,
+                  19.625
+                ]
+              }
+            },
+            {
+              "trial": 1,
+              "session_cache": "retained; repeated payload read",
+              "wall_seconds": 1.2420424169977196,
+              "transport": {
+                "response_body_bytes": 1365811,
+                "http_operations": 2,
+                "events": [
+                  {
+                    "stage": "materialized:regional_24_hours:1",
+                    "method": "GET",
+                    "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis/v0.1.0.icechunk/chunks/2G30H43FNHY7HHDYCTSG",
+                    "kind": "repository",
+                    "request_headers": {
+                      "Range": "bytes=64989511-64990538"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 1028,
+                    "etag": "\"a40d8d04d6ae9a32b79bea5f02cdd05d\"",
+                    "content_range": "bytes 64989511-64990538/64990539",
+                    "sha256": "e2e5fcdd5f96414ada2e3c91e99e89124d00c3ccbcffc659bef1eebd72ba4b26",
+                    "wall_seconds": 0.31213704094989225
+                  },
+                  {
+                    "stage": "materialized:regional_24_hours:1",
+                    "method": "GET",
+                    "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis/v0.1.0.icechunk/chunks/2G30H43FNHY7HHDYCTSG",
+                    "kind": "repository",
+                    "request_headers": {
+                      "Range": "bytes=57249035-58613817"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 1364783,
+                    "etag": "\"a40d8d04d6ae9a32b79bea5f02cdd05d\"",
+                    "content_range": "bytes 57249035-58613817/64990539",
+                    "sha256": "a96639701c3814c21346b1406b82c8eaeb53b898cd97b6ef6df35e5d4b7faf9f",
+                    "wall_seconds": 0.9141550420317799
+                  }
+                ]
+              },
+              "values": {
+                "shape": [
+                  24,
+                  2,
+                  2
+                ],
+                "dtype": "float32",
+                "logical_bytes": 384,
+                "sha256": "b5a1c95facd8cc6cc9fc8877696e023b2f759585d10a352f338d7a2942abccd0",
+                "finite_values": 96,
+                "nan_values": 0,
+                "min": 16.25,
+                "max": 22.0,
+                "first_values": [
+                  20.125,
+                  21.0,
+                  20.25,
+                  21.375,
+                  19.375,
+                  20.5,
+                  20.125,
+                  20.25,
+                  19.75,
+                  20.125,
+                  20.0,
+                  20.125,
+                  19.625,
+                  19.875,
+                  19.5,
+                  20.0,
+                  19.375,
+                  20.0,
+                  19.25,
+                  19.875,
+                  19.25,
+                  19.75,
+                  19.125,
+                  19.625
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "regional_map_101",
+          "index_start": [
+            48072,
+            200,
+            300
+          ],
+          "index_count": [
+            1,
+            101,
+            101
+          ],
+          "selected_coordinates": {
+            "time": [
+              1792886400
+            ],
+            "latitude": [
+              40.0,
+              39.75,
+              39.5,
+              39.25,
+              39.0,
+              38.75,
+              38.5,
+              38.25,
+              38.0,
+              37.75,
+              37.5,
+              37.25,
+              37.0,
+              36.75,
+              36.5,
+              36.25,
+              36.0,
+              35.75,
+              35.5,
+              35.25,
+              35.0,
+              34.75,
+              34.5,
+              34.25,
+              34.0,
+              33.75,
+              33.5,
+              33.25,
+              33.0,
+              32.75,
+              32.5,
+              32.25,
+              32.0,
+              31.75,
+              31.5,
+              31.25,
+              31.0,
+              30.75,
+              30.5,
+              30.25,
+              30.0,
+              29.75,
+              29.5,
+              29.25,
+              29.0,
+              28.75,
+              28.5,
+              28.25,
+              28.0,
+              27.75,
+              27.5,
+              27.25,
+              27.0,
+              26.75,
+              26.5,
+              26.25,
+              26.0,
+              25.75,
+              25.5,
+              25.25,
+              25.0,
+              24.75,
+              24.5,
+              24.25,
+              24.0,
+              23.75,
+              23.5,
+              23.25,
+              23.0,
+              22.75,
+              22.5,
+              22.25,
+              22.0,
+              21.75,
+              21.5,
+              21.25,
+              21.0,
+              20.75,
+              20.5,
+              20.25,
+              20.0,
+              19.75,
+              19.5,
+              19.25,
+              19.0,
+              18.75,
+              18.5,
+              18.25,
+              18.0,
+              17.75,
+              17.5,
+              17.25,
+              17.0,
+              16.75,
+              16.5,
+              16.25,
+              16.0,
+              15.75,
+              15.5,
+              15.25,
+              15.0
+            ],
+            "longitude": [
+              -105.0,
+              -104.75,
+              -104.5,
+              -104.25,
+              -104.0,
+              -103.75,
+              -103.5,
+              -103.25,
+              -103.0,
+              -102.75,
+              -102.5,
+              -102.25,
+              -102.0,
+              -101.75,
+              -101.5,
+              -101.25,
+              -101.0,
+              -100.75,
+              -100.5,
+              -100.25,
+              -100.0,
+              -99.75,
+              -99.5,
+              -99.25,
+              -99.0,
+              -98.75,
+              -98.5,
+              -98.25,
+              -98.0,
+              -97.75,
+              -97.5,
+              -97.25,
+              -97.0,
+              -96.75,
+              -96.5,
+              -96.25,
+              -96.0,
+              -95.75,
+              -95.5,
+              -95.25,
+              -95.0,
+              -94.75,
+              -94.5,
+              -94.25,
+              -94.0,
+              -93.75,
+              -93.5,
+              -93.25,
+              -93.0,
+              -92.75,
+              -92.5,
+              -92.25,
+              -92.0,
+              -91.75,
+              -91.5,
+              -91.25,
+              -91.0,
+              -90.75,
+              -90.5,
+              -90.25,
+              -90.0,
+              -89.75,
+              -89.5,
+              -89.25,
+              -89.0,
+              -88.75,
+              -88.5,
+              -88.25,
+              -88.0,
+              -87.75,
+              -87.5,
+              -87.25,
+              -87.0,
+              -86.75,
+              -86.5,
+              -86.25,
+              -86.0,
+              -85.75,
+              -85.5,
+              -85.25,
+              -85.0,
+              -84.75,
+              -84.5,
+              -84.25,
+              -84.0,
+              -83.75,
+              -83.5,
+              -83.25,
+              -83.0,
+              -82.75,
+              -82.5,
+              -82.25,
+              -82.0,
+              -81.75,
+              -81.5,
+              -81.25,
+              -81.0,
+              -80.75,
+              -80.5,
+              -80.25,
+              -80.0
+            ]
+          },
+          "repeats": [
+            {
+              "trial": 0,
+              "session_cache": "retained; first payload read",
+              "wall_seconds": 1.697125833015889,
+              "transport": {
+                "response_body_bytes": 10009835,
+                "http_operations": 5,
+                "events": [
+                  {
+                    "stage": "materialized:regional_map_101:0",
+                    "method": "GET",
+                    "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis/v0.1.0.icechunk/chunks/2G30H43FNHY7HHDYCTSG",
+                    "kind": "repository",
+                    "request_headers": {
+                      "Range": "bytes=64989511-64990538"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 1028,
+                    "etag": "\"a40d8d04d6ae9a32b79bea5f02cdd05d\"",
+                    "content_range": "bytes 64989511-64990538/64990539",
+                    "sha256": "e2e5fcdd5f96414ada2e3c91e99e89124d00c3ccbcffc659bef1eebd72ba4b26",
+                    "wall_seconds": 0.3162327909958549
+                  },
+                  {
+                    "stage": "materialized:regional_map_101:0",
+                    "method": "GET",
+                    "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis/v0.1.0.icechunk/chunks/BKT4HK7G6EG1FE9DCQP0",
+                    "kind": "repository",
+                    "request_headers": {
+                      "Range": "bytes=67304152-67305179"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 1028,
+                    "etag": "\"d43fed14086875cbbab026ccec45385e\"",
+                    "content_range": "bytes 67304152-67305179/67305180",
+                    "sha256": "458cb81a8a60927a7bebb7bc4f72ad50dfec481af53847b720bc6399a8e98cbd",
+                    "wall_seconds": 0.38313458301126957
+                  },
+                  {
+                    "stage": "materialized:regional_map_101:0",
+                    "method": "GET",
+                    "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis/v0.1.0.icechunk/chunks/BKT4HK7G6EG1FE9DCQP0",
+                    "kind": "repository",
+                    "request_headers": {
+                      "Range": "bytes=23527994-24660816"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 1132823,
+                    "etag": "\"d43fed14086875cbbab026ccec45385e\"",
+                    "content_range": "bytes 23527994-24660816/67305180",
+                    "sha256": "89f0915551534190d174a960b24fa0394c4ec06d306e00cda0ec21973ccb90f0",
+                    "wall_seconds": 1.0090600830153562
+                  },
+                  {
+                    "stage": "materialized:regional_map_101:0",
+                    "method": "GET",
+                    "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis/v0.1.0.icechunk/chunks/BKT4HK7G6EG1FE9DCQP0",
+                    "kind": "repository",
+                    "request_headers": {
+                      "Range": "bytes=20335437-22126025"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 1790589,
+                    "etag": "\"d43fed14086875cbbab026ccec45385e\"",
+                    "content_range": "bytes 20335437-22126025/67305180",
+                    "sha256": "7e3c10ba5be96d62ad0bb05779c984a809a31d88e3fd4c6c03384f2df3e3a189",
+                    "wall_seconds": 1.1319531670305878
+                  },
+                  {
+                    "stage": "materialized:regional_map_101:0",
+                    "method": "GET",
+                    "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis/v0.1.0.icechunk/chunks/2G30H43FNHY7HHDYCTSG",
+                    "kind": "repository",
+                    "request_headers": {
+                      "Range": "bytes=57249035-64333401"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 7084367,
+                    "etag": "\"a40d8d04d6ae9a32b79bea5f02cdd05d\"",
+                    "content_range": "bytes 57249035-64333401/64990539",
+                    "sha256": "5a3f76b6cf756d6186a82610c66c600b8617b15dab7ae252627dfd5c5b64e1c0",
+                    "wall_seconds": 1.3432642499683425
+                  }
+                ]
+              },
+              "values": {
+                "shape": [
+                  1,
+                  101,
+                  101
+                ],
+                "dtype": "float32",
+                "logical_bytes": 40804,
+                "sha256": "7268e625660d232bf5500c9712808ce5fc352ed372236061cc6069c7473098c2",
+                "finite_values": 10201,
+                "nan_values": 0,
+                "min": 1.2890625,
+                "max": 29.625,
+                "first_values": [
+                  10.25,
+                  8.5625,
+                  7.5,
+                  8.125,
+                  8.375,
+                  8.25,
+                  8.1875,
+                  7.5,
+                  7.8125,
+                  8.125,
+                  8.0625,
+                  7.84375,
+                  8.375,
+                  8.4375,
+                  8.0,
+                  7.90625,
+                  8.125,
+                  8.25,
+                  8.875,
+                  9.9375,
+                  10.6875,
+                  11.375,
+                  12.125,
+                  13.25
+                ]
+              }
+            },
+            {
+              "trial": 1,
+              "session_cache": "retained; repeated payload read",
+              "wall_seconds": 1.8983989589614794,
+              "transport": {
+                "response_body_bytes": 10009835,
+                "http_operations": 5,
+                "events": [
+                  {
+                    "stage": "materialized:regional_map_101:1",
+                    "method": "GET",
+                    "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis/v0.1.0.icechunk/chunks/2G30H43FNHY7HHDYCTSG",
+                    "kind": "repository",
+                    "request_headers": {
+                      "Range": "bytes=64989511-64990538"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 1028,
+                    "etag": "\"a40d8d04d6ae9a32b79bea5f02cdd05d\"",
+                    "content_range": "bytes 64989511-64990538/64990539",
+                    "sha256": "e2e5fcdd5f96414ada2e3c91e99e89124d00c3ccbcffc659bef1eebd72ba4b26",
+                    "wall_seconds": 0.38821337500121444
+                  },
+                  {
+                    "stage": "materialized:regional_map_101:1",
+                    "method": "GET",
+                    "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis/v0.1.0.icechunk/chunks/BKT4HK7G6EG1FE9DCQP0",
+                    "kind": "repository",
+                    "request_headers": {
+                      "Range": "bytes=67304152-67305179"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 1028,
+                    "etag": "\"d43fed14086875cbbab026ccec45385e\"",
+                    "content_range": "bytes 67304152-67305179/67305180",
+                    "sha256": "458cb81a8a60927a7bebb7bc4f72ad50dfec481af53847b720bc6399a8e98cbd",
+                    "wall_seconds": 0.41491425002459437
+                  },
+                  {
+                    "stage": "materialized:regional_map_101:1",
+                    "method": "GET",
+                    "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis/v0.1.0.icechunk/chunks/BKT4HK7G6EG1FE9DCQP0",
+                    "kind": "repository",
+                    "request_headers": {
+                      "Range": "bytes=23527994-24660816"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 1132823,
+                    "etag": "\"d43fed14086875cbbab026ccec45385e\"",
+                    "content_range": "bytes 23527994-24660816/67305180",
+                    "sha256": "89f0915551534190d174a960b24fa0394c4ec06d306e00cda0ec21973ccb90f0",
+                    "wall_seconds": 0.9669000830035657
+                  },
+                  {
+                    "stage": "materialized:regional_map_101:1",
+                    "method": "GET",
+                    "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis/v0.1.0.icechunk/chunks/BKT4HK7G6EG1FE9DCQP0",
+                    "kind": "repository",
+                    "request_headers": {
+                      "Range": "bytes=20335437-22126025"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 1790589,
+                    "etag": "\"d43fed14086875cbbab026ccec45385e\"",
+                    "content_range": "bytes 20335437-22126025/67305180",
+                    "sha256": "7e3c10ba5be96d62ad0bb05779c984a809a31d88e3fd4c6c03384f2df3e3a189",
+                    "wall_seconds": 1.0582994589931332
+                  },
+                  {
+                    "stage": "materialized:regional_map_101:1",
+                    "method": "GET",
+                    "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis/v0.1.0.icechunk/chunks/2G30H43FNHY7HHDYCTSG",
+                    "kind": "repository",
+                    "request_headers": {
+                      "Range": "bytes=57249035-64333401"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 7084367,
+                    "etag": "\"a40d8d04d6ae9a32b79bea5f02cdd05d\"",
+                    "content_range": "bytes 57249035-64333401/64990539",
+                    "sha256": "5a3f76b6cf756d6186a82610c66c600b8617b15dab7ae252627dfd5c5b64e1c0",
+                    "wall_seconds": 1.4850474580307491
+                  }
+                ]
+              },
+              "values": {
+                "shape": [
+                  1,
+                  101,
+                  101
+                ],
+                "dtype": "float32",
+                "logical_bytes": 40804,
+                "sha256": "7268e625660d232bf5500c9712808ce5fc352ed372236061cc6069c7473098c2",
+                "finite_values": 10201,
+                "nan_values": 0,
+                "min": 1.2890625,
+                "max": 29.625,
+                "first_values": [
+                  10.25,
+                  8.5625,
+                  7.5,
+                  8.125,
+                  8.375,
+                  8.25,
+                  8.1875,
+                  7.5,
+                  7.8125,
+                  8.125,
+                  8.0625,
+                  7.84375,
+                  8.375,
+                  8.4375,
+                  8.0,
+                  7.90625,
+                  8.125,
+                  8.25,
+                  8.875,
+                  9.9375,
+                  10.6875,
+                  11.375,
+                  12.125,
+                  13.25
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "total_response_body_bytes": 25711604
+    },
+    "virtual": {
+      "catalog_url": "https://stac.dynamical.org/noaa-gfs-analysis-virtual/collection.json",
+      "repository_url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis-virtual/v0.1.0.icechunk",
+      "snapshot_id": "SJSV5KG1GSWR2XQD2SW0",
+      "metadata": {
+        "temperature_2m": {
+          "shape": [
+            48138,
+            721,
+            1440
+          ],
+          "data_type": "float64",
+          "chunk_grid": {
+            "name": "regular",
+            "configuration": {
+              "chunk_shape": [
+                1,
+                721,
+                1440
+              ]
+            }
+          },
+          "chunk_key_encoding": {
+            "name": "default",
+            "configuration": {
+              "separator": "/"
+            }
+          },
+          "fill_value": "NaN",
+          "codecs": [
+            {
+              "name": "scale_offset",
+              "configuration": {
+                "offset": -273.15
+              }
+            },
+            {
+              "name": "gribberish",
+              "configuration": {
+                "var": "TMP",
+                "adjust_longitude_range": true,
+                "north_up": true
+              }
+            }
+          ],
+          "attributes": {
+            "long_name": "2 metre temperature",
+            "short_name": "2t",
+            "standard_name": "air_temperature",
+            "units": "degree_Celsius",
+            "step_type": "instant",
+            "coordinates": "spatial_ref",
+            "_FillValue": "AAAAAAAA+H8="
+          },
+          "dimension_names": [
+            "time",
+            "latitude",
+            "longitude"
+          ],
+          "zarr_format": 3,
+          "node_type": "array",
+          "storage_transformers": []
+        },
+        "time": {
+          "shape": [
+            48138
+          ],
+          "data_type": "int64",
+          "chunk_grid": {
+            "name": "regular",
+            "configuration": {
+              "chunk_shape": [
+                166440
+              ]
+            }
+          },
+          "chunk_key_encoding": {
+            "name": "default",
+            "configuration": {
+              "separator": "/"
+            }
+          },
+          "fill_value": 0,
+          "codecs": [
+            {
+              "name": "bytes",
+              "configuration": {
+                "endian": "little"
+              }
+            },
+            {
+              "name": "blosc",
+              "configuration": {
+                "typesize": 8,
+                "cname": "zstd",
+                "clevel": 3,
+                "shuffle": "shuffle",
+                "blocksize": 0
+              }
+            }
+          ],
+          "attributes": {
+            "long_name": "Time",
+            "standard_name": "time",
+            "axis": "T",
+            "statistics_approximate": {
+              "min": "2021-05-01T00:00:00",
+              "max": "Present"
+            },
+            "units": "seconds since 1970-01-01",
+            "calendar": "proleptic_gregorian"
+          },
+          "dimension_names": [
+            "time"
+          ],
+          "zarr_format": 3,
+          "node_type": "array",
+          "storage_transformers": []
+        },
+        "latitude": {
+          "shape": [
+            721
+          ],
+          "data_type": "float64",
+          "chunk_grid": {
+            "name": "regular",
+            "configuration": {
+              "chunk_shape": [
+                721
+              ]
+            }
+          },
+          "chunk_key_encoding": {
+            "name": "default",
+            "configuration": {
+              "separator": "/"
+            }
+          },
+          "fill_value": "NaN",
+          "codecs": [
+            {
+              "name": "bytes",
+              "configuration": {
+                "endian": "little"
+              }
+            },
+            {
+              "name": "blosc",
+              "configuration": {
+                "typesize": 8,
+                "cname": "zstd",
+                "clevel": 3,
+                "shuffle": "shuffle",
+                "blocksize": 0
+              }
+            }
+          ],
+          "attributes": {
+            "long_name": "Latitude",
+            "standard_name": "latitude",
+            "axis": "Y",
+            "units": "degree_north",
+            "statistics_approximate": {
+              "min": -90.0,
+              "max": 90.0
+            },
+            "_FillValue": "AAAAAAAA+H8="
+          },
+          "dimension_names": [
+            "latitude"
+          ],
+          "zarr_format": 3,
+          "node_type": "array",
+          "storage_transformers": []
+        },
+        "longitude": {
+          "shape": [
+            1440
+          ],
+          "data_type": "float64",
+          "chunk_grid": {
+            "name": "regular",
+            "configuration": {
+              "chunk_shape": [
+                1440
+              ]
+            }
+          },
+          "chunk_key_encoding": {
+            "name": "default",
+            "configuration": {
+              "separator": "/"
+            }
+          },
+          "fill_value": "NaN",
+          "codecs": [
+            {
+              "name": "bytes",
+              "configuration": {
+                "endian": "little"
+              }
+            },
+            {
+              "name": "blosc",
+              "configuration": {
+                "typesize": 8,
+                "cname": "zstd",
+                "clevel": 3,
+                "shuffle": "shuffle",
+                "blocksize": 0
+              }
+            }
+          ],
+          "attributes": {
+            "long_name": "Longitude",
+            "standard_name": "longitude",
+            "axis": "X",
+            "units": "degree_east",
+            "statistics_approximate": {
+              "min": -180.0,
+              "max": 179.75
+            },
+            "_FillValue": "AAAAAAAA+H8="
+          },
+          "dimension_names": [
+            "longitude"
+          ],
+          "zarr_format": 3,
+          "node_type": "array",
+          "storage_transformers": []
+        },
+        "spatial_ref": {
+          "shape": [],
+          "data_type": "int64",
+          "chunk_grid": {
+            "name": "regular",
+            "configuration": {
+              "chunk_shape": []
+            }
+          },
+          "chunk_key_encoding": {
+            "name": "default",
+            "configuration": {
+              "separator": "/"
+            }
+          },
+          "fill_value": 0,
+          "codecs": [
+            {
+              "name": "bytes",
+              "configuration": {
+                "endian": "little"
+              }
+            },
+            {
+              "name": "zstd",
+              "configuration": {
+                "level": 0,
+                "checksum": false
+              }
+            }
+          ],
+          "attributes": {
+            "comment": "This coordinate reference system matches the source data which follows WMO conventions of assuming the earth is a perfect sphere with a radius of 6,371,229m. It is similar to EPSG:4326, but EPSG:4326 uses a more accurate representation of the earth's shape.",
+            "crs_wkt": "GEOGCS[\"unknown\",DATUM[\"unknown\",SPHEROID[\"unknown\",6371229,0]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AXIS[\"Longitude\",EAST],AXIS[\"Latitude\",NORTH]]",
+            "semi_major_axis": 6371229.0,
+            "semi_minor_axis": 6371229.0,
+            "inverse_flattening": 0.0,
+            "reference_ellipsoid_name": "unknown",
+            "longitude_of_prime_meridian": 0.0,
+            "prime_meridian_name": "Greenwich",
+            "geographic_crs_name": "unknown",
+            "horizontal_datum_name": "unknown",
+            "grid_mapping_name": "latitude_longitude",
+            "spatial_ref": "GEOGCS[\"unknown\",DATUM[\"unknown\",SPHEROID[\"unknown\",6371229,0]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AXIS[\"Longitude\",EAST],AXIS[\"Latitude\",NORTH]]"
+          },
+          "zarr_format": 3,
+          "node_type": "array",
+          "storage_transformers": []
+        }
+      },
+      "open_metadata_wall_seconds": 3.4062891250359826,
+      "open_metadata_transport": {
+        "response_body_bytes": 333001,
+        "http_operations": 10,
+        "events": [
+          {
+            "stage": "virtual:open_metadata",
+            "method": "GET",
+            "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis-virtual/v0.1.0.icechunk/refs/branch.main/ref.json",
+            "kind": "repository",
+            "request_headers": {},
+            "status": 404,
+            "response_body_bytes": 338,
+            "etag": null,
+            "content_range": null,
+            "sha256": "c9af491d585e61dc549e63e620a0dbfb50d244481384491b644295398649bfda",
+            "wall_seconds": 0.2798423750209622
+          },
+          {
+            "stage": "virtual:open_metadata",
+            "method": "GET",
+            "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis-virtual/v0.1.0.icechunk/config.yaml",
+            "kind": "repository",
+            "request_headers": {},
+            "status": 404,
+            "response_body_bytes": 324,
+            "etag": null,
+            "content_range": null,
+            "sha256": "d838c6fc05145332be89f537a2765c03b7d1f7eda8e2442dac2e710e5389e717",
+            "wall_seconds": 0.28955745801795274
+          },
+          {
+            "stage": "virtual:open_metadata",
+            "method": "GET",
+            "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis-virtual/v0.1.0.icechunk/repo",
+            "kind": "repository",
+            "request_headers": {},
+            "status": 200,
+            "response_body_bytes": 85830,
+            "etag": "\"10253e3fc3ac0e2c64ddf7464a9e5dbc\"",
+            "content_range": null,
+            "sha256": "1ae65e2624fba4cc5044720c153c1855ed30b176a388f76cd47086054303bae9",
+            "wall_seconds": 0.5052011669613421
+          },
+          {
+            "stage": "virtual:open_metadata",
+            "method": "GET",
+            "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis-virtual/v0.1.0.icechunk/repo",
+            "kind": "repository",
+            "request_headers": {},
+            "status": 200,
+            "response_body_bytes": 85830,
+            "etag": "\"10253e3fc3ac0e2c64ddf7464a9e5dbc\"",
+            "content_range": null,
+            "sha256": "1ae65e2624fba4cc5044720c153c1855ed30b176a388f76cd47086054303bae9",
+            "wall_seconds": 0.5202813750365749
+          },
+          {
+            "stage": "virtual:open_metadata",
+            "method": "GET",
+            "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis-virtual/v0.1.0.icechunk/snapshots/SJSV5KG1GSWR2XQD2SW0",
+            "kind": "repository",
+            "request_headers": {},
+            "status": 200,
+            "response_body_bytes": 152177,
+            "etag": "\"4019991fcd986fb2cd0cd87c287f575b\"",
+            "content_range": null,
+            "sha256": "299bd136614f41ae120d8c025b39fa0c569cd87f221d01cba17072165fe71574",
+            "wall_seconds": 0.5236626659752801
+          },
+          {
+            "stage": "virtual:open_metadata",
+            "method": "GET",
+            "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis-virtual/v0.1.0.icechunk/manifests/R8HHDCFREPD6PPFEG2PG",
+            "kind": "repository",
+            "request_headers": {
+              "Range": "bytes=0-156"
+            },
+            "status": 206,
+            "response_body_bytes": 157,
+            "etag": "\"986990ec22b2d90f3c6b8cc381f9c1c5\"",
+            "content_range": "bytes 0-156/157",
+            "sha256": "3553ae63945cb62ec25c933bb4f9f2e4f47f0c16ed8e9da7e93c480d0ab76468",
+            "wall_seconds": 0.39461270900210366
+          },
+          {
+            "stage": "virtual:open_metadata",
+            "method": "GET",
+            "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis-virtual/v0.1.0.icechunk/chunks/RBAS6ADPE35BBDVHT4J0",
+            "kind": "repository",
+            "request_headers": {
+              "Range": "bytes=0-7016"
+            },
+            "status": 206,
+            "response_body_bytes": 7017,
+            "etag": "\"cf657394bb4887501f6894650b5ea4d1\"",
+            "content_range": "bytes 0-7016/7017",
+            "sha256": "0cffa26518defdb2977ba8c76862a06a5e1f9d4b8efcd36c4ab5955c7d9e8115",
+            "wall_seconds": 0.2953378749662079
+          },
+          {
+            "stage": "virtual:open_metadata",
+            "method": "GET",
+            "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis-virtual/v0.1.0.icechunk/manifests/19VAS1PHYEWA1Y08WY30",
+            "kind": "repository",
+            "request_headers": {
+              "Range": "bytes=0-595"
+            },
+            "status": 206,
+            "response_body_bytes": 596,
+            "etag": "\"c8f9e66268d19cce9614b854e5e9ba72\"",
+            "content_range": "bytes 0-595/596",
+            "sha256": "cc569b5c7b1e1474d230992b7d0b58ab4978f55eb3ba75eaca664c2db4309ea7",
+            "wall_seconds": 0.3423815830028616
+          },
+          {
+            "stage": "virtual:open_metadata",
+            "method": "GET",
+            "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis-virtual/v0.1.0.icechunk/manifests/AA8WWTGT7SFV0F5V7YPG",
+            "kind": "repository",
+            "request_headers": {
+              "Range": "bytes=0-155"
+            },
+            "status": 206,
+            "response_body_bytes": 156,
+            "etag": "\"4e950d97098fcb8d6bf16e6fa40efc20\"",
+            "content_range": "bytes 0-155/156",
+            "sha256": "67fe7ab6a6643d21fa7c9c23bf49c852f0653600e69d35752a84d8e154a21306",
+            "wall_seconds": 0.3005414999788627
+          },
+          {
+            "stage": "virtual:open_metadata",
+            "method": "GET",
+            "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis-virtual/v0.1.0.icechunk/chunks/5WCREK2RK2M9FPXQKDDG",
+            "kind": "repository",
+            "request_headers": {
+              "Range": "bytes=0-575"
+            },
+            "status": 206,
+            "response_body_bytes": 576,
+            "etag": "\"38f0ca23661525fee65557c4de3f26c3\"",
+            "content_range": "bytes 0-575/576",
+            "sha256": "b2962657b4a6756720ee382d99b0514a5a34a49ef1935c5117c8c2d443914355",
+            "wall_seconds": 0.38090204197214916
+          }
+        ]
+      },
+      "workloads": [
+        {
+          "name": "regional_one_time",
+          "index_start": [
+            48072,
+            224,
+            316
+          ],
+          "index_count": [
+            1,
+            2,
+            2
+          ],
+          "selected_coordinates": {
+            "time": [
+              1792886400
+            ],
+            "latitude": [
+              34.0,
+              33.75
+            ],
+            "longitude": [
+              -101.0,
+              -100.75
+            ]
+          },
+          "repeats": [
+            {
+              "trial": 0,
+              "session_cache": "retained; first payload read",
+              "wall_seconds": 0.8556972920196131,
+              "transport": {
+                "response_body_bytes": 875420,
+                "http_operations": 2,
+                "events": [
+                  {
+                    "stage": "virtual:regional_one_time:0",
+                    "method": "GET",
+                    "url": "https://dynamical-noaa-gfs.s3.us-west-2.amazonaws.com/noaa-gfs-analysis-virtual/v0.1.0.icechunk/manifests/5ZYHG34BM3R7MSQQ6750",
+                    "kind": "repository",
+                    "request_headers": {
+                      "Range": "bytes=0-2523"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 2524,
+                    "etag": "\"838370e39da9158c08c5824d1cebfc25\"",
+                    "content_range": "bytes 0-2523/2524",
+                    "sha256": "d7b2af94b10134a3f483704de284d43c1e2064a04ea2089040d87ceaf939ea6a",
+                    "wall_seconds": 0.3775256249937229
+                  },
+                  {
+                    "stage": "virtual:regional_one_time:0",
+                    "method": "GET",
+                    "url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20261025/00/atmos/gfs.t00z.pgrb2.0p25.f000?x-id=GetObject",
+                    "kind": "virtual_source",
+                    "request_headers": {
+                      "Range": "bytes=420702269-421575164"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 872896,
+                    "etag": "\"28fcd45367375bc20f584f4855624ede\"",
+                    "content_range": "bytes 420702269-421575164/513443477",
+                    "sha256": "1babdd36cab0df3f0d05060d51b7829a0cf453aa13af4217f0524578df305556",
+                    "wall_seconds": 0.28826758405193686
+                  }
+                ]
+              },
+              "values": {
+                "shape": [
+                  1,
+                  2,
+                  2
+                ],
+                "dtype": "float64",
+                "logical_bytes": 32,
+                "sha256": "da8e4b7cc256ce57e3724d24899ec8488b3729be06373f77dcab6c64c7c2954e",
+                "finite_values": 4,
+                "nan_values": 0,
+                "min": 20.150996093750052,
+                "max": 21.420996093750034,
+                "first_values": [
+                  20.150996093750052,
+                  21.04099609375004,
+                  20.30099609375003,
+                  21.420996093750034
+                ]
+              }
+            },
+            {
+              "trial": 1,
+              "session_cache": "retained; repeated payload read",
+              "wall_seconds": 0.17036849999567494,
+              "transport": {
+                "response_body_bytes": 872896,
+                "http_operations": 1,
+                "events": [
+                  {
+                    "stage": "virtual:regional_one_time:1",
+                    "method": "GET",
+                    "url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20261025/00/atmos/gfs.t00z.pgrb2.0p25.f000?x-id=GetObject",
+                    "kind": "virtual_source",
+                    "request_headers": {
+                      "Range": "bytes=420702269-421575164"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 872896,
+                    "etag": "\"28fcd45367375bc20f584f4855624ede\"",
+                    "content_range": "bytes 420702269-421575164/513443477",
+                    "sha256": "1babdd36cab0df3f0d05060d51b7829a0cf453aa13af4217f0524578df305556",
+                    "wall_seconds": 0.15948583401041105
+                  }
+                ]
+              },
+              "values": {
+                "shape": [
+                  1,
+                  2,
+                  2
+                ],
+                "dtype": "float64",
+                "logical_bytes": 32,
+                "sha256": "da8e4b7cc256ce57e3724d24899ec8488b3729be06373f77dcab6c64c7c2954e",
+                "finite_values": 4,
+                "nan_values": 0,
+                "min": 20.150996093750052,
+                "max": 21.420996093750034,
+                "first_values": [
+                  20.150996093750052,
+                  21.04099609375004,
+                  20.30099609375003,
+                  21.420996093750034
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "regional_24_hours",
+          "index_start": [
+            48072,
+            224,
+            316
+          ],
+          "index_count": [
+            24,
+            2,
+            2
+          ],
+          "selected_coordinates": {
+            "time": [
+              1792886400,
+              1792890000,
+              1792893600,
+              1792897200,
+              1792900800,
+              1792904400,
+              1792908000,
+              1792911600,
+              1792915200,
+              1792918800,
+              1792922400,
+              1792926000,
+              1792929600,
+              1792933200,
+              1792936800,
+              1792940400,
+              1792944000,
+              1792947600,
+              1792951200,
+              1792954800,
+              1792958400,
+              1792962000,
+              1792965600,
+              1792969200
+            ],
+            "latitude": [
+              34.0,
+              33.75
+            ],
+            "longitude": [
+              -101.0,
+              -100.75
+            ]
+          },
+          "repeats": [
+            {
+              "trial": 0,
+              "session_cache": "retained; first payload read",
+              "wall_seconds": 1.0580828330130316,
+              "transport": {
+                "response_body_bytes": 18408814,
+                "http_operations": 24,
+                "events": [
+                  {
+                    "stage": "virtual:regional_24_hours:0",
+                    "method": "GET",
+                    "url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20261025/06/atmos/gfs.t06z.pgrb2.0p25.f000?x-id=GetObject",
+                    "kind": "virtual_source",
+                    "request_headers": {
+                      "Range": "bytes=409015625-409888807"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 873183,
+                    "etag": "\"ab5833efcdb639f0c129f075c761d079\"",
+                    "content_range": "bytes 409015625-409888807/500264622",
+                    "sha256": "ace918717e52215eaf76f58635f72c429f6372c463ab1cf17b6eb41e01034571",
+                    "wall_seconds": 0.3139934159698896
+                  },
+                  {
+                    "stage": "virtual:regional_24_hours:0",
+                    "method": "GET",
+                    "url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20261025/00/atmos/gfs.t00z.pgrb2.0p25.f003?x-id=GetObject",
+                    "kind": "virtual_source",
+                    "request_headers": {
+                      "Range": "bytes=414225312-415095358"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 870047,
+                    "etag": "\"e08e9aefebf4ce697e54750c7005b3d0\"",
+                    "content_range": "bytes 414225312-415095358/534566285",
+                    "sha256": "cf2a1c95423aa3aaa7a5aa8eff441656c92d550d85639d8e6ba971ddd19cff04",
+                    "wall_seconds": 0.34266725002089515
+                  },
+                  {
+                    "stage": "virtual:regional_24_hours:0",
+                    "method": "GET",
+                    "url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20261025/06/atmos/gfs.t06z.pgrb2.0p25.f003?x-id=GetObject",
+                    "kind": "virtual_source",
+                    "request_headers": {
+                      "Range": "bytes=411986707-412860990"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 874284,
+                    "etag": "\"83a0178ce4aa66c15296bee17a34be1a\"",
+                    "content_range": "bytes 411986707-412860990/534535732",
+                    "sha256": "89df357dbac03b35fc69ab312e1eec3133041c7765d23e4044f2529cd5af2be1",
+                    "wall_seconds": 0.34364274999825284
+                  },
+                  {
+                    "stage": "virtual:regional_24_hours:0",
+                    "method": "GET",
+                    "url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20261025/00/atmos/gfs.t00z.pgrb2.0p25.f001?x-id=GetObject",
+                    "kind": "virtual_source",
+                    "request_headers": {
+                      "Range": "bytes=415723921-416595558"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 871638,
+                    "etag": "\"295be9c2966421d418265d09848096ee\"",
+                    "content_range": "bytes 415723921-416595558/536601381",
+                    "sha256": "24d881e75afb21f314a84a7d20599f2e7e148cf25bc44272d98e355117b56584",
+                    "wall_seconds": 0.3692146249813959
+                  },
+                  {
+                    "stage": "virtual:regional_24_hours:0",
+                    "method": "GET",
+                    "url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20261025/00/atmos/gfs.t00z.pgrb2.0p25.f000?x-id=GetObject",
+                    "kind": "virtual_source",
+                    "request_headers": {
+                      "Range": "bytes=420702269-421575164"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 872896,
+                    "etag": "\"28fcd45367375bc20f584f4855624ede\"",
+                    "content_range": "bytes 420702269-421575164/513443477",
+                    "sha256": "1babdd36cab0df3f0d05060d51b7829a0cf453aa13af4217f0524578df305556",
+                    "wall_seconds": 0.3992589580011554
+                  },
+                  {
+                    "stage": "virtual:regional_24_hours:0",
+                    "method": "GET",
+                    "url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20261025/00/atmos/gfs.t00z.pgrb2.0p25.f002?x-id=GetObject",
+                    "kind": "virtual_source",
+                    "request_headers": {
+                      "Range": "bytes=414360944-415231964"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 871021,
+                    "etag": "\"78df281499a0901c4ab67cd790b988ab\"",
+                    "content_range": "bytes 414360944-415231964/536550503",
+                    "sha256": "d49bc30b1771c5fb6139455c195060a2d109500177bde5af285207bcd7a2b48a",
+                    "wall_seconds": 0.41025287500815466
+                  },
+                  {
+                    "stage": "virtual:regional_24_hours:0",
+                    "method": "GET",
+                    "url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20261025/00/atmos/gfs.t00z.pgrb2.0p25.f004?x-id=GetObject",
+                    "kind": "virtual_source",
+                    "request_headers": {
+                      "Range": "bytes=415134770-416004284"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 869515,
+                    "etag": "\"34b254567bc28a5527f08e7c6f22921c\"",
+                    "content_range": "bytes 415134770-416004284/537834372",
+                    "sha256": "28f0bb10b3c62a4b9c9d14c8db27774385dbde592d7ed26c2af6b917e9c6073b",
+                    "wall_seconds": 0.4197921250015497
+                  },
+                  {
+                    "stage": "virtual:regional_24_hours:0",
+                    "method": "GET",
+                    "url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20261025/06/atmos/gfs.t06z.pgrb2.0p25.f002?x-id=GetObject",
+                    "kind": "virtual_source",
+                    "request_headers": {
+                      "Range": "bytes=412165901-413039273"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 873373,
+                    "etag": "\"7820e3c7630220e7e33be50d106abc2a\"",
+                    "content_range": "bytes 412165901-413039273/531783085",
+                    "sha256": "41b58599297714dc4b40609e49672a5da9336fcb4082f8c264270698fa9ae9c4",
+                    "wall_seconds": 0.4780781659646891
+                  },
+                  {
+                    "stage": "virtual:regional_24_hours:0",
+                    "method": "GET",
+                    "url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20261025/00/atmos/gfs.t00z.pgrb2.0p25.f005?x-id=GetObject",
+                    "kind": "virtual_source",
+                    "request_headers": {
+                      "Range": "bytes=413856942-414726260"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 869319,
+                    "etag": "\"01ae29ec75422b679bf04a49fa7f611e\"",
+                    "content_range": "bytes 413856942-414726260/535128091",
+                    "sha256": "3f5614f31cb1401d4e00481f2338b624e45b924dda348807fc268f36de0179bf",
+                    "wall_seconds": 0.4890582909574732
+                  },
+                  {
+                    "stage": "virtual:regional_24_hours:0",
+                    "method": "GET",
+                    "url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20261025/06/atmos/gfs.t06z.pgrb2.0p25.f001?x-id=GetObject",
+                    "kind": "virtual_source",
+                    "request_headers": {
+                      "Range": "bytes=410701200-411575092"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 873893,
+                    "etag": "\"b1dfca6b1280f1761833a14fbab15125\"",
+                    "content_range": "bytes 410701200-411575092/527999507",
+                    "sha256": "d7f9bda4ea810b10fbb30a2c219fb1e5ca3611a588ae2dfa0031e3c55a59d176",
+                    "wall_seconds": 0.5186108750058338
+                  },
+                  {
+                    "stage": "virtual:regional_24_hours:0",
+                    "method": "GET",
+                    "url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20261025/06/atmos/gfs.t06z.pgrb2.0p25.f004?x-id=GetObject",
+                    "kind": "virtual_source",
+                    "request_headers": {
+                      "Range": "bytes=411847494-412719514"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 872021,
+                    "etag": "\"521ce3e43ca8877f0a5a2c08bfa5facc\"",
+                    "content_range": "bytes 411847494-412719514/532186211",
+                    "sha256": "48f6daf128a204cdbe3338101ccdba27fb65501a0d8d435ad675100073a77bce",
+                    "wall_seconds": 0.24241199996322393
+                  },
+                  {
+                    "stage": "virtual:regional_24_hours:0",
+                    "method": "GET",
+                    "url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20261025/06/atmos/gfs.t06z.pgrb2.0p25.f005?x-id=GetObject",
+                    "kind": "virtual_source",
+                    "request_headers": {
+                      "Range": "bytes=413351345-414228207"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 876863,
+                    "etag": "\"d13b42195a94904ff4cae8a9604a8aa7\"",
+                    "content_range": "bytes 413351345-414228207/536513922",
+                    "sha256": "167cef02e6b3d63da8d0e06b238d16e17312f2e622c6b70881da9071151cb0bb",
+                    "wall_seconds": 0.2789757910068147
+                  },
+                  {
+                    "stage": "virtual:regional_24_hours:0",
+                    "method": "GET",
+                    "url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20261025/12/atmos/gfs.t12z.pgrb2.0p25.f000?x-id=GetObject",
+                    "kind": "virtual_source",
+                    "request_headers": {
+                      "Range": "bytes=408574556-409452748"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 878193,
+                    "etag": "\"a3b8a6bdc867ce6457bbcb65ec74eb8a\"",
+                    "content_range": "bytes 408574556-409452748/498422407",
+                    "sha256": "0b1b5d8f40833b8912336bb8868f97e0619e000990a26042f4c2009d1f67f23d",
+                    "wall_seconds": 0.2898024169844575
+                  },
+                  {
+                    "stage": "virtual:regional_24_hours:0",
+                    "method": "GET",
+                    "url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20261025/12/atmos/gfs.t12z.pgrb2.0p25.f005?x-id=GetObject",
+                    "kind": "virtual_source",
+                    "request_headers": {
+                      "Range": "bytes=418350027-418862605"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 512579,
+                    "etag": "\"ccf04e1da46f9677f975b1eb8b0bd24b\"",
+                    "content_range": "bytes 418350027-418862605/540962488",
+                    "sha256": "f1ea9e88010cf569210738e12e281a2f61a5cfa8e03027c694642c1e37317502",
+                    "wall_seconds": 0.21676199999637902
+                  },
+                  {
+                    "stage": "virtual:regional_24_hours:0",
+                    "method": "GET",
+                    "url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20261025/18/atmos/gfs.t18z.pgrb2.0p25.f000?x-id=GetObject",
+                    "kind": "virtual_source",
+                    "request_headers": {
+                      "Range": "bytes=412843023-413355692"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 512670,
+                    "etag": "\"f3c71eea6a646d02feac507c56d3455d\"",
+                    "content_range": "bytes 412843023-413355692/505209753",
+                    "sha256": "b52617659d6b8021ddea679b2d4b66318c3cf3ffcf5bfdf3164e277d506b058a",
+                    "wall_seconds": 0.2061006670119241
+                  },
+                  {
+                    "stage": "virtual:regional_24_hours:0",
+                    "method": "GET",
+                    "url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20261025/12/atmos/gfs.t12z.pgrb2.0p25.f004?x-id=GetObject",
+                    "kind": "virtual_source",
+                    "request_headers": {
+                      "Range": "bytes=415015892-415525735"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 509844,
+                    "etag": "\"158471ed277d3622a6ab73ba5d5b4c80\"",
+                    "content_range": "bytes 415015892-415525735/536077347",
+                    "sha256": "8872c0a98bc90c2143e9ef4ee063c52bce822cd78eff99380077d2e2ad477350",
+                    "wall_seconds": 0.3179334159940481
+                  },
+                  {
+                    "stage": "virtual:regional_24_hours:0",
+                    "method": "GET",
+                    "url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20261025/12/atmos/gfs.t12z.pgrb2.0p25.f003?x-id=GetObject",
+                    "kind": "virtual_source",
+                    "request_headers": {
+                      "Range": "bytes=413884678-414394322"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 509645,
+                    "etag": "\"d46ad6c8a6f951d364db2f485a9d5fe1\"",
+                    "content_range": "bytes 413884678-414394322/534147268",
+                    "sha256": "195235990d49454f17de9d11dbdfcd787305c5f0cf950a3daf4c0353c4bbbf31",
+                    "wall_seconds": 0.3198814169736579
+                  },
+                  {
+                    "stage": "virtual:regional_24_hours:0",
+                    "method": "GET",
+                    "url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20261025/12/atmos/gfs.t12z.pgrb2.0p25.f001?x-id=GetObject",
+                    "kind": "virtual_source",
+                    "request_headers": {
+                      "Range": "bytes=411939500-412814137"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 874638,
+                    "etag": "\"c3c7bf06610dd1bf2dbfd6cc1a029d69\"",
+                    "content_range": "bytes 411939500-412814137/530119211",
+                    "sha256": "ec11403d81db27833d46a93af17cf44b1da7463ba84ff372336a578305d104c5",
+                    "wall_seconds": 0.4471647919854149
+                  },
+                  {
+                    "stage": "virtual:regional_24_hours:0",
+                    "method": "GET",
+                    "url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20261025/12/atmos/gfs.t12z.pgrb2.0p25.f002?x-id=GetObject",
+                    "kind": "virtual_source",
+                    "request_headers": {
+                      "Range": "bytes=411687570-412561938"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 874369,
+                    "etag": "\"b9042a4a76aa9cb5cb72ea28a64abfbe\"",
+                    "content_range": "bytes 411687570-412561938/531587315",
+                    "sha256": "66d586a4679ccd71a522fee61b392fc9cc73b521092f4880daac36d08a29457a",
+                    "wall_seconds": 0.4506780839874409
+                  },
+                  {
+                    "stage": "virtual:regional_24_hours:0",
+                    "method": "GET",
+                    "url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20261025/18/atmos/gfs.t18z.pgrb2.0p25.f002?x-id=GetObject",
+                    "kind": "virtual_source",
+                    "request_headers": {
+                      "Range": "bytes=413500168-414009753"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 509586,
+                    "etag": "\"f3475116898eee2b07784a60b3a27906\"",
+                    "content_range": "bytes 413500168-414009753/533914275",
+                    "sha256": "dce47ea047da6275cc72623b62cfa1880b1a893c528c7a3d30e6205c0119549a",
+                    "wall_seconds": 0.34545320802135393
+                  },
+                  {
+                    "stage": "virtual:regional_24_hours:0",
+                    "method": "GET",
+                    "url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20261025/18/atmos/gfs.t18z.pgrb2.0p25.f001?x-id=GetObject",
+                    "kind": "virtual_source",
+                    "request_headers": {
+                      "Range": "bytes=412361275-412871617"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 510343,
+                    "etag": "\"e34ad009db6f93f450ad0589e38a54e7\"",
+                    "content_range": "bytes 412361275-412871617/530558399",
+                    "sha256": "790ceaa3009a92625e6b6595a830852687e49a082cb25ebc27e6644190d77e44",
+                    "wall_seconds": 0.4080395409837365
+                  },
+                  {
+                    "stage": "virtual:regional_24_hours:0",
+                    "method": "GET",
+                    "url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20261025/18/atmos/gfs.t18z.pgrb2.0p25.f004?x-id=GetObject",
+                    "kind": "virtual_source",
+                    "request_headers": {
+                      "Range": "bytes=415001408-415872350"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 870943,
+                    "etag": "\"ed3ef9afebbc0b6f1569edfeacab6c25\"",
+                    "content_range": "bytes 415001408-415872350/538730932",
+                    "sha256": "fa384e22c5738c8f42b2ac725f2de4b0b38593d4bb345e9fdf4c43b9d9bb83e6",
+                    "wall_seconds": 0.3273190410109237
+                  },
+                  {
+                    "stage": "virtual:regional_24_hours:0",
+                    "method": "GET",
+                    "url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20261025/18/atmos/gfs.t18z.pgrb2.0p25.f003?x-id=GetObject",
+                    "kind": "virtual_source",
+                    "request_headers": {
+                      "Range": "bytes=414620363-415127717"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 507355,
+                    "etag": "\"7740090b46567bfeec9e4d6fc94f1068\"",
+                    "content_range": "bytes 414620363-415127717/536901627",
+                    "sha256": "e31a334914b0cd6835ba3769c066ff2cd7929ce8e023f6bbb83989c5182cd8cf",
+                    "wall_seconds": 0.34950941702118143
+                  },
+                  {
+                    "stage": "virtual:regional_24_hours:0",
+                    "method": "GET",
+                    "url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20261025/18/atmos/gfs.t18z.pgrb2.0p25.f005?x-id=GetObject",
+                    "kind": "virtual_source",
+                    "request_headers": {
+                      "Range": "bytes=415060887-415931482"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 870596,
+                    "etag": "\"735e22a360d1a05c78cfc215ab56e05e\"",
+                    "content_range": "bytes 415060887-415931482/539463952",
+                    "sha256": "1c92b7217a189a51d7fd9606583ec42187a99d413aca843f3b5ef16bf63cfb7a",
+                    "wall_seconds": 0.3195616659941152
+                  }
+                ]
+              },
+              "values": {
+                "shape": [
+                  24,
+                  2,
+                  2
+                ],
+                "dtype": "float64",
+                "logical_bytes": 768,
+                "sha256": "9052068c6be51e72b572ff9294bd0cca7234335c22c3d275ee46278c3f0c0b08",
+                "finite_values": 96,
+                "nan_values": 0,
+                "min": 16.237910156250052,
+                "max": 22.000566406250016,
+                "first_values": [
+                  20.150996093750052,
+                  21.04099609375004,
+                  20.30099609375003,
+                  21.420996093750034,
+                  19.33757812500005,
+                  20.497578125000018,
+                  20.167578125000034,
+                  20.207578125000055,
+                  19.802402343750032,
+                  20.072402343750014,
+                  19.972402343750048,
+                  20.122402343750025,
+                  19.614394531250014,
+                  19.854394531250023,
+                  19.53439453125003,
+                  20.004394531250057,
+                  19.354863281250005,
+                  19.964863281250018,
+                  19.194863281250036,
+                  19.934863281250045,
+                  19.262539062500025,
+                  19.692539062500032,
+                  19.15253906250001,
+                  19.68253906250004
+                ]
+              }
+            },
+            {
+              "trial": 1,
+              "session_cache": "retained; repeated payload read",
+              "wall_seconds": 1.0181478750309907,
+              "transport": {
+                "response_body_bytes": 18408814,
+                "http_operations": 24,
+                "events": [
+                  {
+                    "stage": "virtual:regional_24_hours:1",
+                    "method": "GET",
+                    "url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20261025/06/atmos/gfs.t06z.pgrb2.0p25.f000?x-id=GetObject",
+                    "kind": "virtual_source",
+                    "request_headers": {
+                      "Range": "bytes=409015625-409888807"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 873183,
+                    "etag": "\"ab5833efcdb639f0c129f075c761d079\"",
+                    "content_range": "bytes 409015625-409888807/500264622",
+                    "sha256": "ace918717e52215eaf76f58635f72c429f6372c463ab1cf17b6eb41e01034571",
+                    "wall_seconds": 0.29010170797118917
+                  },
+                  {
+                    "stage": "virtual:regional_24_hours:1",
+                    "method": "GET",
+                    "url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20261025/06/atmos/gfs.t06z.pgrb2.0p25.f003?x-id=GetObject",
+                    "kind": "virtual_source",
+                    "request_headers": {
+                      "Range": "bytes=411986707-412860990"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 874284,
+                    "etag": "\"83a0178ce4aa66c15296bee17a34be1a\"",
+                    "content_range": "bytes 411986707-412860990/534535732",
+                    "sha256": "89df357dbac03b35fc69ab312e1eec3133041c7765d23e4044f2529cd5af2be1",
+                    "wall_seconds": 0.30085449997568503
+                  },
+                  {
+                    "stage": "virtual:regional_24_hours:1",
+                    "method": "GET",
+                    "url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20261025/00/atmos/gfs.t00z.pgrb2.0p25.f000?x-id=GetObject",
+                    "kind": "virtual_source",
+                    "request_headers": {
+                      "Range": "bytes=420702269-421575164"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 872896,
+                    "etag": "\"28fcd45367375bc20f584f4855624ede\"",
+                    "content_range": "bytes 420702269-421575164/513443477",
+                    "sha256": "1babdd36cab0df3f0d05060d51b7829a0cf453aa13af4217f0524578df305556",
+                    "wall_seconds": 0.35839895805111155
+                  },
+                  {
+                    "stage": "virtual:regional_24_hours:1",
+                    "method": "GET",
+                    "url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20261025/00/atmos/gfs.t00z.pgrb2.0p25.f004?x-id=GetObject",
+                    "kind": "virtual_source",
+                    "request_headers": {
+                      "Range": "bytes=415134770-416004284"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 869515,
+                    "etag": "\"34b254567bc28a5527f08e7c6f22921c\"",
+                    "content_range": "bytes 415134770-416004284/537834372",
+                    "sha256": "28f0bb10b3c62a4b9c9d14c8db27774385dbde592d7ed26c2af6b917e9c6073b",
+                    "wall_seconds": 0.3971460839966312
+                  },
+                  {
+                    "stage": "virtual:regional_24_hours:1",
+                    "method": "GET",
+                    "url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20261025/00/atmos/gfs.t00z.pgrb2.0p25.f001?x-id=GetObject",
+                    "kind": "virtual_source",
+                    "request_headers": {
+                      "Range": "bytes=415723921-416595558"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 871638,
+                    "etag": "\"295be9c2966421d418265d09848096ee\"",
+                    "content_range": "bytes 415723921-416595558/536601381",
+                    "sha256": "24d881e75afb21f314a84a7d20599f2e7e148cf25bc44272d98e355117b56584",
+                    "wall_seconds": 0.43025845900410786
+                  },
+                  {
+                    "stage": "virtual:regional_24_hours:1",
+                    "method": "GET",
+                    "url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20261025/06/atmos/gfs.t06z.pgrb2.0p25.f002?x-id=GetObject",
+                    "kind": "virtual_source",
+                    "request_headers": {
+                      "Range": "bytes=412165901-413039273"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 873373,
+                    "etag": "\"7820e3c7630220e7e33be50d106abc2a\"",
+                    "content_range": "bytes 412165901-413039273/531783085",
+                    "sha256": "41b58599297714dc4b40609e49672a5da9336fcb4082f8c264270698fa9ae9c4",
+                    "wall_seconds": 0.4334422079846263
+                  },
+                  {
+                    "stage": "virtual:regional_24_hours:1",
+                    "method": "GET",
+                    "url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20261025/00/atmos/gfs.t00z.pgrb2.0p25.f002?x-id=GetObject",
+                    "kind": "virtual_source",
+                    "request_headers": {
+                      "Range": "bytes=414360944-415231964"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 871021,
+                    "etag": "\"78df281499a0901c4ab67cd790b988ab\"",
+                    "content_range": "bytes 414360944-415231964/536550503",
+                    "sha256": "d49bc30b1771c5fb6139455c195060a2d109500177bde5af285207bcd7a2b48a",
+                    "wall_seconds": 0.4511622919817455
+                  },
+                  {
+                    "stage": "virtual:regional_24_hours:1",
+                    "method": "GET",
+                    "url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20261025/00/atmos/gfs.t00z.pgrb2.0p25.f005?x-id=GetObject",
+                    "kind": "virtual_source",
+                    "request_headers": {
+                      "Range": "bytes=413856942-414726260"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 869319,
+                    "etag": "\"01ae29ec75422b679bf04a49fa7f611e\"",
+                    "content_range": "bytes 413856942-414726260/535128091",
+                    "sha256": "3f5614f31cb1401d4e00481f2338b624e45b924dda348807fc268f36de0179bf",
+                    "wall_seconds": 0.4618590830359608
+                  },
+                  {
+                    "stage": "virtual:regional_24_hours:1",
+                    "method": "GET",
+                    "url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20261025/00/atmos/gfs.t00z.pgrb2.0p25.f003?x-id=GetObject",
+                    "kind": "virtual_source",
+                    "request_headers": {
+                      "Range": "bytes=414225312-415095358"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 870047,
+                    "etag": "\"e08e9aefebf4ce697e54750c7005b3d0\"",
+                    "content_range": "bytes 414225312-415095358/534566285",
+                    "sha256": "cf2a1c95423aa3aaa7a5aa8eff441656c92d550d85639d8e6ba971ddd19cff04",
+                    "wall_seconds": 0.4729902080143802
+                  },
+                  {
+                    "stage": "virtual:regional_24_hours:1",
+                    "method": "GET",
+                    "url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20261025/06/atmos/gfs.t06z.pgrb2.0p25.f001?x-id=GetObject",
+                    "kind": "virtual_source",
+                    "request_headers": {
+                      "Range": "bytes=410701200-411575092"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 873893,
+                    "etag": "\"b1dfca6b1280f1761833a14fbab15125\"",
+                    "content_range": "bytes 410701200-411575092/527999507",
+                    "sha256": "d7f9bda4ea810b10fbb30a2c219fb1e5ca3611a588ae2dfa0031e3c55a59d176",
+                    "wall_seconds": 0.4866487920517102
+                  },
+                  {
+                    "stage": "virtual:regional_24_hours:1",
+                    "method": "GET",
+                    "url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20261025/06/atmos/gfs.t06z.pgrb2.0p25.f004?x-id=GetObject",
+                    "kind": "virtual_source",
+                    "request_headers": {
+                      "Range": "bytes=411847494-412719514"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 872021,
+                    "etag": "\"521ce3e43ca8877f0a5a2c08bfa5facc\"",
+                    "content_range": "bytes 411847494-412719514/532186211",
+                    "sha256": "48f6daf128a204cdbe3338101ccdba27fb65501a0d8d435ad675100073a77bce",
+                    "wall_seconds": 0.26650495803914964
+                  },
+                  {
+                    "stage": "virtual:regional_24_hours:1",
+                    "method": "GET",
+                    "url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20261025/06/atmos/gfs.t06z.pgrb2.0p25.f005?x-id=GetObject",
+                    "kind": "virtual_source",
+                    "request_headers": {
+                      "Range": "bytes=413351345-414228207"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 876863,
+                    "etag": "\"d13b42195a94904ff4cae8a9604a8aa7\"",
+                    "content_range": "bytes 413351345-414228207/536513922",
+                    "sha256": "167cef02e6b3d63da8d0e06b238d16e17312f2e622c6b70881da9071151cb0bb",
+                    "wall_seconds": 0.2861681249924004
+                  },
+                  {
+                    "stage": "virtual:regional_24_hours:1",
+                    "method": "GET",
+                    "url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20261025/12/atmos/gfs.t12z.pgrb2.0p25.f001?x-id=GetObject",
+                    "kind": "virtual_source",
+                    "request_headers": {
+                      "Range": "bytes=411939500-412814137"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 874638,
+                    "etag": "\"c3c7bf06610dd1bf2dbfd6cc1a029d69\"",
+                    "content_range": "bytes 411939500-412814137/530119211",
+                    "sha256": "ec11403d81db27833d46a93af17cf44b1da7463ba84ff372336a578305d104c5",
+                    "wall_seconds": 0.25854754203464836
+                  },
+                  {
+                    "stage": "virtual:regional_24_hours:1",
+                    "method": "GET",
+                    "url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20261025/12/atmos/gfs.t12z.pgrb2.0p25.f000?x-id=GetObject",
+                    "kind": "virtual_source",
+                    "request_headers": {
+                      "Range": "bytes=408574556-409452748"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 878193,
+                    "etag": "\"a3b8a6bdc867ce6457bbcb65ec74eb8a\"",
+                    "content_range": "bytes 408574556-409452748/498422407",
+                    "sha256": "0b1b5d8f40833b8912336bb8868f97e0619e000990a26042f4c2009d1f67f23d",
+                    "wall_seconds": 0.30818966700462624
+                  },
+                  {
+                    "stage": "virtual:regional_24_hours:1",
+                    "method": "GET",
+                    "url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20261025/12/atmos/gfs.t12z.pgrb2.0p25.f003?x-id=GetObject",
+                    "kind": "virtual_source",
+                    "request_headers": {
+                      "Range": "bytes=413884678-414394322"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 509645,
+                    "etag": "\"d46ad6c8a6f951d364db2f485a9d5fe1\"",
+                    "content_range": "bytes 413884678-414394322/534147268",
+                    "sha256": "195235990d49454f17de9d11dbdfcd787305c5f0cf950a3daf4c0353c4bbbf31",
+                    "wall_seconds": 0.23784899996826425
+                  },
+                  {
+                    "stage": "virtual:regional_24_hours:1",
+                    "method": "GET",
+                    "url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20261025/18/atmos/gfs.t18z.pgrb2.0p25.f000?x-id=GetObject",
+                    "kind": "virtual_source",
+                    "request_headers": {
+                      "Range": "bytes=412843023-413355692"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 512670,
+                    "etag": "\"f3c71eea6a646d02feac507c56d3455d\"",
+                    "content_range": "bytes 412843023-413355692/505209753",
+                    "sha256": "b52617659d6b8021ddea679b2d4b66318c3cf3ffcf5bfdf3164e277d506b058a",
+                    "wall_seconds": 0.32277945801615715
+                  },
+                  {
+                    "stage": "virtual:regional_24_hours:1",
+                    "method": "GET",
+                    "url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20261025/12/atmos/gfs.t12z.pgrb2.0p25.f004?x-id=GetObject",
+                    "kind": "virtual_source",
+                    "request_headers": {
+                      "Range": "bytes=415015892-415525735"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 509844,
+                    "etag": "\"158471ed277d3622a6ab73ba5d5b4c80\"",
+                    "content_range": "bytes 415015892-415525735/536077347",
+                    "sha256": "8872c0a98bc90c2143e9ef4ee063c52bce822cd78eff99380077d2e2ad477350",
+                    "wall_seconds": 0.3580166249885224
+                  },
+                  {
+                    "stage": "virtual:regional_24_hours:1",
+                    "method": "GET",
+                    "url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20261025/12/atmos/gfs.t12z.pgrb2.0p25.f002?x-id=GetObject",
+                    "kind": "virtual_source",
+                    "request_headers": {
+                      "Range": "bytes=411687570-412561938"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 874369,
+                    "etag": "\"b9042a4a76aa9cb5cb72ea28a64abfbe\"",
+                    "content_range": "bytes 411687570-412561938/531587315",
+                    "sha256": "66d586a4679ccd71a522fee61b392fc9cc73b521092f4880daac36d08a29457a",
+                    "wall_seconds": 0.3791797500452958
+                  },
+                  {
+                    "stage": "virtual:regional_24_hours:1",
+                    "method": "GET",
+                    "url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20261025/12/atmos/gfs.t12z.pgrb2.0p25.f005?x-id=GetObject",
+                    "kind": "virtual_source",
+                    "request_headers": {
+                      "Range": "bytes=418350027-418862605"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 512579,
+                    "etag": "\"ccf04e1da46f9677f975b1eb8b0bd24b\"",
+                    "content_range": "bytes 418350027-418862605/540962488",
+                    "sha256": "f1ea9e88010cf569210738e12e281a2f61a5cfa8e03027c694642c1e37317502",
+                    "wall_seconds": 0.35739045799709857
+                  },
+                  {
+                    "stage": "virtual:regional_24_hours:1",
+                    "method": "GET",
+                    "url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20261025/18/atmos/gfs.t18z.pgrb2.0p25.f002?x-id=GetObject",
+                    "kind": "virtual_source",
+                    "request_headers": {
+                      "Range": "bytes=413500168-414009753"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 509586,
+                    "etag": "\"f3475116898eee2b07784a60b3a27906\"",
+                    "content_range": "bytes 413500168-414009753/533914275",
+                    "sha256": "dce47ea047da6275cc72623b62cfa1880b1a893c528c7a3d30e6205c0119549a",
+                    "wall_seconds": 0.2795695000095293
+                  },
+                  {
+                    "stage": "virtual:regional_24_hours:1",
+                    "method": "GET",
+                    "url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20261025/18/atmos/gfs.t18z.pgrb2.0p25.f001?x-id=GetObject",
+                    "kind": "virtual_source",
+                    "request_headers": {
+                      "Range": "bytes=412361275-412871617"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 510343,
+                    "etag": "\"e34ad009db6f93f450ad0589e38a54e7\"",
+                    "content_range": "bytes 412361275-412871617/530558399",
+                    "sha256": "790ceaa3009a92625e6b6595a830852687e49a082cb25ebc27e6644190d77e44",
+                    "wall_seconds": 0.3627255419851281
+                  },
+                  {
+                    "stage": "virtual:regional_24_hours:1",
+                    "method": "GET",
+                    "url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20261025/18/atmos/gfs.t18z.pgrb2.0p25.f003?x-id=GetObject",
+                    "kind": "virtual_source",
+                    "request_headers": {
+                      "Range": "bytes=414620363-415127717"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 507355,
+                    "etag": "\"7740090b46567bfeec9e4d6fc94f1068\"",
+                    "content_range": "bytes 414620363-415127717/536901627",
+                    "sha256": "e31a334914b0cd6835ba3769c066ff2cd7929ce8e023f6bbb83989c5182cd8cf",
+                    "wall_seconds": 0.2894406659761444
+                  },
+                  {
+                    "stage": "virtual:regional_24_hours:1",
+                    "method": "GET",
+                    "url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20261025/18/atmos/gfs.t18z.pgrb2.0p25.f005?x-id=GetObject",
+                    "kind": "virtual_source",
+                    "request_headers": {
+                      "Range": "bytes=415060887-415931482"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 870596,
+                    "etag": "\"735e22a360d1a05c78cfc215ab56e05e\"",
+                    "content_range": "bytes 415060887-415931482/539463952",
+                    "sha256": "1c92b7217a189a51d7fd9606583ec42187a99d413aca843f3b5ef16bf63cfb7a",
+                    "wall_seconds": 0.3043269999907352
+                  },
+                  {
+                    "stage": "virtual:regional_24_hours:1",
+                    "method": "GET",
+                    "url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20261025/18/atmos/gfs.t18z.pgrb2.0p25.f004?x-id=GetObject",
+                    "kind": "virtual_source",
+                    "request_headers": {
+                      "Range": "bytes=415001408-415872350"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 870943,
+                    "etag": "\"ed3ef9afebbc0b6f1569edfeacab6c25\"",
+                    "content_range": "bytes 415001408-415872350/538730932",
+                    "sha256": "fa384e22c5738c8f42b2ac725f2de4b0b38593d4bb345e9fdf4c43b9d9bb83e6",
+                    "wall_seconds": 0.32717995799612254
+                  }
+                ]
+              },
+              "values": {
+                "shape": [
+                  24,
+                  2,
+                  2
+                ],
+                "dtype": "float64",
+                "logical_bytes": 768,
+                "sha256": "9052068c6be51e72b572ff9294bd0cca7234335c22c3d275ee46278c3f0c0b08",
+                "finite_values": 96,
+                "nan_values": 0,
+                "min": 16.237910156250052,
+                "max": 22.000566406250016,
+                "first_values": [
+                  20.150996093750052,
+                  21.04099609375004,
+                  20.30099609375003,
+                  21.420996093750034,
+                  19.33757812500005,
+                  20.497578125000018,
+                  20.167578125000034,
+                  20.207578125000055,
+                  19.802402343750032,
+                  20.072402343750014,
+                  19.972402343750048,
+                  20.122402343750025,
+                  19.614394531250014,
+                  19.854394531250023,
+                  19.53439453125003,
+                  20.004394531250057,
+                  19.354863281250005,
+                  19.964863281250018,
+                  19.194863281250036,
+                  19.934863281250045,
+                  19.262539062500025,
+                  19.692539062500032,
+                  19.15253906250001,
+                  19.68253906250004
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "regional_map_101",
+          "index_start": [
+            48072,
+            200,
+            300
+          ],
+          "index_count": [
+            1,
+            101,
+            101
+          ],
+          "selected_coordinates": {
+            "time": [
+              1792886400
+            ],
+            "latitude": [
+              40.0,
+              39.75,
+              39.5,
+              39.25,
+              39.0,
+              38.75,
+              38.5,
+              38.25,
+              38.0,
+              37.75,
+              37.5,
+              37.25,
+              37.0,
+              36.75,
+              36.5,
+              36.25,
+              36.0,
+              35.75,
+              35.5,
+              35.25,
+              35.0,
+              34.75,
+              34.5,
+              34.25,
+              34.0,
+              33.75,
+              33.5,
+              33.25,
+              33.0,
+              32.75,
+              32.5,
+              32.25,
+              32.0,
+              31.75,
+              31.5,
+              31.25,
+              31.0,
+              30.75,
+              30.5,
+              30.25,
+              30.0,
+              29.75,
+              29.5,
+              29.25,
+              29.0,
+              28.75,
+              28.5,
+              28.25,
+              28.0,
+              27.75,
+              27.5,
+              27.25,
+              27.0,
+              26.75,
+              26.5,
+              26.25,
+              26.0,
+              25.75,
+              25.5,
+              25.25,
+              25.0,
+              24.75,
+              24.5,
+              24.25,
+              24.0,
+              23.75,
+              23.5,
+              23.25,
+              23.0,
+              22.75,
+              22.5,
+              22.25,
+              22.0,
+              21.75,
+              21.5,
+              21.25,
+              21.0,
+              20.75,
+              20.5,
+              20.25,
+              20.0,
+              19.75,
+              19.5,
+              19.25,
+              19.0,
+              18.75,
+              18.5,
+              18.25,
+              18.0,
+              17.75,
+              17.5,
+              17.25,
+              17.0,
+              16.75,
+              16.5,
+              16.25,
+              16.0,
+              15.75,
+              15.5,
+              15.25,
+              15.0
+            ],
+            "longitude": [
+              -105.0,
+              -104.75,
+              -104.5,
+              -104.25,
+              -104.0,
+              -103.75,
+              -103.5,
+              -103.25,
+              -103.0,
+              -102.75,
+              -102.5,
+              -102.25,
+              -102.0,
+              -101.75,
+              -101.5,
+              -101.25,
+              -101.0,
+              -100.75,
+              -100.5,
+              -100.25,
+              -100.0,
+              -99.75,
+              -99.5,
+              -99.25,
+              -99.0,
+              -98.75,
+              -98.5,
+              -98.25,
+              -98.0,
+              -97.75,
+              -97.5,
+              -97.25,
+              -97.0,
+              -96.75,
+              -96.5,
+              -96.25,
+              -96.0,
+              -95.75,
+              -95.5,
+              -95.25,
+              -95.0,
+              -94.75,
+              -94.5,
+              -94.25,
+              -94.0,
+              -93.75,
+              -93.5,
+              -93.25,
+              -93.0,
+              -92.75,
+              -92.5,
+              -92.25,
+              -92.0,
+              -91.75,
+              -91.5,
+              -91.25,
+              -91.0,
+              -90.75,
+              -90.5,
+              -90.25,
+              -90.0,
+              -89.75,
+              -89.5,
+              -89.25,
+              -89.0,
+              -88.75,
+              -88.5,
+              -88.25,
+              -88.0,
+              -87.75,
+              -87.5,
+              -87.25,
+              -87.0,
+              -86.75,
+              -86.5,
+              -86.25,
+              -86.0,
+              -85.75,
+              -85.5,
+              -85.25,
+              -85.0,
+              -84.75,
+              -84.5,
+              -84.25,
+              -84.0,
+              -83.75,
+              -83.5,
+              -83.25,
+              -83.0,
+              -82.75,
+              -82.5,
+              -82.25,
+              -82.0,
+              -81.75,
+              -81.5,
+              -81.25,
+              -81.0,
+              -80.75,
+              -80.5,
+              -80.25,
+              -80.0
+            ]
+          },
+          "repeats": [
+            {
+              "trial": 0,
+              "session_cache": "retained; first payload read",
+              "wall_seconds": 0.18430095800431445,
+              "transport": {
+                "response_body_bytes": 872896,
+                "http_operations": 1,
+                "events": [
+                  {
+                    "stage": "virtual:regional_map_101:0",
+                    "method": "GET",
+                    "url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20261025/00/atmos/gfs.t00z.pgrb2.0p25.f000?x-id=GetObject",
+                    "kind": "virtual_source",
+                    "request_headers": {
+                      "Range": "bytes=420702269-421575164"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 872896,
+                    "etag": "\"28fcd45367375bc20f584f4855624ede\"",
+                    "content_range": "bytes 420702269-421575164/513443477",
+                    "sha256": "1babdd36cab0df3f0d05060d51b7829a0cf453aa13af4217f0524578df305556",
+                    "wall_seconds": 0.17254449997562915
+                  }
+                ]
+              },
+              "values": {
+                "shape": [
+                  1,
+                  101,
+                  101
+                ],
+                "dtype": "float64",
+                "logical_bytes": 81608,
+                "sha256": "2a40098dbc812f5483bfc9988ede91932d5462b11c773ad54fa8ef82b77a3318",
+                "finite_values": 10201,
+                "nan_values": 0,
+                "min": 1.2909960937500387,
+                "max": 29.670996093750034,
+                "first_values": [
+                  10.270996093750057,
+                  8.570996093750011,
+                  7.490996093750027,
+                  8.110996093750032,
+                  8.370996093750023,
+                  8.270996093750057,
+                  8.190996093750016,
+                  7.510996093750009,
+                  7.80099609375003,
+                  8.150996093750052,
+                  8.05099609375003,
+                  7.84099609375005,
+                  8.380996093750014,
+                  8.450996093750007,
+                  8.020996093750057,
+                  7.910996093750043,
+                  8.140996093750005,
+                  8.240996093750027,
+                  8.870996093750023,
+                  9.940996093750016,
+                  10.680996093750025,
+                  11.360996093750032,
+                  12.120996093750023,
+                  13.240996093750027
+                ]
+              }
+            },
+            {
+              "trial": 1,
+              "session_cache": "retained; repeated payload read",
+              "wall_seconds": 0.24223120900569484,
+              "transport": {
+                "response_body_bytes": 872896,
+                "http_operations": 1,
+                "events": [
+                  {
+                    "stage": "virtual:regional_map_101:1",
+                    "method": "GET",
+                    "url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20261025/00/atmos/gfs.t00z.pgrb2.0p25.f000?x-id=GetObject",
+                    "kind": "virtual_source",
+                    "request_headers": {
+                      "Range": "bytes=420702269-421575164"
+                    },
+                    "status": 206,
+                    "response_body_bytes": 872896,
+                    "etag": "\"28fcd45367375bc20f584f4855624ede\"",
+                    "content_range": "bytes 420702269-421575164/513443477",
+                    "sha256": "1babdd36cab0df3f0d05060d51b7829a0cf453aa13af4217f0524578df305556",
+                    "wall_seconds": 0.23111212498042732
+                  }
+                ]
+              },
+              "values": {
+                "shape": [
+                  1,
+                  101,
+                  101
+                ],
+                "dtype": "float64",
+                "logical_bytes": 81608,
+                "sha256": "2a40098dbc812f5483bfc9988ede91932d5462b11c773ad54fa8ef82b77a3318",
+                "finite_values": 10201,
+                "nan_values": 0,
+                "min": 1.2909960937500387,
+                "max": 29.670996093750034,
+                "first_values": [
+                  10.270996093750057,
+                  8.570996093750011,
+                  7.490996093750027,
+                  8.110996093750032,
+                  8.370996093750023,
+                  8.270996093750057,
+                  8.190996093750016,
+                  7.510996093750009,
+                  7.80099609375003,
+                  8.150996093750052,
+                  8.05099609375003,
+                  7.84099609375005,
+                  8.380996093750014,
+                  8.450996093750007,
+                  8.020996093750057,
+                  7.910996093750043,
+                  8.140996093750005,
+                  8.240996093750027,
+                  8.870996093750023,
+                  9.940996093750016,
+                  10.680996093750025,
+                  11.360996093750032,
+                  12.120996093750023,
+                  13.240996093750027
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "total_response_body_bytes": 40644737
+    }
+  },
+  "comparisons": [
+    {
+      "name": "regional_one_time",
+      "same_nan_mask": true,
+      "max_absolute_difference_celsius": 0.05099609375002956,
+      "equal_after_virtual_cast_float32": false,
+      "allclose_atol_0.0001_rtol_0": false
+    },
+    {
+      "name": "regional_24_hours",
+      "same_nan_mask": true,
+      "max_absolute_difference_celsius": 0.06208984374995907,
+      "equal_after_virtual_cast_float32": false,
+      "allclose_atol_0.0001_rtol_0": false
+    },
+    {
+      "name": "regional_map_101",
+      "same_nan_mask": true,
+      "max_absolute_difference_celsius": 0.060996093750020464,
+      "equal_after_virtual_cast_float32": false,
+      "allclose_atol_0.0001_rtol_0": false
+    }
+  ],
+  "measurement_limits": [
+    "Response bodies only: excludes request/response headers, TCP/TLS and DNS.",
+    "Loopback forwarding adds latency; compare bytes and selected values, not absolute production latency.",
+    "Cold means a fresh Python repository/session and its in-process caches, not a cold provider/CDN cache.",
+    "Warm repeats keep that session; Zarr may still re-fetch payloads because no decoded-value cache is installed.",
+    "Only selected samples are compared; shared coordinates/names do not prove archive-wide equivalence.",
+    "Materialized Float32 and virtual Float64 are different stored representations; tolerances are reported, never silently treated as bit equal."
+  ],
+  "per_product_response_body_budget_bytes": 134217728
+}

@@ -8,6 +8,11 @@ Tile-Ripper can subset three specific public Zarr stores: a low-resolution ERA5 
 | NASA POWER IMERG daily spatial store (Zarr v2) | [`examples/imerg.json`](../../examples/imerg.json) | `IMERG_PRECTOT` (mm/day), `IMERG_PRECLIQUID_PROB` (%) |
 | dynamical.org NOAA GFS analysis v0.1.0 (Zarr v3), a derived dataset, not NOAA's official GRIB2 archive | [`examples/zarr-v3-gfs.json`](../../examples/zarr-v3-gfs.json) | `temperature_2m` (°C) |
 
+Dynamical's current catalog also publishes Icechunk repositories. They use the
+separate opt-in [Icechunk workflow](../icechunk/workflow.md), with explicit
+snapshot selection and distinct materialized/virtual source profiles. The
+legacy plain-Zarr example here does not imply support for those repositories.
+
 ## Before you start
 
 Uses the build from [Installation](../installation.md). Commands assume `tile-ripper` is on your PATH; from a source checkout use `./target/release/tile-ripper`. Run them from the repository root, because `examples/...` paths are relative to it.

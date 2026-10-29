@@ -241,7 +241,7 @@ fn run() -> Result<()> {
                     writeln!(
                         out,
                         "{}",
-                        serde_json::json!({"type":"chunk","asset_id":c.asset_id,"node_id":c.node_id,"variable":c.variable,"datetime":c.datetime,"indices":c.indices,"window":c.window,"crs":c.crs,"transform":c.transform,"nodata":c.nodata,"scale":c.scale,"offset":c.offset,"dtype":match &c.pixels {tile_ripper::Pixels::Int8(_)=>"int8",tile_ripper::Pixels::UInt8(_)=>"uint8",tile_ripper::Pixels::UInt16(_)=>"uint16",tile_ripper::Pixels::Int16(_)=>"int16",tile_ripper::Pixels::UInt32(_)=>"uint32",tile_ripper::Pixels::Float32(_)=>"float32"},"bytes":c.pixels.byte_len(),"valid_pixels":c.validity().filter(|v|*v).count(),"seconds":started.elapsed().as_secs_f64()})
+                        serde_json::json!({"type":"chunk","asset_id":c.asset_id,"node_id":c.node_id,"variable":c.variable,"datetime":c.datetime,"indices":c.indices,"window":c.window,"crs":c.crs,"transform":c.transform,"nodata":c.nodata,"scale":c.scale,"offset":c.offset,"dtype":match &c.pixels {tile_ripper::Pixels::Int8(_)=>"int8",tile_ripper::Pixels::UInt8(_)=>"uint8",tile_ripper::Pixels::UInt16(_)=>"uint16",tile_ripper::Pixels::Int16(_)=>"int16",tile_ripper::Pixels::UInt32(_)=>"uint32",tile_ripper::Pixels::Float32(_)=>"float32",tile_ripper::Pixels::Float64(_)=>"float64"},"bytes":c.pixels.byte_len(),"valid_pixels":c.validity().filter(|v|*v).count(),"seconds":started.elapsed().as_secs_f64()})
                     )?;
                 }
                 let report = stream.finish()?;
@@ -439,9 +439,10 @@ fn stream_quality(
                     tile_ripper::Pixels::Int16(v) => v.iter().flat_map(|v| v.to_le_bytes()).collect(),
                     tile_ripper::Pixels::UInt32(v) => v.iter().flat_map(|v| v.to_le_bytes()).collect(),
                     tile_ripper::Pixels::Float32(v) => v.iter().flat_map(|v| v.to_le_bytes()).collect(),
+                    tile_ripper::Pixels::Float64(v) => v.iter().flat_map(|v| v.to_le_bytes()).collect(),
                 };
                 v["encoding"] = "base64-little-endian".into();
-                v["dtype"] = match &c.pixels {tile_ripper::Pixels::Int8(_)=>"int8",tile_ripper::Pixels::UInt8(_)=>"uint8",tile_ripper::Pixels::UInt16(_)=>"uint16",tile_ripper::Pixels::Int16(_)=>"int16",tile_ripper::Pixels::UInt32(_)=>"uint32",tile_ripper::Pixels::Float32(_)=>"float32"}.into();
+                v["dtype"] = match &c.pixels {tile_ripper::Pixels::Int8(_)=>"int8",tile_ripper::Pixels::UInt8(_)=>"uint8",tile_ripper::Pixels::UInt16(_)=>"uint16",tile_ripper::Pixels::Int16(_)=>"int16",tile_ripper::Pixels::UInt32(_)=>"uint32",tile_ripper::Pixels::Float32(_)=>"float32",tile_ripper::Pixels::Float64(_)=>"float64"}.into();
                 v["values"] = base64::engine::general_purpose::STANDARD.encode(bytes).into();
                 v["source_mask"] = base64::engine::general_purpose::STANDARD.encode(c.validity().map(u8::from).collect::<Vec<_>>()).into();
             }

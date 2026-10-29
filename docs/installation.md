@@ -23,7 +23,8 @@ The rest of this page uses the complete native build. The others are under
 
 ## Prerequisites
 
-- **Rust 1.91 or newer (tested with 1.92).** Install it with
+- **Rust 1.91 or newer (tested with 1.92).** The optional `icechunk` feature
+  requires Rust 1.91.1 or newer; use 1.92 for the full validation matrix. Install Rust with
   [rustup](https://rustup.rs). A Linux distribution's packaged Cargo may be too
   old for this lockfile; do not regenerate `Cargo.lock` to work around that.
 - **A C/C++ compiler, CMake, pkg-config and CA certificates.** Bundled Zarr

@@ -18,7 +18,7 @@ use zarrs::{
 };
 
 pub(crate) fn requires_zarr_bindings(r: &Request) -> bool {
-    matches!(&r.source,Source::Assets{assets} if assets.iter().any(|a|a.format == Format::Hdf5 || a.format == Format::ZarrV3 || (a.format == Format::ZarrV2 && cog::remote(&a.locator))))
+    matches!(&r.source,Source::Assets{assets} if assets.iter().any(|a|a.format == Format::Hdf5 || a.format.is_v3() || (a.format == Format::ZarrV2 && cog::remote(&a.locator))))
 }
 #[derive(Default)]
 pub(crate) struct Sources {
@@ -93,10 +93,27 @@ impl Sources {
         let metadata_budget = Arc::new(MetadataBudget::new(r.budget.buffer_bytes / 2));
         if let Source::Assets { assets } = &r.source {
             for a in assets.iter().filter(|a| {
-                a.format == Format::ZarrV3
-                    || (a.format == Format::ZarrV2 && cog::remote(&a.locator))
+                a.format.is_v3() || (a.format == Format::ZarrV2 && cog::remote(&a.locator))
             }) {
-                if a.format == Format::ZarrV3 && !cog::remote(&a.locator) {
+                if a.format == Format::Icechunk {
+                    #[cfg(feature = "icechunk")]
+                    {
+                        sources.objects.insert(
+                            a.id.clone(),
+                            Arc::new(Objects::Icechunk(crate::icechunk_source::Binding::open(
+                                a,
+                                &r.budget,
+                                metadata_budget.clone(),
+                            )?)),
+                        );
+                        continue;
+                    }
+                    #[cfg(not(feature = "icechunk"))]
+                    return fail(
+                        "build with the icechunk feature to acquire Icechunk repositories",
+                    );
+                }
+                if a.format.is_v3() && !cog::remote(&a.locator) {
                     if a.etag.is_some() {
                         return fail("local Zarr cannot use an HTTP ETag");
                     }
@@ -126,12 +143,12 @@ impl Sources {
                     client.clone(),
                     metadata_budget.clone(),
                 )?;
-                http.validate_data = a.format == Format::ZarrV3;
+                http.validate_data = a.format.is_v3();
                 if let Some(cap) = range_cap {
                     http.range_cap = cap;
                 }
                 let source = Arc::new(Objects::Http(http));
-                let source = if a.format == Format::ZarrV3 {
+                let source = if a.format.is_v3() {
                     crate::zarr_v3::metadata_view(source, &r.budget)?
                 } else {
                     crate::zarr_acquire::metadata_view(source, &r.budget)?
@@ -182,6 +199,7 @@ impl Sources {
         self.v3.validate()?;
         self.phase("prepare_validation");
         for s in self.objects.values() {
+            s.icechunk_validate(true)?;
             if let Some(h) = s.http() {
                 h.seal()?;
             }
@@ -201,6 +219,7 @@ impl Sources {
         self.hdf5.validate_cancellable(_cancelled)?;
         self.v3.validate()?;
         for s in self.objects.values() {
+            s.icechunk_validate(false)?;
             if let Some(h) = s.http() {
                 h.validate()?;
             }
@@ -211,6 +230,7 @@ impl Sources {
         #[cfg(feature = "native-hdf5")]
         self.hdf5.phase(phase);
         for source in self.objects.values() {
+            source.icechunk_phase(phase);
             if let Some(http) = source.http() {
                 let mut state = http.state.lock().unwrap();
                 state.phase = phase;
@@ -228,6 +248,9 @@ impl Sources {
             return serde_json::json!({"native_cog":value});
         }
         self.objects.get(id).map_or(serde_json::Value::Null, |s| {
+            if let Some(snapshot) = s.snapshot() {
+                return snapshot;
+            }
             s.http().map_or(serde_json::Value::Null, |h| {
                 serde_json::json!(h.state.lock().unwrap().versions)
             })
@@ -242,7 +265,9 @@ impl Sources {
                 .objects
                 .values()
                 .map(|s| {
-                    s.overlay_bytes() + s.http().map_or(0, |h| h.state.lock().unwrap().cached_bytes)
+                    s.overlay_bytes()
+                        + s.http().map_or(0, |h| h.state.lock().unwrap().cached_bytes)
+                        + s.icechunk_prepared_bytes()
                 })
                 .sum::<usize>()
     }
@@ -272,6 +297,11 @@ impl Sources {
             .collect::<BTreeMap<_, _>>());
         #[cfg(feature = "native-hdf5")]
         self.hdf5.add_stats(&mut value);
+        for (id, source) in &self.objects {
+            if let Some(snapshot) = source.snapshot() {
+                value[id] = snapshot;
+            }
+        }
         #[cfg(all(feature = "native-cog", feature = "authenticated-http"))]
         if self.native.transport_reservation().unwrap_or(0) > 0 {
             value["native_cog_authenticated"] = self.native.transport_stats();
@@ -290,7 +320,7 @@ impl MetadataBudget {
             used: AtomicUsize::new(0),
         }
     }
-    fn reserve(&self, bytes: usize) -> bool {
+    pub(crate) fn reserve(&self, bytes: usize) -> bool {
         self.used
             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |used| {
                 used.checked_add(bytes).filter(|next| *next <= self.cap)
@@ -308,12 +338,80 @@ impl MetadataBudget {
 pub(crate) enum Objects {
     Local(FilesystemStore),
     Http(Http),
+    #[cfg(feature = "icechunk")]
+    Icechunk(crate::icechunk_source::Binding),
     Overlay {
         origin: Arc<Objects>,
         entries: BTreeMap<String, Vec<u8>>,
     },
 }
 impl Objects {
+    fn icechunk_prepared_bytes(&self) -> usize {
+        #[cfg(feature = "icechunk")]
+        match self {
+            Self::Icechunk(binding) => return binding.prepared_extra_bytes(),
+            Self::Overlay { origin, .. } => return origin.icechunk_prepared_bytes(),
+            _ => {}
+        }
+        0
+    }
+    #[cfg(feature = "icechunk")]
+    pub(crate) fn physical_cached_bytes(&self) -> usize {
+        self.http()
+            .map_or(0, |http| http.state.lock().unwrap().cached_bytes)
+    }
+    #[cfg(feature = "icechunk")]
+    pub(crate) fn validate_physical(&self, seal: bool) -> Result<()> {
+        if let Some(http) = self.http() {
+            if seal {
+                http.seal()
+            } else {
+                http.validate()
+            }
+        } else {
+            Ok(())
+        }
+    }
+    #[cfg(feature = "icechunk")]
+    pub(crate) fn set_phase(&self, phase: &'static str) {
+        if let Some(http) = self.http() {
+            http.state.lock().unwrap().phase = phase;
+        }
+    }
+    #[cfg(feature = "icechunk")]
+    pub(crate) fn physical_stats(&self) -> serde_json::Value {
+        self.http().map_or(serde_json::Value::Null, |http| {
+            serde_json::json!(http.state.lock().unwrap().stats)
+        })
+    }
+    pub(crate) fn icechunk_validate(&self, seal: bool) -> Result<()> {
+        #[cfg(feature = "icechunk")]
+        match self {
+            Self::Icechunk(binding) => return binding.validate(seal),
+            Self::Overlay { origin, .. } => return origin.icechunk_validate(seal),
+            _ => {}
+        }
+        let _ = seal;
+        Ok(())
+    }
+    pub(crate) fn icechunk_phase(&self, phase: &'static str) {
+        #[cfg(feature = "icechunk")]
+        match self {
+            Self::Icechunk(binding) => binding.phase(phase),
+            Self::Overlay { origin, .. } => origin.icechunk_phase(phase),
+            _ => {}
+        }
+        let _ = phase;
+    }
+    pub(crate) fn snapshot(&self) -> Option<serde_json::Value> {
+        #[cfg(feature = "icechunk")]
+        match self {
+            Self::Icechunk(binding) => return Some(binding.describe()),
+            Self::Overlay { origin, .. } => return origin.snapshot(),
+            _ => {}
+        }
+        None
+    }
     /// Bounded physical ranges for the v3 adapter. V2 keeps its established
     /// whole-object trait behavior, including its accounting and cache policy.
     pub(crate) fn ranges(
@@ -322,6 +420,8 @@ impl Objects {
         ranges: &[s::byte_range::ByteRange],
     ) -> Result<Option<Vec<s::Bytes>>> {
         match self {
+            #[cfg(feature = "icechunk")]
+            Self::Icechunk(binding) => binding.ranges(key, ranges),
             Self::Http(http) => {
                 let size = self
                     .size_key(key)?
@@ -362,9 +462,13 @@ impl Objects {
         }
     }
     pub(crate) fn remote(&self) -> bool {
-        self.http().is_some()
+        self.http().is_some() || self.snapshot().is_some()
     }
     pub(crate) fn identity(&self, key: &str) -> serde_json::Value {
+        #[cfg(feature = "icechunk")]
+        if let Self::Icechunk(binding) = self {
+            return binding.identity(key);
+        }
         self.http().map_or_else(|| serde_json::json!({"kind":"local_pinned_stat"}), |h| {
             serde_json::json!({"url":h.base.join(key).ok().map(|u|u.to_string()),"version":h.state.lock().unwrap().versions.get(key),"authenticated_scope":h.transport.identity()})
         })
@@ -374,6 +478,8 @@ impl Objects {
             Self::Local(store) => Some(store.key_to_fspath(key)),
             Self::Overlay { origin, .. } => origin.local_path(key),
             Self::Http(_) => None,
+            #[cfg(feature = "icechunk")]
+            Self::Icechunk(_) => None,
         }
     }
     fn overlay_bytes(&self) -> usize {
@@ -389,9 +495,15 @@ impl Objects {
             Self::Http(h) => Some(h),
             Self::Overlay { origin, .. } => origin.http(),
             Self::Local(_) => None,
+            #[cfg(feature = "icechunk")]
+            Self::Icechunk(_) => None,
         }
     }
     pub(crate) fn reserve_overlay_cache(&self, bytes: usize) -> Result<()> {
+        #[cfg(feature = "icechunk")]
+        if let Self::Icechunk(binding) = self {
+            return binding.reserve(bytes);
+        }
         if let Some(http) = self.http() {
             if !http.metadata_budget.reserve(bytes) {
                 return fail("aggregate HTTP metadata/coordinate cache exceeds half buffer_bytes");
@@ -453,6 +565,8 @@ impl Objects {
     pub fn size(&self, key: &str) -> Result<Option<u64>> {
         let key = s::StoreKey::new(key)?;
         match self {
+            #[cfg(feature = "icechunk")]
+            Self::Icechunk(binding) => binding.size(&key),
             Self::Http(h) => Ok(h.request(&key, Access::DataHead)?.map(|r| r.0.size)),
             Self::Local(s) => Ok(s.size_key(&key)?),
             Self::Overlay { origin, entries } => {
@@ -466,6 +580,8 @@ impl Objects {
     }
     pub fn sizes(&self, keys: &[String]) -> Result<Vec<Option<u64>>> {
         match self {
+            #[cfg(feature = "icechunk")]
+            Self::Icechunk(_) => keys.iter().map(|key| self.size(key)).collect(),
             Self::Local(_) => keys.iter().map(|key| self.size(key)).collect(),
             Self::Http(http) => http.sizes(keys),
             Self::Overlay { origin, entries } => {
@@ -491,6 +607,10 @@ impl Objects {
 impl ReadableStorageTraits for Objects {
     fn get(&self, key: &s::StoreKey) -> std::result::Result<s::MaybeBytes, s::StorageError> {
         match self {
+            #[cfg(feature = "icechunk")]
+            Self::Icechunk(binding) => binding
+                .get(key)
+                .map_err(|e| s::StorageError::Other(e.to_string())),
             Self::Local(s) => s.get(key),
             Self::Http(h) => h
                 .get(key)
@@ -591,6 +711,8 @@ pub(crate) struct Http {
     state: Mutex<State>,
     metadata_budget: Arc<MetadataBudget>,
     validate_data: bool,
+    expected_etag: Option<String>,
+    expected_modified_before: Option<i64>,
 }
 #[derive(Clone, Copy)]
 enum Access {
@@ -600,7 +722,7 @@ enum Access {
     Range { start: u64, end: u64 },
 }
 impl Http {
-    fn build_client() -> Result<Client> {
+    pub(crate) fn build_client() -> Result<Client> {
         Client::builder()
             .timeout(Duration::from_secs(30))
             .connect_timeout(Duration::from_secs(10))
@@ -610,7 +732,7 @@ impl Http {
             .build()
             .map_err(|_| "cannot initialize HTTP client".into())
     }
-    fn new(
+    pub(crate) fn new(
         url: &str,
         b: &Budget,
         client: Arc<Client>,
@@ -641,7 +763,24 @@ impl Http {
             }),
             metadata_budget,
             validate_data: false,
+            expected_etag: None,
+            expected_modified_before: None,
         })
+    }
+    #[cfg(feature = "icechunk")]
+    pub(crate) fn icechunk_payload(
+        url: &str,
+        budget: &Budget,
+        client: Arc<Client>,
+        metadata: Arc<MetadataBudget>,
+        expected_etag: Option<String>,
+        expected_modified_before: Option<i64>,
+    ) -> Result<Self> {
+        let mut http = Self::new(url, budget, client, metadata)?;
+        http.validate_data = true;
+        http.expected_etag = expected_etag;
+        http.expected_modified_before = expected_modified_before;
+        Ok(http)
     }
     fn get(&self, key: &s::StoreKey) -> Result<s::MaybeBytes> {
         if let Some(b) = self.state.lock().unwrap().cached.get(key.as_str()).cloned() {
@@ -789,6 +928,11 @@ impl Http {
                     }
                 }
             }
+            if known.is_none() {
+                if let Some(etag) = &self.expected_etag {
+                    headers.insert(header::IF_MATCH, etag.parse()?);
+                }
+            }
             let mut retry_after = None;
             let mut status = 0;
             let mut body = Vec::new();
@@ -839,6 +983,26 @@ impl Http {
                     .filter(|v| strong_etag(v))
                     .ok_or("HTTP source requires strong ETags")?
                     .to_owned();
+                if self
+                    .expected_etag
+                    .as_ref()
+                    .is_some_and(|expected| expected != &etag)
+                {
+                    return fail("Icechunk virtual source ETag differs from snapshot reference");
+                }
+                if let Some(expected) = self.expected_modified_before {
+                    let modified = response
+                        .headers()
+                        .get(header::LAST_MODIFIED)
+                        .and_then(|value| value.to_str().ok())
+                        .and_then(|value| chrono::DateTime::parse_from_rfc2822(value).ok())
+                        .ok_or("Icechunk virtual source requires a Last-Modified header")?;
+                    if modified.timestamp() > expected {
+                        return fail(
+                            "Icechunk virtual source changed after its snapshot reference",
+                        );
+                    }
+                }
                 let length = response
                     .headers()
                     .get(header::CONTENT_LENGTH)

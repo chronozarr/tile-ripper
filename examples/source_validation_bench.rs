@@ -36,6 +36,7 @@ mod enabled {
             Pixels::Int16(v) => v.iter().flat_map(|v| v.to_le_bytes()).collect(),
             Pixels::UInt32(v) => v.iter().flat_map(|v| v.to_le_bytes()).collect(),
             Pixels::Float32(v) => v.iter().flat_map(|v| v.to_le_bytes()).collect(),
+            Pixels::Float64(v) => v.iter().flat_map(|v| v.to_le_bytes()).collect(),
         };
         let mask: Vec<u8> = chunk.validity().map(u8::from).collect();
         let digest = |b: &[u8]| {

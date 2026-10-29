@@ -50,6 +50,15 @@ are rejected. Signatures stay in memory. Changed objects, expired signatures and
 explicit fresh plan. Prepared acquisitions never switch provider, and product
 checkpoints remain unsupported. See the [provider workflow, evidence and limits](docs/providers/qualification.md).
 
+Opt-in [Icechunk acquisition](docs/icechunk/workflow.md) adds snapshot-pinned
+`plan` / `stream` / `fetch` for two inspected Dynamical GFS analysis profiles:
+materialized Float32 shards and virtual Float64 GRIB messages. Native values,
+coordinates, source CRS and physical references are retained. Build with
+`--no-default-features --features icechunk`; default features remain unchanged.
+The products have different numerical representations and remain explicit
+source choices. [Measured access patterns and limits](docs/icechunk/reference.md)
+explain when each layout helps and why a small AOI can still read a whole GRIB grid.
+
 The standalone [AlphaEarth GeoZarr prototype](docs/alphaearth/workflow.md) streams bounded rank-four native Int8 embeddings using selective shard ranges and sampled coordinate validation. It preserves the live source’s original `band` dimension and positional channel order. Durable embedding output remains outside this prototype.
 
 Bounded SWOT Raster D discovery now finds candidates by WGS84 bounding box and

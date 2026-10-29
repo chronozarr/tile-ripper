@@ -100,6 +100,7 @@ fn element_bytes(dtype: &str) -> Result<usize> {
         "Byte" | "|u1" => Ok(1),
         "UInt16" | "Int16" | "<u2" | "<i2" => Ok(2),
         "Float32" | "UInt32" | "<f4" | "<u4" => Ok(4),
+        "Float64" | "<f8" => Ok(8),
         _ => Err(format!("unsupported scheduler dtype {dtype}").into()),
     }
 }
@@ -180,13 +181,13 @@ fn tasks(r: &Request, p: &Plan, sources: &crate::storage::Sources) -> Result<Vec
                     continue;
                 }
                 // HTTP sizes are already version-pinned by planning. No probes.
-                let encoded = if a.format == Format::ZarrV3 {
+                let encoded = if a.format.is_v3() {
                     sources.v3.binding(&a.id, path)?.encoded_bytes(indices)?
                 } else {
                     usize::try_from(store.size_key(&StoreKey::new(key)?)?.unwrap_or(0))?
                 };
                 let bytes = native
-                    .checked_mul(2)
+                    .checked_mul(if l.dtype == "<f8" { 5 } else { 2 })
                     .and_then(|n| n.checked_add(encoded.checked_mul(2)?))
                     .and_then(|n| n.checked_add(plane.checked_mul(2)?))
                     .ok_or("working set overflow")?;
@@ -195,7 +196,7 @@ fn tasks(r: &Request, p: &Plan, sources: &crate::storage::Sources) -> Result<Vec
                     nodes: vec![ni],
                     host: host(a)?,
                     bytes,
-                    reader_bytes: if a.format == Format::ZarrV3 {
+                    reader_bytes: if a.format.is_v3() {
                         0
                     } else {
                         coordinates.checked_mul(3).ok_or("reader state overflow")?
@@ -338,7 +339,7 @@ fn coalesce_tasks(
             result.push(first);
             continue;
         };
-        if asset.format != Format::ZarrV3 {
+        if !asset.format.is_v3() {
             result.push(first);
             continue;
         }
@@ -588,11 +589,13 @@ pub(crate) fn execute(
                                             task.native.clone(),
                                         )?,
                                     )),
-                                    Format::ZarrV2 | Format::ZarrV3 => Reader::Zarr(Box::new(
-                                        crate::zarr_acquire::SelectedReader::new(
-                                            r, asset, sources, sel,
-                                        )?,
-                                    )),
+                                    Format::ZarrV2 | Format::ZarrV3 | Format::Icechunk => {
+                                        Reader::Zarr(Box::new(
+                                            crate::zarr_acquire::SelectedReader::new(
+                                                r, asset, sources, sel,
+                                            )?,
+                                        ))
+                                    }
                                 };
                                 reader = Some((task.selected, physical));
                                 report.source_open_seconds += open.elapsed().as_secs_f64();

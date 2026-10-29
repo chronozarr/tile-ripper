@@ -47,6 +47,8 @@ pub mod stream;
 #[cfg(feature = "native-cog")]
 mod native_cog;
 
+#[cfg(feature = "icechunk")]
+mod icechunk_source;
 mod zarr_ranges;
 mod zarr_v3;
 

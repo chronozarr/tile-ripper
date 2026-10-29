@@ -27,7 +27,7 @@ impl RuntimeConfig {
         );
         let has_zarr_v3 = matches!(
             &request.source,
-            Source::Assets { assets } if assets.iter().any(|asset| asset.format == Format::ZarrV3)
+            Source::Assets { assets } if assets.iter().any(|asset| asset.format.is_v3())
         );
         // Nested preparation inherits choices already captured by its caller.
         // A new source kind may additionally need a backend/range policy that

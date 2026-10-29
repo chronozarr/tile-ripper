@@ -48,11 +48,16 @@ pub enum Format {
     Cog,
     ZarrV2,
     ZarrV3,
+    /// Read-only, snapshot-pinned Icechunk repository exposing admitted Zarr v3 arrays.
+    Icechunk,
     Hdf5,
 }
 impl Format {
     pub(crate) fn is_zarr(self) -> bool {
-        matches!(self, Self::ZarrV2 | Self::ZarrV3)
+        matches!(self, Self::ZarrV2 | Self::ZarrV3 | Self::Icechunk)
+    }
+    pub(crate) fn is_v3(self) -> bool {
+        matches!(self, Self::ZarrV3 | Self::Icechunk)
     }
 }
 

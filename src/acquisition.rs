@@ -234,7 +234,26 @@ impl Prepared {
             }
         }
         s += &format!("Estimated logical output value bytes: {} (encoding, coordinates and metadata excluded).\n", self.inspection["output_estimates"]["native_value_bytes"]);
-        s += "Source identities are checked before and after execution; per-object validation is not an atomic dataset snapshot.\n";
+        let snapshots: Vec<_> = self.inspection["sources"]
+            .as_array()
+            .into_iter()
+            .flatten()
+            .filter(|source| source["format"] == "icechunk")
+            .collect();
+        if snapshots.is_empty() {
+            s += "Source identities are checked before and after execution; per-object validation is not an atomic dataset snapshot.\n";
+        } else {
+            for source in snapshots {
+                s += &format!(
+                    "Icechunk {} snapshot {} (resolved once; never repinned).\n",
+                    source["asset_id"].as_str().unwrap_or("unknown"),
+                    source["object_identities"]["snapshot_id"]
+                        .as_str()
+                        .unwrap_or("unknown")
+                );
+            }
+            s += "Physical source identities are checked before and after execution. Icechunk metadata traffic and internal library allocations are outside payload transport counters and reservations.\n";
+        }
         let reads = &self.inspection["expected_reads"];
         s += &format!(
             "Expected data-library reads: {} local, {} remote (estimates; metadata excluded).\n",
@@ -883,7 +902,7 @@ fn prepare_on_with_native_selection(
             let Source::Assets { assets } = &request.source else {
                 unreachable!()
             };
-            let sources:Vec<_>=assets.iter().map(|a|json!({"asset_id":a.id,"format":a.format,"reference":if crate::cog::remote(&a.locator){stac_workflow::safe_reference(&a.locator)}else{a.locator.clone()},"datetime":a.datetime,"object_version":a.etag,"local_identity":versions.describe(Path::new(&a.locator)),"object_identities":sources.describe(&a.id),"zarr_v3":sources.v3.describe(&a.id),"version_validation":if crate::cog::remote(&a.locator){"conditional ETag"}else{"local size and modification timestamp"}})).collect();
+            let sources:Vec<_>=assets.iter().map(|a|json!({"asset_id":a.id,"format":a.format,"reference":if crate::cog::remote(&a.locator){stac_workflow::safe_reference(&a.locator)}else{a.locator.clone()},"datetime":a.datetime,"object_version":a.etag,"local_identity":versions.describe(Path::new(&a.locator)),"object_identities":sources.describe(&a.id),"zarr_v3":sources.v3.describe(&a.id),"version_validation":if a.format == Format::Icechunk {"pinned snapshot and conditional physical payload ETags"}else if crate::cog::remote(&a.locator){"conditional ETag"}else{"local size and modification timestamp"}})).collect();
             (
                 plan,
                 json!(sources),
@@ -934,6 +953,7 @@ fn prepare_on_with_native_selection(
             "Byte" | "UInt8" | "|u1" => 1,
             "UInt16" | "Int16" | "<u2" | "<i2" => 2,
             "Float32" | "UInt32" | "<f4" | "<u4" => 4,
+            "Float64" | "<f8" => 8,
             _ => return None,
         };
         total.checked_add(
@@ -1073,15 +1093,18 @@ fn outputs(p: &Plan, mode: OutputStrategy) -> Value {
         let Some(l) = &s.layout else {
             continue;
         };
-        let mut record = json!({"asset_id":s.asset_id,"variable":l.variable,"timestamps":s.timestamps,"window":s.window,"native_grid":{"crs":l.crs,"transform":crate::spatial::window_transform(l,&s.window)},"dtype":match l.dtype.as_str() { "Byte" | "UInt8" | "|u1" => "uint8", "UInt16" | "<u2" => "uint16", "Int16" | "<i2" => "int16", "UInt32" | "<u4" => "uint32", "Float32" | "<f4" => "float32", _ => "unsupported" },"native_dtype":l.dtype,"nodata":l.nodata,"scale":l.scale,"offset":l.offset,"aoi_mask_applied":s.mask_geometry.is_some()});
+        let mut record = json!({"asset_id":s.asset_id,"variable":l.variable,"timestamps":s.timestamps,"window":s.window,"native_grid":{"crs":l.crs,"transform":crate::spatial::window_transform(l,&s.window)},"dtype":match l.dtype.as_str() { "Byte" | "UInt8" | "|u1" => "uint8", "UInt16" | "<u2" => "uint16", "Int16" | "<i2" => "int16", "UInt32" | "<u4" => "uint32", "Float32" | "<f4" => "float32", "Float64" | "<f8" => "float64", _ => "unsupported" },"native_dtype":l.dtype,"nodata":l.nodata,"scale":l.scale,"offset":l.offset,"aoi_mask_applied":s.mask_geometry.is_some()});
         if zarr {
             record["file"] = json!(format!("{}.zarr", s.asset_id));
-            record["validity"] = json!(if matches!(l.dtype.as_str(), "Float32" | "<f4") {
-                "NaN is invalid; raw Float32 preserved"
+            record["validity"] = json!(if matches!(
+                l.dtype.as_str(),
+                "Float32" | "<f4" | "Float64" | "<f8"
+            ) {
+                "NaN is invalid; raw floating-point values preserved"
             } else {
                 "explicit integer fill"
             });
-            record["dimensions"] = json!({"names":if matches!(l.dtype.as_str(), "Float32" | "<f4") {if s.dimensions.as_ref().is_some_and(|d|d.names.iter().any(|v|v=="lat")){vec!["time","lat","lon"]}else{vec!["time","latitude","longitude"]}}else{vec!["time","y","x"]},"shape":[s.timestamps.len(),s.window.height,s.window.width]});
+            record["dimensions"] = json!({"names":if matches!(l.dtype.as_str(), "Float32" | "<f4" | "Float64" | "<f8") {if s.dimensions.as_ref().is_some_and(|d|d.names.iter().any(|v|v=="lat")){vec!["time","lat","lon"]}else{vec!["time","latitude","longitude"]}}else{vec!["time","y","x"]},"shape":[s.timestamps.len(),s.window.height,s.window.width]});
             if let Variable::Dataset { path } = &l.variable {
                 record["dataset"] = json!(path.trim_start_matches('/'));
             }
@@ -1229,7 +1252,7 @@ impl Versions {
             for file in [".zgroup", ".zattrs", ".zarray", "zarr.json"] {
                 v.add(root.join(file))?;
             }
-            if a.format == Format::ZarrV3 {
+            if matches!(a.format, Format::ZarrV3 | Format::Icechunk) {
                 for axis in [
                     "time",
                     "x",
