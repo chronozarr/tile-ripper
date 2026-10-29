@@ -146,13 +146,22 @@ impl RangeSource {
         failed: Arc<AtomicBool>,
         session: Option<Session>,
     ) -> Result<Arc<Self>> {
+        Self::open_with_identity(a, snapshot, failed, session, None)
+    }
+    pub(super) fn open_with_identity(
+        a: &Asset,
+        snapshot: Option<&Snapshot>,
+        failed: Arc<AtomicBool>,
+        session: Option<Session>,
+        identity: Option<&crate::stac_workflow::CogIdentity>,
+    ) -> Result<Arc<Self>> {
         if failed.load(Ordering::Acquire) {
             return Err(
                 "native COG preparation invalidated by an earlier source failure; prepare again"
                     .into(),
             );
         }
-        let result = Self::open_bound(a, snapshot, failed.clone(), session);
+        let result = Self::open_bound(a, snapshot, failed.clone(), session, identity);
         if result.is_err() {
             failed.store(true, Ordering::Release);
         } else if failed.load(Ordering::Acquire) {
@@ -168,6 +177,7 @@ impl RangeSource {
         snapshot: Option<&Snapshot>,
         failed: Arc<AtomicBool>,
         session: Option<Session>,
+        identity: Option<&crate::stac_workflow::CogIdentity>,
     ) -> Result<Arc<Self>> {
         let (binding, size) = if cog::remote(&a.locator) {
             let etag = a
@@ -176,22 +186,15 @@ impl RangeSource {
                 .filter(|e| strong(e))
                 .ok_or("native COG requires a pinned strong ETag; use acquisition::prepare")?
                 .clone();
-            // Initialization is atomic too: parallel inspection must share one
-            // connection pool from its first requests, not race to build pools.
-            static CLIENT: OnceLock<std::result::Result<Client, &'static str>> = OnceLock::new();
-            let client = CLIENT
-                .get_or_init(|| {
-                    Client::builder()
-                        .timeout(Duration::from_secs(45))
-                        .connect_timeout(Duration::from_secs(10))
-                        .redirect(reqwest::redirect::Policy::none())
-                        .build()
-                        .map_err(|_| "native COG client initialization failed")
-                })
-                .as_ref()
-                .map_err(|e| *e)?
-                .clone();
+            // Reuse the identity check's anonymous connection pool. Authenticated
+            // sessions still own their separate exact-object transport.
+            let client = crate::http_transport::cog_client()?;
             let url = Url::parse(&a.locator).map_err(|_| "invalid native COG URL")?;
+            let fresh_size = if session.is_none() {
+                identity.map(|identity| identity.size_for(a)).transpose()?
+            } else {
+                None
+            };
             #[cfg(feature = "authenticated-http")]
             let transport = session
                 .map(crate::http_transport::Transport::Authenticated)
@@ -201,39 +204,45 @@ impl RangeSource {
                 let _ = session;
                 crate::http_transport::Transport::default()
             };
-            let r = (0..=2)
-                .find_map(|attempt| {
-                    if attempt > 0 {
-                        std::thread::sleep(Duration::from_millis(100 * attempt));
-                    }
-                    let mut headers = header::HeaderMap::new();
-                    headers.insert(header::IF_MATCH, header::HeaderValue::from_str(&etag).ok()?);
-                    match transport.send(&client, Method::HEAD, url.clone(), headers, None) {
-                        Ok(r)
-                            if r.status() >= 500
-                                || r.status() == StatusCode::TOO_MANY_REQUESTS.as_u16() =>
-                        {
-                            None
+            let size = if let Some(size) = fresh_size {
+                size
+            } else {
+                let r = (0..=2)
+                    .find_map(|attempt| {
+                        if attempt > 0 {
+                            std::thread::sleep(Duration::from_millis(100 * attempt));
                         }
-                        other => Some(other),
-                    }
-                })
-                .ok_or("native COG HEAD retries exhausted")?
-                .map_err(|_| "native COG HEAD transport failed")?;
-            if r.status() != StatusCode::OK.as_u16()
-                || r.headers().get(header::ETAG).and_then(|v| v.to_str().ok())
-                    != Some(etag.as_str())
-            {
-                return Err("native COG source version/HEAD conflict".into());
-            }
-            let size = r
-                .headers()
-                .get(header::CONTENT_LENGTH)
-                .and_then(|v| v.to_str().ok())
-                .and_then(|s| s.parse::<u64>().ok())
-                .filter(|s| *s > 0)
-                .ok_or("native COG HEAD missing object size")?;
-            drop(r);
+                        let mut headers = header::HeaderMap::new();
+                        headers
+                            .insert(header::IF_MATCH, header::HeaderValue::from_str(&etag).ok()?);
+                        match transport.send(&client, Method::HEAD, url.clone(), headers, None) {
+                            Ok(r)
+                                if r.status() >= 500
+                                    || r.status() == StatusCode::TOO_MANY_REQUESTS.as_u16() =>
+                            {
+                                None
+                            }
+                            other => Some(other),
+                        }
+                    })
+                    .ok_or("native COG HEAD retries exhausted")?
+                    .map_err(|_| "native COG HEAD transport failed")?;
+                if r.status() != StatusCode::OK.as_u16()
+                    || r.headers().get(header::ETAG).and_then(|v| v.to_str().ok())
+                        != Some(etag.as_str())
+                {
+                    return Err("native COG source version/HEAD conflict".into());
+                }
+                let size = r
+                    .headers()
+                    .get(header::CONTENT_LENGTH)
+                    .and_then(|v| v.to_str().ok())
+                    .and_then(|s| s.parse::<u64>().ok())
+                    .filter(|s| *s > 0)
+                    .ok_or("native COG HEAD missing object size")?;
+                drop(r);
+                size
+            };
             (
                 Binding::Http {
                     client,
@@ -467,13 +476,28 @@ impl RangeSource {
         while at < end {
             let base = at / PAGE * PAGE;
             if !pages.contains_key(&base) {
-                if (pages.len() + 1) * PAGE as usize > METADATA_CACHE {
+                // The first remote parser read usually needs both header
+                // pages. Read ahead at most one page, only while this cache
+                // is empty; retain ordinary pages so all later reads and
+                // snapshot accounting keep their existing 4 KiB bounds.
+                let initial_remote =
+                    base == 0 && pages.is_empty() && matches!(&self.binding, Binding::Http { .. });
+                let bytes = (self.size - base).min(if initial_remote { 2 * PAGE } else { PAGE });
+                let additional = bytes.div_ceil(PAGE) as usize;
+                if (pages.len() + additional) * PAGE as usize > METADATA_CACHE {
                     return Err(error("native COG metadata range budget exceeded"));
                 }
-                pages.insert(
-                    base,
-                    Arc::new(self.exact(base, (self.size - base).min(PAGE) as usize)?),
-                );
+                let response = self.exact(base, bytes as usize)?;
+                if response.len() > PAGE as usize {
+                    // The response plus split copies peak at 16 KiB while
+                    // the cache is empty, below its 512 KiB plane limit.
+                    // The parser's requested result allocation is unchanged.
+                    for (index, page) in response.chunks(PAGE as usize).enumerate() {
+                        pages.insert(base + index as u64 * PAGE, Arc::new(page.to_vec()));
+                    }
+                } else {
+                    pages.insert(base, Arc::new(response));
+                }
             }
             let page = &pages[&base];
             let first = (at - base) as usize;
@@ -484,6 +508,10 @@ impl RangeSource {
         Ok(result)
     }
 }
+
+#[cfg(test)]
+#[path = "cog_range_http_tests.rs"]
+mod http_tests;
 
 #[cfg(test)]
 mod tests {

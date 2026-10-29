@@ -311,14 +311,15 @@ impl Prepared {
             } => {
                 sources.phase("pre_execution_validation");
                 versions.validate()?;
-                sources.validate_cog_identities(request, &Default::default())?;
-                sources.validate_cancellable(Some(cancelled))?;
+                let execution_sources =
+                    sources.validated_cog_readers(request, &Default::default())?;
+                execution_sources.validate_cancellable(Some(cancelled))?;
                 sources.phase("execution");
                 let mut report = crate::scheduler::execute(
                     request,
                     plan,
                     *planning_seconds,
-                    sources,
+                    &execution_sources,
                     cancelled,
                     sink,
                 )
@@ -424,8 +425,9 @@ impl Prepared {
             } => {
                 sources.phase("pre_execution_validation");
                 versions.validate()?;
-                sources.validate_cog_identities(request, &Default::default())?;
-                sources.validate()?;
+                let execution_sources =
+                    sources.validated_cog_readers(request, &Default::default())?;
+                execution_sources.validate()?;
                 sources.phase("execution");
                 let mut staged = (**request).clone();
                 staged.sink = match &request.sink {
@@ -443,7 +445,7 @@ impl Prepared {
                     }
                 };
                 let materialization_prefix = fetch_started.elapsed().as_secs_f64();
-                crate::execute::fetch_on(&staged, plan, *planning_seconds, sources)
+                crate::execute::fetch_on(&staged, plan, *planning_seconds, &execution_sources)
                     .map_err(|e| safe_error(request, "fetch", e))?;
                 sources.phase("post_execution_validation");
                 versions
@@ -554,6 +556,20 @@ pub fn fetch(request: &Request, cache: &mut LayoutCache) -> Result<Value> {
 pub fn prepare(request: &Request, cache: &mut LayoutCache) -> Result<Prepared> {
     let _quiet = crate::diagnostics::QuietNative::enter();
     prepare_inner(request, cache, Default::default()).map_err(|e| safe_error(request, "prepare", e))
+}
+/// Anonymous native COG preparation with product-private inspected geometry
+/// admission. The public request and reusable layout expose no exception flag.
+pub(crate) fn prepare_with_native_selection(
+    request: &Request,
+    cache: &mut LayoutCache,
+    selection_policy: &crate::planner::NativeSelectionPolicy,
+) -> Result<Prepared> {
+    if !crate::cog::native_selected() {
+        return fail("product native selection requires the native COG backend");
+    }
+    let _quiet = crate::diagnostics::QuietNative::enter();
+    prepare_on_with_native_selection(request, cache, Default::default(), None, selection_policy)
+        .map_err(|e| safe_error(request, "prepare", e))
 }
 /// Prepare only when Tile-Ripper was compiled without its `gdal` feature.
 /// Keep backend environment selection fixed until this prepared request and its
@@ -842,6 +858,7 @@ fn prepare_on_with_native_selection(
             let t = Instant::now();
             // Capture relevant metadata before inspection, then add selected data keys.
             let mut versions = Versions::metadata(&request)?;
+            let mut cog_identities = None;
             if assets
                 .iter()
                 .any(|a| a.format == Format::Cog && crate::cog::remote(&a.locator))
@@ -850,21 +867,35 @@ fn prepare_on_with_native_selection(
                 if let Some(sources) = prepared_sources.as_ref() {
                     sources.resolve_authenticated_cog_identities(&mut request)?;
                 } else {
-                    stac_workflow::resolve_identities(&mut request, &mut [], &Default::default())?;
+                    cog_identities = Some(stac_workflow::resolve_identities(
+                        &mut request,
+                        &mut [],
+                        &Default::default(),
+                    )?);
                 }
                 #[cfg(not(all(feature = "native-cog", feature = "authenticated-http")))]
-                stac_workflow::resolve_identities(&mut request, &mut [], &Default::default())?;
+                {
+                    cog_identities = Some(stac_workflow::resolve_identities(
+                        &mut request,
+                        &mut [],
+                        &Default::default(),
+                    )?);
+                }
             }
-            let sources = match prepared_sources {
+            let mut sources = match prepared_sources {
                 Some(sources) => sources,
                 None => crate::storage::Sources::with_transport(&request, transport)?,
             };
+            if let Some(identities) = cog_identities {
+                sources.install_cog_identities(identities);
+            }
             let plan = crate::planner::plan_on_with_native_selection(
                 &request,
                 cache,
                 &sources,
                 selection_policy,
             )?;
+            sources.clear_cog_reader_identities();
             sources.seal()?;
             versions.validate()?;
             versions.add_data(&request, &plan)?;

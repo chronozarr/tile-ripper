@@ -340,7 +340,7 @@ mod typed {
             .unwrap();
         assert_eq!(valid, aoi);
         assert!(valid.iter().filter(|value| **value == 0).count() > 100);
-        assert!(valid.iter().any(|value| *value == 1));
+        assert!(valid.contains(&1));
         std::fs::remove_dir_all(out).unwrap();
     }
 

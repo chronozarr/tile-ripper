@@ -81,6 +81,9 @@ impl Server {
                         Err(e) => panic!("{e}"),
                     }
                 };
+                // Accepted sockets can inherit O_NONBLOCK on macOS. The
+                // fixture must read a full request before consuming a reply.
+                stream.set_nonblocking(false).unwrap();
                 stream
                     .set_read_timeout(Some(Duration::from_secs(2)))
                     .unwrap();

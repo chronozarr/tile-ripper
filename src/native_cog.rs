@@ -135,8 +135,13 @@ impl PhysicalMetadata {
     }
 }
 
-#[derive(Default)]
+#[derive(Clone, Default)]
 pub(crate) struct Snapshots {
+    shared: Arc<SnapshotState>,
+    reader_identities: Option<Arc<crate::stac_workflow::CogIdentities>>,
+}
+#[derive(Default)]
+struct SnapshotState {
     cap: usize,
     entries: Mutex<BTreeMap<String, Arc<range::Snapshot>>>,
     physical: Mutex<BTreeMap<String, PhysicalMetadata>>,
@@ -151,9 +156,31 @@ pub(crate) struct Snapshots {
 impl Snapshots {
     pub(crate) fn new(buffer_bytes: usize) -> Self {
         Self {
-            cap: (buffer_bytes / 2).min(8 * 1024 * 1024),
+            shared: Arc::new(SnapshotState {
+                cap: (buffer_bytes / 2).min(8 * 1024 * 1024),
+                ..Default::default()
+            }),
             ..Self::default()
         }
+    }
+    pub(crate) fn with_reader_identities(
+        &self,
+        identities: Arc<crate::stac_workflow::CogIdentities>,
+    ) -> Self {
+        Self {
+            shared: self.shared.clone(),
+            reader_identities: Some(identities),
+        }
+    }
+    pub(crate) fn clear_reader_identities(&mut self) {
+        self.reader_identities = None;
+    }
+    fn reader_identity(&self, asset: &Asset) -> Result<Option<&crate::stac_workflow::CogIdentity>> {
+        self.reader_identities
+            .as_ref()
+            .map(|identities| identities.get(asset))
+            .transpose()
+            .map(Option::flatten)
     }
     #[cfg(feature = "authenticated-http")]
     pub(crate) fn with_sessions(
@@ -164,14 +191,17 @@ impl Snapshots {
             return fail("authenticated native COG session requires a nonempty asset id");
         }
         Ok(Self {
-            cap: (buffer_bytes / 2).min(8 * 1024 * 1024),
-            sessions,
+            shared: Arc::new(SnapshotState {
+                cap: (buffer_bytes / 2).min(8 * 1024 * 1024),
+                sessions,
+                ..Default::default()
+            }),
             ..Self::default()
         })
     }
     #[cfg(feature = "authenticated-http")]
     fn session(&self, a: &Asset) -> Result<Option<range::Session>> {
-        let Some(session) = self.sessions.get(&a.id) else {
+        let Some(session) = self.shared.sessions.get(&a.id) else {
             return Ok(None);
         };
         if a.format != crate::Format::Cog || !session.accepts(&a.locator) {
@@ -188,13 +218,14 @@ impl Snapshots {
         &self,
         assets: &mut [Asset],
     ) -> Result<BTreeMap<String, u64>> {
-        if assets.len() != self.sessions.len() {
+        if assets.len() != self.shared.sessions.len() {
             return fail("authenticated native COG sessions and assets must match exactly");
         }
         let mut identities = BTreeMap::new();
         let mut sizes = BTreeMap::new();
         for asset in assets {
             let session = self
+                .shared
                 .sessions
                 .get(&asset.id)
                 .ok_or("authenticated native COG asset is missing its exact session")?;
@@ -217,17 +248,17 @@ impl Snapshots {
             }
             sizes.insert(asset.id.clone(), size);
         }
-        *self.authenticated_identities.lock().unwrap() = identities;
+        *self.shared.authenticated_identities.lock().unwrap() = identities;
         Ok(sizes)
     }
     #[cfg(feature = "authenticated-http")]
     pub(crate) fn validate_authenticated(&self) -> Result<()> {
-        let identities = self.authenticated_identities.lock().unwrap().clone();
+        let identities = self.shared.authenticated_identities.lock().unwrap().clone();
         let result = (|| {
-            if identities.len() != self.sessions.len() {
+            if identities.len() != self.shared.sessions.len() {
                 return fail("authenticated native COG identities were not resolved");
             }
-            for (id, session) in &self.sessions {
+            for (id, session) in &self.shared.sessions {
                 let (etag, size) = identities
                     .get(id)
                     .ok_or("authenticated native COG identity is missing")?;
@@ -242,7 +273,8 @@ impl Snapshots {
     }
     #[cfg(feature = "authenticated-http")]
     pub(crate) fn transport_reservation(&self) -> Result<usize> {
-        self.sessions
+        self.shared
+            .sessions
             .len()
             .checked_mul(crate::authenticated_http::WORKING_RESERVATION)
             .ok_or_else(|| "authenticated native COG transport reservation overflow".into())
@@ -250,7 +282,8 @@ impl Snapshots {
     #[cfg(feature = "authenticated-http")]
     pub(crate) fn transport_stats(&self) -> serde_json::Value {
         serde_json::Value::Object(
-            self.sessions
+            self.shared
+                .sessions
                 .iter()
                 .map(|(id, session)| (id.clone(), session.statistics()))
                 .collect(),
@@ -258,6 +291,7 @@ impl Snapshots {
     }
     pub(crate) fn bytes(&self) -> usize {
         let snapshots = self
+            .shared
             .entries
             .lock()
             .unwrap()
@@ -266,6 +300,7 @@ impl Snapshots {
             .sum::<usize>();
         snapshots
             + self
+                .shared
                 .physical
                 .lock()
                 .unwrap()
@@ -274,9 +309,10 @@ impl Snapshots {
                 .sum::<usize>()
     }
     pub(crate) fn trim(&self, cap: usize) {
-        let mut entries = self.entries.lock().unwrap();
+        let mut entries = self.shared.entries.lock().unwrap();
         let mut retained = entries.values().map(|s| s.bytes()).sum::<usize>()
             + self
+                .shared
                 .physical
                 .lock()
                 .unwrap()
@@ -288,19 +324,26 @@ impl Snapshots {
                 break;
             };
             retained -= snapshot.bytes();
-            self.skipped.fetch_add(1, Ordering::Relaxed);
+            self.shared.skipped.fetch_add(1, Ordering::Relaxed);
         }
     }
     pub(crate) fn inspect(&self, a: &Asset, band: usize) -> Result<Layout> {
-        let (tiff, source) = open(a, 0, None, self.failed.clone(), self.session(a)?)?;
+        let (tiff, source) = open(
+            a,
+            0,
+            None,
+            self.shared.failed.clone(),
+            self.session(a)?,
+            self.reader_identity(a)?,
+        )?;
         let layout = layout(&tiff, band)?;
         let physical = physical_metadata(&tiff, &layout)?;
         if physical.bytes() > MAX_RETAINED_PHYSICAL_METADATA {
             return fail("native COG physical metadata exceeds 64 KiB per-source bound");
         }
         {
-            let snapshots = self.entries.lock().unwrap();
-            let mut entries = self.physical.lock().unwrap();
+            let snapshots = self.shared.entries.lock().unwrap();
+            let mut entries = self.shared.physical.lock().unwrap();
             let retained = entries
                 .iter()
                 .filter(|(id, _)| **id != a.id)
@@ -312,21 +355,22 @@ impl Snapshots {
                     .sum::<usize>();
             if retained
                 .checked_add(physical.bytes())
-                .is_none_or(|bytes| bytes > self.cap)
+                .is_none_or(|bytes| bytes > self.shared.cap)
             {
                 return fail("native COG physical metadata exceeds prepared buffer reservation");
             }
             entries.insert(a.id.clone(), physical);
         }
-        if self.cap > 0 && crate::cog::remote(&a.locator) {
+        if self.shared.cap > 0 && crate::cog::remote(&a.locator) {
             let snapshot = Arc::new(source.snapshot(a));
-            let mut entries = self.entries.lock().unwrap();
+            let mut entries = self.shared.entries.lock().unwrap();
             let retained = entries
                 .iter()
                 .filter(|(id, _)| **id != a.id)
                 .map(|(_, s)| s.bytes())
                 .sum::<usize>()
                 + self
+                    .shared
                     .physical
                     .lock()
                     .unwrap()
@@ -336,55 +380,56 @@ impl Snapshots {
             // If the bounded optimization does not fit, retain baseline reads.
             if retained
                 .checked_add(snapshot.bytes())
-                .is_some_and(|n| n <= self.cap)
+                .is_some_and(|n| n <= self.shared.cap)
             {
                 entries.insert(a.id.clone(), snapshot);
             } else {
-                self.skipped.fetch_add(1, Ordering::Relaxed);
+                self.shared.skipped.fetch_add(1, Ordering::Relaxed);
             }
         }
         Ok(layout)
     }
     fn get(&self, a: &Asset) -> Option<Arc<range::Snapshot>> {
-        self.entries.lock().unwrap().get(&a.id).cloned()
+        self.shared.entries.lock().unwrap().get(&a.id).cloned()
     }
     pub(crate) fn validate(&self) -> Result<()> {
-        if self.failed.load(Ordering::Acquire) {
+        if self.shared.failed.load(Ordering::Acquire) {
             return fail(
                 "native COG preparation invalidated by an earlier source failure; prepare again",
             );
         }
         #[cfg(feature = "authenticated-http")]
-        if !self.sessions.is_empty() {
+        if !self.shared.sessions.is_empty() {
             self.validate_authenticated()?;
         }
         Ok(())
     }
     pub(crate) fn invalidate(&self) {
-        self.failed.store(true, Ordering::Release);
+        self.shared.failed.store(true, Ordering::Release);
     }
     pub(crate) fn summary(&self) -> serde_json::Value {
-        let entries = self.entries.lock().unwrap();
-        let physical = self.physical.lock().unwrap();
+        let entries = self.shared.entries.lock().unwrap();
+        let physical = self.shared.physical.lock().unwrap();
         let physical_bytes = physical
             .values()
             .map(PhysicalMetadata::bytes)
             .sum::<usize>();
         let summary = serde_json::json!({"retained_sources":entries.len(),"retained_bytes":entries.values().map(|s|s.bytes()).sum::<usize>() + physical_bytes,
             "physical_metadata_sources":physical.len(),"physical_metadata_bytes":physical_bytes,
-            "cap_bytes":self.cap,"skipped_sources":self.skipped.load(Ordering::Relaxed),
+            "cap_bytes":self.shared.cap,"skipped_sources":self.shared.skipped.load(Ordering::Relaxed),
             "scope":"this Prepared only; immutable version-bound parser pages; never a data cache"});
         #[cfg(feature = "authenticated-http")]
         let summary = {
             let mut summary = summary;
-            summary["authenticated_sources"] = serde_json::json!(self.sessions.len());
+            summary["authenticated_sources"] = serde_json::json!(self.shared.sessions.len());
             summary["authenticated_transport"] = self.transport_stats();
             summary
         };
         summary
     }
     pub(crate) fn describe(&self, id: &str) -> Option<serde_json::Value> {
-        self.physical
+        self.shared
+            .physical
             .lock()
             .unwrap()
             .get(id)
@@ -402,13 +447,16 @@ pub(crate) struct Strategy {
 enum Delivery {
     #[default]
     Windows,
-    Selection(crate::Window),
+    Selection {
+        window: crate::Window,
+        bytes: usize,
+    },
 }
 impl Strategy {
     pub(crate) fn summary(&self) -> serde_json::Value {
         let (scope, selection_bytes) = match &self.delivery {
             Delivery::Windows => ("planned_windows", 0),
-            Delivery::Selection(w) => ("bounded_selection", w.width * w.height * 2),
+            Delivery::Selection { bytes, .. } => ("bounded_selection", *bytes),
         };
         serde_json::json!({"read_scope":scope,"retained_selection_bytes":selection_bytes,
             "decoded_cache_limit_bytes":self.cache_bytes,"coalesced_groups":self.groups.len(),
@@ -535,19 +583,7 @@ pub(crate) fn reservation(
         .iter()
         .map(|t| (t.x, t.y))
         .collect::<BTreeSet<_>>();
-    let first = nodes.first().and_then(|n| match &n.operation {
-        Operation::Read {
-            read: Read::LibraryWindow { tiles, .. },
-        } => Some(tiles),
-        _ => None,
-    });
-    if nodes.len() > 1
-        && selection_bytes <= MAX_TILE
-        && key_set(&tiles) == expected
-        && first.is_some_and(|tiles| {
-            tiles.iter().map(|t| (t.x, t.y)).collect::<BTreeSet<_>>() == expected
-        })
-    {
+    if nodes.len() > 1 && selection_bytes <= MAX_TILE && key_set(&tiles) == expected {
         // These phases do not overlap: upstream first produces raw selection
         // bytes while decoding blocks, then converts raw bytes to typed values.
         // Only afterward do we retain the selection and allocate/mask one chunk.
@@ -561,26 +597,46 @@ pub(crate) fn reservation(
             .checked_add(windows)
             .ok_or("selection working set overflow")?;
         let base = decode.max(convert).max(deliver);
+        let window_base = retained
+            .checked_add(block_peak)
+            .and_then(|n| n.checked_add(windows))
+            .ok_or("window working set overflow")?;
         // Preserve the largest payload concurrency the individual-tile strategy
         // can admit. Coalescing may use spare capacity, never a reader's slot.
         let concurrency = (budget / base).max(1).min(workers.max(1));
-        let available = (budget / concurrency).saturating_sub(base);
-        let groups = range::groups(selection_tiles, available);
-        let merged = groups.iter().map(|g| g.len + 8).max().unwrap_or(0);
-        let peak = decode
-            .checked_add(merged)
-            .ok_or("selection encoded working set overflow")?
-            .max(convert)
-            .max(deliver);
-        return Ok((
-            0,
-            peak.saturating_sub(windows),
-            Strategy {
-                cache_bytes: 0,
-                groups,
-                delivery: Delivery::Selection(selection.clone()),
-            },
-        ));
+        let window_concurrency = (budget / window_base).max(1).min(workers.max(1));
+        // A zero budget is the planner's minimum-reservation probe. Otherwise
+        // retain window delivery when the selection cannot fit, or would
+        // reduce the number of readers admitted by the ungrouped strategy.
+        let admitted = if budget == 0 {
+            base <= window_base
+        } else {
+            base <= budget && concurrency >= window_concurrency
+        };
+        if admitted {
+            // The union of all planned reads is exactly the selection's tile
+            // set. Masked-out windows cannot cause any extra tile to be read.
+            let available = (budget / concurrency).saturating_sub(base);
+            let groups = range::groups(selection_tiles, available);
+            let merged = groups.iter().map(|g| g.len + 8).max().unwrap_or(0);
+            let peak = decode
+                .checked_add(merged)
+                .ok_or("selection encoded working set overflow")?
+                .max(convert)
+                .max(deliver);
+            return Ok((
+                0,
+                peak.saturating_sub(windows),
+                Strategy {
+                    cache_bytes: 0,
+                    groups,
+                    delivery: Delivery::Selection {
+                        window: selection.clone(),
+                        bytes: selection_bytes,
+                    },
+                },
+            ));
+        }
     }
     let available = budget.saturating_sub(retained.saturating_add(working).saturating_add(windows));
     // Only group the actual cache misses, and only if every group member is
@@ -640,8 +696,14 @@ fn open(
     snapshot: Option<&range::Snapshot>,
     failed: Arc<AtomicBool>,
     session: Option<range::Session>,
+    identity: Option<&crate::stac_workflow::CogIdentity>,
 ) -> Result<(TiffFile, Arc<RangeSource>)> {
-    let source = RangeSource::open(a, snapshot, failed, session)?;
+    let source = match identity {
+        Some(identity) => {
+            RangeSource::open_with_identity(a, snapshot, failed, session, Some(identity))?
+        }
+        None => RangeSource::open(a, snapshot, failed, session)?,
+    };
     let tiff = TiffFile::from_source_with_options(
         source.clone(),
         OpenOptions {
@@ -1029,7 +1091,7 @@ fn calibration(i: &Ifd) -> Result<(Option<f64>, Option<f64>)> {
     Ok((scale, offset))
 }
 pub(crate) fn inspect(a: &Asset, band: usize) -> Result<Layout> {
-    let (t, _) = open(a, 0, None, Default::default(), None)?;
+    let (t, _) = open(a, 0, None, Default::default(), None, None)?;
     layout(&t, band)
 }
 pub(crate) struct SelectedReader {
@@ -1165,8 +1227,9 @@ impl SelectedReader {
             asset,
             strategy.cache_bytes,
             snapshot.as_deref(),
-            snapshots.failed.clone(),
+            snapshots.shared.failed.clone(),
             snapshots.session(asset)?,
+            snapshots.reader_identity(asset)?,
         )?;
         let layout = layout(&tiff, 1)?;
         if serde_json::to_value(&layout)? != serde_json::to_value(expected)? {
@@ -1181,7 +1244,7 @@ impl SelectedReader {
         source.begin_data(strategy.groups);
         let buffered = match strategy.delivery {
             Delivery::Windows => Buffered::Direct,
-            Delivery::Selection(w) => Buffered::Pending(w),
+            Delivery::Selection { window, .. } => Buffered::Pending(window),
         };
         Ok(Self {
             asset: asset.clone(),
@@ -1372,7 +1435,7 @@ mod efficiency_tests {
         (layout, nodes)
     }
     #[test]
-    fn selection_buffer_preserves_payload_concurrency_and_first_read_tiles() {
+    fn selection_buffer_preserves_payload_concurrency_and_selected_tiles() {
         let window = crate::Window {
             x: 7124,
             y: 2004,
@@ -1383,7 +1446,7 @@ mod efficiency_tests {
         let refs: Vec<_> = nodes.iter().collect();
         let window_pair = 256 * 256 * 4;
         let (cache, working, strategy) = reservation(&layout, &window, &refs, 16 << 20, 2).unwrap();
-        assert!(matches!(strategy.delivery, Delivery::Selection(_)));
+        assert!(matches!(strategy.delivery, Delivery::Selection { .. }));
         assert_eq!(cache, 0);
         assert_eq!(strategy.cache_bytes, 0);
         assert!(strategy.groups.is_empty());
@@ -1396,12 +1459,11 @@ mod efficiency_tests {
         let (_, working, strategy) = reservation(&layout, &window, &refs, 32 << 20, 4).unwrap();
         assert!(strategy.groups.is_empty());
         assert!((working + window_pair) * 4 + 64 * 1024 < 32 << 20);
-        // Masked holes can remove delivery windows, but may not make an extra
-        // source tile eligible. The first remaining read must still need every
-        // tile decoded by the bounded selection read.
+        // Masked holes may remove delivery windows if their tile union still
+        // covers exactly the tiles decoded by the bounded selection read.
         let skipped = vec![&nodes[0], &nodes[nodes.len() - 1]];
         let (_, _, strategy) = reservation(&layout, &window, &skipped, 16 << 20, 2).unwrap();
-        assert!(matches!(strategy.delivery, Delivery::Selection(_)));
+        assert!(matches!(strategy.delivery, Delivery::Selection { .. }));
         let mut partial = nodes.clone();
         if let Operation::Read {
             read: Read::LibraryWindow { tiles, .. },
@@ -1417,7 +1479,7 @@ mod efficiency_tests {
             2,
         )
         .unwrap();
-        assert!(matches!(strategy.delivery, Delivery::Windows));
+        assert!(matches!(strategy.delivery, Delivery::Selection { .. }));
         let earlier = crate::Window {
             x: 6868,
             y: 1748,
@@ -1433,6 +1495,21 @@ mod efficiency_tests {
             2,
         )
         .unwrap();
+        assert!(matches!(strategy.delivery, Delivery::Selection { .. }));
+        // The first output window needs only one of the four selected TIFF
+        // tiles. Every tile remains selected by some planned output window.
+        if let Operation::Read {
+            read: Read::LibraryWindow { tiles, .. },
+        } = &nodes[0].operation
+        {
+            assert_eq!(tiles.len(), 1);
+        } else {
+            panic!("expected window read");
+        }
+        // Retaining only that first window removes three selected tiles. The
+        // optimization must not fetch them just to fill its selection buffer.
+        let (_, _, strategy) =
+            reservation(&layout, &earlier, &[&nodes[0], &nodes[1]], 16 << 20, 2).unwrap();
         assert!(matches!(strategy.delivery, Delivery::Windows));
         let single = crate::Window {
             x: 7300,
@@ -1450,6 +1527,69 @@ mod efficiency_tests {
         )
         .unwrap();
         assert!(matches!(strategy.delivery, Delivery::Windows));
+    }
+    #[test]
+    fn selection_buffer_falls_back_without_reducing_window_concurrency() {
+        let window = crate::Window {
+            x: 0,
+            y: 0,
+            width: 768,
+            height: 768,
+        };
+        let (mut layout, _) = fixture(window.clone());
+        layout.block = [256, 256];
+        layout.tiles = (0..3)
+            .flat_map(|y| {
+                (0..3).map(move |x| Tile {
+                    x,
+                    y,
+                    offset: Some(1_000_000 + (y * 3 + x) as u64 * 80_000),
+                    bytes: Some(80_000),
+                })
+            })
+            .collect();
+        let mut nodes = Vec::new();
+        for y in (0..768).step_by(256) {
+            for x in (0..768).step_by(256) {
+                let window = crate::Window {
+                    x,
+                    y,
+                    width: 256,
+                    height: 256,
+                };
+                nodes.push(Node {
+                    id: nodes.len(),
+                    dependencies: vec![],
+                    asset_id: "fixture".into(),
+                    operation: Operation::Read {
+                        read: Read::LibraryWindow {
+                            tiles: crate::cog::tiles(&layout, &window),
+                            window,
+                            band: 1,
+                        },
+                    },
+                });
+            }
+        }
+        let refs: Vec<_> = nodes.iter().collect();
+        let window_pair = 256 * 256 * 4;
+        // No source tile is repeated. Buffering the larger selection would
+        // reserve more memory than reading these windows directly.
+        let (_, working, strategy) = reservation(&layout, &window, &refs, 0, 2).unwrap();
+        assert!(matches!(strategy.delivery, Delivery::Windows));
+        let minimum = working + window_pair;
+        let (_, working, strategy) = reservation(&layout, &window, &refs, minimum, 2).unwrap();
+        assert!(matches!(strategy.delivery, Delivery::Windows));
+        assert_eq!(working + window_pair, minimum);
+        let (_, working, strategy) = reservation(&layout, &window, &refs, minimum * 2, 2).unwrap();
+        assert!(matches!(strategy.delivery, Delivery::Windows));
+        assert!((working + window_pair) * 2 <= minimum * 2);
+        let (_, _, strategy) = reservation(&layout, &window, &refs, 16 << 20, 2).unwrap();
+        assert!(matches!(strategy.delivery, Delivery::Selection { .. }));
+        assert_eq!(
+            strategy.summary()["retained_selection_bytes"],
+            768 * 768 * 2
+        );
     }
     #[test]
     fn buffered_chunk_rows_edges_and_bounds_are_exact() {

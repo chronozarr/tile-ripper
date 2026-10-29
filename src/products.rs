@@ -1212,9 +1212,112 @@ pub(crate) fn wave2_grid_identity_for_tile(
     Ok(())
 }
 
-fn signed_planetary(c: &Client, product: &str, href: &str) -> Result<String> {
-    routing::validate_planetary_locator(product, href)?;
-    let result = (|| -> Result<String> {
+/// Candidate identity for the inspected Planetary Computer HLS southern-frame
+/// convention. This cannot be enabled by a public request/layout flag.
+pub(crate) fn hls_pc_southern_tile(
+    product: &str,
+    observation: &Observation,
+    band: &str,
+    asset: &ProductAsset,
+) -> Result<Option<String>> {
+    let p = profile::profile(product)?;
+    if p.family != profile::ProductFamily::Hls {
+        return fail("PC HLS southern-grid convention is confined to HLS L30/S30 v2");
+    }
+    p.validate_identity(
+        &observation.id,
+        observation.platform.as_deref(),
+        observation.processing.as_deref(),
+    )?;
+    p.validate_datetime(&observation.id, &observation.datetime)?;
+    routing::validate_planetary_locator(p.id, &asset.href)?;
+    let collection = if p.id == profile::HLS_L30_V2 {
+        "hls2-l30"
+    } else {
+        "hls2-s30"
+    };
+    if observation.collection != collection
+        || !p.bands.iter().any(|b| b.name == band)
+        || !Url::parse(&asset.href)?
+            .path()
+            .ends_with(&format!("/{0}/{0}.{band}.tif", observation.id))
+    {
+        return fail("PC HLS southern-grid catalog/source/granule/band identity conflicts");
+    }
+    let tile = observation
+        .id
+        .split('.')
+        .nth(2)
+        .ok_or("HLS identity has no MGRS tile")?;
+    Ok((tile.as_bytes()[3] < b'N').then(|| tile.to_owned()))
+}
+
+/// Bind the actual TIFF grid, retained HLS tags and object pin before allowing
+/// WGS84 AOI selection in its EPSG:326xx frame with southern negative northings.
+pub(crate) fn hls_pc_extended_northern_grid(
+    product: &str,
+    observation: &Observation,
+    band: &profile::BandProfile,
+    asset: &ProductAsset,
+    source: &Value,
+    layout: &crate::Layout,
+) -> Result<u32> {
+    let tile = hls_pc_southern_tile(product, observation, &band.name, asset)?
+        .ok_or("PC HLS extended-north mapping requires a southern MGRS tile")?;
+    physical_identity(product, observation, band, asset, source)?;
+    let zone = tile[1..3].parse::<u32>()?;
+    if layout.crs != format!("EPSG:{}", 32600 + zone)
+        || layout.transform.iter().any(|n| !n.is_finite())
+        || [
+            layout.transform[1],
+            layout.transform[2],
+            layout.transform[4],
+            layout.transform[5],
+        ] != [30., 0., 0., -30.]
+        || layout.transform[3] + layout.height as f64 * layout.transform[5] >= 0.
+    {
+        return fail("PC HLS extended-north source must retain its actual 30 m northern UTM CRS and southern physical frame");
+    }
+    let physical = native_physical(source)
+        .ok_or("PC HLS convention requires inspected native COG metadata")?;
+    if physical["normalized_crs"].as_str() != Some(layout.crs.as_str()) {
+        return fail("PC HLS inspected CRS conflicts with the native layout");
+    }
+    let pin = source["object_version"]
+        .as_str()
+        .filter(|s| s.starts_with('"') && s.ends_with('"'))
+        .ok_or("PC HLS convention requires the inspected immutable object ETag")?;
+    if asset
+        .etag
+        .as_deref()
+        .is_some_and(|expected| expected != pin)
+    {
+        return fail("PC HLS inspected object ETag conflicts with the selected source pin");
+    }
+    let xml = physical["gdal_metadata_xml"]
+        .as_str()
+        .ok_or("PC HLS convention lacks source TIFF tags")?;
+    let expected_south = format!("EPSG:{}", 32700 + zone);
+    if gdal_item(xml, "HORIZONTAL_CS_CODE") != Some(expected_south.as_str())
+        || gdal_item(xml, "ULX").and_then(|v| v.parse::<f64>().ok()) != Some(layout.transform[0])
+        || gdal_item(xml, "ULY").and_then(|v| v.parse::<f64>().ok()) != Some(layout.transform[3])
+        || gdal_item(xml, "NCOLS").and_then(|v| v.parse::<usize>().ok()) != Some(layout.width)
+        || gdal_item(xml, "NROWS").and_then(|v| v.parse::<usize>().ok()) != Some(layout.height)
+        || gdal_item(xml, "SPATIAL_RESOLUTION").and_then(|v| v.parse::<f64>().ok()) != Some(30.)
+    {
+        return fail("PC HLS southern-grid TIFF tags conflict with the inspected source frame");
+    }
+    wave2_grid_identity_for_tile(&tile, layout, true)?;
+    Ok(zone)
+}
+
+fn signed_planetary(
+    c: &Client,
+    signatures: &mut routing::PlanetarySignatures,
+    product: &str,
+    href: &str,
+) -> Result<String> {
+    let result = signatures.sign(product, href, || {
         let mut signer = Url::parse("https://planetarycomputer.microsoft.com/api/sas/v1/sign")?;
         signer.query_pairs_mut().append_pair("href", href);
         let v = read_json(
@@ -1223,9 +1326,8 @@ fn signed_planetary(c: &Client, product: &str, href: &str) -> Result<String> {
                 .map_err(|_| "signing transport failed")?,
         )?;
         let signed = text(&v, "href")?;
-        routing::validate_signature(href, signed)?;
         Ok(signed.into())
-    })();
+    });
     result.map_err(|error| {
         let alternative = if product.starts_with("hls-") {
             " For a different qualified route, explicitly create a fresh --provider earthdata plan with --auth earthdata --netrc PRIVATE_FILE; supplied observations must be explicitly rediscovered against that provider."
@@ -1310,10 +1412,11 @@ fn prepare_inner(
         .filter(|bytes| *bytes >= 4 * 1024 * 1024)
         .ok_or("product metadata reservation leaves less than 4 MiB for native acquisition; raise buffer_bytes")?;
     let c = client()?;
+    let mut signatures = routing::PlanetarySignatures::default();
     let mut assets = vec![];
     let mut metadata = vec![];
     let mut native_selection = crate::planner::NativeSelectionPolicy::default();
-    let mut annual_observation_context = BTreeMap::new();
+    let mut observation_context = BTreeMap::new();
     let mut ids = BTreeSet::new();
     for (i, o) in catalog.observations.iter().enumerate() {
         if !ids.insert(&o.id) {
@@ -1326,7 +1429,7 @@ fn prepare_inner(
             let href = if catalog.provider == routing::Provider::PlanetaryComputer
                 && a.href.starts_with("https://")
             {
-                signed_planetary(&c, &r.product, &a.href)?
+                signed_planetary(&c, &mut signatures, &r.product, &a.href)?
             } else {
                 a.href.clone()
             };
@@ -1339,7 +1442,7 @@ fn prepare_inner(
             });
             if p.family == profile::ProductFamily::OperaDistAnn {
                 if let Some(candidate) = dist_ann::extended_northern_candidate(o)? {
-                    let observation = annual_observation_context
+                    let observation = observation_context
                         .entry(o.id.clone())
                         .or_insert_with(|| std::sync::Arc::new(o.clone()))
                         .clone();
@@ -1351,6 +1454,22 @@ fn prepare_inner(
                         a.clone(),
                     )?;
                 }
+            }
+            if p.family == profile::ProductFamily::Hls
+                && catalog.provider == routing::Provider::PlanetaryComputer
+                && hls_pc_southern_tile(p.id, o, &b.name, a)?.is_some()
+            {
+                let observation = observation_context
+                    .entry(o.id.clone())
+                    .or_insert_with(|| std::sync::Arc::new(o.clone()))
+                    .clone();
+                native_selection.admit_hls_pc_southern(
+                    id.clone(),
+                    p.id.into(),
+                    observation,
+                    b.name.clone(),
+                    a.clone(),
+                )?;
             }
             metadata.push(json!({"asset_id":id,"provider":catalog.provider,"canonical_locator":crate::stac_workflow::safe_reference(&a.href),"access_policy":if catalog.provider == routing::Provider::PlanetaryComputer { routing::SIGNING_POLICY } else { routing::POLICY },"item_id":o.id,"collection":o.collection,"requested_band":b.name,"product":r.product,"product_version":p.processing_version(&o.id)?,"platform":o.platform,"processing":o.processing,"product_band":b,"acquisition":o.properties,"asset_metadata":a.metadata,"href":crate::stac_workflow::safe_reference(&a.href),"raster_bands":[{"scale":b.scale,"offset":b.offset,"unit":b.unit}],"quality_policies":r.quality_policies.iter().filter(|name|name.parse::<profile::QualityPolicy>().is_ok_and(|q|q.required_bands().contains(&b.name.as_str()))).collect::<Vec<_>>() }));
             if p.family == profile::ProductFamily::OperaDistAnn {
@@ -1437,8 +1556,10 @@ fn prepare_inner(
                 "authenticated product COG acquisition requires authenticated-http feature",
             );
         }
-    } else {
+    } else if native_selection.is_empty() {
         acquisition::prepare(&request, cache)?
+    } else {
+        acquisition::prepare_with_native_selection(&request, cache, &native_selection)?
     };
     let physical_inspection = prepared.explain();
     let mut extended_north_provenance = BTreeMap::new();
@@ -1471,6 +1592,24 @@ fn prepare_inner(
             })
             .ok_or("inspected physical product source metadata missing")?;
         inspected_product_identity(&r.product, observation, band, asset, physical_source, l)?;
+        if p.family == profile::ProductFamily::Hls
+            && catalog.provider == routing::Provider::PlanetaryComputer
+            && hls_pc_southern_tile(p.id, observation, &band.name, asset)?.is_some()
+            && l.crs
+                .strip_prefix("EPSG:")
+                .and_then(|v| v.parse::<u32>().ok())
+                .is_some_and(|epsg| (32601..=32660).contains(&epsg))
+        {
+            let zone =
+                hls_pc_extended_northern_grid(p.id, observation, band, asset, physical_source, l)?;
+            extended_north_provenance.insert(selected.asset_id.clone(), json!({
+                "source_declared_crs":l.crs,"source_transform":l.transform,
+                "mgrs_tile":observation.id.split('.').nth(2),
+                "source_horizontal_cs_code":format!("EPSG:{}",32700+zone),
+                "selection_mapping":"Planetary Computer HLS southern tile in source-declared northern UTM coordinates; false northing 0; no +south",
+                "data_reprojection":false,"crs_relabeling":false,"coordinate_shift_m":0,
+                "scope":"exact inspected HLS v2 object, native TIFF grid/tags and MGRS tile identity"}));
+        }
         if p.family == profile::ProductFamily::OperaDistAnn {
             if let Some(provenance) =
                 dist_ann::last_date_provenance(observation, band, physical_source)?
@@ -1672,6 +1811,135 @@ pub fn source_validity<'a>(
 #[cfg(test)]
 mod wave2_identity_tests {
     use super::*;
+
+    #[cfg(feature = "native-cog")]
+    fn pc_hls_southern_fixture() -> (Observation, ProductAsset, Value, crate::Layout) {
+        // Captured metadata identities from the independently read July 13,
+        // 2025 Ucayali specimen. No source values or bearer URLs are embedded.
+        let id = "HLS.S30.T18MVS.2025194T151729.v2.0";
+        let asset = ProductAsset {
+            href: format!("https://hls2euwest.blob.core.windows.net/hls2/S30/18/M/VS/2025/07/13/{id}/{id}.B04.tif"),
+            etag: Some("\"0x8DDC77CCDFA0AD4\"".into()), metadata: Value::Null,
+        };
+        let observation = Observation {
+            id: id.into(),
+            datetime: "2025-07-13T15:25:20.106080Z".into(),
+            collection: "hls2-s30".into(),
+            platform: Some("SENTINEL_2B".into()),
+            processing: None,
+            assets: BTreeMap::from([("B04".into(), asset.clone())]),
+            properties: Value::Null,
+        };
+        let xml = r#"<GDALMetadata><Item name="HLS_PROCESSING_TIME">fixture processing timestamp</Item><Item name="SENSING_TIME">2025-07-13T15:25:20.106081Z</Item><Item name="PRODUCT_URI">S2B_MSIL1C_20250713T151729_N0511_R125_T18MVS_20250713T194831.SAFE</Item><Item name="TILE_ID">S2B_OPER_MSI_L1C_TL_2BPS_20250713T194831_A043623_T18MVS_N05.11</Item><Item name="HORIZONTAL_CS_CODE">EPSG:32718</Item><Item name="HORIZONTAL_CS_NAME">WGS84 / UTM zone 18S</Item><Item name="ULX">399960</Item><Item name="ULY">-799980</Item><Item name="NCOLS">3660</Item><Item name="NROWS">3660</Item><Item name="SPATIAL_RESOLUTION">30</Item></GDALMetadata>"#;
+        let source = json!({"object_version":asset.etag,"object_identities":{"native_cog":{"normalized_crs":"EPSG:32618","gdal_metadata_xml":xml}}});
+        let layout = crate::Layout {
+            width: 3660,
+            height: 3660,
+            transform: [399960., 30., 0., -799980., 0., -30.],
+            crs: "EPSG:32618".into(),
+            variable: Variable::Band { index: 1 },
+            block: [256, 256],
+            dtype: "Int16".into(),
+            nodata: Some(-9999.),
+            scale: Some(0.0001),
+            offset: Some(0.),
+            tiles: vec![],
+        };
+        (observation, asset, source, layout)
+    }
+
+    #[cfg(feature = "native-cog")]
+    #[test]
+    fn pc_hls_southern_mapping_preserves_source_frame_and_independent_window() -> Result<()> {
+        let (observation, asset, source, layout) = pc_hls_southern_fixture();
+        let band = profile::profile("hls-s30")?.band("B04")?.clone();
+        let zone = hls_pc_extended_northern_grid(
+            "hls-s30",
+            &observation,
+            &band,
+            &asset,
+            &source,
+            &layout,
+        )?;
+        assert_eq!(zone, 18);
+        let aoi = Spatial::Bounds {
+            crs: "EPSG:4326".into(),
+            bbox: [-75.075, -7.68, -74.985, -7.59],
+        };
+        // The GDAL-free projection layer enforces this hemisphere guard;
+        // GDAL/PROJ itself accepts the source's extended northern coordinates.
+        #[cfg(not(feature = "gdal"))]
+        assert!(crate::spatial::native_mask_for_selection(
+            &aoi,
+            &layout,
+            crate::spatial::NativeSelection::Standard
+        )
+        .is_err());
+        let geometry = crate::spatial::native_mask_for_selection(
+            &aoi,
+            &layout,
+            crate::spatial::NativeSelection::ProviderExtendedNorthernUtm { zone },
+        )?
+        .unwrap();
+        let bounds = Spatial::Bounds {
+            crs: layout.crs.clone(),
+            bbox: crate::spatial::bounds(&geometry),
+        };
+        let window = crate::spatial::window(&layout, &bounds)?.unwrap();
+        assert_eq!(
+            [window.x, window.y, window.width, window.height],
+            [3058, 1299, 332, 333]
+        );
+        let mask = crate::spatial::mask(&geometry, &layout, &window)?;
+        assert_eq!(mask.data().iter().filter(|v| **v != 0).count(), 109561);
+        assert_eq!(layout.crs, "EPSG:32618");
+        assert_eq!(layout.transform[3], -799980.);
+        Ok(())
+    }
+
+    #[cfg(feature = "native-cog")]
+    #[test]
+    fn pc_hls_southern_admission_rejects_source_tile_frame_and_tag_substitution() -> Result<()> {
+        let (observation, asset, source, layout) = pc_hls_southern_fixture();
+        let band = profile::profile("hls-s30")?.band("B04")?.clone();
+        let check = |o: &Observation, a: &ProductAsset, s: &Value, l: &crate::Layout| {
+            hls_pc_extended_northern_grid("hls-s30", o, &band, a, s, l)
+        };
+        for (field, from, to) in [
+            ("gdal_metadata_xml", "EPSG:32718", "EPSG:32719"),
+            ("gdal_metadata_xml", "399960", "499960"),
+            ("gdal_metadata_xml", "T18MVS", "T18MVT"),
+            ("normalized_crs", "EPSG:32618", "EPSG:32718"),
+        ] {
+            let mut wrong = source.clone();
+            let value = wrong["object_identities"]["native_cog"][field]
+                .as_str()
+                .unwrap()
+                .replace(from, to);
+            wrong["object_identities"]["native_cog"][field] = json!(value);
+            assert!(
+                check(&observation, &asset, &wrong, &layout).is_err(),
+                "{field} {from}->{to}"
+            );
+        }
+        let mut wrong_source = source.clone();
+        wrong_source["object_version"] = json!("\"other-object\"");
+        assert!(check(&observation, &asset, &wrong_source, &layout).is_err());
+        let mut wrong_asset = asset.clone();
+        wrong_asset.href = wrong_asset.href.replace(".B04.tif", ".B03.tif");
+        assert!(check(&observation, &wrong_asset, &source, &layout).is_err());
+        let mut wrong = layout.clone();
+        wrong.transform[3] += 10_000_000.;
+        assert!(check(&observation, &asset, &source, &wrong).is_err());
+        wrong = layout.clone();
+        wrong.crs = "EPSG:32619".into();
+        assert!(check(&observation, &asset, &source, &wrong).is_err());
+        assert!(hls_pc_southern_tile("opera-dist-alert", &observation, "B04", &asset).is_err());
+        let mut wrong_observation = observation.clone();
+        wrong_observation.collection = "HLSS30_2.0".into();
+        assert!(check(&wrong_observation, &asset, &source, &layout).is_err());
+        Ok(())
+    }
 
     #[cfg(feature = "native-cog")]
     #[test]

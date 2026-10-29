@@ -4,7 +4,7 @@ use super::{profile, Observation, ProductRequest};
 use crate::{fail, Result};
 use reqwest::Url;
 use serde::{Deserialize, Serialize};
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 
 pub const POLICY: &str = "qualified-provider-v1";
 pub const SIGNING_POLICY: &str = "pc-exact-object-request-v1";
@@ -346,6 +346,66 @@ pub fn validate_signature(canonical: &str, signed: &str) -> Result<()> {
     }
     Ok(())
 }
+
+/// Bearer grants live only for one product preparation. A verified container
+/// grant may authorize another exact object in that same host/container; a
+/// blob grant is reusable only for its original canonical object. No token is
+/// serialized, refreshed, or used to list the container.
+#[derive(Default)]
+pub(crate) struct PlanetarySignatures {
+    containers: BTreeMap<(String, String), String>,
+    blobs: BTreeMap<String, String>,
+}
+impl PlanetarySignatures {
+    pub(crate) fn sign(
+        &mut self,
+        product: &str,
+        canonical: &str,
+        fetch: impl FnOnce() -> Result<String>,
+    ) -> Result<String> {
+        validate_planetary_locator(product, canonical)?;
+        let mut url = Url::parse(canonical)?;
+        let scope = (
+            url.host_str()
+                .ok_or("canonical object has no host")?
+                .to_owned(),
+            url.path_segments()
+                .and_then(|mut p| p.next())
+                .filter(|s| !s.is_empty())
+                .ok_or("canonical object has no container")?
+                .to_owned(),
+        );
+        if let Some(query) = self
+            .blobs
+            .get(canonical)
+            .or_else(|| self.containers.get(&scope))
+        {
+            url.set_query(Some(query));
+            let signed = url.to_string();
+            // Revalidate object identity, grant and expiry on every use. An
+            // expiring grant fails the preparation rather than fetching a new
+            // authorization halfway through its already selected sources.
+            validate_signature(canonical, &signed)?;
+            return Ok(signed);
+        }
+        let signed = fetch()?;
+        validate_signature(canonical, &signed)?;
+        let parsed = Url::parse(&signed).map_err(|_| "signer returned invalid URL")?;
+        let query = parsed
+            .query()
+            .ok_or("signer returned no SAS query")?
+            .to_owned();
+        if parsed
+            .query_pairs()
+            .any(|(key, value)| key == "sr" && value == "c")
+        {
+            self.containers.insert(scope, query);
+        } else {
+            self.blobs.insert(canonical.to_owned(), query);
+        }
+        Ok(signed)
+    }
+}
 pub(crate) fn decision(
     r: &ProductRequest,
     selected: Provider,
@@ -497,6 +557,81 @@ mod tests {
         ] {
             assert!(validate_signature(c, &value).is_err());
         }
+    }
+    #[test]
+    fn preparation_reuses_only_verified_container_grants() -> Result<()> {
+        let a = "https://hls2euwest.blob.core.windows.net/hls2/S30/a.tif";
+        let b = "https://hls2euwest.blob.core.windows.net/hls2/S30/b.tif";
+        let query = "sp=rl&sr=c&sig=test-signature&se=2099-01-01T00%3A00%3A00Z";
+        let mut cache = PlanetarySignatures::default();
+        cache.sign("hls-s30", a, || Ok(format!("{a}?{query}")))?;
+        let signed = cache.sign("hls-s30", b, || {
+            Err("cached container must not contact signer".into())
+        })?;
+        assert_eq!(signed, format!("{b}?{query}"));
+        validate_signature(b, &signed)?;
+        assert!(cache
+            .sign("hls-l30", b, || panic!(
+                "invalid product must not contact signer"
+            ))
+            .is_err());
+        let landsat = "https://landsateuwest.blob.core.windows.net/landsat-c2/a.tif";
+        let mut called = false;
+        cache.sign("landsat-c2-l2-sr", landsat, || {
+            called = true;
+            Ok(format!("{landsat}?{query}"))
+        })?;
+        assert!(
+            called,
+            "a different qualified host/container needs its own grant"
+        );
+        Ok(())
+    }
+    #[test]
+    fn blob_grants_and_expired_container_grants_are_not_promoted_or_refreshed() -> Result<()> {
+        let a = "https://hls2euwest.blob.core.windows.net/hls2/S30/a.tif";
+        let b = "https://hls2euwest.blob.core.windows.net/hls2/S30/b.tif";
+        let query = "sp=r&sr=b&sig=test-signature&se=2099-01-01T00%3A00%3A00Z";
+        let mut cache = PlanetarySignatures::default();
+        cache.sign("hls-s30", a, || Ok(format!("{a}?{query}")))?;
+        cache.sign("hls-s30", a, || panic!("exact blob grant should be reused"))?;
+        let mut called = false;
+        cache.sign("hls-s30", b, || {
+            called = true;
+            Ok(format!("{b}?{query}"))
+        })?;
+        assert!(called, "a blob grant cannot authorize a different object");
+        let mut cache = PlanetarySignatures::default();
+        cache.sign("hls-s30", a, || {
+            Ok(format!("{a}?{}", query.replace("sp=r&sr=b", "sp=rl&sr=c")))
+        })?;
+        *cache.containers.values_mut().next().unwrap() = query
+            .replace("sp=r&sr=b", "sp=rl&sr=c")
+            .replace("2099", "2000");
+        assert!(cache
+            .sign("hls-s30", b, || panic!(
+                "expiring preparation must fail without refreshing authorization"
+            ))
+            .is_err());
+        Ok(())
+    }
+    #[test]
+    fn rejected_signatures_never_enter_preparation_cache() {
+        let a = "https://hls2euwest.blob.core.windows.net/hls2/S30/a.tif";
+        let mut cache = PlanetarySignatures::default();
+        assert!(cache
+            .sign("hls-s30", a, || Ok(format!(
+                "{a}?sp=rlw&sr=c&sig=test&se=2099-01-01T00%3A00%3A00Z"
+            )))
+            .is_err());
+        assert!(cache.containers.is_empty() && cache.blobs.is_empty());
+        assert!(cache
+            .sign("hls-s30", a, || Ok(format!(
+                "{}?sp=rl&sr=c&sig=test&se=2099-01-01T00%3A00%3A00Z",
+                a.replace("a.tif", "b.tif")
+            )))
+            .is_err());
+        assert!(cache.containers.is_empty() && cache.blobs.is_empty());
     }
     #[test]
     fn product_name_alone_never_creates_equivalence() {

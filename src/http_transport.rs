@@ -3,6 +3,31 @@ use crate::Result;
 use reqwest::{header::HeaderMap, Method, Url};
 use std::{io::Read, sync::atomic::AtomicBool};
 
+#[path = "http_trace.rs"]
+mod trace;
+pub(crate) use trace::Trace;
+
+/// One anonymous COG connection pool for identity checks and conditional TIFF
+/// reads. Connections may be reused; request URLs, ETags and metadata are not.
+pub(crate) fn cog_client() -> Result<reqwest::blocking::Client> {
+    use std::{sync::OnceLock, time::Duration};
+    static CLIENT: OnceLock<std::result::Result<reqwest::blocking::Client, &'static str>> =
+        OnceLock::new();
+    CLIENT
+        .get_or_init(|| {
+            reqwest::blocking::Client::builder()
+                .timeout(Duration::from_secs(45))
+                .connect_timeout(Duration::from_secs(10))
+                .redirect(reqwest::redirect::Policy::none())
+                .user_agent("tile-ripper/0.1")
+                .build()
+                .map_err(|_| "anonymous COG client initialization failed")
+        })
+        .as_ref()
+        .cloned()
+        .map_err(|e| (*e).into())
+}
+
 #[derive(Clone, Default)]
 pub(crate) enum Transport {
     #[default]
@@ -18,6 +43,7 @@ pub(crate) enum Transport {
 pub(crate) enum Response<'a> {
     Anonymous(
         reqwest::blocking::Response,
+        Option<Trace>,
         std::marker::PhantomData<&'a ()>,
     ),
     #[cfg(feature = "authenticated-http")]
@@ -33,12 +59,20 @@ impl Transport {
         _cancelled: Option<&'a AtomicBool>,
     ) -> Result<Response<'a>> {
         match self {
-            Self::Anonymous => client
-                .request(method, url)
-                .headers(headers)
-                .send()
-                .map(|r| Response::Anonymous(r, std::marker::PhantomData))
-                .map_err(|_| "retryable HTTP transport failure".into()),
+            Self::Anonymous => {
+                let mut trace = Trace::start(&method, &url, &headers);
+                client
+                    .request(method, url)
+                    .headers(headers)
+                    .send()
+                    .map(|r| {
+                        if let Some(t) = &mut trace {
+                            t.received(r.status().as_u16());
+                        }
+                        Response::Anonymous(r, trace, std::marker::PhantomData)
+                    })
+                    .map_err(|_| "retryable HTTP transport failure".into())
+            }
             #[cfg(feature = "authenticated-http")]
             Self::Authenticated(t) => t
                 .send(method, url, headers, _cancelled)
@@ -94,24 +128,27 @@ impl Transport {
 impl Response<'_> {
     pub(crate) fn status(&self) -> u16 {
         match self {
-            Self::Anonymous(r, _) => r.status().as_u16(),
+            Self::Anonymous(r, _, _) => r.status().as_u16(),
             #[cfg(feature = "authenticated-http")]
             Self::Authenticated(r) => r.inner.status().as_u16(),
         }
     }
     pub(crate) fn headers(&self) -> &HeaderMap {
         match self {
-            Self::Anonymous(r, _) => r.headers(),
+            Self::Anonymous(r, _, _) => r.headers(),
             #[cfg(feature = "authenticated-http")]
             Self::Authenticated(r) => r.inner.headers(),
         }
     }
     pub(crate) fn read_body(&mut self, cap: u64, body: &mut Vec<u8>) -> Result<()> {
         match self {
-            Self::Anonymous(r, _) => {
-                r.take(cap + 1)
-                    .read_to_end(body)
-                    .map_err(|_| "retryable interrupted HTTP body")?;
+            Self::Anonymous(r, trace, _) => {
+                let before = body.len();
+                let result = r.take(cap + 1).read_to_end(body);
+                if let Some(t) = trace {
+                    t.body(body.len() - before);
+                }
+                result.map_err(|_| "retryable interrupted HTTP body")?;
             }
             #[cfg(feature = "authenticated-http")]
             Self::Authenticated(r) => r.read_body(cap, body)?,
