@@ -12,6 +12,13 @@ use std::collections::{BTreeMap, HashSet};
 #[derive(Default)]
 pub(crate) struct NativeSelectionPolicy {
     annual_dist_extended_north: BTreeMap<String, AnnualDistExtendedNorth>,
+    hls_pc_southern: BTreeMap<String, HlsPcSouthern>,
+}
+struct HlsPcSouthern {
+    product: String,
+    observation: std::sync::Arc<crate::products::Observation>,
+    band: String,
+    asset: crate::products::ProductAsset,
 }
 struct AnnualDistExtendedNorth {
     candidate: crate::products::dist_ann::ExtendedNorthernUtm,
@@ -20,6 +27,37 @@ struct AnnualDistExtendedNorth {
     asset: crate::products::ProductAsset,
 }
 impl NativeSelectionPolicy {
+    pub(crate) fn is_empty(&self) -> bool {
+        self.annual_dist_extended_north.is_empty() && self.hls_pc_southern.is_empty()
+    }
+    pub(crate) fn admit_hls_pc_southern(
+        &mut self,
+        asset_id: String,
+        product: String,
+        observation: std::sync::Arc<crate::products::Observation>,
+        band: String,
+        asset: crate::products::ProductAsset,
+    ) -> Result<()> {
+        if crate::products::hls_pc_southern_tile(&product, &observation, &band, &asset)?.is_none() {
+            return fail("PC HLS southern selection requires a validated southern HLS source");
+        }
+        if self
+            .hls_pc_southern
+            .insert(
+                asset_id,
+                HlsPcSouthern {
+                    product,
+                    observation,
+                    band,
+                    asset,
+                },
+            )
+            .is_some()
+        {
+            return fail("duplicate PC HLS native selection policy asset");
+        }
+        Ok(())
+    }
     pub(crate) fn admit_annual_dist_extended_north(
         &mut self,
         asset_id: String,
@@ -51,6 +89,34 @@ impl NativeSelectionPolicy {
         layout: &Layout,
         sources: Option<&crate::storage::Sources>,
     ) -> Result<crate::spatial::NativeSelection> {
+        if let Some(entry) = self.hls_pc_southern.get(&asset.id) {
+            crate::products::routing::validate_signature(&entry.asset.href, &asset.locator)?;
+            let tile = crate::products::hls_pc_southern_tile(
+                &entry.product,
+                &entry.observation,
+                &entry.band,
+                &entry.asset,
+            )?
+            .ok_or("missing PC HLS southern tile identity")?;
+            let zone = tile[1..3].parse::<u32>()?;
+            if layout.crs == format!("EPSG:{}", 32700 + zone) {
+                return Ok(crate::spatial::NativeSelection::Standard);
+            }
+            let sources = sources
+                .ok_or("PC HLS southern selection requires inspected native source evidence")?;
+            let source = serde_json::json!({"object_version":asset.etag,"object_identities":sources.describe(&asset.id)});
+            let profile = crate::products::profile::profile(&entry.product)?;
+            let band = profile.band(&entry.band)?;
+            let zone = crate::products::hls_pc_extended_northern_grid(
+                &entry.product,
+                &entry.observation,
+                band,
+                &entry.asset,
+                &source,
+                layout,
+            )?;
+            return Ok(crate::spatial::NativeSelection::ProviderExtendedNorthernUtm { zone });
+        }
         let Some(entry) = self.annual_dist_extended_north.get(&asset.id) else {
             return Ok(crate::spatial::NativeSelection::Standard);
         };

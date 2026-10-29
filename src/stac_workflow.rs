@@ -86,6 +86,75 @@ pub struct ObjectIdentity {
     pub etag: String,
     pub bytes: u64,
 }
+/// Runtime-only evidence from one fresh HEAD pass. Never serialized or global.
+#[derive(Clone, Default)]
+pub(crate) struct CogIdentities {
+    entries: std::collections::BTreeMap<String, CogIdentity>,
+}
+#[derive(Clone, PartialEq)]
+pub(crate) struct CogIdentity {
+    asset_id: String,
+    locator: String,
+    etag: String,
+    bytes: u64,
+}
+impl CogIdentity {
+    #[cfg(feature = "native-cog")]
+    pub(crate) fn size_for(&self, asset: &Asset) -> Result<u64> {
+        if self.asset_id != asset.id
+            || self.locator != asset.locator
+            || asset.etag.as_ref() != Some(&self.etag)
+        {
+            return fail("native COG fresh identity does not match its exact asset binding");
+        }
+        Ok(self.bytes)
+    }
+}
+impl CogIdentities {
+    fn from_head(core: &Request, identities: &[(usize, ObjectIdentity)]) -> Result<Self> {
+        let Source::Assets { assets } = &core.source else {
+            return fail("missing runtime asset bindings");
+        };
+        let mut entries = std::collections::BTreeMap::new();
+        for (i, identity) in identities {
+            let asset = &assets[*i];
+            if entries
+                .insert(
+                    asset.id.clone(),
+                    CogIdentity {
+                        asset_id: asset.id.clone(),
+                        locator: asset.locator.clone(),
+                        etag: identity.etag.clone(),
+                        bytes: identity.bytes,
+                    },
+                )
+                .is_some()
+            {
+                return fail("duplicate COG identity asset binding");
+            }
+        }
+        Ok(Self { entries })
+    }
+    #[cfg(feature = "native-cog")]
+    pub(crate) fn get(&self, asset: &Asset) -> Result<Option<&CogIdentity>> {
+        let identity = self.entries.get(&asset.id);
+        if let Some(identity) = identity {
+            identity.size_for(asset)?;
+        }
+        Ok(identity)
+    }
+    pub(crate) fn validate_against(&self, prepared: &Self) -> Result<()> {
+        if self.entries != prepared.entries {
+            return fail(
+                "source identity conflict: locator, ETag or length differs from preparation",
+            );
+        }
+        Ok(())
+    }
+    pub(crate) fn is_empty(&self) -> bool {
+        self.entries.is_empty()
+    }
+}
 #[derive(Clone, Debug, Default, Serialize)]
 pub struct DiscoveryReport {
     pub seconds: f64,
@@ -122,9 +191,12 @@ impl Discovered {
         drop(initial_scope);
         let _runtime = runtime_config.enter();
         let t = Instant::now();
-        resolve_identities(&mut self.core, &mut self.sources, &self.request.limits)?;
-        let sources = crate::storage::Sources::new(&self.core)?;
+        let identities =
+            resolve_identities(&mut self.core, &mut self.sources, &self.request.limits)?;
+        let mut sources = crate::storage::Sources::new(&self.core)?;
+        sources.install_cog_identities(identities);
         let mut plan = crate::planner::plan_on(&self.core, cache, &sources)?;
+        sources.clear_cog_reader_identities();
         // The STAC sink assembles native chunks into one file per asset.
         for node in &mut plan.nodes {
             if let crate::Operation::Write { output } = &mut node.operation {
@@ -205,13 +277,14 @@ impl Prepared {
     ) -> Result<ExecutionReport> {
         let _runtime = self.runtime_config.enter();
         configure(&self.discovered.request.limits)?;
-        self.sources
-            .validate_cog_identities(&self.discovered.core, &self.discovered.request.limits)?;
+        let execution_sources = self
+            .sources
+            .validated_cog_readers(&self.discovered.core, &self.discovered.request.limits)?;
         let report = crate::scheduler::execute(
             &self.discovered.core,
             &self.plan,
             self.planning_seconds,
-            &self.sources,
+            &execution_sources,
             cancelled,
             sink,
         )?;
@@ -608,28 +681,29 @@ pub fn prepare(request: &StacRequest, cache: &mut LayoutCache) -> Result<Prepare
 
 /// Recheck pinned COG versions without changing pins or touching GDAL caches.
 /// A successful read is still provisional until this final HEAD pass succeeds.
-pub(crate) fn validate_identities(core: &Request, limits: &Limits) -> Result<()> {
-    remote_identities(core, limits).map(|_| ())
+pub(crate) fn validate_identities(core: &Request, limits: &Limits) -> Result<CogIdentities> {
+    let identities = remote_identities(core, limits)?;
+    CogIdentities::from_head(core, &identities)
 }
 
 pub(crate) fn resolve_identities(
     core: &mut Request,
     sources: &mut [SourceReference],
     limits: &Limits,
-) -> Result<()> {
+) -> Result<CogIdentities> {
     let identities = remote_identities(core, limits)?;
     let Source::Assets { assets } = &mut core.source else {
         return fail("missing runtime asset bindings");
     };
-    for (i, identity) in identities {
-        let asset = &mut assets[i];
+    for (i, identity) in &identities {
+        let asset = &mut assets[*i];
         crate::cog::clear_remote_cache(asset)?;
         asset.etag = Some(identity.etag.clone());
-        if let Some(source) = sources.get_mut(i) {
-            source.object_identity = Some(identity);
+        if let Some(source) = sources.get_mut(*i) {
+            source.object_identity = Some(identity.clone());
         }
     }
-    Ok(())
+    CogIdentities::from_head(core, &identities)
 }
 
 fn remote_identities(core: &Request, limits: &Limits) -> Result<Vec<(usize, ObjectIdentity)>> {
@@ -645,69 +719,95 @@ fn remote_identities(core: &Request, limits: &Limits) -> Result<Vec<(usize, Obje
         return Ok(Vec::new());
     }
     let started = Instant::now();
-    let runtime = tokio::runtime::Builder::new_current_thread()
-        .enable_all()
-        .build()?;
-    let client = stac_io::api::ClientBuilder::new()
-        .timeout(Duration::from_secs(limits.timeout_seconds))
-        .user_agent("tile-ripper/0.1")
-        .build()?;
+    let client = crate::http_transport::cog_client()?;
     let width = crate::storage::worker_count()?;
-    let result = runtime.block_on(async {
+    let result = (|| -> Result<Vec<(usize, ObjectIdentity)>> {
         let mut identities = Vec::with_capacity(remote.len());
-        // A bounded batch uses one pooled async client, and never opens GDAL
-        // handles concurrently. Conservative global <= per-origin width respects
-        // both operation limits even when a batch spans several origins.
+        // Keep every preparation/pre-execution/post-execution HEAD. Only the
+        // pooled connections survive batches; no source identity is cached.
         for batch in remote.chunks(width) {
-            let mut pending = tokio::task::JoinSet::new();
-            for (i, asset) in batch {
-                let (i, asset, client) = (*i, (*asset).clone(), client.clone());
-                let retries = limits.max_retries;
-                pending.spawn(async move {
-                    let result = async {
-                        let mut attempt = 0;
-                        let response = loop {
-                            attempt += 1;
-                            match client.head(&asset.locator).send().await {
-                                Ok(r) if r.status().is_success() => break r,
-                                Ok(r) if r.status().is_client_error() && r.status().as_u16() != 429 => {
-                                    return fail("asset identity HEAD rejected by provider (credentials omitted)")
+            let completed = std::thread::scope(|scope| {
+                let handles: Vec<_> = batch
+                    .iter()
+                    .map(|(i, asset)| {
+                        let client = &client;
+                        scope.spawn(move || -> Result<(usize, ObjectIdentity)> {
+                            let mut attempt = 0;
+                            let response = loop {
+                                attempt += 1;
+                                let mut trace = crate::http_transport::Trace::head(&asset.locator);
+                                let response = client
+                                    .head(&asset.locator)
+                                    .timeout(Duration::from_secs(limits.timeout_seconds))
+                                    .send();
+                                if let Ok(response) = &response {
+                                    if let Some(trace) = trace.as_mut() { trace.received(response.status().as_u16()); }
                                 }
-                                _ if attempt <= retries => {
-                                    // Async delay lets other admitted HEADs progress.
-                                    tokio::time::sleep(Duration::from_secs(u64::from(attempt))).await;
+                                drop(trace);
+                                match response {
+                                    Ok(r) if r.status() == reqwest::StatusCode::OK => break r,
+                                    Ok(r) if r.status().is_success() => {
+                                        return fail("asset identity HEAD requires HTTP 200")
+                                    }
+                                    Ok(r)
+                                        if r.status().is_client_error()
+                                            && r.status().as_u16() != 429 =>
+                                    {
+                                        return fail("asset identity HEAD rejected by provider (credentials omitted)")
+                                    }
+                                    _ if attempt <= limits.max_retries => {
+                                        std::thread::sleep(Duration::from_secs(u64::from(attempt)));
+                                    }
+                                    _ => return fail("asset identity HEAD failed after bounded retries (credentials omitted)"),
                                 }
-                                _ => return fail("asset identity HEAD failed after bounded retries (credentials omitted)"),
+                            };
+                            let etag = response
+                                .headers()
+                                .get("etag")
+                                .and_then(|v| v.to_str().ok())
+                                .filter(|v| strong_etag(v))
+                                .ok_or("supported source must expose a strong ETag for conditional extraction")?
+                                .to_owned();
+                            if asset.etag.as_ref().is_some_and(|expected| *expected != etag) {
+                                return fail("source version conflict: requested ETag differs from current source");
                             }
-                        };
-                        let etag = response.headers().get("etag")
-                            .and_then(|v| v.to_str().ok())
-                            .filter(|v| !v.is_empty() && !v.starts_with("W/"))
-                            .ok_or("supported source must expose a strong ETag for conditional extraction")?.to_owned();
-                        if asset.etag.as_ref().is_some_and(|expected| *expected != etag) {
-                            return fail("source version conflict: requested ETag differs from current source");
-                        }
-                        let bytes = response.headers().get("content-length")
-                            .and_then(|v| v.to_str().ok()).and_then(|v| v.parse().ok())
-                            .ok_or("source HEAD missing content-length")?;
-                        Ok(ObjectIdentity { etag, bytes })
-                    }.await;
-                    // Keep error ordering deterministic as well as source order.
-                    (i, result)
-                });
-            }
-            let mut completed = Vec::with_capacity(batch.len());
-            while let Some(result) = pending.join_next().await {
-                completed.push(result.map_err(|_| "COG identity worker failed")?);
-            }
-            completed.sort_by_key(|(i, _)| *i);
-            for (i, result) in completed { identities.push((i, result?)); }
+                            let bytes = response
+                                .headers()
+                                .get("content-length")
+                                .and_then(|v| v.to_str().ok())
+                                .and_then(|v| v.parse().ok())
+                                .filter(|bytes| *bytes > 0)
+                                .ok_or("source HEAD missing positive content-length")?;
+                            Ok((*i, ObjectIdentity { etag, bytes }))
+                        })
+                    })
+                    .collect();
+                handles
+                    .into_iter()
+                    .map(|h| h.join().map_err(|_| "COG identity worker failed")?)
+                    .collect::<Result<Vec<_>>>()
+            })?;
+            // Joining in request order also preserves deterministic errors.
+            identities.extend(completed);
         }
         Ok(identities)
-    });
+    })();
     crate::diagnostics::profile_stage("cog_identity_batch", started.elapsed().as_secs_f64());
     result
 }
+
+fn strong_etag(etag: &str) -> bool {
+    etag.len() >= 2
+        && etag.starts_with('"')
+        && etag.ends_with('"')
+        && !etag[1..etag.len() - 1]
+            .bytes()
+            .any(|b| b < 33 || b == 127 || b == b'"')
+}
+
+#[cfg(test)]
+#[path = "stac_identity_tests.rs"]
+mod identity_tests;
 
 #[cfg(not(feature = "gdal"))]
 fn configure(_: &Limits) -> Result<()> {

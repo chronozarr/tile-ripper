@@ -20,29 +20,78 @@ use zarrs::{
 pub(crate) fn requires_zarr_bindings(r: &Request) -> bool {
     matches!(&r.source,Source::Assets{assets} if assets.iter().any(|a|a.format == Format::Hdf5 || a.format.is_v3() || (a.format == Format::ZarrV2 && cog::remote(&a.locator))))
 }
-#[derive(Default)]
+#[derive(Clone, Default)]
 pub(crate) struct Sources {
     objects: BTreeMap<String, Arc<Objects>>,
+    cog_identities: Option<Arc<crate::stac_workflow::CogIdentities>>,
     #[cfg(feature = "native-cog")]
     pub(crate) native: crate::native_cog::Snapshots,
-    pub(crate) v3: crate::zarr_v3::Context,
+    pub(crate) v3: Arc<crate::zarr_v3::Context>,
     #[cfg(feature = "native-hdf5")]
-    pub(crate) hdf5: crate::hdf5::Context,
+    pub(crate) hdf5: Arc<crate::hdf5::Context>,
 }
 
 impl Sources {
+    pub(crate) fn install_cog_identities(
+        &mut self,
+        identities: crate::stac_workflow::CogIdentities,
+    ) {
+        let identities = Arc::new(identities);
+        #[cfg(feature = "native-cog")]
+        {
+            self.native = self.native.with_reader_identities(identities.clone());
+        }
+        self.cog_identities = Some(identities);
+    }
+    pub(crate) fn clear_cog_reader_identities(&mut self) {
+        #[cfg(feature = "native-cog")]
+        self.native.clear_reader_identities();
+    }
+    /// Each execution owns its fresh receipt view. Shared source state retains
+    /// prepared pins and failure latches, never an ambient current HEAD result.
+    pub(crate) fn validated_cog_readers(
+        &self,
+        request: &Request,
+        limits: &crate::stac_workflow::Limits,
+    ) -> Result<Self> {
+        let identities = self.checked_cog_identities(request, limits)?;
+        #[allow(unused_mut)]
+        let mut view = self.clone();
+        #[cfg(feature = "native-cog")]
+        if let Some(identities) = identities {
+            view.native = self.native.with_reader_identities(Arc::new(identities));
+        }
+        #[cfg(not(feature = "native-cog"))]
+        let _ = identities;
+        Ok(view)
+    }
     pub(crate) fn validate_cog_identities(
         &self,
         request: &Request,
         limits: &crate::stac_workflow::Limits,
     ) -> Result<()> {
+        self.checked_cog_identities(request, limits).map(|_| ())
+    }
+    fn checked_cog_identities(
+        &self,
+        request: &Request,
+        limits: &crate::stac_workflow::Limits,
+    ) -> Result<Option<crate::stac_workflow::CogIdentities>> {
         #[cfg(all(feature = "native-cog", feature = "authenticated-http"))]
         if self.native.transport_reservation()? > 0 {
-            return self.native.validate();
+            self.native.validate()?;
+            return Ok(None);
         }
         #[cfg(feature = "native-cog")]
         self.native.validate()?;
-        let result = crate::stac_workflow::validate_identities(request, limits);
+        let result = crate::stac_workflow::validate_identities(request, limits).and_then(|fresh| {
+            if let Some(prepared) = &self.cog_identities {
+                fresh.validate_against(prepared)?;
+            } else if !fresh.is_empty() {
+                return fail("COG source identities were not bound during preparation");
+            }
+            Ok(Some(fresh))
+        });
         #[cfg(feature = "native-cog")]
         {
             if result.is_err() {
@@ -56,7 +105,7 @@ impl Sources {
     #[cfg(feature = "native-hdf5")]
     pub(crate) fn from_hdf5(hdf5: crate::hdf5::Context) -> Self {
         Self {
-            hdf5,
+            hdf5: Arc::new(hdf5),
             ..Default::default()
         }
     }
@@ -82,7 +131,7 @@ impl Sources {
         let mut sources = Self::default();
         #[cfg(feature = "native-hdf5")]
         {
-            sources.hdf5.transport = transport.clone();
+            Arc::get_mut(&mut sources.hdf5).unwrap().transport = transport.clone();
         }
         let _ = transport;
         #[cfg(feature = "native-cog")]
