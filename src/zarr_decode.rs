@@ -670,6 +670,157 @@ pub(crate) fn array<T: ReadableStorageTraits + 'static>(
     *ar.attributes_mut() = serde_json::from_value(attrs)?;
     Ok(ar)
 }
+
+/// Local scientific-observation arrays used by the stack post-pass. This has a
+/// separate dtype/rank admission from remote archive profiles. Reuse the same
+/// encoded-size and fixed-output decoder guards; never call a growable codec
+/// directly through zarrs on an unchecked local chunk.
+pub(crate) fn local_observation<T: ReadableStorageTraits + 'static>(
+    inner: Arc<T>,
+    path: &str,
+    mut metadata: serde_json::Value,
+    attrs: serde_json::Value,
+    buffer_bytes: usize,
+) -> Result<Array<Checked<T>>> {
+    let v2 = metadata["zarr_format"] == 2;
+    let element = match if v2 { metadata["dtype"].as_str() } else { metadata["data_type"].as_str() } {
+        Some("|u1" | "uint8") => 1,
+        Some("<u2" | "<i2" | "uint16" | "int16") => 2,
+        Some("<f4" | "<i4" | "float32" | "int32") => 4,
+        Some("<f8" | "<i8" | "float64" | "int64") => 8,
+        _ => return fail("unsupported local observation dtype; expected native little-endian scientific values or coordinates"),
+    };
+    let chunks = if v2 {
+        &metadata["chunks"]
+    } else {
+        &metadata["chunk_grid"]["configuration"]["chunk_shape"]
+    };
+    let chunks = chunks
+        .as_array()
+        .ok_or("local observation has no regular chunk shape")?;
+    if chunks.len() > 3 {
+        return fail("local observation source must have rank at most three");
+    }
+    let expected = chunks.iter().try_fold(element, |n: usize, c| {
+        let size = c
+            .as_u64()
+            .and_then(|v| usize::try_from(v).ok())
+            .filter(|n| *n > 0)
+            .ok_or("invalid local observation chunk dimension")?;
+        n.checked_mul(size)
+            .ok_or("local observation chunk size overflow")
+    })?;
+    if expected > buffer_bytes / 2 || buffer_bytes / 8 == 0 {
+        return fail("decoded local observation chunk exceeds buffer reservation");
+    }
+    let (codec, config) = if v2 {
+        if metadata["order"] != "C"
+            || metadata
+                .get("filters")
+                .is_some_and(|v| !v.is_null() && v.as_array().is_none_or(|a| !a.is_empty()))
+        {
+            return fail("local observation requires C order and no storage filters");
+        }
+        (
+            metadata["compressor"]["id"].as_str().map(str::to_owned),
+            metadata["compressor"].clone(),
+        )
+    } else {
+        if metadata["zarr_format"] != 3
+            || metadata["chunk_grid"]["name"] != "regular"
+            || metadata
+                .get("storage_transformers")
+                .is_some_and(|v| v.as_array().is_none_or(|a| !a.is_empty()))
+        {
+            return fail(
+                "local observation requires ordinary regular chunks without storage transformers",
+            );
+        }
+        let codecs = metadata["codecs"]
+            .as_array()
+            .ok_or("local observation has no codecs")?;
+        if codecs.is_empty()
+            || codecs.len() > 2
+            || codecs[0]["name"] != "bytes"
+            || codecs[0]["configuration"]["endian"] != "little"
+        {
+            return fail("local observation source requires little-endian bytes and at most one lossless compressor; sharded sources are unsupported");
+        }
+        (
+            codecs
+                .get(1)
+                .map(|c| c["name"].as_str().ok_or("invalid local source compressor"))
+                .transpose()?
+                .map(str::to_owned),
+            codecs
+                .get(1)
+                .map(|c| c["configuration"].clone())
+                .unwrap_or_default(),
+        )
+    };
+    let bitshuffle = if v2 {
+        config["shuffle"] == 2
+    } else {
+        config["shuffle"] == "bitshuffle"
+    };
+    match codec.as_deref() {
+        None => {
+            if v2 && !metadata["compressor"].is_null() {
+                return fail("invalid local observation compressor");
+            }
+        }
+        Some("gzip" | "zstd") => {}
+        Some("blosc")
+            if matches!(config["cname"].as_str(), Some("lz4" | "zstd"))
+                && (if v2 {
+                    config["shuffle"].as_u64().is_some_and(|v| v <= 2)
+                } else {
+                    matches!(
+                        config["shuffle"].as_str(),
+                        Some("noshuffle" | "shuffle" | "bitshuffle")
+                    )
+                })
+                && config["clevel"].as_u64().is_some_and(|v| v <= 9)
+                && config["blocksize"].as_u64() == Some(0)
+                && (v2 || config["typesize"].as_u64() == Some(element as u64)) => {}
+        _ => return fail(
+            "unsupported local observation compressor; admitted: raw, gzip, Zstd, Blosc LZ4/Zstd",
+        ),
+    }
+    // Validate the original chain before replacing gzip/Zstd with the guarded
+    // fixed-output result. Blosc remains in zarrs after its header is admitted.
+    let path = path.trim_matches('/');
+    let _ = Array::new_with_metadata(
+        inner.clone(),
+        &format!("/{path}"),
+        serde_json::from_value(metadata.clone())?,
+    )?;
+    if matches!(codec.as_deref(), Some("gzip" | "zstd")) {
+        if v2 {
+            metadata["compressor"] = serde_json::Value::Null;
+        } else {
+            metadata["codecs"].as_array_mut().unwrap().truncate(1);
+        }
+    }
+    let checked = Arc::new(Checked {
+        inner,
+        prefix: format!("{path}/"),
+        expected,
+        cap: buffer_bytes / 8,
+        codec,
+        element,
+        blosc_format: if config["cname"] == "zstd" { 4 } else { 1 },
+        bitshuffle,
+        grib: None,
+    });
+    let mut array = Array::new_with_metadata(
+        checked,
+        &format!("/{path}"),
+        serde_json::from_value(metadata)?,
+    )?;
+    *array.attributes_mut() = serde_json::from_value(attrs)?;
+    Ok(array)
+}
 fn gzip(bytes: &[u8], expected: usize) -> Result<Vec<u8>> {
     let mut decoder = flate2::bufread::GzDecoder::new(Cursor::new(bytes));
     let mut out = vec![0u8; expected];
@@ -716,7 +867,10 @@ impl<T: ReadableStorageTraits> ReadableStorageTraits for Checked<T> {
                 .size_key(key)?
                 .is_some_and(|v| v > self.cap as u64)
             {
-                return fail("encoded object exceeds half buffer_bytes");
+                return fail(&format!(
+                    "encoded object exceeds {}-byte buffer reservation",
+                    self.cap
+                ));
             }
             let Some(bytes) = self.inner.get(key)? else {
                 if [
@@ -735,7 +889,10 @@ impl<T: ReadableStorageTraits> ReadableStorageTraits for Checked<T> {
                 return Ok(None);
             };
             if bytes.len() > self.cap {
-                return fail("encoded object exceeds half buffer_bytes");
+                return fail(&format!(
+                    "encoded object exceeds {}-byte buffer reservation",
+                    self.cap
+                ));
             }
             if !key.as_str().starts_with(&self.prefix) {
                 return fail("unexpected array object");

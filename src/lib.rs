@@ -41,6 +41,7 @@ pub use pixels::Pixels;
 
 mod scheduler;
 mod scientific_output;
+pub mod stack;
 pub use scientific_output::{ScientificEncoding, ScientificOutputOptions};
 pub mod stream;
 

@@ -24,6 +24,9 @@ fn run() -> Result<()> {
     if args.get(1).is_some_and(|s| s == "discover") {
         return cli::discovery::run(&args[2..]);
     }
+    if args.get(1).is_some_and(|s| s == "stack") {
+        return cli::stack::run(&args[2..]);
+    }
     if args.get(1).is_some_and(|s| s == "discover-job") {
         #[cfg(all(feature = "native-hdf5", feature = "authenticated-http"))]
         return cli::discovery::job(&args[2..]);
