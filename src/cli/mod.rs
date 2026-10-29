@@ -473,6 +473,16 @@ pub fn transport_totals(transport: &Value) -> Option<(u64, u64)> {
         })
 }
 
+/// `--human` fetch report; the manifest in the output directory has the detail.
+pub fn fetch_summary(records: usize, output: &str, transport: Option<(u64, u64)>) -> String {
+    let http = if let Some((requests, bytes)) = transport {
+        format!("Observed HTTP: {requests} requests, {bytes} response-body bytes (metadata and validation included).")
+    } else {
+        "Observed HTTP totals unavailable for this backend; manifest records measured stages and planned reads separately.".into()
+    };
+    format!("Acquisition complete: {records} output records.\nOutput: {output}\nCompletion and provenance: manifest.json\n{http}\n")
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

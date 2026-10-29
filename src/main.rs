@@ -272,13 +272,16 @@ fn run() -> Result<()> {
         cache.save(Path::new(&path))?;
     }
     if human && command == "fetch" {
-        println!("Acquisition complete: {} output records.\nOutput: {}\nCompletion and provenance: manifest.json", value["outputs"].as_array().map_or(0, |a| a.len()), destination.as_ref().map_or_else(|| "callback".into(), |p|p.display().to_string()));
-        let transport = &value["observed"]["transport"];
-        if let Some((requests, bytes)) = cli::transport_totals(transport) {
-            println!("Observed HTTP: {requests} requests, {bytes} response-body bytes (metadata and validation included).");
-        } else {
-            println!("Observed HTTP totals unavailable for this backend; manifest records measured stages and planned reads separately.");
-        }
+        print!(
+            "{}",
+            cli::fetch_summary(
+                value["outputs"].as_array().map_or(0, |a| a.len()),
+                &destination
+                    .as_ref()
+                    .map_or_else(|| "callback".into(), |p| p.display().to_string()),
+                cli::transport_totals(&value["observed"]["transport"]),
+            )
+        );
     } else {
         println!("{}", serde_json::to_string_pretty(&value)?);
     }

@@ -78,6 +78,19 @@ pub(crate) fn coordinate_window(
     if requested != crs {
         return fail("bounds CRS must equal native coordinate CRS");
     }
+    // Longitudes are not wrapped: on a 0–360 source a negative box would
+    // overlap only the cell straddling 0° and silently select that column.
+    if crs == "EPSG:4326" && *xmin < 0. && x.iter().any(|v| *v > 180.) {
+        let advice = if *xmax <= 0. {
+            format!("use {}..{} instead", xmin + 360., xmax + 360.)
+        } else {
+            format!(
+                "split the box at 0° into {}..360 and 0..{xmax}",
+                xmin + 360.
+            )
+        };
+        return Err(format!("bbox longitude {xmin} is negative but source longitudes run 0–360° east and are not wrapped; {advice}").into());
+    }
     fn indices(v: &[f64], lo: f64, hi: f64) -> Option<(usize, usize)> {
         let selected: Vec<_> = v
             .iter()
@@ -206,5 +219,35 @@ mod coordinate_tests {
             .unwrap()
             .unwrap();
         assert_eq!((w.x, w.width), (1, 2));
+    }
+
+    #[test]
+    fn negative_longitudes_on_a_0_to_360_source_fail_instead_of_selecting_0() {
+        // WeatherBench2 ERA5 64x32 centers: 0, 5.625, ..., 354.375 east.
+        let x: Vec<f64> = (0..64).map(|i| i as f64 * 5.625).collect();
+        let y = vec![30.9375, 36.5625, 42.1875, 47.8125];
+        let bounds = |bbox| Spatial::Bounds {
+            crs: "EPSG:4326".into(),
+            bbox,
+        };
+        let error = coordinate_window("EPSG:4326", &bounds([-10., 35., -1., 45.]), &x, &y)
+            .unwrap_err()
+            .to_string();
+        assert!(error.contains("0–360"), "{error}");
+        assert!(error.contains("350..359"), "{error}");
+        let error = coordinate_window("EPSG:4326", &bounds([-10., 35., 10., 45.]), &x, &y)
+            .unwrap_err()
+            .to_string();
+        assert!(error.contains("split"), "{error}");
+        let w = coordinate_window("EPSG:4326", &bounds([350., 35., 359., 45.]), &x, &y)
+            .unwrap()
+            .unwrap();
+        assert_eq!((w.x, w.width), (62, 2));
+        // Sources already in -180..180 keep accepting western longitudes.
+        let western: Vec<f64> = x.iter().map(|v| v - 180.).collect();
+        let w = coordinate_window("EPSG:4326", &bounds([-10., 35., -1., 45.]), &western, &y)
+            .unwrap()
+            .unwrap();
+        assert_eq!((w.x, w.width), (30, 3));
     }
 }
