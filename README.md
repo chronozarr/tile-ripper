@@ -4,96 +4,68 @@ Tile-Ripper downloads a small area and time range from supported scientific
 raster datasets into Zarr, keeping the original stored values, native grid and
 masks, and recording the exact source files and versions it read.
 
-Start here: [Quickstart](https://tileripper.com/quickstart) · [Supported data](https://tileripper.com/supported-data) · [Installation](https://tileripper.com/installation)
+[Documentation](https://tileripper.com) · [Quickstart](https://tileripper.com/quickstart) · [Supported data](https://tileripper.com/supported-data) · [Installation](https://tileripper.com/installation) · [Apache-2.0](LICENSE)
 
-[Documentation](https://tileripper.com) · [Quickstart](https://tileripper.com/quickstart) · [Apache-2.0](LICENSE)
+**Status:** source alpha (`0.1.0-alpha.1`). There is no packaged release yet;
+build from source. The API and request format may still change. Tile-Ripper is
+not a general Zarr reader, reprojection engine, mosaic or temporal compositor.
 
-Maintainers: for the current candidate contract, repeatable validation and
-remaining owner decisions, start with [ALPHA.md](ALPHA.md) and the
-[consolidation checklist](docs/consolidation.md).
+## Example
 
-Named native product workflows cover sensor-specific Landsat 4/5 TM, Landsat 7 ETM+ and Landsat 8/9 Collection 2 surface reflectance, HLS L30/S30 v2, OPERA DSWx-HLS, current DSWx-S1, DIST-ALERT, and the qualified OPERA RTC-S1 Float32 profile. They also expose a [strictly pinned, qualified DSWx-NI v0.1 engineering prototype](docs/products/opera-expansion/dswx-ni.md), plus [qualified ten-layer DIST-S1 and 21-layer DIST-ANN acquisition](docs/products/opera-expansion/qualification.md) for the exact source specimens and grids in their receipts. Use `tile-ripper products` and the existing `plan` / `fetch` / `stream` commands with a product request. See [runnable examples and installation](docs/products/workflow.md), [exact real-source qualification and access limits](docs/products/qualification.md), [scientific band/quality definitions](docs/products/specifications.md), and the [25-row coverage roadmap](docs/products/roadmap.md). Stored values, native grids, calibration, classification labels, and independent quality masks are preserved.
+This request asks for Landsat 8/9 surface reflectance (red, near-infrared and
+their quality layers) over a ~1 km box in North Carolina on one day
+([`examples/product-landsat.json`](examples/product-landsat.json)):
 
-[Wave 3 native array products](docs/products/wave3/qualification.md) add current GOES-19 CMIPC C13/C01, SMAP SPL3SMP_E v6 global AM/PM, and a real NISAR GCOV frequency-A HHHH diagonal. Their ordinary discovery/plan/stream/fetch commands preserve original scientific types, typed native grids, source fill, separate AOI/quality masks and durable Zarr. GOES is anonymous; SMAP and NISAR use separately qualified explicit Earthdata policies. [Wave 4 geographic acquisition](docs/products/wave4/qualification.md) adds WGS84 AOIs for the inspected 10/20 m NISAR UTM16N grids, separate SMAP northern-polar AM/PM profiles, and GOES-19 mesoscale-1 C02. Build with `--no-default-features --features native-cog,native-hdf5,authenticated-http`; Cargo defaults remain unchanged.
-
-Named products accept `--provider auto|planetary_computer|earthdata|pinned`
-(or `"provider"` in product JSON). For example:
-
-```sh
-tile-ripper plan hls-request.json --provider auto --human
-tile-ripper plan hls-request.json --provider earthdata --auth earthdata --netrc /private/path/.netrc --human
+```json
+{
+  "product": "landsat-c2-l2-sr",
+  "aoi": {"kind": "bounds", "crs": "EPSG:4326", "bbox": [-78.95,35.95,-78.94,35.96]},
+  "start": "2024-06-29T00:00:00Z",
+  "end": "2024-06-29T23:59:59Z",
+  "bands": ["SR_B4", "SR_B5", "QA_PIXEL", "QA_RADSAT", "SR_QA_AEROSOL"],
+  "quality_policies": ["landsat_pixel_clear"],
+  "max_observations": 8,
+  "buffer_bytes": 33554432,
+  "chunk_edge": 256
+}
 ```
 
-Fresh automatic Landsat/HLS discovery prefers credential-free Planetary Computer
-access, including accountless runtime signing. HLS uses `hls2-l30`/`hls2-s30` v2
-collections; legacy HLS v1.4 is excluded. OPERA retains its current Earthdata
-routes. Explicit authorization is considered only when that provider is selected;
-ambient credentials are never searched. No general authenticated-route speed
-advantage is established, so authorization alone does not change the default.
-Supplied observations pin their physical source and are never replaced. An
-explicit override that conflicts with them fails; mixed-provider observations
-require separate preparations.
+Build without GDAL, inspect what will be read, then download:
 
-JSON and human plans expose the provider, policy, credentials, coverage limits,
-and immutable physical source identity. HLS automatic discovery compares both
-bounded catalogs, records actual observation IDs/counts and failures, and
-prioritizes complete coverage. With authorization,
-a strict observation superset wins; incomparable sets require an explicit
-selection. Without authorization, NASA-only identities are disclosed and require
-a fresh authorized plan. Explicit overrides query only their selected catalog.
-Cross-provider scientific evidence is limited to independently compared samples bound to exact canonical URLs and
-ETags; other assets have unknown cross-provider equivalence. A matching name,
-tile or date cannot create an equivalence group. The observed PC signer grants
-container read/list access; the engine confines every request to the selected
-canonical object. Exact read-only blob grants are also accepted; write grants
-are rejected. Signatures stay in memory. Changed objects, expired signatures and unavailable sources fail and require an
-explicit fresh plan. Prepared acquisitions never switch provider, and product
-checkpoints remain unsupported. See the [provider workflow, evidence and limits](docs/providers/qualification.md).
+```sh
+cargo build --release --locked --no-default-features --features native-cog
+./target/release/tile-ripper plan examples/product-landsat.json --gdal-free --human
+./target/release/tile-ripper fetch examples/product-landsat.json --gdal-free --output ./landsat.zarr
+```
 
-Opt-in [Icechunk acquisition](docs/icechunk/workflow.md) adds snapshot-pinned
-`plan` / `stream` / `fetch` for two inspected Dynamical GFS analysis profiles:
-materialized Float32 shards and virtual Float64 GRIB messages. Native values,
-coordinates, source CRS and physical references are retained. Build with
-`--no-default-features --features icechunk`; default features remain unchanged.
-The products have different numerical representations and remain explicit
-source choices. [Measured access patterns and limits](docs/icechunk/reference.md)
-explain when each layout helps and why a small AOI can still read a whole GRIB grid.
+`plan` lists the scenes, bands, native grid windows and reads before any
+download. `fetch` writes a new Zarr store (it never overwrites an existing
+path) with stored values, native coordinates and separate masks, and records
+the exact source files and versions in its provenance. Landsat is read from
+Microsoft Planetary Computer and needs no account. The
+[product workflow](docs/products/workflow.md) covers discovery, streaming and
+authenticated sources.
 
-The standalone [AlphaEarth GeoZarr prototype](docs/alphaearth/workflow.md) streams bounded rank-four native Int8 embeddings using selective shard ranges and sampled coordinate validation. It preserves the live source’s original `band` dimension and positional channel order. Durable embedding output remains outside this prototype.
+## Supported data
 
-Bounded SWOT Raster D discovery now finds candidates by WGS84 bounding box and
-date through NASA CMR. `discover` reports catalog relevance and exclusions;
-`discover-job` accepts explicit native windows or WGS84 bounding boxes and
-polygons, resolves geographic requests against inspected source CRS and stored
-pixel centers, and writes a version-pinned job after admission. Geographic
-outputs retain a distinct `aoi_mask` beside source validity and quality masks.
-See the [geographic workflow and contract](docs/swot-aoi/workflow.md),
-[runnable AOI selection](examples/swot-aoi-selection.json) and
-[independent scientific gate](docs/swot-aoi/report.md). The original
-[native-index workflow](docs/swot-discovery/workflow.md) remains available.
-Geographic job generation now reuses one immutable source-grid inspection per
-granule. See the [inspection API and checkpoint boundaries](docs/grid-inspection/workflow.md)
-and [matched three-product measurements](docs/grid-inspection/report.md).
-The [source-validation lifecycle and measurements](docs/source-validation/report.md)
-document the subsequent single-binding HEAD reduction, source-failure latches,
-retained authorization/completion checks, and COG/Zarr request controls.
+| Data | What works | Access | Details |
+| --- | --- | --- | --- |
+| Landsat | Collection 2 surface reflectance and QA for Landsat 4/5 TM, 7 ETM+ and 8/9 | No account | [Landsat](docs/products/qualification.md) |
+| HLS | L30 and S30 v2 reflectance with Fmask | No account; NASA Earthdata optional | [HLS](docs/providers/qualification.md) |
+| OPERA | DSWx-HLS, DSWx-S1, DIST-ALERT (HLS and S1), annual DIST-ANN and RTC-S1; DSWx-NI as a prototype | NASA Earthdata for archive access | [OPERA](docs/products/opera-expansion/qualification.md) |
+| GOES | GOES-19 ABI cloud and moisture imagery: CONUS C01/C13 and mesoscale-1 C02 | No account | [GOES](docs/products/wave3/goes.md) |
+| SMAP | SPL3SMP_E v6 soil moisture, global and northern polar grids, AM and PM | NASA Earthdata | [SMAP](docs/products/wave3/smap.md) |
+| NISAR | GCOV frequency-A HHHH backscatter on 10 m and 20 m UTM 16N grids, selected by lat/lon box | NASA Earthdata | [NISAR](docs/products/wave4/qualification.md) |
+| Icechunk GFS | Dynamical GFS analysis, materialized or GRIB-backed, pinned to one repository snapshot | Separate `icechunk` build | [Icechunk GFS](docs/icechunk/workflow.md) |
 
-Explicit one-to-four-observation SWOT Raster D PGD0 jobs now use normal
-`plan` / `fetch` commands to write one scientific Zarr v2 dataset. Each granule
-keeps its native grid, raw variable types, source masks and quality policy.
-See the [runnable workflow and Rust API](docs/swot-job/workflow.md) and
-[scientific, recovery, resource and measurement evidence](docs/swot-job/report.md).
+Support covers the specific product versions and grids checked in each linked
+page; a mission name alone does not mean every product from it works.
+Sentinel-2, SWOT Raster, public Zarr stores (ERA5, IMERG, GFS) and an AlphaEarth
+embeddings prototype are also available; see
+[all sources and limits](#supported-sources-and-limits) and
+[more workflows](#more-workflows).
 
-Opt-in authenticated source-range resume for the qualified SWOT Raster D
-workflow is available through the normal `plan`/`stream` CLI and Rust APIs.
-See [the tested workflow](docs/transfer-resume/workflow.md) and
-[the local decision gate](docs/transfer-resume/report.md). A resumed scientific
-stream starts at its beginning; results remain provisional until `finish()`.
-The [held-out UTM01W qualification](docs/held-out-qualification/report.md)
-resolves the sparse-reference failure and verifies a nonempty second PGD0
-selection, live recovery and Linux ARM64 checkpoint behavior.
-
-[Private alpha candidate: installation and first scientist trial](ALPHA.md).
+## Build and try a real dataset
 
 Retrieve native scientific raster subsets with one Rust library and one
 `plan` / `fetch` / `stream` CLI. Inspect the selected observations, native grids and physical
@@ -105,7 +77,6 @@ required to acquire data. The default build uses GDAL; opt-in builds support
 Use [native CLI selection and public Rust examples](docs/native-http/cli.md) for
 `--backend native` and the explicit `--gdal-free` build guard.
 
-## Build and try a real dataset
 
 Install Rust/Cargo and system GDAL. On macOS with Homebrew:
 
@@ -241,6 +212,51 @@ COG Polygon extraction instead masks by pixel center. Scientific coordinates
 are preserved; EPSG:4326 on these Zarr profiles is an interpretation of geographic
 axes, not a provider-declared precise datum. Original codec decoding is applied
 once; outputs do not repeat IMERG's lossy storage filter.
+
+## More workflows
+
+Opt-in [Icechunk acquisition](docs/icechunk/workflow.md) adds snapshot-pinned
+`plan` / `stream` / `fetch` for two inspected Dynamical GFS analysis profiles:
+materialized Float32 shards and virtual Float64 GRIB messages. Native values,
+coordinates, source CRS and physical references are retained. Build with
+`--no-default-features --features icechunk`; default features remain unchanged.
+The products have different numerical representations and remain explicit
+source choices. [Measured access patterns and limits](docs/icechunk/reference.md)
+explain when each layout helps and why a small AOI can still read a whole GRIB grid.
+
+The standalone [AlphaEarth GeoZarr prototype](docs/alphaearth/workflow.md) streams bounded rank-four native Int8 embeddings using selective shard ranges and sampled coordinate validation. It preserves the live source’s original `band` dimension and positional channel order. Durable embedding output remains outside this prototype.
+
+Bounded SWOT Raster D discovery now finds candidates by WGS84 bounding box and
+date through NASA CMR. `discover` reports catalog relevance and exclusions;
+`discover-job` accepts explicit native windows or WGS84 bounding boxes and
+polygons, resolves geographic requests against inspected source CRS and stored
+pixel centers, and writes a version-pinned job after admission. Geographic
+outputs retain a distinct `aoi_mask` beside source validity and quality masks.
+See the [geographic workflow and contract](docs/swot-aoi/workflow.md),
+[runnable AOI selection](examples/swot-aoi-selection.json) and
+[independent scientific gate](docs/swot-aoi/report.md). The original
+[native-index workflow](docs/swot-discovery/workflow.md) remains available.
+Geographic job generation now reuses one immutable source-grid inspection per
+granule. See the [inspection API and checkpoint boundaries](docs/grid-inspection/workflow.md)
+and [matched three-product measurements](docs/grid-inspection/report.md).
+The [source-validation lifecycle and measurements](docs/source-validation/report.md)
+document the subsequent single-binding HEAD reduction, source-failure latches,
+retained authorization/completion checks, and COG/Zarr request controls.
+
+Explicit one-to-four-observation SWOT Raster D PGD0 jobs now use normal
+`plan` / `fetch` commands to write one scientific Zarr v2 dataset. Each granule
+keeps its native grid, raw variable types, source masks and quality policy.
+See the [runnable workflow and Rust API](docs/swot-job/workflow.md) and
+[scientific, recovery, resource and measurement evidence](docs/swot-job/report.md).
+
+Opt-in authenticated source-range resume for the qualified SWOT Raster D
+workflow is available through the normal `plan`/`stream` CLI and Rust APIs.
+See [the tested workflow](docs/transfer-resume/workflow.md) and
+[the local decision gate](docs/transfer-resume/report.md). A resumed scientific
+stream starts at its beginning; results remain provisional until `finish()`.
+The [held-out UTM01W qualification](docs/held-out-qualification/report.md)
+resolves the sparse-reference failure and verifies a nonempty second PGD0
+selection, live recovery and Linux ARM64 checkpoint behavior.
 
 ## Inspect a plan
 
@@ -389,3 +405,10 @@ URL and a private netrc file path, then pass it to
 `swot::prepare_authenticated`. [Usage and scope](docs/earthdata-auth/workflow.md).
 Ordinary `prepare` remains anonymous; credentials and signed URLs never enter
 request JSON or provenance.
+
+## Maintainers
+
+- [ALPHA.md](ALPHA.md): candidate contract, private alpha installation and first scientist trial
+- [Consolidation checklist](docs/consolidation.md): local checks and remaining owner decisions
+- [Product coverage summary](docs/products/workflow.md#product-coverage-summary), [scientific band and quality definitions](docs/products/specifications.md) and the [coverage roadmap](docs/products/roadmap.md)
+- [Provider routing, signing and access limits](docs/providers/qualification.md#summary)
