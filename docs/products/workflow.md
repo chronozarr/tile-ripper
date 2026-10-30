@@ -2,6 +2,12 @@
 
 GOES ABI, SMAP and the selected NISAR diagonal use the existing `products`, `discover`, `plan`, `stream --values` and `fetch --output NEW.zarr` commands. See the [Wave 3 decision gate](wave3/qualification.md), [GOES commands](wave3/goes.md), [SMAP commands](wave3/smap.md) and [NISAR commands](wave3/nisar.md). Array descriptors appear in `array_profiles`; their concrete coordinate models preserve scan angles, EASE-Grid or original UTM centers. The Rust entry point is `products::arrays::prepare` or its explicit `prepare_earthdata` counterpart, demonstrated by `examples/array_product.rs`. The older COG profile contract below remains unchanged.
 
+## Product coverage summary
+
+Named native product workflows cover sensor-specific Landsat 4/5 TM, Landsat 7 ETM+ and Landsat 8/9 Collection 2 surface reflectance, HLS L30/S30 v2, OPERA DSWx-HLS, current DSWx-S1, DIST-ALERT, and the qualified OPERA RTC-S1 Float32 profile. They also expose a [strictly pinned, qualified DSWx-NI v0.1 engineering prototype](opera-expansion/dswx-ni.md), plus [qualified ten-layer DIST-S1 and 21-layer DIST-ANN acquisition](opera-expansion/qualification.md) for the exact source specimens and grids in their receipts. Use `tile-ripper products` and the existing `plan` / `fetch` / `stream` commands with a product request. See the commands below, [exact real-source qualification and access limits](qualification.md), [scientific band/quality definitions](specifications.md), and the [25-row coverage roadmap](roadmap.md). Stored values, native grids, calibration, classification labels, and independent quality masks are preserved.
+
+[Wave 3 native array products](wave3/qualification.md) add current GOES-19 CMIPC C13/C01, SMAP SPL3SMP_E v6 global AM/PM, and a real NISAR GCOV frequency-A HHHH diagonal. Their ordinary discovery/plan/stream/fetch commands preserve original scientific types, typed native grids, source fill, separate AOI/quality masks and durable Zarr. GOES is anonymous; SMAP and NISAR use separately qualified explicit Earthdata policies. [Wave 4 geographic acquisition](wave4/qualification.md) adds WGS84 AOIs for the inspected 10/20 m NISAR UTM16N grids, separate SMAP northern-polar AM/PM profiles, and GOES-19 mesoscale-1 C02. Build with `--no-default-features --features native-cog,native-hdf5,authenticated-http`; Cargo defaults remain unchanged.
+
 # Native scientific product workflows
 
 Build the portable native path (the global Cargo default remains GDAL):
