@@ -15,11 +15,34 @@ tile-ripper plan examples/weatherbench2.json --human
 | `plan` | Inspect a request without writing output. Reads metadata and source identities and can use the network. |
 | `fetch` | Write the selected subset to a new directory. |
 | `stream` | Print chunk records as they are read. The final completion record ends the stream. |
-| `products` | Print the named product profiles and array descriptors as JSON. |
+| `products` | Print named profiles, array descriptors and supported acquisition routes as JSON. Also accepts `--json`. |
 | `discover` | Find source items. Use `--product` for a named product, or `--collection` to search SWOT (Surface Water and Ocean Topography) Raster granules in the NASA Common Metadata Repository (CMR). |
 | `discover-job` | Build a SWOT job from a selection file. Writes the job to `--output`; review JSON goes to standard output. |
 
 `discover` also takes `--bbox`, `--start`, `--end`, `--limit` and `--output`, and takes no credentials. `--bands` applies to `--product`. `discover-job` also takes `--auth`, `--netrc` and `--output`.
+
+## Supported routes
+
+Run `tile-ripper products --json` before constructing a new request. The existing
+profile lists are retained; the additive `routes` description identifies the
+generic STAC adapter, explicit COG inputs and named-product provider routes. It
+reports build features, access requirements and the limits of the Chronozarr
+handoff. The listing is available without contacting a provider.
+
+The generic STAC adapter supports Earth Search's `sentinel-2-c1-l2a` collection.
+Planetary Computer's `sentinel-1-rtc` is a different collection and is not admitted
+by that adapter. The named `opera-rtc-s1` profile is a separate OPERA product.
+Explicit COG inputs require a JSON request with `source.kind: "assets"` and
+`assets[].format: "cog"`, as in `examples/cog-request.json`. There is no
+`--format cog` convenience flag. They use the URLs supplied in that request; an
+object version pin does not supply authorization to read that object.
+
+Chronozarr's `convert_tile_ripper` bridge requires completed, ordinary
+uncompressed per-observation COG Zarr v2 output with the required scientific
+source metadata. The selected observations must share one exact native grid and
+collection, compatible band calibration and unique acquisition times. Consult
+the route's bridge description before choosing an output. See the
+[Chronozarr bridge contract](https://github.com/chronozarr/chronozarr/blob/main/docs/tile-ripper.md).
 
 ## Options
 
@@ -43,7 +66,7 @@ Do not combine these with a request file.
 | --- | --- |
 | `--output NEW_DIRECTORY` | Destination for `fetch`; required with selection flags. Choose a new path; existing paths are refused. |
 | `--output-format zarr_v2\|geotiff\|native` | Output format. Needs a directory destination: `--output`, or a request file with a directory sink. See Output format below. |
-| `--human` / `--json` | Readable summary, or JSON (the default, stable for scripts). |
+| `--human` / `--json` | Readable summary/errors, or JSON (the default). If both are supplied, the last mode flag wins. |
 | `--dry-run` | Same as `plan`. Metadata may still download. |
 | `--cache FILE` | Metadata cache. Loaded if the file exists; saved after the run. |
 | `--discover-only` | With `plan` only. Runs discovery and skips preparing the request. |
@@ -97,6 +120,42 @@ Named products accept tiled single-band UInt8, UInt16, Int16 and Float32 COGs. S
 - **Streaming.** `stream` prints newline-delimited JSON (NDJSON) records. Chunk records are provisional until the final completion record arrives. Do not use streamed values from a run that ends without one.
 - **GDAL.** GDAL remains the default backend. `--backend native` in a build that includes both readers still links GDAL. Use `--gdal-free` only with a build that excludes GDAL. The canonical build in [Installation](../installation.md) excludes GDAL.
 - **No processing.** Tile-Ripper does not resample or composite data, does not reproject it implicitly, and does not apply calibration. Values keep their stored types and units. See [Output, values and masks](output.md).
+
+## JSON failures
+
+In default/`--json` mode, a failed command exits with status 1 and writes one JSON
+error document to **standard error**. Successful JSON continues to use standard
+output. Failed streams can already have emitted provisional chunk records; only
+a successful final completion record makes those chunks usable.
+
+The error document has `schema_version: 1`, `document_type: "error"` and an
+`error` object. That object includes a stable `code`, `stage`, safe `message`,
+`retryable` and `http_status`. A null retryability or status means it is unknown
+or unavailable, not a successful request. Typed failures can include a sanitized
+source reference and additional details. Credentials and signed access grants
+are excluded from the JSON diagnostic.
+
+The first typed cases are:
+
+| Code | Meaning |
+| --- | --- |
+| `INVALID_ARGUMENTS` | The CLI request or options are invalid. |
+| `CONFIGURATION_ERROR` | A required reader/build configuration is unavailable. |
+| `UNSUPPORTED_STAC_COLLECTION` | The collection is outside the supported STAC adapter; details identify supported collections. |
+| `SOURCE_IDENTITY_HTTP_ERROR` | The provider's response prevented source identity validation; `http_status` records the actual response. |
+| `SOURCE_IDENTITY_TRANSPORT_ERROR` | Source identity validation failed at the transport layer; no HTTP status may be available. |
+| `OPERATION_FAILED` | An otherwise untyped failure. Retryability is unknown; arbitrary underlying error text is withheld from this JSON fallback. |
+
+Retryability describes whether another attempt may be appropriate. It does not
+retry a command, switch providers or replace an accepted source pin. The existing
+bounded request retries and source-version checks still apply.
+
+Use `--human` for readable diagnostics. For automation, capture the two streams
+separately:
+
+```sh
+tile-ripper plan request.json --json > plan.json 2> error.json
+```
 
 ## See also
 

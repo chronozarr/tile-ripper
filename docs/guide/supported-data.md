@@ -15,6 +15,43 @@ Commands assume `tile-ripper` is on your PATH; from a source checkout use
 `./target/release/tile-ripper`. Example paths are relative to the repository
 root. Every row uses the build from [Installation](../installation.md).
 
+## Inspect supported routes
+
+`tile-ripper products` retains the named `profiles` and `array_profiles` and adds
+`routes` (`tile-ripper-routes-v1`). It describes the generic adapters, existing
+named-product provider policies, compiled build features and direct Chronozarr
+bridge limits without reading credentials or contacting a catalog. Build
+availability does not establish authorization, catalog coverage or physical
+source compatibility.
+
+The generic `stac` route uses the Earth Search adapter for exactly
+`sentinel-2-c1-l2a`; it does not discover Planetary Computer `sentinel-1-rtc` or
+arbitrary STAC collections. Generic `cog` requests use a JSON request with
+`source.kind: "assets"` and `assets[].format: "cog"` to supply exact public
+asset URLs or local paths (`--format cog` is not a convenience flag). They do not discover assets, sign Planetary Computer
+URLs or add protected-object authentication through the generic CLI. OPERA
+RTC-S1 is a separate named product with its existing ASF/Earthdata production
+route and qualification limits. Public reference samples and explicitly supplied
+local mirrors do not establish protected production access.
+
+Both generic COG routes need `native-cog` or `gdal`; their qualified native
+profile needs `native-cog`. Named COG acquisition needs `native-cog`, and the
+listed Earthdata production routes also need `authenticated-http` and explicit
+authorization. The route JSON reports these compiled capabilities separately
+from credential requirements. Native array descriptors retain their existing
+`native-hdf5` and product-specific access boundaries.
+
+The direct `chronozarr.convert_tile_ripper` bridge belongs to a separate
+Chronozarr checkout; it is not installed by Tile-Ripper or included in the
+published Chronozarr 0.5.1 package. It accepts a completed local ordinary,
+uncompressed, C-order, unfiltered per-observation COG Zarr v2
+`acquisition_result`, with required collection, item and requested-band source
+metadata. Selected observations must satisfy its exact grid, band, time,
+calibration and mask checks. Generic supplied COG output does not automatically
+provide that provenance. Generic array stores, compressed or filtered output,
+and persistent stacks have separate conversion contracts; see
+[the bridge boundaries](../0004-same-grid-time-stacking.md#chronozarr-output-and-quality-policy).
+
 ## Supported datasets
 
 "Earthdata login" means a NASA Earthdata account and a private netrc file

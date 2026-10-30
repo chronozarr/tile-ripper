@@ -615,7 +615,13 @@ fn oversized_selection_is_refused_before_credentials_or_source_inspection() {
         .output()
         .unwrap();
     assert!(!r.status.success());
-    assert!(String::from_utf8(r.stderr)
+    let error: serde_json::Value = serde_json::from_slice(&r.stderr).unwrap();
+    assert_eq!(error["document_type"], "error");
+    assert_eq!(error["error"]["code"], "INVALID_ARGUMENTS");
+    assert_eq!(error["error"]["stage"], "cli");
+    assert_eq!(error["error"]["retryable"], false);
+    assert!(error["error"]["message"]
+        .as_str()
         .unwrap()
         .contains("input bound (65536 bytes)"));
     std::fs::remove_file(path).unwrap();

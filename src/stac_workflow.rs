@@ -442,8 +442,19 @@ fn band_key(request: &str) -> &str {
     }
 }
 pub fn discover(r: &StacRequest) -> Result<Discovered> {
-    if r.collection != "sentinel-2-c1-l2a" {
-        return fail("Earth Search adapter currently supports collection sentinel-2-c1-l2a only");
+    if r.collection != crate::routes::EARTH_SEARCH_SENTINEL2_COLLECTION {
+        return Err(crate::error::Diagnostic::new(
+            "UNSUPPORTED_STAC_COLLECTION",
+            "discovery",
+            "Earth Search adapter currently supports collection sentinel-2-c1-l2a only",
+        )
+        .with_retryable(false)
+        .with_source(&r.endpoint)
+        .with_details(json!({
+            "supported_collections": [crate::routes::EARTH_SEARCH_SENTINEL2_COLLECTION],
+            "hints": ["Inspect qualified routes with tile-ripper products --json; sources are never substituted."]
+        }))
+        .into());
     }
     if !r.endpoint.starts_with("https://") && !r.endpoint.starts_with("http://127.0.0.1:") {
         return fail("STAC endpoint must use HTTPS (loopback HTTP is allowed for tests)");
@@ -747,18 +758,66 @@ fn remote_identities(core: &Request, limits: &Limits) -> Result<Vec<(usize, Obje
                                 match response {
                                     Ok(r) if r.status() == reqwest::StatusCode::OK => break r,
                                     Ok(r) if r.status().is_success() => {
-                                        return fail("asset identity HEAD requires HTTP 200")
+                                        return Err(identity_http_error(
+                                            &asset.locator,
+                                            r.status(),
+                                            "asset identity HEAD requires HTTP 200",
+                                            Some(false),
+                                            attempt,
+                                            limits.max_retries,
+                                        ))
                                     }
                                     Ok(r)
                                         if r.status().is_client_error()
                                             && r.status().as_u16() != 429 =>
                                     {
-                                        return fail("asset identity HEAD rejected by provider (credentials omitted)")
+                                        return Err(identity_http_error(
+                                            &asset.locator,
+                                            r.status(),
+                                            "asset identity HEAD rejected by provider (credentials omitted)",
+                                            Some(false),
+                                            attempt,
+                                            limits.max_retries,
+                                        ))
                                     }
                                     _ if attempt <= limits.max_retries => {
                                         std::thread::sleep(Duration::from_secs(u64::from(attempt)));
                                     }
-                                    _ => return fail("asset identity HEAD failed after bounded retries (credentials omitted)"),
+                                    Ok(r) => {
+                                        let retryable = (r.status().as_u16() == 429
+                                            || r.status().is_server_error())
+                                            .then_some(true);
+                                        return Err(identity_http_error(
+                                            &asset.locator,
+                                            r.status(),
+                                            "asset identity HEAD failed after bounded retries (credentials omitted)",
+                                            retryable,
+                                            attempt,
+                                            limits.max_retries,
+                                        ));
+                                    }
+                                    Err(error) => {
+                                        let retryable = error.is_timeout() || error.is_connect();
+                                        let mut diagnostic = crate::error::Diagnostic::new(
+                                            "SOURCE_IDENTITY_TRANSPORT_ERROR",
+                                            "source_identity",
+                                            "asset identity HEAD failed after bounded retries (credentials omitted)",
+                                        )
+                                        .with_source(&asset.locator)
+                                        .with_details(json!({
+                                            "method": "HEAD", "attempts": attempt,
+                                            "max_retries": limits.max_retries,
+                                            "timeout": error.is_timeout(),
+                                            "connection_failure": error.is_connect()
+                                        }));
+                                        if retryable {
+                                            diagnostic = diagnostic.with_retryable(true);
+                                        }
+                                        if let Some(status) = error.status() {
+                                            diagnostic = diagnostic.with_http_status(status.as_u16());
+                                        }
+                                        return Err(diagnostic.into());
+                                    }
                                 }
                             };
                             let etag = response
@@ -794,6 +853,27 @@ fn remote_identities(core: &Request, limits: &Limits) -> Result<Vec<(usize, Obje
     })();
     crate::diagnostics::profile_stage("cog_identity_batch", started.elapsed().as_secs_f64());
     result
+}
+
+fn identity_http_error(
+    source: &str,
+    status: reqwest::StatusCode,
+    message: &'static str,
+    retryable: Option<bool>,
+    attempts: u32,
+    max_retries: u32,
+) -> Box<dyn std::error::Error + Send + Sync> {
+    let mut diagnostic =
+        crate::error::Diagnostic::new("SOURCE_IDENTITY_HTTP_ERROR", "source_identity", message)
+            .with_source(source)
+            .with_http_status(status.as_u16())
+            .with_details(
+                json!({"method": "HEAD", "attempts": attempts, "max_retries": max_retries}),
+            );
+    if let Some(retryable) = retryable {
+        diagnostic = diagnostic.with_retryable(retryable);
+    }
+    diagnostic.into()
 }
 
 fn strong_etag(etag: &str) -> bool {

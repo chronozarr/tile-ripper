@@ -1245,7 +1245,7 @@ pub(crate) fn safe_error(
             message.replace_range(start..end, "[source]");
         }
     }
-    format!("{stage}: {message}").into()
+    crate::error::context(stage, message, e)
 }
 
 #[derive(Clone, PartialEq)]
