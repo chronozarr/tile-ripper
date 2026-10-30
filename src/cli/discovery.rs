@@ -145,8 +145,9 @@ pub fn job(args: &[String]) -> Result<()> {
     }
     let mut translated = vec!["plan".into()];
     translated.extend_from_slice(args);
-    let options =
-        super::parse_with_input_limit(&translated, 64 * 1024)?.ok_or("selection required")?;
+    let options = super::parse_with_input_limit(&translated, 64 * 1024)
+        .map_err(crate::argument_error)?
+        .ok_or("selection required")?;
     if options.discover_only
         || options.human
         || options.cache_path.is_some()

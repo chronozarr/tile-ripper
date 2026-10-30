@@ -661,7 +661,7 @@ fn human_errors(args: &[String]) -> bool {
             "--json" => Some(false),
             _ => None,
         })
-        .last()
+        .next_back()
         .unwrap_or(false)
 }
 
