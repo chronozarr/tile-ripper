@@ -12,7 +12,7 @@ pub fn list() -> Result<()> {
     println!(
         "{}",
         serde_json::to_string_pretty(
-            &serde_json::json!({"schema":"tile-ripper-products-v1","profiles":products::profile::profiles(),"array_profiles":arrays,"capability":"descriptors require physical native COG inspection; see docs/products/qualification.md for real-source qualification and access boundaries","build":"--no-default-features --features native-cog; Cargo defaults unchanged"})
+            &serde_json::json!({"schema":"tile-ripper-products-v1","profiles":products::profile::profiles(),"array_profiles":arrays,"routes":tile_ripper::routes::describe()?,"capability":"descriptors require physical native COG inspection; see docs/products/qualification.md for real-source qualification and access boundaries","build":"--no-default-features --features native-cog; Cargo defaults unchanged"})
         )?
     );
     Ok(())
@@ -97,7 +97,13 @@ pub fn run(options: super::Options) -> Result<()> {
             .is_some_and(|s| s != "zarr_v2")
         || options.backend == Some(super::Backend::Gdal)
     {
-        return Err("product workflow requires native COG/scientific Zarr; quality policies belong in product JSON; archive authentication is product-specific (see qualification documentation)".into());
+        return Err(tile_ripper::error::Diagnostic::new(
+            "INVALID_ARGUMENTS",
+            "cli",
+            "product workflow requires native COG/scientific Zarr; quality policies belong in product JSON; archive authentication is product-specific (see qualification documentation)",
+        )
+        .with_retryable(false)
+        .into());
     }
     std::env::set_var("TILE_RIPPER_COG_BACKEND", "native");
     if options.gdal_free {

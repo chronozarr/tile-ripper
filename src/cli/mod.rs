@@ -6,7 +6,7 @@ pub mod discovery;
 pub mod products;
 pub mod stack;
 const HELP: &str = r#"tile-ripper plan|fetch|stream [request.json] [options]
-  tile-ripper products
+  tile-ripper products [--json]
   tile-ripper stack INPUT.zarr OUTPUT.zarr   same-grid time stacks of a fetch output (--help)
   tile-ripper discover --product FAMILY --bbox W,S,E,N --start RFC3339 --end RFC3339 --bands NAMES --limit 8
   Product JSON: docs/products/workflow.md
@@ -27,7 +27,9 @@ const HELP: &str = r#"tile-ripper plan|fetch|stream [request.json] [options]
   --backend native|gdal             COG reader; overrides TILE_RIPPER_COG_BACKEND
   --gdal-free                      require a build without GDAL; native COG if compiled
   --provider auto|planetary_computer|earthdata|pinned   product route override
-  --human | --json                  JSON default, stable for scripts
+  --human | --json                  JSON default; last format flag wins
+  JSON failures: stderr schema_version=1/document_type=error; exit 1.
+  Human failures retain text. Untyped errors use OPERATION_FAILED/stage cli.
   --dry-run                        fetch behaves as plan; metadata may download
   --cache FILE --discover-only      discover-only requires plan
   --auth earthdata|configured --netrc PRIVATE_FILE   explicit native HDF5 auth

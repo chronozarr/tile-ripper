@@ -1,6 +1,8 @@
 mod cli;
 use std::{env, path::Path};
-use tile_ripper::{acquisition, cog::LayoutCache, Format, Request, Result, Sink, Source};
+use tile_ripper::{
+    acquisition, cog::LayoutCache, error::Diagnostic, Format, Request, Result, Sink, Source,
+};
 fn run() -> Result<()> {
     let mut args: Vec<_> = env::args().collect();
     if let Some(command) = args.get_mut(1) {
@@ -11,10 +13,10 @@ fn run() -> Result<()> {
         }
     }
     if args.get(1).is_some_and(|s| s == "products") {
-        if args.len() != 2 {
-            return Err(
-                "products accepts no options; use discover --product or a product request".into(),
-            );
+        if args.len() != 2 && !(args.len() == 3 && args[2] == "--json") {
+            return Err(argument_message(
+                "products accepts only --json; use discover --product or a product request",
+            ));
         }
         return cli::products::list();
     }
@@ -33,7 +35,7 @@ fn run() -> Result<()> {
         #[cfg(not(all(feature = "native-hdf5", feature = "authenticated-http")))]
         return Err("discover-job requires native-hdf5,authenticated-http features".into());
     }
-    let options = cli::parse(&args[1..])?;
+    let options = cli::parse(&args[1..]).map_err(argument_error)?;
     let Some(options) = options else {
         return Ok(());
     };
@@ -70,7 +72,7 @@ fn run() -> Result<()> {
         env::set_var("TILE_RIPPER_COG_BACKEND", "native");
     }
     if gdal_free {
-        tile_ripper::cog::require_gdal_free()?;
+        tile_ripper::cog::require_gdal_free().map_err(configuration_error)?;
     }
     if let Some(n) = workers {
         env::set_var("TILE_RIPPER_WORKERS", n.to_string());
@@ -104,12 +106,11 @@ fn run() -> Result<()> {
     };
     let mut request: Request = if input.get("source").is_some() {
         serde_json::from_value(input)
-            .map_err(|_| "invalid request schema; see docs/unified-workflow.md")?
+            .map_err(|_| argument_message("invalid request schema; see docs/unified-workflow.md"))?
     } else {
-        acquisition::from_stac(
-            serde_json::from_value(input)
-                .map_err(|_| "invalid request schema; see docs/unified-workflow.md")?,
-        )
+        acquisition::from_stac(serde_json::from_value(input).map_err(|_| {
+            argument_message("invalid request schema; see docs/unified-workflow.md")
+        })?)
     };
     if let Some(path) = output {
         request.sink = match request.sink {
@@ -141,24 +142,24 @@ fn run() -> Result<()> {
                 _ => request.sink,
             };
         } else if output_format.is_some() {
-            return Err(
-                "--output-format requires a directory sink; supply --output NEW_DIRECTORY".into(),
-            );
+            return Err(argument_message(
+                "--output-format requires a directory sink; supply --output NEW_DIRECTORY",
+            ));
         }
     }
     if cog_source(&request.source) {
         // Resolve the selected reader before discovery or source inspection.
-        tile_ripper::cog::backend()?;
+        tile_ripper::cog::backend().map_err(configuration_error)?;
     }
     if command == "fetch"
         && !cfg!(feature = "gdal")
         && cog_source(&request.source)
         && !matches!(request.sink, Sink::ZarrDirectory { .. })
     {
-        return Err("GeoTIFF output requires GDAL; use --gdal-free or --output-format zarr_v2 for scientific Zarr output".into());
+        return Err(argument_message("GeoTIFF output requires GDAL; use --gdal-free or --output-format zarr_v2 for scientific Zarr output"));
     }
     if discover_only && command != "plan" {
-        return Err("--discover-only requires plan".into());
+        return Err(argument_message("--discover-only requires plan"));
     }
     let destination = match &request.sink {
         Sink::Directory { path }
@@ -167,7 +168,9 @@ fn run() -> Result<()> {
         Sink::Callback => None,
     };
     if command == "fetch" && destination.as_ref().is_some_and(|path| path.exists()) {
-        return Err("output directory already exists; choose --output NEW_DIRECTORY".into());
+        return Err(argument_message(
+            "output directory already exists; choose --output NEW_DIRECTORY",
+        ));
     }
     if human {
         eprintln!("Inspecting source metadata and native selection…");
@@ -623,9 +626,59 @@ fn cog_source(source: &Source) -> bool {
         Source::Assets { assets } => assets.iter().any(|asset| asset.format == Format::Cog),
     }
 }
+
+fn argument_message(message: &'static str) -> Box<dyn std::error::Error + Send + Sync> {
+    Diagnostic::new("INVALID_ARGUMENTS", "cli", message)
+        .with_retryable(false)
+        .into()
+}
+
+fn argument_error(
+    error: Box<dyn std::error::Error + Send + Sync>,
+) -> Box<dyn std::error::Error + Send + Sync> {
+    // cli::parse returns closed messages: user-supplied values/arguments are not
+    // included. Preserve those actionable labels without inspecting their text.
+    Diagnostic::new("INVALID_ARGUMENTS", "cli", error.to_string())
+        .with_retryable(false)
+        .with_cause(error)
+        .into()
+}
+
+fn configuration_error(
+    error: Box<dyn std::error::Error + Send + Sync>,
+) -> Box<dyn std::error::Error + Send + Sync> {
+    // The backend/linkage guards return closed labels, never environment values.
+    Diagnostic::new("CONFIGURATION_ERROR", "cli", error.to_string())
+        .with_retryable(false)
+        .with_cause(error)
+        .into()
+}
+
+fn human_errors(args: &[String]) -> bool {
+    args.iter()
+        .filter_map(|argument| match argument.as_str() {
+            "--human" => Some(true),
+            "--json" => Some(false),
+            _ => None,
+        })
+        .last()
+        .unwrap_or(false)
+}
+
 fn main() {
+    // Select error format before parsing, including malformed invocations. Last
+    // explicit format flag wins, matching the successful-request parser.
+    let human = human_errors(&env::args().skip(1).collect::<Vec<_>>());
     if let Err(e) = run() {
-        eprintln!("tile-ripper: {e}");
+        if human {
+            eprintln!("tile-ripper: {e}");
+        } else {
+            let error = tile_ripper::error::envelope(e.as_ref());
+            let output = serde_json::to_string(&error).unwrap_or_else(|_| {
+                r#"{"schema_version":1,"document_type":"error","error":{"code":"OPERATION_FAILED","stage":"cli","message":"Operation failed; error serialization unavailable.","retryable":null,"http_status":null}}"#.into()
+            });
+            eprintln!("{output}");
+        }
         std::process::exit(1);
     }
 }

@@ -1,5 +1,6 @@
 //! Explainable acquisition planning. Locators are runtime inputs, never plan fields.
 pub mod cog;
+pub mod error;
 pub mod execute;
 pub mod model;
 pub mod planner;
@@ -21,6 +22,7 @@ mod zarr_acquire;
 
 pub mod acquisition;
 pub mod products;
+pub mod routes;
 
 mod diagnostics;
 mod output_transaction;
