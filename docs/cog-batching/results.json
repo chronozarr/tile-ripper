@@ -1,0 +1,800 @@
+{
+  "schema_version": 1,
+  "document_type": "native_cog_batching_optimization",
+  "status": "implemented_and_benchmarked",
+  "completed_utc": "2026-11-02T21:17:32.259153+00:00",
+  "implementation": {
+    "production_files": [
+      "src/cog_range.rs",
+      "src/native_cog.rs"
+    ],
+    "regression_files": [
+      "src/cog_range_http_tests.rs",
+      "tests/native_cog_selection.rs"
+    ],
+    "description": "Partition capped physical runs by first-needed node and global single-use eligibility; retain whole valid consumption permutations; conservatively bisect rejected intervals to recover smaller legal batches.",
+    "unchanged_constraints": [
+      "actual cache-miss sequence and decoded LRU policy",
+      "same first-needed output node and globally consecutive miss-position set",
+      "global repeated-offset refusal",
+      "only selected tiles; wrapper gaps <=8 bytes",
+      "8MiB read cap and 2MiB tile/selection limits",
+      "existing allocation reservations and requested working-buffer budgets",
+      "source pins, range checks, cancellation/finalization and durable publication"
+    ],
+    "known_limit": "Conservative bisection may miss additional legal subgroups. This is not an optimal partition algorithm."
+  },
+  "population": {
+    "matched_fetch_cli_invocations": 57,
+    "main_core": 30,
+    "standard_guards": 18,
+    "multiasset_guard": 9,
+    "acquisition_failures": 0,
+    "smoke_fetches_separate": 3,
+    "main_repetitions_per_mode_condition": 5,
+    "guard_repetitions_per_mode": 3,
+    "repeated_independently_checked_values": 152308416,
+    "scope": "Synthetic deterministic UInt16 COG, native grid/bounds, same immutable source bytes and output sink; loopback HTTP/1.1; warm source pages and fresh client processes. Multiasset routes reuse identical source bytes under separate IDs."
+  },
+  "physical_plan": {
+    "main_selected_native_tiles": 49,
+    "payload_gets_baseline": 49,
+    "payload_gets_candidate": 21,
+    "eligible_groups_candidate": 21,
+    "main_native_total_body_bytes_both": 6432317,
+    "main_reserved_bytes_baseline": 4072000,
+    "main_reserved_bytes_candidate": 4465378,
+    "main_requested_budget_bytes": 67108864
+  },
+  "measurements": [
+    {
+      "condition": "shaped-8ms-100Mbit",
+      "case": "core",
+      "mode": "baseline-gdal",
+      "runs": 5,
+      "failures": 0,
+      "wall_all": [
+        1.098156000021845,
+        1.1025983330328017,
+        1.1078080410370603,
+        1.1144272909732535,
+        1.0957922919187695
+      ],
+      "wall_seconds_median": 1.1025983330328017,
+      "cpu_seconds_median": 0.180889,
+      "peak_rss_bytes_median": 64618496,
+      "output_files_median": 10,
+      "output_bytes_median": 4012862,
+      "source_data_requests_median": null,
+      "source_data_bytes_median": null,
+      "first_output_seconds_median": 0.165066708,
+      "actual_workers_median": 1,
+      "active_workers_peak_median": 1,
+      "reserved_bytes_peak_median": 524288,
+      "http_median": {
+        "head": 4,
+        "get": 22,
+        "body_bytes": 6456977,
+        "selected_native_payload_GETs": 21,
+        "selected_encoded_bytes": 6423733,
+        "unselected_encoded_bytes": 30702,
+        "duplicate_response_bytes": 56
+      }
+    },
+    {
+      "condition": "shaped-8ms-100Mbit",
+      "case": "core",
+      "mode": "baseline-native",
+      "runs": 5,
+      "failures": 0,
+      "wall_all": [
+        1.3768452500225976,
+        1.3834260840667412,
+        1.3937849589856341,
+        1.3741126250242814,
+        1.3758472909685224
+      ],
+      "wall_seconds_median": 1.3768452500225976,
+      "cpu_seconds_median": 0.188423,
+      "peak_rss_bytes_median": 59965440,
+      "output_files_median": 10,
+      "output_bytes_median": 4016830,
+      "source_data_requests_median": 49,
+      "source_data_bytes_median": 6424125,
+      "first_output_seconds_median": 0.235305166,
+      "actual_workers_median": 1,
+      "active_workers_peak_median": 1,
+      "reserved_bytes_peak_median": 4072000,
+      "http_median": {
+        "head": 3,
+        "get": 50,
+        "body_bytes": 6432317,
+        "selected_native_payload_GETs": 49,
+        "selected_encoded_bytes": 6423733,
+        "unselected_encoded_bytes": 6126,
+        "duplicate_response_bytes": 0
+      }
+    },
+    {
+      "condition": "shaped-8ms-100Mbit",
+      "case": "core",
+      "mode": "candidate-native",
+      "runs": 5,
+      "failures": 0,
+      "wall_all": [
+        1.0924536670790985,
+        1.0967979170382023,
+        1.0868069169810042,
+        1.0977135410066694,
+        1.0888401250122115
+      ],
+      "wall_seconds_median": 1.0924536670790985,
+      "cpu_seconds_median": 0.182323,
+      "peak_rss_bytes_median": 60735488,
+      "output_files_median": 10,
+      "output_bytes_median": 4016840,
+      "source_data_requests_median": 21,
+      "source_data_bytes_median": 6424125,
+      "first_output_seconds_median": 0.17197004100000002,
+      "actual_workers_median": 1,
+      "active_workers_peak_median": 1,
+      "reserved_bytes_peak_median": 4465378,
+      "http_median": {
+        "head": 3,
+        "get": 22,
+        "body_bytes": 6432317,
+        "selected_native_payload_GETs": 21,
+        "selected_encoded_bytes": 6423733,
+        "unselected_encoded_bytes": 6126,
+        "duplicate_response_bytes": 0
+      }
+    },
+    {
+      "condition": "unshaped",
+      "case": "core",
+      "mode": "baseline-gdal",
+      "runs": 5,
+      "failures": 0,
+      "wall_all": [
+        0.20357541600242257,
+        0.2111130830598995,
+        0.20674079202581197,
+        0.201280124951154,
+        0.20244583301246166
+      ],
+      "wall_seconds_median": 0.20357541600242257,
+      "cpu_seconds_median": 0.170174,
+      "peak_rss_bytes_median": 63635456,
+      "output_files_median": 10,
+      "output_bytes_median": 4012860,
+      "source_data_requests_median": null,
+      "source_data_bytes_median": null,
+      "first_output_seconds_median": 0.010540833,
+      "actual_workers_median": 1,
+      "active_workers_peak_median": 1,
+      "reserved_bytes_peak_median": 524288,
+      "http_median": {
+        "head": 4,
+        "get": 22,
+        "body_bytes": 6456977,
+        "selected_native_payload_GETs": 21,
+        "selected_encoded_bytes": 6423733,
+        "unselected_encoded_bytes": 30702,
+        "duplicate_response_bytes": 56
+      }
+    },
+    {
+      "condition": "unshaped",
+      "case": "core",
+      "mode": "baseline-native",
+      "runs": 5,
+      "failures": 0,
+      "wall_all": [
+        0.2053282499546185,
+        0.21203741698991507,
+        0.20940458308905363,
+        0.198343624942936,
+        0.20390887500252575
+      ],
+      "wall_seconds_median": 0.2053282499546185,
+      "cpu_seconds_median": 0.172613,
+      "peak_rss_bytes_median": 58900480,
+      "output_files_median": 10,
+      "output_bytes_median": 4016836,
+      "source_data_requests_median": 49,
+      "source_data_bytes_median": 6424125,
+      "first_output_seconds_median": 0.017515876,
+      "actual_workers_median": 1,
+      "active_workers_peak_median": 1,
+      "reserved_bytes_peak_median": 4072000,
+      "http_median": {
+        "head": 3,
+        "get": 50,
+        "body_bytes": 6432317,
+        "selected_native_payload_GETs": 49,
+        "selected_encoded_bytes": 6423733,
+        "unselected_encoded_bytes": 6126,
+        "duplicate_response_bytes": 0
+      }
+    },
+    {
+      "condition": "unshaped",
+      "case": "core",
+      "mode": "candidate-native",
+      "runs": 5,
+      "failures": 0,
+      "wall_all": [
+        0.19784366700332612,
+        0.20120024995412678,
+        0.20052466704510152,
+        0.1954812080366537,
+        0.20071108301635832
+      ],
+      "wall_seconds_median": 0.20052466704510152,
+      "cpu_seconds_median": 0.169365,
+      "peak_rss_bytes_median": 59162624,
+      "output_files_median": 10,
+      "output_bytes_median": 4016835,
+      "source_data_requests_median": 21,
+      "source_data_bytes_median": 6424125,
+      "first_output_seconds_median": 0.015660375,
+      "actual_workers_median": 1,
+      "active_workers_peak_median": 1,
+      "reserved_bytes_peak_median": 4465378,
+      "http_median": {
+        "head": 3,
+        "get": 22,
+        "body_bytes": 6432317,
+        "selected_native_payload_GETs": 21,
+        "selected_encoded_bytes": 6423733,
+        "unselected_encoded_bytes": 6126,
+        "duplicate_response_bytes": 0
+      }
+    },
+    {
+      "condition": "shaped-8ms-100Mbit",
+      "case": "small-selection",
+      "mode": "baseline-gdal",
+      "runs": 3,
+      "failures": 0,
+      "wall_all": [
+        0.5990954589797184,
+        0.5931578340241686,
+        0.5871835829457268
+      ],
+      "wall_seconds_median": 0.5931578340241686,
+      "cpu_seconds_median": 0.15878199999999998,
+      "peak_rss_bytes_median": 61603840,
+      "output_files_median": 5,
+      "output_bytes_median": 1232345,
+      "source_data_requests_median": null,
+      "source_data_bytes_median": null,
+      "first_output_seconds_median": 0.165452501,
+      "actual_workers_median": 1,
+      "active_workers_peak_median": 1,
+      "reserved_bytes_peak_median": 524288,
+      "http_median": {
+        "head": 4,
+        "get": 9,
+        "body_bytes": 2834055,
+        "selected_native_payload_GETs": 8,
+        "selected_encoded_bytes": 2096839,
+        "unselected_encoded_bytes": 734950,
+        "duplicate_response_bytes": 12
+      }
+    },
+    {
+      "condition": "shaped-8ms-100Mbit",
+      "case": "small-selection",
+      "mode": "baseline-native",
+      "runs": 3,
+      "failures": 0,
+      "wall_all": [
+        0.46172433404717594,
+        0.4557321249740198,
+        0.46220912504941225
+      ],
+      "wall_seconds_median": 0.46172433404717594,
+      "cpu_seconds_median": 0.149873,
+      "peak_rss_bytes_median": 57376768,
+      "output_files_median": 5,
+      "output_bytes_median": 1236490,
+      "source_data_requests_median": 4,
+      "source_data_bytes_median": 2096967,
+      "first_output_seconds_median": 0.274089042,
+      "actual_workers_median": 1,
+      "active_workers_peak_median": 1,
+      "reserved_bytes_peak_median": 2367902,
+      "http_median": {
+        "head": 3,
+        "get": 5,
+        "body_bytes": 2105159,
+        "selected_native_payload_GETs": 4,
+        "selected_encoded_bytes": 2096839,
+        "unselected_encoded_bytes": 6126,
+        "duplicate_response_bytes": 0
+      }
+    },
+    {
+      "condition": "shaped-8ms-100Mbit",
+      "case": "small-selection",
+      "mode": "candidate-native",
+      "runs": 3,
+      "failures": 0,
+      "wall_all": [
+        0.46306566696148366,
+        0.45917004195507616,
+        0.4569572079926729
+      ],
+      "wall_seconds_median": 0.45917004195507616,
+      "cpu_seconds_median": 0.149087,
+      "peak_rss_bytes_median": 57294848,
+      "output_files_median": 5,
+      "output_bytes_median": 1236512,
+      "source_data_requests_median": 4,
+      "source_data_bytes_median": 2096967,
+      "first_output_seconds_median": 0.27225825,
+      "actual_workers_median": 1,
+      "active_workers_peak_median": 1,
+      "reserved_bytes_peak_median": 2367902,
+      "http_median": {
+        "head": 3,
+        "get": 5,
+        "body_bytes": 2105159,
+        "selected_native_payload_GETs": 4,
+        "selected_encoded_bytes": 2096839,
+        "unselected_encoded_bytes": 6126,
+        "duplicate_response_bytes": 0
+      }
+    },
+    {
+      "condition": "shaped-8ms-100Mbit",
+      "case": "tight-budget",
+      "mode": "baseline-gdal",
+      "runs": 3,
+      "failures": 0,
+      "wall_all": [
+        1.1128460420295596,
+        1.106380374985747,
+        1.1095687081106007
+      ],
+      "wall_seconds_median": 1.1095687081106007,
+      "cpu_seconds_median": 0.181549,
+      "peak_rss_bytes_median": 64323584,
+      "output_files_median": 10,
+      "output_bytes_median": 4012858,
+      "source_data_requests_median": null,
+      "source_data_bytes_median": null,
+      "first_output_seconds_median": 0.164099542,
+      "actual_workers_median": 1,
+      "active_workers_peak_median": 1,
+      "reserved_bytes_peak_median": 524288,
+      "http_median": {
+        "head": 4,
+        "get": 22,
+        "body_bytes": 6456977,
+        "selected_native_payload_GETs": 21,
+        "selected_encoded_bytes": 6423733,
+        "unselected_encoded_bytes": 30702,
+        "duplicate_response_bytes": 56
+      }
+    },
+    {
+      "condition": "shaped-8ms-100Mbit",
+      "case": "tight-budget",
+      "mode": "baseline-native",
+      "runs": 3,
+      "failures": 0,
+      "wall_all": [
+        1.3754624580033123,
+        1.3823299170471728,
+        1.386609791079536
+      ],
+      "wall_seconds_median": 1.3823299170471728,
+      "cpu_seconds_median": 0.186978,
+      "peak_rss_bytes_median": 59588608,
+      "output_files_median": 10,
+      "output_bytes_median": 4016834,
+      "source_data_requests_median": 49,
+      "source_data_bytes_median": 6424125,
+      "first_output_seconds_median": 0.234691833,
+      "actual_workers_median": 1,
+      "active_workers_peak_median": 1,
+      "reserved_bytes_peak_median": 4072000,
+      "http_median": {
+        "head": 3,
+        "get": 50,
+        "body_bytes": 6432317,
+        "selected_native_payload_GETs": 49,
+        "selected_encoded_bytes": 6423733,
+        "unselected_encoded_bytes": 6126,
+        "duplicate_response_bytes": 0
+      }
+    },
+    {
+      "condition": "shaped-8ms-100Mbit",
+      "case": "tight-budget",
+      "mode": "candidate-native",
+      "runs": 3,
+      "failures": 0,
+      "wall_all": [
+        1.381267708959058,
+        1.3860312919132411,
+        1.3849312500096858
+      ],
+      "wall_seconds_median": 1.3849312500096858,
+      "cpu_seconds_median": 0.183417,
+      "peak_rss_bytes_median": 60260352,
+      "output_files_median": 10,
+      "output_bytes_median": 4016834,
+      "source_data_requests_median": 49,
+      "source_data_bytes_median": 6424125,
+      "first_output_seconds_median": 0.23596050100000002,
+      "actual_workers_median": 1,
+      "active_workers_peak_median": 1,
+      "reserved_bytes_peak_median": 4072000,
+      "http_median": {
+        "head": 3,
+        "get": 50,
+        "body_bytes": 6432317,
+        "selected_native_payload_GETs": 49,
+        "selected_encoded_bytes": 6423733,
+        "unselected_encoded_bytes": 6126,
+        "duplicate_response_bytes": 0
+      }
+    },
+    {
+      "condition": "shaped-8ms-100Mbit",
+      "case": "multiasset-budget",
+      "mode": "baseline-gdal",
+      "runs": 3,
+      "failures": 0,
+      "wall_all": [
+        3.557427415973507,
+        3.5423698750091717,
+        3.5564088749233633
+      ],
+      "wall_seconds_median": 3.5564088749233633,
+      "cpu_seconds_median": 0.326104,
+      "peak_rss_bytes_median": 85475328,
+      "output_files_median": 37,
+      "output_bytes_median": 16035769,
+      "source_data_requests_median": null,
+      "source_data_bytes_median": null,
+      "first_output_seconds_median": 0.412052209,
+      "actual_workers_median": 4,
+      "active_workers_peak_median": 4,
+      "reserved_bytes_peak_median": 2097152,
+      "http_median": {
+        "head": 16,
+        "get": 88,
+        "body_bytes": 25827908,
+        "selected_native_payload_GETs": 84,
+        "selected_encoded_bytes": 25694932,
+        "unselected_encoded_bytes": 122808,
+        "duplicate_response_bytes": 224
+      }
+    },
+    {
+      "condition": "shaped-8ms-100Mbit",
+      "case": "multiasset-budget",
+      "mode": "baseline-native",
+      "runs": 3,
+      "failures": 0,
+      "wall_all": [
+        4.468264083028771,
+        4.542543707997538,
+        4.4783489999827
+      ],
+      "wall_seconds_median": 4.4783489999827,
+      "cpu_seconds_median": 0.330256,
+      "peak_rss_bytes_median": 72908800,
+      "output_files_median": 37,
+      "output_bytes_median": 16050199,
+      "source_data_requests_median": 196,
+      "source_data_bytes_median": 25696500,
+      "first_output_seconds_median": 0.458001792,
+      "actual_workers_median": 4,
+      "active_workers_peak_median": 4,
+      "reserved_bytes_peak_median": 16288000,
+      "http_median": {
+        "head": 12,
+        "get": 200,
+        "body_bytes": 25729268,
+        "selected_native_payload_GETs": 196,
+        "selected_encoded_bytes": 25694932,
+        "unselected_encoded_bytes": 24504,
+        "duplicate_response_bytes": 0
+      }
+    },
+    {
+      "condition": "shaped-8ms-100Mbit",
+      "case": "multiasset-budget",
+      "mode": "candidate-native",
+      "runs": 3,
+      "failures": 0,
+      "wall_all": [
+        3.542347624897957,
+        3.5115114169893786,
+        3.48003254190553
+      ],
+      "wall_seconds_median": 3.5115114169893786,
+      "cpu_seconds_median": 0.30577,
+      "peak_rss_bytes_median": 69730304,
+      "output_files_median": 37,
+      "output_bytes_median": 16050226,
+      "source_data_requests_median": 84,
+      "source_data_bytes_median": 25696500,
+      "first_output_seconds_median": 0.326972625,
+      "actual_workers_median": 4,
+      "active_workers_peak_median": 3,
+      "reserved_bytes_peak_median": 13404740,
+      "http_median": {
+        "head": 12,
+        "get": 88,
+        "body_bytes": 25729268,
+        "selected_native_payload_GETs": 84,
+        "selected_encoded_bytes": 25694932,
+        "unselected_encoded_bytes": 24504,
+        "duplicate_response_bytes": 0
+      }
+    }
+  ],
+  "comparisons": [
+    {
+      "condition": "shaped-8ms-100Mbit",
+      "case": "core",
+      "candidate_vs_baseline_wall_ratio": 0.7934469520530129,
+      "candidate_minus_baseline_wall_paired": [
+        -0.2843915829434991,
+        -0.2866281670285389,
+        -0.30697804200462997,
+        -0.27639908401761204,
+        -0.28700716595631093
+      ],
+      "candidate_vs_GDAL_wall_ratio": 0.9907993095492904,
+      "candidate_minus_baseline_first_output_paired": [
+        -0.06058949999999999,
+        -0.063704166,
+        -0.06661054100000002,
+        -0.062489165999999985,
+        -0.064896916
+      ]
+    },
+    {
+      "condition": "unshaped",
+      "case": "core",
+      "candidate_vs_baseline_wall_ratio": 0.9766053482140004,
+      "candidate_minus_baseline_wall_paired": [
+        -0.007484582951292396,
+        -0.010837167035788298,
+        -0.008879916043952107,
+        -0.0028624169062823057,
+        -0.003197791986167431
+      ],
+      "candidate_vs_GDAL_wall_ratio": 0.9850141583044353,
+      "candidate_minus_baseline_first_output_paired": [
+        -0.0015089600000000002,
+        -0.003695541999999998,
+        -0.005333582999999999,
+        0.0002881250000000002,
+        -0.0021472499999999964
+      ]
+    },
+    {
+      "condition": "shaped-8ms-100Mbit",
+      "case": "small-selection",
+      "candidate_vs_baseline_wall_ratio": 0.9944679283638561,
+      "candidate_minus_baseline_wall_paired": [
+        0.0013413329143077135,
+        0.0034379169810563326,
+        -0.00525191705673933
+      ],
+      "candidate_vs_GDAL_wall_ratio": 0.7741110638966407,
+      "candidate_minus_baseline_first_output_paired": [
+        -0.005091000000000012,
+        -0.0009760000000000324,
+        -0.0007564170000000092
+      ]
+    },
+    {
+      "condition": "shaped-8ms-100Mbit",
+      "case": "tight-budget",
+      "candidate_vs_baseline_wall_ratio": 1.0018818466781576,
+      "candidate_minus_baseline_wall_paired": [
+        0.005805250955745578,
+        0.003701374866068363,
+        -0.0016785410698503256
+      ],
+      "candidate_vs_GDAL_wall_ratio": 1.248170789142007,
+      "candidate_minus_baseline_first_output_paired": [
+        0.0032327090000000003,
+        0.0017078750000000253,
+        -0.0013123739999999773
+      ]
+    },
+    {
+      "condition": "shaped-8ms-100Mbit",
+      "case": "multiasset-budget",
+      "candidate_vs_baseline_wall_ratio": 0.7841084777008098,
+      "candidate_minus_baseline_wall_paired": [
+        -0.9259164581308141,
+        -1.0310322910081595,
+        -0.99831645807717
+      ],
+      "candidate_vs_GDAL_wall_ratio": 0.9873756197577389,
+      "candidate_minus_baseline_first_output_paired": [
+        -0.10342975100000001,
+        -0.15409962500000002,
+        -0.14129154300000002
+      ]
+    }
+  ],
+  "limitations": [
+    "One macOS ARM64 workstation; loopback shaping does not qualify actual provider/TLS/HTTP2/signing performance.",
+    "Five main repeats, three guard repeats. The approximately 1% GDAL difference is treated as practical parity.",
+    "Working reservation is distinct from process RSS; the GDAL control retains its 32MiB cache outside the scheduler reservation.",
+    "Extra encoded-buffer reservation reduced four-source active admission from4 to3 at16MiB, while completion improved in all three measured pairs. Other crossover workloads remain possible.",
+    "Float32 NaN payloads/signed zero/masks, sparse AOI, reordered/repeated misses and transport failures are regression coverage, not the fresh UInt16 timing population."
+  ],
+  "reproduce": {
+    "commands": "/Users/jakegearon/.local/share/tile-ripper/cog-batching/20261102-q15mzs60/benchmark/commands.json",
+    "driver": "/Users/jakegearon/.local/share/tile-ripper/cog-batching/20261102-q15mzs60/benchmark/run_comparison.py",
+    "driver_sha256": "bd34ddc8cd4b97fd0a6eed13de6293df7cd9322e8836f816e2b4209c2980106c",
+    "frozen_oracle": "/Users/jakegearon/.local/share/tile-ripper/planner-audits/20261102-de1bo43m/measurement/run_matrix_primary_cog.py",
+    "runtime": {
+      "python": "/Users/jakegearon/projects/chronozarr/.venv/bin/python",
+      "python_version": "3.13.17",
+      "platform": "macOS-26.7.1-arm64-arm-64bit-Mach-O",
+      "logical_cpus": 16,
+      "packages": {
+        "numpy": "2.4.4",
+        "rasterio": "1.5.0",
+        "zarr": "3.4.0",
+        "psutil": "7.2.2",
+        "xarray": "2026.2.0"
+      },
+      "oracle_GDAL": "3.12.1",
+      "linked_GDAL_version": "3.12.4",
+      "rustc": "rustc 1.92.0 (ded5c06cf 2025-12-08)",
+      "candidate_dynamic_dependencies": [
+        "/Users/jakegearon/.local/share/tile-ripper/cog-batching/20261102-q15mzs60/bin/tile-ripper-candidate:",
+        "\t/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1356.0.0)",
+        "\t/usr/lib/libobjc.A.dylib (compatibility version 1.0.0, current version 228.0.0)",
+        "\t/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation (compatibility version 300.0.0, current version 4201.0.0)",
+        "\t/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2000.67.0)",
+        "\t/System/Library/Frameworks/Security.framework/Versions/A/Security (compatibility version 1.0.0, current version 61901.60.40)",
+        "\t/System/Library/Frameworks/SystemConfiguration.framework/Versions/A/SystemConfiguration (compatibility version 1.0.0, current version 1385.60.3)",
+        "\t/usr/lib/libiconv.2.dylib (compatibility version 7.0.0, current version 7.0.0)",
+        "\t/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation (compatibility version 150.0.0, current version 4201.0.0)",
+        "\t/opt/homebrew/opt/gdal/lib/libgdal.38.dylib (compatibility version 38.0.0, current version 38.3.12)"
+      ],
+      "driver_sha256": "bd34ddc8cd4b97fd0a6eed13de6293df7cd9322e8836f816e2b4209c2980106c"
+    },
+    "raw_runs": {
+      "primary": {
+        "file": "/Users/jakegearon/.local/share/tile-ripper/cog-batching/20261102-q15mzs60/benchmark/primary/runs.jsonl",
+        "sha256": "086add33d965ab2bf3477d17b795fb61ecdb69dbedbc890cd61d559ca5f917ee"
+      },
+      "guards": {
+        "file": "/Users/jakegearon/.local/share/tile-ripper/cog-batching/20261102-q15mzs60/benchmark/guards/runs.jsonl",
+        "sha256": "7d2614501e3fc5b0c7c38af306be3310233a65edab1b9c2388adf1b17bbc35fd"
+      },
+      "multiasset-budget": {
+        "file": "/Users/jakegearon/.local/share/tile-ripper/cog-batching/20261102-q15mzs60/benchmark/multiasset-budget/runs.jsonl",
+        "sha256": "22d62500453b89a9b7dd671089af7e34ccfba2f814408d9fadaf94266e45e5b8"
+      }
+    }
+  },
+  "source": {
+    "base_revision": "dab55f273be704c40726fa7c68592709d2f7a728",
+    "branch": "codex/cog-first-use-batching",
+    "baseline_binary_sha256": "d8200a16a24516ba02765ba9445620d326f58f2df0464a76b24369c9e1028797",
+    "candidate_binary_sha256": "2681d53325c6fdd3e7cbf1a1e2e728012ac5224692e2431f333f796608cacc13",
+    "final_source_patch_sha256": "810897d4d43f45e54039682ea10f88001214ff2148c4a122b2430388d94241a4",
+    "build_features": [
+      "gdal",
+      "native-cog",
+      "native-hdf5",
+      "authenticated-http"
+    ],
+    "build_profile": "release; CARGO_PROFILE_RELEASE_DEBUG=0; rustc1.92.0"
+  },
+  "verification": {
+    "native_cog_all_targets": {
+      "passed": 236,
+      "failed": 0,
+      "preexisting_ignored": 3
+    },
+    "scientific_gates": [
+      "full raw values and masks versus Rasterio/GDAL",
+      "native CRS/affine/nodata/scale/offset/time and complete exactly-once coverage",
+      "cross-mode output fingerprints and scientific manifest records",
+      "strong ETags and conditional selected payload reads",
+      "complete stdout receipt equals atomically published manifest",
+      "raw HTTP counts/bytes reconcile with native execution counters",
+      "no candidate increase in unselected or duplicate bytes",
+      "reservations within the unchanged requested budgets"
+    ],
+    "commands": [
+      {
+        "name": "build-release",
+        "command": [
+          "cargo",
+          "build",
+          "--release",
+          "--locked",
+          "--offline",
+          "--no-default-features",
+          "--features",
+          "gdal,native-cog,native-hdf5,authenticated-http",
+          "--bin",
+          "tile-ripper"
+        ],
+        "exit_code": 0
+      },
+      {
+        "name": "native-cog-all-targets-corrected-oracle",
+        "command": [
+          "cargo",
+          "test",
+          "--release",
+          "--locked",
+          "--offline",
+          "--no-default-features",
+          "--features",
+          "native-cog",
+          "--all-targets",
+          "--",
+          "--test-threads=1"
+        ],
+        "exit_code": 0
+      },
+      {
+        "name": "clippy-mixed",
+        "command": [
+          "cargo",
+          "clippy",
+          "--release",
+          "--locked",
+          "--offline",
+          "--no-default-features",
+          "--features",
+          "gdal,native-cog,native-hdf5,authenticated-http",
+          "--all-targets",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0
+      },
+      {
+        "name": "fmt-final",
+        "command": [
+          "cargo",
+          "fmt",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0
+      }
+    ],
+    "test_oracle_correction": "First native suite failed the newly added Int16 validity expectation at natural -9999 collisions. Fixture bits were correct; expectation was corrected, failure retained, all targets rerun. Production code unchanged.",
+    "smoke_exclusion": "Three preplanned functional/warmup smoke fetches are retained separately. First candidate launch was 2.337s; no cause attributed. No matched repetitions or outliers removed."
+  },
+  "independent_review": {
+    "status": "accept_scoped_measurement_with_documented_tradeoffs; no material integrity blocker found",
+    "file": "/Users/jakegearon/.local/share/tile-ripper/cog-batching/20261102-q15mzs60/team/measurement-review.json",
+    "sha256": "2eb2a83f3e148caeeaa989ddb4ab41da84d44431237d4e337372637bc5fbf37d"
+  },
+  "preservation": {
+    "primary_and_sentinel1_checkout_heads_status_and_original_files_unchanged": true,
+    "candidate_production_and_lib_unit_sources_match_frozen_build": true,
+    "committed_pushed_merged_at_measurement_closeout": false
+  },
+  "full_evidence": {
+    "file": "/Users/jakegearon/.local/share/tile-ripper/cog-batching/20261102-q15mzs60/results.json",
+    "sha256": "42a5def197a484c9c41f18b62f4a6a872d12534b76608f6989e8b0c187663145"
+  }
+}

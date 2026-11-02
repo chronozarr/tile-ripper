@@ -53,8 +53,24 @@ impl Group {
 }
 /// Join only selected tiles separated by a GDAL COG's <=8 wrapper bytes.
 /// Vertical row gaps and unrelated compressed tiles are never prefetched.
-pub(super) fn groups(mut tiles: Vec<crate::Tile>, cap: usize) -> Vec<Group> {
+pub(super) fn groups(tiles: Vec<crate::Tile>, cap: usize) -> Vec<Group> {
     let sequence: Vec<_> = tiles.iter().filter_map(|t| t.offset).collect();
+    let mut groups = physical_groups(tiles, cap);
+    groups.retain(|g| {
+        let positions: Vec<_> = sequence
+            .iter()
+            .enumerate()
+            .filter(|(_, offset)| g.members.iter().any(|member| member.0 == **offset))
+            .map(|(i, _)| i)
+            .collect();
+        g.members.len() > 1
+            && positions.len() == g.members.len()
+            && positions.last().unwrap() - positions[0] + 1 == positions.len()
+    });
+    groups
+}
+
+fn physical_groups(mut tiles: Vec<crate::Tile>, cap: usize) -> Vec<Group> {
     tiles.sort_by_key(|t| t.offset);
     tiles.dedup_by_key(|t| t.offset);
     let mut groups: Vec<Group> = Vec::new();
@@ -86,18 +102,112 @@ pub(super) fn groups(mut tiles: Vec<crate::Tile>, cap: usize) -> Vec<Group> {
             members: vec![(offset, len)],
         });
     }
-    groups.retain(|g| {
-        let positions: Vec<_> = sequence
-            .iter()
-            .enumerate()
-            .filter(|(_, offset)| g.members.iter().any(|member| member.0 == **offset))
-            .map(|(i, _)| i)
-            .collect();
-        g.members.len() > 1
-            && positions.len() == g.members.len()
-            && positions.last().unwrap() - positions[0] + 1 == positions.len()
-    });
     groups
+}
+
+/// Recover first-use subgroups without fetching tiles needed by a later node.
+/// The ordinary `groups` path above retains its bounded-selection behavior.
+pub(super) fn groups_by_first_use(
+    tiles: Vec<crate::Tile>,
+    first: &BTreeMap<u64, usize>,
+    cap: usize,
+) -> Vec<Group> {
+    // Count before filtering or partitioning. A repeated miss must never become
+    // eligible merely because its other occurrence lies outside this subgroup.
+    // Keep positions for every declared offset, even if its byte count is absent.
+    let mut uses = BTreeMap::<u64, (usize, usize)>::new();
+    for (position, offset) in tiles.iter().filter_map(|t| t.offset).enumerate() {
+        uses.entry(offset)
+            .and_modify(|(_, count)| *count += 1)
+            .or_insert((position, 1));
+    }
+    let mut result = Vec::new();
+    for run in physical_groups(tiles, cap) {
+        let mut start = 0;
+        while start < run.members.len() {
+            let offset = run.members[start].0;
+            let Some(node) = first.get(&offset) else {
+                start += 1;
+                continue;
+            };
+            if !matches!(uses.get(&offset), Some((_, 1))) {
+                start += 1;
+                continue;
+            }
+            let mut end = start + 1;
+            while end < run.members.len()
+                && first.get(&run.members[end].0) == Some(node)
+                && matches!(uses.get(&run.members[end].0), Some((_, 1)))
+            {
+                end += 1;
+            }
+            salvage_first_use(&run.members[start..end], &uses, first, cap, &mut result);
+            start = end;
+        }
+    }
+    result
+}
+
+fn salvage_first_use(
+    members: &[(u64, usize)],
+    uses: &BTreeMap<u64, (usize, usize)>,
+    first: &BTreeMap<u64, usize>,
+    cap: usize,
+    result: &mut Vec<Group>,
+) {
+    if members.len() < 2 {
+        return;
+    }
+    // Check the whole interval before splitting: physical [A,B,C] consumed as
+    // [B,C,A] is legal even though its [A,B] prefix is not consecutive.
+    if let Some(group) = first_use_group(members, uses, first, cap) {
+        result.push(group);
+        return;
+    }
+    // Conservative salvage, not an optimal interval partition. Borrowed halves
+    // bound recursion depth and avoid copying rejected tiles or member vectors.
+    let middle = members.len() / 2;
+    salvage_first_use(&members[..middle], uses, first, cap, result);
+    salvage_first_use(&members[middle..], uses, first, cap, result);
+}
+
+fn first_use_group(
+    members: &[(u64, usize)],
+    uses: &BTreeMap<u64, (usize, usize)>,
+    first: &BTreeMap<u64, usize>,
+    cap: usize,
+) -> Option<Group> {
+    let mut minimum = usize::MAX;
+    let mut maximum = 0;
+    for (offset, _) in members {
+        let (position, count) = uses.get(offset)?;
+        if *count != 1 {
+            return None;
+        }
+        minimum = minimum.min(*position);
+        maximum = maximum.max(*position);
+    }
+    if maximum.checked_sub(minimum)?.checked_add(1)? != members.len() {
+        return None;
+    }
+    for pair in members.windows(2) {
+        let end = pair[0].0.checked_add(pair[0].1 as u64)?;
+        if pair[1].0.checked_sub(end)? > 8 {
+            return None;
+        }
+    }
+    let offset = members.first()?.0;
+    let last = members.last()?;
+    let len = usize::try_from(last.0.checked_add(last.1 as u64)?.checked_sub(offset)?).ok()?;
+    if len.checked_add(8)? > cap.min(MAX_READ) {
+        return None;
+    }
+    let group = Group {
+        offset,
+        len,
+        members: members.to_vec(),
+    };
+    group.first_needed_together(first).then_some(group)
 }
 struct Encoded {
     group: usize,
@@ -575,6 +685,102 @@ mod tests {
         assert!(groups(vec![a.clone(), tile(209, 100)], 1024).is_empty());
         assert!(groups(vec![a.clone(), tile(1000, 100), b.clone()], 1024).is_empty());
         assert!(groups(vec![a.clone(), b, a], 1024).is_empty());
+    }
+    #[test]
+    fn first_use_salvages_rejected_same_node_intervals() {
+        for (offsets, expected) in [
+            (
+                vec![100, 208, 1000, 316, 424],
+                vec![vec![(100, 100), (208, 100)], vec![(316, 100), (424, 100)]],
+            ),
+            (
+                vec![100, 1000, 208, 316, 2000, 424, 532, 3000, 640],
+                // Bisection conservatively salvages this internal B/C pair;
+                // it does not promise an optimal partition of every interval.
+                vec![vec![(208, 100), (316, 100)]],
+            ),
+        ] {
+            let tiles: Vec<_> = offsets.iter().map(|offset| tile(*offset, 100)).collect();
+            let first = offsets.into_iter().map(|offset| (offset, 0)).collect();
+            assert!(groups(tiles.clone(), 4096).is_empty());
+            let actual = groups_by_first_use(tiles, &first, 4096);
+            assert_eq!(
+                actual.iter().map(|g| g.members.clone()).collect::<Vec<_>>(),
+                expected
+            );
+            assert!(actual.iter().all(|g| g.first_needed_together(&first)));
+        }
+    }
+    #[test]
+    fn first_use_splits_nodes_before_merging_and_preserves_permutations() {
+        let tiles = vec![
+            tile(100, 100),
+            tile(208, 100),
+            tile(316, 100),
+            tile(424, 100),
+        ];
+        let first = BTreeMap::from([(100, 0), (208, 0), (316, 1), (424, 1)]);
+        let old = groups(tiles.clone(), 1024);
+        assert_eq!(old.len(), 1);
+        assert!(!old[0].first_needed_together(&first));
+        let actual = groups_by_first_use(tiles, &first, 1024);
+        assert_eq!(actual.len(), 2);
+        assert_eq!(actual[0].members, vec![(100, 100), (208, 100)]);
+        assert_eq!(actual[1].members, vec![(316, 100), (424, 100)]);
+
+        // Physical A/B/C is consumed B/C/A. Test the complete interval before
+        // considering prefixes, so this already-legal permutation stays legal.
+        let tiles = vec![tile(208, 100), tile(316, 100), tile(100, 100)];
+        let first = BTreeMap::from([(100, 0), (208, 0), (316, 0)]);
+        let old = groups(tiles.clone(), 324);
+        let actual = groups_by_first_use(tiles, &first, 324);
+        assert_eq!(old.len(), 1);
+        assert_eq!(actual.len(), 1);
+        assert_eq!(actual[0].members, old[0].members);
+        assert_eq!(actual[0].len, old[0].len);
+    }
+    #[test]
+    fn first_use_counts_repeats_and_unusable_offsets_before_partitioning() {
+        let first = BTreeMap::from([(100, 0), (208, 0), (316, 1), (1000, 0)]);
+        // Counting within the first-node partition would incorrectly admit A/B.
+        assert!(groups_by_first_use(
+            vec![
+                tile(100, 100),
+                tile(208, 100),
+                tile(316, 100),
+                tile(100, 100)
+            ],
+            &first,
+            1024
+        )
+        .is_empty());
+        let mut unusable = tile(1000, 100);
+        unusable.bytes = None;
+        // Its declared offset still interrupts A/B's global logical interval.
+        assert!(
+            groups_by_first_use(vec![tile(100, 100), unusable, tile(208, 100)], &first, 1024)
+                .is_empty()
+        );
+    }
+    #[test]
+    fn first_use_keeps_gap_wrapper_capacity_and_max_read_limits() {
+        let first = BTreeMap::from([(100, 0), (208, 0), (209, 0)]);
+        let tiles = vec![tile(100, 100), tile(208, 100)];
+        assert_eq!(groups_by_first_use(tiles.clone(), &first, 216).len(), 1);
+        assert!(groups_by_first_use(tiles, &first, 215).is_empty());
+        assert!(groups_by_first_use(vec![tile(100, 100), tile(209, 100)], &first, 1024).is_empty());
+
+        for (half, expected) in [(MAX_READ / 2 - 4, 1), (MAX_READ / 2, 0)] {
+            let second = 100 + half as u64;
+            let first = BTreeMap::from([(100, 0), (second, 0)]);
+            let actual = groups_by_first_use(
+                vec![tile(100, half as u64), tile(second, half as u64)],
+                &first,
+                usize::MAX,
+            );
+            assert_eq!(actual.len(), expected);
+            assert!(actual.iter().all(|g| g.len + 8 <= MAX_READ));
+        }
     }
     #[test]
     fn merged_wrapped_and_direct_reads_preserve_bytes_and_counters() {
