@@ -13,7 +13,7 @@ static NEXT: AtomicUsize = AtomicUsize::new(0);
 const SIDE: usize = 768;
 const BLOCK: usize = 256;
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 enum Sample {
     Byte,
     Int16,
@@ -66,6 +66,16 @@ impl Sample {
                 };
                 value.to_bits().to_le_bytes().to_vec()
             }
+        }
+    }
+    fn valid(self, x: usize, y: usize) -> bool {
+        let index = y * SIDE + x;
+        match self {
+            Self::Byte => !index.is_multiple_of(97),
+            // The ordinary generated sequence can also equal the declared
+            // nodata value, independently of the explicitly injected samples.
+            Self::Int16 => i16::from_le_bytes(self.value(x, y).try_into().unwrap()) != -9999,
+            Self::Float32 => !matches!(index % 19, 0 | 1 | 3),
         }
     }
 }
@@ -211,6 +221,33 @@ fn assert_values(chunk: &Chunk, sample: Sample) {
         _ => panic!("unexpected stored sample type"),
     };
     assert_eq!(actual, expected, "source window {:?}", chunk.window);
+    let expected_valid: Vec<_> = (chunk.window.y..chunk.window.y + chunk.window.height)
+        .flat_map(|y| {
+            (chunk.window.x..chunk.window.x + chunk.window.width).map(move |x| sample.valid(x, y))
+        })
+        .collect();
+    let actual_valid = chunk.validity().collect::<Vec<_>>();
+    assert_eq!(actual_valid.len(), expected_valid.len());
+    if let Some(index) = actual_valid
+        .iter()
+        .zip(&expected_valid)
+        .position(|(actual, expected)| actual != expected)
+    {
+        let x = chunk.window.x + index % chunk.window.width;
+        let y = chunk.window.y + index / chunk.window.width;
+        let value = match &chunk.pixels {
+            Pixels::UInt8(values) => values[index].to_string(),
+            Pixels::Int16(values) => values[index].to_string(),
+            Pixels::Float32(values) => {
+                format!("{} (bits {:#010x})", values[index], values[index].to_bits())
+            }
+            _ => unreachable!(),
+        };
+        panic!(
+            "source mask mismatch at ({x}, {y}), chunk index {index}, sample {sample:?}={value}: actual {}, expected {}; window {:?}",
+            actual_valid[index], expected_valid[index], chunk.window
+        );
+    }
     assert_eq!(chunk.crs, "EPSG:32617");
     assert_eq!(chunk.datetime.as_deref(), Some("2025-07-13T15:17:29Z"));
     assert_eq!(
@@ -270,6 +307,42 @@ fn misaligned_selection_coalesces_exact_six_tiles_and_preserves_all_typed_bits()
 }
 
 #[test]
+fn window_delivery_salvages_same_first_use_pairs_without_prefetch_or_extra_payload() {
+    let fixture = Fixture::new(Sample::Float32);
+    let mut request = request(
+        &fixture.0,
+        Spatial::Bounds {
+            crs: "EPSG:32617".into(),
+            bbox: [500000., 3999232., 500768., 4000000.],
+        },
+    );
+    // The full Float32 selection exceeds the 2 MiB bounded-selection limit.
+    // One early window uses tiles 0,1,3,4, while the adjacent physical run also
+    // contains tiles needed only by later windows. Only eligible pairs may merge.
+    request.budget.chunk_edge = 512;
+    let prepared = acquisition::prepare(&request, &mut LayoutCache::default()).unwrap();
+    let layout = prepared.plan().selected[0].layout.as_ref().unwrap();
+    let payload: u64 = layout.tiles.iter().map(|tile| tile.bytes.unwrap()).sum();
+    let mut windows = Vec::new();
+    let report = prepared
+        .execute(|chunk| {
+            assert_values(&chunk, Sample::Float32);
+            windows.push((chunk.window.x, chunk.window.y));
+            Ok(())
+        })
+        .unwrap();
+    assert_eq!(windows, [(0, 0), (512, 0), (0, 512), (512, 512)]);
+    assert_eq!(report.chunks, 4);
+    assert_eq!(report.source_data_requests, Some(6));
+    assert_eq!(report.source_data_bytes, Some(payload));
+    let strategy = &report.scheduler["native_strategies"][0]["strategy"];
+    assert_eq!(strategy["read_scope"], "planned_windows");
+    assert_eq!(strategy["retained_selection_bytes"], 0);
+    assert_eq!(strategy["coalesced_groups"], 3);
+    assert!(report.scheduler["reserved_bytes_peak"].as_u64().unwrap() <= 16 << 20);
+}
+
+#[test]
 fn tight_buffer_keeps_exact_window_delivery_when_the_selection_cannot_fit() {
     let fixture = Fixture::new(Sample::Byte);
     let mut request = request(
@@ -294,6 +367,10 @@ fn tight_buffer_keeps_exact_window_delivery_when_the_selection_cannot_fit() {
     assert_eq!(chunks, 9);
     assert_eq!(report.source_data_requests, Some(9));
     assert_eq!(report.source_data_bytes, Some(payload));
+    assert_eq!(
+        report.scheduler["native_strategies"][0]["strategy"]["coalesced_groups"],
+        0
+    );
     assert!(report.scheduler["reserved_bytes_peak"].as_u64().unwrap() <= 768 << 10);
     assert_eq!(
         report.scheduler["native_strategies"][0]["strategy"]["read_scope"],

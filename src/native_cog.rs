@@ -671,7 +671,7 @@ pub(crate) fn reservation(
             }
         }
     }
-    let mut groups = range::groups(misses, available);
+    let mut groups = range::groups_by_first_use(misses, &first_needed, available);
     // Do not delay an early chunk to prefetch a tile only a later chunk needs.
     // The controlled replay found no six-source wall-time benefit from that
     // broader prefetch despite its lower GET count.
@@ -1590,6 +1590,79 @@ mod efficiency_tests {
             strategy.summary()["retained_selection_bytes"],
             768 * 768 * 2
         );
+    }
+    #[test]
+    fn first_use_groups_recover_misaligned_large_selection_without_buffering_it() {
+        let selection = crate::Window {
+            x: 240,
+            y: 240,
+            width: 1400,
+            height: 1400,
+        };
+        let (mut layout, _) = fixture(selection.clone());
+        layout.width = 2048;
+        layout.height = 2048;
+        layout.block = [256, 256];
+        layout.tiles = (0..8)
+            .flat_map(|y| {
+                (0..8).map(move |x| Tile {
+                    x,
+                    y,
+                    offset: Some(1_000_000 + (y * 8 + x) as u64 * 131_126),
+                    bytes: Some(131_118),
+                })
+            })
+            .collect();
+        let mut nodes = Vec::new();
+        for y in (selection.y..selection.y + selection.height).step_by(512) {
+            for x in (selection.x..selection.x + selection.width).step_by(512) {
+                let window = crate::Window {
+                    x,
+                    y,
+                    width: 512.min(selection.x + selection.width - x),
+                    height: 512.min(selection.y + selection.height - y),
+                };
+                nodes.push(Node {
+                    id: nodes.len(),
+                    dependencies: vec![],
+                    asset_id: "fixture".into(),
+                    operation: Operation::Read {
+                        read: Read::LibraryWindow {
+                            tiles: crate::cog::tiles(&layout, &window),
+                            window,
+                            band: 1,
+                        },
+                    },
+                });
+            }
+        }
+        let refs: Vec<_> = nodes.iter().collect();
+        let (cache, working, strategy) =
+            reservation(&layout, &selection, &refs, 64 << 20, 1).unwrap();
+        assert_eq!(nodes.len(), 9);
+        assert!(matches!(strategy.delivery, Delivery::Windows));
+        assert_eq!(cache, 19 * 256 * 256 * 2);
+        assert_eq!(strategy.groups.len(), 21);
+        assert_eq!(
+            strategy.groups.iter().filter(|g| g.len == 393_370).count(),
+            7
+        );
+        assert_eq!(
+            strategy.groups.iter().filter(|g| g.len == 262_244).count(),
+            14
+        );
+        assert!(cache + working + 512 * 512 * 4 <= 64 << 20);
+
+        // With no room for a merged body the previous individual-read strategy
+        // remains admissible; neither the selection nor memory cap is widened.
+        let (cache, working, minimum) = reservation(&layout, &selection, &refs, 0, 1).unwrap();
+        assert!(minimum.groups.is_empty());
+        let budget = cache + working + 512 * 512 * 4;
+        let (cache, working, strategy) =
+            reservation(&layout, &selection, &refs, budget, 1).unwrap();
+        assert!(strategy.groups.is_empty());
+        assert!(matches!(strategy.delivery, Delivery::Windows));
+        assert_eq!(cache + working + 512 * 512 * 4, budget);
     }
     #[test]
     fn buffered_chunk_rows_edges_and_bounds_are_exact() {

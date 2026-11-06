@@ -264,6 +264,237 @@ fn truncated_initial_remote_body_is_retried_and_never_cached() {
     assert_eq!(f.gets().len(), 3);
 }
 
+fn data_tile(offset: u64) -> crate::Tile {
+    crate::Tile {
+        x: offset as usize,
+        y: 0,
+        offset: Some(offset),
+        bytes: Some(16),
+    }
+}
+
+#[test]
+fn first_use_subgroups_fetch_only_the_current_nodes_bytes_with_conditional_wrappers() {
+    for wrapper in [0, 4, 8] {
+        let f = HttpFixture::new(1024);
+        let first = BTreeMap::from([(100, 0), (124, 0), (148, 1), (172, 1)]);
+        let groups = groups_by_first_use(
+            [100, 124, 148, 172].into_iter().map(data_tile).collect(),
+            &first,
+            96,
+        );
+        assert_eq!(groups.len(), 2);
+        assert!(groups.iter().all(|g| g.first_needed_together(&first)));
+        let source = RangeSource::open(&f.asset, None, Default::default(), None).unwrap();
+        source.begin_data(groups);
+        let shift = if wrapper == 0 { 0 } else { 4 };
+        for offset in [100, 124] {
+            let at = offset - shift;
+            assert_eq!(
+                source.read_exact_at(at, 16 + wrapper).unwrap(),
+                f.object[at as usize..at as usize + 16 + wrapper]
+            );
+            // The second node's adjacent tiles must not be prefetched.
+            assert_eq!(f.gets().len(), 1);
+            assert_eq!(
+                f.gets()[0].range,
+                Some(format!(
+                    "bytes={}-{}",
+                    100 - shift,
+                    139 + wrapper as u64 - shift
+                ))
+            );
+        }
+        assert!(source.encoded.lock().unwrap().is_none());
+        for offset in [148, 172] {
+            let at = offset - shift;
+            assert_eq!(
+                source.read_exact_at(at, 16 + wrapper).unwrap(),
+                f.object[at as usize..at as usize + 16 + wrapper]
+            );
+        }
+        assert_eq!(f.gets().len(), 2);
+        assert_eq!(
+            f.gets()[1].range,
+            Some(format!(
+                "bytes={}-{}",
+                148 - shift,
+                187 + wrapper as u64 - shift
+            ))
+        );
+        assert!(source.encoded.lock().unwrap().is_none());
+        let counters = source.counters.lock().unwrap();
+        assert_eq!(counters.requests, 2);
+        assert_eq!(counters.bytes, 2 * (40 + wrapper) as u64);
+        assert!(counters.encoded_capacity_peak <= 48 + 24);
+        assert!(f
+            .requests
+            .lock()
+            .unwrap()
+            .iter()
+            .all(|r| r.if_match.as_deref() == Some("\"v1\"")));
+    }
+}
+
+#[test]
+fn salvaged_subgroups_preserve_shuffled_miss_order_without_refetching_partial_buffers() {
+    // The physical four-tile run is interrupted in consumption order by a
+    // distant exact read. Both two-tile subgroups remain useful in either order.
+    for sequence in [[100, 124, 400, 148, 172], [148, 172, 400, 100, 124]] {
+        let f = HttpFixture::new(1024);
+        let first = BTreeMap::from([(100, 0), (124, 0), (148, 0), (172, 0), (400, 0)]);
+        let groups =
+            groups_by_first_use(sequence.into_iter().map(data_tile).collect(), &first, 128);
+        assert_eq!(groups.len(), 2);
+        let source = RangeSource::open(&f.asset, None, Default::default(), None).unwrap();
+        source.begin_data(groups);
+        for offset in sequence {
+            assert_eq!(
+                source.read_exact_at(offset, 16).unwrap(),
+                f.object[offset as usize..offset as usize + 16]
+            );
+        }
+        let expected = if sequence[0] == 100 {
+            ["bytes=100-139", "bytes=400-415", "bytes=148-187"]
+        } else {
+            ["bytes=148-187", "bytes=400-415", "bytes=100-139"]
+        };
+        let gets = f.gets();
+        assert_eq!(
+            gets.iter()
+                .map(|r| r.range.as_deref().unwrap())
+                .collect::<Vec<_>>(),
+            expected
+        );
+        assert!(gets.iter().all(|r| r.if_match.as_deref() == Some("\"v1\"")));
+        assert_eq!(source.counters.lock().unwrap().bytes, 96);
+        assert!(source.encoded.lock().unwrap().is_none());
+    }
+}
+
+#[test]
+fn globally_repeated_misses_stay_exact_while_their_single_use_neighbors_can_merge() {
+    let f = HttpFixture::new(1024);
+    let first = BTreeMap::from([(100, 0), (124, 1), (148, 1)]);
+    let groups = groups_by_first_use(
+        [100, 124, 148, 100].into_iter().map(data_tile).collect(),
+        &first,
+        128,
+    );
+    assert_eq!(groups.len(), 1);
+    assert!(groups[0].members.iter().all(|member| member.0 != 100));
+    let source = RangeSource::open(&f.asset, None, Default::default(), None).unwrap();
+    source.begin_data(groups);
+    for offset in [100, 124, 148, 100] {
+        assert_eq!(
+            source.read_exact_at(offset, 16).unwrap(),
+            f.object[offset as usize..offset as usize + 16]
+        );
+    }
+    assert_eq!(
+        f.gets()
+            .iter()
+            .map(|r| r.range.clone().unwrap())
+            .collect::<Vec<_>>(),
+        ["bytes=100-115", "bytes=124-163", "bytes=100-115"]
+    );
+    assert_eq!(source.counters.lock().unwrap().bytes, 72);
+    assert!(source.encoded.lock().unwrap().is_none());
+}
+
+#[test]
+fn subgroup_caps_gaps_and_interleaved_reads_do_not_cause_eviction_refetch() {
+    for (second, cap, expected_gets) in [(124, 48, 1), (124, 47, 2), (125, 49, 2)] {
+        let f = HttpFixture::new(1024);
+        let first = BTreeMap::from([(100, 0), (second, 0)]);
+        let groups = groups_by_first_use(vec![data_tile(100), data_tile(second)], &first, cap);
+        let source = RangeSource::open(&f.asset, None, Default::default(), None).unwrap();
+        source.begin_data(groups);
+        for offset in [100, second] {
+            assert_eq!(
+                source.read_exact_at(offset, 16).unwrap(),
+                f.object[offset as usize..offset as usize + 16]
+            );
+        }
+        assert_eq!(f.gets().len(), expected_gets);
+        assert!(source.counters.lock().unwrap().encoded_capacity_peak <= cap + 16);
+    }
+
+    let f = HttpFixture::new(1024);
+    let first = BTreeMap::from([(100, 0), (124, 0), (148, 0), (172, 0)]);
+    let groups = groups_by_first_use(
+        [100, 148, 124, 172].into_iter().map(data_tile).collect(),
+        &first,
+        48,
+    );
+    let source = RangeSource::open(&f.asset, None, Default::default(), None).unwrap();
+    source.begin_data(groups);
+    for offset in [100, 148, 124, 172] {
+        assert_eq!(
+            source.read_exact_at(offset, 16).unwrap(),
+            f.object[offset as usize..offset as usize + 16]
+        );
+    }
+    // Accept conservative exact reads or any legal salvage, but never two
+    // overlapping partially consumed groups that evict and refetch each other.
+    let gets = f.gets();
+    let ranges = gets
+        .iter()
+        .map(|r| r.range.clone().unwrap())
+        .collect::<Vec<_>>();
+    assert_eq!(
+        ranges
+            .iter()
+            .collect::<std::collections::BTreeSet<_>>()
+            .len(),
+        ranges.len()
+    );
+    assert!(source.counters.lock().unwrap().bytes <= 4 * 16 + 3 * 8);
+    assert!(source.encoded.lock().unwrap().is_none());
+}
+
+#[test]
+fn failed_salvaged_group_poisoning_prevents_cached_sibling_delivery_and_retry() {
+    for fault in [1, 5] {
+        let f = HttpFixture::new(1024);
+        let first = BTreeMap::from([(100, 0), (124, 0), (148, 0), (172, 0), (400, 0)]);
+        let planned = || {
+            groups_by_first_use(
+                [100, 124, 400, 148, 172]
+                    .into_iter()
+                    .map(data_tile)
+                    .collect(),
+                &first,
+                128,
+            )
+        };
+        assert_eq!(planned().len(), 2);
+        let failed = Arc::new(AtomicBool::new(false));
+        let source = RangeSource::open(&f.asset, None, failed.clone(), None).unwrap();
+        let sibling = RangeSource::open(&f.asset, None, failed.clone(), None).unwrap();
+        source.begin_data(planned());
+        sibling.begin_data(planned());
+        source.read_exact_at(100, 16).unwrap();
+        source.read_exact_at(124, 16).unwrap();
+        sibling.read_exact_at(148, 16).unwrap();
+        assert!(sibling.encoded.lock().unwrap().is_some());
+        f.fault.store(fault, Ordering::Release);
+        assert!(source.read_exact_at(148, 16).is_err());
+        assert!(failed.load(Ordering::Acquire));
+        assert!(source.encoded.lock().unwrap().is_none());
+        let requests = f.requests.lock().unwrap().len();
+        f.fault.store(0, Ordering::Release);
+        assert!(source.read_exact_at(172, 16).is_err());
+        assert!(sibling.read_exact_at(172, 16).is_err());
+        assert!(RangeSource::open(&f.asset, None, failed, None).is_err());
+        assert_eq!(f.requests.lock().unwrap().len(), requests);
+        assert!(f
+            .gets()
+            .iter()
+            .all(|r| r.if_match.as_deref() == Some("\"v1\"")));
+    }
+}
+
 fn cog_fixture() -> HttpFixture {
     HttpFixture::from_bytes(
         std::fs::read(
